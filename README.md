@@ -1,6 +1,6 @@
 # PxStat
 
-“:rocket:”
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
 ![Descriptive/Alt text here](https://cdn.glitch.com/worldscollide2.jpg)
