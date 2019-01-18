@@ -17,19 +17,15 @@ https://img.shields.io/github/languages/code-size/badges/shields.svg
 * [Setup](#setup)
 
 ## General info
-This project is simple Lorem ipsum dolor generator.
+This project is ....
 	
 ## Technologies
 Project is created with:
-* Lorem version: 12.3
-* Ipsum version: 2.33
-* Ament library version: 999
+
 	
 ## Setup
-To run this project, install it locally using npm:
+To run this project, install it locally using ...:
 
 ```
-$ cd ../lorem
-$ npm install
-$ npm start
+
 ```
