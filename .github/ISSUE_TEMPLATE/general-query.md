@@ -1,7 +1,7 @@
 ---
 name: General query
 about: Ask for information
-title: "[QUERY]"
+title: "[QUERY] "
 labels: question
 assignees: CSOIreland
 

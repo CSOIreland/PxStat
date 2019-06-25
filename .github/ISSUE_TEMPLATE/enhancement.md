@@ -1,7 +1,7 @@
 ---
 name: Enhancement
 about: Suggest an idea for this project
-title: "[ENHANCEMENT]"
+title: "[ENHANCEMENT] "
 labels: enhancement
 assignees: CSOIreland
 
