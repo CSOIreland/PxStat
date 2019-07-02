@@ -12,11 +12,7 @@ The output follows alos the **Open Data** recommendations by providing access to
 
 PxStat also empowers the Data-Owners (Publishers) to manage the publication of their data through a Workflow to identify & prevent issues before going Live, schedule and track Releases, compare data and meta-data of the Releases over time and finally monitor the usage of the data via analytical tools.
 
-The name **PxStat** is derived from `Px` (file format by the PcAxis Statistical Community) + `Stat` (Statistics).
-
-
 WORK IN PROGRESS...
-
 
 ## Table of contents
 * [General info](#general-info)
