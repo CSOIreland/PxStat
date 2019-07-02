@@ -7,10 +7,10 @@ PxStat is a **Data Dissemination Management System** for National Statistical In
 
 The system is powered by a lightweight engine and provides a modern, responsive and efficient Web interface. 
 
-Users can run extensive meta-data searches , filter results, explore data by _"slicing and dicing"_, export results to different formats, visualise data over geographical layers, share their results and automate their processes by reading data via API queries. 
+**Users** can run extensive meta-data searches , filter results, explore data by _"slicing and dicing"_, export results to different formats, visualise data over geographical layers, share their results and automate their processes by reading data via API queries. 
 The output follows alos the **Open Data** recommendations by providing access to multiple data formats (JSON-Stat, CSV, PX) and is ready to enable RDF and LOSD (Linked-Open-Statistical-Data) to reach _"5 Star Linked Open Data"_.
 
-PxStat also empowers the Data-Owners (Publishers) to manage the publication of their data through a Workflow to identify & prevent issues before going Live, schedule and track Releases, compare data and meta-data of the Releases over time and finally monitor the usage of the data via analytical tools.
+PxStat also empowers the **Data-Owners** to manage the publication of their data through a Workflow to identify & prevent issues before going Live, schedule and track Releases, compare data and meta-data of the Releases over time and finally monitor the usage of the data via analytical tools.
 
 WORK IN PROGRESS...
 
