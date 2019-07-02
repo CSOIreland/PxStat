@@ -3,8 +3,8 @@
 [![GitHub Watches](https://img.shields.io/github/watchers/goncaloperes/Project-CodeIgniter-CMS.svg?style=social&label=Watch&maxAge=2592000)](https://github.com/goncaloperes/Project-CodeIgniter-CMS/watchers)
 
 # PxStat
-This is a **Data Dissemination Management System** for National Statistical Institutes and Statistical Organisations.
-The name **PxStat** is derived from `Px` (file format by the PcAxis Statistical Community) + `Stat` (Statstics).
+PxStat is a **Data Dissemination Management System** for National Statistical Institutes and Statistical Organisations.
+The name **PxStat** is derived from `Px` (file format by the PcAxis Statistical Community) + `Stat` (Statistics).
 
 
 WORK IN PROGRESS...
