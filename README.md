@@ -12,33 +12,12 @@ The output follows alos the **Open Data** recommendations by providing access to
 
 PxStat also empowers the **Data-Owners** to manage the publication of their data through a Workflow to identify & prevent issues before going Live, schedule and track Releases, compare data and meta-data of the Releases over time and finally monitor the usage of the data via analytical tools.
 
-WORK IN PROGRESS...
-
 ## [Wiki](https://github.com/CSOIreland/PxStat/wiki)
-The Wiki centrlaly hosts all the technicall and business information about the system:
+The Wiki centrally hosts all the technicall and business information about the system:
 * [Installation](Installation)
 * [API](API)
 * [Developer](Developer)
 * [End User Guide](End-User-Guide)
 
 ## [Issues](https://github.com/CSOIreland/PxStat/issues/new/choose)
-Please raise a new Issue in GitHub if you wan to get in touch about suggesting **Enhancements**, filing a **Bug**, submitting a **General Query** or reporting a **Security Vulnerability**.
-
-## Live Systems
-* [General info](#general-info)
-* [Technologies](#technologies)
-* [Setup](#setup)
-
-## General info
-This project is ....
-	
-## Technologies
-Project is created with:
-
-	
-## Setup
-To run this project, install it locally using ...:
-
-```
-
-```
+Please raise a new Issue in GitHub if you wan to suggest an **Enhancement**, file a **Bug**, submit a **General Query** or report a **Security Vulnerability**.
