@@ -3,9 +3,9 @@
 [![GitHub Watches](https://img.shields.io/github/watchers/goncaloperes/Project-CodeIgniter-CMS.svg?style=social&label=Watch&maxAge=2592000)](https://github.com/goncaloperes/Project-CodeIgniter-CMS/watchers)
 
 # PxStat
-PxStat is a **Data Dissemination Management System** for National Statistical Institutes and Statistical Organisations, developed by the **CSO** (Central Statistics Office, Ireland) with the support of the **PcAxis** Statistical Community 
+PxStat is a **Data Dissemination Management System** especially designed for National Statistical Institutes and Statistical Organisations, developed by the **CSO** (Central Statistics Office, Ireland) with the support of the **PcAxis** Statistical Community.
 
-The system is powered by a lightweight engine and provides a modern, responsive and efficient Web interface. 
+The system is powered by a lightweight engine and provides a modern, responsive and efficient Web interface and Web services
 
 **Users** can run extensive meta-data searches , filter results, explore data by _"slicing and dicing"_, export results to different formats, visualise data over geographical layers, share their results and automate their processes by reading data via API queries. 
 The output follows alos the **Open Data** recommendations by providing access to multiple data formats (JSON-Stat, CSV, PX) and is ready to enable RDF and LOSD (Linked-Open-Statistical-Data) to reach _"5 Star Linked Open Data"_.
@@ -14,7 +14,17 @@ PxStat also empowers the **Data-Owners** to manage the publication of their data
 
 WORK IN PROGRESS...
 
-## Table of contents
+## [Wiki](https://github.com/CSOIreland/PxStat/wiki)
+The Wiki centrlaly hosts all the technicall and business information about the system:
+* [Installation](Installation)
+* [API](API)
+* [Developer](Developer)
+* [End User Guide](End-User-Guide)
+
+## [Issues](https://github.com/CSOIreland/PxStat/issues/new/choose)
+Please raise a new Issue in GitHub if you wan to get in touch about suggesting **Enhancements**, filing a **Bug**, submitting a **General Query** or reporting a **Security Vulnerability**.
+
+## Live Systems
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
