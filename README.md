@@ -21,3 +21,10 @@ The Wiki centrally hosts all the technicall and business information about the s
 
 ## [Issues](https://github.com/CSOIreland/PxStat/issues/new/choose)
 Please raise a new Issue in GitHub if you wan to suggest an **Enhancement**, file a **Bug**, submit a **General Query** or report a **Security Vulnerability**.
+
+***
+<img src="https://user-images.githubusercontent.com/5030226/60980383-47ccbf80-a32c-11e9-8572-3c234abcd9fb.png" Title="Central Statistic Office, Ireland" alt="Central Statistic Office, Ireland" width="24"> **Central Statistics Office**  
+Skehard Road, Cork T12 X00E, Ireland  
+`Tel:` (+353) 21 453 5000  
+`eMail:` information@cso.ie  
+`Website:` [www.cso.ie](https://www.cso.ie/)  
