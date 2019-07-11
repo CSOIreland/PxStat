@@ -23,6 +23,7 @@ The Wiki centrally hosts all the technicall and business information about the s
 Please raise a new Issue in GitHub if you wan to suggest an **Enhancement**, file a **Bug**, submit a **General Query** or report a **Security Vulnerability**.
 
 ## Collaborations
-The following bodies are collaborating on the project:
-* <img src="https://user-images.githubusercontent.com/5030226/60980383-47ccbf80-a32c-11e9-8572-3c234abcd9fb.png" Title="CSO" alt="CSO" width="24"> [CSO - Central Statistics Office, Ireland](https://www.cso.ie/) 
-* <img src="https://user-images.githubusercontent.com/45821392/61072024-5a1d2b00-a40a-11e9-96f4-ec163882881d.png" Title="NISRA" alt="NISRA" width="24"> [NISRA - Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk/) 
+The following bodies are collaborating on the project:  
+
+<img src="https://user-images.githubusercontent.com/5030226/60980383-47ccbf80-a32c-11e9-8572-3c234abcd9fb.png" Title="CSO" alt="CSO" width="24"> [CSO - Central Statistics Office, Ireland](https://www.cso.ie/)  
+<img src="https://user-images.githubusercontent.com/45821392/61072024-5a1d2b00-a40a-11e9-96f4-ec163882881d.png" Title="NISRA" alt="NISRA" width="24"> [NISRA - Northern Ireland Statistics and Research Agency](https://www.nisra.gov.uk/)   
