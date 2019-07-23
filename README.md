@@ -20,7 +20,7 @@ The Wiki centrally hosts all the technicall and business information about the s
 * [End User Guide](https://github.com/CSOIreland/PxStat/wiki/End-User-Guide)
 
 ## [Issues](https://github.com/CSOIreland/PxStat/issues/new/choose)
-Please raise a new Issue in GitHub if you wan to suggest an **Enhancement**, file a **Bug**, submit a **General Query** or report a **Security Vulnerability**.
+Please raise a new Issue in GitHub if you want to suggest an **Enhancement**, file a **Bug**, submit a **General Query** or report a **Security Vulnerability**.
 
 
 ***
