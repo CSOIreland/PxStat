@@ -19,7 +19,7 @@ The Wiki centrally hosts all the technicall and business information about the s
 * [Developer](https://github.com/CSOIreland/PxStat/wiki/Developer)
 * [End User Guide](https://github.com/CSOIreland/PxStat/wiki/End-User-Guide)
 
-## [Questions ?](https://github.com/CSOIreland/PxStat/issues/new/choose)
+## [Questions](https://github.com/CSOIreland/PxStat/issues/new/choose)
 Please raise a new Issue in GitHub if you want to file a **Bug**, suggest an **Enhancement**, report a **Security Vulnerability** or submit a **General Query**.
 
 ***
