@@ -5,7 +5,7 @@
 # PxStat
 PxStat is a **Data Dissemination Management System** especially designed for National Statistical Institutes and Statistical Organisations, developed by the **CSO** (Central Statistics Office, Ireland) with the support of the **PcAxis** statistical community and the collaboration of the **Open Source** community.
 
-The system is powered by a lightweight engine and provides a modern, responsive and efficient Web interface and Web services
+The system is powered by a lightweight engine and provides a modern, responsive and efficient Web interface and Web services for managing and disseminating statistics.
 
 **Users** can run extensive meta-data searches , filter results, explore data by _"slicing and dicing"_, export results to different formats, visualise data over geographical layers, share their results and automate their processes by reading data via API queries. 
 The output follows alos the **Open Data** recommendations by providing access to multiple data formats (JSON-Stat, CSV, PX) and is ready to enable RDF and LOSD (Linked-Open-Statistical-Data) to reach _"5 Star Linked Open Data"_.
