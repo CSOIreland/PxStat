@@ -1,0 +1,44 @@
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Paulo Patricio
+-- Create date: 27 Nov 2018
+-- Description:	Gets the previous live release
+-- =============================================
+CREATE
+	OR
+
+ALTER VIEW VW_RELEASE_LIVE_PREVIOUS
+AS
+SELECT RLS_ID AS VRP_RLS_ID
+	,MTR_ID AS VRP_MTR_ID
+FROM TD_MATRIX
+INNER JOIN TD_RELEASE ON RLS_ID = MTR_RLS_ID
+	AND RLS_DELETE_FLAG = 0
+	AND RLS_LIVE_FLAG = 1
+	AND RLS_VERSION != 0
+	AND RLS_REVISION = 0
+	AND (
+		RLS_LIVE_DATETIME_FROM IS NOT NULL
+		AND getDate() > RLS_LIVE_DATETIME_FROM
+		)
+	AND (
+		RLS_LIVE_DATETIME_TO IS NOT NULL
+		AND getDate() > RLS_LIVE_DATETIME_TO
+		)
+	AND RLS_LIVE_DATETIME_TO IN (
+		SELECT RLS_LIVE_DATETIME_FROM
+		FROM VW_RELEASE_LIVE_NOW
+		INNER JOIN TD_RELEASE AS inner_rls ON inner_rls.RLS_ID = VRN_RLS_ID
+		INNER JOIN TD_MATRIX AS inner_mtr on inner_mtr.MTR_ID=VRN_MTR_ID
+		AND inner_mtr.MTR_CODE=MTR_CODE
+		
+		)
+WHERE MTR_DELETE_FLAG = 0;
+GO
+
+
