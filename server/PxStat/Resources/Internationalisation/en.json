@@ -1,0 +1,104 @@
+﻿{
+  "static": {
+    "release": "Release",
+    "all-groups": "All Groups"
+  },
+  "error": {
+    "authentication": "Invalid authentication. Access denied.",
+    "create": "No record has been created. Please review your input.",
+    "delete": "No record has been deleted. Please review your selection.",
+    "duplicate": "No record has been created. A duplicate record already exists. Please review your input.",
+    "exception": "An unexpected error has occurred. Please seek technical support.",
+    "invalid": "Invalid input",
+    "privilege": "Unauthorized request. Access denied.",
+    "publish": "Incomplete data in the Release. Please review your data.",
+    "schema": "API Schema violated. Please review the syntax of your API request.",
+    "update": "No record has been updated. Please review your input.",
+    "validation": "Validation failed. Please review your input.",
+    "parsing": {
+      "parse-error": "Parse Error",
+      "unexpected": "Unexpected character {0} found at row {1}, column {2}",
+      "expected": "Expected value: {0}",
+      "eof": "EOF",
+      "unmatched-parameters": "Failed to reconcile request parameters with available data"
+
+    }
+  },
+  "px": {
+
+    "build": {
+      "language": "The specified language was not found in the supplied px file."
+    },
+    "duplicate": "You are about to upload a new revision of the existing Table &quot;{0}&quot;. Are you sure?",
+    "duplicate-different-group": "You are about to upload a new revision of the existing Table &quot;{0}&quot; and to change the group from &quot;{1}&quot; to &quot;{2}&quot;. Are you sure?",
+
+    "integrity": {
+      "data": "PX Integrity: the data &quot;{Data}&quot; is invalid.",
+      "size": "PX Integrity: &quot;{Expected}&quot; cells of data expected but &quot;{Found}&quot; found for the Language &quot;{Language}&quot;.",
+      "language": "language",
+      "expected": "Expected",
+      "found": "Found",
+      "source": "Source",
+      "codes": "Duplicate codes found"
+    },
+
+    "authentication": {
+      "authenticated": "AUTHENTICATED",
+      "registered": "REGISTERED",
+      "anonymous": "ANONYMOUS",
+      "any": "ANY"
+    },
+
+    "parse": "PX Parse: the input contains invalid syntax.",
+    "pendinglive": "The Table &quot;{0}&quot; has a live release pending. Please wait for the release to go live before uploading a new version.",
+
+    "schema": {
+      "key-alphanumeric": "PX Schema: the keyword {0} must be alpha-numeric.",
+      "key-any-of": "PX Schema: the input must contains either the key &quot;{0}&quot; or &quot;{1}&quot;.",
+      "key-boolean": "PX Schema: the keyword {0} must either yes or no.",
+      "key-length-min": "PX Schema: the keyword {0} must have a minimum length of {1} char(s).",
+      "key-length-min-max": "PX Schema: the keyword {0} must have a length between {1} and {2} chars.",
+      "key-mandatory": "PX Schema: the input must contain the key &quot;{0}&quot;.",
+      "key-not-found": "PX Schema: the keyword &quot;{0}&quot; has not been found for the language &quot;{1}&quot;.",
+      "key-numeric-min-max": "PX Schema: the keyword {0} must have a value between {1} and {2}."
+    },
+    "setting": {
+      "axisversion-invalid": "PX Setting [AXIS-VERSION]: &quot;{PropertyValue}&quot; is invalid.",
+      "language-invalid": "PX Setting [LANGUAGE]: &quot;{PropertyValue}&quot; is invalid.",
+      "languages-invalid": "PX Setting [LANGUAGE]: &quot;{Language}&quot; is invalid.",
+      "source-invalid": "PX Setting [SOURCE]: &quot;{PropertyValue}&quot; is invalid.",
+      "sources-invalid": "PX Setting [SOURCE]: &quot;{Source}&quot; is invalid."
+    },
+
+    "workflow": "The Table &quot;{0}&quot; has a workflow in progress. Please wait for the workflow to complete before uploading a new version."
+  },
+  "default": {
+    "classification": "State",
+    "csv": {
+      "code": " CODE",
+      "header": "Unit,Value",
+      "unit": "UNIT",
+      "value": "VALUE"
+    },
+    "statistic": "Statistic",
+    "subject-area": "n/a",
+    "subject-code": "NA",
+    "variable": "State"
+  },
+  "email": {
+    "body": {
+      "request-create": "[p]A new request of type [b]{0}[/b]  has been submitted against the Table [b]{1}[/b] Version [b]{2}.{3} [/b]and is awaiting approval.[/p] [p]View this workflow at {4}.[/p]",
+      "response-approve": "[p]A new request of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b] and is awaiting sign-off.[/p] [p]View this workflow at {4}.[/p]",
+      "response-reject": "[p]The request for approval of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].[/p] [p]View this workflow at {4}.[/p]",
+      "signoff-approve": "[p]The request for sign-off of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].[/p] [p]View this workflow at {4}.[/p]",
+      "signoff-reject": "[p]The request for sign-off of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].[/p] [p]View this workflow at {4}.[/p]"
+    },
+    "subject": {
+      "request-create": "{0} {1}.{2}: Awaiting Approval",
+      "response-approve": "{0} {1}.{2}: Awaiting Sign-off",
+      "response-reject": "{0} {1}.{2}: Approval Rejected",
+      "signoff-approve": "{0} {1}.{2}: Sign-off Approved",
+      "signoff-reject": "{0} {1}.{2}: Sign-off Rejected"
+    }
+  }
+}

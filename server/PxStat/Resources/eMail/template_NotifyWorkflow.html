@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-16">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="background-color: #fff; font-family: 'Roboto Sans', sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;">
+
+    <div class="container" style="margin: 0px auto;  width: 75%;">
+        <h1>{title}</h1>
+        <h2>{subject}</h2>
+        <hr>
+
+        <p>{body}</p>
+
+        <hr>
+        <p style="font-size: smaller;">
+            You received this email because you are part of this Workflow.
+        </p>
+        <p style="font-size: smaller; display: none;">
+            <b>Sender's IP Address:</b> {ip}<br />
+        </p>
+        <p style="font-size: smaller;">
+            <b>Date/Time:</b> {datetime} <span style="font-size:x-small; color:gray;">(24h, local time)</span>
+        </p>
+        <p>
+            <a href="{website_url}" target="_blank">{website_name}</a>
+        </p>
+    </div>
+
+</body>
+
+</html>

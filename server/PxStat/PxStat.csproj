@@ -1,0 +1,606 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{41C45653-C643-45B8-902D-4755A647F0FB}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PxStat</RootNamespace>
+    <AssemblyName>PxStat</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort>44305</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Live|AnyCPU' ">
+    <OutputPath>bin\Live\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="API.Library, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\API.Library.3.0.4\API.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DeviceDetector.NET, Version=3.11.6.0, Culture=neutral, PublicKeyToken=73b5cbe69dbf55fb, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeviceDetector.NET.3.11.6\lib\net45\DeviceDetector.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Enyim.Caching, Version=2.16.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnyimMemcached.2.16.0\lib\net35\Enyim.Caching.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.8.4.0\lib\net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Pidgin, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Pidgin.2.1.0\lib\net451\Pidgin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Primitives">
+      <HintPath>..\packages\System.ComponentModel.Primitives.4.3.0\lib\net45\System.ComponentModel.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard1.1\System.Memory.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="YamlDotNet, Version=6.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.6.0.0\lib\net45\YamlDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="NuGet.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\eMail\template_GroupMessage.html" />
+    <Content Include="Resources\regexes\bots.yml" />
+    <Content Include="Resources\regexes\client\browsers.yml" />
+    <Content Include="Resources\regexes\client\browser_engine.yml" />
+    <Content Include="Resources\regexes\client\feed_readers.yml" />
+    <Content Include="Resources\regexes\client\libraries.yml" />
+    <Content Include="Resources\regexes\client\mediaplayers.yml" />
+    <Content Include="Resources\regexes\client\mobile_apps.yml" />
+    <Content Include="Resources\regexes\client\pim.yml" />
+    <Content Include="Resources\regexes\device\cameras.yml" />
+    <Content Include="Resources\regexes\device\car_browsers.yml" />
+    <Content Include="Resources\regexes\device\consoles.yml" />
+    <Content Include="Resources\regexes\device\mobiles.yml" />
+    <Content Include="Resources\regexes\device\portable_media_player.yml" />
+    <Content Include="Resources\regexes\device\televisions.yml" />
+    <Content Include="Resources\regexes\oss.yml" />
+    <Content Include="Resources\regexes\vendorfragments.yml" />
+    <Content Include="packages.config" />
+    <Content Include="scripts\ai.0.22.9-build00167.js" />
+    <Content Include="scripts\ai.0.22.9-build00167.min.js" />
+    <Content Include="Static.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\Internationalisation\en.json" />
+    <Content Include="Resources\Internationalisation\pl.json" />
+    <Content Include="Resources\Internationalisation\ga.json" />
+    <Content Include="Resources\Internationalisation\keyword\keyword_en.json" />
+    <Content Include="Resources\Internationalisation\keyword\keyword_ga.json" />
+    <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
+    <None Include="Properties\PublishProfiles\Live.pubxml" />
+    <None Include="Properties\PublishProfiles\TEST.pubxml" />
+    <None Include="Properties\PublishProfiles\UAT.pubxml" />
+    <None Include="Web.Live.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.Test.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.UAT.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\eMail\template_NotifyWorkflow.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Build\BSO\Build_BSO.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_Create.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_Read.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_ReadTemplate.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_Update.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_Validate.cs" />
+    <Compile Include="Entities\Build\Build_API.cs" />
+    <Compile Include="Entities\Build\Build_DTO.cs" />
+    <Compile Include="Entities\Build\Build_DTO_Read.cs" />
+    <Compile Include="Entities\Build\Build_DTO_ReadTemplate.cs" />
+    <Compile Include="Entities\Build\Build_VLD.cs" />
+    <Compile Include="Entities\Data\Classification\BSO\Classification_BSO_Read.cs" />
+    <Compile Include="Entities\Data\Classification\BSO\Classification_BSO_Search.cs" />
+    <Compile Include="Entities\Data\Classification\Classification_ADO.cs" />
+    <Compile Include="Entities\Data\Classification\Classification_API.cs" />
+    <Compile Include="Entities\Data\Classification\Classification_DTO.cs" />
+    <Compile Include="Entities\Data\Classification\Classification_VLD.cs" />
+    <Compile Include="Entities\Data\Compare\BSO\Compare_BSO.cs" />
+    <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadAddition.cs" />
+    <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadPreviousRelease.cs" />
+    <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadDeletion.cs" />
+    <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadAmendment.cs" />
+    <Compile Include="Entities\Data\Compare\Compare_API.cs" />
+    <Compile Include="Entities\Data\Compare\Compare_DTO.cs" />
+    <Compile Include="Entities\Data\Compare\Compare_VLD.cs" />
+    <Compile Include="Entities\Data\Compare\Compare_ADO.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadCollection.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreMetadata.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreDataset.cs" />
+    <Compile Include="Entities\Data\Cube\Cube_ADO.cs" />
+    <Compile Include="Entities\Data\Cube\Cube_API.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadMetadata.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadDataset.cs" />
+    <Compile Include="Entities\Data\Cube\Cube_VLD.cs" />
+    <Compile Include="Entities\Data\Cube\JsonStat.cs" />
+    <Compile Include="Entities\Data\Cube\Cube_DTO.cs" />
+    <Compile Include="Entities\Data\Cube\JsonStatCollection.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\MatrixValidator.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Create.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadHistory.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Read.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Validate.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadCodeList.cs" />
+    <Compile Include="Entities\Data\Matrix\Px\PxIntegrityValidator.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\BSO\ReasonRelease_BSO_Delete.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\BSO\ReasonRelease_BSO_Read.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\BSO\ReasonRelease_BSO_Update.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\BSO\ReasonRelease_BSO_Create.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\ReasonRelease_ADO.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\ReasonRelease_API.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\ReasonRelease_DTO.cs" />
+    <Compile Include="Entities\Data\ReasonRelease\ReasonRelease_VLD.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_DeleteComment.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadPrevious.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateComment.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_Delete.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_DeleteWip.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_Read.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadListByProduct.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadList.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateAnalyticalFlag.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateDependencyFlag.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateProduct.cs" />
+    <Compile Include="Entities\Data\Release\Release_ADO _wf.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadCurrentAccess.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsApprover.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_UpdateCurrent.cs" />
+    <Compile Include="Entities\Security\Analytic\Analytic_ADO.cs" />
+    <Compile Include="Entities\Security\Analytic\Analytic_API.cs" />
+    <Compile Include="Entities\Security\Analytic\Analytic_DTO.cs" />
+    <Compile Include="Entities\Security\Analytic\Analytic_VLD.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_Create.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadBrowser.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadLanguage.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadTimeline.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadOs.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadReferrer.cs" />
+    <Compile Include="Entities\Security\Logging\BSO\Logging_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Logging\Logging_ADO.cs" />
+    <Compile Include="Entities\Security\Logging\Logging_API.cs" />
+    <Compile Include="Entities\Security\Logging\Logging_DTO.cs" />
+    <Compile Include="Entities\Security\Logging\Logging_VLD.cs" />
+    <Compile Include="Entities\Security\Trace\BSO\Trace_BSO_Create.cs" />
+    <Compile Include="Entities\Security\Trace\BSO\Trace_BSO_ReadType.cs" />
+    <Compile Include="Entities\System\Navigation\AlertLanguage\AlertLanguage_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\AlertLanguage\AlertLanguage_BSO.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\Alert_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\Alert_API.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\Alert_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\Alert_VLD.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_Create.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_ReadLive.cs" />
+    <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_Update.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_Extract.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadLive.cs" />
+    <Compile Include="Resources\Internationalisation\keyword\keyword_en.cs" />
+    <Compile Include="Resources\Internationalisation\keyword\keyword_ga.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword\IKeywordExtractor.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword\Keyword_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword\Keyword_VLD.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\BSO\Keyword_Product_BSO_Mandatory.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\BSO\Keyword_Release_BSO_Create.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\BSO\Keyword_Release_BSO_CreateMandatory.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\BSO\Keyword_Release_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\BSO\Keyword_Release_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\BSO\Keyword_Release_BSO_Update.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\Keyword_Release_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\Keyword_Release_API.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\Keyword_Release_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Release\Keyword_Release_VLD.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\BSO\Keyword_Subject_BSO_Mandatory.cs" />
+    <Compile Include="Entities\System\Navigation\Navigation\BSO\Navigation_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Navigation\BSO\Navigation_BSO_Search.cs" />
+    <Compile Include="Entities\System\Navigation\Navigation\Navigation_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Navigation\Navigation_API.cs" />
+    <Compile Include="Entities\System\Navigation\Navigation\Navigation_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Navigation\Navigation_VLD.cs" />
+    <Compile Include="Entities\System\Navigation\ProductLanguage\ProductLangauge_BSO.cs" />
+    <Compile Include="Entities\System\Navigation\ProductLanguage\ProductLanguage_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\ProductLanguage\ProductLanguage_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\SubjectLanguage\SubjectLanguage_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\SubjectLanguage\SubjectLanguage_BSO.cs" />
+    <Compile Include="Entities\System\Navigation\SubjectLanguage\SubjectLanguage_DTO.cs" />
+    <Compile Include="Entities\System\Notification\Email\BSO\Email_BSO_GroupMessage_Create.cs" />
+    <Compile Include="Entities\System\Notification\Email\BSO\Email_BSO_NotifyWorkflow.cs" />
+    <Compile Include="Entities\System\Notification\Email\Email_API.cs" />
+    <Compile Include="Entities\System\Notification\Email\Email_VLD.cs" />
+    <Compile Include="Entities\System\Notification\Email\Email_DTO_GroupMessage.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\BSO\Copyright_BSO.cs" />
+    <Compile Include="Entities\System\Settings\Frequency\BSO\Frequency_BSO.cs" />
+    <Compile Include="Entities\System\Settings\Frequency\BSO\Frequency_BSO_Read.cs" />
+    <Compile Include="Entities\System\Settings\Frequency\Frequency_API.cs" />
+    <Compile Include="Entities\System\Settings\Frequency\Frequency_DTO.cs" />
+    <Compile Include="Entities\System\Settings\Frequency\Frequency_VLD.cs" />
+    <Compile Include="Entities\System\Settings\Language\BSO\Language_BSO.cs" />
+    <Compile Include="Entities\System\Settings\Language\BSO\Language_BSO_ReadListByRelease.cs" />
+    <Compile Include="Entities\Workflow\Comment\BSO\Comment_BSO_Create.cs" />
+    <Compile Include="Entities\Workflow\Comment\BSO\Comment_BSO_Delete.cs" />
+    <Compile Include="Entities\Workflow\Comment\BSO\Comment_BSO_Update.cs" />
+    <Compile Include="Entities\Workflow\Comment\Comment_ADO.cs" />
+    <Compile Include="Entities\Workflow\Comment\Comment_DTO.cs" />
+    <Compile Include="Entities\Workflow\Comment\Comment_VLD.cs" />
+    <Compile Include="Entities\Workflow\Request\BSO\Request_BSO_Read.cs" />
+    <Compile Include="Entities\Workflow\Request\Request_DTO.cs" />
+    <Compile Include="Entities\Workflow\Request\Request_VLD.cs" />
+    <Compile Include="Entities\Workflow\Request\Request_ADO.cs" />
+    <Compile Include="Entities\Workflow\Request\Request_API.cs" />
+    <Compile Include="Entities\Workflow\WorkflowRequest\BSO\WorkflowRequest_BSO_Delete.cs" />
+    <Compile Include="Entities\Workflow\WorkflowSignoff\WorkflowSignoff_API.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadAwaitingSignoff.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadWorkInProgress.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\BBCode.cs" />
+    <Compile Include="Resources\CacheMetadata.cs" />
+    <Compile Include="Resources\Cleanser.cs" />
+    <Compile Include="Resources\DataAdaptor.cs" />
+    <Compile Include="Entities\Data\Release\Release_ADO.cs" />
+    <Compile Include="Entities\Data\Release\Release_DTO.cs" />
+    <Compile Include="Entities\Data\Release\Release_VLD.cs" />
+    <Compile Include="Entities\Data\Release\Release_API.cs" />
+    <Compile Include="Entities\Security\Group\BSO\Group_BSO_ReadAccess.cs" />
+    <Compile Include="Entities\Workflow\WorkflowSignoff\BSO\WorkflowSignoff_BSO_Create.cs" />
+    <Compile Include="Entities\Workflow\WorkflowSignoff\WorkflowSignoff_ADO.cs" />
+    <Compile Include="Entities\Workflow\WorkflowSignoff\WorkflowSignoff_DTO.cs" />
+    <Compile Include="Entities\Workflow\WorkflowSignoff\WorkflowSignoff_VLD.cs" />
+    <Compile Include="Entities\Workflow\WorkflowRequest\BSO\WorkflowRequest_BSO_Create.cs" />
+    <Compile Include="Entities\Workflow\WorkflowRequest\WorkflowRequest_ADO.cs" />
+    <Compile Include="Entities\Workflow\WorkflowRequest\WorkflowRequest_API.cs" />
+    <Compile Include="Entities\Workflow\WorkflowRequest\WorkflowRequest_DTO.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsAdministrator.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsInAD.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsModerator.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsPowerUser.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsRegistered.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\BSO\Keyword_Product_BSO_Create.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\BSO\Keyword_Product_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\BSO\Keyword_Product_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\BSO\Keyword_Product_BSO_Update.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\Keyword_Product_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\Keyword_Product_API.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\Keyword_Product_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Product\Keyword_Product_VLD.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\BSO\Keyword_Subject_BSO_Create.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\BSO\Keyword_Subject_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\BSO\Keyword_Subject_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\BSO\Keyword_Subject_BSO_Update.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\Keyword_Subject_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\Keyword_Subject_API.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\Keyword_Subject_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword_Subject\Keyword_Subject_VLD.cs" />
+    <Compile Include="Entities\System\Navigation\Product\BSO\Product_BSO_Create.cs" />
+    <Compile Include="Entities\System\Navigation\Product\BSO\Product_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Product\BSO\Product_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Navigation\Product\BSO\Product_BSO_Update.cs" />
+    <Compile Include="Entities\System\Navigation\Product\Product_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Product\Product_API.cs" />
+    <Compile Include="Entities\System\Navigation\Product\Product_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Product\Product_VLD.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\BSO\Subject_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\BSO\Subject_BSO_Update.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\BSO\Subject_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\BSO\Subject_BSO_Create.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\Subject_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\Subject_API.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\Subject_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Subject\Subject_VLD.cs" />
+    <Compile Include="Entities\Data\Matrix\Matrix_ADO.cs" />
+    <Compile Include="Entities\Security\Account\Account_ADO.cs" />
+    <Compile Include="Entities\Security\Account\Account_DTO.cs" />
+    <Compile Include="Entities\Security\Account\Account_VLD.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_Create.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadCurrent.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_Update.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_Delete.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_Read.cs" />
+    <Compile Include="Entities\Security\ActiveDirectory\ActiveDirectory_ADO.cs" />
+    <Compile Include="Entities\Security\ActiveDirectory\ActiveDirectory_API.cs" />
+    <Compile Include="Entities\Security\ActiveDirectory\ActiveDirectory_DTO.cs" />
+    <Compile Include="Entities\Security\ActiveDirectory\ActiveDirectory_VLD.cs" />
+    <Compile Include="Entities\Security\ActiveDirectory\BSO\ActiveDirectory_BSO_Read.cs" />
+    <Compile Include="Entities\Security\GroupAccount\BSO\GroupAccount_BSO_Create.cs" />
+    <Compile Include="Entities\Security\GroupAccount\BSO\GroupAccount_BSO_Delete.cs" />
+    <Compile Include="Entities\Security\GroupAccount\BSO\GroupAccount_BSO_Read.cs" />
+    <Compile Include="Entities\Security\GroupAccount\BSO\GroupAccount_BSO_Update.cs" />
+    <Compile Include="Entities\Security\GroupAccount\GroupAccount_ADO.cs" />
+    <Compile Include="Entities\Security\GroupAccount\GroupAccount_DTO.cs" />
+    <Compile Include="Entities\Security\GroupAccount\GroupAccount_VLD.cs" />
+    <Compile Include="Entities\Security\Group\BSO\Group_BSO_Create.cs" />
+    <Compile Include="Entities\Security\Group\BSO\Group_BSO_Delete.cs" />
+    <Compile Include="Entities\Security\Group\BSO\Group_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Group\BSO\Group_BSO_Update.cs" />
+    <Compile Include="Entities\Security\Group\Group_ADO.cs" />
+    <Compile Include="Entities\Security\Group\Group_DTO.cs" />
+    <Compile Include="Entities\Security\Group\Group_VLD.cs" />
+    <Compile Include="Entities\Security\Privilege\BSO\Privilege_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Privilege\Privilege_ADO.cs" />
+    <Compile Include="Entities\Security\Privilege\Privilege_DTO.cs" />
+    <Compile Include="Entities\Security\Privilege\Privilege_VLD.cs" />
+    <Compile Include="Entities\Security\Trace\BSO\Trace_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Trace\Trace_ADO.cs" />
+    <Compile Include="Entities\Security\Trace\Trace_API.cs" />
+    <Compile Include="Entities\Security\Trace\Trace_DTO.cs" />
+    <Compile Include="Entities\Security\Trace\Trace_VLD.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\BSO\Copyright_BSO_Create.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\BSO\Copyright_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\BSO\Copyright_BSO_Read.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\BSO\Copyright_BSO_Update.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\Copyright_ADO.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\Copyright_DTO.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\Copyright_VLD.cs" />
+    <Compile Include="Entities\System\Settings\Copyright\Copyright_API.cs" />
+    <Compile Include="Entities\System\Settings\Format\BSO\Format_BSO_Read.cs" />
+    <Compile Include="Entities\System\Settings\Format\Format_ADO.cs" />
+    <Compile Include="Entities\System\Settings\Format\Format_API.cs" />
+    <Compile Include="Entities\System\Settings\Format\Format_DTO.cs" />
+    <Compile Include="Entities\System\Settings\Format\Format_VLD.cs" />
+    <Compile Include="Entities\System\Settings\Language\BSO\Language_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Settings\Language\BSO\Language_BSO_Update.cs" />
+    <Compile Include="Entities\System\Settings\Language\BSO\Language_BSO_Read.cs" />
+    <Compile Include="Entities\System\Settings\Reason\BSO\Reason_BSO_Create.cs" />
+    <Compile Include="Entities\System\Settings\Reason\BSO\Reason_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Settings\Reason\BSO\Reason_BSO_Read.cs" />
+    <Compile Include="Entities\System\Settings\Reason\BSO\Reason_BSO_Update.cs" />
+    <Compile Include="Entities\System\Settings\Reason\Reason_ADO.cs" />
+    <Compile Include="Entities\System\Settings\Reason\Reason_API.cs" />
+    <Compile Include="Entities\System\Settings\Reason\Reason_DTO.cs" />
+    <Compile Include="Entities\System\Settings\Reason\Reason_VLD.cs" />
+    <Compile Include="Entities\Template\BaseTemplate_Delete.cs" />
+    <Compile Include="Entities\Template\BaseTemplate_Update.cs" />
+    <Compile Include="Entities\Template\BaseTemplate_Read.cs" />
+    <Compile Include="Entities\Template\BaseTemplate_Create.cs" />
+    <Compile Include="Entities\Template\BaseTemplate.cs" />
+    <Compile Include="Entities\Data\Matrix\Matrix_DTO.cs" />
+    <Compile Include="Entities\Data\Matrix\Matrix_VLD.cs" />
+    <Compile Include="Entities\Data\Matrix\Px\IPxStatEngine.cs" />
+    <Compile Include="Entities\Data\Matrix\Px\PxSchemaValidator.cs" />
+    <Compile Include="Entities\Data\Matrix\Px\PxSettingsValidator.cs" />
+    <Compile Include="Entities\Data\Matrix\Matrix_API.cs" />
+    <Compile Include="Entities\Data\Matrix\Px\PxStatEngine.cs" />
+    <Compile Include="Entities\Security\Account\Account_API.cs" />
+    <Compile Include="Entities\Security\GroupAccount\GroupAccount_API.cs" />
+    <Compile Include="Entities\Security\Group\Group_API.cs" />
+    <Compile Include="Entities\Security\Privilege\Privilege_API.cs" />
+    <Compile Include="Entities\System\Settings\Language\BSO\Language_BSO_Create.cs" />
+    <Compile Include="Entities\System\Settings\Language\Language_VLD.cs" />
+    <Compile Include="Entities\System\Settings\Language\Language_DTO.cs" />
+    <Compile Include="Entities\System\Settings\Language\Language_ADO.cs" />
+    <Compile Include="Entities\System\Settings\Language\Language_API.cs" />
+    <Compile Include="Entities\System\Settings\SettingsData.cs" />
+    <Compile Include="Entities\Workflow\WorkflowRequest\WorkflowRequest_VLD.cs" />
+    <Compile Include="Entities\Workflow\WorkflowResponse\BSO\WorkflowResponse_BSO_Create.cs" />
+    <Compile Include="Entities\Workflow\WorkflowResponse\WorkflowResponse_ADO.cs" />
+    <Compile Include="Entities\Workflow\WorkflowResponse\WorkflowResponse_API.cs" />
+    <Compile Include="Entities\Workflow\WorkflowResponse\WorkflowResponse_DTO.cs" />
+    <Compile Include="Entities\Workflow\WorkflowResponse\WorkflowResponse_VLD.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_Read.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadAll.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadAwaitingResponse.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadHistory.cs" />
+    <Compile Include="Entities\Workflow\Workflow\Workflow_ADO.cs" />
+    <Compile Include="Entities\Workflow\Workflow\Workflow_API.cs" />
+    <Compile Include="Entities\Workflow\Workflow\Workflow_DTO.cs" />
+    <Compile Include="Entities\Workflow\Workflow\Workflow_VLD.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Constants.cs" />
+    <Compile Include="Resources\CustomAttributes.cs" />
+    <Compile Include="Resources\Exceptions.cs" />
+    <Compile Include="Resources\Keyword.cs" />
+    <Compile Include="Resources\Label.cs" />
+    <Compile Include="Resources\MethodReader.cs" />
+    <Compile Include="Resources\PxParser\PxDocument.cs" />
+    <Compile Include="Resources\PxParser\PxInterfaces.cs" />
+    <Compile Include="Resources\PxParser\PxKey.cs" />
+    <Compile Include="Resources\PxParser\PxKeyword.cs" />
+    <Compile Include="Resources\PxParser\PxKeywordDictionary.cs" />
+    <Compile Include="Resources\PxParser\PxParser.cs" />
+    <Compile Include="Resources\PxParser\PxValidator.cs" />
+    <Compile Include="Resources\PxParser\PxStatParseError.cs" />
+    <Compile Include="Resources\PxParser\PxValue.cs" />
+    <Compile Include="Resources\Sanitizer.cs" />
+    <Compile Include="Resources\Error.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>61370</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:61370/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <Import Project="..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets" Condition="Exists('..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

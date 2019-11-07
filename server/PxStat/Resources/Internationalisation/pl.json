@@ -1,0 +1,101 @@
+﻿{
+  "static": {
+    "release": "Wydanie",
+    "all-groups": "Wszystkie Grupy"
+  },
+  "error": {
+    "authentication": "Niepoprawne uwierzytelnienie. Brak dostępu.",
+    "create": "Nie utworzono żadnego rekordu. Sprawdź swoje dane wejściowe.",
+    "delete": "Żaden rekord nie został usunięty. Sprawdź swój wybór.",
+    "duplicate": "Nie utworzono żadnego rekordu. Zduplikowany rekord już istnieje. Sprawdź swoje dane wejściowe.",
+    "exception": "Wystąpił nieoczekiwany błąd. Proszimy o kontakt z pomocą techniczną.",
+    "invalid": "Niepoprawne dane wejściowe.",
+    "privilege": "Nieautoryzowane żądanie. Brak dostępu.",
+    "publish": "Niekompletne dane w Wydania. Sprawdź swoje dane.",
+    "schema": "Naruszono schemat interfejsu API. Przejrzyj składnię żądania interfejsu API.",
+    "update": "Żaden rekord nie został zaktualizowany. Sprawdź swoje dane wejściowe.",
+    "validation": "Walidacja nie powiodła się. Sprawdź swoje dane wejściowe.",
+    "parsing": {
+      "parse-error": "Błąd Przetwarzania:",
+      "unexpected": "Nieoczekiwany znak {0} znaleziony w rzędzie {1}, kolumna {2}",
+      "expected": "Wartość Oczekiwana: {0}",
+      "eof": "EOF",
+      "unmatched-parameters": "Failed to reconcile request parameters with available data"
+    }
+  },
+  "px": {
+
+    "build": {
+      "language": "Podanego języka nie znaleziono w dostarczonym pliku px."
+    },
+    "duplicate": "masz zamiar przesłać nową wersję istniejącej Tabeli &quot;{0}&quot;. Jesteś pewny?",
+    "duplicate-different-group": "masz zamiar przesłać nową wersję istniejącej Tabeli &quot;{0}&quot; i zmienić grupę z &quot;{1}&quot; na &quot;{2}&quot;. Jesteś pewny?",
+
+    "integrity": {
+      "data": "PX Integralność: danych &quot;{Data}&quot; jest niepoprawna.",
+      "size": "PX Integralność: &quot;{Expected}&quot; oczekiwane komórki danych, ale &quot;{Found}&quot; znaleziono dla języka &quot;{Language}&quot;.",
+      "language": "Język",
+      "expected": "Spodziewany",
+      "found": "Znaleziono",
+      "source": "Źródło"
+    },
+    "authentication": {
+      "authenticated": "ZALEGALIZOWANY",
+      "registered": "ZAREJESTROWANY",
+      "anonymous": "ANONIMOWY",
+      "any": "KAŻDY"
+    },
+
+    "parse": "Analiza PX: dane wejściowe zawierają niepoprawną składnię.",
+    "pendinglive": "Tabela &quot;{0}&quot; oczekuje na wydanie na żywo. Zaczekaj na wydanie przejdzie w stan wydania przed wgraniem nowej wersji wydania.",
+
+    "schema": {
+      "key-alphanumeric": "Schemat PX: słowo kluczowe {0} musi być alfanumeryczne.",
+      "key-any-of": "Schemat PX: dane wejściowe muszą zawierać klucz &quot;{0}&quot; albo &quot;{1}&quot;.",
+      "key-boolean": "Schemat PX: słowo kluczowe {0} musi mieć wartość tak lub nie.",
+      "key-length-min": "Schemat PX: słowo kluczowe {0} musi mieć minimalną długość {1} znak/znaków.",
+      "key-length-min-max": "Schemat PX: słowo kluczowe {0} musi mieć długość od {1} do {2} znaków.",
+      "key-mandatory": "Schemat PX: dane wejściowe muszą zawierać klucz &quot;{0}&quot;.",
+      "key-not-found": "Schemat PX: słowo kluczowe &quot;{0}&quot; nie znaleziono dla tego języka &quot;{1}&quot;.",
+      "key-numeric-min-max": "Schemat PX: słowo kluczowe {0} musi mieć wartość między {1} a {2}."
+    },
+    "setting": {
+      "axisversion-invalid": "Ustawienie PX [AXIS-VERSION]: &quot;{PropertyValue}&quot; jest niepoprawna.",
+      "language-invalid": "Ustawienie PX [LANGUAGE]: &quot;{PropertyValue}&quot; jest niepoprawna.",
+      "languages-invalid": "Ustawienie PX [LANGUAGE]: &quot;{Language}&quot; jest niepoprawna.",
+      "source-invalid": "Ustawienie PX [SOURCE]: &quot;{PropertyValue}&quot; jest niepoprawna.",
+      "sources-invalid": "Ustawienie PX [SOURCE]: &quot;{Source}&quot; jest niepoprawna."
+    },
+
+    "workflow": "Tabela &quot;{0}&quot; praca w toku. Zaczekaj na zakończenie przepływu pracy przed przesłaniem nowej wersji."
+  },
+  "default": {
+    "classification": "Stan",
+    "csv": {
+      "code": " KOD",
+      "header": "Wartość,Jednostka",
+      "unit": "JEDNOSTKA",
+      "value": "WARTOŚĆ"
+    },
+    "statistic": "Statystyka",
+    "subject-area": "n/a",
+    "subject-code": "NA",
+    "variable": "Stan"
+  },
+  "email": {
+    "body": {
+      "request-create": "[p]Nowe żądanie typu [b]{0}[/b] zostało przesłane przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}. {3}[/b] i oczekuje na zatwierdzenie.[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]",
+      "response-approve": "[p]Nowe żądanie typu [b]{0}[/b] zostało zatwierdzone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b] i oczekuje na wylogowanie.[/p] [p]Kliknij {4}, aby wyświetlić to żądanie.[/p]",
+      "response-reject": "[p]Wniosek o homologację typu [b]{0}[/b] został odrzucony przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]",
+      "signoff-approve": "[p]Wniosek o wypisanie się typu [b]{0}[/b] został zatwierdzony w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]",
+      "signoff-reject": "[p]Żądanie wypisania się typu [b]{0}[/b] zostało odrzucone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]"
+    },
+    "subject": {
+      "request-create": "{0} {1}.{2}: Oczekuje Na Zatwierdzenie",
+      "response-approve": "{0} {1}.{2}: Oczekiwanie Na Podpis",
+      "response-reject": "{0} {1}.{2}: Zatwierdzenie Odrzucone",
+      "signoff-approve": "{0} {1}.{2}: Podpis Zatwierdzony",
+      "signoff-reject": "{0} {1}.{2}: Podpis Odrzucony"
+    }
+  }
+}

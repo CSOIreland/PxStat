@@ -1,0 +1,559 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DeviceDetector.NET</name>
+    </assembly>
+    <members>
+        <member name="F:DeviceDetectorNET.DeviceDetector.VERSION">
+            <summary>
+            Current version number of DeviceDetector
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.desktopOsArray">
+            <summary>
+            Operating system families that are known as desktop only
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.UNKNOWN">
+            <summary>
+            Constant used as value for unknown browser / os
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.userAgent">
+            <summary>
+            Holds the useragent that should be parsed
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.os">
+            <summary>
+            Holds the operating system data after parsing the UA
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.client">
+            <summary>
+            Holds the client data after parsing the UA
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.device">
+            <summary>
+            Holds the device type after parsing the UA
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.brand">
+            <summary>
+            Holds the device brand data after parsing the UA
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.model">
+            <summary>
+            Holds the device model data after parsing the UA
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.bot">
+             <summary>
+             Holds bot information if parsing the UA results in a bot
+             (All other information attributes will stay empty in that case)
+            
+             If $discardBotInformation is set to true, this property will be set to
+             true if parsed UA is identified as bot, additional information will be not available
+            
+             If $skipBotDetection is set to true, bot detection will not be performed and isBot will
+             always be false
+             </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.DeviceDetector.cache">
+            <summary>
+            Holds the cache class used for caching the parsed yml-Files
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.#ctor(System.String)">
+             <summary>
+            
+             </summary>
+             <param name="userAgent">UA to parse</param>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.SetUserAgent(System.String)">
+            <summary>
+            Sets the useragent to be parsed
+            </summary>
+            <param name="userAgent"></param>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.DiscardBotInformation(System.Boolean)">
+            <summary>
+            Sets whether to discard additional bot information
+            If information is discarded it's only possible check whether UA was detected as bot or not.
+            (Discarding information speeds up the detection a bit)
+            </summary>
+            <param name="discard"></param>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.SkipBotDetection(System.Boolean)">
+            <summary>
+            Sets whether to skip bot detection.
+            It is needed if we want bots to be processed as a simple clients. So we can detect if it is mobile client,
+            or desktop, or enything else. By default all this information is not retrieved for the bots.
+            </summary>
+            <param name="skip"></param>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.IsBot">
+            <summary>
+            Returns if the parsed UA was identified as a Bot
+            @see bots.yml for a list of detected bots
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.IsTouchEnabled">
+            <summary>
+            Returns if the parsed UA was identified as a touch enabled device
+            Note: That only applies to windows 8 tablets
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.HasAndroidTableFragment">
+            <summary>
+            Returns if the parsed UA contains the 'Android; Tablet;' fragment
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.HasAndroidMobileFragment">
+            <summary>
+            Returns if the parsed UA contains the 'Android; Mobile;' fragment
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.IsDesktop">
+            <summary>
+            Returns if the parsed UA was identified as desktop device
+            Desktop devices are all devices with an unknown type that are running a desktop os
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.GetOs">
+            <summary>
+            Returns the operating system data extracted from the parsed UA
+            If $attr is given only that property will be returned
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.GetBrowserClient">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.GetDeviceName">
+            <summary>
+            Returns the device type extracted from the parsed UA
+             <see cref="F:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.DeviceTypes"/> for available device types
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.GetBrandName">
+            <summary>
+            Returns the full device brand name extracted from the parsed UA
+            @see self::$deviceBrand for available device brands
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.GetBot">
+            <summary>
+            Returns the bot extracted from the parsed UA
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.IsParsed">
+            <summary>
+            Returns true, if userAgent was already parsed with <see cref="M:DeviceDetectorNET.DeviceDetector.Parse"/>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.Parse">
+            <summary>
+            Triggers the parsing of the current user agent
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.ParseBot">
+            <summary>
+            Parses the UA for bot information using the Bot parser
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.ParseClient">
+            <summary>
+            @todo: refactory
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.ParseDevice">
+            <summary>
+            @todo: refactory
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.GetInfoFromUserAgent(System.String)">
+             <summary>
+             Parses a useragent and returns the detected data
+            
+             ATTENTION: Use that method only for testing or very small applications
+             To get fast results from DeviceDetector you need to make your own implementation,
+             that should use one of the caching mechanisms. See README.md for more information.
+            
+             </summary>
+             <param name="ua">UserAgent to parse</param>
+             <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.DeviceDetector.SetCache(DeviceDetectorNET.Cache.ICache)">
+            <summary>
+            Sets the Cache class
+            </summary>
+            <param name="cache"></param>
+        </member>
+        <member name="T:DeviceDetectorNET.DeviceDetectorSettings">
+            <summary>
+            Global DeviceDetector settings
+            </summary>
+        </member>
+        <member name="P:DeviceDetectorNET.DeviceDetectorSettings.RegexesDirectory">
+            <summary>
+            Default yaml regexes path
+            Default is <see cref="F:System.String.Empty"/>
+            Exemple: C:\YamlRegexsFiles\
+            </summary>
+        </member>
+        <member name="T:DeviceDetectorNET.Parser.BotParser">
+            <summary>
+            Class BotParserAbstract
+            Abstract class for all bot parsers
+            </summary>
+        </member>
+        <member name="T:DeviceDetectorNET.Parser.BotParserAbstract`2">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="P:DeviceDetectorNET.Parser.BotParserAbstract`2.DiscardDetails">
+            <summary>
+            Enables information discarding
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.BotParserAbstract`2.Parse">
+             <summary>
+             Parses the current UA and checks whether it contains bot information
+            
+             @see bots.yml for list of detected bots
+            
+             Step 1: Build a big regex containing all regexes and match UA against it
+             -> If no matches found: return
+             -> Otherwise:
+             Step 2: Walk through the list of regexes in bots.yml and try to match every one
+             -> Return the matched data
+            
+             If $discardDetails is set to TRUE, the Step 2 will be skipped
+             $bot will be set to TRUE instead
+            
+             NOTE: Doing the big match before matching every single regex speeds up the detection
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.Client.BrowserParser.AvailableBrowsers">
+            <summary>
+            Known browsers mapped to their internal short codes
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.Client.BrowserParser.BrowserFamilies">
+            <summary>
+            Browser families mapped to the short codes of the associated browsers
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.Client.BrowserParser.MobileOnlyBrowsers">
+            <summary>
+            Browsers that are available for mobile devices only
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Client.BrowserParser.GetAvailableBrowsers">
+            <summary>
+            Returns list of all available browsers
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Client.BrowserParser.GetAvailableBrowserFamilies">
+            <summary>
+            Returns list of all available browser families
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Client.BrowserParser.GetBrowserFamily(System.String,System.String@)">
+              <summary>
+            
+              </summary>
+              <param name="browserLabel"></param>
+             <param name="name"></param>
+             <returns>bool|string If false, "Unknown"</returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Client.BrowserParser.IsMobileOnlyBrowser(System.String)">
+            <summary>
+             Returns if the given browser is mobile only
+            </summary>
+            <param name="browser">Label or name of browser</param>
+            <returns></returns>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.Client.Browser.EngineParser.AvailableEngines">
+            <summary>
+            Known browser engines mapped to their internal short codes
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Client.Browser.EngineParser.GetAvailableEngines">
+            <summary>
+            Returns list of all available browser engines
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Client.Browser.EngineParser.Parse">
+            <summary>
+            Returns list of all available browser engines
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.DeviceTypes">
+            <summary>
+            Detectable device types
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.DeviceBrands">
+            <summary>
+            Known device brands
+            Note: Before using a new brand in on of the regex files, it needs to be added here
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.GetAvailableDeviceTypes">
+            <summary>
+            Returns available device types
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.GetAvailableDeviceTypeNames">
+            <summary>
+            Returns names of all available device types
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.GetModel">
+            <summary>
+            Returns the detected device model
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.GetBrand">
+            <summary>
+            Returns the detected device brand
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.GetFullName(System.String)">
+             <summary>
+            
+             </summary>
+             <param name="brandId"></param>
+             <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.Device.DeviceParserAbstract`2.SetUserAgent(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.OperatingSystemParser.OperatingSystems">
+            <summary>
+            Known operating systems mapped to their internal short codes
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.OperatingSystemParser.OsFamilies">
+            <summary>
+            Operating system families mapped to the short codes of the associated operating systems
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.OperatingSystemParser.GetAvailableOperatingSystems">
+            <summary>
+            Returns all available operating systems
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.OperatingSystemParser.GetAvailableOperatingSystemFamilies">
+            <summary>
+            Returns all available operating system families
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.OperatingSystemParser.GetOsFamily(System.String,System.String@)">
+            <summary>
+            Returns the operating system family for the given operating system
+            </summary>
+            <param name="osLabel"></param>
+            <param name="name"></param>
+            <returns>bool|string If false, <see cref="F:DeviceDetectorNET.Parser.OperatingSystemParser.Unknown"/></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.OperatingSystemParser.GetNameFromId(System.String,System.String)">
+            <summary>
+            Returns the full name for the given short name
+            </summary>
+            <param name="os"></param>
+            <param name="ver"></param>
+            <returns></returns>
+        </member>
+        <member name="P:DeviceDetectorNET.Parser.ParserAbstract`2.FixtureFile">
+            <summary>
+            Holds the path to the yml file containing regexes
+            </summary>
+        </member>
+        <member name="P:DeviceDetectorNET.Parser.ParserAbstract`2.ParserName">
+            <summary>
+            Holds the internal name of the parser
+            Used for caching
+            </summary>
+        </member>
+        <member name="P:DeviceDetectorNET.Parser.ParserAbstract`2.UserAgent">
+            <summary>
+            Holds the user agent the should be parsed
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.globalMethods">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.regexList">
+            <summary>
+            Holds an array with regexes to parse, if already loaded
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.maxMinorParts">
+            <summary>
+            Indicates how deep versioning will be detected
+            if $maxMinorParts is 0 only the major version will be returned
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.VERSION_TRUNCATION_MAJOR">
+            <summary>
+            Versioning constant used to set max versioning to major version only
+            Version examples are: 3, 5, 6, 200, 123, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.VERSION_TRUNCATION_MINOR">
+            <summary>
+            Versioning constant used to set max versioning to minor version
+            Version examples are: 3.4, 5.6, 6.234, 0.200, 1.23, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.VERSION_TRUNCATION_PATCH">
+            <summary>
+            Versioning constant used to set max versioning to path level
+            Version examples are: 3.4.0, 5.6.344, 6.234.2, 0.200.3, 1.2.3, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.VERSION_TRUNCATION_BUILD">
+            <summary>
+            Versioning constant used to set versioning to build number
+            Version examples are: 3.4.0.12, 5.6.334.0, 6.234.2.3, 0.200.3.1, 1.2.3.0, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.ParserAbstract`2.VERSION_TRUNCATION_NONE">
+            <summary>
+            Versioning constant used to set versioning to unlimited (no truncation)
+            </summary>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.SetVersionTruncation(System.Int32)">
+            <summary>
+            Set how DeviceDetector should return versions
+            </summary>
+            <param name="type">Any of the VERSION_TRUNCATION_* constants</param>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.SetUserAgent(System.String)">
+            <summary>
+            Sets the user agent to parse
+            </summary>
+            <param name="ua"></param>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.GetName">
+            <summary>
+            Returns the internal name of the parser
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.GetRegexes">
+            <summary>
+            Returns the result of the parsed yml file defined in $fixtureFile
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.GetRegexesDirectory">
+             <summary>
+            
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.IsMatchUserAgent(System.String)">
+            <summary>
+            Matches the useragent against the given regex
+            </summary>
+            <param name="regex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.BuildVersion(System.String,System.String[])">
+            <summary>
+            Builds the version with the given $versionString and $matches
+            Example:
+            $versionString = 'v$2'
+            $matches = array('version_1_0_1', '1_0_1')
+            return value would be v1.0.1
+            </summary>
+            <param name="versionString"></param>
+            <param name="matches"></param>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.PreMatchOverall">
+             <summary>
+             Tests the useragent against a combination of all regexes
+            
+             All regexes returned by getRegexes() will be reversed and concated with '|'
+             Afterwards the big regex will be tested against the user agent
+            
+             Method can be used to speed up detections by making a big check before doing checks for every single regex
+             </summary>
+             <returns></returns>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.SetCache(DeviceDetectorNET.Cache.ICache)">
+            <summary>
+            Sets the Cache class
+            </summary>
+            <param name="cacheProvider"></param>
+        </member>
+        <member name="M:DeviceDetectorNET.Parser.ParserAbstract`2.GetCache">
+            <summary>
+            Returns Cache object
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.VersionTruncation.VERSION_TRUNCATION_MAJOR">
+            <summary>
+            Versioning constant used to set max versioning to major version only
+            Version examples are: 3, 5, 6, 200, 123, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.VersionTruncation.VERSION_TRUNCATION_MINOR">
+            <summary>
+            Versioning constant used to set max versioning to minor version
+            Version examples are: 3.4, 5.6, 6.234, 0.200, 1.23, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.VersionTruncation.VERSION_TRUNCATION_PATCH">
+            <summary>
+            Versioning constant used to set max versioning to path level
+            Version examples are: 3.4.0, 5.6.344, 6.234.2, 0.200.3, 1.2.3, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.VersionTruncation.VERSION_TRUNCATION_BUILD">
+            <summary>
+            Versioning constant used to set versioning to build number
+            Version examples are: 3.4.0.12, 5.6.334.0, 6.234.2.3, 0.200.3.1, 1.2.3.0, ...
+            </summary>
+        </member>
+        <member name="F:DeviceDetectorNET.Parser.VersionTruncation.VERSION_TRUNCATION_NONE">
+            <summary>
+            Versioning constant used to set versioning to unlimited (no truncation)
+            </summary>
+        </member>
+    </members>
+</doc>

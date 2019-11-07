@@ -1,0 +1,14 @@
+﻿{
+  "excluded": {
+    "article": [ "the", "an", "a" ],
+    "preposition": [ "of", "in", "to", "for", "with", "on", "at", "from", "by", "about", "as", "into", "like", "through", "after", "over", "between", "out", "against", "during", "without", "before", "under", "around", "among", "and", "or" ],
+    "regex": "[^a-zA-Z\\d\\s:]"
+  },
+  "inflection": {
+    "plural": [],
+    "eclipsis": []
+  },
+  "irregular": {
+    "plural": {}
+  }
+}

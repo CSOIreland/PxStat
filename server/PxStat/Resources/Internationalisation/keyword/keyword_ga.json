@@ -1,0 +1,25 @@
+﻿{
+
+  "excluded": {
+    "article": [ "na", "an" ],
+    "preposition": [ "agus", "ag", "ar", "as", "chun", "chuig", "de", "do", "den", "don", "fara", "faoi", "i", "idir", "ionsar", "le", "ó", "roimh", "trí", "thar", "um", "a", "dar", "is", "gan", "go", "godtí", "go dtí", "mar", "os", "seachas" ],
+    "regex": "[^a-zA-ZÁÉÍÓÚáéíóú\\d\\s\\-]"
+  },
+  "inflection": {
+    "plural": [ "a", "í", "ta", "a", "anna", "tha", "ach", "each", "aidh", "aigh", "eanna", "eacha", "acha", "the", "adh", "eadh" ],
+    "eclipsis": [ "bp", "dt", "gc", "mb", "nd", "ng", "bhf", "n-", "t-" ]
+  },
+  "irregular": {
+    "plural": {
+      "mná": "bean",
+      "deirfiúracha": "deirfiúr",
+      "siúracha": "siúr",
+      "déithe": "dia",
+      "laethanta": "lá",
+      "leapacha": "leaba",
+      "míonna": "mí",
+      "holanna": "olann",
+      "tailte": "talamh"
+    }
+  }
+}
