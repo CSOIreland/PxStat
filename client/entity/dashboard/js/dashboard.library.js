@@ -92,7 +92,6 @@ app.dashboard.workInProgress.ajax.read = function () {
  */
 app.dashboard.workInProgress.callback.read = function (response) {
     if (response.error) {
-        app.dashboard.workInProgress.callback.drawDatatable();
         api.modal.error(response.error.message);
     } else if (response.data !== undefined) {
         app.dashboard.workInProgress.callback.drawDataTable(response.data);
@@ -556,18 +555,8 @@ app.dashboard.drawCallbackliveReleases = function () {
         app.library.group.modal.read($(this).attr("idn"));
     });
 
-    /* $("#dashboard-panel-livereleases table").find("[name=" + C_APP_NAME_LINK_VIEW + "]").once("click", function (e) {
-         e.preventDefault();
- 
-         $('.tooltip').remove();
-         api.content.goTo("entity/analytic", null, "#nav-link-analytic", { "SbjCode": $(this).attr("MtrCode") });
-     });*/
-
     $("#dashboard-panel-livereleases table").find("[name=" + C_APP_NAME_LINK_ANALYTIC + "]").once("click", function (e) {
         e.preventDefault();
-        debugger
-        //$('.tooltip').remove();
-        //api.content.goTo("entity/analytic", null, "#nav-link-analytic", { "SbjCode": $(this).attr("MtrCode") });
         app.analytic.ajax.readBrowser($(this).attr("mtr-code"), "#analytic-chart-modal [name=browser-pie-chart]");
         app.analytic.ajax.readOs($(this).attr("mtr-code"), "#analytic-chart-modal [name=operating-system-pie-chart]");
         app.analytic.ajax.readReferrer($(this).attr("mtr-code"), "#analytic-chart-modal [name=referrer-column-chart]");
