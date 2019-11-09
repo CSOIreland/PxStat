@@ -1,0 +1,45 @@
+<div id="build-map-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-full" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header bg-primary text-light">
+                <span name="cls-code"></span>: <span name="cls-value"></span>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <table class="table table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th label="code"></th>
+                                    <th label="value"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div name="map" class="col-8">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex w-100 justify-content-between">
+                <button name="download-classification" class="btn btn-primary" disabled>
+                    <i class="fas fa-file-download"></i> Download Classification
+                </button>
+                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                    <span label="close"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page specific CSS -->
+<script src="entity/build/map/css/map.css"></script>
+
+<!-- Page specific JS -->
+<script src="entity/build/map/js/map.library.js"></script>
+<script src="entity/build/map/js/map.js"></script>

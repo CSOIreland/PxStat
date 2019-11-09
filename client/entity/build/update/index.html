@@ -1,0 +1,650 @@
+<div id="build-update-upload-file" class="row mx-0 mt-2">
+    <div class="col-sm-12">
+        <div class="card m-3 border-primary">
+            <div class="card-header bg-primary text-light" label="upload-source-file"></div>
+            <div class="card-body">
+                <div class="card-body">
+                    <div class="box">
+                        <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
+                        <input hidden="true" type="file" name="build-update-upload-file-input" id="build-update-upload-file-input" class="box__file" />
+                        <div class="box__input2">
+                            <label class="box__input3" for="build-update-upload-file-input">
+                                <i class="fas fa-upload fa-2x"></i>
+                                <span name="file-name"></span>
+                                <span name="file-tip">
+                                    <strong><span label="choose-a"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
+                                    <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                </span>
+                                <br />
+                                <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex text-right justify-content-between">
+                <span>
+                    <button name="file-data-view" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview"></span> </button>
+                </span>
+                <span>
+                    <button name="upload-source-file-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
+                    <button name="upload-source-file" class="btn btn-primary text-light" disabled><i class="fas fa-upload"></i> <span label="parse"></span></button>
+                </span>
+            </div>
+        </div>
+
+
+        <div class="card m-3 border-danger" name="upload-error-card" style="display: none">
+            <div class="card-header bg-danger text-light" label="errors"></div>
+            <div class="card-body" name="upload-error">
+            </div>
+        </div>
+
+
+
+    </div>
+
+</div>
+<!-- Define Matrix Properties -->
+<div id="build-update-dimensions" class="row mx-0 mt-2" style="display: none">
+    <div class="col-sm-12">
+        <div id="build-update-properties" class="card m-3 border-primary">
+            <form>
+                <div class="card-header bg-primary text-light" label="properties"></div>
+                <div class="card-body">
+
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span class="mandatory" for="mtr-value" label="table"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control text-uppercase" name="mtr-value" maxlength="20" autocomplete="off" aria-describedby="button-addon">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" name="button-matrix-lookup" data-toggle="modal"><i class="fas fa-search"></i> <span label="lookup"></span></button>
+                                </div>
+                            </div>
+                            <div class="serverValidationError text-danger" name="mtr-value-error-holder"></div>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span class="mandatory" label="languages"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <ul class="list-group" name="lng-list-group"></ul>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <label class="mandatory" label="frequency-code"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <select class="form-control" name="frequency-code"></select>
+                            <span class="serverValidationError text-danger" name="frequency-code-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <label class="mandatory" label="copyright"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <select class="form-control" name="copyright-code"></select>
+                            <span class="serverValidationError text-danger" name="copyright-code-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span class="mandatory" label="official-statistics"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="official-flag" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+                    <div class="border-top row mx-0"></div>
+                </div>
+                <input type="submit" name="submit-form" style="display: none">
+            </form>
+        </div>
+
+        <div id="build-update-matrix-dimensions" class="card m-3 border-primary">
+            <div class="card-header bg-primary text-light" label="dimensions"></div>
+            <div class="card-body">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" name="nav-tab" role="tablist">
+                        <!-- template: tabs items languages-->
+
+                    </div>
+                </nav>
+                <div class="tab-content" name="tab-content">
+                    <!-- template: tab item language content -->
+
+                </div>
+
+                <div id="build-update-matrix-data" class="card border-bottom mt-2">
+                    <div class="card-header" label="data"></div>
+                    <div class="card-body">
+                        <div class="box">
+                            <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
+                            <input hidden="true" type="file" name="build-update-upload-data" id="build-update-upload-data" class="box__file" />
+                            <div class="box__input2">
+                                <label class="box__input3" for="build-update-upload-data">
+                                    <i class="fas fa-upload fa-2x"></i>
+                                    <span name="file-name"></span>
+                                    <span name="file-tip">
+                                        <strong><span label="choose-a"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                        <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                    </span>
+                                    <br />
+                                    <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex text-right justify-content-between">
+                        <span>
+                            <button name="preview-data" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview">Preview</span> </button>
+                        </span>
+                        <span>
+                            <button name="reset-data" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset">Reset</span></button>
+                            <button name="download-data-template" class="btn btn-info" type="button" disabled><i class="fas fa-file-download"></i> <span label="download-data-template"></span> </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-right">
+                <button name="reset" class="btn btn-warning text-dark" type="button">
+                    <i class="fas fa-undo"></i> <span label="reset"></span>
+                </button>
+                <button class="btn btn-tertiary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-download"></i> <span label="update"></span></button>
+                <div name="format-list" class="dropdown-menu"></div>
+            </div>
+        </div>
+
+        <div class="card m-3 border-danger" name="update-error-card" style="display: none">
+            <div class="card-header bg-danger text-light" label="errors"></div>
+            <div class="card-body" name="update-error">
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal" id="build-update-modal-preview-source" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-full" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <i class="far fa-times-circle"></i> <span label="close"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="build-update-modal-frequency" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header  bg-info">
+                    <h5 class="modal-title  text-light" label="frequency"></h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <label class="mandatory" label="frequency-code"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <select class="form-control" name="frq-code"></select>
+                            <span class="serverValidationError text-danger" name="frq-code-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span class="mandatory" label="dimension"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <ul class="list-group p-2" name="frequency-radio-group"></ul>
+                            <span class="serverValidationError text-danger" name="frq-value-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top row mx-0"></div>
+
+                </div>
+                <div class="modal-footer bg-warning justify-content-start rounded-0">
+                    <label>
+                        <span label="upload-frequency-automatically-detected"></span>
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <i class="far fa-times-circle"></i> <span label="close"></span>
+                    </button>
+                    <button name="btn-validate" type="submit" class="btn btn-primary text-light">
+                        <i class="fas fa-check-circle"></i> <span label="validate"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal" id="build-update-modal-preview-data" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-full" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <i class="far fa-times-circle"></i> <span label="close"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="build-update-edit-classification" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true" data-dismiss="modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" name="title"></h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body p-4" id="result">
+
+
+                    <div class="border row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label for="cls-code" placeholder="" autocomplete="off" label="code"></label></div>
+                        <div class="col-8 p-2">
+                            <span name="cls-code"></span>
+                        </div>
+                    </div>
+                    <div class="border row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label for="cls-value" placeholder="" autocomplete="off" label="value"></label></div>
+                        <div class="col-8 p-2">
+                            <span name="cls-value"></span>
+                        </div>
+                    </div>
+                    <div class="border row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label class="" for="cls-geo-url" placeholder="" autocomplete="off" label="geojson-url"></label></div>
+                        <div class="col-8 p-2">
+                            <input class="form-control mb-2" name="cls-geo-url" type="text" maxlength="2048" autocomplete="off">
+                            <a href="" class="d-none" name="geojson-lookup" target="_blank">Lookup GeoJSON Maps <i class="fas fa-external-link-alt"></i></a>
+                            <span class="serverValidationError text-danger" name="cls-geo-url-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            Variables
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th label="code"></th>
+                                        <th label="value"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="fas fa-times"></i> <span label="close"></span></button>
+                    <button class="btn btn-primary text-light" type="submit" name="update-classification"><i class="far fa-save"></i> <span label="update"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--  initiate-matrix-lookup Modal -->
+<div class="modal" id="build-update-matrix-lookup" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="table-lookup"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body p-4">
+                <table class="table table-striped hover display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th label="table"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <i class="far fa-times-circle"></i><span label="cancel"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="build-update-new-periods" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" label="add-periods"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <nav>
+                    <div class="nav nav-tabs" role="tablist">
+                        <a class="nav-item nav-link active" name="manual-tab" data-toggle="tab" href="#build-update-manual-periods" role="tab" aria-controls="manual-si" aria-selected="true" label="manual"></a>
+                        <a class="nav-item nav-link" name="upload-tab" data-toggle="tab" href="#build-update-upload-periods" role="tab" aria-controls="upload-si" aria-selected="false" label="upload"></a>
+                    </div>
+                </nav>
+                <div class="tab-content">
+                    <div id="build-update-manual-periods" name="manual-si" role="tabpanel" aria-labelledby="manual-si-tab" class="tab-pane fade show active">
+                        <div class="card border-top-0 rounded-0">
+                            <div class="card-body">
+                                <!-- <div class="table-responsive"> -->
+
+                                <table class="table table-bordered editable-table" style="table-layout: fixed; width:100%">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col"><span class="mandatory" label="code"></span></th>
+                                            <th scope="col"><span class="mandatory" label="value"></span></th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <button type="button" name="add-period-row" class="btn btn-secondary text-light"><i class="fas fa-plus-circle"></i>
+                                    <span label="add-row"></span>
+                                </button>
+                                <div class="card mt-2 border-danger" name="manual-period-errors-card" style="display: none">
+                                    <div class="card-header bg-danger text-light" label="errors"></div>
+                                    <div class="card-body">
+                                        <ul name="manual-period-errors" class="list-group mt-2">
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!--   </div> -->
+
+                            </div>
+                            <div class="card-footer text-right">
+
+                                <button name="manual-submit-periods" class="btn btn-primary"><i class="far fa-save"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div id="build-update-upload-periods" name="upload-si" role="tabpanel" aria-labelledby="upload-si-tab" class="tab-pane fade">
+                        <div class="card border-top-0 rounded-0">
+                            <div class="card-body">
+                                <div class="box">
+                                    <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
+                                    <input id="build-update-upload-periods-file" hidden="true" type="file" name="build-update-upload-periods-file" class="box__file" />
+                                    <div class="box__input2">
+                                        <label class="box__input3" for="build-update-upload-periods-file">
+                                            <i class="fas fa-upload fa-2x"></i>
+                                            <span name="file-name"></span>
+                                            <span name="file-tip">
+                                                <strong><span label="choose-a"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                                <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                            </span>
+                                            <br />
+                                            <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="border row mx-0">
+                                    <span class="serverValidationError text-danger" name="upload-error-holder"></span>
+                                </div>
+                                <div class="card mt-2 border-danger" name="upload-period-errors-card" style="display: none">
+                                    <div class="card-header bg-danger text-light" label="errors"></div>
+                                    <div class="card-body">
+                                        <ul name="upload-period-errors" class="list-group mt-2">
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                                <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv"><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
+                                </a>
+                                <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
+                                    <span label="add-periods"></span>
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                    <span label="cancel"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="build-update-dimension-metadata-templates" style="display: none">
+
+    <!-- template: tabs items languages-->
+    <a name="nav-lng-tab-item" class="nav-item nav-link" id="" data-toggle="tab" href="" role="tab" aria-controls="" aria-selected="true"></a>
+
+
+    <!-- template: tab item language content -->
+    <div name="nav-lng-tab-item-content" class="tab-pane fade show" id="" role="tabpanel" aria-labelledby="" lng-iso-code="">
+
+
+        <div class="accordion" id="">
+            <div class="card border-top-0 rounded-0" name="dimension-collapse" card="properties">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="" aria-expanded="true" aria-controls="" label="properties">
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="" class="collapse show" aria-labelledby="heading-one" data-parent="">
+                    <form>
+                        <div class="card-body">
+                            <div class="border-top border-right border-left row mx-0">
+                                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                    <label class="mandatory" for="title-value" label="title"></label>
+                                </div>
+                                <div class="col-8 p-2">
+                                    <input class="form-control" name="title-value" type="text" maxlength="256" autocomplete="off">
+                                    <span class="serverValidationError text-danger" name="title-value-error-holder"></span>
+                                </div>
+                            </div>
+                            <div class="border-top border-right border-left row mx-0">
+                                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                    <label class="mandatory" for="statistic-label" label="statistic-label"></label>
+                                </div>
+                                <div class="col-8 p-2">
+                                    <input class="form-control" name="statistic-label" type="text" maxlength="256" autocomplete="off">
+                                    <span class="serverValidationError text-danger" name="statistic-label-error-holder"></span>
+                                </div>
+                            </div>
+                            <div class="border-top border-right border-left row mx-0">
+                                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                    <label class="mandatory" for="frequency-value" label="frequency-value"></label>
+                                </div>
+                                <div class="col-8 p-2">
+                                    <input class="form-control" name="frequency-value" type="text" autocomplete="off">
+                                    <span class="serverValidationError text-danger" name="frequency-value-error-holder"></span>
+                                </div>
+                            </div>
+                            <div class="border-top border-right border-left row mx-0">
+                                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                    <label class="" for="note-value" label="note"></label>
+                                </div>
+                                <div class="col-8 p-2">
+                                    <textarea rows="3" name="note-value" contenteditable="false" class="form-control" autocomplete="off"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="border-top row mx-0"></div>
+                        </div>
+                        <input type="submit" style="display:none">
+                    </form>
+                </div>
+            </div>
+            <div class="card" name="dimension-collapse" card="statistics">
+                <div class="card-header" id="build-update-statistics-heading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+                            <span label="statistics"></span>
+                        </button>
+                    </h5>
+                </div>
+                <div id="" class="collapse" aria-labelledby="build-update-statistics-heading" data-parent="">
+                    <div class="card-body">
+                        <div class="card border-bottom">
+                            <div class="card-body ">
+                                <table name="statistics-added-table" class="table table-striped hover display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th label="code"></th>
+                                            <th label="value"></th>
+                                            <th label="unit">Unit</th>
+                                            <th label="decimal"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" name="dimension-collapse" card="classifications">
+                <div class="card-header" id="build-update-classifications-heading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+                            <span label="classifications"></span>
+                        </button>
+                    </h5>
+                </div>
+                <div id="" class="collapse" aria-labelledby="build-update-classifications-heading" data-parent="">
+                    <div class="card-body">
+                        <div class="card border-bottom">
+                            <div class="card-body ">
+                                <table name="classifications-added-table" class="table table-striped hover display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th label="code"></th>
+                                            <th label="value"></th>
+                                            <th label="geojson-url"></th>
+                                            <th label="variables-no"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" name="dimension-collapse" card="periods">
+                <div class="card-header" id="build-update-periods-heading">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+                            <span label="periods"></span>
+                        </button>
+                    </h5>
+                </div>
+                <div id="" class="collapse" aria-labelledby="build-update-periods-heading" data-parent="">
+                    <div class="card-body">
+                        <div class="card border-bottom">
+                            <div class="card-header" label="existing"></div>
+                            <div class="card-body">
+                                <table name="periods-existing" class="table table-striped hover display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th label="code"></th>
+                                            <th label="value"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <div class="card border-bottom mt-2">
+                            <div class="card-header" label="new"> </div>
+                            <div class="card-body">
+                                <table name="periods-new" class="table table-striped hover display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th label="code"></th>
+                                            <th label="value"></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer text-right bg-white">
+                                <button name="add-periods" class="btn btn-primary text-light">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span label="add-periods"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <!--Update dropdown format template-->
+    <a name="create-submit" class="dropdown-item" href="#"></a>
+</div>
+
+<!-- Define Map -->
+<div id="build-update-map"></div>
+
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/build/update/css/update.css">
+<!-- Page specific JS -->
+<script src="entity/build/update/js/update.library.js"></script>
+<script src="entity/build/update/js/update.dimension.library.js"></script>
+<script src="entity/build/update/js/update.upload.library.js"></script>
+<script src="entity/build/update/js/update.js"></script>

@@ -1,0 +1,58 @@
+<div id="data-search-input" class="col-sm-12 my-4">
+    <div class="input-group input-group-lg">
+        <input type="text" name="search-input" class="form-control p-4" placeholder="" aria-label="Search for data" aria-describedby="Search for data" autocomplete="off">
+        <div class="input-group-append">
+            <button name="data-search-input-button" class="btn btn-neutral" type="button">
+                <i class="fas fa-search"></i> <span label="search"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="data-search-templates" style="display:none">
+
+    <!-- Template: data-search-navigation-->
+    <div name="navigation" class="col p-2">
+        <nav class="navbar px-2">
+            <a class="w-100 p-1 text-light bg-primary rounded-top p-3" data-toggle="collapse" data-target="#navbarTreeView" href="#"><i class="fas fa-bars"></i>
+                <span label="browse"></span>
+            </a>
+            <div class="collapse navbar-collapse show" id="navbarTreeView">
+                <ul name="search-results-items" class="navbar-nav mr-auto search-results-items p-2 border rounded">
+                    <!-- Append => Template: search-results-item-->
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <!-- Template: data-filter-template-->
+    <div class="col data-filter-template">
+        <div name="data-metadata-search-results-filter-sort-select"></div>
+        <div name="data-metadata-search-results-filter-list-group"></div>
+    </div>
+
+    <!-- Template: search-results-subjects-navigation-->
+
+
+    <!-- Template: search-results-item-->
+    <li name="navigation-subject-list" class="nav-item dropdown">
+
+        <a name="navigation-subject-link" class="nav-link text-muted d-flex justify-content-between align-items-center dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+        </a>
+        <div name="navigation-product-list" class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <!-- Append => Template: search-results-item-select-data -->
+
+        </div>
+    </li>
+
+    <!-- Template: search-results-item-select-->
+    <a name="navigation-product-item" class="dropdown-item d-flex justify-content-between align-items-center" href="#">
+        <span name="product-name"></span>
+        <span name="product-release-count" class="badge badge-primary badge-pill"></span>
+    </a>
+
+</div>
+
+<!-- Page specific JS -->
+<script src="entity/data/js/data.search.library.js"></script>
+<script src="entity/data/js/data.search.js"></script>

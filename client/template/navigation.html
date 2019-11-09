@@ -1,0 +1,105 @@
+<div class="container-fullwidth">
+    <nav class="navbar navbar-expand-xl navbar-dark bg-navbar nav-pills">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+            <span label="menu"></span>
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item pl-3">
+                    <a id="nav-link-data" class="nav-link text-light " href="#" label="data"> </a>
+                </li>
+                <li class="nav-item pl-3" style="display: none;">
+                    <a id="nav-link-dashboard" class="nav-link text-light " href="#" label="dashboard"> </a>
+                </li>
+                <li class="nav-item pl-3" style="display: none;">
+                    <a id="nav-link-release" class="nav-link text-light " href="#" label="releases"></a>
+                </li>
+                <li class="nav-item pl-3" style="display: none;">
+                    <a id="nav-link-analytic" class="nav-link text-light " href="#" label="analytics"></a>
+                </li>
+                <li class="nav-item pl-3 dropdown" style="display: none;">
+                    <a class="nav-link text-light dropdown-toggle " href="#" id="nav-link-build" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span label="build"></span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="nav-link-build">
+                        <a id="nav-link-create" class="dropdown-item px-3" href="#" label="create"></a>
+                        <a id="nav-link-update" class="dropdown-item px-3" href="#" label="update"></a>
+                        <div class="dropdown-divider"></div>
+                        <a id="nav-link-upload" class="dropdown-item px-3 " href="#" label="upload"></a>
+                    </div>
+                </li>
+                <li class="nav-item pl-3 dropdown" style="display: none;">
+                    <a class="nav-link text-light dropdown-toggle " href="#" id="nav-link-manage" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span label="manage"></span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="nav-link-manage">
+                        <a id="nav-link-user" class="dropdown-item px-3" href="#" label="users"></a>
+                        <a id="nav-link-group" class="dropdown-item px-3" href="#" label="groups"></a>
+                        <a id="nav-link-subject" class="dropdown-item px-3" href="#" label="subjects"></a>
+                        <a id="nav-link-product" class="dropdown-item px-3" href="#" label="products"></a>
+                        <a id="nav-link-alert" class="dropdown-item px-3" href="#" label="alerts"></a>
+                        <a id="nav-link-email" class="dropdown-item px-3" href="#" label="email"></a>
+                        <div class="dropdown-divider"></div>
+                        <a id="nav-link-tracing" class="dropdown-item px-3" href="#" label="tracing"></a>
+                        <a id="nav-link-logging" class="dropdown-item px-3" href="#" label="logging"></a>
+                    </div>
+                </li>
+                <li class="nav-item pl-3 dropdown" style="display: none;">
+                    <a class="nav-link text-light dropdown-toggle " href="#" id="nav-link-configuration" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span label="configuration"></span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="nav-link-configuration">
+                        <a id="nav-link-copyright" class="dropdown-item px-3" href="#" label="copyrights"></a>
+                        <a id="nav-link-reason" class="dropdown-item px-3" href="#" label="reasons"></a>
+                        <div class="dropdown-divider"></div>
+                        <a id="nav-link-language" class="dropdown-item px-3" href="#" label="languages"></a>
+                        <a id="nav-link-format" class="dropdown-item px-3" href="#" label="formats"></a>
+                    </div>
+                </li>
+                <li class="nav-item pl-3 dropdown" style="display: none;">
+                    <a class="nav-link text-light dropdown-toggle " href="#" id="nav-link-keyword" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span label="keywords"></span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="nav-link-keyword">
+                        <a id="nav-link-keyword-subject" class="dropdown-item px-3" href="#" label="subjects"></a>
+                        <a id="nav-link-keyword-product" class="dropdown-item px-3" href="#" label="products"></a>
+                        <a id="nav-link-keyword-release" class="dropdown-item px-3" href="#" label="releases"></a>
+
+                    </div>
+                </li>
+            </ul>
+
+            <div class="btn-group mr-3" role="group">
+                <button id="nav-user" type="button" class="btn btn-outline-primary text-light">
+                    <i class="fas fa-user mr-2"></i><span name="name"></span>
+                </button>
+
+                <div id="nav-language" class="btn-group" role="group">
+                    <button name="selection" type="button" class="btn btn-outline-primary text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <div name="dropdown" class="dropdown-menu dropdown-menu-right"></div>
+                </div>
+            </div>
+
+            <i id="nav-loader" class="fas fa-spinner fa-lg text-navbar navbar-text"></i>
+        </div>
+    </nav>
+
+    <nav id="breadcrumb-nav" aria-label="breadcrumb">
+        <ol name="breadcrumb-list" class="breadcrumb"></ol>
+    </nav>
+</div>
+
+<div id="navigation-templates" style="display: none">
+    <li name="home" class="breadcrumb-item"><a href="" label="home"></a></li>
+    <li name="item" class="breadcrumb-item active" aria-current="page"></li>
+    <li name="link" class="breadcrumb-item"><a href=""></a></li>
+</div>
+
+<!-- CSS file for Navigation page-->
+<link rel="stylesheet" href="template/css/navigation.css">
+<!-- JS file for Navigation page-->
+<script src="template/js/navigation.library.js"></script>
+<script src="template/js/navigation.js"></script>

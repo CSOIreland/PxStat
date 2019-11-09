@@ -1,0 +1,254 @@
+<!-- Select Matrix dropdowns   -->
+<div id="keyword-release-container" class="card m-3 border-primary">
+  <div class="card-header bg-primary text-light" label="select"></div>
+  <div class="card-body">
+    <div class="border row mx-0">
+      <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+        <label class="mandatory" for="keyword-release-matrix-search" label="table"></label>
+      </div>
+      <div class="col-8 p-2">
+        <select class="form-control" name="keyword-release-matrix-search" disable></select>
+        <span class="serverValidationError text-danger" name="keyword-release-matrix-search-error-holder"></span>
+      </div>
+    </div>
+    <div class="border-top row mx-0"></div>
+  </div>
+</div>
+
+<!-- Release Data Table  -->
+<div id="keyword-release-table-release-container" class="card m-3 border-primary" style="display: none">
+  <div class="card-header bg-primary text-light" label="releases"></div>
+  <div class="card-body">
+    <table class="table table-striped hover" style="width:100%">
+      <thead>
+        <tr>
+          <th label="release"></th>
+          <th label="status"></th>
+          <th label="live-from"></th>
+          <th label="live-to"></th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+
+<!-- Data Table Release-Keyword- -->
+<div id="keyword-release-table-release-keyword-container" class="card m-3 border-primary" style="display: none">
+  <div class="card-header bg-primary text-light" label="release-keywords"></div>
+  <div class="card-body">
+    <table class="table table-striped hover display" style="width:100%">
+      <thead>
+        <tr>
+          <th label="keyword"></th>
+          <th label="mandatory"></th>
+          <th label="acronym"></th>
+          <th></th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+  <!-- Button trigger modal Create Release-Keyword -->
+  <div class="card-footer text-right">
+    <button name="button-view" class="btn btn-primary text-light update-btn">
+      <i class="fas fa-search"></i> <span label="view-data"></span>
+    </button>
+    <button name="button-create" class="btn btn-primary text-light">
+      <i class="fas fa-plus-circle"></i> <span label="add-release-keyword"></span>
+    </button>
+  </div>
+</div>
+
+<!-- Modal - Create Release-Keyword -->
+<div id="keyword-release-modal-create" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title text-light" label="add-release-keyword"></h5>
+        <button type="button" class="close text-light" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <form>
+        <input type="hidden" name="rls-code" value="">
+        <div class="modal-body">
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="table"></label>
+            </div>
+            <div class="col-8 p-2">
+              <span name="mtr-code"></span>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="release"></label>
+            </div>
+            <div class="col-8 p-2">
+              <span name="rls-version"></span>.<span name="rls-revision"></span>
+            </div>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label class="mandatory" label="keyword"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input type="text" class="form-control" name="krl-value" maxlength="256">
+              <span class="serverValidationError text-danger" name="krl-value-error-holder"></span>
+            </div>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="acronym"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input name="acronym-toggle" type="checkbox"></input>
+            </div>
+          </div>
+          <div class="border row mx-0" name="language-row">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="language"></label>
+            </div>
+            <div class="col-8 p-2">
+              <select class="form-control" name="language">
+              </select>
+              <span class="serverValidationError text-danger" name="language-error-holder"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-warning justify-content-start rounded-0">
+          <label>
+            <span label="singularise-warning"></span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-neutral" data-dismiss="modal">
+            <i class="far fa-times-circle"></i> <span label="cancel"></span>
+          </button>
+          <button class="btn btn-primary text-light" type="submit">
+            <i class="fas fa-plus-circle"></i> <span label="add"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal - Update Release-Keyword -->
+<div id="keyword-release-modal-update" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title text-light" label="update-release-keyword"></h5>
+        <button type="button" class="close text-light" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <form>
+        <input type="hidden" name="krl-code" value="">
+        <input type="hidden" name="rls-code" value="">
+        <div class="modal-body">
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="table"></label>
+            </div>
+            <div class="col-8 p-2">
+              <span name="mtr-code"></span>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="release"></label>
+            </div>
+            <div class="col-8 p-2">
+              <span name="rls-version"></span>.<span name="rls-revision"></span>
+            </div>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label class="mandatory" label="keyword"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input type="text" class="form-control" name="krl-value" maxlength="256">
+              <span class="serverValidationError text-danger" name="krl-value-error-holder"></span>
+            </div>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="acronym"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input name="acronym-toggle" type="checkbox"></input>
+            </div>
+          </div>
+          <div class="border row mx-0" name="language-row">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="language"></label>
+            </div>
+            <div class="col-8 p-2">
+              <select class="form-control" name="language">
+              </select>
+              <span class="serverValidationError text-danger" name="language-error-holder"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-warning justify-content-start rounded-0">
+          <label>
+            <span label="singularise-warning"></span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-neutral" data-dismiss="modal">
+            <i class="far fa-times-circle"></i> <span label="cancel"></span>
+          </button>
+          <button class="btn btn-primary text-light" type="submit">
+            <i class="far fa-save"></i> <span label="update"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--  dataViewModal -->
+<div class="modal" id="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-full" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" label="view-data"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body p-4" id="result">
+
+        <div id="data-dataset-row" class="mx-0 mt-2">
+
+        </div>
+
+        <div id="data-dataview-row" class="mx-0 mt-2">
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Template: Region 1-->
+<div id="keyword-release-templates" class="invisible" style="display: none">
+
+</div>
+
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/keyword/release/css/keyword.release.css" />
+<!-- Page specific JS -->
+<!-- FIXME: Import whole release.library.js - we might create shared version of methods at app.library.js-->
+<script src="entity/release/js/release.library.js"></script>
+<!--Import data library that we need-->
+<script src="entity/data/js/data.library.js"></script>
+<script src="entity/data/js/data.dataset.library.js"></script>
+<script src="entity/data/js/data.dataview.library.js"></script>
+
+<script src="entity/keyword/release/js/keyword.release.library.js"></script>
+<script src="entity/keyword/release/js/keyword.release.js"></script>

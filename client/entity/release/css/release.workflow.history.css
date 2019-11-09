@@ -1,0 +1,16 @@
+/*******************************************************************************
+Custom CSS application specific
+*******************************************************************************/
+
+/*
+specific css to fix bug with expand button (plus/minus) in mobile mode (DataTable responsive). 
+*/
+
+td.details-request-control i.fa.plus-control {
+    color: forestgreen;
+    /*cursor: pointer;*/
+}
+
+tr.shown td.details-request-control i.fa.plus-control {
+    color: red;
+}

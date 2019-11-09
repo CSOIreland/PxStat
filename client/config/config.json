@@ -1,0 +1,175 @@
+{
+	"title": "data.domain.extension",
+	"url": {
+		"application": "https://data.domain.extension/",
+		"api": {
+			"public": "https://ws.domain.extension/public/api.jsonrpc",
+			"private": "https://ws.domain.extension/private/api.jsonrpc"
+		},
+		"header": {
+			"logo": {
+				"alt": "ORGANISATION NAME",
+				"src": "image/logo.png"
+			}
+		},
+		"footer": [
+			{
+				"text": "WEBSITE NAME",
+				"href": "https://www.domain.extension/"
+			}
+		]
+	},
+	"language": {
+		"iso": {
+			"code": "en",
+			"name": "English"
+		}
+	},
+	"embargo": {
+		"time": "11:00:00",
+		"day": [
+			1,
+			2,
+			3,
+			4,
+			5
+		]
+	},
+	"mask": {
+		"datetime": {
+			"ajax": "YYYY-MM-DDTHH:mm:ss",
+			"display": "DD/MM/YYYY HH:mm:ss",
+			"file": "YYYYMMDDTHHMMss",
+			"dateRangePicker": "DD/MM/YYYY HH:mm",
+			"default": "0001-01-01T0:00:00.000Z"
+		},
+		"date": {
+			"ajax": "YYYY-MM-DD",
+			"display": "DD/MM/YYYY"
+		},
+		"time": {
+			"display": "HH:mm:ss"
+		}
+	},
+	"separator": {
+		"thousand": {
+			"ajax": "",
+			"display": ","
+		},
+		"decimal": {
+			"ajax": ".",
+			"display": "."
+		}
+	},
+	"upload": {
+		"threshold": {
+			"soft": 1048576,
+			"hard": 104857600
+		},
+		"unitsPerSecond": {
+			"validate": 400000,
+			"read": 180000,
+			"create": 40000
+		},
+		"timeout": 3600000
+	},
+	"regex": {
+		"phone": {
+			"pattern": "\\(\\+\\d{1,3}\\)\\s\\d+\\s\\d+\\s\\d+",
+			"placeholder": "(+353) 21 452 2253"
+		}
+	},
+	"entity": {
+		"data": {
+			"datatable": {
+				"length": 100,
+				"null": ".."
+			},
+			"threshold": {
+				"soft": 1000,
+				"hard": 1000000
+			},
+			"pagination": 10
+		},
+		"build": {
+			"officialStatistics": true,
+			"geoJsonLookup": {
+				"enabled": true,
+				"href": "https://geojson.doamin.extension/"
+			}
+		},
+		"release": {
+			"comparison": {
+				"threshold": {
+					"soft": 1048576
+				}
+			}
+		},
+		"analytic": {
+			"dateRangePicker": 29
+		}
+	},
+	"plugin": {
+		"sharethis": {
+			"enabled": false,
+			"apiURL": "https://platform-api.sharethis.com/js/sharethis.js#property={0}&product=inline-share-buttons",
+			"apiKey": ""
+		},
+		"highcharts": {
+			"enabled": true
+		},
+		"highmaps": {
+			"featureIdentifier": "AREA_ID",
+			"featureName": "AREA_NAME",
+			"minColor": "#FFFF00",
+			"maxColor": "#990041",
+			"useHTML": "true"
+		},
+		"tinymce": {
+			"apiURL": "https://cdn.tiny.cloud/1/{0}/tinymce/5/tinymce.min.js",
+			"apiKey": ""
+		},
+		"jscookie": {
+			"path": "/",
+			"secure": "true",
+			"expires": 365
+		},
+		"datatable": {
+			"lengthMenu": [
+				[
+					10,
+					25,
+					50,
+					100,
+					-1
+				],
+				[
+					10,
+					25,
+					50,
+					100,
+					"All"
+				]
+			],
+			"responsive": true,
+			"fixedHeader": true,
+			"dom": "fltip",
+			"deferRender": true
+		},
+		"cookieConsent": {
+			"palette": {
+				"popup": {
+					"background": "#45c1c0",
+					"text": "#ffffff"
+				},
+				"button": {
+					"background": "#006f74",
+					"text": "#ffffff"
+				}
+			},
+			"position": "top",
+			"static": true,
+			"content": {}
+		}
+	}
+}

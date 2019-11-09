@@ -1,0 +1,324 @@
+<!-- Release Workflow Modal Response Publish-->
+<div id="request-workflow-modal-response-publish" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-tertiary">
+                    <h5 class="modal-title text-light" label="add-response"></h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="card mb-3">
+                        <div class="card-header" label="request"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="type"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="emergency"></label>
+                            </div>
+                            <div class="col-8 p-2" name="wrq-emergency-flag"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="publish-date"></label>
+                            </div>
+                            <div class="col-8 p-2" name="wrq-datetime"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="under-reservation"></label>
+                            </div>
+                            <div class="col-8 p-2" name="wrq-reservation-flag"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="archived"></label>
+                            </div>
+                            <div class="col-8 p-2" name="wrq-archive-flag"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-cmm-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-by"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-create-username"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-date"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-dtg-create-datetime"></div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-header" label="response"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2">
+                                <textarea rows="3" name="rsp-cmm-value" class="form-control"></textarea>
+                                <span class="serverValidationError text-danger" name="rsp-cmm-value-error-holder"></span>
+                            </div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                    </button>
+                    <button type="button" name="button-reject" class="btn btn-danger text-light">
+                        <i class="fas fa-times-circle"></i> <span label="reject"></span>
+                    </button>
+                    <button type="button" name="button-approve" class="btn btn-success text-light">
+                        <i class="fas fa-check-circle"></i> <span label="approve"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Release Workflow Modal Response Flag-->
+<div id="request-workflow-modal-response-flag" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-tertiary">
+                    <h5 class="modal-title text-light" label="add-response"></h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="card mb-3">
+                        <div class="card-header" label="request"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="type"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="under-reservation"></label>
+                            </div>
+                            <div class="col-8 p-2" name="wrq-reservation-flag"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="archived"></label>
+                            </div>
+                            <div class="col-8 p-2" name="wrq-archive-flag"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-cmm-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-by"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-create-username"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-date"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-dtg-create-datetime"></div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-header" label="response"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2">
+                                <textarea rows="3" name="rsp-cmm-value" class="form-control"></textarea>
+                                <span class="serverValidationError text-danger" name="rsp-cmm-value-error-holder"></span>
+                            </div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">
+                        <i class="fas fa-ban"></i> <span label="cancel"></span>
+                    </button>
+                    <button type="button" name="button-reject" class="btn btn-danger text-light">
+                        <i class="fas fa-times-circle"></i> <span label="reject"></span>
+                    </button>
+                    <button type="button" name="button-approve" class="btn btn-success text-light">
+                        <i class="fas fa-check-circle"></i> <span label="approve"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Release Workflow Modal Response Delete-->
+<div id="request-workflow-modal-response-delete" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-tertiary">
+                    <h5 class="modal-title text-light" label="add-response"></h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="card mb-3">
+                        <div class="card-header" label="request"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="type"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-cmm-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-by"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-create-username"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-date"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-dtg-create-datetime"></div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header" label="response"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2">
+                                <textarea rows="3" name="rsp-cmm-value" class="form-control"></textarea>
+                                <span class="serverValidationError text-danger" name="rsp-cmm-value-error-holder"></span>
+                            </div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-warning justify-content-start rounded-0">
+                    <label>
+                        <span label="it-is-not-possible-to-recover-a-deleted-release"></span>
+                        <span label="please-consider-the-rollback"></span>
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">
+                        <i class="fas fa-ban"></i> <span label="cancel"></span>
+                    </button>
+                    <button type="button" name="button-reject" class="btn btn-danger text-light">
+                        <i class="fas fa-times-circle"></i> <span label="reject"></span>
+                    </button>
+                    <button type="button" name="button-approve" class="btn btn-success text-light">
+                        <i class="fas fa-check-circle"></i> <span label="approve"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Release Workflow Modal Response Rollback-->
+<div id="request-workflow-modal-response-rollback" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-tertiary">
+                    <h5 class="modal-title text-light" label="add-response"></h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="card mb-3">
+                        <div class="card-header" label="request"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="type"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-cmm-value"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-by"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-create-username"></div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="created-date"></label>
+                            </div>
+                            <div class="col-8 p-2" name="rqs-dtg-create-datetime"></div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header" label="response"></div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label label="comment"></label>
+                            </div>
+                            <div class="col-8 p-2">
+                                <textarea rows="3" name="rsp-cmm-value" class="form-control"></textarea>
+                                <span class="serverValidationError text-danger" name="rsp-cmm-value-error-holder"></span>
+                            </div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-warning justify-content-start rounded-0">
+                    <label>
+                        <span label="the-previous-version-will-be-re-published"></span>
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">
+                        <i class="fas fa-ban"></i> <span label="cancel"></span>
+                    </button>
+                    <button type="button" name="button-reject" class="btn btn-danger text-light">
+                        <i class="fas fa-times-circle"></i> <span label="reject"></span>
+                    </button>
+                    <button type="button" name="button-approve" class="btn btn-success text-light">
+                        <i class="fas fa-check-circle"></i> <span label="approve"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Page specific JS -->
+<script src="entity/release/js/release.workflow.modal.response.library.js"></script>
+<script src="entity/release/js/release.workflow.modal.response.js"></script>

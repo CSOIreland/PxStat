@@ -1,0 +1,35 @@
+/*******************************************************************************
+Application - Library
+*******************************************************************************/
+
+/* Prevent scrollwork flickering */
+
+body {
+    overflow-y: scroll;
+}
+
+/* Mandatory icon for lables on forms */
+
+label.mandatory:before, span.mandatory:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f069";
+    vertical-align: super;
+    font-size: xx-small;
+    color: #DC4128;
+    margin: 1px;
+}
+
+/* 
+* Modal Full size
+* used at keyword\release, index.comparison.html, index.source.html
+*/
+
+.modal-full {
+    min-width: 90%;
+    margin: 0 auto;
+}
+
+.modal-full .modal-content {
+    min-height: 100vh;
+}

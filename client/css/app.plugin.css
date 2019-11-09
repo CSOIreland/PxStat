@@ -1,0 +1,43 @@
+/*******************************************************************************
+Application - Library
+*******************************************************************************/
+
+/* DataTable - Fix datatable bootstrap filter */
+
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_info {
+    float: left;
+}
+
+.dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_paginate, .dataTables_wrapper .dt-buttons {
+    float: right;
+}
+
+/* DataTable - Override responsive bootstrap extension */
+
+table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
+    background-color: #17a2b8
+}
+
+table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th:first-child:before {
+    background-color: #DC4128
+}
+
+table.dataTable.dtr-column>tbody>tr>td.control:before, table.dataTable.dtr-column>tbody>tr>th.control:before {
+    background-color: #17a2b8
+}
+
+table.dataTable.dtr-column>tbody>tr.parent td.control:before, table.dataTable.dtr-column>tbody>tr.parent th.control:before {
+    background-color: #DC4128
+}
+
+/* Editable-table - Implement missing stylesheet */
+
+.editable-table tbody td {
+    border-width: 2px;
+    border-style: dashed;
+    border-color: #dee2e6;
+}
+
+.editable-table thead th {
+    border-bottom: 0px !important;
+}

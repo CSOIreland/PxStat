@@ -1,0 +1,114 @@
+<div id="language-read-container" class="container-fluid">
+    <div class="card border-primary m-3">
+        <div class="card-header bg-primary text-light" label="languages"></div>
+        <div class="card-body">
+            <table class="table table-striped hover display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th label="iso-code"></th>
+                        <th label="iso-language"></th>
+                        <th label="no-releases"></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer text-right">
+            <button class="btn text-light btn-primary" name="button-create">
+                <i class="fas fa-plus-circle"></i> <span label="add-language"></span>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Modal - Add Language-->
+<div id="language-modal-create" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="add-language"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form>
+                <div class="modal-body">
+
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <label class="mandatory" for="lng-iso-code" label="iso-code"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input type="text" minlength="2" maxlength="2" name="lng-iso-code" class="form-control">
+                            <span class="serverValidationError text-danger" name="lng-iso-code-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <label class="mandatory" for="lng-iso-name" label="iso-language"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input type="text" minlength="2" maxlength="32" name="lng-iso-name" class="form-control">
+                            <span class="serverValidationError text-danger" name="lng-iso-name-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top row mx-0"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                    </button>
+                    <button class="btn btn-primary text-light" type="submit">
+                        <i class="fas fa-plus-circle"></i> <span label="add"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal - Edit Language-->
+<div id="language-modal-update" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="update-language"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <label for="lng-iso-code" label="iso-code"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <label type="text" maxlength="2" name="lng-iso-code"></label>
+                            <span class="serverValidationError text-danger" name="lng-iso-code-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <label class="mandatory" for="lng-iso-name" label="iso-language"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input type="text" minlength="2" maxlength="32" name="lng-iso-name" class="form-control" autofocus>
+                            <span class="serverValidationError text-danger" name="lng-iso-name-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top row mx-0"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                    </button>
+                    <button class="btn btn-primary text-light" type="submit">
+                        <i class="far fa-save"></i> <span label="update"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/configuration/language/css/language.css">
+<!-- Page specific JS -->
+<script src="entity/configuration/language/js/language.library.js"></script>
+<script src="entity/configuration/language/js/language.js"></script>

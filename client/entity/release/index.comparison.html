@@ -1,0 +1,245 @@
+<div class="modal" id="release-comparison-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-full" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" label="comparison-report"><span>:</span><span name="mtr-code"></span></h5>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div id="release-comparison-report">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="bg-primary text-light" scope="col" colspan="3" label="information"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th class="bg-neutral" scope="row" style="width:33%" label="version"></th>
+                                    <td empty="true" style="width:33%">
+                                        <span name="rls-version-previous"></span>.<span name="rls-revision-previous"></span>
+                                    </td>
+                                    <td empty="true" style="width:33%">
+                                        <span name="rls-revision-current"></span>.<span name="rls-revision-current"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-neutral" scope="row" label="status"></th>
+                                    <td name="status-previous" empty="true"></td>
+                                    <td name="status-current" empty="true"></td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-neutral" scope="row" label="live-from"></th>
+                                    <td name="rls-live-datetime-from-previous" empty="true"></td>
+                                    <td name="rls-live-datetime-from-current" empty="true"></td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-neutral" scope="row" label="live-to"></th>
+                                    <td name="rls-live-datetime-to-previous" empty="true"></td>
+                                    <td name="rls-live-datetime-to-current" empty="true"></td>
+                                </tr>
+                                <tr name="emergency-row">
+                                    <th class="bg-neutral" scope="row" label="emergency"></th>
+                                    <td name="rls-emergency-flag-previous" empty="true"></td>
+                                    <td name="rls-emergency-flag-current" empty="true"></td>
+                                </tr>
+                                <tr name="group-row">
+                                    <th class="bg-neutral" scope="row" label="group"></th>
+                                    <td name="grp-name-previous" empty="true"></td>
+                                    <td name="grp-name-current" empty="true"></td>
+                                </tr>
+                                <tr name="subject-row">
+                                    <th class="bg-neutral" scope="row" label="subject"></th>
+                                    <td name="sbj-value-previous" empty="true"></td>
+                                    <td name="sbj-value-current" empty="true"></td>
+                                </tr>
+                                <tr name="product-row">
+                                    <th class="bg-neutral" scope="row" label="product"></th>
+                                    <td name="prc-value-previous" empty="true"></td>
+                                    <td name="prc-value-current" empty="true"></td>
+                                </tr>
+                                <tr name="analytical-row">
+                                    <th class="bg-neutral" scope="row" label="analytical"></th>
+                                    <td name="rls-analytical-flag-previous" empty="true"></td>
+                                    <td name="rls-analytical-flag-current" empty="true"></td>
+                                </tr>
+                                <tr name="dependency-row">
+                                    <th class="bg-neutral" scope="row" label="dependency"></th>
+                                    <td name="rls-dependency-flag-previous" empty="true"></td>
+                                    <td name="rls-dependency-flag-current" empty="true"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="bg-primary text-light" scope="col" colspan="3" label="source"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr name="title-row">
+                                    <th class="bg-neutral" scope="row" style="width:33%" label="title"></th>
+                                    <td name="mtr-title-previous" empty="true" style="width:33%"></td>
+                                    <td name="mtr-title-current" empty="true" style="width:33%"></td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-neutral" scope="row" label="uploaded-date"></th>
+                                    <td name="dtg-create-datetime-previous" empty="true"></td>
+                                    <td name="dtg-create-datetime-current" empty="true"></td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-neutral" scope="row" label="uploaded-by"></th>
+                                    <td name="ccn-username-previous" empty="true"></td>
+                                    <td name="ccn-username-current" empty="true"></td>
+                                </tr>
+                                <tr name="frequency-row">
+                                    <th class="bg-neutral" scope="row" label="frequency"></th>
+                                    <td name="frq-value-previous" empty="true"></td>
+                                    <td name="frq-value-current" empty="true"></td>
+                                </tr>
+                                <tr name="copyright-row">
+                                    <th class="bg-neutral" scope="row" label="copyright"></th>
+                                    <td name="cpr-value-previous" empty="true"></td>
+                                    <td name="cpr-value-current" empty="true"></td>
+                                </tr>
+                                <tr name="official-row">
+                                    <th class="bg-neutral" scope="row" label="official-statistics"></th>
+                                    <td name="mtr-official-flag-previous" empty="true"></td>
+                                    <td name="mtr-official-flag-current" empty="true"></td>
+                                </tr>
+                                <tr name="footnote-row">
+                                    <th class="bg-neutral" scope="row" label="footnote"></th>
+                                    <td name="mtr-note-previous" empty="true"></td>
+                                    <td name="mtr-note-current" empty="true"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="bg-primary text-light" scope="col" colspan="3" label="properties"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr name="reservation-row">
+                                    <th class="bg-neutral" scope="row" style="width:33%" label="under-reservation"></th>
+                                    <td name="rls-reservation-previous" empty="true" style="width:33%"></td>
+                                    <td name="rls-reservation-current" empty="true" style="width:33%"></td>
+                                </tr>
+                                <tr name="archive-row">
+                                    <th class="bg-neutral" scope="row" label="archived"></th>
+                                    <td name="rls-archive-previous" empty="true"></td>
+                                    <td name="rls-archive-current" empty="true"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="container-fluid">
+
+                    <div id="comparison-datatable-amendment" class="card mb-2 border-primary">
+                        <div class="card-header bg-primary text-light" label="amendments"></div>
+                        <div class="card-body">
+                            <div name="table-wrapper"></div>
+                        </div>
+                        <div class="card-footer d-flex text-right justify-content-between">
+                            <span>
+                                <span label="codes" class="text-right font-weight-bold"></span>
+                                <span><input checked type="checkbox" id="comparison-amendment-toggle"></span>
+                            </span>
+                            <span>
+                                <button name="csv" class="btn btn-tertiary text-light">
+                                    <i class="fas fa-download"></i> <span label="csv"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="comparison-datatable-addition" class="card mb-2 border-primary">
+                        <div class="card-header bg-primary text-light" label="additions"></div>
+                        <div class="card-body">
+                            <div name="table-wrapper"></div>
+                        </div>
+                        <div class="card-footer d-flex text-right justify-content-between">
+                            <span>
+                                <span label="codes" class="text-right font-weight-bold"></span>
+                                <span><input checked type="checkbox" id="comparison-addition-toggle"></span>
+                            </span>
+                            <span>
+                                <button name="csv" class="btn btn-tertiary text-light">
+                                    <i class="fas fa-download"></i> <span label="csv"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="comparison-datatable-deletion" class="card mb-2 border-primary">
+                        <div class="card-header bg-primary text-light" label="deletions"></div>
+                        <div class="card-body">
+                            <div name="table-wrapper"></div>
+                        </div>
+                        <div class="card-footer d-flex text-right justify-content-between">
+                            <span>
+                                <span label="codes" class="text-right font-weight-bold"></span>
+                                <span><input checked type="checkbox" id="comparison-deletion-toggle"></span>
+                            </span>
+                            <span>
+                                <button name="csv" class="btn btn-tertiary text-light">
+                                    <i class="fas fa-download"></i> <span label="csv"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div id="release-comparison-reason" class="card border-primary">
+                        <div class="card-header bg-primary text-light" label="reasons"></div>
+                        <div class="card-body">
+                            <table class="table table-striped hover" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th label="reason-code"></th>
+                                        <th></th>
+                                        <th label="internal"></th>
+                                        <th label="external"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <div name="extra-information" style="display: none">
+                                <div class="card mb-2">
+                                    <div class="card-header" label="internal-description"></div>
+                                    <div class="card-body" name="rsn-value-internal"></div>
+                                </div>
+                                <div class="card mb-2">
+                                    <div class="card-header" label="external-description"></div>
+                                    <div class="card-body" name="rsn-value-external"></div>
+                                </div>
+                                <div class="card mb-2">
+                                    <div class="card-header" label="comment"></div>
+                                    <div class="card-body" name="cmm-value"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <i class="far fa-times-circle"></i> <span label="close"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="release-comparison-templates" style="display: none">
+    <table name="comparison-table" class="table table-bordered" style="width:100%">
+        <thead>
+            <tr></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<!-- Page specific JS -->
+<script src="entity/release/js/release.comparison.library.js"></script>
+<script src="entity/release/js/release.comparison.js"></script>

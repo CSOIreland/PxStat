@@ -1,0 +1,18 @@
+/*******************************************************************************
+Custom CSS application specific
+*******************************************************************************/
+
+/* Wrap  lines when necessary inside the code tags */
+
+pre {
+    white-space: pre-wrap !important;
+}
+
+table{
+    margin: 0 auto;
+    width: 100%;
+    clear: both;
+    border-collapse: collapse;
+    table-layout: fixed;
+    word-wrap:break-word;
+}

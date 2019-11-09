@@ -1,0 +1,11 @@
+/*******************************************************************************
+Custom CSS application specific
+*******************************************************************************/
+
+/* Wrap  lines when necesary inside the code tags */
+
+pre {
+    word-wrap: normal;
+    /*white-space: pre-wrap !important;*/
+    white-space: pre !important;
+}

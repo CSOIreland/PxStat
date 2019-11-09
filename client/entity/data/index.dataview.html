@@ -1,0 +1,59 @@
+<div id="data-view-container"></div>
+
+<div id="data-dataview-templates" style="display: none">
+    <div name="data-view">
+        <div class="row mx-0 mt-2">
+            <div class="col-sm">
+                <div class="card mb-4">
+                    <!-- Data Table data set Header-->
+                    <div class="card-header">
+                        <h5 label="results"></h5>
+                    </div>
+                    <!-- Data Table data table-->
+                    <div class="card-body">
+                        <table name="datatable" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr name="header-row"></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-content-between align-items-center">
+                        <div class="row justify-content-between align-items-center">
+
+                            <!-- Data Table data Show Codes button-->
+                            <span><span label="codes" class="text-right font-weight-bold"></span>
+                                <span><input checked type="checkbox" id="code-toggle"></span></span>
+                            <span>
+                                <div>
+                                    <!-- Data Table data Download Results button-->
+                                    <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-download"></i> <span label="download-results"></span>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="data-download-results">
+                                        <a name="download-select-dataset-json" class="dropdown-item" href="#">JSON-stat</a>
+                                        <a name="download-select-dataset-px" class="dropdown-item" href="#">PX</a>
+                                        <a name="download-select-dataset-csv" class="dropdown-item" href="#">CSV</a>
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- API accordion -->
+
+            </div>
+        </div>
+    </div>
+    <div name="data-view-map-label">
+        <b name="label"></b><b>: </b> <span name="name"></span>
+        <br>
+        <b label="unit"></b><b>: </b><span name="unit"></span>
+        <br>
+        <b label="value"></b><b>: </b><span name="value"></span>
+    </div>
+
+</div>
+<!-- Page specific JS -->
+<script src="entity/data/js/data.dataview.library.js"></script>
+<script src="entity/data/js/data.dataview.js"></script>

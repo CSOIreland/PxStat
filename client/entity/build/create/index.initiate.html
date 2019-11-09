@@ -1,0 +1,191 @@
+<div class="col-sm-12">
+    <div id="build-create-initiate-setup" class="card m-3 border-primary">
+        <form>
+            <div class="card-header bg-primary text-light" label="properties"></div>
+            <div class="card-body">
+
+                <div class="border-top border-right border-left row mx-0">
+                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <span class="mandatory" for="mtr-value" label="table"></span>
+                    </div>
+                    <div class="col-8 p-2">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control text-uppercase" name="mtr-value" type="text" maxlength="20" autocomplete="off" aria-describedby="button-addon">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" name="button-matrix-lookup" data-toggle="modal"><i class="fas fa-search"></i>
+                                    <span label="lookup"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="serverValidationError text-danger" name="mtr-value-error-holder"></div>
+                    </div>
+                </div>
+
+                <div class="border-top border-right border-left row mx-0">
+                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <span class="mandatory" label="languages"></span>
+                    </div>
+                    <div class="col-8 p-2">
+                        <ul class="list-group" name="lng-checkbox-group"></ul>
+                    </div>
+                </div>
+                <div class="border-top border-right border-left row mx-0">
+                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <label class="mandatory" label="frequency-code"></label>
+                    </div>
+                    <div class="col-8 p-2">
+                        <select class="form-control" name="frequency-code"></select>
+                        <span class="serverValidationError text-danger" name="frequency-code-error-holder"></span>
+                    </div>
+                </div>
+                <div class="border-top border-right border-left row mx-0">
+                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <label class="mandatory" for="copyright-code" label="copyright"></label>
+                    </div>
+                    <div class="col-8 p-2">
+                        <select class="form-control" name="copyright-code"></select>
+                        <span class="serverValidationError text-danger" name="copyright-code-error-holder"></span>
+                    </div>
+                </div>
+                <div class="border-top border-right border-left row mx-0">
+                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <span class="mandatory" label="official-statistics"></span>
+                    </div>
+                    <div class="col-8 p-2">
+                        <input name="official-flag" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                    </div>
+                </div>
+                <div class="border-top row mx-0"></div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <span>
+                    <button class="btn btn-info" name="import-show-modal" type="button" data-toggle="modal" data-target="#build-create-import">
+                        <i class="fas fa-upload"></i>
+                        <span label="import"></span>
+                    </button>
+                </span>
+                <span>
+                    <button class="btn btn-warning text-dark" name="button-clear" type="button">
+                        <i class="fas fa-undo"></i>
+                        <span label="reset"></span>
+                    </button>
+                    <button class="btn btn-primary text-light" type="submit" value="submit" name="button-generate">
+                        <i class="fas fa-cubes"></i>
+                        <span label="build-dimensions"></span>
+                    </button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--  initiate-matrix-lookup Modal -->
+<div class="modal" id="build-create-initiate-matrix-lookup" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="table-lookup"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body p-4">
+                <table class="table table-striped hover display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th label="table"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <i class="far fa-times-circle"></i>
+                    <span label="close"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  import modal -->
+<div class="modal" id="build-create-import" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="import"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="box">
+                    <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
+                    <input hidden="true" type="file" name="build-create-import-file" id="build-create-import-file" class="box__file" />
+                    <div class="box__input2">
+                        <label class="box__input3" for="build-create-import-file">
+                            <i class="fas fa-upload fa-2x"></i>
+                            <span name="upload-file-name"></span>
+                            <span name="upload-file-tip">
+                                <strong><span label="choose-a"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
+                                <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                            </span>
+                            <br />
+                            <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                        </label>
+                    </div>
+                </div>
+                <div name="frequency-codes" style="display: none;">
+                    <div class="mt-2">
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <label class="mandatory" label="frequency-code"></label>
+                            </div>
+                            <div class="col-8 p-2">
+                                <select class="form-control" name="frq-code"></select>
+                            </div>
+                        </div>
+                        <div class="border-top border-right border-left row mx-0">
+                            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                                <span class="mandatory" label="dimension"></span>
+                            </div>
+                            <div class="col-8 p-2">
+                                <ul class="list-group p-2" name="frequency-radio-group"></ul>
+                            </div>
+                        </div>
+                        <div class="border-top row mx-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card m-3 border-danger" name="upload-error-card" style="display: none">
+                <div class="card-header bg-danger text-light" label="errors"></div>
+                <div class="card-body" name="upload-error">
+                </div>
+            </div>
+            <div class="modal-footer bg-warning justify-content-start rounded-0" name="frequency-warning" style="display: none;">
+                <label>
+                    <span label="upload-frequency-automatically-detected"></span>
+                </label>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <span>
+                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <i class="far fa-times-circle"></i> <span label="close"></span>
+                    </button>
+                </span>
+                <span>
+                    <button name="import-file-reset" class="btn btn-warning text-dark" type="button">
+                        <i class="fas fa-undo"></i> <span label="reset"></span>
+                    </button>
+                    <button name="parse-source-file" class="btn btn-primary text-light" disabled>
+                        <i class="fas fa-upload"></i> <span label="parse"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page specific JS -->
+<script src="entity/build/create/js/create.initiate.library.js"></script>
+<script src="entity/build/create/js/create.import.library.js"></script>
+<script src="entity/build/create/js/create.import.js"></script>
+<script src="entity/build/create/js/create.initiate.js"></script>

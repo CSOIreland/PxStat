@@ -1,0 +1,161 @@
+<!-- Select dropdowns  Subject and Product -->
+<div id="select-card" class="card m-3 border-primary">
+    <div class="card-header bg-primary text-light" label="select"></div>
+    <form>
+        <div class="card-body" name="card-submit">
+
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <label for="picker-date-range" label="date-range"></label>
+                </div>
+                <div class="col-8 p-2">
+                    <div id="analytic-date-range">
+                        <i class="fa fa-calendar"></i>&nbsp;
+                        <span></span> <i class="fa fa-caret-down"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <label label="subject"></label>
+                </div>
+                <div class="col-8 p-2">
+                    <select class="form-control" name="select-subject" disabled></select>
+                    <span class="serverValidationError text-danger" name="select-subject-error-holder"></span>
+                </div>
+            </div>
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <label label="product"></label>
+                </div>
+                <div class="col-8 p-2">
+                    <select class="form-control" name="select-product" disabled></select>
+                    <span class="serverValidationError text-danger" name="select-product-error-holder"></span>
+                </div>
+            </div>
+            <div class="border-bottom  border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <label for="nlt-masked-ip" label="ip-address"></label>
+                </div>
+                <div class="col-8 p-2">
+                    <input name="nlt-masked-ip" type="text" class="form-control" placeholder="sample Ip Address:192.168.211">
+                    <span class="serverValidationError text-danger" name="nlt-masked-ip-error-holder"></span>
+                </div>
+                <div class="border-top row mx-0"></div>
+            </div>
+        </div>
+        <div class="card-footer text-right">
+            <span>
+                <button name="button-cancel" class="btn btn-neutral">
+                    <i class="far fa-times-circle"></i> <span label="clear"></span>
+                </button>
+                <button class="btn btn-primary text-light" type="submit">
+                    <i class="fas fa-search"></i> <span label="submit"></span>
+                </button>
+            </span>
+        </div>
+    </form>
+
+</div>
+<div id="analytic-results" style="display:none">
+    <div id="summary-card" class="card m-3 border-primary">
+        <div class="card-header bg-primary text-light" label="summary"></div>
+        <div class="card-body">
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right" label="bots"></div>
+                <div name="analytic-sum-bots" class="col-8 p-2 bg-white"></div>
+            </div>
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right" label="m2m"></div>
+                <div name="analytic-sum-m2m" class="col-8 p-2 bg-white"></div>
+            </div>
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right" label="users"></div>
+                <div name="analytic-sum-users" class="col-8 p-2 bg-white"></div>
+            </div>
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-light border-right col-4 p-2 text-right font-weight-bold" label="total"></div>
+                <div name="analytic-sum-totals" class="col-8 p-2 bg-white font-weight-bold"> </div>
+            </div>
+            <div class="border-top row mx-0 mb-2"></div>
+        </div>
+    </div>
+    <div id="analytic-data" class="card border-primary m-3">
+        <div class="card-header bg-primary text-light" label="analytics"></div>
+        <div class="card-body">
+            <table class="table table-striped hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th label="table"></th>
+                        <th label="subject"></th>
+                        <th label="product"></th>
+                        <th label="date-published"></th>
+                        <th label="bots"></th>
+                        <th label="m2m"></th>
+                        <th label="users"></th>
+                        <th label="total"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div id="analytic-chart" class="row p-3">
+        <div class="col-sm-12 mb-4">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card mb-4">
+                        <div name="analytic-div-header-dates" class="card-header p-2" label="hits-over-time"></div>
+                        <div class="card-body p-1">
+                            <div name="dates-line-chart" style="width: 100%; height: 400px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card mb-4">
+                        <div name="analytic-div-header-referrer" class="card-header p-2" label="referrer"></div>
+                        <div class="card-body p-1">
+                            <div name="referrer-column-chart" style="width: 100%; height: 400px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="card mb-4">
+                        <div name="analytic-div-header-browser" class="card-header p-2" label="browser"></div>
+                        <div class="card-body p-1">
+                            <div name="browser-pie-chart" style="width: 100%; height: 400px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card mb-4">
+                        <div name="analytic-div-header-os" class="card-header p-2" label="operating-system"></div>
+                        <div class="card-body p-1">
+                            <div name="operating-system-pie-chart" style="width: 100%; height: 400px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card mb-4">
+                        <div name="analytic-div-header-language" class="card-header p-2" label="table-language"></div>
+                        <div class="card-body p-1">
+                            <div name="language-pie-chart" style="width: 100%; height: 400px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="analytic-modal"></div>
+
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/analytic/css/analytic.css">
+<!-- Page specific JS -->
+<script src="entity/analytic/js/analytic.library.js"></script>
+<script src="entity/analytic/js/analytic.chart.js"></script>
+<script src="entity/analytic/js/analytic.js"></script>

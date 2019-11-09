@@ -1,0 +1,19 @@
+/* Set the progress-bar height */
+
+.progress {
+  height: 40px;
+}
+
+/* Avoid wrapping white spaces or breaking words in a button */
+
+.btn {
+  white-space: nowrap !important;
+  word-wrap: normal;
+}
+									
+/* No decoration for disabled links */
+
+a[disabled] {
+  cursor: default;
+  text-decoration: none;
+}
