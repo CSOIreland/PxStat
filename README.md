@@ -3,7 +3,7 @@
 [![GitHub Watches](https://img.shields.io/github/watchers/goncaloperes/Project-CodeIgniter-CMS.svg?style=social&label=Watch&maxAge=2592000)](https://github.com/goncaloperes/Project-CodeIgniter-CMS/watchers)
 
 # PxStat
-PxStat is a **Data Dissemination Management System** especially designed for National Statistical Institutes and Statistical Organisations, developed by the [CSO](https://www.cso.ie) (Central Statistics Office, Ireland) with the support of the **PcAxis** statistical community and the collaboration of the **Open Source** community.
+PxStat is a **Data Dissemination Management System** especially designed for National Statistical Institutes and Statistical Organisations, developed by the [CSO](https://www.cso.ie) (Central Statistics Office, Ireland) with the support of the **PC-Axis** statistical community and the collaboration of the **Open Source** community.
 
 The system is powered by a lightweight engine and provides a modern, responsive and efficient Web Interface and Web Services (API) for managing and disseminating statistics.
 
