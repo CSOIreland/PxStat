@@ -15,14 +15,14 @@ namespace PxStat.System.Navigation
         /// </summary>
         string LngIsoCode { get; set; }
 
+        List<Synonym> SynonymList { get; set; }
+
         /// <summary>
         /// cultureInfo object
         /// </summary>
         CultureInfo cultureInfo { get; set; }
 
-
-
-
         string Singularize(string words);
+        string Sanitize(string readString);
     }
 }

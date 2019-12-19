@@ -38,6 +38,8 @@ namespace PxStat.Data
         {
             //Mandatory - MtrCode
             RuleFor(x => x.MtrCode).NotEmpty();
+            //Optional LngIsoCode
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
 
@@ -50,6 +52,7 @@ namespace PxStat.Data
         {
             //Mandatory - PrcCode
             RuleFor(x => x.PrcCode).NotEmpty();
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
 

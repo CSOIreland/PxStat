@@ -33,7 +33,7 @@ namespace PxStat.Data
         protected override bool Execute()
         {
             var adoMatrix = new Matrix_ADO(Ado);
-            var list = adoMatrix.ReadHistory(SamAccountName, DTO.DateFrom, DTO.DateTo);
+            var list = adoMatrix.ReadHistory(SamAccountName, DTO);
             Response.data = list;
 
             return true;

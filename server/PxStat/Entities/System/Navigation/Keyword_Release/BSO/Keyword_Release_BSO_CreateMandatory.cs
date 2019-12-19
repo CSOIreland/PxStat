@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using API;
+﻿using API;
 using PxStat.Data;
+using System.Collections.Generic;
+using System.Data;
 
 namespace PxStat.System.Navigation
 {

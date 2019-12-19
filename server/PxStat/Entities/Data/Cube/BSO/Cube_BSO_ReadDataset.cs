@@ -1,7 +1,8 @@
-﻿using System;
-using API;
+﻿using API;
 using Newtonsoft.Json.Linq;
 using PxStat.Template;
+using System;
+using static PxStat.System.Settings.Format_DTO_Read;
 
 namespace PxStat.Data
 {
@@ -43,7 +44,10 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
-
+            if (DTO.Format.FrmDirection != FormatDirection.DOWNLOAD.ToString())
+            {
+                return false;
+            }
             ////See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO);
             if (cache.hasData)
@@ -51,7 +55,6 @@ namespace PxStat.Data
                 Response.data = cache.data;
                 return true;
             }
-
             var items = new Release_ADO(Ado).ReadLiveNow(DTO.matrix, DTO.language);
             var result = Release_ADO.GetReleaseDTO(items);
             if (result == null)
@@ -75,6 +78,7 @@ namespace PxStat.Data
         /// <returns></returns>
         internal static bool ExecuteReadDataset(ADO theAdo, Cube_DTO_Read theDto, Release_DTO releaseDto, JSONRPC_Output theResponse)
         {
+
             var theMatrix = new Matrix(theAdo, releaseDto, theDto.language).ApplySearchCriteria(theDto);
             if (theMatrix == null)
             {
@@ -89,7 +93,9 @@ namespace PxStat.Data
                 return true;
             }
 
-            switch (theDto.format)
+
+
+            switch (theDto.Format.FrmType)
             {
                 case DatasetFormat.JsonStat:
                     var jsonStat = matrix.GetJsonStatObject();
@@ -108,6 +114,7 @@ namespace PxStat.Data
             else
                 MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", theDto, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.Code);
             return true;
+
         }
     }
 }

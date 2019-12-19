@@ -15,7 +15,7 @@ namespace PxStat.Security
             //Mandatory - matrix
             RuleFor(x => x.matrix).NotEmpty().Length(1, 20);
             //Mandatory - NltMaskedIp
-            RuleFor(x => x.NltMaskedIp).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP"));
+            // RuleFor(x => x.NltMaskedIp).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP"));
             //Optional - NltOs
             RuleFor(x => x.NltOs).NotEmpty().Length(1, 64).When(x => !string.IsNullOrEmpty(x.NltOs));
             //Optional - NltBrowser
@@ -82,6 +82,26 @@ namespace PxStat.Security
             RuleFor(x => x.NltInternalNetworkMask).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP")).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
+        }
+    }
+
+
+    internal class Analytic_VLD_ReadFormat : AbstractValidator<Analytic_DTO_Read>
+    {
+        internal Analytic_VLD_ReadFormat()
+        {
+            //Mandatory - DateFrom
+            RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
+            //Mandatory - DateTo
+            RuleFor(x => x.DateTo).NotEqual(default(DateTime));
+            //Optional FrmType
+            RuleFor(x => x.FrmType).Length(1, 32).When(x => !string.IsNullOrEmpty(x.FrmType));
+
+            RuleFor(x => x.FrmVersion).Length(1, 32).When(x => !string.IsNullOrEmpty(x.FrmVersion));
+
+            //FrmVersion must be empty when FrmType is empty
+            RuleFor(x => x.FrmVersion).Empty().When(x => string.IsNullOrEmpty(x.FrmType));
+
         }
     }
 

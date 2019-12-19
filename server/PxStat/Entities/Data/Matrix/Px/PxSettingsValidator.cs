@@ -195,8 +195,9 @@ namespace PxStat.Data.Px
         /// <param name="ado"></param>
         internal PxSettingsValidator(ADO ado, bool includeSource = true)
         {
+
             this.ado = ado;
-            RuleFor(x => x.FormatVersion).Must(v => Matrix.AxisVersionIsSupported(ado, Resources.Constants.C_SYSTEM_PX_NAME, v)).WithMessage((string)Label.Get("px.setting.axisversion-invalid"));
+            RuleFor(x => x.FormatVersion).Must(v => (Matrix.AxisVersionIsSupported(ado, Resources.Constants.C_SYSTEM_PX_NAME, v) || Matrix.JsonStatVersionIsSupported(ado, Resources.Constants.C_SYSTEM_JSON_STAT_NAME, v))).WithMessage((string)Label.Get("px.setting.axisversion-invalid"));
             if (includeSource)
             {
                 RuleFor(x => x.MainSpec.Source).Must(s => Matrix.SourceIsSupported(ado, s)).WithMessage((string)Label.Get("px.setting.source-invalid"));

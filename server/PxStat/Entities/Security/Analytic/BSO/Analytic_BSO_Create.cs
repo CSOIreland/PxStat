@@ -1,12 +1,12 @@
-﻿using System;
+﻿using API;
+using DeviceDetectorNET;
+using DeviceDetectorNET.Cache;
+using PxStat.Resources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using DeviceDetectorNET;
 using System.Web.Hosting;
-using DeviceDetectorNET.Cache;
-using API;
-using PxStat.Resources;
 
 
 namespace PxStat.Security
@@ -38,13 +38,31 @@ namespace PxStat.Security
             //Get the matrix field from the calling DTO
             if (MethodReader.DynamicHasProperty(requestDTO, "matrix")) aDto.matrix = requestDTO.matrix;
 
-            aDto.NltReferer = hRequest.Url.Host;
+            // Get the Referer
+            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Utility.GetCustomConfig("APP_SECURITY_ANALYTIC_REFERER_NA") : hRequest.UrlReferrer.Host;
 
             //The m2m parameter will not be translated into a DTO property so we just read it from the request parameters if it exists
             if (request.parameters.m2m != null) aDto.NltM2m = request.parameters.m2m;
             else aDto.NltM2m = true;
 
+            // Get the DateTime
             aDto.NltDate = DateTime.Now;
+
+            //Get Format information
+            if (MethodReader.DynamicHasProperty(requestDTO, "Format"))
+            {
+                if (MethodReader.DynamicHasProperty(requestDTO.Format, "FrmType") && MethodReader.DynamicHasProperty(requestDTO.Format, "FrmVersion"))
+                {
+                    aDto.FrmType = requestDTO.Format.FrmType;
+                    aDto.FrmVersion = requestDTO.Format.FrmVersion;
+                }
+            }
+
+            if (MethodReader.DynamicHasProperty(requestDTO, "FrmType") && MethodReader.DynamicHasProperty(requestDTO, "FrmType"))
+            {
+                aDto.FrmType = requestDTO.Format.FrmType;
+                aDto.FrmVersion = requestDTO.Format.FrmVersion;
+            }
 
             //Get the device detector and populate the dto attributes
             DeviceDetector deviceDetector = GetDeviceDetector(request.userAgent);
@@ -58,6 +76,8 @@ namespace PxStat.Security
 
             if (deviceDetector.GetOs().Match != null)
                 aDto.NltOs = deviceDetector.GetOs().Match.Name;
+
+
 
 
             //validate whatever has been returned

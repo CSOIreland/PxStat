@@ -1,8 +1,8 @@
-﻿using System;
+﻿using API;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using API;
 
 namespace PxStat.System.Navigation
 {
@@ -65,7 +65,7 @@ namespace PxStat.System.Navigation
         {
             //Get a keyword extractor. The keyword extractor should, if possible, correspond to the supplied LngIsoCode
             //If an extractor is not found for the supplied LngIsoCode then a basic default extractor is supplied.
-            Keyword_BSO_Extract kbe = new Navigation.Keyword_BSO_Extract(dto.LngIsoCode);
+            Keyword_BSO_Extract kbe = new Keyword_BSO_Extract(dto.LngIsoCode);
             //  IKeywordExtractor extractor = kbe.GetExtractor();
 
             //Get a list of keywords based on the supplied search term
@@ -91,17 +91,35 @@ namespace PxStat.System.Navigation
             //In order to do this,  we pass a datatable as a parameter
             //First we create the table
             DataTable dt = new DataTable();
-            //dt.Columns.Add("K_VALUE");
             dt.Columns.Add("Key");
             dt.Columns.Add("Value");
 
-            //We can now add each search term as a row in the table
+
+
+            //Gather any synonyms and include them in the search, in the synonyms column
             foreach (string word in searchList)
             {
-                var row = dt.NewRow();
-                row["Key"] = null;
-                row["Value"] = word;
-                dt.Rows.Add(row);
+
+                var hitlist = kbe.extractor.SynonymList.Where(x => x.match == word.ToLower());
+                if ((kbe.extractor.SynonymList.Where(x => x.match == word.ToLower())).Count() > 0)
+                {
+
+                    foreach (var syn in hitlist)
+                    {
+                        var row = dt.NewRow();
+                        row["Key"] = syn.lemma;
+                        row["Value"] = syn.match;
+                        dt.Rows.Add(row);
+                    }
+                }
+                else
+                {
+                    var row = dt.NewRow();
+                    row["Key"] = word;
+                    row["Value"] = word;
+                    dt.Rows.Add(row);
+
+                }
 
             }
 

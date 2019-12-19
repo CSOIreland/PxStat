@@ -34,6 +34,7 @@ namespace PxStat.System.Navigation
             var adoKeywordRelease = new Keyword_Release_ADO();
 
             var list = adoKeywordRelease.Read(Ado, DTO);
+
             Response.data = list.data;
 
             return true;

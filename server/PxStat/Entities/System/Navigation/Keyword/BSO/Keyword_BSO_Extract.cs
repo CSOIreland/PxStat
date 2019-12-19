@@ -1,5 +1,4 @@
 ﻿using API;
-using PxStat.Resources;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Design.PluralizationServices;
@@ -20,29 +19,32 @@ namespace PxStat.System.Navigation
     internal class Keyword_BSO_Extract : PluralizationService
     {
         internal IKeywordExtractor extractor { get; }
-        string LngIsoCode;
+
         Keyword keyword;
 
+        /// <summary>
+        /// In the constructor, we will attempt to get the language specific extractor.
+        /// If we can't find one then we'll revert to the default language
+        /// </summary>
+        /// <param name="lngIsoCode"></param>
         internal Keyword_BSO_Extract(string lngIsoCode)
         {
-            LngIsoCode = lngIsoCode;
-            keyword = new PxStat.Keyword(lngIsoCode);
-            switch (lngIsoCode)
-            {
-                case "en":
-                    this.extractor = new Keyword_en();
-                    break;
-                case "ga":
-                    this.extractor = new Keyword_ga();
-                    break;
-                default:
-                    //We will default to an extractor based on the default language of the system
-                    string extractorClassName = "PxStat.Resources.Keyword_" + Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
 
-                    Type extractorType = Type.GetType(extractorClassName);
-                    this.extractor = (IKeywordExtractor)Assembly.GetAssembly(extractorType).CreateInstance(extractorType.FullName);
-                    break;
+            keyword = new PxStat.Keyword(lngIsoCode);
+
+            string extractorClassName = Utility.GetCustomConfig("APP_INTERNATIONALISATION_EXTRACTOR_CLASS_NAME") + lngIsoCode;
+
+
+            Type extractorType = Type.GetType(extractorClassName);
+            if (extractorType != null)
+                this.extractor = (IKeywordExtractor)Assembly.GetAssembly(extractorType).CreateInstance(extractorType.FullName);
+            else
+            {
+                extractorClassName = Utility.GetCustomConfig("APP_INTERNATIONALISATION_EXTRACTOR_CLASS_NAME") + Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                extractorType = Type.GetType(extractorClassName);
+                this.extractor = (IKeywordExtractor)Assembly.GetAssembly(extractorType).CreateInstance(extractorClassName);
             }
+
         }
 
         /// <summary>
@@ -52,11 +54,13 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         internal bool IsExcluded(string word)
         {
-
+            if (word.Length < 2) return true;
 
             List<string> wordList = keyword.GetStringList("excluded.article");
 
             wordList.AddRange(keyword.GetStringList("excluded.preposition"));
+            wordList.AddRange(keyword.GetStringList("excluded.interrogative"));
+            wordList.AddRange(keyword.GetStringList("excluded.miscellaneous"));
 
 
             if (wordList.Contains(word.ToLower()))
@@ -90,7 +94,7 @@ namespace PxStat.System.Navigation
         internal List<string> ExtractSplit(string readString)
         {
 
-            readString = Sanitize(readString);
+            readString = extractor.Sanitize(readString);
 
             // convert the sentence to a list of words
             List<string> wordListInput = readString.Split(' ').ToList<string>();
@@ -121,17 +125,7 @@ namespace PxStat.System.Navigation
             return wordList;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="words"></param>
-        /// <returns></returns>
-        internal string Sanitize(string words)
-        {
-            //replace non alpha characters with spaces
-            //Note this Regex is specific to the english language. Use a language appropriate string for any other language
-            return Regex.Replace(words, keyword.Get("excluded.regex"), " ");
-        }
+
 
         /// <summary>
         /// This function returns a list of nominative singular words from a string of space separated words (e.g. a sentance).
@@ -142,7 +136,7 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         internal List<string> ExtractSplitSingular(string readString)
         {
-            readString = Sanitize(readString);
+            readString = extractor.Sanitize(readString);
 
             // convert the sentance to a list of words
             List<string> wordListInput = readString.Split(' ').ToList<string>();
@@ -201,14 +195,15 @@ namespace PxStat.System.Navigation
 
         public override string Singularize(string word)
         {
-            //First we check in case this is in the list of irregular endings...
-            Keyword kw = new Keyword(LngIsoCode);
-            string lookup = "irregular.plural." + word;
-            string result = kw.Get(lookup);
-            if (!(result).Equals(lookup))
-                return result;
-            else
-                return extractor.Singularize(word);
+            return extractor.Singularize(word);
         }
+    }
+
+    public class Synonym
+    {
+        public string match { get; set; }
+        public string lemma { get; set; }
+
+        public Synonym() { }
     }
 }

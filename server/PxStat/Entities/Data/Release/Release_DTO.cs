@@ -1,4 +1,5 @@
-﻿using System;
+﻿using API;
+using System;
 
 namespace PxStat.Data
 {
@@ -48,6 +49,8 @@ namespace PxStat.Data
         /// </summary>
         public string PrcCode { get; set; }
 
+        public string LngIsoCode { get; set; }
+
         /// <summary>
         /// Blank constructor
         /// </summary>
@@ -65,6 +68,10 @@ namespace PxStat.Data
                 this.MtrCode = parameters.MtrCode;
             if (parameters.PrcCode != null)
                 this.PrcCode = parameters.PrcCode;
+            if (parameters.LngIsoCode != null)
+                this.LngIsoCode = parameters.LngIsoCode;
+            else
+                this.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
         }
     }
 

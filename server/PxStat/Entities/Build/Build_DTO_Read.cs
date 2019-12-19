@@ -16,6 +16,7 @@ namespace PxStat.Build
         public string FrqCodeTimeval { get; internal set; }
         public string FrqValueTimeval { get; internal set; }
         public string Signature { get; internal set; }
+
         /// <summary>
         /// 
         /// </summary>

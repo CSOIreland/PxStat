@@ -33,7 +33,7 @@ namespace PxStat.Workflow
         {
             var adoWorkflow = new Workflow_ADO();
 
-            var result = adoWorkflow.ReadWorkInProgress(Ado, SamAccountName);
+            var result = adoWorkflow.ReadWorkInProgress(Ado, SamAccountName, DTO.LngIsoCode);
 
             var adoAd = new ActiveDirectory_ADO();
 

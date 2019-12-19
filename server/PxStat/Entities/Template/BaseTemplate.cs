@@ -1,10 +1,10 @@
-﻿using System;
-using Newtonsoft.Json;
-using FluentValidation.Results;
+﻿using API;
 using FluentValidation;
-using API;
-using PxStat.Security;
+using FluentValidation.Results;
+using Newtonsoft.Json;
 using PxStat.Resources;
+using PxStat.Security;
+using System;
 
 namespace PxStat.Template
 {
@@ -283,6 +283,7 @@ namespace PxStat.Template
         {
             if (!ActiveDirectory.IsAuthenticated(Request.userPrincipal))
             {
+
                 OnAuthenticationFailed();
                 return false;
             }

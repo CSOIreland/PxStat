@@ -1,5 +1,6 @@
 ﻿using API;
 
+
 namespace PxStat.Build
 {
     /// <summary>
@@ -53,6 +54,28 @@ namespace PxStat.Build
         public static dynamic Validate(JSONRPC_API jsonrpcRequest)
         {
             return new Build_BSO_Validate(jsonrpcRequest).Read().Response;
+        }
+
+
+        public static dynamic BuildRead(JSONRPC_API jsonrpcRequest)
+        {
+            return new Build_BSO_BuildRead(jsonrpcRequest).Read().Response;
+        }
+
+        public static dynamic ReadDatasetByExistingPeriods(JSONRPC_API jsonrpcRequest)
+        {
+            return new Build_BSO_ReadDatasetByExistingPeriods(jsonrpcRequest).Read().Response;
+        }
+
+        public static dynamic ReadDatasetByAllPeriods(JSONRPC_API jsonrpcRequest)
+        {
+            return new Build_BSO_ReadDatasetByAllPeriods(jsonrpcRequest).Read().Response;
+        }
+
+
+        public static dynamic ReadDatasetByNewPeriods(JSONRPC_API jsonrpcRequest)
+        {
+            return new Build_BSO_ReadDatasetByNewPeriods(jsonrpcRequest).Read().Response;
         }
     }
 }

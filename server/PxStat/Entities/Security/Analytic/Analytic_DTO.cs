@@ -47,6 +47,9 @@ namespace PxStat.Security
         /// Date and time of the request
         /// </summary>
         public DateTime NltDate { get; internal set; }
+        public string FrmType { get; set; }
+        public string FrmVersion { get; set; }
+
         #endregion
     }
     /// <summary>
@@ -94,6 +97,9 @@ namespace PxStat.Security
         /// Language ISO code
         /// </summary>
         public string LngIsoCode { get; set; }
+
+        public string FrmType { get; internal set; }
+        public string FrmVersion { get; internal set; }
         #endregion
 
         /// <summary>
@@ -124,6 +130,10 @@ namespace PxStat.Security
                 NltInternalNetworkMask = parameters.NltInternalNetworkMask;
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
+            if (parameters.FrmType != null)
+                FrmType = parameters.FrmType;
+            if (parameters.FrmVersion != null)
+                FrmVersion = parameters.FrmVersion;
         }
     }
 }

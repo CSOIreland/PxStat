@@ -40,6 +40,8 @@ namespace PxStat.Data
         {
             if (parameters.ClsID != null)
                 ClsID = parameters.ClsID;
+            else
+                parameters.ClsID = default(int);
         }
 
 

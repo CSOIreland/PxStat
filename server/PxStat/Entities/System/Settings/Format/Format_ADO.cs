@@ -23,6 +23,8 @@ namespace PxStat.System.Settings
                 paramList.Add(new ADO_inputParams() { name = "@FrmType", value = format.FrmType });
             if (!string.IsNullOrEmpty(format.FrmVersion))
                 paramList.Add(new ADO_inputParams() { name = "@FrmVersion", value = format.FrmVersion });
+            if (!string.IsNullOrEmpty(format.FrmDirection))
+                paramList.Add(new ADO_inputParams() { name = "@FrmDirection", value = format.FrmDirection });
 
             //Call the stored procedure
             output = ado.ExecuteReaderProcedure("System_Settings_Format_Read", paramList);

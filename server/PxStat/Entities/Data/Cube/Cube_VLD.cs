@@ -1,5 +1,6 @@
 ﻿
 using FluentValidation;
+using PxStat.Build;
 
 namespace PxStat.Data
 {
@@ -13,27 +14,29 @@ namespace PxStat.Data
         /// </summary>
         public Cube_VLD_Read()
         {
-            int x = 1;
+
             //Mandatory
             RuleFor(dto => dto.matrix)
                 .NotEmpty()
                 .WithMessage("Invalid matrix code")
                 .WithName("matrixValidation");
             //Optional
-            RuleFor(dto => dto.language.Length)
-                .Equal(2)
-                .When(dto => !string.IsNullOrEmpty(dto.language))
-                .WithMessage("Invalid language code")
-                .WithName("languageValidation");
-            //Optional
-            RuleFor(dto => dto.format)
-                .Must((dto, format)
-                    => format?.CompareTo(DatasetFormat.JsonStat) == 0
-                    || format?.CompareTo(DatasetFormat.Px) == 0
-                    || format?.CompareTo(DatasetFormat.Csv) == 0)
-                .When(dto => !string.IsNullOrEmpty(dto.format))
-                .WithMessage("Invalid format")
-                .WithName("formatValidation");
+            //RuleFor(dto => dto.language.Length)
+            //    .Equal(2)
+            //    .When(dto => !string.IsNullOrEmpty(dto.language))
+            //    .WithMessage("Invalid language code")
+            //    .WithName("languageValidation");
+            ////Optional
+            //RuleFor(dto => dto.Format.FrmType)
+            //    .Must((dto, format)
+            //        => format?.CompareTo(DatasetFormat.JsonStat) == 0
+            //        || format?.CompareTo(DatasetFormat.Px) == 0
+            //        || format?.CompareTo(DatasetFormat.Csv) == 0)
+            //    .WithMessage("Invalid format")
+            //    .WithName("formatValidation");
+            RuleFor(f => f.Format.FrmType).NotEmpty().WithMessage("FrmType is empty");
+            RuleFor(f => f.Format.FrmVersion).NotEmpty().WithMessage("FrmVersion is empty");
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists).WithMessage("Format does not exist");
         }
     }
 
@@ -44,7 +47,7 @@ namespace PxStat.Data
     {
         public Cube_VLD_ReadMetadata() : base()
         {
-
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatForReadMetadata);
         }
     }
 
@@ -55,6 +58,8 @@ namespace PxStat.Data
     {
         public Cube_VLD_ReadDataset() : base()
         {
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatForReadDataset).WithMessage("Invalid format parameters for ReadDataset");
+
         }
     }
 
@@ -95,14 +100,18 @@ namespace PxStat.Data
                 .WithName("languageValidation");
 
             //Optional
-            RuleFor(dto => dto.format)
+            RuleFor(dto => dto.Format.FrmType)
                 .Must((dto, format)
                     => format?.CompareTo(DatasetFormat.JsonStat) == 0
                     || format?.CompareTo(DatasetFormat.Px) == 0
                     || format?.CompareTo(DatasetFormat.Csv) == 0)
-                .When(dto => !string.IsNullOrEmpty(dto.format))
                 .WithMessage("Invalid format")
                 .WithName("formatValidation");
+            RuleFor(f => f.Format.FrmType).NotEmpty();
+            RuleFor(f => f.Format.FrmVersion).NotEmpty();
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
+
         }
     }
 
@@ -113,7 +122,7 @@ namespace PxStat.Data
     {
         public Cube_VLD_ReadPreMetadata() : base()
         {
-
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatForReadPreMetadata);
         }
     }
 
@@ -124,6 +133,7 @@ namespace PxStat.Data
     {
         public Cube_VLD_ReadPreDataset() : base()
         {
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatForReadPreDataset);
         }
     }
 }

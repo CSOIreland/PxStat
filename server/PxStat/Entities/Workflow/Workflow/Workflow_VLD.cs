@@ -12,6 +12,7 @@ namespace PxStat.Workflow
         {
             //Optional - RlsCode
             RuleFor(f => f.RlsCode).GreaterThan(0).When(f => f.RlsCode != default(int)).WithMessage("Invalid Release Code").WithName("InvalidRlsCode");
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
 }

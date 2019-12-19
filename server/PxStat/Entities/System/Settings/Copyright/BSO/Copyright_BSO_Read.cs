@@ -49,4 +49,3 @@ namespace PxStat.System.Settings
         }
     }
 }
-

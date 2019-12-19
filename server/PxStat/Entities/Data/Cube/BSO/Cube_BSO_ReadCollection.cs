@@ -1,11 +1,11 @@
-﻿using System;
-using API;
+﻿using API;
 using Newtonsoft.Json.Linq;
-using PxStat.Template;
-using System.Collections.Generic;
-using System.Linq;
 using PxStat.Resources;
+using PxStat.Template;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 
 namespace PxStat.Data
 {
@@ -100,13 +100,13 @@ namespace PxStat.Data
 
             theResponse.data = new JRaw(Serialize.ToJson(collection));
 
-            MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", theCubeDTO, theResponse.data, minDateItem, Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
+            MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", theCubeDTO, theResponse.data, minDateItem, Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
 
             return true;
         }
 
         /// <summary>
-        /// 
+        /// Returns the dataset in JSON-stat format
         /// </summary>
         /// <param name="collection"></param>
         /// <returns></returns>
@@ -128,20 +128,24 @@ namespace PxStat.Data
 
             foreach (var element in collection)
             {
+
                 var aItem = new Item()
                 {
                     Href = new Uri(string.Format("{0}/{1}/{2}", ConfigurationManager.AppSettings["APP_URL"], Utility.GetCustomConfig("APP_COOKIELINK_TABLE"), element.MtrCode)),
                     Class = ItemClass.Dataset,
                     Label = element.MtrTitle,
                     Updated = DataAdaptor.ConvertToString(element.RlsLiveDatatimeFrom),
+
                     Extension = new Dictionary<string, object>()
                 };
 
+                var Frequency = new { name = element.FrqValue, code = element.FrqCode };
 
-                aItem.Extension.Add("copyright", new { label = element.CprValue, href = element.CprUrl });
+                aItem.Extension.Add("copyright", new { name = element.CprValue, code = element.CprCode, href = element.CprUrl });
                 aItem.Extension.Add("emergency", element.EmergencyFlag);
                 aItem.Extension.Add("language", new { code = element.LngIsoCode, name = element.LngIsoName });
                 aItem.Extension.Add("matrix", element.MtrCode);
+                aItem.Extension.Add("frequency", Frequency);
                 theCollectionLink.Item.Add(aItem);
             }
 
@@ -151,4 +155,3 @@ namespace PxStat.Data
         }
     }
 }
-

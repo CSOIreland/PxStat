@@ -8,13 +8,13 @@ namespace PxStat.Security
     /// <summary>
     /// Read the current user
     /// </summary>
-    internal class Acccount_BSO_ReadCurrentAccess : BaseTemplate_Read<Account_DTO_Read, Account_VLD_ReadCurrent>
+    internal class Account_BSO_ReadCurrentAccess : BaseTemplate_Read<Account_DTO_Read, Account_VLD_ReadCurrent>
     {
         /// <summary>
         /// This method reads only the current logged in user without the Group data
         /// </summary>
         /// <param name="request"></param>
-        internal Acccount_BSO_ReadCurrentAccess(JSONRPC_API request) : base(request, new Account_VLD_ReadCurrent())
+        internal Account_BSO_ReadCurrentAccess(JSONRPC_API request) : base(request, new Account_VLD_ReadCurrent())
         {
         }
 

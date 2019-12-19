@@ -14,6 +14,8 @@ namespace PxStat.System.Settings
         public string CprCode { get; set; }
         #endregion
 
+        public string CprValue { get; set; }
+
         /// <summary>
         /// Blank constructor
         /// </summary>
@@ -27,13 +29,15 @@ namespace PxStat.System.Settings
         {
             if (parameters.CprCode != null)
                 this.CprCode = parameters.CprCode;
+            if (parameters.CprValue != null)
+                this.CprValue = parameters.CprValue;
         }
     }
 
     /// <summary>
     /// DTO for Copyright Create
     /// </summary>
-    internal class Copyright_DTO_Create
+    public class Copyright_DTO_Create
     {
         #region Properties
         /// <summary>

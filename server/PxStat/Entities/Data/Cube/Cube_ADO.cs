@@ -1,6 +1,6 @@
-﻿using System;
+﻿using API;
+using System;
 using System.Collections.Generic;
-using API;
 
 namespace PxStat.Data
 {
@@ -30,14 +30,14 @@ namespace PxStat.Data
         /// <returns></returns>
         internal Matrix ReadCubeData(Matrix theMatrix)
         {
-            List<KeyValuePair<string, string>> vrbList = new List<KeyValuePair<string, string>>();
+            List<KeyValuePair<string, string>> clsVrbList = new List<KeyValuePair<string, string>>();
             foreach (var classification in theMatrix.MainSpec.Classification)
             {
                 if (classification.ClassificationFilterWasApplied)
                 {
                     foreach (var variable in classification.Variable)
                     {
-                        vrbList.Add(new KeyValuePair<string, string>(classification.Code, variable.Code));
+                        clsVrbList.Add(new KeyValuePair<string, string>(classification.Code, variable.Code));
                     }
 
                 }
@@ -62,7 +62,7 @@ namespace PxStat.Data
                 }
             }
 
-            theMatrix.Cells = new Matrix_ADO(ado).ReadDataByRelease(theMatrix.ReleaseCode, theMatrix.TheLanguage, vrbList, prdList, sttList);
+            theMatrix.Cells = new Matrix_ADO(ado).ReadDataByRelease(theMatrix.ReleaseCode, theMatrix.TheLanguage, clsVrbList, prdList, sttList);
 
             return theMatrix;
         }

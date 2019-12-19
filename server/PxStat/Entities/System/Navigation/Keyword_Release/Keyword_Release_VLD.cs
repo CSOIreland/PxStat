@@ -35,6 +35,8 @@ namespace PxStat.System.Navigation
             RuleFor(f => f.RlsCode).GreaterThan(0).When(f => f.RlsCode != default(int)).WithMessage("Invalid Release Code").WithName("InvalidRlsCode");
             //Optional  - KrlCode
             RuleFor(f => f.KrlCode).GreaterThan(0).When(f => f.KrlCode != default(int)).WithMessage("Invalid Keyword Release Code").WithName("InvalidKrlCode");
+            //Optional LngIsoCode
+            RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode)).WithMessage("Invalid ISO code");
         }
     }
 

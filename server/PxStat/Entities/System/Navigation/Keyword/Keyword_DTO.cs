@@ -31,4 +31,19 @@ namespace PxStat.System.Navigation
             else LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
         }
     }
+
+    public class Keyword_DTO_ReadSynonym
+    {
+        [LowerCase]
+        public string KrlValue { get; set; }
+        public string LngIsoCode { get; set; }
+
+        public Keyword_DTO_ReadSynonym(dynamic parameters)
+        {
+            if (parameters.KrlValue != null)
+                this.KrlValue = parameters.KrlValue;
+            if (parameters.LngIsoCode != null)
+                this.LngIsoCode = parameters.LngIsoCode;
+        }
+    }
 }

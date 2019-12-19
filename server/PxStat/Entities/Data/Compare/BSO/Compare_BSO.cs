@@ -1,10 +1,9 @@
-﻿using System;
+﻿using API;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using API;
-using PxStat.Build;
 using static PxStat.Data.Matrix;
 
 namespace PxStat.Data
@@ -292,7 +291,7 @@ namespace PxStat.Data
             {
                 graph = CartesianProduct(graph.ToArray(), dimensions[i].details.ToArray());
             }
-            List<DataItem_DTO> itemList = new List<Build.DataItem_DTO>();
+            List<DataItem_DTO> itemList = new List<DataItem_DTO>();
             //int counter = 0;
             foreach (var item in graph)
             {
@@ -378,6 +377,8 @@ namespace PxStat.Data
             foreach (DataItem_DTO dataItem in dataItems)
             {
                 dataItem.dataValue = theMatrixData.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value) ? Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") : theMatrixData.Cells.ElementAt(counter).TdtValue;
+
+
                 counter++;
                 //if a new classification was added then we must mark everything as amended
                 if (theSpec.Classification.Count > 0)

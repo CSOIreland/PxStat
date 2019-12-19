@@ -1,7 +1,5 @@
 ﻿using API;
 using System;
-using System.Diagnostics;
-using System.Web.Hosting;
 
 namespace PxStat.Data
 {
@@ -90,6 +88,16 @@ namespace PxStat.Data
         public static dynamic ReadCodeList(JSONRPC_API jsonrpcRequest)
         {
             return new Matrix_BSO_ReadCodeList(jsonrpcRequest).Read().Response;
+        }
+
+        /// <summary>
+        /// Get a list of Matrix codes based on usage of products
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadByProduct(JSONRPC_API jsonrpcRequest)
+        {
+            return new Matrix_BSO_ReadByProduct(jsonrpcRequest).Read().Response;
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace PxStat.Workflow
+﻿using API;
+
+namespace PxStat.Workflow
 {
     /// <summary>
     /// DTO for Workflow
@@ -15,6 +17,8 @@
         /// </summary>
         public bool WrqCurrentFlagOnly { get; set; }
 
+        public string LngIsoCode { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -26,6 +30,10 @@
             if (parameters.WrqCurrentFlagOnly != null)
                 this.WrqCurrentFlagOnly = parameters.WrqCurrentFlagOnly;
             else this.WrqCurrentFlagOnly = true;
+            if (parameters.LngIsoCode != null)
+                this.LngIsoCode = parameters.LngIsoCode;
+            else
+                this.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
 
         }
 

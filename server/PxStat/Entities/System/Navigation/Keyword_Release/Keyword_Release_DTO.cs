@@ -1,4 +1,6 @@
-﻿namespace PxStat.System.Navigation
+﻿using API;
+
+namespace PxStat.System.Navigation
 {
     /// <summary>
     /// DTO for Keyword Release
@@ -49,7 +51,8 @@
                 this.KrlCode = parameters.KrlCode;
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
-
+            else
+                this.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
         }
 
         /// <summary>

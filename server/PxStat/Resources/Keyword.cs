@@ -1,35 +1,16 @@
-﻿using System.Collections.Generic;
-using API;
-using Newtonsoft.Json.Linq;
+﻿using PxStat.System.Navigation;
+using System.Collections.Generic;
 
 namespace PxStat
 {
     public class Keyword
     {
-        // Mandatory language merged with the default one (fall back)
-
-        internal dynamic mandatoryKeywordInstance { get; set; }
-        internal dynamic defaultKeywordInstance
-        {
-            get; private set;
-        }
-        internal dynamic mergedInstance { get; set; }
+        internal dynamic keywordInstance { get; set; }
 
 
         internal Keyword(string lngIsoCode)
         {
-            if ((Properties.Resources.ResourceManager.GetString("keyword_" + lngIsoCode)) == null) return;
-
-            mandatoryKeywordInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("keyword_" + lngIsoCode));
-
-            defaultKeywordInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("keyword_" + Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")));
-            // Initiate the merged label with the mandatory one
-            mergedInstance = mandatoryKeywordInstance;
-            mergedInstance.Merge(defaultKeywordInstance, new JsonMergeSettings
-            {
-                // union array values together to avoid duplicates
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
+            keywordInstance = Keyword_BSO_ResourceFactory.GetKeyword(lngIsoCode);
         }
 
 
@@ -40,7 +21,7 @@ namespace PxStat
             try
             {
                 string[] properties = keyword.Split('.');
-                dynamic output = mergedInstance;
+                dynamic output = keywordInstance;
                 foreach (string property in properties)
                 {
                     if (output[property] != null)
@@ -71,7 +52,7 @@ namespace PxStat
             try
             {
                 string[] properties = keyword.Split('.');
-                dynamic output = mergedInstance;
+                dynamic output = keywordInstance;
                 foreach (string property in properties)
                 {
                     if (output[property] != null)

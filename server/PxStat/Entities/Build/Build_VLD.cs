@@ -1,12 +1,13 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using API;
 using FluentValidation;
 using PxStat.Data;
 using PxStat.Entities.BuildData;
+using PxStat.Resources;
 using PxStat.System.Settings;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using static PxStat.Data.Matrix;
 
 namespace PxStat.Build
@@ -247,14 +248,22 @@ namespace PxStat.Build
         {
             RuleFor(f => f.MtrCode).NotEmpty().Length(1, 20);
             RuleFor(f => f.CprCode).NotEmpty().Length(1, 32);
+            RuleFor(f => f.FrqCode).NotEmpty().Length(1, 256);
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
             RuleFor(f => f.DimensionList).Must(CustomValidations.DimensionsValid).WithMessage("Invalid Dimensions");
             RuleFor(f => f.DimensionList).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.MainLanguageRepresented).WithMessage("Main language not contained in any dimension");
             RuleForEach(f => f.DimensionList).SetValidator(new Dimension_VLD());
-            RuleFor(f => f.FrmType).NotEmpty().Length(1, 32);
-            RuleFor(f => f.FrmVersion).NotEmpty().Length(1, 32);
-            RuleFor(f => f).Must(CustomValidations.FormatExists).WithMessage("Requested format/version not found in the system");
+            RuleFor(f => f.Format.FrmType).NotEmpty().Length(1, 32);
+            RuleFor(f => f.Format.FrmVersion).NotEmpty().Length(1, 32);
+            RuleFor(f => f.Format).Must(CustomValidations.FormatExists).WithMessage("Requested format/version/direction not found in the system");
+            RuleFor(f => f.Format).NotEmpty();
+            RuleFor(f => f.Format.FrmType).NotEmpty();
+            RuleFor(f => f.Format.FrmVersion).NotEmpty();
+
+
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatForBuildCreate);
+
         }
     }
 
@@ -292,7 +301,6 @@ namespace PxStat.Build
             RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
             RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval)).WithMessage("You must supply a FrqCode with a FrqValue");
             RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("You must supply a FrqValue with a FrqCode");
-
         }
 
 
@@ -330,8 +338,7 @@ namespace PxStat.Build
         internal Dimension_VLD()
         {
             RuleFor(f => f.CprValue).NotEmpty().Length(1, 256);
-            RuleFor(f => f.FrqCode).NotEmpty().Length(1, 256);
-            RuleFor(f => f.FrqValue).NotEmpty().Length(1, 256);
+
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
             RuleFor(f => f.MtrTitle).NotEmpty().Length(1, 256);
             RuleFor(f => f.Contents).NotEmpty().Length(1, 256);
@@ -345,6 +352,30 @@ namespace PxStat.Build
             RuleFor(f => f.Classifications.Count).GreaterThan(0).WithMessage("You must have at least one classification");
             RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD());
             RuleForEach(f => f.Statistics).SetValidator(new Statistic_VLD());
+            RuleFor(f => f.Frequency).SetValidator(new Frequency_VLD());
+        }
+    }
+
+    //FrequencyRecordDTO_Create
+
+    internal class Frequency_VLD : AbstractValidator<FrequencyRecordDTO_Create>
+    {
+        internal Frequency_VLD()
+        {
+            RuleFor(x => x.Value).NotEmpty().Length(1, 256);
+            RuleForEach(x => x.Period).SetValidator(new Period_VLD());
+        }
+    }
+
+    //
+
+    internal class Period_VLD : AbstractValidator<PeriodRecordDTO_Create>
+    {
+        internal Period_VLD()
+        {
+            RuleFor(x => x.Code).NotEmpty().Length(1, 256);
+            RuleFor(x => x.Value).NotEmpty().Length(1, 256);
+            RuleFor(x => x.Code).Must(CustomValidations.NotReservedWord);
         }
     }
 
@@ -363,6 +394,7 @@ namespace PxStat.Build
             RuleFor(f => f.GeoUrl).NotEmpty().Length(1, 2048).When(f => !string.IsNullOrEmpty(f.GeoUrl));
             RuleFor(f => f.Variable).Must(CustomValidations.VariableCodeNotRepeated).WithMessage("Non unique VrbCode");
             RuleForEach(f => f.Variable).SetValidator(new Variable_VLD());
+            RuleFor(f => f.Code).Must(CustomValidations.NotReservedWord);
         }
 
     }
@@ -393,6 +425,7 @@ namespace PxStat.Build
             RuleFor(f => f.Value).NotEmpty().Length(1, 256);
             RuleFor(f => f.Unit).NotEmpty().Length(1, 256); ;
             RuleFor(f => Convert.ToInt32(f.Decimal)).InclusiveBetween(0, 6);
+            RuleFor(f => f.Code).Must(CustomValidations.NotReservedWord);
         }
     }
 
@@ -417,9 +450,10 @@ namespace PxStat.Build
         {
             RuleFor(f => f.MtrCode).NotEmpty().Length(1, 20);
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
-            RuleFor(f => f.format).Must(x => (new List<string> { Resources.Constants.C_SYSTEM_PX_NAME, Resources.Constants.C_SYSTEM_JSON_STAT_NAME, Resources.Constants.C_SYSTEM_JSON_NAME }).Contains(x));
         }
     }
+
+
 
     /// <summary>
     /// Used for partial validation. This validates the top level items in the dimension
@@ -438,6 +472,15 @@ namespace PxStat.Build
             RuleFor(f => f.MtrTitle).NotEmpty().Length(1, 256);
             RuleFor(f => f.StatisticLabel).NotEmpty().Length(1, 256);
 
+        }
+    }
+
+    internal class Dimension_VLD_UltraLite : AbstractValidator<Dimension_DTO>
+    {
+        internal Dimension_VLD_UltraLite()
+        {
+            RuleFor(f => f.Frequency.Period).NotNull();
+            RuleForEach(f => f.Frequency.Period).SetValidator(new Period_VLD());
         }
     }
 
@@ -484,6 +527,67 @@ namespace PxStat.Build
             RuleFor(f => f).Must(CustomValidations.FormatExists).WithMessage("Requested format/version not found in the system");
             RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
 
+            RuleFor(f => f.Format.FrmType).NotEmpty();
+            RuleFor(f => f.Format.FrmVersion).NotEmpty();
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
+
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatForBuildUpdate);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class Build_VLD_BuildRead : AbstractValidator<BuildUpdate_DTO>
+    {
+        internal Build_VLD_BuildRead()
+        {
+
+            RuleFor(x => x).Must(CustomValidations.PeriodsNotRepeated).WithMessage("One or more period codes have been repeated");
+            RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
+            RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
+
+            RuleFor(f => f.Dimension).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
+            RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
+            RuleFor(f => f.Dimension).NotNull();
+
+        }
+    }
+
+    internal class Build_VLD_BuildReadNewPeriods : AbstractValidator<BuildUpdate_DTO>
+    {
+        internal Build_VLD_BuildReadNewPeriods()
+        {
+
+            RuleFor(x => x).Must(CustomValidations.PeriodsNotRepeated).WithMessage("One or more period codes have been repeated");
+            RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
+            RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
+
+            RuleFor(f => f.Dimension).Must(CustomValidations.LanguagesUnique).When(f => f.Dimension != null).WithMessage("Non unique language");
+            RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
+            RuleFor(f => f.Dimension).NotNull();
+            // RuleFor(f => f.Dimension.Count).Equal(1).When(f => f.Dimension != null);
+            RuleForEach(f => f.Dimension).SetValidator(new Dimension_VLD_UltraLite()).When(f => f.Dimension != null);
+        }
+    }
+
+
+    internal class Build_VLD_BuildExistingPeriods : AbstractValidator<BuildUpdate_DTO>
+    {
+        internal Build_VLD_BuildExistingPeriods()
+        {
+
+            RuleFor(x => x).Must(CustomValidations.PeriodsNotRepeated).WithMessage("One or more period codes have been repeated");
+            RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
+            RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
+
+            RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
+            RuleFor(f => f.Dimension).NotNull();
+            // RuleFor(f => f.Dimension.Count).Equal(1).When(f => f.Dimension != null);
         }
     }
 
@@ -492,7 +596,65 @@ namespace PxStat.Build
     /// </summary>
     internal static class CustomValidations
     {
-        //Build_DTO_ReadTemplate
+
+        public static object Enumerations { get; private set; }
+
+        internal static bool NotReservedWord(string strWord)
+        {
+
+            return (!Constants.C_SYSTEM_RESERVED_WORD().Contains(strWord.ToLower()));
+
+        }
+
+        internal static bool FormatForReadPreMetadata(Format_DTO_Read dto)
+        {
+            if (dto.FrmDirection != Format_DTO_Read.FormatDirection.DOWNLOAD.ToString()) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat)) return false;
+            return true;
+
+        }
+
+        internal static bool FormatForReadMetadata(Format_DTO_Read dto)
+        {
+            if (dto.FrmDirection != Format_DTO_Read.FormatDirection.DOWNLOAD.ToString()) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat)) return false;
+            return true;
+
+        }
+
+        internal static bool FormatForReadPreDataset(Format_DTO_Read dto)
+        {
+            if (dto.FrmDirection != Format_DTO_Read.FormatDirection.DOWNLOAD.ToString()) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.CSV)) return false;
+            return true;
+
+        }
+
+
+        internal static bool FormatForReadDataset(Format_DTO_Read dto)
+        {
+            if (dto.FrmDirection != Format_DTO_Read.FormatDirection.DOWNLOAD.ToString()) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.CSV)) return false;
+            return true;
+
+        }
+
+        internal static bool FormatForBuildUpdate(Format_DTO_Read dto)
+        {
+            if (dto.FrmDirection != Format_DTO_Read.FormatDirection.UPLOAD.ToString()) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX)) return false;
+            return true;
+
+        }
+
+        internal static bool FormatForBuildCreate(Format_DTO_Read dto)
+        {
+            if (dto.FrmDirection != Format_DTO_Read.FormatDirection.UPLOAD.ToString()) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX)) return false;
+            return true;
+
+        }
+
         internal static bool SignatureMatch(Build_DTO_ReadTemplate dto)
         {
 
@@ -506,7 +668,7 @@ namespace PxStat.Build
             return (signature == dto.Signature);
         }
 
-        internal static bool SignatureMatch(BuildUpdate_DTO dto)
+        internal static bool SignatureMatch(dynamic dto)
         {
             var v = dto.GetSignatureDTO();
             var signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(dto.GetSignatureDTO()));
@@ -526,7 +688,7 @@ namespace PxStat.Build
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal static bool PeriodsNotRepeated(BuildUpdate_DTO dto)
+        internal static bool PeriodsNotRepeated(dynamic dto)
         {
             foreach (var per in dto.Periods)
             {
@@ -672,7 +834,7 @@ namespace PxStat.Build
             {
                 foreach (var c in cloneList)
                 {
-                    if (!d.IsEquivalent(c)) return false;
+                    if (!d.IsEquivalentUnordered(c)) return false;
                 }
             }
 
@@ -714,7 +876,7 @@ namespace PxStat.Build
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal static bool FormatExists(Build_DTO dto)
+        internal static bool FormatExists(Format_DTO_Read dto)
         {
             bool exists = false;
             ADO Ado = new ADO("defaultconnection");
@@ -724,6 +886,7 @@ namespace PxStat.Build
                 Format_DTO_Read dtoFormat = new Format_DTO_Read();
                 dtoFormat.FrmType = dto.FrmType;
                 dtoFormat.FrmVersion = dto.FrmVersion;
+                dtoFormat.FrmDirection = dto.FrmDirection;
                 var result = adoFormat.Read(Ado, dtoFormat);
                 exists = result.hasData;
             }
@@ -740,7 +903,7 @@ namespace PxStat.Build
 
         }
 
-        internal static bool FormatExists(BuildUpdate_DTO dto)
+        internal static bool FormatExists(dynamic dto)
         {
             bool exists = false;
             ADO Ado = new ADO("defaultconnection");
@@ -748,8 +911,8 @@ namespace PxStat.Build
             {
                 Format_ADO adoFormat = new Format_ADO();
                 Format_DTO_Read dtoFormat = new Format_DTO_Read();
-                dtoFormat.FrmType = dto.FrmType;
-                dtoFormat.FrmVersion = dto.FrmVersion;
+                dtoFormat.FrmType = dto.Format.FrmType;
+                dtoFormat.FrmVersion = dto.Format.FrmVersion;
                 var result = adoFormat.Read(Ado, dtoFormat);
                 exists = result.hasData;
             }
@@ -768,13 +931,16 @@ namespace PxStat.Build
 
         //Build_DTO_ReadTemplate
 
-        internal static bool FrequencyCodeExists(Build_DTO_ReadTemplate dto)
+
+
+        internal static bool FrequencyCodeExists(dynamic dto)
         {
             Frequency_BSO bso = new Frequency_BSO();
             Frequency_DTO dtoFreq = bso.Read(dto.FrqCodeTimeval);
             return (dtoFreq.FrqCode != null);
 
         }
+        /*
         internal static bool FrequencyCodeExists(BuildUpdate_DTO dto)
         {
             Frequency_BSO bso = new Frequency_BSO();
@@ -799,7 +965,7 @@ namespace PxStat.Build
 
         }
 
-
+    */
 
     }
 }

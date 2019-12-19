@@ -37,7 +37,7 @@ namespace PxStat.Security
         /// <returns></returns>
         public static dynamic ReadCurrentAccess(JSONRPC_API requestApi)
         {
-            return new Acccount_BSO_ReadCurrentAccess(requestApi).Read().Response;
+            return new Account_BSO_ReadCurrentAccess(requestApi).Read().Response;
         }
 
         /// <summary>

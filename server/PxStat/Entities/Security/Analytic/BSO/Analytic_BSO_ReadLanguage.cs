@@ -60,7 +60,7 @@ namespace PxStat.Security
             {
                 if (counter < limit)
                 {
-                    itemDict.Add(item.LngIsoCode, item.lngCount);
+                    itemDict.Add(item.LngIsoName, item.lngCount);
                 }
                 else otherSum = otherSum + item.lngCount;
                 counter++;

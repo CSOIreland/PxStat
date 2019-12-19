@@ -37,7 +37,7 @@ namespace PxStat.Workflow
 
 
 
-            ADO_readerOutput result = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode);
+            ADO_readerOutput result = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode, DTO.LngIsoCode);
 
             if (!result.hasData)
             {

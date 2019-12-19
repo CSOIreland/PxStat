@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using API;
+﻿using API;
 using FluentValidation.Results;
 using PxParser.Resources.Parser;
 using PxStat.Data.Px;
 using PxStat.Template;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Dynamic;
 
 namespace PxStat.Data
 {
@@ -127,7 +127,7 @@ namespace PxStat.Data
             }
 
             sw.Stop();
-            Log.Instance.Debug(string.Format("Matrix validated in {0} seconds", Math.Round((double)sw.ElapsedMilliseconds)));
+            Log.Instance.Debug(string.Format("Matrix validated in {0} ms", Math.Round((double)sw.ElapsedMilliseconds)));
 
             Response.data = API.JSONRPC.success;
             return true;
@@ -198,11 +198,7 @@ namespace PxStat.Data
         /// <returns></returns>
         internal bool PxSettingsAreValid(Matrix theMatrix)
         {
-
-            if (DTO.Source == Utility.GetCustomConfig("APP_DEFAULT_SOURCE"))
-                SettingsValidatorResult = new PxSettingsValidatorBuild(Ado).Validate(theMatrix);
-            else
-                SettingsValidatorResult = new PxSettingsValidator(Ado).Validate(theMatrix);
+            SettingsValidatorResult = new PxSettingsValidator(Ado, true).Validate(theMatrix);
             return SettingsValidatorResult.IsValid;
         }
 

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using API;
+using PxStat.Template;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using API;
-using PxStat.Template;
 
 namespace PxStat.System.Navigation
 {
@@ -48,7 +48,7 @@ namespace PxStat.System.Navigation
 
             dynamic data = adoNav.Search(DTO);
 
-            Response.data = formatOutput(data, DTO.LngIsoCode);
+            Response.data = FormatOutput(data, DTO.LngIsoCode);
 
             return true;
         }
@@ -58,7 +58,7 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="rawList"></param>
         /// <returns></returns>
-        private List<dynamic> formatOutput(List<dynamic> rawList, string lngIsoCode)
+        private List<dynamic> FormatOutput(List<dynamic> rawList, string lngIsoCode)
         {
             List<dynamic> releases = GetReleases(rawList).ToList();
             List<dynamic> classifications = GetClassifications(rawList).ToList();

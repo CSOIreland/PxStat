@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using API;
+﻿using API;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace PxStat.Data
 {
@@ -200,6 +200,7 @@ namespace PxStat.Data
     /// </summary>
     public partial struct ValueElement
     {
+
         public double? Double;
         public string String;
 

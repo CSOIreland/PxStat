@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
+using System.Collections.Generic;
 
 namespace PxStat.Workflow
 {
@@ -39,9 +39,13 @@ namespace PxStat.Workflow
         /// <param name="ado"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadWorkInProgress(ADO ado, string userName)
+        internal ADO_readerOutput ReadWorkInProgress(ADO ado, string userName, string lngIsoCode)
         {
-            var inputParams = new List<ADO_inputParams>() { new ADO_inputParams { name = "@CcnUsername", value = userName } };
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@CcnUsername", value = userName } ,
+                new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode  },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") }
+            };
 
             var reader = ado.ExecuteReaderProcedure("Workflow_ReadWorkInProgress", inputParams);
 
@@ -94,13 +98,15 @@ namespace PxStat.Workflow
         /// <param name="ccnUsername"></param>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadAwaitingResponse(ADO ado, string ccnUsername, int rlsCode)
+        internal ADO_readerOutput ReadAwaitingResponse(ADO ado, string ccnUsername, int rlsCode, string lngIsoCode)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
             var inputParams = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername}
+                new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
+                new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")},
             };
 
             if (rlsCode != default(int))
@@ -117,18 +123,20 @@ namespace PxStat.Workflow
             return output;
         }
 
-        internal ADO_readerOutput ReadLive(ADO ado, string ccnUsername, int rlsCode)
+        internal ADO_readerOutput ReadLive(ADO ado, string ccnUsername, Workflow_DTO dto)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
             var inputParams = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername}
+                new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
+                new ADO_inputParams() {name ="@LngIsoCode",value= dto.LngIsoCode },
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
             };
 
-            if (rlsCode != default(int))
+            if (dto.RlsCode != default(int))
             {
-                inputParams.Add(new ADO_inputParams() { name = "@RlsCode", value = rlsCode });
+                inputParams.Add(new ADO_inputParams() { name = "@RlsCode", value = dto.RlsCode });
             }
 
             //Call the stored procedure
@@ -148,13 +156,16 @@ namespace PxStat.Workflow
         /// <param name="ccnUsername"></param>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadAwaitingSignoff(ADO ado, string ccnUsername, int rlsCode)
+        internal ADO_readerOutput ReadAwaitingSignoff(ADO ado, string ccnUsername, int rlsCode, string lngIsoCode)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
             var inputParams = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername}
+                new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
+                new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+
             };
 
             if (rlsCode != default(int))

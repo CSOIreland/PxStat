@@ -17,15 +17,6 @@ namespace PxStat.Data
         }
 
         /// <summary>
-        /// Test authentication
-        /// </summary>
-        /// <returns></returns>
-        protected override bool HasUserToBeAuthenticated()
-        {
-            return true;
-        }
-
-        /// <summary>
         /// Test privilege
         /// </summary>
         /// <returns></returns>
@@ -63,4 +54,3 @@ namespace PxStat.Data
 
     }
 }
-

@@ -44,6 +44,11 @@ namespace PxStat.Security
                 inputParamList.Add(new ADO_inputParams() { name = "@NltBrowser", value = dto.NltBrowser });
             if (dto.NltReferer != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@NltReferer", value = dto.NltReferer });
+            if (dto.FrmType != null && dto.FrmVersion != null)
+            {
+                inputParamList.Add(new ADO_inputParams() { name = "@FrmType", value = dto.FrmType });
+                inputParamList.Add(new ADO_inputParams() { name = "@FrmVersion", value = dto.FrmVersion });
+            }
 
             var retParam = new ADO_returnParam() { name = "return", value = 0 };
 
@@ -115,6 +120,34 @@ namespace PxStat.Security
             return Ado.ExecuteReaderProcedure("Security_Analytic_ReadOs", inputParamList);
 
         }
+
+        //Security_Analytic_ReadFormat
+        internal ADO_readerOutput ReadFormat(Analytic_DTO_Read dto)
+        {
+            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+            };
+
+            if (dto.NltInternalNetworkMask != null)
+            {
+                if (dto.NltInternalNetworkMask.Length > 0)
+                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
+            }
+
+            if (dto.PrcCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
+
+            if (dto.SbjCode > 0)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+
+
+            //Call the stored procedure
+            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadFormat", inputParamList);
+
+        }
+
         /// <summary>
         /// Read an analysis by Browser
         /// </summary>

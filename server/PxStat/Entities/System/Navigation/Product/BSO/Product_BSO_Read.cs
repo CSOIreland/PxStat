@@ -22,7 +22,7 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser();
+            return IsPowerUser() || IsModerator();
         }
 
         /// <summary>
@@ -42,4 +42,3 @@ namespace PxStat.System.Navigation
         }
     }
 }
-

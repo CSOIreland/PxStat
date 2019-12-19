@@ -1,5 +1,9 @@
 ﻿using API;
 using FluentValidation;
+using FluentValidation.Internal;
+using FluentValidation.Validators;
+using System;
+using System.Collections.Generic;
 
 namespace PxStat.Security
 {
@@ -91,6 +95,94 @@ namespace PxStat.Security
             string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
             //Mandatory - GrpCode
             RuleFor(f => f.GrpCode).Matches(alphaNumericRegex).NotEmpty().Length(1, 32).WithMessage("Invalid Group Code").WithName("GroupCodeValidation");
+        }
+    }
+
+
+    internal static class GroupValidatorExtensions
+    {
+        internal static IRuleBuilderOptions<T, TProperty> GroupExistsValidator<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder, dynamic dto)
+        {
+            return ruleBuilder.SetValidator(new GroupValidator<T>(dto));
+
+        }
+    }
+
+    internal class GroupValidator<T> : PropertyValidator
+    {
+        dynamic dto;
+        /// <summary>
+        /// DataIsGoodValidator
+        /// </summary>
+        internal GroupValidator(dynamic Dto) : base(Label.Get("px.integrity.data"))
+        {
+            dto = Dto;
+        }
+
+        /// <summary>
+        /// IsValid
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected override bool IsValid(PropertyValidatorContext context)
+        {
+            var list = context.PropertyValue as IList<T>;
+            if (list != null && list.Count > 0)
+            {
+                foreach (var e in list)
+                {
+                    return CheckGroupExists(dto.GrpCode, context.MessageFormatter);
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// CheckDataIsGood
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <param name="messageFormatter"></param>
+        /// <returns></returns>
+        private bool CheckGroupExists(dynamic dto, MessageFormatter messageFormatter)
+        {
+            ADO ado = new ADO("defaultConnection");
+            try
+            {
+                if (dto.GrpCode == null) return false;
+                Group_ADO gAdo = new Group_ADO();
+                return gAdo.Exists(ado, dto.GrpCode);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                ado.Dispose();
+            }
+        }
+    }
+
+    internal static class CustomValidations
+    {
+
+        internal static bool CheckGroupExists(dynamic dto)
+        {
+            ADO ado = new ADO("defaultConnection");
+            try
+            {
+                if (dto.GrpCode == null) return false;
+                Group_ADO gAdo = new Group_ADO();
+                return gAdo.Exists(ado, dto.GrpCode);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                ado.Dispose();
+            }
         }
     }
 }

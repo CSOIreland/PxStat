@@ -36,7 +36,7 @@ namespace PxStat.Data
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
         [CacheRead(CAS_REPOSITORY =
-            Resources.Constants.C_CAS_DATA_READ_PRE_DATASET, DOMAIN = "release")]
+            Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET, DOMAIN = "release")]
         public static dynamic ReadPreDataset(JSONRPC_API jsonrpcRequest)
         {
             return new Cube_BSO_ReadPreDataset(jsonrpcRequest).Read().Response;
@@ -47,7 +47,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
-        [CacheRead(CAS_REPOSITORY = Resources.Constants.C_CAS_DATA_READ_PRE_METADATA, DOMAIN = "release")]
+        [CacheRead(CAS_REPOSITORY = Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA, DOMAIN = "release")]
         public static dynamic ReadPreMetadata(JSONRPC_API jsonrpcRequest)
         {
             return new Cube_BSO_ReadPreMetadata(jsonrpcRequest).Read().Response;

@@ -41,7 +41,11 @@ namespace PxStat.Resources
         internal const string C_SYSTEM_PX_NAME = "PX";
         internal const string C_SYSTEM_JSON_STAT_NAME = "JSON-stat";
         internal const string C_SYSTEM_JSON_NAME = "json";
-        internal const string C_SYSTEM_CSV_NAME = "csv";
+        internal const string C_SYSTEM_CSV_NAME = "CSV";
+
+
+        private const string C_SYSTEM_CODE_RESERVED_WORD_VALUE = "Value";
+        private const string C_SYSTEM_CODE_RESERVED_WORD_UNIT = "Unit";
 
 
         /// <summary>
@@ -51,6 +55,11 @@ namespace PxStat.Resources
         internal static List<string> C_SECURITY_TRACE_TYPE()
         {
             return new List<string> { C_SECURITY_TRACE_AUTHENTICATED, C_SECURITY_TRACE_REGISTERED, C_SECURITY_TRACE_ANONYMOUS };
+        }
+
+        internal static List<string> C_SYSTEM_RESERVED_WORD()
+        {
+            return new List<string> { C_SYSTEM_CODE_RESERVED_WORD_VALUE, C_SYSTEM_CODE_RESERVED_WORD_UNIT, C_SYSTEM_CODE_RESERVED_WORD_VALUE.ToLower(), C_SYSTEM_CODE_RESERVED_WORD_UNIT.ToLower() };
         }
 
         /// <summary>
@@ -134,14 +143,17 @@ namespace PxStat.Resources
         // Cas Repositories(Compare And Swap)
         internal const string C_CAS_NAVIGATION_READ = "PxStat.System.Navigation.Navigation_API.Read";
         internal const string C_CAS_NAVIGATION_SEARCH = "PxStat.System.Navigation.Navigation_API.Search";
-        internal const string C_CAS_DATA_CUBE_READ_DATASET = "PxStat.Data.Cube_API.ReadDataset";
+
         internal const string C_CAS_DATA_COMPARE_READ_AMENDMENT = "PxStat.Data.Compare_API.ReadAmendment";
         internal const string C_CAS_DATA_COMPARE_READ_DELETION = "PxStat.Data.Compare_API.ReadDeletion";
         internal const string C_CAS_DATA_COMPARE_READ_ADDITION = "PxStat.Data.Compare_API.ReadAddition";
         internal const string C_CAS_DATA_COMPARE_READ_PREVIOUS_RELEASE = "PxStat.Data.Compare_API.ReadPreviousRelease";
+
+        internal const string C_CAS_DATA_CUBE_READ_PRE_DATASET = "PxStat.Data.Cube_API.ReadPreDataset";
+        internal const string C_CAS_DATA_CUBE_READ_PRE_METADATA = "PxStat.Data.Cube_API.ReadPreMetadata";
+
+        internal const string C_CAS_DATA_CUBE_READ_DATASET = "PxStat.Data.Cube_API.ReadDataset";
         internal const string C_CAS_DATA_CUBE_READ_METADATA = "PxStat.Data.Cube_API.ReadMetadata";
-        internal const string C_CAS_DATA_READ_PRE_DATASET = "PxStat.Data.Cube_API.ReadPreDataset";
-        internal const string C_CAS_DATA_READ_PRE_METADATA = "PxStat.Data.Cube_API.ReadPreMetadata";
         internal const string C_CAS_DATA_CUBE_READ_COLLECTION = "PxStat.Data.Cube_API.ReadCollection";
         #endregion
     }

@@ -1,6 +1,6 @@
 ﻿using API;
-using Newtonsoft.Json.Linq;
 using PxStat.Template;
+using static PxStat.System.Settings.Format_DTO_Read;
 
 namespace PxStat.Data
 {
@@ -33,6 +33,11 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+            if (DTO.Format.FrmDirection != FormatDirection.DOWNLOAD.ToString())
+            {
+                return false;
+            }
+
             var item = new Matrix_ADO(Ado).Read(DTO.release, DTO.language, SamAccountName);
             var result = Release_ADO.GetReleaseDTO(item);
             if (result == null)
@@ -46,4 +51,3 @@ namespace PxStat.Data
         }
     }
 }
-

@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=3.0.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.3.0.4\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.3.0.6\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
@@ -204,6 +204,10 @@
     <None Include="Properties\PublishProfiles\Live.pubxml" />
     <None Include="Properties\PublishProfiles\TEST.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
+    <None Include="Resources\Internationalisation\keyword\dictionary_en.json" />
+    <None Include="Resources\Internationalisation\keyword\dictionary_ga.json" />
+    <None Include="Resources\Internationalisation\keyword\synonym_en.json" />
+    <None Include="Resources\Internationalisation\keyword\synonym_ga.json" />
     <None Include="Web.Live.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -225,8 +229,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Build\BSO\Build_BSO.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_BuildRead.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Create.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Read.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_ReadDatasetByAllPeriods.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_ReadDatasetByExistingPeriods.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_ReadDatasetByNewPeriods.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_ReadTemplate.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Update.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Validate.cs" />
@@ -264,6 +272,7 @@
     <Compile Include="Entities\Data\Matrix\BSO\MatrixValidator.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Create.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByProduct.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadHistory.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Read.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Validate.cs" />
@@ -283,7 +292,6 @@
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_Delete.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_DeleteWip.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_Read.cs" />
-    <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadListByProduct.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadList.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateAnalyticalFlag.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateDependencyFlag.cs" />
@@ -300,6 +308,7 @@
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_Create.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_Read.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadBrowser.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadFormat.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadLanguage.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadTimeline.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadOs.cs" />
@@ -323,6 +332,9 @@
     <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_ReadLive.cs" />
     <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_Update.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_Extract.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ReadSynonym.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ResourceFactory.cs" />
+    <Compile Include="Entities\System\Navigation\Keyword\Keyword_API.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadLive.cs" />
     <Compile Include="Resources\Internationalisation\keyword\keyword_en.cs" />
     <Compile Include="Resources\Internationalisation\keyword\keyword_ga.cs" />
@@ -559,6 +571,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

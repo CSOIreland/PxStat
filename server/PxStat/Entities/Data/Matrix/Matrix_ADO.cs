@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,6 +62,23 @@ namespace PxStat.Data
             ado.ExecuteNonQueryProcedure("Data_Matrix_Create", inputParams, ref returnParam);
 
             return (int)returnParam.value;
+        }
+
+        /// <summary>
+        ///  Get a list of Matrix codes based on usage of products
+        /// </summary>
+        /// <param name="prcCode"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput ReadByProduct(string prcCode, string lngIsoCode)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@PrcCode", value = prcCode },
+                new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") }
+
+            };
+
+            return ado.ExecuteReaderProcedure("Data_Matrix_ReadByProduct", inputParams);
         }
 
         /// <summary>
@@ -180,9 +198,13 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="jsonrpcRequest">The request param</param>
         /// <returns>TODO</returns>
-        internal IList<dynamic> ReadCodeList(string userName)
+        internal IList<dynamic> ReadCodeList(string userName, string lngIsoCode)
         {
-            var inputParams = new List<ADO_inputParams>() { new ADO_inputParams { name = "@CcnUsername", value = userName } };
+            var inputParams = new List<ADO_inputParams>()
+            { new ADO_inputParams { name = "@CcnUsername", value = userName },
+              new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
+              new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") }
+            };
 
             var reader = ado.ExecuteReaderProcedure("Data_Matrix_ReadCodeList", inputParams);
 
@@ -324,55 +346,9 @@ namespace PxStat.Data
             return (int)returnParam.value;
         }
 
-
-
-        /// <summary>
-        /// Bulk loads the TM_DATA_CELL data
-        /// </summary>
-        /// <param name="dataTable"></param>
-        /// <param name="dataCellTable"></param>
-        //internal  Task CreateDataCellRecord(DataTable dataCellTable)
-        internal void CreateDataCellRecord(DataTable dataCellTable)
-        {
-            var mappingCells = new List<SqlBulkCopyColumnMapping>()
-                {
-                    new SqlBulkCopyColumnMapping("DTC_TDT_IX", "DTC_TDT_IX"),
-                    new SqlBulkCopyColumnMapping("DTC_MTR_ID", "DTC_MTR_ID"),
-                    new SqlBulkCopyColumnMapping("DTC_VRB_ID", "DTC_VRB_ID")
-                };
-
-            //await Task.Run(() => ado.ExecuteBulkCopy("TM_DATA_CELL", mappingCells, dataCellTable, true));
-
-            ado.ExecuteBulkCopy("TM_DATA_CELL", mappingCells, dataCellTable, true);
-
-
-        }
-
-        /// <summary>
-        /// Bulk uploads the TD_DATA data
-        /// </summary>
-        /// <param name="dataTable"></param>
-        //internal  Task CreateTdDataRecord(DataTable dataTable)
-        internal void CreateTdDataRecord(DataTable dataTable)
-        {
-
-            var mappings = new List<SqlBulkCopyColumnMapping>()
-                {
-                    new SqlBulkCopyColumnMapping("TDT_VALUE", "TDT_VALUE"),
-                    new SqlBulkCopyColumnMapping("TDT_STT_ID", "TDT_STT_ID"),
-                    new SqlBulkCopyColumnMapping("TDT_PRD_ID", "TDT_PRD_ID"),
-                    new SqlBulkCopyColumnMapping("TDT_IX", "TDT_IX"), // only exists with [TM_DATA_CELL]
-                    new SqlBulkCopyColumnMapping("TDT_MTR_ID", "TDT_MTR_ID")
-                };
-
-            //await Task.Run(() => ado.ExecuteBulkCopy("TD_DATA", mappings, dataTable, true));
-            ado.ExecuteBulkCopy("TD_DATA", mappings, dataTable, true);
-
-
-        }
-
         internal Task CreateTdtDataAndCellRecords(DataTable dataTable, DataTable dataCellTable)
         {
+
             var mappings = new List<SqlBulkCopyColumnMapping>()
                 {
                     new SqlBulkCopyColumnMapping("TDT_VALUE", "TDT_VALUE"),
@@ -400,6 +376,19 @@ namespace PxStat.Data
             return Task.CompletedTask;
         }
 
+        internal void MarkMatrixAsContainingData(int mtrId, bool containsData)
+        {
+            var inputParams = new List<ADO_inputParams>()
+                {
+                    new ADO_inputParams() {name ="@MtrDataFlag",value= containsData},
+                    new ADO_inputParams() {name ="@MtrId",value= mtrId},
+                };
+
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+
+            ado.ExecuteNonQueryProcedure("Data_Matrix_Update_Data_Flag", inputParams, ref returnParam);
+
+        }
 
 
         /// <summary>
@@ -415,7 +404,7 @@ namespace PxStat.Data
             };
 
 
-            var reader = ado.ExecuteReaderProcedure("Data_Matrix_ReadMatrixPeriods", inputParams);
+            var reader = ado.ExecuteReaderProcedure("Data_Matrix_ReadPeriodByMatrix", inputParams);
 
             return reader.data;
         }
@@ -590,12 +579,14 @@ namespace PxStat.Data
         /// <param name="dateFrom"></param>
         /// <param name="dateTo"></param>
         /// <returns></returns>
-        internal dynamic ReadHistory(string ccnUsername, DateTime dateFrom, DateTime dateTo)
+        internal dynamic ReadHistory(string ccnUsername, Matrix_DTO_ReadHistory dto)
         {
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@CcnUsername", value = ccnUsername },
-                new ADO_inputParams { name = "@DateFrom", value = dateFrom  },
-                new ADO_inputParams { name = "@DateTo", value = dateTo  }
+                new ADO_inputParams { name = "@DateFrom", value = dto.DateFrom   },
+                new ADO_inputParams { name = "@DateTo", value = dto.DateTo },
+                new ADO_inputParams { name = "@LngIsoCode", value = dto.LngIsoCode   },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")  }
             };
 
             var output = ado.ExecuteReaderProcedure("Data_Matrix_ReadHistory", inputParams);
@@ -686,18 +677,23 @@ namespace PxStat.Data
         /// <param name="prdCodes"></param>
         /// <param name="sttCodes"></param>
         /// <returns></returns>
-        internal IList<dynamic> ReadDataByRelease(int releaseCode, string languageCode, IList<KeyValuePair<string, string>> vrbCodes, IList<string> prdCodes, IList<string> sttCodes)
+        internal IList<dynamic> ReadDataByRelease(int releaseCode, string languageCode, IList<KeyValuePair<string, string>> clsVrbCodes, IList<string> prdCodes, IList<string> sttCodes)
         {
             var inputParams = new List<ADO_inputParams>() {
-                new ADO_inputParams { name = "@RlsCode", value = releaseCode },
-                new ADO_inputParams { name = "@LngIsoCode", value = languageCode }
+                new ADO_inputParams { name = "@RlsCode", value = releaseCode }
             };
 
-            inputParams.Add(GetDataTableParam(vrbCodes, new KeyValuePair<string, string>("Key", "Value"), "@VrbCodeList", "KeyValueVarchar"));
             inputParams.Add(GetDataTableParam(sttCodes, "Value", "@SttCodeList", "ValueVarchar"));
             inputParams.Add(GetDataTableParam(prdCodes, "Value", "@PrdCodeList", "ValueVarchar"));
+            inputParams.Add(GetDataTableParam(clsVrbCodes, new KeyValuePair<string, string>("Key", "Value"), "@ClsVrbCodeList", "KeyValueVarchar"));
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             var reader = ado.ExecuteReaderProcedure("Data_Matrix_ReadDataByRelease", inputParams);
+
+            sw.Stop();
+            Log.Instance.Info(string.Format("Data read from DB in {0} ms", Math.Round((double)sw.ElapsedMilliseconds)));
 
             if (reader.hasData)
             {
@@ -708,7 +704,9 @@ namespace PxStat.Data
                         v.TdtValue = (DBNull)v.TdtValue;
                     }
                 }
-                return reader.data;
+
+                var returnVal = reader.data.OrderBy(x => x.SttId).ThenBy(x => x.PrdId).ThenBy(x => x.TdtId).ToList();
+                return returnVal;
             }
 
             return new List<dynamic>();

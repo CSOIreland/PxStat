@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using API;
-using System.Dynamic;
+﻿using API;
 using PxStat.Resources;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
 
 namespace PxStat.Data
 {
@@ -135,23 +135,7 @@ namespace PxStat.Data
             return ReadInt(returnParam.value);
         }
 
-        /// <summary>
-        /// Reads a list of Releases for a product code
-        /// </summary>
-        /// <param name="productCode"></param>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        internal IList<dynamic> ReadListByProduct(string productCode, string username)
-        {
-            var inputParams = new List<ADO_inputParams>() {
-                new ADO_inputParams { name = "@CcnUsername", value = username },
-                new ADO_inputParams { name = "@PrcCode", value = productCode }
-            };
 
-            var reader = ado.ExecuteReaderProcedure("Data_Release_ReadListByProduct", inputParams);
-
-            return reader.data;
-        }
 
         /// <summary>
         /// Deletes the Release search keywords
@@ -386,14 +370,17 @@ namespace PxStat.Data
         /// <summary>
         /// Read a list of releases
         /// </summary>
-        /// <param name="dTO"></param>
+        /// <param name="dto"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal IList<dynamic> ReadList(Release_DTO_Read dTO, string userName)
+        internal IList<dynamic> ReadList(Release_DTO_Read dto, string userName)
         {
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@CcnUsername", value = userName },
-                new ADO_inputParams { name = "@MtrCode", value = dTO.MtrCode }
+                new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode },
+                new ADO_inputParams { name = "@LngIsoCode", value = dto.LngIsoCode },
+                new ADO_inputParams{name="@LngIsoCodeDefault",value=Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+
             };
 
             var reader = ado.ExecuteReaderProcedure("Data_Release_ReadList", inputParams);

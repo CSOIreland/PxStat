@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
+using System.Collections.Generic;
 namespace PxStat.System.Settings
 {
     /// <summary>
@@ -20,6 +20,10 @@ namespace PxStat.System.Settings
             List<ADO_inputParams> paramList = new List<ADO_inputParams>();
             if (!string.IsNullOrEmpty(copyright.CprCode))
                 paramList.Add(new ADO_inputParams() { name = "@source", value = copyright.CprCode });
+
+            if (!string.IsNullOrEmpty(copyright.CprValue))
+                paramList.Add(new ADO_inputParams() { name = "@CprValue", value = copyright.CprValue });
+
 
             //Call the stored procedure
             output = ado.ExecuteReaderProcedure("System_Settings_Copyright_Read", paramList);

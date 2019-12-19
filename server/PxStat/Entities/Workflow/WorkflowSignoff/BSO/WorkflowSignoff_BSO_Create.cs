@@ -1,11 +1,11 @@
 ﻿using API;
-using PxStat.Template;
 using PxStat.Data;
-using System.Collections.Generic;
-using System;
 using PxStat.Resources;
-using PxStat.System.Notification;
 using PxStat.Security;
+using PxStat.System.Notification;
+using PxStat.Template;
+using System;
+using System.Collections.Generic;
 
 namespace PxStat.Workflow
 {
@@ -83,7 +83,7 @@ namespace PxStat.Workflow
 
             //Is this awaiting signoff?
             var adoWorkflow = new Workflow_ADO();
-            ADO_readerOutput resultStatus = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode);
+            ADO_readerOutput resultStatus = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode, Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"));
 
             if (!resultStatus.hasData)
             {

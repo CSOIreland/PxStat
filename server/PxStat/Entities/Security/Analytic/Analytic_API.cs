@@ -67,5 +67,10 @@ namespace PxStat.Security
         {
             return new Analytic_BSO_ReadLanguage(requestApi).Read().Response;
         }
+
+        public static dynamic ReadFormat(JSONRPC_API requestApi)
+        {
+            return new Analytic_BSO_ReadFormat(requestApi).Read().Response;
+        }
     }
 }

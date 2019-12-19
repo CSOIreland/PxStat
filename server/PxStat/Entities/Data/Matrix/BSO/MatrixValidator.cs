@@ -6,7 +6,7 @@ using PxStat.Data.Px;
 namespace PxStat.Data
 {
     /// <summary>
-    /// Validator for a Matix
+    /// Validator for a Matrix
     /// </summary>
     internal class MatrixValidator
     {

@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using API;
+﻿using API;
 using FluentValidation;
-using FluentValidation.Results;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PxParser.Resources.Parser;
 using PxStat.Data;
-using PxStat.Resources;
 using PxStat.Resources.PxParser;
 using PxStat.System.Settings;
 using PxStat.Template;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using static PxStat.Data.Matrix;
 
 namespace PxStat.Build
@@ -58,6 +54,7 @@ namespace PxStat.Build
         /// <returns></returns>
         protected override bool Execute()
         {
+
             //do the physical structure validation
 
             //This is required for validation in the Matrix code, but is not used for px build
@@ -74,184 +71,21 @@ namespace PxStat.Build
                 return false;
             }
 
-
-
-
-            //Get this matrix from the px file , but we also need to pass in the Timeval stuff
-            //The "" bit is temporary until we make the parameters optional (Currently this interferes with existing overloads)
+            //Get this matrix from the px file 
             Matrix theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
+            Build_BSO bBso = new Build_BSO();
 
 
-            Matrix matrixNewMetadata = new Matrix(DTO);
-            Request.parameters.GrpCode = Utility.GetCustomConfig("APP_DEFAULT_GROUP");
-            Request.parameters.source = Utility.GetCustomConfig("APP_DEFAULT_SOURCE");
-            //Get the Specifications for the new matrix:
-            if (DTO.Dimension.Count > 0)
-            {
-                matrixNewMetadata.OtherLanguageSpec = new List<Matrix.Specification>();
-                foreach (var dimension in DTO.Dimension)
-                {
-                    matrixNewMetadata.OtherLanguageSpec.Add(new Matrix.Specification(dimension.LngIsoCode, DTO));
-                    //matrixNewMetadata.OtherLanguageSpec.Add(new Matrix.Specification());
-                }
 
-            }
+            //Get this matrix from the px file 
+            theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado); //new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
 
 
 
-            Matrix.Specification theSpec = theMatrixData.GetSpecFromLanguage(DTO.LngIsoCode);
 
-
-
-            if (DTO.MtrCode != null)
-                theMatrixData.Code = DTO.MtrCode;
-
-
-            if (DTO.CprCode != null)
-            {
-                //Look this up from 
-                Copyright_ADO cAdo = new Copyright_ADO();
-                Copyright_DTO_Read cDto = new Copyright_DTO_Read();
-                cDto.CprCode = DTO.CprCode;
-                var result = cAdo.Read(Ado, cDto);
-                if (result.hasData)
-                {
-                    theSpec.Source = result.data[0].CprValue;
-                }
-                else
-                {
-                    Response.error = Label.Get("error.validation");
-                    return false;
-                }
-            }
-
-            theMatrixData.IsOfficialStatistic = DTO.MtrOfficialFlag;
-
-            if (theSpec == null)
-                throw new FormatException(Label.Get("px.build.language"));
-
-            Dictionary<string, string> stats = new Dictionary<string, string>();
-            Dictionary<string, string> periods = new Dictionary<string, string>();
-            Dictionary<string, string> classifications = new Dictionary<string, string>();
-            Dictionary<string, string> variables = new Dictionary<string, string>();
-
-            List<StatisticalRecordDTO_Create> sList = new List<StatisticalRecordDTO_Create>();
-
-            foreach (var stat in theMatrixData.MainSpec.Statistic)
-            {
-                stats.Add(stat.Code, stat.Value);
-                StatisticalRecordDTO_Create newStat = new StatisticalRecordDTO_Create();
-                newStat.Code = stat.Code;
-                newStat.Value = stat.Value;
-                newStat.Decimal = stat.Decimal;
-                newStat.Unit = stat.Unit;
-                sList.Add(newStat);
-            }
-
-            //Periods may have been added or removed. Furthermore, the same periods may have different values for different languages
-            // First we create a list for the specification we're using for validation
-            foreach (var dim in DTO.Dimension)
-            {
-                if (dim.LngIsoCode == theSpec.Language)
-                {
-                    foreach (var per in theSpec.Frequency.Period)
-                    {
-                        periods.Add(per.Code, per.Value);
-                    }
-                    if (dim.Frequency != null)
-                    {
-                        foreach (var per in dim.Frequency.Period)
-                        {
-                            if (!periods.ContainsKey(per.Code))
-                            {
-                                periods.Add(per.Code, per.Value);
-                            }
-                        }
-                    }
-
-                }
-
-            }
-
-
-            foreach (var cls in theSpec.Classification)
-            {
-                classifications.Add(cls.Code, cls.Value);
-                foreach (var vrb in cls.Variable)
-                {
-                    variables.Add(cls.Code + vrb.Code, vrb.Value);
-                }
-            }
-
-
-
-            //Get the new data and metadata from the csv input in the DTO
-            if (DTO.PxData != null)
-                requestItems = GetInputObjectsJson(stats, periods, classifications, variables, theSpec);
-
-            //validate the individual dimensions
-            if (requestItems != null)
-            {
-                Build_Update_VLD validator = new Build_Update_VLD(theSpec, requestItems);
-                ValidationResult res = validator.Validate(DTO);
-                if (!res.IsValid)
-                {
-                    Response.error = Label.Get("error.validation");
-                    return false;
-                }
-            }
-
-            //Get the current and new periods for each specification
-            List<PeriodRecordDTO_Create> allPeriods = GetCurrentAndNewPeriods(theSpec, requestItems);
-
-
-            //Sort the existing data in SPC order
-            Build_BSO pBso = new Build_BSO();
-            theMatrixData = pBso.ConvertCellsOrderToSPC(theMatrixData);
-
-
-            //Get a List<DataItem_DTO> of the new requestItems
-            if (requestItems != null)
-                requestItems = tagNewData(theSpec, allPeriods, requestItems);
-
-            //Get the existing data items as a list of DataItem_DTO with a sort word - !! - use CartesianProduct function..            
-            var existingData = pBso.GetExistingDataItems(theMatrixData, theSpec);// 
-
-            List<DataItem_DTO> allData;
-            //..and merge the new data with the existing data
-            if (requestItems != null)
-                allData = MergeData(requestItems, existingData);
-            else
-                allData = existingData;
-
-            //Ensure that any new periods are reflected in the matrix
-
-
-
-            theMatrixData = updatePeriods(theMatrixData, theSpec, DTO.Dimension.ToList());
-
-            //Merge the Metadata here...
-            theMatrixData = mergeMetadata(theMatrixData, matrixNewMetadata);
-
-            //Sort the merged data in SPC order
-            allData = pBso.sortSPC(theSpec, allData, true);
-
-            //Set the Cells to the merged and sorted data
-            theMatrixData.Cells = pBso.GetNewCells(allData);
-
-            List<dynamic> cells = new List<dynamic>();
-            foreach (var c in theMatrixData.Cells)
-            {
-                dynamic cl = new ExpandoObject();
-                cl.TdtValue = c.Value.ToString() == Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") ? null : c.Value.ToString();
-                cells.Add(cl);
-
-            }
-            theMatrixData.Cells = cells;
-
-            if (DTO.FrmType == DatasetFormat.Px)
+            if (DTO.Format.FrmType == DatasetFormat.Px)
             {
                 List<dynamic> resultPx = new List<dynamic>();
                 resultPx.Add(theMatrixData.GetPxObject(true).ToString());
@@ -262,7 +96,7 @@ namespace PxStat.Build
                 return true;
             }
 
-            else if (DTO.FrmType == DatasetFormat.JsonStat)
+            else if (DTO.Format.FrmType == DatasetFormat.JsonStat)
             {
 
                 //Return the metadata and data, using one json-stat object for each specification
@@ -279,7 +113,8 @@ namespace PxStat.Build
 
                 foreach (var lang in languages)
                 {
-                    JsonStat json = theMatrixData.GetJsonStatObject(lang, false);
+                    //JsonStat json = theMatrixData.GetJsonStatObject(lang, false);
+                    JsonStat json = theMatrixData.GetJsonStatObject(false, true, lang);
                     jsons.Add(new JRaw(Serialize.ToJson(json)));
                 }
 
@@ -294,11 +129,15 @@ namespace PxStat.Build
         {
             existingMatrix.MainSpec = mergeSpecsMetadata(existingMatrix.MainSpec, amendedMatrix.GetSpecFromLanguage(existingMatrix.MainSpec.Language));
 
+
+
             if (existingMatrix.OtherLanguageSpec == null) return existingMatrix;
 
             List<Specification> otherSpecs = new List<Specification>();
             foreach (Specification spec in existingMatrix.OtherLanguageSpec)
             {
+                spec.Source = existingMatrix.MainSpec.Source;
+
                 otherSpecs.Add(mergeSpecsMetadata(spec, amendedMatrix.GetSpecFromLanguage(spec.Language)));
             }
 
@@ -310,6 +149,7 @@ namespace PxStat.Build
         private Specification mergeSpecsMetadata(Specification existingSpec, Specification amendedSpec)
         {
             existingSpec.Title = amendedSpec.Title;
+            existingSpec.Contents = amendedSpec.Contents;
             existingSpec.Frequency.Value = amendedSpec.Frequency != null ? amendedSpec.Frequency.Value : existingSpec.Frequency.Value;
             existingSpec.NotesAsString = amendedSpec.NotesAsString != null ? amendedSpec.NotesAsString : existingSpec.NotesAsString;
             existingSpec.ContentVariable = amendedSpec.ContentVariable != null ? amendedSpec.ContentVariable : existingSpec.ContentVariable;
@@ -574,47 +414,6 @@ namespace PxStat.Build
 
             return merged;
         }
-
-        private List<DataItem_DTO> GetInputObjectsJson(Dictionary<string, string> stats, Dictionary<string, string> periods, Dictionary<string, string> classifications, Dictionary<string, string> variables, Specification theSpec)
-        {
-            List<DataItem_DTO> buildList = new List<DataItem_DTO>();
-
-            try
-            {
-                foreach (var item in DTO.PxData.DataItems)
-                {
-
-                    Dictionary<string, string> readData = JsonConvert.DeserializeObject<Dictionary<string, string>>(item.ToString());
-                    DataItem_DTO readItem = new DataItem_DTO();
-                    readItem.dataValue = readData[Label.Get("default.csv.value")];
-                    readItem.period.Code = readData[theSpec.Frequency.Code];
-                    readItem.period.Value = periods[readItem.period.Code];
-                    readItem.statistic.Value = readData[theSpec.ContentVariable.ToUpper()];
-                    foreach (var clsDict in classifications)
-                    {
-                        ClassificationRecordDTO_Create cls = new ClassificationRecordDTO_Create();
-                        cls.Code = clsDict.Key;
-                        cls.Value = clsDict.Value;
-                        List<VariableRecordDTO_Create> vrbList = new List<VariableRecordDTO_Create>();
-                        VariableRecordDTO_Create vrb = new VariableRecordDTO_Create();
-                        vrb.Value = readData[cls.Code];
-                        vrb.Code = vrb.Value;
-                        vrbList.Add(vrb);
-                        cls.Variable = vrbList;
-                        readItem.classifications.Add(cls);
-                    }
-
-                    buildList.Add(readItem);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new UnmatchedParametersException(ex);
-            }
-
-            return buildList;
-        }
-
 
 
         /// <summary>

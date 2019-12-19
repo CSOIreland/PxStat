@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using API;
+﻿using API;
 using Newtonsoft.Json;
 using PxStat.Resources;
+using PxStat.System.Settings;
+using System;
+using System.Collections.Generic;
 
 namespace PxStat.Data
 {
@@ -67,10 +68,8 @@ namespace PxStat.Data
         public string language { get; set; }
 
 
-        /// <summary>
-        ///  Format (e.g. px, json-stat)
-        /// </summary>
-        public string format { get; set; }
+
+        public Format_DTO_Read Format { get; set; }
 
         /// <summary>
         /// json-stat role, e.g. time, geo etc
@@ -88,6 +87,8 @@ namespace PxStat.Data
         /// <param name="parameters"></param>
         public Cube_DTO_Read(dynamic parameters)
         {
+
+
             if (parameters.matrix != null)
                 this.matrix = parameters.matrix;
 
@@ -96,13 +97,21 @@ namespace PxStat.Data
 
             if (parameters.language != null)
                 this.language = parameters.language;
+            else this.language = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
 
-            if (parameters.format != null)
+            Format = new Format_DTO_Read();
+            if (parameters.FrmType != null && parameters.FrmVersion != null)
             {
-                this.format = parameters.format;
-                if (this.format == Constants.C_SYSTEM_JSON_NAME)
-                    this.format = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
+
+                Format.FrmType = parameters.FrmType;
+                Format.FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
+
+                if (Format.FrmType == Constants.C_SYSTEM_JSON_NAME)
+                    Format.FrmType = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
+                Format.FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
+                Format.FrmVersion = parameters.FrmVersion;
             }
+
 
             if (parameters.role != null)
             {
@@ -120,9 +129,9 @@ namespace PxStat.Data
                 this.language = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
             }
             // Default format
-            if (string.IsNullOrEmpty(this.format))
+            if (string.IsNullOrEmpty(this.Format.FrmType))
             {
-                this.format = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
+                this.Format.FrmType = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
             }
 
         }
@@ -142,7 +151,7 @@ namespace PxStat.Data
     }
 
     /// <summary>
-    /// 
+    /// Some constants
     /// </summary>
     public sealed class DatasetFormat
     {

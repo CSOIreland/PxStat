@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using API;
+﻿using API;
 using Newtonsoft.Json.Linq;
 using PxStat.Data;
 using PxStat.Template;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
 
 namespace PxStat.Build
 {
@@ -36,11 +36,15 @@ namespace PxStat.Build
         protected override bool Execute()
         {
 
-            Matrix matrix = new Matrix(DTO);
-            matrix.MainSpec = new Matrix.Specification(DTO.matrixDto.LngIsoCode, DTO);
-            matrix.TheLanguage = DTO.LngIsoCode;
-            matrix.FormatType = DTO.FrmType;
-            matrix.FormatVersion = DTO.FrmVersion;
+
+            Matrix matrix = new Matrix(DTO)
+            {
+                MainSpec = new Matrix.Specification(DTO.matrixDto.LngIsoCode, DTO),
+                TheLanguage = DTO.LngIsoCode,
+                FormatType = DTO.Format.FrmType,
+                FormatVersion = DTO.Format.FrmVersion
+            };
+
 
             //Get the Specifications
             if (DTO.DimensionList.Count > 1)
@@ -62,6 +66,8 @@ namespace PxStat.Build
 
             matrix.Cells = GetBlankCells(matrix);
 
+            matrix.SortMatrixMetadataSpc();
+
             //We should be able to validate the newly created matrix now...
             MatrixValidator mValidator = new MatrixValidator();
             if (!mValidator.Validate(matrix))
@@ -72,7 +78,7 @@ namespace PxStat.Build
 
             dynamic fileOutput = new ExpandoObject();
 
-            switch (DTO.FrmType)
+            switch (DTO.Format.FrmType)
             {
                 case Resources.Constants.C_SYSTEM_PX_NAME:
                     List<dynamic> resultPx = new List<dynamic>();
@@ -87,7 +93,6 @@ namespace PxStat.Build
                     jsonData.Add(new JRaw(Serialize.ToJson(matrix.GetJsonStatObject())));
 
 
-
                     if (matrix.OtherLanguageSpec != null)
                     {
                         foreach (Matrix.Specification s in matrix.OtherLanguageSpec)
@@ -96,7 +101,7 @@ namespace PxStat.Build
                             jsonData.Add(new JRaw(Serialize.ToJson(matrix.GetJsonStatObject())));
                         }
                     }
-                    //result.JsonData = jsonData;
+
                     Response.data = jsonData;
                     break;
 

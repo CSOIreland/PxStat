@@ -1,7 +1,9 @@
-﻿
+﻿using API;
+using PxStat.System.Navigation;
+using System.Collections.Generic;
 using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
-using PxStat.System.Navigation;
+using System.Text.RegularExpressions;
 
 namespace PxStat.Resources
 {
@@ -13,6 +15,9 @@ namespace PxStat.Resources
     /// </summary>
     internal class Keyword_en : IKeywordExtractor
     {
+        public List<Synonym> SynonymList { get; set; }
+
+        readonly Keyword keyword;
         /// <summary>
         /// ISO language code
         /// </summary>
@@ -35,14 +40,26 @@ namespace PxStat.Resources
         public Keyword_en()
         {
             //this will be "en" for english
-            this.LngIsoCode = "en";
+            this.LngIsoCode = Utility.GetCustomConfig("APP_INTERNATIONALISATION_ENGLISH");
+            keyword = new Keyword(LngIsoCode);
             this.cultureInfo = new CultureInfo(LngIsoCode);
             //The PluralizationService contains a number of ready-made english language operations
             pluralService =
               PluralizationService.CreateService(cultureInfo);
+
+            this.SynonymList = Keyword_BSO_ResourceFactory.GetSynonyms(LngIsoCode);
+
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="words"></param>
+        /// <returns></returns>
+        public string Sanitize(string words)
+        {
+            return Regex.Replace(words, keyword.Get("excluded.regex"), " ");
+        }
 
 
 
@@ -76,7 +93,12 @@ namespace PxStat.Resources
             else return word;
         }
 
+        internal Dictionary<string, string> GetSynonyms()
+        {
+            Dictionary<string, string> synonyms = new Dictionary<string, string>();
 
+            return synonyms;
+        }
 
     }
 }

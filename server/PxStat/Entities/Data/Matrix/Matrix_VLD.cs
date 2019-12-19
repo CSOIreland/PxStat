@@ -10,6 +10,16 @@ namespace PxStat.Data
     {
         public Matrix_VLD_ReadCodeList()
         {
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
+    internal class Matrix_VLD_ReadByProduct : AbstractValidator<Matrix_DTO_ReadByProduct>
+    {
+        public Matrix_VLD_ReadByProduct()
+        {
+            RuleFor(x => x.PrcCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
 
@@ -20,7 +30,7 @@ namespace PxStat.Data
     {
         public Matrix_VLD_Read()
         {
-            RuleFor(x => x.LngIsoCode).NotEmpty();
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
             RuleFor(x => x.RlsCode).NotEmpty().GreaterThan(0);
         }
     }
@@ -37,6 +47,7 @@ namespace PxStat.Data
             RuleFor(x => x.FrqValueTimeval).Length(1, 256).When(x => !string.IsNullOrEmpty(x.FrqValueTimeval));
             RuleFor(x => x.FrqCodeTimeval).Length(1, 256).When(x => !string.IsNullOrEmpty(x.FrqCodeTimeval));
             RuleFor(x => x.LngIsoCode.Length).Equal(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
+            RuleFor(x => x).Must(Security.CustomValidations.CheckGroupExists).WithMessage("Group does not exist");
         }
     }
 
@@ -76,6 +87,7 @@ namespace PxStat.Data
         {
             RuleFor(x => x.DateFrom).NotEmpty();
             RuleFor(x => x.DateTo).NotEmpty();
+            RuleFor(f => f.LngIsoCode).NotEmpty().Length(2);
         }
     }
 }

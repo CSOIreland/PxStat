@@ -36,15 +36,7 @@ namespace PxStat.Data
             return new Release_BSO_ReadList(jsonrpcRequest).Read().Response;
         }
 
-        /// <summary>
-        /// Returns the list of releases for a given matrix code based on the user profile
-        /// </summary>
-        /// <param name="jsonrpcRequest">The request containing the matrix code</param>
-        /// <returns>TODO</returns>
-        public static dynamic ReadListByProduct(JSONRPC_API jsonrpcRequest)
-        {
-            return new Release_BSO_ReadListByProduct(jsonrpcRequest).Read().Response;
-        }
+
 
         /// <summary>
         /// Updates the value of the Release Analytical flag
@@ -53,9 +45,9 @@ namespace PxStat.Data
         /// <returns></returns>
         [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST =
             Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + "/MtrCode,"
-            + Resources.Constants.C_CAS_DATA_READ_PRE_DATASET + "/RlsCode,"
+            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + "/RlsCode,"
             + Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + "/MtrCode,"
-            + Resources.Constants.C_CAS_DATA_READ_PRE_METADATA + "/RlsCode")]
+            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + "/RlsCode")]
         public static dynamic UpdateAnalyticalFlag(JSONRPC_API jsonrpcRequest)
         {
             return new Release_BSO_UpdateAnalyticalFlag(jsonrpcRequest).Update().Response;
@@ -68,9 +60,9 @@ namespace PxStat.Data
         /// <returns></returns>
         [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST =
             Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + "/MtrCode,"
-            + Resources.Constants.C_CAS_DATA_READ_PRE_DATASET + "/RlsCode,"
+            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + "/RlsCode,"
             + Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + "/MtrCode,"
-            + Resources.Constants.C_CAS_DATA_READ_PRE_METADATA + "/RlsCode")]
+            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + "/RlsCode")]
         public static dynamic UpdateDependencyFlag(JSONRPC_API jsonrpcRequest)
         {
             return new Release_BSO_UpdateDependencyFlag(jsonrpcRequest).Update().Response;
@@ -82,8 +74,8 @@ namespace PxStat.Data
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
         [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_NAVIGATION_READ + ","
-            + Resources.Constants.C_CAS_DATA_READ_PRE_DATASET + "/RlsCode,"
-            + Resources.Constants.C_CAS_DATA_READ_PRE_METADATA + "/RlsCode"
+            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + "/RlsCode,"
+            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + "/RlsCode"
             )] // internal cache flush for live read (matrix code not available in the DTO at this point)
         public static dynamic UpdateProduct(JSONRPC_API jsonrpcRequest)
         {
@@ -95,7 +87,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
-        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_DATA_READ_PRE_DATASET + "/RlsCode")]// internal cache flush for live read (matrix code not available in the DTO at this point)
+        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + "/RlsCode")]// internal cache flush for live read (matrix code not available in the DTO at this point)
         public static dynamic UpdateComment(JSONRPC_API jsonrpcRequest)
         {
             return new Release_BSO_UpdateComment(jsonrpcRequest).Update().Response;
@@ -106,7 +98,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
-        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_DATA_READ_PRE_DATASET + "/RlsCode")]// internal cache flush for live read (matrix code not available in the DTO at this point)
+        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + "/RlsCode")]// internal cache flush for live read (matrix code not available in the DTO at this point)
         public static dynamic DeleteComment(JSONRPC_API jsonrpcRequest)
         {
             return new Release_BSO_DeleteComment(jsonrpcRequest).Delete().Response;

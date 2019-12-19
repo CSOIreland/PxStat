@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PxStat.Resources
 {
@@ -12,7 +13,9 @@ namespace PxStat.Resources
     /// </summary>
     public class Keyword_ga : IKeywordExtractor
     {
-        Keyword keyword;
+        readonly Keyword keyword;
+        readonly Dictionary<string, string> nounDictionary;
+        public List<Synonym> SynonymList { get; set; }
 
         /// <summary>
         /// Language ISO Code
@@ -28,14 +31,24 @@ namespace PxStat.Resources
         /// Constructor
         /// </summary>
         /// <param name="lngIsoCode"></param>
-        internal Keyword_ga()
+        public Keyword_ga()
         {
-            this.LngIsoCode = "ga";
+
+            LngIsoCode = Utility.GetCustomConfig("APP_INTERNATIONALISATION_IRISH");
+            keyword = new Keyword(LngIsoCode);
+
+            nounDictionary = Keyword_BSO_ResourceFactory.GetMorphology(LngIsoCode);
+
+            this.SynonymList = Keyword_BSO_ResourceFactory.GetSynonyms(LngIsoCode);
+
+
         }
 
-
-
-
+        public string Sanitize(string words)
+        {
+            string s = keyword.Get("excluded.regex");
+            return Regex.Replace(words, keyword.Get("excluded.regex"), " ");
+        }
 
         /// <summary>
         /// Gets a list from a comma separated string
@@ -67,98 +80,26 @@ namespace PxStat.Resources
         //
         public string Pluralize(string word)
         {
-            string outWord = word;
-            List<string> wordList = keyword.GetStringList("inflection.plural");
-            int last = 0;
-            foreach (string s in wordList)
-            {
-                if (word.EndsWith(s))
-                {
-                    if (s.Length > last && word.Length > s.Length)
-                    {
-                        outWord = word.Substring(0, word.Length - s.Length);
-                        last = s.Length;
-                    }
-                }
-            }
-            return outWord;
+            throw new NotImplementedException();
         }
 
-        //Remove the final 'i' from the word
-        /// <summary>
-        /// Plurals from the first declension
-        /// </summary>
-        /// <param name="word"></param>
-        /// <returns></returns>
-        private string PluralFirstDeclension(string word)
-        {
-            List<char> charList = word.ToCharArray().ToList<char>();
-            List<char> charListOut = new List<char>();
-            charList.Reverse();
-            if (charList.Count > 2)
-            {
-                if (charList[1] != 'i')
-                    charListOut = charList;
-                else
-                {
-                    for (int i = 0; i < charList.Count; i++)
-                    {
-                        if (i != 1) charListOut.Add(charList[i]);
-                    }
-                }
 
-            }
-            charListOut.Reverse();
-            string outstring = "";
-            foreach (char c in charListOut) { outstring = outstring + c; }
-            return outstring;
-        }
 
         //
         /// <summary>
-        /// If 'h' is the second letter of the word, remove it
+        /// If 'h' is the second letter of the word, remove it (in certain cases!)
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        private string Aspiration(string word)
-        {
-            //e.g. dative case
-            if (word.Length < 3) return word;
-            if (word.Substring(0, 1).Equals("h"))
-            {
-                if (IsSlender(word.Substring(1, 1).ToCharArray()[0]))
-                {
-                    word = word.Substring(1, word.Length - 1);
-
-                }
-
-            }
-            //e.g. genitive case
-            if (word.Length > 2)
-            {
-                if (word.Substring(1, 1).Equals("h"))
-                {
-                    word = word.Substring(0, 1) + word.Substring(2, word.Length - 2);
-                }
-            }
-
-            return word;
-        }
-        //Remove the lenition from a word
-        private string Lenition(string word)
+        private string RemoveAspiration(string word)
         {
             string outWord = word;
-            List<string> wordList = keyword.GetStringList("inflection.eclipsis");
-            foreach (string s in wordList)
+            List<string> aspirationList = keyword.GetStringList("inflection.aspiration");
+            foreach (string s in aspirationList)
             {
-                if (word.StartsWith(s))
+                if (word.StartsWith(s) && s.Length >= 2 && word.Length >= 3)
                 {
-                    if (s.Equals("bhf"))
-                    {
-                        outWord = word.Substring(s.Length - 1, word.Length - (s.Length - 1));
-                    }
-                    else
-                        outWord = word.Substring(s.Length, word.Length - s.Length);
+                    outWord = word.Substring(0, 1) + word.Substring(2, word.Length - 2);
                 }
             }
 
@@ -166,17 +107,28 @@ namespace PxStat.Resources
         }
 
         /// <summary>
-        /// get a list of slender vowels
+        /// Remove the eclipsis (e.g. bh, dt, etc) from the start of a word
         /// </summary>
-        /// <param name="inChar"></param>
+        /// <param name="word"></param>
         /// <returns></returns>
-        private bool IsSlender(char inChar)
+        private string RemoveEclipsis(string word)
         {
-            List<char> slenders = new List<char>() { 'a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú' };
-            if (slenders.Contains(inChar))
-                return true;
-            else return false;
+            string outWord = word;
+            List<string> eclipsisList = keyword.GetStringList("inflection.eclipsis");
+            foreach (string s in eclipsisList)
+            {
+                if (word.StartsWith(s) && s.Length == 2)
+                {
+                    outWord = word.Substring(s.Length - (s.Length - 1), word.Length - (s.Length - (s.Length - 1)));
+                }
+                else if (word.StartsWith(s) && s.Length == 3)
+                    outWord = word.Substring(s.Length - (s.Length - 2), word.Length - (s.Length - (s.Length - 2)));
+            }
+
+            return outWord;
         }
+
+
 
         public bool IsPlural(string word)
         {
@@ -190,21 +142,11 @@ namespace PxStat.Resources
 
         public string Singularize(string word)
         {
-            string outWord = word;
-            List<string> wordList = Utility.GetCustomConfig("APP_KEYWORD_GA_INFLECTED_PLURAL").Split(',').ToList<string>();
-            int last = 0;
-            foreach (string s in wordList)
-            {
-                if (word.EndsWith(s))
-                {
-                    if (s.Length > last && word.Length > s.Length)
-                    {
-                        outWord = word.Substring(0, word.Length - s.Length);
-                        last = s.Length;
-                    }
-                }
-            }
-            return outWord;
+
+            word = RemoveEclipsis(word.ToLower());
+            word = RemoveAspiration(word);
+
+            return nounDictionary.ContainsKey(word) ? nounDictionary[word] : word;
         }
     }
 }

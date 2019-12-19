@@ -35,7 +35,7 @@ namespace PxStat.Workflow
 
             Workflow_ADO wfAdo = new Workflow_ADO();
 
-            ADO_readerOutput output = wfAdo.ReadAwaitingResponse(Ado, SamAccountName, DTO.RlsCode);
+            ADO_readerOutput output = wfAdo.ReadAwaitingResponse(Ado, SamAccountName, DTO.RlsCode, Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"));
             if (!output.hasData)
             {
                 Log.Instance.Debug("No valid AwaitingResponse workflow found for RlsCode " + DTO.RlsCode);

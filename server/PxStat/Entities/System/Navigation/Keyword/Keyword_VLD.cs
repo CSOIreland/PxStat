@@ -13,4 +13,13 @@ namespace PxStat.System.Navigation
             RuleFor(f => f.LngIsoCode).NotEmpty().Length(2).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
         }
     }
+
+    internal class Keyword_VLD_ReadSynonym : AbstractValidator<Keyword_DTO_ReadSynonym>
+    {
+        internal Keyword_VLD_ReadSynonym()
+        {
+
+            RuleFor(f => f.KrlValue).NotEmpty().Length(1, 256);
+        }
+    }
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using API;
+﻿using API;
 using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Validators;
 using PxParser.Resources.Parser;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PxStat.Data
 {
@@ -135,14 +135,7 @@ namespace PxStat.Data
                     success &= CheckFactsAndDimensionsMatch(theMatrix.Cells.Count, mainSpec, mainSpec.Language, context.MessageFormatter);
                 }
 
-                //if (!success)
-                //{
-                //    context.MessageFormatter.AppendArgument("Expected", context.MessageFormatter.PlaceholderValues["Expected"]);
-                //    context.MessageFormatter.AppendArgument("Found", context.MessageFormatter.PlaceholderValues["Found"]);
-                //    context.MessageFormatter.AppendArgument("Language", context.MessageFormatter.PlaceholderValues["Language"]);
-                //}
 
-                //return false;
             }
 
             return success;
@@ -212,7 +205,9 @@ namespace PxStat.Data
 
         private static bool NoDuplicateDomains(Matrix matrix)
         {
-            return matrix.MainSpec.Classification.GroupBy(x => x.Code).Any(g => g.Count() == 1);
+
+
+            return !matrix.MainSpec.Classification.GroupBy(x => x.Code).Any(g => g.Count() > 1);
         }
 
         private static string FormatDataIsGood(Matrix matrix)

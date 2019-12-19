@@ -1,12 +1,12 @@
-﻿using Pidgin;
+﻿using API;
+using Pidgin;
+using PxStat;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
-using API;
-using System;
-using PxStat;
 
 namespace PxParser.Resources.Parser
 {
@@ -253,6 +253,9 @@ namespace PxParser.Resources.Parser
                     case "NOTE":
                     case "TITLE":
                     case "CONTACT":
+                    case "VALUENOTE":
+                    case "VALUENOTEX":
+
 
                         return PxValueMultiline.Cast<IPxElement>();
 

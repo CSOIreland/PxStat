@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using PxStat.Template;
 using System;
+using static PxStat.System.Settings.Format_DTO_Read;
 
 namespace PxStat.Data
 {
@@ -43,6 +44,11 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+            if (DTO.Format.FrmDirection != FormatDirection.DOWNLOAD.ToString())
+            {
+                return false;
+            }
+
             ////See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", DTO);
             if (cache.hasData)
@@ -100,4 +106,3 @@ namespace PxStat.Data
         }
     }
 }
-
