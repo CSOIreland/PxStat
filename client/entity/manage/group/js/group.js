@@ -31,6 +31,8 @@ $(document).ready(function () {
     //Adding placeholders from config file for phone number
     $("#group-modal-create-group").find("[name = grp-contact-phone]").attr("placeholder", app.config.regex.phone.placeholder);
     $("#group-form-update-group").find("[name = grp-contact-phone]").attr("placeholder", app.config.regex.phone.placeholder);
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 }); 

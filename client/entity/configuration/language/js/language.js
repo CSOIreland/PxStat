@@ -23,6 +23,9 @@ $(document).ready(function () {
   // Initiate all bootstrap tooltip
   $('[data-toggle="tooltip"]').tooltip();
 
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 

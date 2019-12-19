@@ -39,6 +39,93 @@ app.build.update.upload.file.content.data.JSON = null;
 app.build.update.upload.file.content.data.name = null;
 app.build.update.upload.file.content.data.size = null;
 
+
+//#region Matrix Lookup
+
+/**
+ * Ajax read call
+ */
+app.build.update.upload.ajax.matrixLookup = function () {
+    // Change app.config.language.iso.code to the selected one
+    api.ajax.jsonrpc.request(app.config.url.api.private,
+        "PxStat.Data.Matrix_API.ReadCodeList",
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
+        "app.build.update.upload.callback.matrixLookup");
+};
+
+/**
+* * Callback subject read
+* @param  {} response
+*/
+app.build.update.upload.callback.matrixLookup = function (response) {
+    if (response.error) {
+        api.modal.error(response.error.message);
+    } else if (response.data !== undefined) {
+        // Handle the Data in the Response then
+        app.build.update.upload.callback.drawMatrix(response.data);
+    }
+    // Handle Exception
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Draw Callback for Datatable
+ */
+app.build.update.upload.callback.drawCallbackDrawMatrix = function () {
+    $('[data-toggle="tooltip"]').tooltip();
+    // Responsive
+    $("#build-create-initiate-matrix-lookup table").DataTable().columns.adjust().responsive.recalc();
+}
+
+
+/**
+* Draw table
+* @param {*} data
+*/
+app.build.update.upload.callback.drawMatrix = function (data) {
+    var searchInput = $("#build-update-properties [name=mtr-value]").val();
+    if ($.fn.dataTable.isDataTable("#build-update-matrix-lookup table")) {
+        app.library.datatable.reDraw("#build-update-matrix-lookup table", data);
+    } else {
+        var localOptions = {
+            data: data,
+            columns: [
+                {
+                    data: null,
+                    render: function (_data, _type, row) {
+                        return app.library.html.tooltip(row.MtrCode, row.MtrTitle);
+                    }
+                },
+            ],
+            drawCallback: function (settings) {
+                app.build.update.upload.callback.drawCallbackDrawMatrix();
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        //Initialize DataTable
+        $("#build-update-matrix-lookup table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.build.update.upload.callback.drawCallbackDrawMatrix();
+        });
+        window.onresize = function () {
+            // Responsive
+            $($.fn.dataTable.tables(true)).DataTable().columns.adjust().responsive.recalc();
+        };
+    }
+    // Responsive
+    $("#build-update-matrix-lookup table").DataTable().columns.adjust().responsive.recalc();
+    $('#build-update-matrix-lookup').find("input[type=search]").val(searchInput);
+    $("#build-update-matrix-lookup table").DataTable().search(searchInput).draw();
+    $('#build-update-matrix-lookup').modal("show");
+};
+
+//#endregion
+
+
+
+
 /**
  * Custom validation for Files
  */
@@ -76,16 +163,18 @@ app.build.update.upload.validate.periodFile = function () {
  * Custom validation for Files
  */
 app.build.update.upload.validate.dataFile = function () {
+    var isValid = true;
+
     if (!app.build.update.upload.file.content.data.JSON) {
-        return false;
+        isValid = false;
     }
 
     //check for errors in csv
     if (app.build.update.upload.file.content.data.JSON.errors.length) {
-        return false;
+        isValid = false;
     }
 
-    //check that number of csv headers match number of dimensions
+
     //get default language JsonStat
     var dimensionCodes = [];
     $(app.build.update.ajax.response).each(function (key, value) {
@@ -106,26 +195,17 @@ app.build.update.upload.validate.dataFile = function () {
 
     var csvHeaders = app.build.update.upload.file.content.data.JSON.meta.fields;
 
-    //remove Value column to validate against dimensions
-    csvHeaders = jQuery.grep(csvHeaders, function (value) {
-        return value != "VALUE";
-    });
-
-    //check length 
-    if (dimensionCodes.length != csvHeaders.length) {
-        return false;
-    };
-
-    //check that dimension codes match csv header codes
-    $(csvHeaders).each(function (key, code) {
-        if (jQuery.inArray(code, dimensionCodes) == -1) {
+    //check that dimension codes are in csv header codes
+    $(dimensionCodes).each(function (key, code) {
+        if (jQuery.inArray(code, csvHeaders) == -1) {
+            isValid = false;
             return false;
         };
     });
 
-    // Enable 
-    return true;
+    return isValid;
 };
+
 
 /**
  *
@@ -159,6 +239,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             app.build.update.upload.Signature = null;
             app.build.update.upload.file.content.source.UTF8 = null;
             app.build.update.upload.file.content.source.Base64 = null;
+
+            $("#build-update-upload-file").find("[name=upload-error]").empty();
+            $("#build-update-upload-file").find("[name=upload-error-card]").hide();
 
             //Reset Frequency and Copyright dropdowns every time you drop a new file in
             $("#build-update-properties [name=frequency-code]").val();
@@ -225,6 +308,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 
         case "build-update-upload-periods-file":
             //clean up
+
+            $('#build-update-upload-periods').find("[name=errors-card]").hide();
+            $('#build-update-upload-periods').find("[name=errors]").empty();
+
             app.build.update.upload.file.content.period.UTF8 = null;
             $("#build-update-upload-periods").find("[name=upload-submit-periods]").prop("disabled", true);
 
@@ -302,6 +389,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                     skipEmptyLines: true
                 });
             };
+
             readerUTF8.readAsText(file);
             readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
             readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });
@@ -316,9 +404,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                     api.modal.error(app.label.static["invalid-csv-format"]);
                     $("#build-update-dimensions").find("[name=update]").prop("disabled", true);
                 }
+
                 api.spinner.stop();
             });
-
             break;
 
         default:
@@ -329,7 +417,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 /**
  *
  */
-app.build.update.upload.validate.ajax.read = function (callbackOnSuccess) {
+app.build.update.upload.validate.ajax.read = function (callbackOnSuccess, unitsPerSecond) {
 
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
@@ -349,7 +437,7 @@ app.build.update.upload.validate.ajax.read = function (callbackOnSuccess) {
         }
     );
     // Add the progress bar
-    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.update.upload.file.content.source.Base64.length, app.config.upload.unitsPerSecond.read));
+    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.update.upload.file.content.source.Base64.length, unitsPerSecond));
 };
 
 /**
@@ -419,6 +507,104 @@ app.build.update.upload.validate.callback.downloadDataTemplate = function (respo
         // Store for later use
         app.build.update.upload.Signature = response.data.Signature;
         app.build.update.ajax.downloadDataTemplate();
+    }
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+}
+
+/**
+ * 
+ */
+app.build.update.upload.validate.callback.downloadAllData = function (response) {
+    // N.B. This is a silent validation to cathc hacks only
+    if (response.data && response.data.Signature) {
+        // Store for later use
+        app.build.update.upload.Signature = response.data.Signature;
+
+        var params = {
+            "MtrInput": app.build.update.upload.file.content.source.Base64,
+            "FrqValueTimeval": app.build.update.upload.FrqValue,
+            "FrqCodeTimeval": app.build.update.upload.FrqCode,
+            "Signature": app.build.update.upload.Signature,
+            "Dimension": []
+        };
+
+        //get new periods
+        $.each(app.build.update.data.Dimension, function (index, dimension) {
+            var language = {
+                "LngIsoCode": dimension.LngIsoCode,
+                "Frequency": {
+                    "Period": []
+                }
+            }
+            language.Frequency.Period = dimension.Frequency.Period;
+            params.Dimension.push(language);
+        });
+
+        app.build.update.ajax.downloadAllData(params);
+    }
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+}
+
+/**
+ * 
+ */
+app.build.update.upload.validate.callback.downloadNewData = function (response) {
+    // N.B. This is a silent validation to cathc hacks only
+    if (response.data && response.data.Signature) {
+        // Store for later use
+        app.build.update.upload.Signature = response.data.Signature;
+
+        var params = {
+            "MtrInput": app.build.update.upload.file.content.source.Base64,
+            "FrqValueTimeval": app.build.update.upload.FrqValue,
+            "FrqCodeTimeval": app.build.update.upload.FrqCode,
+            "Signature": app.build.update.upload.Signature,
+            "Dimension": []
+        };
+
+        //get new periods
+        $.each(app.build.update.data.Dimension, function (index, dimension) {
+            var language = {
+                "LngIsoCode": dimension.LngIsoCode,
+                "Frequency": {
+                    "Period": []
+                }
+            }
+            language.Frequency.Period = dimension.Frequency.Period;
+            params.Dimension.push(language);
+        });
+
+        app.build.update.ajax.downloadNewData(params);
+    }
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+}
+
+/**
+ * 
+ */
+app.build.update.upload.validate.callback.downloadExistingData = function (response) {
+    // N.B. This is a silent validation to cathc hacks only
+    if (response.data && response.data.Signature) {
+        // Store for later use
+        app.build.update.upload.Signature = response.data.Signature;
+
+        var params = {
+            "MtrInput": app.build.update.upload.file.content.source.Base64,
+            "FrqValueTimeval": app.build.update.upload.FrqValue,
+            "FrqCodeTimeval": app.build.update.upload.FrqCode,
+            "Signature": app.build.update.upload.Signature,
+            "Dimension": []
+        };
+
+        //get new periods
+        $.each(app.build.update.data.Dimension, function (index, dimension) {
+            var language = {
+                "LngIsoCode": dimension.LngIsoCode
+            }
+            params.Dimension.push(language);
+        });
+
+        app.build.update.ajax.downloadExistingData(params);
     }
     else api.modal.exception(app.label.static["api-ajax-exception"]);
 }
@@ -555,7 +741,7 @@ app.build.update.upload.drawProperties = function () {
 
             //set copyright to value from px file
             $("#build-update-properties [name=copyright-code] > option").each(function () {
-                if (this.text == data.extension.copyright.label) {
+                if (this.text == data.extension.copyright.name) {
                     $("#build-update-properties [name=copyright-code]").val(this.value);
                 }
             });
@@ -589,6 +775,7 @@ app.build.update.upload.drawProperties = function () {
         //draw dimensions
 
         //set up tab for each language
+        //each accordion must have unique id to toggle, each collapse must unique id. Use language code to build unique id's
         var tabLanguageItem = $("#build-update-dimension-metadata-templates").find("[name=nav-lng-tab-item]").clone(); // Tabs item item
         //Set values
         tabLanguageItem.attr("lng-iso-code", lngIsoCode);
@@ -691,9 +878,10 @@ app.build.update.upload.drawProperties = function () {
                     }
                 });
             }
-        }
+        };
 
-        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=note-value]").val(data.note[0]);
+        //Don't use tinymce set content as 'once' change event within app.library.utility.initTinyMce won't trigger
+        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=note-value]").val(data.note.join(" "));
 
         //draw dimension datatables
         app.build.update.dimension.drawStatistic(lngIsoCode, statisticsData);
@@ -710,12 +898,8 @@ app.build.update.upload.drawProperties = function () {
         });
 
         $("#build-update-dimension-nav-" + lngIsoCode).find("[name=add-periods]").once("click", function () {
-            $("#build-update-new-periods").find("[name=upload-submit-periods]").attr("lng-iso-code", lngIsoCode);
-            $("#build-update-new-periods").find("[name=manual-submit-periods]").attr("lng-iso-code", lngIsoCode);
 
             $('#build-update-manual-periods table').find("tbody").empty();
-            $('#build-update-manual-periods').find("[name=manual-si-errors-card]").hide();
-            $('#build-update-manual-periods').find("[name=manual-si-errors]").empty();
 
             $('#build-update-manual-periods table').editableTableWidget();
 
@@ -774,12 +958,12 @@ app.build.update.upload.drawProperties = function () {
 
     //enable download template if valid frqCode
     if ($("#build-update-properties").find("[name=frequency-code]").val()) {
-        $("#build-update-matrix-data").find("[name=download-data-template]").prop('disabled', false);
+        $("#build-update-matrix-data").find("[name=download-data-template], [name=download-data-file]").prop('disabled', false);
     };
 
     //enable download template when changing frqCode
     $("#build-update-properties").find("[name=frequency-code]").once('change', function () {
-        $("#build-update-matrix-data").find("[name=download-data-template]").prop('disabled', false);
+        $("#build-update-matrix-data").find("[name=download-data-template], [name=download-data-file]").prop('disabled', false);
     });
 
     // Initiate all text areas as tinyMCE

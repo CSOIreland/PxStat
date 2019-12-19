@@ -11,4 +11,6 @@ $(document).ready(function () {
   app.build.upload_panel.format.ajax.read();
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 });

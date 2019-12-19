@@ -24,34 +24,38 @@
                             <i class="fas fa-upload fa-2x"></i>
                             <span name="upload-file-name"></span>
                             <span name="upload-file-tip">
-                                <strong><span label="choose-a"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
-                                <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                <strong><span label="choose"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
+                                <span class="box__dragndrop"> <span label="drag-here"></span></span>
                             </span>
                             <br />
-                            <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                            <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                         </label>
                     </div>
                 </div>
                 <span class="serverValidationError text-danger" name="upload-file-error-holder"></span>
             </div>
-            <div class="card-footer d-flex text-right justify-content-between">
-                <span>
-                    <button name="upload-btn-preview" type="button" class="btn btn-info" disabled>
-                        <i class="far fa-file"></i> <span label="preview"></span>
-                    </button>
-                </span>
-                <span>
-                    <button name="upload-btn-cancel" type="button" class="btn btn-warning text-dark">
-                        <i class="fas fa-undo"></i> <span label="reset"></span>
-                    </button>
-                    <button name="upload-btn-validate" type="submit" class="btn btn-primary text-light">
-                        <i class="fas fa-check-circle"></i> <span label="validate"></span>
-                    </button>
-                    <button name="upload-btn-upload" type="submit" class="btn btn-primary text-light" disabled>
-                        <i class="fas fa-upload"></i> <span label="upload"></span>
-                    </button>
-                </span>
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                        <button name="upload-btn-preview" type="button" class="btn btn-info" disabled>
+                            <i class="far fa-file"></i> <span label="preview"></span>
+                        </button>
+                    </div>
+                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                        <button name="upload-btn-cancel" type="button" class="btn btn-warning text-dark">
+                            <i class="fas fa-undo"></i> <span label="reset"></span>
+                        </button>
+                        <button name="upload-btn-validate" type="submit" class="btn btn-primary text-light">
+                            <i class="fas fa-check-circle"></i> <span label="validate"></span>
+                        </button>
+                        <button name="upload-btn-upload" type="submit" class="btn btn-primary text-light" disabled>
+                            <i class="fas fa-upload"></i> <span label="upload"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
+
         </div>
     </form>
     <div class="card m-3 border-danger" name="upload-error-card" style="display: none;">
@@ -86,10 +90,11 @@
                 <tr>
                     <th label="table"></th>
                     <th label="release"></th>
+                    <th label="status"></th>
+                    <th label="request"></th>
                     <th label="group"></th>
                     <th label="uploaded-by"></th>
                     <th label="uploaded-date"></th>
-                    <th label="status"></th>
                 </tr>
             </thead>
             <tbody>
@@ -151,16 +156,20 @@
                 </div>
                 <div class="modal-footer bg-warning justify-content-start rounded-0">
                     <label>
-                        <span label="upload-frequency-automatically-detected"></span>
+                        <span label="upload-frequency-detected"></span>
                     </label>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
-                        <i class="far fa-times-circle"></i> <span label="close"></span>
-                    </button>
-                    <button name="btn-validate" type="submit" class="btn btn-primary text-light">
-                        <i class="fas fa-check-circle"></i> <span label="validate"></span>
-                    </button>
+                    <div class="container-fluid">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i> <span label="close"></span>
+                            </button>
+                            <button name="btn-validate" type="submit" class="btn btn-primary text-light">
+                                <i class="fas fa-check-circle"></i> <span label="validate"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

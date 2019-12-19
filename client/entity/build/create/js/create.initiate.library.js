@@ -27,7 +27,9 @@ app.build.create.initiate.ajax.matrixLookup = function () {
     // Change app.config.language.iso.code to the selected one
     api.ajax.jsonrpc.request(app.config.url.api.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
-        {},
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.build.create.initiate.callback.matrixLookup");
 };
 
@@ -50,6 +52,7 @@ app.build.create.initiate.callback.matrixLookup = function (response) {
  * Draw Callback for Datatable
  */
 app.build.create.initiate.drawCallbackDrawMatrix = function () {
+    $('[data-toggle="tooltip"]').tooltip();
     // Responsive
     $("#build-create-initiate-matrix-lookup table").DataTable().columns.adjust().responsive.recalc();
 }
@@ -70,7 +73,7 @@ app.build.create.initiate.callback.drawMatrix = function (data) {
                 {
                     data: null,
                     render: function (_data, _type, row) {
-                        return row.MtrCode;
+                        return app.library.html.tooltip(row.MtrCode, row.MtrTitle);
                     }
                 },
             ],
@@ -81,7 +84,7 @@ app.build.create.initiate.callback.drawMatrix = function (data) {
             language: app.label.plugin.datatable
         };
         //Initialize DataTable
-        $("#build-create-initiate-matrix-lookup table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#build-create-initiate-matrix-lookup table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.build.create.initiate.drawCallbackDrawMatrix();
         });
         window.onresize = function () {
@@ -280,7 +283,7 @@ app.build.create.initiate.setUpDimensions = function () {
     $(languages).each(function (key, item) {
         app.build.create.initiate.languages.push({
             "code": item.value,
-            "value": item.attributes.lngname.value
+            "name": item.attributes.lngname.value
         });
 
         app.build.create.initiate.data.Dimension.push(
@@ -300,7 +303,9 @@ app.build.create.initiate.setUpDimensions = function () {
     });
 
     app.build.create.dimension.drawTabs();
+
     $("#build-create-dimensions").show();
+
     //get properties from imported source
     $(languages).each(function (key, item) {
 
@@ -392,8 +397,9 @@ app.build.create.initiate.setUpDimensions = function () {
 
                     }
                 };
-                var tinyMceId = $("#build-create-dimension-accordion-collapse-properties-" + item.value).find("[name=note-value]").attr("id");
-                tinymce.get(tinyMceId).setContent(importedSource.note);
+
+                //Don't use tinymce set content as 'once' change event within app.library.utility.initTinyMce won't trigger
+                $("#build-create-dimension-accordion-collapse-properties-" + item.value).find("[name=note-value]").val(importedSource.note.join(" "));
             }
         }
         app.build.create.dimension.drawStatistics(item.value);
@@ -401,7 +407,8 @@ app.build.create.initiate.setUpDimensions = function () {
         app.build.create.dimension.drawPeriods(item.value);
     });
 
-
+    //Initialize TinyMce after tabs re drawn.
+    app.library.utility.initTinyMce();
 
     $('html, body').animate({ scrollTop: $('#build-create-dimensions').offset().top }, 1000);
 };
@@ -435,12 +442,12 @@ app.build.create.initiate.validation.setup = function () {
         errorPlacement: function (error, element) {
             $("#build-create-initiate-setup [name=" + element[0].name + "-error-holder").empty().append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.build.create.initiate.data.MtrCode = $("#build-create-initiate-setup").find("[name=mtr-value]").val();
             app.build.create.initiate.data.FrqCode = $("#build-create-initiate-setup").find("[name=frequency-code]").val();
             app.build.create.initiate.data.CprCode = $("#build-create-initiate-setup").find("[name=copyright-code]").val();
             app.build.create.initiate.data.MtrOfficialFlag = $("#build-create-initiate-setup").find("[name=official-flag]").prop('checked');
-
             app.build.create.initiate.setUpDimensions();
         }
     }).resetForm();

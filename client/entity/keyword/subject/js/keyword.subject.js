@@ -16,10 +16,11 @@ $(document).ready(function () {
 
   $("#keyword-subject-read").hide();
 
+  // Load the side panel
+  api.content.load("#panel", "entity/keyword/search/index.html");
+
   //Ajax call for data
   app.keyword.subject.ajax.readSubject();
-  // Translate labels language (Last to run)
-  app.library.html.parseStaticLabel();
 
   $("#keyword-subject-modal-create [name=acronym-toggle], #keyword-subject-modal-update [name=acronym-toggle]").bootstrapToggle("destroy").bootstrapToggle({
     on: app.label.static["true"],
@@ -28,4 +29,10 @@ $(document).ready(function () {
     offstyle: "warning",
     width: C_APP_TOGGLE_LENGTH
   });
+
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+
+  // Translate labels language (Last to run)
+  app.library.html.parseStaticLabel();
 });

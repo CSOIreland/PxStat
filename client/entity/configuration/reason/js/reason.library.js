@@ -130,7 +130,7 @@ app.reason.drawReasonDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#reason-table-read-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#reason-table-read-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.reason.drawCallback();
         });
     }
@@ -179,7 +179,7 @@ app.reason.ajax.read = function () {
  */
 app.reason.modal.delete = function () {
     var idn = $(this).attr("idn");
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [idn]), app.reason.ajax.delete, idn);
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [idn]), app.reason.ajax.delete, idn);
 };
 
 /**
@@ -440,7 +440,8 @@ app.reason.validation.create = function () {
         errorPlacement: function (error, element) {
             $("#reason-modal-create").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.reason.ajax.create();
         }
     }).resetForm();
@@ -478,7 +479,8 @@ app.reason.validation.update = function () {
         errorPlacement: function (error, element) {
             $("#reason-modal-update").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.reason.ajax.update();
         }
     }).resetForm();

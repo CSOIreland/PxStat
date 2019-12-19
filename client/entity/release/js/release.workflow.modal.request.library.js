@@ -95,7 +95,8 @@ app.release.workflow.modal.request.validation.create = function (RqsCode) {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-request-publish [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.request.ajax.create(RqsCode);
                     $("#request-workflow-modal-request-publish").modal("hide");
                 }
@@ -110,7 +111,8 @@ app.release.workflow.modal.request.validation.create = function (RqsCode) {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-request-flag [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.request.ajax.create(RqsCode);
                     $("#request-workflow-modal-request-flag").modal("hide");
                 }
@@ -130,7 +132,8 @@ app.release.workflow.modal.request.validation.create = function (RqsCode) {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-request-delete [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.request.ajax.create(RqsCode);
                     $("#request-workflow-modal-request-delete").modal("hide");
                 }
@@ -150,7 +153,8 @@ app.release.workflow.modal.request.validation.create = function (RqsCode) {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-request-rollback [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.request.ajax.create(RqsCode);
                     $("#request-workflow-modal-request-rollback").modal("hide");
                 }

@@ -76,7 +76,7 @@ app.release.workflow.history.callback.drawDataTable = function (data) {
                     data: null,
                     visible: true,
                     render: function (data, type, row) {
-                        return app.label.static[row.RqsValue];
+                        return app.label.datamodel.request[row.RqsValue];
                     }
                 },
                 {
@@ -174,7 +174,7 @@ app.release.workflow.history.callback.drawDataTable = function (data) {
             language: app.label.plugin.datatable,
             "order": [[1, "desc"]]
         };
-        $("#release-workflow-history table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#release-workflow-history table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.release.workflow.history.drawCallback();
         });
     }
@@ -188,24 +188,42 @@ app.release.workflow.history.callback.drawDataTable = function (data) {
  * @param {*} textTooltip
  */
 app.release.workflow.history.render.reply = function (requestType, textTooltip) {
+
     switch (requestType) {
         case C_APP_TS_RESPONSE_APPROVED:
-        case C_APP_TS_SIGNOFF_APPROVED:
             return $("<a>", {
                 "data-toggle": "tooltip",
-                "data-original-title": textTooltip ? app.label.static[textTooltip.toLowerCase()] : "", //textTooltip,
+                "data-original-title": textTooltip ? app.label.datamodel.response[textTooltip] : "", //textTooltip,
                 html:
                     $("<i>", {
                         class: "fas fa-check-circle text-success"
                     }).get(0).outerHTML
             }).get(0).outerHTML;
             break;
-
+        case C_APP_TS_SIGNOFF_APPROVED:
+            return $("<a>", {
+                "data-toggle": "tooltip",
+                "data-original-title": textTooltip ? app.label.datamodel.signoff[textTooltip] : "", //textTooltip,
+                html:
+                    $("<i>", {
+                        class: "fas fa-check-circle text-success"
+                    }).get(0).outerHTML
+            }).get(0).outerHTML;
+            break;
         case C_APP_TS_RESPONSE_REJECTED:
+            return $("<a>", {
+                "data-toggle": "tooltip",
+                "data-original-title": textTooltip ? app.label.datamodel.response[textTooltip] : "", //textTooltip,
+                html:
+                    $("<i>", {
+                        class: "fas fa-times-circle text-danger"
+                    }).get(0).outerHTML
+            }).get(0).outerHTML;
+            break;
         case C_APP_TS_SIGNOFF_REJECTED:
             return $("<a>", {
                 "data-toggle": "tooltip",
-                "data-original-title": textTooltip ? app.label.static[textTooltip.toLowerCase()] : "", //textTooltip,
+                "data-original-title": textTooltip ? app.label.datamodel.signoff[textTooltip] : "", //textTooltip,
                 html:
                     $("<i>", {
                         class: "fas fa-times-circle text-danger"
@@ -236,7 +254,7 @@ app.release.workflow.history.render.extraInfo = function (row) {
     //set the temporary ID for the postCallbackFunction
     grid.attr("id", "extraInfoPost");
     // Request
-    grid.find("[name=rqs-value]").empty().html(app.label.static[row.RqsValue]); //Translation
+    grid.find("[name=rqs-value]").empty().html(app.label.datamodel.request[row.RqsValue]); //Translation
     grid.find("[name=wrq-emergency-flag]").empty().html(app.library.html.boolean(row.WrqEmergencyFlag, true, true));
     grid.find("[name=wrq-datetime]").empty().html(row.WrqDatetime ? moment(row.WrqDatetime).format(app.config.mask.datetime.display) : "");
     grid.find("[name=wrq-reservation-flag]").empty().html(app.library.html.boolean(row.WrqReservationFlag, true, true));

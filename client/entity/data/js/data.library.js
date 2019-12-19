@@ -65,8 +65,6 @@ app.data.setDataPicker = function () {
         $('#latest-releases-date-picker span').html(start.format(app.config.mask.date.display));
         app.data.ajax.readLatestReleases();
 
-        app.data.callback.drawCollectionApiDetails();
-
     });
 
 };
@@ -77,7 +75,7 @@ app.data.setDataPicker = function () {
 app.data.ajax.readLatestReleases = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.public,
-        C_APP_API_READ_COLLECTION_METHOD,
+        "PxStat.Data.Cube_API.ReadCollection",
         app.data.collection.params,
         "app.data.callback.readLatestReleases",
         null,
@@ -107,7 +105,7 @@ app.data.callback.readLatestReleases = function (response) {
  * Draw Callback for Datatable
  */
 app.data.callback.drawCallbackDrawLatestReleases = function () {
-    $("#data-latest-releases table tbody").find('tr').once('click', function (e) {
+    $("#data-latest-releases table [name=link]").once('click', function (e) {
         e.preventDefault();
         $("#data-latest-releases").remove();
         $("#data-accordion-collection-api").hide();
@@ -115,8 +113,6 @@ app.data.callback.drawCallbackDrawLatestReleases = function () {
         $("#data-navigation").find(".navbar-collapse").collapse("hide");
         app.data.init($(this).attr("lng-iso-code"), $(this).attr("mtr-code"), null, $(this).attr("mtr-code"));
         app.data.dataset.ajax.readMetadata();
-    }).on('mouseenter', function () {
-        $(this).css({ 'cursor': 'pointer' });
     });
 
     $('[data-toggle="tooltip"]').tooltip();
@@ -131,8 +127,9 @@ app.data.callback.drawLatestReleases = function (data) {
     if ($.fn.dataTable.isDataTable("#data-latest-releases table")) {
         app.library.datatable.reDraw("#data-latest-releases table", data);
     } else {
+
         var localOptions = {
-            order: [[4, 'desc']],
+            order: [[5, 'desc']],
             data: data,
             "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
             createdRow: function (row, data, dataIndex) {
@@ -142,18 +139,42 @@ app.data.callback.drawLatestReleases = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<span>", {
+                        return $("<a>", {
+                            name: "link",
+                            "mtr-code": data.extension.matrix,
+                            "lng-iso-code": data.extension.language.code,
                             text: data.extension.matrix,
-                            class: "text-muted"
+                            href: "#",
                         }).get(0).outerHTML;
                     }
                 },
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<h6>", {
-                            // class: "font-weight-normal",
-                            text: data.label
+                        return $("<a>", {
+                            class: "badge badge-secondary mr-1 text-light",
+                            text: data.extension.frequency.name
+                        }).get(0).outerHTML;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return $("<a>", {
+                            name: "link",
+                            "mtr-code": data.extension.matrix,
+                            "lng-iso-code": data.extension.language.code,
+                            text: data.label,
+                            href: "#",
+                        }).get(0).outerHTML;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return $("<span>", {
+                            class: "badge badge-primary p-1",
+                            text: data.extension.language.name
                         }).get(0).outerHTML;
                     }
                 },
@@ -179,19 +200,8 @@ app.data.callback.drawLatestReleases = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<span>", {
-                            class: "badge badge-primary p-1",
-                            text: data.extension.language.name
-                        }).get(0).outerHTML;
-                    }
-                },
-                {
-                    data: null,
-                    render: function (data, type, row) {
-                        return $("<span>", {
-                            class: "text-muted",
-                            text: moment(row.updated, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display)
-                        }).get(0).outerHTML;
+                        return moment(row.updated, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+
                     }
                 }
             ],
@@ -201,7 +211,7 @@ app.data.callback.drawLatestReleases = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#data-latest-releases").show().find("table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#data-latest-releases").show().find("table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.data.callback.drawCallbackDrawLatestReleases();
         });
 
@@ -217,7 +227,7 @@ app.data.callback.drawCollectionApiDetails = function () {
     $("#data-collection-api").find("[name=api-object]").text(function () {
         return JSON.stringify({
             "jsonrpc": C_APP_API_JSONRPC_VERSION,
-            "method": C_APP_API_READ_COLLECTION_METHOD,
+            "method": "PxStat.Data.Cube_API.ReadCollection",
             "params": app.data.collection.params
         }, null, "\t");
     });

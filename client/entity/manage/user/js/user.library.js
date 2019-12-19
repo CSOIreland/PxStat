@@ -186,7 +186,7 @@ app.user.drawUserDataTable = function (data) {
         {
           data: null,
           render: function (data, type, row) {
-            return app.label.static[row.PrvValue];
+            return app.label.datamodel.privilege[row.PrvValue];
           }
         },
         {
@@ -211,7 +211,7 @@ app.user.drawUserDataTable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#user-read-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#user-read-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.user.drawCallback();
     });
 
@@ -267,7 +267,7 @@ app.user.callback.createDropDownPrivilege = function (response) {
       }));
       //Fill rest of select with role types
       $.each(response.data, function (_key, entry) {
-        $("#user-modal-create").find("[name=user-select-create-type]").append(new Option(app.label.static[this.PrvValue], this.PrvCode));
+        $("#user-modal-create").find("[name=user-select-create-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
       });
     } else {
       api.modal.exception(app.label.static["api-ajax-nodata"]);
@@ -334,7 +334,8 @@ app.user.validation.create = function () {
     errorPlacement: function (error, element) {
       $("#user-modal-create [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.user.ajax.create();
     }
   }).resetForm();
@@ -428,7 +429,7 @@ app.user.callback.updateDropDownPrivilege = function (response, selectedPrvCode)
       $("#user-modal-update").find("[name=user-select-update-type]").empty(); //clear previous list of user types
       //fill rest of select with role types
       $.each(response.data, function (_key, entry) {
-        $("#user-modal-update").find("[name=user-select-update-type]").append(new Option(app.label.static[this.PrvValue], this.PrvCode));
+        $("#user-modal-update").find("[name=user-select-update-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
       });
       //set default to be selected
       $("#user-modal-update").find("[name=user-select-update-type]").val(selectedPrvCode);
@@ -605,7 +606,8 @@ app.user.validation.update = function () {
     errorPlacement: function (error, element) {
       $("#user-modal-update [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.user.ajax.update();
     }
   }).resetForm();
@@ -674,7 +676,7 @@ app.user.callback.update = function (response, callbackParam) {
  */
 app.user.modal.delete = function () {
   var idn = $(this).attr("idn");
-  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [idn]), app.user.ajax.delete, idn);
+  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [idn]), app.user.ajax.delete, idn);
 };
 
 /**

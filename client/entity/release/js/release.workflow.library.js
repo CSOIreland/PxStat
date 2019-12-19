@@ -65,7 +65,7 @@ app.release.workflow.request.callback.readType = function (response) {
         $.each(response.data, function (i, row) {
             var option = $("<option>", {
                 "value": row.RqsCode,
-                "text": app.label.static[row.RqsValue]
+                "text": app.label.datamodel.request[row.RqsValue]
             });
             $("#release-workflow-request [name=rqs-code]").append(option);
         });
@@ -81,7 +81,29 @@ app.release.workflow.request.callback.readType = function (response) {
  */
 app.release.workflow.read = function () {
     // Check first if it's Awaiting Response
-    app.release.workflow.response.ajax.read();
+    if (app.release.isAwaitingResponse) {
+        // Toggle Reason buttons
+        app.release.reason.toggle();
+        app.release.workflow.response.render();
+        app.release.workflow.modal.response.render();
+    }
+    else if (app.release.isAwaitingSignOff) {
+        // Toggle Reason buttons
+        app.release.reason.toggle();
+        app.release.workflow.signoff.render();
+        app.release.workflow.modal.signoff.render();
+    }
+
+    else {
+        // Toggle Reason buttons
+        app.release.reason.toggle();
+        // If it is no Awaiting Signoff, then it is Awaiting Request
+        app.release.workflow.request.render();
+    }
+
+
+
+    //app.release.workflow.response.ajax.read();
 };
 
 /**
@@ -96,41 +118,6 @@ app.release.workflow.response.render = function () {
     }
 };
 
-/**
- * 
- */
-app.release.workflow.response.ajax.read = function () {
-    api.ajax.jsonrpc.request(
-        app.config.url.api.private,
-        "PxStat.Workflow.Workflow_API.ReadAwaitingResponse",
-        { "RlsCode": app.release.RlsCode },
-        "app.release.workflow.response.callback.read",
-        null,
-        null,
-        null,
-        { async: false });
-};
-
-/**
-* 
- * @param {*} response
- */
-app.release.workflow.response.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        // If it is no Awaiting Response, then check if it is Awaiting Signoff
-        app.release.workflow.signoff.ajax.read();
-    } else if (response.data) {
-        // Store for later use
-        app.release.isWorkflowInProgress = true;
-        // Toggle Reason buttons
-        app.release.reason.toggle();
-        app.release.workflow.response.render();
-        app.release.workflow.modal.response.render();
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-};
 //#endregion
 
 //#region Awaiting Signoff 
@@ -147,43 +134,4 @@ app.release.workflow.signoff.render = function () {
     }
 };
 
-/**
- * 
- */
-app.release.workflow.signoff.ajax.read = function () {
-    api.ajax.jsonrpc.request(
-        app.config.url.api.private,
-        "PxStat.Workflow.Workflow_API.ReadAwaitingSignoff",
-        { "RlsCode": app.release.RlsCode },
-        "app.release.workflow.signoff.callback.read",
-        null,
-        null,
-        null,
-        { async: false });
-};
-
-/**
-* 
- * @param {*} response
- */
-app.release.workflow.signoff.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        // Store for later use
-        app.release.isWorkflowInProgress = false;
-        // Toggle Reason buttons
-        app.release.reason.toggle();
-        // If it is no Awaiting Signoff, then it is Awaiting Request
-        app.release.workflow.request.render();
-    } else if (response.data) {
-        // Store for later use
-        app.release.isWorkflowInProgress = true;
-        // Toggle Reason buttons
-        app.release.reason.toggle();
-        app.release.workflow.signoff.render();
-        app.release.workflow.modal.signoff.render();
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-};
 //#endregion

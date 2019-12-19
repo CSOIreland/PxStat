@@ -9,6 +9,7 @@ $(document).ready(function () {
         $(this).find("[name=browser-pie-chart]").empty();
         $(this).find("[name=operating-system-pie-chart]").empty();
         $(this).find("[name=language-pie-chart]").empty();
+        $(this).find("[name=format-pie-chart]").empty();
     });
 
     // Translate labels language (Last to run)

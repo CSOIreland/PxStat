@@ -57,23 +57,25 @@
                 </div>
                 <div class="border-top row mx-0"></div>
             </div>
-            <div class="card-footer d-flex justify-content-between">
-                <span>
-                    <button class="btn btn-info" name="import-show-modal" type="button" data-toggle="modal" data-target="#build-create-import">
-                        <i class="fas fa-upload"></i>
-                        <span label="import"></span>
-                    </button>
-                </span>
-                <span>
-                    <button class="btn btn-warning text-dark" name="button-clear" type="button">
-                        <i class="fas fa-undo"></i>
-                        <span label="reset"></span>
-                    </button>
-                    <button class="btn btn-primary text-light" type="submit" value="submit" name="button-generate">
-                        <i class="fas fa-cubes"></i>
-                        <span label="build-dimensions"></span>
-                    </button>
-                </span>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                        <button class="btn btn-info" name="import-show-modal" type="button" data-toggle="modal" data-target="#build-create-import">
+                            <i class="fas fa-upload"></i>
+                            <span label="import"></span>
+                        </button>
+                    </div>
+                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                        <button class="btn btn-warning text-dark" name="button-clear" type="button">
+                            <i class="fas fa-undo"></i>
+                            <span label="reset"></span>
+                        </button>
+                        <button class="btn btn-primary text-light" type="submit" value="submit" name="button-generate">
+                            <i class="fas fa-cubes"></i>
+                            <span label="build-dimensions"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
@@ -125,11 +127,11 @@
                             <i class="fas fa-upload fa-2x"></i>
                             <span name="upload-file-name"></span>
                             <span name="upload-file-tip">
-                                <strong><span label="choose-a"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
-                                <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                <strong><span label="choose"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
+                                <span class="box__dragndrop"> <span label="drag-here"></span></span>
                             </span>
                             <br />
-                            <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                            <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                         </label>
                     </div>
                 </div>
@@ -162,24 +164,32 @@
             </div>
             <div class="modal-footer bg-warning justify-content-start rounded-0" name="frequency-warning" style="display: none;">
                 <label>
-                    <span label="upload-frequency-automatically-detected"></span>
+                    <span label="upload-frequency-detected"></span>
                 </label>
             </div>
-            <div class="modal-footer d-flex justify-content-between">
-                <span>
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
-                        <i class="far fa-times-circle"></i> <span label="close"></span>
-                    </button>
-                </span>
-                <span>
-                    <button name="import-file-reset" class="btn btn-warning text-dark" type="button">
-                        <i class="fas fa-undo"></i> <span label="reset"></span>
-                    </button>
-                    <button name="parse-source-file" class="btn btn-primary text-light" disabled>
-                        <i class="fas fa-upload"></i> <span label="parse"></span>
-                    </button>
-                </span>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4  text-left my-2">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i> <span label="close"></span>
+                            </button>
+                        </div>
+                        <div class="col-xs-12 col-sm-8 text-right  my-2">
+                            <button name="import-file-reset" class="btn btn-warning text-dark" type="button">
+                                <i class="fas fa-undo"></i> <span label="reset"></span>
+                            </button>
+                            <button name="parse-source-file" class="btn btn-primary text-light" disabled>
+                                <i class="fas fa-upload"></i> <span label="parse"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
+
+
         </div>
     </div>
 </div>

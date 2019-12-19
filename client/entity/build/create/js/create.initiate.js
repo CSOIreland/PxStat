@@ -6,9 +6,7 @@ $(document).ready(function () {
     app.build.create.initiate.ajax.readFrequency();
     app.build.create.initiate.ajax.readCopyright();
 
-    $("#build-create-initiate-setup").find("[name=button-matrix-lookup]").on("click", function (e) {
-        app.build.create.initiate.ajax.matrixLookup();
-    });
+    $("#build-create-initiate-setup").find("[name=button-matrix-lookup]").on("click", app.build.create.initiate.ajax.matrixLookup);
 
     if (app.config.entity.build.officialStatistics) {
         $("#build-create-initiate-setup [name=official-flag]").prop('checked', true);
@@ -28,7 +26,7 @@ $(document).ready(function () {
     //Confirm reset and reset details
     $("#build-create-initiate-setup").find("[name=button-clear]").once("click", function () {
         api.modal.confirm(
-            app.label.static["create-reset-page"],
+            app.label.static["build-reset-page"],
             app.build.create.initiate.clear
         );
     });

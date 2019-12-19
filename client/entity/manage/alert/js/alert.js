@@ -9,9 +9,11 @@ $(document).ready(function () {
     app.alert.ajax.read();
 
     // Parse warning
-    $("#alert-container [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-to-the-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
+    $("#alert-container [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
     // Initiate all text areas as tinyMCE
     app.library.utility.initTinyMce();
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

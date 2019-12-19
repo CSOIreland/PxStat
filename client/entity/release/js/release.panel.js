@@ -12,6 +12,8 @@ $(document).ready(function () {
     app.release.panel.awaitingResponse.ajax.read();
     //Load requests Data Table data
     app.release.panel.awaitingSignoff.ajax.read();
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

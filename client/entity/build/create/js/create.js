@@ -16,6 +16,8 @@ $(document).ready(function () {
     $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB").show();
     // Initiate Drag n Drop plugin
     api.plugin.dragndrop.initiate(document, window);
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

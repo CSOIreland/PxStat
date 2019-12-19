@@ -35,7 +35,8 @@ $(document).ready(function () {
 
     // Load Modal 
     api.content.load("#analytic-modal", "entity/analytic/index.modal.html");
-
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

@@ -23,13 +23,18 @@
                                         <span name="rls-version-previous"></span>.<span name="rls-revision-previous"></span>
                                     </td>
                                     <td empty="true" style="width:33%">
-                                        <span name="rls-revision-current"></span>.<span name="rls-revision-current"></span>
+                                        <span name="rls-version-current"></span>.<span name="rls-revision-current"></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="bg-neutral" scope="row" label="status"></th>
                                     <td name="status-previous" empty="true"></td>
                                     <td name="status-current" empty="true"></td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-neutral" scope="row" label="request"></th>
+                                    <td></td>
+                                    <td name="request-current"></td>
                                 </tr>
                                 <tr>
                                     <th class="bg-neutral" scope="row" label="live-from"></th>
@@ -145,16 +150,20 @@
                         <div class="card-body">
                             <div name="table-wrapper"></div>
                         </div>
-                        <div class="card-footer d-flex text-right justify-content-between">
-                            <span>
-                                <span label="codes" class="text-right font-weight-bold"></span>
-                                <span><input checked type="checkbox" id="comparison-amendment-toggle"></span>
-                            </span>
-                            <span>
-                                <button name="csv" class="btn btn-tertiary text-light">
-                                    <i class="fas fa-download"></i> <span label="csv"></span>
-                                </button>
-                            </span>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-4 text-left my-2">
+                                    <span>
+                                        <span label="codes" class="text-right font-weight-bold"></span>
+                                        <span><input checked type="checkbox" id="comparison-amendment-toggle"></span>
+                                    </span>
+                                </div>
+                                <div class="col-xs-12 col-sm-8 text-right my-2">
+                                    <button name="csv" class="btn btn-tertiary text-light">
+                                        <i class="fas fa-download"></i> <span label="csv"></span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="comparison-datatable-addition" class="card mb-2 border-primary">
@@ -162,16 +171,21 @@
                         <div class="card-body">
                             <div name="table-wrapper"></div>
                         </div>
-                        <div class="card-footer d-flex text-right justify-content-between">
-                            <span>
-                                <span label="codes" class="text-right font-weight-bold"></span>
-                                <span><input checked type="checkbox" id="comparison-addition-toggle"></span>
-                            </span>
-                            <span>
-                                <button name="csv" class="btn btn-tertiary text-light">
-                                    <i class="fas fa-download"></i> <span label="csv"></span>
-                                </button>
-                            </span>
+
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-4 text-left my-2">
+                                    <span>
+                                        <span label="codes" class="text-right font-weight-bold"></span>
+                                        <span><input checked type="checkbox" id="comparison-addition-toggle"></span>
+                                    </span>
+                                </div>
+                                <div class="col-xs-12 col-sm-8 text-right my-2">
+                                    <button name="csv" class="btn btn-tertiary text-light">
+                                        <i class="fas fa-download"></i> <span label="csv"></span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="comparison-datatable-deletion" class="card mb-2 border-primary">
@@ -179,16 +193,21 @@
                         <div class="card-body">
                             <div name="table-wrapper"></div>
                         </div>
-                        <div class="card-footer d-flex text-right justify-content-between">
-                            <span>
-                                <span label="codes" class="text-right font-weight-bold"></span>
-                                <span><input checked type="checkbox" id="comparison-deletion-toggle"></span>
-                            </span>
-                            <span>
-                                <button name="csv" class="btn btn-tertiary text-light">
-                                    <i class="fas fa-download"></i> <span label="csv"></span>
-                                </button>
-                            </span>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-4 text-left my-2">
+                                    <span>
+                                        <span label="codes" class="text-right font-weight-bold"></span>
+                                        <span><input checked type="checkbox" id="comparison-deletion-toggle"></span>
+                                    </span>
+                                    <span>
+                                </div>
+                                <div class="col-xs-12 col-sm-8 text-right my-2">
+                                    <button name="csv" class="btn btn-tertiary text-light">
+                                        <i class="fas fa-download"></i> <span label="csv"></span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="release-comparison-reason" class="card border-primary">

@@ -1,34 +1,34 @@
 <div class="col px-2">
     <div name="back-to-select-results" class="row mx-0 mb-2 mw-100">
-        <div class="col"><button class="btn btn-warning" type="submit">
+        <div class="col pl-2"><button class="btn btn-warning" type="submit">
                 <i class="fas fa-angle-left"></i>
                 <span label="back"></span>
             </button></div>
     </div>
 </div>
 
-<div id="matrix-selection-placeholder" class="col px-2">
+<div id="data-dataview-selected-table" class="col px-2">
 
 </div>
 
 <!-- Template: Region 1-->
 <div id="data-dataset-templates" style="display: none">
     <div name="matrix-selection" class="row mx-0">
-        <div class="col-sm p-2">
+        <div class="col p-2">
             <div name="table-selection-card" class="card mb-4">
                 <!-- Data Table data View-->
                 <div class="card-header">
                     <div class="row px-2">
-                        <div class="col-8 px-0">
+                        <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
                             <h5 name="mtr-title" class="mb-1"></h5>
                         </div>
-                        <div class="col-4 text-right px-0" name="updated-date-and-time"> <small><i name="emergency-flag" class="fas fa-exclamation-triangle text-warning mr-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="emergency-release"></i>
+                        <div class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1" name="updated-date-and-time"> <small><i name="emergency-flag" class="fas fa-exclamation-triangle text-warning mr-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="emergency-release"></i>
                                 <span label="last-updated"></span><span>: </span><b name="updated-date" class="mr-1"></b><span name="updated-time"></span>
                             </small>
                         </div>
                     </div>
                     <div class="row px-2">
-                        <div class="col-8 px-0">
+                        <div class="col-xl-8 col-sm-12 px-0">
                             <h6 class="mb-1">
                                 <span>
                                     <span name="mtr-code"></span> <i name="unofficial-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
@@ -36,9 +36,9 @@
                                 </span>
                             </h6>
                         </div>
-                        <div class="col-4 text-right px-0">
+                        <div class="col-xl-4 col-sm-12 text-sm-left text-xl-right px-0">
                             <span>
-                                <i name="archive-flag" class="fas fa-file-archive text-data mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="archived"></i>
+                                <i name="archive-flag" class="fas fa-file-archive text-dark mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="archived"></i>
                                 <i name="reservation-flag" class="fas fa-exclamation text-danger mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="under-reservation"></i>
                                 <i name="analytical-flag" class="fas fa-chart-line text-warning mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="analytical"></i>
                                 <i name="dependency-flag" class="fab fa-hubspot text-tertiary mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="dependency"></i>
@@ -47,15 +47,30 @@
                         </div>
                     </div>
 
+                </div>
+
+                <div class="card-header">
                     <div class="row px-2">
-                        <div class="col-8 px-0"><span name="dimensions"></span>
-                            <span><span name="dimension-time" class="badge badge-secondary p-1 mr-1"></span><span name="dimension-time-span" class="badge badge-neutral p-1 mr-1"></span></span>
+                        <div class="col-xl-8 col-sm-12 px-0"><span name="dimensions"></span>
+                            <span><span name="dimension-time" class="badge badge-secondary p-1 mr-1 text-light"></span><span name="dimension-time-span" class="badge badge-neutral p-1 mr-1"></span></span>
                         </div>
-                        <div class="col-4 text-right px-0">
+                        <div class="col-xl-4 col-sm-12 text-sm-left text-xl-right px-0">
                             <small><a name="copyright" href="" target="_blank"></a></small>
                         </div>
                     </div>
+
                 </div>
+
+                <div class="card-header bg-danger text-light d-none p-2" name="under-reservation-header">
+                    <i class="fas fa-exclamation text-light mx-1" data-toggle="tooltip" data-original-title="" label-tooltip="under-reservation"></i>
+                    <span label="under-reservation"></span>
+                </div>
+
+                <div class="card-header bg-neutral text-dark d-none p-2 " name="archive-header">
+                    <i class="fas fa-file-archive mx-1" data-toggle="tooltip" data-original-title="" label-tooltip="archived"></i>
+                    <span label="archived"></span>
+                </div>
+
                 <!-- Change Data Table data Select view/ data MAP-->
                 <div name="map-header" class="card-header text-right d-none">
                     <!-- Data Table data Show Codes button-->
@@ -73,20 +88,27 @@
                         <div name="highmap-container" class="col-sm-6"></div>
                     </div>
                 </div>
-                <div name="card-footer" class="card-footer d-flex justify-content-between align-items-center">
-                    <span>
-                        <span label="codes" class="text-right font-weight-bold"></span>
-                        <span><input checked type="checkbox" id="code-toggle-select"></span>
-                    </span>
-                    <span>
-                        <span label="data-cells-selected" class="font-weight-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
-                        <button name="reset" type="button" class="btn btn-warning text-dark">
-                            <i class="fas fa-undo"></i> <span label="reset"></span>
-                        </button>
-                        <button name="show-data" class="btn btn-primary" type="submit">
-                            <i class="fas fa-search"></i> <span name="button-show-data-text" label="view-all"></span>
-                        </button>
-                    </span>
+                <div name="card-footer" class="card-footer">
+                    <div class="row">
+                        <div class="col text-right"> <span label="data-selected" class="font-weight-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
+                        </div>
+                    </div>
+                </div>
+                <div name="card-footer" class="card-footer">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 text-left my-2"> <span label="codes" class="text-right font-weight-bold"></span>
+                            <span><input checked type="checkbox" id="code-toggle-select"></span>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-8 text-right my-2">
+                            <button name="reset" type="button" class="btn btn-warning text-dark">
+                                <i class="fas fa-undo"></i> <span label="reset"></span>
+                            </button>
+                            <button name="show-data" class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i> <span name="button-show-data-text" label="view-all"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,7 +116,7 @@
 
     <span name="dimension" class="badge badge-tertiary p-1 mr-1"></span>
 
-    <div name="dimension-container" class="col-sm-6">
+    <div name="dimension-container" class="col-xl-6 col-sm-12">
         <div class="card mb-4">
             <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center p-2"><span>
                     <span class="font-weight-bold">
@@ -119,7 +141,7 @@
         <div class="card mb-4">
             <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center p-2">
                 <span name="dimension-label" class="font-weight-bold"></span>
-                <span name="dimension-count" class="badge badge-data badge-pill bg-tertiary"></span>
+                <span name="dimension-count" class="badge badge-data badge-pill bg-tertiary text-light"></span>
             </div>
             <div class="card-body p-1">
                 <select name="dimension-select" class="custom-select" idn="" role="">
@@ -148,11 +170,7 @@
         <div class="card m-3 border-info">
             <div class="card-header bg-info text-light" label="download-full-dataset"></div>
             <div class="card-body">
-                <div class="list-group">
-                    <a name="download-full-dataset-json" href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><span>JSON-stat</span><span><i class="fas fa-file-download text-info"></i></span></a>
-                    <a name="download-full-dataset-px" href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><span>PX</span><span><i class="fas fa-file-download text-info"></i></span></a>
-                    <a name="download-full-dataset-csv" href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"><span>CSV</span><span><i class="fas fa-file-download text-info"></i></span></a>
-                </div>
+                <div name="download-full-dataset" class="list-group"></div>
             </div>
         </div>
         <div class="card border-info m-3">
@@ -176,6 +194,14 @@
 
         <div name="sharethis"></div>
     </div>
+
+    <a name="download-dataset-format" href="#" frm-type="" frm-version="" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <span>
+            <span name="type"></span>
+            <span><small name="version" class="text-muted"></small></span>
+        </span>
+        <span><i class="fas fa-file-download text-info"></i></span>
+    </a>
 
     <li name="reason" class="list-group-item"></li>
 </div>

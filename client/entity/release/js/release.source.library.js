@@ -169,7 +169,7 @@ app.release.source.download = function () {
  */
 app.release.source.view = function () {
     if (app.release.fileContent.length > app.config.upload.threshold.soft) {
-        api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview-file", [app.library.utility.formatNumber(Math.ceil(app.release.fileContent.length / 1024)) + " KB"]),
+        api.modal.confirm(app.library.html.parseDynamicLabel("confirm-file", [app.library.utility.formatNumber(Math.ceil(app.release.fileContent.length / 1024)) + " KB"]),
             app.release.source.callback.view)
     }
     else {

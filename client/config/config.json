@@ -67,9 +67,10 @@
 			"hard": 104857600
 		},
 		"unitsPerSecond": {
-			"validate": 400000,
-			"read": 180000,
-			"create": 40000
+			"read": 250000,
+			"validate": 500000,
+			"upload": 70000,
+			"update": 40000
 		},
 		"timeout": 3600000
 	},
@@ -102,7 +103,8 @@
 			"comparison": {
 				"threshold": {
 					"soft": 1048576
-				}
+				},
+				"differenceClass": "table-danger"
 			}
 		},
 		"analytic": {

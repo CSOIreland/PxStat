@@ -14,7 +14,7 @@ $(document).ready(function () {
   app.library.utility.initTinyMce();
 
   // Parse warning
-  $("#reason-table-read-container [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-to-the-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
+  $("#reason-table-read-container [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
 
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();

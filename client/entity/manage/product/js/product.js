@@ -25,8 +25,9 @@ $(document).ready(function () {
   }
 
   // Parse warning
-  $("#product-card-read [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-to-the-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
-
+  $("#product-card-read [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 });

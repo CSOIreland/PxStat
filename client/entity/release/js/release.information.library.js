@@ -51,13 +51,18 @@ app.release.information.callback.read = function (response) {
         app.release.isLive = app.release.checkStatusLive(response.data);
         app.release.isPending = app.release.checkStatusPending(response.data);
         app.release.isHistorical = app.release.checkStatusHistorical(response.data);
+
+
         app.release.isWorkInProgress = app.release.checkStatusWorkInProgress(response.data);
+        app.release.isAwaitingResponse = app.release.checkStatusAwaitingResponse(response.data);
+        app.release.isAwaitingSignOff = app.release.checkStatusAwaitingSignOff(response.data);
 
         app.release.information.render(response.data);
         app.release.property.render(response.data);
         app.release.comment.render(response.data);
         app.release.reason.render();
         app.release.workflow.modal.signoff.checkNavigation();
+        app.release.workflow.read();
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -74,6 +79,7 @@ app.release.information.render = function (data) {
     $("#release-information [name=rls-version]").empty().html(data.RlsVersion);
     $("#release-information [name=rls-revision]").empty().html(data.RlsRevision);
     $("#release-information [name=status]").empty().html(app.release.renderStatus(data));
+    $("#release-information [name=request]").empty().html(app.release.renderRequest(data.RqsCode));
     $("#release-information [name=rls-live-datetime-from]").empty().html(data.RlsLiveDatetimeFrom ? moment(data.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
     $("#release-information [name=rls-live-datetime-to]").empty().html(data.RlsLiveDatetimeTo ? moment(data.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
     $("#release-information [name=rls-emergency-flag]").empty().html(app.library.html.boolean(data.RlsEmergencyFlag, true, true));

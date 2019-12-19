@@ -139,7 +139,8 @@ app.build.upload.validation.create = function () {
             $("#build-upload-container [name=" + element[0].name + "-error-holder]").append(error[0]);
             app.build.upload.validation.file();
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             if (!app.build.upload.validation.file()) {
                 return;
             }
@@ -170,7 +171,8 @@ app.build.upload.validation.frequency = function () {
             $("#build-upload-modal-frequency [name=" + element[0].name + "-error-holder]").append(error[0]);
             app.build.upload.validation.file();
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             // Store for later use
             app.build.upload.FrqValue = $("#build-upload-modal-frequency").find("[name=frq-value]:checked").val();
             app.build.upload.FrqCode = $("#build-upload-modal-frequency").find("[name=frq-code]").val();
@@ -347,7 +349,7 @@ app.build.upload.ajax.create = function (overwrite) {
         }
     );
     // Add the progress bar
-    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.upload.file.content.Base64.length, app.config.upload.unitsPerSecond.create));
+    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.upload.file.content.Base64.length, app.config.upload.unitsPerSecond.upload));
 };
 
 /**
@@ -556,7 +558,8 @@ app.build.upload.ajax.uploadHistory = function (dateFrom, dateTo) {
         "PxStat.Data.Matrix_API.ReadHistory",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
-            "DateTo": dateTo.format(app.config.mask.date.ajax)
+            "DateTo": dateTo.format(app.config.mask.date.ajax),
+            "LngIsoCode": app.label.language.iso.code
         },
         "app.build.upload.callback.uploadHistory",
         null,
@@ -607,12 +610,28 @@ app.build.upload.callback.uploadHistory = function (response) {
             data: data,
             columns: [
                 {
-                    data: "MtrCode"
+                    data: null,
+                    render: function (_data, _type, row) {
+                        return app.library.html.tooltip(row.MtrCode, row.MtrTitle);
+                    }
+
                 },
                 {
                     data: null,
                     render: function (data, type, row) {
                         return app.library.html.link.edit({ idn: row.RlsCode, MtrCode: row.MtrCode }, row.RlsVersion + "." + row.RlsRevision);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.release.renderStatus(row);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.release.renderRequest(row.RqsCode);
                     }
                 },
                 {
@@ -644,24 +663,20 @@ app.build.upload.callback.uploadHistory = function (response) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(data.CreateDatetime).format(app.config.mask.datetime.display);
-                    }
-                },
-                {
-                    data: null,
-                    render: function (data, type, row) {
-                        return app.release.renderStatus(row);
+                        return moment(row.CreateDateTime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
                     }
                 }
             ],
-            order: [4, 'desc'],
+            order: [5, 'desc'],
             drawCallback: function (settings) {
                 app.build.upload.drawCallbackUploadHistory();
             },
+
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#build-upload-history table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+
+        $("#build-upload-history table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.build.upload.drawCallbackUploadHistory();
         });
 

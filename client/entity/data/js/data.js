@@ -11,6 +11,8 @@ $(document).ready(function () {
     app.data.goTo.CprCode = api.content.getParam("CprCode");
     app.data.goTo.MtrCode = api.content.getParam("MtrCode");
     app.data.setDataPicker();
+    //populate colection api  
+    app.data.callback.drawCollectionApiDetails();
     $("#data-accordion-collection-api").show();
     api.content.load("#data-search-row", "entity/data/index.search.html");
     api.content.load("#data-metadata-row", "entity/data/index.metadata.html");
@@ -49,8 +51,6 @@ $(document).ready(function () {
     });
 
 
-    //populate colection api  
-    app.data.callback.drawCollectionApiDetails();
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

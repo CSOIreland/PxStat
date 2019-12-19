@@ -164,7 +164,8 @@ app.release.navigation.validation.update = function () {
         errorPlacement: function (error, element) {
             $("#release-navigation-modal [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             var PrcCode = $("#release-navigation-modal [name=prc-code]").val();
             app.release.navigation.ajax.update(PrcCode);
             $("#release-navigation-modal").modal("hide");

@@ -41,7 +41,6 @@ app.library.datatable.reDraw = function (selector, data) {
  */
 app.library.datatable.showExtraInfo = function (datatableSelector, callbackFunction, postCallbackFunction) {
   postCallbackFunction = postCallbackFunction || null;
-
   //Bind click on datatable selector because of responsive classes
   $(datatableSelector).find("[name=" + C_APP_DATATABLE_EXTRA_INFO_LINK + "]").once('click', function (e) {
     e.preventDefault();
@@ -163,6 +162,19 @@ app.library.html.locked = function (textElement) {
 };
 
 /**
+ * Generate an HTML tooltip
+ * @param {*} textElement
+ * */
+app.library.html.tooltip = function (textElement, name) {
+  return $("<span>", {
+    "data-toggle": "tooltip",
+    "data-placement": "right",
+    "title": name,
+    html: textElement
+  }).get(0).outerHTML;
+};
+
+/**
  * Generate an HTML group privilege element
  * @param {*} isApprover
  */
@@ -269,31 +281,25 @@ app.library.html.parseBbCode = function (bbCode) {
 app.library.html.link.baseConstructor = function (attributes, textElement, textTootip, iconElement) {
   textElement = textElement || "";
   textTootip = textTootip || null;
-  // Init params
-  var tooltipParams = {};
+  // Init params  
   var linkParams = {
     html:
       $("<i>", {
         class: iconElement
       }).get(0).outerHTML +
       " " +
-      textElement
+      textElement,
+
+    "data-toggle": textTootip ? "tooltip" : null,
+    title: textTootip
   };
 
-  if (textTootip) {
-    tooltipParams = {
-      "data-toggle": "tooltip",
-      text: textElement,
-      title: textTootip,
-    };
-  }
-
-  jQuery.extend(linkParams, attributes, tooltipParams);
+  $.extend(true, linkParams, attributes);
   return $("<a>", linkParams).get(0).outerHTML;
 };
 
 app.library.html.link.edit = function (attributes, textElement, textTootip) {
-  jQuery.extend(attributes, {
+  $.extend(true, attributes, {
     name: C_APP_NAME_LINK_EDIT,
     href: "#",
   });
@@ -302,7 +308,7 @@ app.library.html.link.edit = function (attributes, textElement, textTootip) {
 };
 
 app.library.html.link.view = function (attributes, textElement, textTootip) {
-  jQuery.extend(attributes, {
+  $.extend(true, attributes, {
     name: C_APP_NAME_LINK_VIEW,
     href: "#",
   });
@@ -311,7 +317,7 @@ app.library.html.link.view = function (attributes, textElement, textTootip) {
 };
 
 app.library.html.link.geoJson = function (attributes, textElement, textTootip) {
-  jQuery.extend(attributes, {
+  $.extend(true, attributes, {
     name: C_APP_NAME_LINK_GEOJSON,
     href: "#",
   });
@@ -320,7 +326,7 @@ app.library.html.link.geoJson = function (attributes, textElement, textTootip) {
 };
 
 app.library.html.link.analytic = function (attributes, textElement, textTootip) {
-  jQuery.extend(attributes, {
+  $.extend(true, attributes, {
     name: C_APP_NAME_LINK_ANALYTIC,
     href: "#",
   });
@@ -331,7 +337,7 @@ app.library.html.link.analytic = function (attributes, textElement, textTootip) 
 app.library.html.link.external = function (attributes, url, textTootip) {
   textTootip = textTootip || null;
 
-  jQuery.extend(attributes, {
+  $.extend(true, attributes, {
     href: url,
     target: "_blank",
   });
@@ -342,7 +348,7 @@ app.library.html.link.external = function (attributes, url, textTootip) {
 app.library.html.link.internal = function (attributes, textElement, textTootip) {
   textTootip = textTootip || null;
 
-  jQuery.extend(attributes, {
+  $.extend(true, attributes, {
     name: C_APP_NAME_LINK_INTERNAL,
     href: "#"
   });
@@ -562,6 +568,49 @@ app.library.utility.initTinyMce = function () {
 };
 
 /**
+ * Compare 2 arrays to see if they are the same. Position not important 
+ */
+app.library.utility.arraysEqual = function (array1, array2) {
+
+  var isEqual = true;
+
+  //first check if lengths are the same
+  if (array1.length != array2.length) {
+    isEqual = false
+    return isEqual;
+  }
+
+  //Array lengths are the same, now chenk that contents are the same
+
+  $.each(array1, function (index, value) {
+    //For each item in array1, find out how many times it appears, must be the same in array2, else return false
+    //order doesn't matter
+    var countArray1 = 0;
+    for (var i = 0; i < array1.length; i++) {
+      if (array1[i] === value) {
+        countArray1++;
+      }
+    };
+
+    var countArray2 = 0;
+    for (var x = 0; x < array2.length; x++) {
+      if (array2[x] === value) {
+        countArray2++;
+      }
+    };
+
+    //count must be the same for item in both arrays, else return false
+    if (countArray1 != countArray2) {
+      isEqual = false
+      return isEqual;
+    }
+
+  });
+  //all items must match, return true
+  return isEqual;
+}
+
+/**
  * Implement a cookieLink
  */
 app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_SelectorToHighlight, nav_menu_SelectorToHighlight) {
@@ -580,6 +629,25 @@ app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_S
 
     // Loading the required entity
     api.content.goTo(relativeURL, nav_link_SelectorToHighlight, nav_menu_SelectorToHighlight, goToParams);
+  }
+  return false;
+};
+/**
+ * Check for duplicate items in an array
+ */
+app.library.utility.arrayHasDuplicate = function (items) {
+  //normalise items
+  $.each(items, function (index, value) {
+    value = value.trim().toLowerCase();
+  });
+
+  var counts = [];
+  for (var i = 0; i <= items.length; i++) {
+    if (counts[items[i]] === undefined) {
+      counts[items[i]] = 1;
+    } else {
+      return true;
+    }
   }
   return false;
 };

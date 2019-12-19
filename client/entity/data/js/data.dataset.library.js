@@ -19,10 +19,13 @@ app.data.dataset.apiParamsData = {};
 */
 app.data.dataset.ajax.readMetadata = function () {
     if (app.data.MtrCode) {
-        api.ajax.jsonrpc.request(app.config.url.api.public,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.public,
             "PxStat.Data.Cube_API.ReadMetadata",
             {
                 "matrix": app.data.MtrCode,
+                "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
+                "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
                 "language": app.data.LngIsoCode,
                 "m2m": false
             },
@@ -37,6 +40,8 @@ app.data.dataset.ajax.readMetadata = function () {
             "PxStat.Data.Cube_API.ReadPreMetadata",
             {
                 "release": app.data.RlsCode,
+                "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
+                "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
                 "language": app.data.LngIsoCode,
                 "m2m": false
             },
@@ -87,6 +92,10 @@ app.data.dataset.callback.readMetadata = function (response) {
 * @param {*} data
 */
 app.data.dataset.callback.drawTableSelection = function (data) {
+    //hide no search results message
+    $("#data-search-input").find("[name=no-search-results]").hide();
+    $("#data-search-input [name=search-input]").val("");
+
     //hide back button if viewing data from release entity
     if (app.data.RlsCode) {
         $("#data-dataset-row").find("[name=back-to-select-results]").hide();
@@ -123,7 +132,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     }
     //archive flag
     if (data.extension.archive) {
-        matrixSelection.find("[name=archive-flag]").removeClass("d-none");
+        matrixSelection.find("[name=archive-flag], [name=archive-header]").removeClass("d-none");
     }
     //dependency flag
     if (data.extension.dependency) {
@@ -131,7 +140,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     }
     //reservation flag
     if (data.extension.reservation) {
-        matrixSelection.find("[name=reservation-flag]").removeClass("d-none");
+        matrixSelection.find("[name=reservation-flag], [name=under-reservation-header]").removeClass("d-none");
     }
     //Add badge for language.
     matrixSelection.find("[name=language]").text(data.extension.language.name);
@@ -153,7 +162,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     matrixSelection.find("[name=copyright]").html(
         $("<i>", {
             class: "far fa-copyright mr-1"
-        }).get(0).outerHTML + data.extension.copyright.label
+        }).get(0).outerHTML + data.extension.copyright.name
     ).attr("href", data.extension.copyright.href);
 
     //build select elements
@@ -196,8 +205,8 @@ app.data.dataset.callback.drawTableSelection = function (data) {
             $.each(data.Dimension(i).id, function (index, value) {
                 var option = $('<option>', {
                     value: value,
-                    "code-true": data.Dimension(i).Category(index).label + " (" + value + ")",
-                    "code-false": data.Dimension(i).Category(index).label,
+                    "code-true": data.Dimension(i).Category(index).label + (data.Dimension(i).Category(index).unit ? " (" + data.Dimension(i).Category(index).unit.label + ")" : "") + " (" + value + ")",
+                    "code-false": data.Dimension(i).Category(index).label + (data.Dimension(i).Category(index).unit ? " (" + data.Dimension(i).Category(index).unit.label + ")" : ""),
                     text: data.Dimension(i).Category(index).label + (data.Dimension(i).Category(index).unit ? " (" + data.Dimension(i).Category(index).unit.label + ")" : ""),
                     title: data.Dimension(i).Category(index).label,
                     filtered: 'true',
@@ -210,11 +219,11 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     }
     matrixSelection.find("[name=data-count-cells]").text(app.library.utility.formatNumber(app.data.dataset.totalCount));
     matrixSelection.find("[name=data-total-cells]").text(app.library.utility.formatNumber(app.data.dataset.totalCount));
-    $("#matrix-selection-placeholder").html(matrixSelection.get(0).outerHTML);
+    $("#data-dataview-selected-table").html(matrixSelection.get(0).outerHTML);
     //select all
-    $("#matrix-selection-placeholder").find("input[type='checkbox']").once("change", function () {
+    $("#data-dataview-selected-table").find("input[type='checkbox']").once("change", function () {
         var dimension = $(this).attr("idn");
-        var select = $("#matrix-selection-placeholder").find("select[idn='" + dimension + "']");
+        var select = $("#data-dataview-selected-table").find("select[idn='" + dimension + "']");
         if ($(this).is(':checked')) {
             select.find("option:enabled[filtered='true']").prop('selected', true);
         } else {
@@ -225,9 +234,9 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     });
 
     //sort
-    $("#matrix-selection-placeholder").find("[name=sort-options]").once("click", function () {
+    $("#data-dataview-selected-table").find("[name=sort-options]").once("click", function () {
         var dimension = $(this).attr("idn");
-        var select = $("#matrix-selection-placeholder").find("select[idn='" + dimension + "']");
+        var select = $("#data-dataview-selected-table").find("select[idn='" + dimension + "']");
         var status = select.attr("sort");
 
         select.html(select.find('option').sort(function (x, y) {
@@ -248,14 +257,15 @@ app.data.dataset.callback.drawTableSelection = function (data) {
 
 
     //filter
-    $("#matrix-selection-placeholder").find("[type=search]").once("keyup", function () {
+    $("#data-dataview-selected-table").find("[type=search]").once("keyup", function () {
         var dimension = $(this).attr("idn");
-        var selectAll = $("#matrix-selection-placeholder").find("input[name=select-all][idn='" + dimension + "']");
-        var select = $("#matrix-selection-placeholder").find("select[idn='" + dimension + "']");
-        var filter = $(this).val().toUpperCase();
+        var selectAll = $("#data-dataview-selected-table").find("input[name=select-all][idn='" + dimension + "']");
+        var select = $("#data-dataview-selected-table").find("select[idn='" + dimension + "']");
+        var filter = $(this).val().toLowerCase();
 
+        //enable case insensitive filtering
         select.find('option:enabled').each(function () {
-            if ((this.text.toUpperCase().indexOf(filter) > -1) || $(this).is(':selected')) {
+            if ((this.text.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
                 select.find('option:disabled').attr('class', 'd-none');
                 selectAll.prop("disabled", false);
                 $(this).attr('filtered', 'true').show();
@@ -280,26 +290,30 @@ app.data.dataset.callback.drawTableSelection = function (data) {
 
 
     //click on an option, refresh count
-    $("#matrix-selection-placeholder").find("[name=dimension-select]").once('change', function () {
+    $("#data-dataview-selected-table").find("[name=dimension-select]").once('change', function () {
         $("button [name=button-show-data-text]").text(app.label.static["view-selection"]);
         app.data.dataset.callback.countSelection();
         app.data.dataset.callback.buildApiParams();
     });
 
     //reset
-    $("#matrix-selection-placeholder").find("[name=reset]").once("click", function () {
-        $("#matrix-selection-placeholder").find("[name=dimension-select]").each(function () {
+    $("#data-dataview-selected-table").find("[name=reset]").once("click", function () {
+
+        $("#data-dataview-selected-table").find("#code-toggle-select").bootstrapToggle('on');
+
+
+        $("#data-dataview-selected-table").find("[name=dimension-select]").each(function () {
             $(this).find('option').prop('selected', false);
         });
-        $("#matrix-selection-placeholder").find("[name=dimension-filter]").each(function () {
+        $("#data-dataview-selected-table").find("[name=dimension-filter]").each(function () {
             $(this).val("").trigger("keyup");
         });
 
-        $("#matrix-selection-placeholder").find("[name=select-all]").each(function () {
+        $("#data-dataview-selected-table").find("[name=select-all]").each(function () {
             $(this).prop('checked', false);
         });
 
-        $("#matrix-selection-placeholder").find("[name=data-count-cells]").text(app.library.utility.formatNumber(app.data.dataset.totalCount));
+        $("#data-dataview-selected-table").find("[name=data-count-cells]").text(app.library.utility.formatNumber(app.data.dataset.totalCount));
         $("button [name=button-show-data-text]").text(app.label.static["view-all"]);
         app.data.dataset.callback.buildApiParams();
 
@@ -317,11 +331,11 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     $('#code-toggle-select').once("change", function () {
         if (!$(this).prop('checked')) {
 
-            $("#matrix-selection-placeholder").find("[name=dimension-code]").each(function () {
+            $("#data-dataview-selected-table").find("[name=dimension-code]").each(function () {
                 $(this).removeClass("d-none");
             });
 
-            $("#matrix-selection-placeholder").find("option").each(function () {
+            $("#data-dataview-selected-table").find("option").each(function () {
                 var codeTrue = $(this).attr("code-true");
                 $(this).text(codeTrue);
                 $(this).attr("title", codeTrue);
@@ -329,11 +343,11 @@ app.data.dataset.callback.drawTableSelection = function (data) {
             });
         }
         else {
-            $("#matrix-selection-placeholder").find("[name=dimension-code]").each(function () {
+            $("#data-dataview-selected-table").find("[name=dimension-code]").each(function () {
                 $(this).addClass("d-none");
             });
 
-            $("#matrix-selection-placeholder").find("option").each(function () {
+            $("#data-dataview-selected-table").find("option").each(function () {
                 var codeFalse = $(this).attr("code-false");
                 $(this).text(codeFalse);
                 $(this).attr("title", codeFalse);
@@ -343,9 +357,9 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     });
 
     //show data
-    $("#matrix-selection-placeholder").find("[name=show-data]").once("click", function () {
+    $("#data-dataview-selected-table").find("[name=show-data]").once("click", function () {
         if (app.data.dataset.selectionCount >= app.config.entity.data.threshold.hard) {
-            api.modal.information(app.library.html.parseDynamicLabel("you-have-requested-records-which-exceeds-the-limit-of", [app.library.utility.formatNumber(app.data.dataset.selectionCount), app.config.entity.data.threshold.hard]));
+            api.modal.information(app.library.html.parseDynamicLabel("records-exceeds-limit", [app.library.utility.formatNumber(app.data.dataset.selectionCount), app.config.entity.data.threshold.hard]));
         }
         else if (app.data.dataset.selectionCount >= app.config.entity.data.threshold.soft) {
             api.modal.confirm(app.library.html.parseDynamicLabel("confirm", [app.library.utility.formatNumber(app.data.dataset.selectionCount)]), app.data.dataview.ajax.data);
@@ -357,7 +371,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     });
 
 
-    $("#matrix-selection-placeholder").find("[name=show-data-map]").once("click", function (e) {
+    $("#data-dataview-selected-table").find("[name=show-data-map]").once("click", function (e) {
         e.preventDefault();
         var status = $(this).attr("status");
         if (status == "data") { //currently data, switch to map
@@ -365,12 +379,13 @@ app.data.dataset.callback.drawTableSelection = function (data) {
             $("#data-view-container").empty();
             $(this).attr("status", "map");
             $(this).find("[name=text]").text(app.label.static.data);
-            $("#matrix-selection-placeholder").find("[name=map-container]").removeClass("d-none");
-            $("#matrix-selection-placeholder").find("[name=dimension-containers]").addClass("d-none");
-            $("#matrix-selection-placeholder").find("[name=card-footer]").removeClass("d-flex").addClass("d-none");
+            $("#data-dataview-selected-table").find("[name=map-container]").removeClass("d-none");
+            $("#data-dataview-selected-table").find("[name=dimension-containers]").addClass("d-none");
+            $("#data-dataview-selected-table").find("[name=card-footer]").removeClass("d-flex").addClass("d-none");
             var apiParams = {
                 "language": app.data.LngIsoCode,
-                "format": C_APP_TS_FORMAT_JSON_STAT,
+                "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
+                "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
                 "m2m": false
             };
             if (app.data.MtrCode) {
@@ -387,9 +402,9 @@ app.data.dataset.callback.drawTableSelection = function (data) {
             $("#data-accordion-api").show();
             $(this).attr("status", "data");
             $(this).find("[name=text]").text("Map");
-            $("#matrix-selection-placeholder").find("[name=map-container]").addClass("d-none");
-            $("#matrix-selection-placeholder").find("[name=dimension-containers]").removeClass("d-none");
-            $("#matrix-selection-placeholder").find("[name=card-footer]").addClass("d-flex").removeClass("d-none");
+            $("#data-dataview-selected-table").find("[name=map-container]").addClass("d-none");
+            $("#data-dataview-selected-table").find("[name=dimension-containers]").removeClass("d-none");
+            $("#data-dataview-selected-table").find("[name=card-footer]").addClass("d-flex").removeClass("d-none");
             app.data.dataset.callback.buildApiParams();
         }
     });
@@ -397,6 +412,8 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     $("#data-dataset-row").show();
     $('[data-toggle="tooltip"]').tooltip();
 
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 };
 
 /**
@@ -457,29 +474,68 @@ app.data.dataset.callback.readMatrixNotes = function (data) {
     };
 
     $("#panel").html(matrixNotes.get(0).outerHTML);
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 
     // Run Sharethis.
     app.data.sharethis(data.extension.matrix);
-    $("#panel").find("[name=download-full-dataset-json]").once("click", function (e) {
-        e.preventDefault();
-        app.data.dataset.callback.fullDownload(C_APP_TS_FORMAT_JSON_STAT);
-    });
-    $("#panel").find("[name=download-full-dataset-px]").once("click", function (e) {
-        e.preventDefault();
-        app.data.dataset.callback.fullDownload(C_APP_TS_FORMAT_PX);
-    });
-    $("#panel").find("[name=download-full-dataset-csv]").once("click", function (e) {
-        e.preventDefault();
-        app.data.dataset.callback.fullDownload(C_APP_FORMAT_CSV);
-    });
+
+    app.data.dataset.ajax.format();
 
 };
 
-app.data.dataset.callback.fullDownload = function (format) {
+app.data.dataset.ajax.format = function () {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.System.Settings.Format_API.Read",
+        {
+            // "LngIsoCode": null,
+            "FrmDirection": C_APP_TS_FORMAT_DIRECTION_DOWNLOAD
+        },
+        "app.data.dataset.callback.format"
+    );
+}
+
+app.data.dataset.callback.format = function (response) {
+    if (response.error) {
+        // Handle the Error in the Response first
+        api.modal.error(response.error.message);
+    }
+
+    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+        api.modal.information(app.label.static["api-ajax-nodata"]);
+    }
+    else if (response.data) {
+        $("#panel [name=matrix-notes]").find().empty();
+        $.each(response.data, function (index, format) {
+            var formatLink = $("#data-dataset-templates").find("[name=download-dataset-format]").clone();
+            formatLink.attr(
+                {
+                    "frm-type": format.FrmType,
+                    "frm-version": format.FrmVersion
+                });
+            formatLink.find("[name=type]").text(format.FrmType);
+            formatLink.find("[name=version]").text(format.FrmVersion);
+            $("#panel [name=download-full-dataset]").append(formatLink);
+        });
+
+        $("#panel [name=download-dataset-format]").once("click", function (e) {
+            e.preventDefault();
+            app.data.dataset.callback.fullDownload($(this).attr("frm-type"), $(this).attr("frm-version"));
+        });
+    }
+    // Handle Exception
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+
+}
+
+
+app.data.dataset.callback.fullDownload = function (format, version) {
     var apiParams = {
         "matrix": app.data.MtrCode,
         "language": app.data.LngIsoCode,
-        "format": format,
+        "FrmType": format,
+        "FrmVersion": version,
         "m2m": false
     };
     app.data.dataset.ajax.downloadDataset(apiParams);
@@ -490,14 +546,14 @@ app.data.dataset.callback.fullDownload = function (format) {
 */
 app.data.dataset.callback.countSelection = function () {
     var count = 1;
-    $("#matrix-selection-placeholder").find("[name=dimension-select]").each(function () {
+    $("#data-dataview-selected-table").find("[name=dimension-select]").each(function () {
         var dimension = $(this).attr("idn");
         var totalOptions = $(this).find("option:enabled").length;
         var selectedOptions = $(this).find('option:selected').length;
 
         //if any option clicked check if select all should be ticked or not
         if (totalOptions == selectedOptions) { // all selected
-            $("#matrix-selection-placeholder").find("input[type=checkbox][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', true);
+            $("#data-dataview-selected-table").find("input[type=checkbox][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', true);
             count = count * totalOptions;
         }
         else if (selectedOptions == 0) {
@@ -505,12 +561,12 @@ app.data.dataset.callback.countSelection = function () {
         }
         else {
             count = count * $(this).find('option:selected').length;
-            $("#matrix-selection-placeholder").find("input[type=checkbox][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', false);
+            $("#data-dataview-selected-table").find("input[type=checkbox][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', false);
         }
     });
     app.data.dataset.selectionCount = count;
 
-    $("#matrix-selection-placeholder").find("[name=data-count-cells]").text(app.library.utility.formatNumber(app.data.dataset.selectionCount));
+    $("#data-dataview-selected-table").find("[name=data-count-cells]").text(app.library.utility.formatNumber(app.data.dataset.selectionCount));
 };
 
 /**
@@ -530,20 +586,21 @@ app.data.dataset.callback.buildApiParams = function () {
     }
     var localParams = {
         "language": app.data.LngIsoCode,
-        "format": C_APP_TS_FORMAT_JSON_STAT,
+        "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
+        "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
         "role": {
             "time": [
-                $("#matrix-selection-placeholder").find("[name=dimension-containers]").find("select[role=time]").attr("idn")
+                $("#data-dataview-selected-table").find("[name=dimension-containers]").find("select[role=time]").attr("idn")
             ],
             "metric": [
-                $("#matrix-selection-placeholder").find("[name=dimension-containers]").find("select[role=metric]").attr("idn")
+                $("#data-dataview-selected-table").find("[name=dimension-containers]").find("select[role=metric]").attr("idn")
             ]
         },
         "dimension": [],
         "m2m": false
     };
 
-    $("#matrix-selection-placeholder").find("[name=dimension-containers]").find("select").each(function (index) {
+    $("#data-dataview-selected-table").find("[name=dimension-containers]").find("select").each(function (index) {
         var numVariables = $(this).find('option:enabled').length;
         var dimension = {
             "id": $(this).attr("idn"),
@@ -560,16 +617,16 @@ app.data.dataset.callback.buildApiParams = function () {
     });
 
     //extend apiParams with local params
-    jQuery.extend(app.data.dataset.apiParamsData, localParams);
+    $.extend(true, app.data.dataset.apiParamsData, localParams);
     $("#data-accordion-api").find("[name=github-link]").attr("href", C_APP_URL_GITHUB_API_CUBE);
     $("#data-accordion-api").find("[name=api-url]").text(app.config.url.api.public);
     $("#data-accordion-api").find("[name=api-object]").text(function () {
         var JsonQuery = {
             "jsonrpc": C_APP_API_JSONRPC_VERSION,
-            "method": C_APP_API_READ_DATASET_METHOD,
+            "method": "PxStat.Data.Cube_API.ReadDataset",
             "params": null
         };
-        var apiParams = jQuery.extend({}, app.data.dataset.apiParamsData);
+        var apiParams = $.extend(true, {}, app.data.dataset.apiParamsData);
         delete apiParams.m2m;
         JsonQuery.params = apiParams;
         return JSON.stringify(JsonQuery, null, "\t");
@@ -585,9 +642,11 @@ app.data.dataset.callback.back = function () {
     var numSearchResults = $("#data-metadata-row [name=search-results] [name=search-result-item]").length;
     if (numSearchResults > 0) {
         //back to search results
-        $("#matrix-selection-placeholder, #panel, #data-view-container").empty();
+        $("#data-dataview-selected-table, #panel, #data-view-container").empty();
         $("#data-metadata-row, #data-filter, #data-search-results-pagination [name=pagination]").show();
         $("#data-accordion-api").hide();
+        //run bootstrap toggle to show/hide toggle button
+        bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     }
     else {
         // Load default Entity
@@ -603,9 +662,9 @@ app.data.dataset.callback.back = function () {
 * @param {*} apiParams
 */
 app.data.dataset.ajax.downloadDataset = function (apiParams) {
-
     if (app.data.MtrCode) {
-        api.ajax.jsonrpc.request(app.config.url.api.public,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.public,
             "PxStat.Data.Cube_API.ReadDataset",
             apiParams,
             "app.data.dataset.callback.downloadDataset",
@@ -615,7 +674,8 @@ app.data.dataset.ajax.downloadDataset = function (apiParams) {
             { async: false });
     }
     else if (app.data.RlsCode) {
-        api.ajax.jsonrpc.request(app.config.url.api.private,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.private,
             "PxStat.Data.Cube_API.ReadPreDataset",
             apiParams,
             "app.data.dataset.callback.downloadDataset",
@@ -639,16 +699,25 @@ app.data.dataset.callback.downloadDataset = function (response, apiParams) {
         var mimeType = "";
         var fileData = null;
         var fileExtension = null;
-        switch (apiParams.format) {
-            case C_APP_TS_FORMAT_JSON_STAT:
-                mimeType = "application/json";
-                fileData = JSON.stringify(data);
-                fileExtension = "." + C_APP_EXTENSION_JSON_STAT;
-                break;
-            default:
+        switch (apiParams.FrmType) {
+            case C_APP_TS_FORMAT_TYPE_PX:
                 mimeType = "text/plain";
                 fileData = data;
-                fileExtension = "." + apiParams.format;
+                fileExtension = C_APP_EXTENSION_PX;
+                break;
+            case C_APP_TS_FORMAT_TYPE_JSONSTAT:
+                mimeType = "application/json";
+                fileData = JSON.stringify(data);
+                fileExtension = C_APP_EXTENSION_JSONSTAT;
+                break;
+            case C_APP_TS_FORMAT_TYPE_CSV:
+                mimeType = "text/plain";
+                fileData = data;
+                fileExtension = C_APP_EXTENSION_CSV;
+                break;
+            default:
+                api.modal.exception(app.label.static["api-ajax-exception"]);
+                return;
                 break;
         }
 
@@ -656,7 +725,7 @@ app.data.dataset.callback.downloadDataset = function (response, apiParams) {
         var downloadUrl = URL.createObjectURL(blob);
         var a = document.createElement("a");
         a.href = downloadUrl;
-        a.download = app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + fileExtension;
+        a.download = app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + '.' + fileExtension;
 
         if (document.createEvent) {
             // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent

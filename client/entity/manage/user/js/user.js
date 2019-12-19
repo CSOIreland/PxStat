@@ -10,6 +10,8 @@ $(document).ready(function () {
 
   // Get data from API and Draw the Data Table for User
   app.user.ajax.read();
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 });

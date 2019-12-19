@@ -10,10 +10,20 @@
   white-space: nowrap !important;
   word-wrap: normal;
 }
-									
+
 /* No decoration for disabled links */
 
 a[disabled] {
   cursor: default;
   text-decoration: none;
+}
+
+/* Strech Buttons to fit the -sm size */
+
+@media (max-width: 576px) {
+  button.btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.25rem !important;
+  }
 }

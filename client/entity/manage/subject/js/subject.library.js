@@ -134,7 +134,7 @@ app.subject.drawDataTable = function (data) {
       $("#subject-read-container").find("[name=warning]").show();
     }
 
-    $("#subject-read-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#subject-read-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.subject.drawCallback();
     });
 
@@ -171,7 +171,8 @@ app.subject.validation.create = function () {
     errorPlacement: function (error, element) {
       $("#subject-modal-create [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.subject.ajax.create();
     }
   }).resetForm();
@@ -292,7 +293,8 @@ app.subject.validation.update = function () {
     errorPlacement: function (error, element) {
       $("#subject-modal-update [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.subject.ajax.update();
     }
   }).resetForm();
@@ -358,7 +360,7 @@ app.subject.modal.delete = function (idn, SbjValue) {
     idn: idn,
     SbjValue: SbjValue
   };
-  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [SbjValue]), app.subject.ajax.delete, objToSend);
+  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [SbjValue]), app.subject.ajax.delete, objToSend);
 };
 
 /**

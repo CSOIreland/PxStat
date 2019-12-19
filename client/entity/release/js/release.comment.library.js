@@ -76,7 +76,8 @@ app.release.comment.validation.create = function () {
         errorPlacement: function (error, element) {
             $("#release-comment-modal-create [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.release.comment.ajax.create();
             $("#release-comment-modal-create").modal("hide");
         }
@@ -148,7 +149,8 @@ app.release.comment.validation.update = function () {
         errorPlacement: function (error, element) {
             $("#release-comment-modal-update [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.release.comment.ajax.update();
             $("#release-comment-modal-update").modal("hide");
         }
@@ -194,7 +196,7 @@ app.release.comment.callback.update = function (response) {
 * 
 */
 app.release.comment.delete = function () {
-    api.modal.confirm(app.label.static["confirm-delete-record"], app.release.comment.ajax.delete);
+    api.modal.confirm(app.label.static["confirm-delete"], app.release.comment.ajax.delete);
 };
 
 /**

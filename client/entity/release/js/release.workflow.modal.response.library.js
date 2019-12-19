@@ -55,7 +55,7 @@ app.release.workflow.modal.response.callback.read = function (response) {
         app.release.workflow.modal.response.RqsCode = response.data.RqsCode;
         switch (response.data.RqsCode) {
             case C_APP_TS_REQUEST_PUBLISH:
-                $("#request-workflow-modal-response-publish [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-response-publish [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-response-publish [name=wrq-emergency-flag]").html(app.library.html.boolean(response.data.WrqEmergencyFlag, true, true));
                 $("#request-workflow-modal-response-publish [name=wrq-datetime]").html(moment(response.data.WrqDatetime).format(app.config.mask.datetime.display));
@@ -67,7 +67,7 @@ app.release.workflow.modal.response.callback.read = function (response) {
                 $("#request-workflow-modal-response-publish [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_PROPERTY:
-                $("#request-workflow-modal-response-flag [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-response-flag [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-response-flag [name=wrq-reservation-flag]").html(app.library.html.boolean(response.data.WrqReservationFlag, true, true));
                 $("#request-workflow-modal-response-flag [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
@@ -77,14 +77,14 @@ app.release.workflow.modal.response.callback.read = function (response) {
                 $("#request-workflow-modal-response-flag [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_DELETE:
-                $("#request-workflow-modal-response-delete [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-response-delete [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-response-delete [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
                 $("#request-workflow-modal-response-delete [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
                 $("#request-workflow-modal-response-delete [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_ROLLBACK:
-                $("#request-workflow-modal-response-rollback [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-response-rollback [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-response-rollback [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
                 $("#request-workflow-modal-response-rollback [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
@@ -132,7 +132,8 @@ app.release.workflow.modal.response.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-response-publish [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.response.ajax.create();
                     $("#request-workflow-modal-response-publish").modal("hide");
                 }
@@ -147,7 +148,8 @@ app.release.workflow.modal.response.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-response-flag [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.response.ajax.create();
                     $("#request-workflow-modal-response-flag").modal("hide");
                 }
@@ -162,7 +164,8 @@ app.release.workflow.modal.response.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-response-delete [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.response.ajax.create();
                     $("#request-workflow-modal-response-delete").modal("hide");
                 }
@@ -177,7 +180,8 @@ app.release.workflow.modal.response.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-response-rollback [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.response.ajax.create();
                     $("#request-workflow-modal-response-rollback").modal("hide");
                 }

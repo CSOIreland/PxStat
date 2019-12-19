@@ -25,7 +25,9 @@ app.release.search.ajax.readMatrixList = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.release.search.callback.readMatrixList");
 };
 
@@ -108,7 +110,10 @@ app.release.search.ajax.readReleaseList = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Release_API.ReadList",
-        { "MtrCode": app.release.MtrCode },
+        {
+            "MtrCode": app.release.MtrCode,
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.release.search.callback.readReleaseList");
 };
 
@@ -154,7 +159,14 @@ app.release.search.callback.readReleaseList = function (response) {
                         render: function (data, type, row) {
                             return app.release.renderStatus(row);
                         }
-                    }, {
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return app.release.renderRequest(row.RqsCode);
+                        }
+                    },
+                    {
                         data: null,
                         render: function (data, type, row) {
                             return !row.RlsLiveDatetimeFrom ? row.RlsLiveDatetimeFrom : moment(row.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display);
@@ -174,7 +186,7 @@ app.release.search.callback.readReleaseList = function (response) {
                 language: app.label.plugin.datatable
             };
 
-            $("#release-search-result table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            $("#release-search-result table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
                 app.release.search.drawCallbackReleaseList();
             });
         }

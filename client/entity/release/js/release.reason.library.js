@@ -105,7 +105,7 @@ app.release.reason.changeCode = function () {
  */
 app.release.reason.toggle = function () {
   // Enable buttons if WIP and Workflow not in progress
-  if (app.release.isWorkInProgress && !app.release.isWorkflowInProgress) {
+  if (app.release.isWorkInProgress && !app.release.isAwaitingResponse && !app.release.isAwaitingSignOff) {
     $("#release-reason [name=add-reason]").prop("disabled", false);
     $("#release-reason-modal-create :submit").prop("disabled", false);
     $("#release-reason-modal-update :submit").prop("disabled", false);
@@ -152,7 +152,7 @@ app.release.reason.drawCallback = function () {
   // Display confirmation Modal on DELETE button click
   $("#release-reason table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", function (e) {
     var idn = $(this).attr("idn");
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [idn]),
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [idn]),
       app.release.reason.ajax.delete,
       idn
 
@@ -232,7 +232,7 @@ app.release.reason.callback.readList = function (response) {
             searchable: false,
             render: function (data, type, row) {
               // Disable button if WIP
-              return app.library.html.deleteButton({ idn: row.RsnCode }, app.release.isWorkInProgress ? false : true);
+              return app.library.html.deleteButton({ idn: row.RsnCode }, app.release.isWorkInProgress || app.release.isAwaitingResponse || app.release.isAwaitingSignOff ? false : true);
             },
             "width": "1%"
           }],
@@ -243,7 +243,7 @@ app.release.reason.callback.readList = function (response) {
         //Translate labels language
         language: app.label.plugin.datatable
       };
-      $("#release-reason table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+      $("#release-reason table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
         app.release.reason.drawCallback();
       });
     }
@@ -335,7 +335,8 @@ app.release.reason.validation.update = function () {
     errorPlacement: function (error, element) {
       $("#release-reason-modal-update [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.release.reason.ajax.update();
       $("#release-reason-modal-update").modal("hide");
     }
@@ -443,7 +444,8 @@ app.release.reason.validation.create = function () {
     errorPlacement: function (error, element) {
       $("#release-reason-modal-create [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.release.reason.ajax.create();
     }
   }).resetForm();

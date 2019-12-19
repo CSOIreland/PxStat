@@ -106,12 +106,12 @@ app.product.callback.readSubject = function (response, SbjCode) {
         }
         else {
           $("#product-card-read").hide();
-          $("#product-card-read-release").hide();
+          $("#product-release-modal").hide();
         }
       } else {
         // Nothing is active so it is a new value (or maybe empty value)
         $("#product-card-read").hide();
-        $("#product-card-read-release").hide();
+        $("#product-release-modal").hide();
       }
     });
     if (SbjCode) {
@@ -165,8 +165,12 @@ app.product.drawCallbackProduct = function () {
       idn: $(this).attr("idn"),
       "PrcValue": $(this).attr("prc-value")
     };
+
     // Ajax read 
-    app.product.ajax.readReleaseByProduct(callbackParam);
+    app.product.ajax.readMatrixByProduct(callbackParam);
+
+    $("#product-release-modal").modal("show");
+
   });
   // Click event delete - Display the modal to delete product
   $("#product-card-read table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", function () {
@@ -207,7 +211,7 @@ app.product.drawDataTableProduct = function (data) {
           data: null,
           render: function (_data, _type, row) {
             var attributes = { idn: row.PrcCode, "prc-value": row.PrcValue }; //idn PrcCode
-            return app.library.html.link.internal(attributes, row.PrcReleaseCount); //idn => PrcCode
+            return app.library.html.link.internal(attributes); //idn => PrcCode
           }
         },
         {
@@ -232,7 +236,7 @@ app.product.drawDataTableProduct = function (data) {
       //Translate labels language
       language: app.label.plugin.datatable
     };
-    $("#product-card-read table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#product-card-read table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.product.drawCallbackProduct();
     });
 
@@ -256,7 +260,7 @@ app.product.drawDataTableProduct = function (data) {
   }
   //smooth transition after changing subject
   $("#product-card-read").hide().fadeIn();
-  $("#product-card-read-release").hide();
+  $("#product-release-modal").hide();
 };
 
 //#endregion
@@ -492,7 +496,7 @@ app.product.modal.readUpdate = function (productRecord) {
 app.product.ajax.update = function () {
   var sbjCode = $("#product-modal-update").find("[name=select-update-subject-search]").val(); // User selected drop down 
   var prcCode = $("#product-modal-update").find("[name=idn]").val();
-  var prcCodeNew = $("#product-modal-update").find("[name=prc-code]").val().trim();
+  var prcCodeNew = $("#product-modal-update").find("[name=prc-code]").val();
   var prcValue = $("#product-modal-update").find("[name=prc-value]").val();
   // Change app.config.language.iso.code to the selected one
   var apiParams = {
@@ -546,7 +550,7 @@ app.product.callback.update = function (response, callbackParam) {
  * @param {*} productToDelete 
  */
 app.product.modal.delete = function (productToDelete) {
-  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [productToDelete.PrcValue]), app.product.ajax.delete, productToDelete);
+  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [productToDelete.PrcValue]), app.product.ajax.delete, productToDelete);
 };
 
 /**
@@ -584,18 +588,21 @@ app.product.callback.delete = function (response, productToDelete) {
 };
 //#endregion
 
-//#region readReleaseByProduct
+//#region readMatrixByProduct
 
 /**
  * Ajax Read Release List
  * @param  {} callbackParam
  */
-app.product.ajax.readReleaseByProduct = function (callbackParam) {
+app.product.ajax.readMatrixByProduct = function (callbackParam) {
   api.ajax.jsonrpc.request(
     app.config.url.api.private,
-    "PxStat.Data.Release_API.ReadListByProduct",
-    { PrcCode: callbackParam.idn },
-    "app.product.callback.readReleaseByProduct",
+    "PxStat.Data.Matrix_API.ReadByProduct",
+    {
+      PrcCode: callbackParam.idn,
+      LngIsoCode: app.label.language.iso.code
+    },
+    "app.product.callback.readMatrixByProduct",
     callbackParam);
 };
 
@@ -604,7 +611,7 @@ app.product.ajax.readReleaseByProduct = function (callbackParam) {
  * @param  {} response
  * @param  {} callbackParam
  */
-app.product.callback.readReleaseByProduct = function (response, callbackParam) {
+app.product.callback.readMatrixByProduct = function (response, callbackParam) {
   if (response.error) {
     // Handle the Error in the Response first
     api.modal.error(response.error.message);
@@ -620,14 +627,25 @@ app.product.callback.readReleaseByProduct = function (response, callbackParam) {
  * Draw Callback for Datatable
  */
 app.product.drawCallbackRelease = function () {
+  $('[data-toggle="tooltip"]').tooltip();
+
   //Release version link click redirect to 
-  $("#product-card-read-release table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+  $("#product-release-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
     e.preventDefault();
-    var callbackParams = {
-      "RlsCode": $(this).attr("idn"),
-      "MtrCode": $(this).attr("MtrCode")
-    };
-    api.content.goTo("entity/release/", "#nav-link-release", "#nav-link-release", callbackParams);
+    //Set the code
+    var MtrCode = $(this).attr("MtrCode");
+
+    $("#product-release-modal").modal("hide");
+
+    //Wait for the modal to close
+    $("#product-release-modal").on('hidden.bs.modal', function (e) {
+      //Unbind the event for next call
+      $("#product-release-modal").off('hidden.bs.modal');
+
+      api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": MtrCode });
+    })
+
+
   });
 }
 
@@ -637,22 +655,18 @@ app.product.drawCallbackRelease = function () {
  * @param  {} callbackParam
  */
 app.product.drawReleaseByProductDataTable = function (data, callbackParam) {
-  $("#product-card-read-release").find("[name=product-card-read-release-header]").text(callbackParam.PrcValue);
-  if ($.fn.dataTable.isDataTable("#product-card-read-release table")) {
-    app.library.datatable.reDraw("#product-card-read-release table", data);
+  $("#product-release-modal").find("[name=product-release-modal-header]").text(callbackParam.PrcValue);
+  if ($.fn.dataTable.isDataTable("#product-release-modal table")) {
+    app.library.datatable.reDraw("#product-release-modal table", data);
   } else {
-
     var localOptions = {
-      createdRow: function (row, dataRow, dataIndex) {
-      },
       data: data,
       columns: [
-        { data: "MtrCode" },
         {
           data: null,
           render: function (data, type, row) {
-            var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode, RlsVersion: row.RlsVersion, RlsRevision: row.RlsRevision }; //idn PrcCode
-            return app.library.html.link.internal(attributes, row.RlsVersion + "." + row.RlsRevision);
+            var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
+            return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
           }
         }
       ],
@@ -662,12 +676,11 @@ app.product.drawReleaseByProductDataTable = function (data, callbackParam) {
       //Translate labels language
       language: app.label.plugin.datatable
     };
-    $("#product-card-read-release table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#product-release-modal table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.product.drawCallbackRelease();
     });
   }
-  $("#product-card-read-release").hide().fadeIn();
-  $('html, body').animate({ scrollTop: $('#product-card-read-release').offset().top }, 1000);
+
 };
 
 //#endregion
@@ -692,7 +705,8 @@ app.product.validation.create = function () {
     errorPlacement: function (error, element) {
       $("#product-modal-create [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.product.ajax.create();
     }
   }).resetForm();
@@ -720,7 +734,8 @@ app.product.validation.update = function () {
     errorPlacement: function (error, element) {
       $("#product-modal-update [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.product.ajax.update();
     }
   }).resetForm();

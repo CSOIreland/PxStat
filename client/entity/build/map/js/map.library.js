@@ -75,8 +75,8 @@ app.map.drawDatatable = function (response) {
     var data = [];
     $.each(response.features, function (index, feature) {
         data.push({
-            "CODE": feature.properties[app.config.plugin.highmaps.featureIdentifier],
-            "VALUE": feature.properties[app.config.plugin.highmaps.featureName],
+            [C_APP_CSV_CODE]: feature.properties[app.config.plugin.highmaps.featureIdentifier],
+            [C_APP_CSV_VALUE]: feature.properties[app.config.plugin.highmaps.featureName],
         });
     });
 
@@ -88,17 +88,17 @@ app.map.drawDatatable = function (response) {
             data: data,
             columns: [
                 {
-                    data: "CODE"
+                    data: C_APP_CSV_CODE
                 },
                 {
-                    data: "VALUE"
+                    data: C_APP_CSV_VALUE
                 }
             ],
             //Translate labels language
             language: app.label.plugin.datatable
         };
 
-        $("#build-map-modal table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions));
+        $("#build-map-modal table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
     };
 }
 
@@ -157,8 +157,8 @@ app.map.download = function (response) {
     var data = [];
     $.each(response.features, function (index, feature) {
         data.push({
-            "CODE": feature.properties[app.config.plugin.highmaps.featureIdentifier],
-            "VALUE": feature.properties[app.config.plugin.highmaps.featureName],
+            [C_APP_CSV_CODE]: feature.properties[app.config.plugin.highmaps.featureIdentifier],
+            [C_APP_CSV_VALUE]: feature.properties[app.config.plugin.highmaps.featureName],
         });
     });
     var mimeType = "text/plain";

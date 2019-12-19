@@ -51,7 +51,7 @@ app.release.workflow.modal.signoff.callback.read = function (response) {
 
         switch (response.data.RqsCode) {
             case C_APP_TS_REQUEST_PUBLISH:
-                $("#request-workflow-modal-signoff-publish [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-signoff-publish [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-publish [name=wrq-emergency-flag]").html(app.library.html.boolean(response.data.WrqEmergencyFlag, true, true));
                 $("#request-workflow-modal-signoff-publish [name=wrq-datetime]").html(moment(response.data.WrqDatetime).format(app.config.mask.datetime.display));
@@ -67,7 +67,7 @@ app.release.workflow.modal.signoff.callback.read = function (response) {
                 $("#request-workflow-modal-signoff-publish [name=rsp-cmm-value]").html(app.library.html.parseBbCode(response.data.RspCmmValue));
                 break;
             case C_APP_TS_REQUEST_PROPERTY:
-                $("#request-workflow-modal-signoff-flag [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-signoff-flag [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-flag [name=wrq-reservation-flag]").html(app.library.html.boolean(response.data.WrqReservationFlag, true, true));
                 $("#request-workflow-modal-signoff-flag [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
@@ -81,7 +81,7 @@ app.release.workflow.modal.signoff.callback.read = function (response) {
                 $("#request-workflow-modal-signoff-flag [name=rsp-cmm-value]").html(app.library.html.parseBbCode(response.data.RspCmmValue));
                 break;
             case C_APP_TS_REQUEST_DELETE:
-                $("#request-workflow-modal-signoff-delete [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-signoff-delete [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-delete [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
                 $("#request-workflow-modal-signoff-delete [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
@@ -92,7 +92,7 @@ app.release.workflow.modal.signoff.callback.read = function (response) {
                 $("#request-workflow-modal-signoff-delete [name=rsp-cmm-value]").html(app.library.html.parseBbCode(response.data.RspCmmValue));
                 break;
             case C_APP_TS_REQUEST_ROLLBACK:
-                $("#request-workflow-modal-signoff-rollback [name=rqs-value]").html(app.label.static[response.data.RqsValue]);
+                $("#request-workflow-modal-signoff-rollback [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-rollback [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
                 $("#request-workflow-modal-signoff-rollback [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
@@ -141,7 +141,8 @@ app.release.workflow.modal.signoff.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-signoff-publish [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.signoff.ajax.create();
                     $("#request-workflow-modal-signoff-publish").modal("hide");
                 }
@@ -156,7 +157,8 @@ app.release.workflow.modal.signoff.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-signoff-flag [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.signoff.ajax.create();
                     $("#request-workflow-modal-signoff-flag").modal("hide");
                 }
@@ -171,7 +173,8 @@ app.release.workflow.modal.signoff.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-signoff-delete [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.signoff.ajax.create();
                     $("#request-workflow-modal-signoff-delete").modal("hide");
                 }
@@ -186,7 +189,8 @@ app.release.workflow.modal.signoff.validation.create = function () {
                 errorPlacement: function (error, element) {
                     $("#request-workflow-modal-signoff-rollback [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
-                submitHandler: function () {
+                submitHandler: function (form) {
+                    $(form).sanitiseForm();
                     app.release.workflow.modal.signoff.ajax.create();
                     $("#request-workflow-modal-signoff-rollback").modal("hide");
                 }

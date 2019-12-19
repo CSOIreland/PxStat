@@ -45,5 +45,39 @@ $(document).ready(function () {
     api.content.goTo("entity/data/", "#nav-link-data");
   }
 
+  //init bootstrap breatpoints for toggle panel
+  $(window).on('init.bs.breakpoint', function (e) {
+    bsBreakpoints.toggle(e.breakpoint);
+  });
+
+  $(window).on('new.bs.breakpoint', function (e) {
+    bsBreakpoints.toggle(e.breakpoint);
+  });
+  bsBreakpoints.init();
+
+
+  $("#panel-toggle").once("click", function (e) {
+    $("#panel").slideToggle("slow", function () {
+      if ($("#panel").is(":visible")) {
+        $("#panel-toggle").find("i").removeClass().addClass("fas fa-minus-circle");
+      }
+      else {
+        $("#panel-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
+      }
+      $('html, body').animate({ scrollTop: $('#panel-toggle').offset().top }, 1000);
+    });
+  });
+
+  $("#data-filter-toggle").once("click", function (e) {
+    $("#data-filter").slideToggle("slow", function () {
+      if ($("#data-filter").is(":visible")) {
+        $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-minus-circle");
+      }
+      else {
+        $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
+      }
+      $('html, body').animate({ scrollTop: $('#data-filter-toggle').offset().top }, 1000);
+    });
+  });
 
 });

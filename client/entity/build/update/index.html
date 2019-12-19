@@ -12,35 +12,35 @@
                                 <i class="fas fa-upload fa-2x"></i>
                                 <span name="file-name"></span>
                                 <span name="file-tip">
-                                    <strong><span label="choose-a"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
-                                    <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                    <strong><span label="choose"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
+                                    <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                 </span>
                                 <br />
-                                <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                             </label>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-footer d-flex text-right justify-content-between">
-                <span>
-                    <button name="file-data-view" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview"></span> </button>
-                </span>
-                <span>
-                    <button name="upload-source-file-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
-                    <button name="upload-source-file" class="btn btn-primary text-light" disabled><i class="fas fa-upload"></i> <span label="parse"></span></button>
-                </span>
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                        <button name="file-data-view" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview"></span> </button>
+                    </div>
+                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                        <button name="upload-source-file-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
+                        <button name="upload-source-file" class="btn btn-primary text-light" disabled><i class="fas fa-upload"></i> <span label="parse"></span></button>
+                    </div>
+                </div>
             </div>
         </div>
-
 
         <div class="card m-3 border-danger" name="upload-error-card" style="display: none">
             <div class="card-header bg-danger text-light" label="errors"></div>
             <div class="card-body" name="upload-error">
             </div>
         </div>
-
-
 
     </div>
 
@@ -133,23 +133,38 @@
                                     <i class="fas fa-upload fa-2x"></i>
                                     <span name="file-name"></span>
                                     <span name="file-tip">
-                                        <strong><span label="choose-a"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
-                                        <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                        <strong><span label="choose"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                        <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                     </span>
                                     <br />
-                                    <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                    <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                                 </label>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer d-flex text-right justify-content-between">
-                        <span>
-                            <button name="preview-data" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview">Preview</span> </button>
-                        </span>
-                        <span>
-                            <button name="reset-data" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset">Reset</span></button>
-                            <button name="download-data-template" class="btn btn-info" type="button" disabled><i class="fas fa-file-download"></i> <span label="download-data-template"></span> </button>
-                        </span>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-4 text-left my-2">
+                                <button name="preview-data" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview">Preview</span> </button>
+                                <button name="download-data-template" class="btn btn-primary" type="button" disabled><i class="fas fa-file-download"></i> <span label="download-csv-template"></span> </button>
+                            </div>
+                            <div class="col-xs-12 col-sm-8 text-right my-2">
+                                <button name="reset-data" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset">Reset</span></button>
+                                <button class="btn btn-tertiary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-download"></i> <span label="download-csv-data"></span></button>
+                                <div class="dropdown-menu">
+                                    <a name="download-data-file-existing" class="dropdown-item" href="#">
+                                        <span label="exsting-periods"></span>
+                                    </a>
+                                    <a name="download-data-file-new" class="dropdown-item disabled" href="#">
+                                        <span label="new-periods"></span>
+                                    </a>
+                                    <a name="download-data-file-all" class="dropdown-item disabled" href="#">
+                                        <span label="all-periods"></span>
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -222,17 +237,25 @@
                 </div>
                 <div class="modal-footer bg-warning justify-content-start rounded-0">
                     <label>
-                        <span label="upload-frequency-automatically-detected"></span>
+                        <span label="upload-frequency-detected"></span>
                     </label>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
-                        <i class="far fa-times-circle"></i> <span label="close"></span>
-                    </button>
-                    <button name="btn-validate" type="submit" class="btn btn-primary text-light">
-                        <i class="fas fa-check-circle"></i> <span label="validate"></span>
-                    </button>
+                    <div class="container-fluid">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i> <span label="close"></span>
+                            </button>
+                            <button name="btn-validate" type="submit" class="btn btn-primary text-light">
+                                <i class="fas fa-check-circle"></i> <span label="validate"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
+
+
+
             </form>
         </div>
     </div>
@@ -307,9 +330,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="fas fa-times"></i> <span label="close"></span></button>
-                    <button class="btn btn-primary text-light" type="submit" name="update-classification"><i class="far fa-save"></i> <span label="update"></span>
-                    </button>
+                    <div class="container-fluid">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="fas fa-times"></i> <span label="close"></span></button>
+                            <button class="btn btn-primary text-light" type="submit" name="update-classification"><i class="far fa-save"></i> <span label="update"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -379,10 +406,10 @@
                                 <button type="button" name="add-period-row" class="btn btn-secondary text-light"><i class="fas fa-plus-circle"></i>
                                     <span label="add-row"></span>
                                 </button>
-                                <div class="card mt-2 border-danger" name="manual-period-errors-card" style="display: none">
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                                     <div class="card-header bg-danger text-light" label="errors"></div>
                                     <div class="card-body">
-                                        <ul name="manual-period-errors" class="list-group mt-2">
+                                        <ul name="errors" class="list-group mt-2">
                                         </ul>
                                     </div>
                                 </div>
@@ -393,7 +420,7 @@
                             <div class="card-footer text-right">
 
                                 <button name="manual-submit-periods" class="btn btn-primary"><i class="far fa-save"></i>
-                                    Save
+                                    <span label="save"></span>
                                 </button>
                             </div>
                         </div>
@@ -412,42 +439,75 @@
                                             <i class="fas fa-upload fa-2x"></i>
                                             <span name="file-name"></span>
                                             <span name="file-tip">
-                                                <strong><span label="choose-a"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
-                                                <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                                <strong><span label="choose"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                                <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                             </span>
                                             <br />
-                                            <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                            <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                                         </label>
                                     </div>
                                 </div>
                                 <div class="border row mx-0">
                                     <span class="serverValidationError text-danger" name="upload-error-holder"></span>
                                 </div>
-                                <div class="card mt-2 border-danger" name="upload-period-errors-card" style="display: none">
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                                     <div class="card-header bg-danger text-light" label="errors"></div>
                                     <div class="card-body">
-                                        <ul name="upload-period-errors" class="list-group mt-2">
+                                        <ul name="errors" class="list-group mt-2">
                                         </ul>
                                     </div>
                                 </div>
 
                             </div>
-                            <div class="card-footer d-flex justify-content-between">
-                                <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv"><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
-                                </a>
-                                <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
-                                    <span label="add-periods"></span>
-                                </button>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                                        <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv"><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                                        <button name="upload-reset-periods" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
+                                        <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
+                                            <span label="add-periods"></span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
                     <span label="cancel"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  initiate-matrix-lookup Modal -->
+<div class="modal" id="build-update-initiate-matrix-lookup" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="table-lookup"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body p-4">
+                <table class="table table-striped hover display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th label="table"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <i class="far fa-times-circle"></i>
+                    <span label="close"></span>
                 </button>
             </div>
         </div>
@@ -635,7 +695,10 @@
 
     </div>
     <!--Update dropdown format template-->
-    <a name="create-submit" class="dropdown-item" href="#"></a>
+    <a name="create-submit" class="dropdown-item" href="#">
+        <span name="type"></span>
+        <span><small name="version" class="text-muted"></small></span>
+    </a>
 </div>
 
 <!-- Define Map -->

@@ -94,7 +94,8 @@ app.email.validation.create = function () {
         errorPlacement: function (error, element) {
             $("#email-container form [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.email.ajax.create();
         }
     }).resetForm();
@@ -135,7 +136,7 @@ app.email.callback.create = function (response) {
         api.modal.error(response.error.message);
     } else if (response.data == C_APP_API_SUCCESS) {
         //Close modal
-        api.modal.success(app.label.static["e-mail-sent-successfully"]);
+        api.modal.success(app.label.static["email-sent"]);
         //Reset screen
         app.email.reset();
     } else {

@@ -14,6 +14,8 @@ $(document).ready(function () {
     //alert("New date range selected: '" + picker.startDate.format('YYYY-MM-DD') + "' to '" + picker.endDate.format('YYYY-MM-DD') + "'");
     app.logging.ajax.read();
   });
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 });

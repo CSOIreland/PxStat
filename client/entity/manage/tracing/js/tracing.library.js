@@ -47,7 +47,6 @@ app.tracing.callback.readType = function (response) {
             var option = $("<option>", {
                 "value": element.AuthenticationType,
                 "text": app.label.static[element.AuthenticationType.toLowerCase()]
-                //{"AuthenticationType":"AUTHENTICATED"},{"AuthenticationType":"REGISTERED"},{"AuthenticationType":"ANONYMOUS"}
             });
             $("#tracing-input").find("[name=select-authentication-type]").append(option);
         });
@@ -95,8 +94,8 @@ app.tracing.ajax.read = function () {
             "StartDate": start,
             "EndDate": end,
             "AuthenticationType": $("#tracing-input").find("[name=select-authentication-type]").val(),
-            "TrcUsername": $("#tracing-input").find("[name=trc-username]").val().trim(),
-            "TrcIp": $("#tracing-input").find("[name=trc-ip]").val().trim()
+            "TrcUsername": $("#tracing-input").find("[name=trc-username]").val(),
+            "TrcIp": $("#tracing-input").find("[name=trc-ip]").val()
         },
         "app.tracing.callback.read",
         null,
@@ -212,7 +211,7 @@ app.tracing.drawDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable,
         };
-        $("#tracing-result table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#tracing-result table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.tracing.drawCallback();
         });
 
@@ -271,11 +270,11 @@ app.tracing.authenticationType = function (user, privilege) {
             "data-toggle": "tooltip",
             "idn": user,
             "data-placement": "left",
-            "title": "", //app.label.static["anonymous"],
-            "data-original-title": app.label.static["anonymous"],
+            "title": "", //app.label.datamodel.authentication["anonymous"],
+            "data-original-title": app.label.datamodel.authentication["anonymous"],
             "html": $("<i>", {
                 "class": "fas fa-user-secret"
-            }).get(0).outerHTML + " " + app.label.static["anonymous"]
+            }).get(0).outerHTML + " " + app.label.datamodel.authentication["anonymous"]
         }).get(0).outerHTML;
     }
     else if (user != null && privilege != null) { //registered user
@@ -285,8 +284,8 @@ app.tracing.authenticationType = function (user, privilege) {
             "href": "#",
             "data-toggle": "tooltip",
             "data-placement": "left",
-            "title": "", //app.label.static["registered"],
-            "data-original-title": app.label.static["registered"],
+            "title": "", //app.label.datamodel.authentication["registered"],
+            "data-original-title": app.label.datamodel.authentication["registered"],
             "html":
                 $("<i>", {
                     "class": "fas fa-user-check text-success"
@@ -300,8 +299,8 @@ app.tracing.authenticationType = function (user, privilege) {
             "idn": user,
             "data-toggle": "tooltip",
             "data-placement": "left",
-            "title": "", //app.label.static["authenticated"],
-            "data-original-title": app.label.static["authenticated"],
+            "title": "", //app.label.datamodel.authentication["authenticated"],
+            "data-original-title": app.label.datamodel.authentication["authenticated"],
             "href": "#",
             "html":
                 $("<i>", {
@@ -329,7 +328,8 @@ app.tracing.validation.submit = function () {
         errorPlacement: function (error, element) {
             $("#tracing-input").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.tracing.ajax.read();
         }
     });

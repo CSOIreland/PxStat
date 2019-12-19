@@ -36,11 +36,12 @@ app.navigation.access.ajax.set = function () {
     { CcnUsername: null },
     "app.navigation.access.callback.set",
     null,
-    null,
+    "app.navigation.access.render",
     null,
     { async: false }
   );
 };
+
 /**
  * Set the navigation
  * @param {*} response 
@@ -53,83 +54,102 @@ app.navigation.access.callback.set = function (response) {
     app.navigation.user.remove();
   } else if (response.data) {
     response.data = response.data[0];
-
-    // Display current user's information
-    app.navigation.user.ajax.read();
-
-    // Show menu items according to user's privilege
-    switch (response.data.PrvCode) {
-      case C_APP_PRIVILEGE_ADMINISTRATOR:
-        //Dashboard
-        $("#nav-link-dashboard").parent().show();
-        // Releases
-        $("#nav-link-release").parent().show();
-        // Analytics
-        $("#nav-link-analytic").parent().show();
-        // Build
-        $("#nav-link-build").parent().show();
-        // Manage
-        $("#nav-link-manage").parent().show();
-        // Configuration
-        $("#nav-link-configuration").parent().show();
-        // Keywords
-        $("#nav-link-keyword").parent().show();
-        break;
-      case C_APP_PRIVILEGE_POWER_USER:
-        //Dashboard
-        $("#nav-link-dashboard").parent().show();
-        // Releases
-        $("#nav-link-release").parent().show();
-        // Analytics
-        $("#nav-link-analytic").parent().show();
-        // Build
-        $("#nav-link-build").parent().show();
-        // Manage
-        $("#nav-link-manage").parent().show();
-        $("#nav-link-tracing").remove();
-        $("#nav-link-logging").remove();
-        // Configuration
-        $("#nav-link-configuration").parent().show();
-        $("#nav-link-language").remove();
-        $("#nav-link-format").remove();
-        // Keywords
-        $("#nav-link-keyword").parent().show();
-        break;
-      case C_APP_PRIVILEGE_MODERATOR:
-        //Dashboard
-        $("#nav-link-dashboard").parent().show();
-        // Releases
-        $("#nav-link-release").parent().show();
-        // Analytics
-        $("#nav-link-analytic").parent().show();
-        // Build
-        $("#nav-link-build").parent().show();
-        // Manage
-        $("#nav-link-manage").parent().remove();
-        // Configuration
-        $("#nav-link-configuration").parent().remove();
-        // Keywords
-        $("#nav-link-keyword").parent().remove();
-        break;
-      default:
-        //Dashboard
-        $("#nav-link-dashboard").parent().remove();
-        // Releases
-        $("#nav-link-release").parent().remove();
-        // Analytics
-        $("#nav-link-analytic").parent().remove();
-        // Build
-        $("#nav-link-build").parent().remove();
-        // Manage
-        $("#nav-link-manage").parent().remove();
-        // Configuration
-        $("#nav-link-configuration").parent().remove();
-        // Keywords
-        $("#nav-link-keyword").parent().remove();
-        break;
-    }
+    // Render the Navigation
+    app.navigation.access.render(response.data.PrvCode)
   }
   else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Render the navigation
+ * @param {*} data 
+ */
+app.navigation.access.render = function (PrvCode) {
+  PrvCode = PrvCode || null;
+
+  // Show menu items according to user's privilege
+  switch (PrvCode) {
+    case C_APP_PRIVILEGE_ADMINISTRATOR:
+      // Display current user's information
+      app.navigation.user.ajax.read();
+
+      //Dashboard
+      $("#nav-link-dashboard").parent().show();
+      // Releases
+      $("#nav-link-release").parent().show();
+      // Analytics
+      $("#nav-link-analytic").parent().show();
+      // Build
+      $("#nav-link-build").parent().show();
+      // Manage
+      $("#nav-link-manage").parent().show();
+      // Configuration
+      $("#nav-link-configuration").parent().show();
+      // Keywords
+      $("#nav-link-keyword").parent().show();
+      break;
+    case C_APP_PRIVILEGE_POWER_USER:
+      // Display current user's information
+      app.navigation.user.ajax.read();
+
+      //Dashboard
+      $("#nav-link-dashboard").parent().show();
+      // Releases
+      $("#nav-link-release").parent().show();
+      // Analytics
+      $("#nav-link-analytic").parent().show();
+      // Build
+      $("#nav-link-build").parent().show();
+      // Manage
+      $("#nav-link-manage").parent().show();
+      $("#nav-link-tracing").remove();
+      $("#nav-link-logging").remove();
+      // Configuration
+      $("#nav-link-configuration").parent().show();
+      $("#nav-link-language").remove();
+      $("#nav-link-format").remove();
+      // Keywords
+      $("#nav-link-keyword").parent().show();
+      break;
+    case C_APP_PRIVILEGE_MODERATOR:
+      // Display current user's information
+      app.navigation.user.ajax.read();
+
+      //Dashboard
+      $("#nav-link-dashboard").parent().show();
+      // Releases
+      $("#nav-link-release").parent().show();
+      // Analytics
+      $("#nav-link-analytic").parent().show();
+      // Build
+      $("#nav-link-build").parent().show();
+      // Manage
+      $("#nav-link-manage").parent().remove();
+      // Configuration
+      $("#nav-link-configuration").parent().remove();
+      // Keywords
+      $("#nav-link-keyword").parent().remove();
+      break;
+    default:
+      // Anonymous or Not Registered user
+      app.navigation.user.remove();
+
+      //Dashboard
+      $("#nav-link-dashboard").parent().remove();
+      // Releases
+      $("#nav-link-release").parent().remove();
+      // Analytics
+      $("#nav-link-analytic").parent().remove();
+      // Build
+      $("#nav-link-build").parent().remove();
+      // Manage
+      $("#nav-link-manage").parent().remove();
+      // Configuration
+      $("#nav-link-configuration").parent().remove();
+      // Keywords
+      $("#nav-link-keyword").parent().remove();
+      break;
+  }
 };
 
 /**

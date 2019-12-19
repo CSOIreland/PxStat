@@ -19,6 +19,9 @@ app.release.isLive = false;
 app.release.isPending = false;
 app.release.isHistorical = false;
 app.release.isWorkInProgress = false;
+app.release.isAwaitingResponse = false;
+app.release.isAwaitingSignOff = false;
+
 app.release.isWorkflowInProgress = false;
 
 app.release.fileContent = null;
@@ -144,7 +147,6 @@ app.release.callback.isApprover = function (response) {
 
     app.release.information.read();
     app.release.source.read();
-    app.release.workflow.read();
     app.release.workflow.history.read();
   }
   // Handle Exception
@@ -214,7 +216,31 @@ app.release.checkStatusWorkInProgress = function (data) {
   var dateTo = (data.RlsLiveDatetimeTo == null) ? null : Date.parse(data.RlsLiveDatetimeTo);
   if (
     data.RlsRevision != 0 &&
-    (!dateFrom && !dateTo)) {
+    (!dateFrom && !dateTo) && !data.RqsCode) {
+    return true;
+  }
+  return false;
+};
+
+app.release.checkStatusAwaitingResponse = function (data) {
+  var now = Date.now();
+  var dateFrom = (data.RlsLiveDatetimeFrom == null) ? null : Date.parse(data.RlsLiveDatetimeFrom);
+  var dateTo = (data.RlsLiveDatetimeTo == null) ? null : Date.parse(data.RlsLiveDatetimeTo);
+  if (
+    data.RlsRevision != 0 &&
+    (!dateFrom && !dateTo) && data.RqsCode && !data.RspCode) {
+    return true;
+  }
+  return false;
+};
+
+app.release.checkStatusAwaitingSignOff = function (data) {
+  var now = Date.now();
+  var dateFrom = (data.RlsLiveDatetimeFrom == null) ? null : Date.parse(data.RlsLiveDatetimeFrom);
+  var dateTo = (data.RlsLiveDatetimeTo == null) ? null : Date.parse(data.RlsLiveDatetimeTo);
+  if (
+    data.RlsRevision != 0 &&
+    (!dateFrom && !dateTo) && data.RqsCode && data.RspCode && !data.SgnCode) {
     return true;
   }
   return false;
@@ -252,8 +278,24 @@ app.release.renderStatus = function (data) {
   // Work in Progress Release
   if (app.release.checkStatusWorkInProgress(data)) {
     return $("<span>", {
-      class: "badge badge-secondary p-2",
+      class: "badge badge-primary p-2",
       text: app.label.static["work-in-progress"]
+    }).get(0).outerHTML;
+  }
+
+  //Awaiting response
+  if (app.release.checkStatusAwaitingResponse(data)) {
+    return $("<span>", {
+      class: "badge badge-secondary p-2",
+      text: app.label.static["awaiting-response"]
+    }).get(0).outerHTML;
+  }
+
+  //Awaiting sign-off
+  if (app.release.checkStatusAwaitingSignOff(data)) {
+    return $("<span>", {
+      class: "badge badge-tertiary p-2",
+      text: app.label.static["awaiting-sign-off"]
     }).get(0).outerHTML;
   }
 
@@ -262,5 +304,24 @@ app.release.renderStatus = function (data) {
     class: "badge badge-secondary p-2",
     text: app.label.static["n-a"]
   }).get(0).outerHTML;
+};
+
+/**
+ * Render the Request Type
+ * @param {*} data 
+ */
+app.release.renderRequest = function (RqsCode) {
+  switch (RqsCode) {
+    case C_APP_TS_REQUEST_PUBLISH:
+      return app.label.static["publish"];
+    case C_APP_TS_REQUEST_PROPERTY:
+      return app.label.static["property"];
+    case C_APP_TS_REQUEST_DELETE:
+      return app.label.static["delete"];
+    case C_APP_TS_REQUEST_ROLLBACK:
+      return app.label.static["rollback"];
+    default:
+      return "";
+  }
 };
 //#endregion

@@ -17,7 +17,8 @@ app.data.dataview.apiParamsMap = {};
 */
 app.data.dataview.ajax.mapMetadata = function (apiParams) {
     if (app.data.MtrCode) {
-        api.ajax.jsonrpc.request(app.config.url.api.public,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.public,
             "PxStat.Data.Cube_API.ReadMetadata",
             apiParams,
             "app.data.dataview.callback.mapMetadata");
@@ -45,7 +46,7 @@ app.data.dataview.callback.mapMetadata = function (response) {
         var data = JSONstat(response.data);
         var geo = data.role.geo[0];
 
-        $("#matrix-selection-placeholder").find("[name=map-dimensions]").empty();
+        $("#data-dataview-selected-table").find("[name=map-dimensions]").empty();
         for (i = 0; i < data.length; i++) {
             var dimension = data.Dimension(i);
             if (dimension.label != geo) {
@@ -79,10 +80,10 @@ app.data.dataview.callback.mapMetadata = function (response) {
                     });
                     dimensionContainer.find("select").attr("idn", data.id[i]).attr("role", data.Dimension(i).role);
                 }
-                $("#matrix-selection-placeholder").find("[name=map-dimensions]").append(dimensionContainer);
+                $("#data-dataview-selected-table").find("[name=map-dimensions]").append(dimensionContainer);
             }
         }
-        $("#matrix-selection-placeholder").find("[name=map-dimensions]").find("select").once("change", function () {
+        $("#data-dataview-selected-table").find("[name=map-dimensions]").find("select").once("change", function () {
             app.data.dataview.getMapSelection();
         });
 
@@ -109,29 +110,30 @@ app.data.dataview.getMapSelection = function () {
 
     var localParams = {
         "language": app.data.LngIsoCode,
-        "format": C_APP_TS_FORMAT_JSON_STAT,
+        "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
+        "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
         "role": {
             "time": [
-                $("#matrix-selection-placeholder").find("[name=map-container]").find("select[role=time]").attr("idn")
+                $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=time]").attr("idn")
             ],
             "metric": [
-                $("#matrix-selection-placeholder").find("[name=map-container]").find("select[role=metric]").attr("idn")
+                $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=metric]").attr("idn")
             ]
         },
         "dimension": [
             {
-                "id": $("#matrix-selection-placeholder").find("[name=map-container]").find("select[role=time]").attr("idn"),
+                "id": $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=time]").attr("idn"),
                 "category": {
                     "index": [
-                        $("#matrix-selection-placeholder").find("[name=map-container]").find("select[role=time]").val()
+                        $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=time]").val()
                     ]
                 }
             },
             {
-                "id": $("#matrix-selection-placeholder").find("[name=map-container]").find("select[role=metric]").attr("idn"),
+                "id": $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=metric]").attr("idn"),
                 "category": {
                     "index": [
-                        $("#matrix-selection-placeholder").find("[name=map-container]").find("select[role=metric]").val()
+                        $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=metric]").val()
                     ]
                 }
             }
@@ -139,7 +141,7 @@ app.data.dataview.getMapSelection = function () {
         "m2m": false
     };
 
-    $($("#matrix-selection-placeholder").find("[name=map-container]").find("select[role=classification]")).each(function (index) {
+    $($("#data-dataview-selected-table").find("[name=map-container]").find("select[role=classification]")).each(function (index) {
 
         var dimension = {
             "id": $(this).attr("idn"),
@@ -152,15 +154,15 @@ app.data.dataview.getMapSelection = function () {
         localParams.dimension.push(dimension);
     });
     //extend apiParams with local params
-    jQuery.extend(app.data.dataview.apiParamsMap, localParams);
+    $.extend(true, app.data.dataview.apiParamsMap, localParams);
     $("#data-accordion-api").find("[name=api-object]").text(function () {
         var JsonQuery = {
             "jsonrpc": C_APP_API_JSONRPC_VERSION,
-            "method": C_APP_API_READ_DATASET_METHOD,
+            "method": "PxStat.Data.Cube_API.ReadDataset",
             "params": null,
             "id": app.library.utility.randomGenerator()
         };
-        var apiParams = jQuery.extend({}, app.data.dataview.apiParamsMap);
+        var apiParams = $.extend(true, {}, app.data.dataview.apiParamsMap);
         delete apiParams.m2m;
         JsonQuery.params = apiParams;
         return JSON.stringify(JsonQuery, null, "\t");
@@ -175,7 +177,8 @@ app.data.dataview.getMapSelection = function () {
 */
 app.data.dataview.ajax.mapData = function () {
     if (app.data.MtrCode) {
-        api.ajax.jsonrpc.request(app.config.url.api.public,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.public,
             "PxStat.Data.Cube_API.ReadDataset",
             app.data.dataview.apiParamsMap,
             "app.data.dataview.callback.mapData",
@@ -189,7 +192,8 @@ app.data.dataview.ajax.mapData = function () {
     else if (app.data.RlsCode) {
         delete app.data.dataview.apiParamsMap.matrix;
         app.data.dataview.apiParamsMap.release = app.data.RlsCode;
-        api.ajax.jsonrpc.request(app.config.url.api.private,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.private,
             "PxStat.Data.Cube_API.ReadPreDataset",
             app.data.dataview.apiParamsMap,
             "app.data.dataview.callback.mapData",
@@ -212,10 +216,10 @@ app.data.dataview.callback.mapData = function (response) {
         var ds = JSONstat(response.data);
         var statisticLabel = ds.role.metric[0];
         var chartTitle = app.data.fileNamePrefix + ": " +
-            $("#matrix-selection-placeholder").find("[name=map-dimensions]").find("[name=dimension-select][role=metric]").find("option:selected").text() + ", " +
-            $("#matrix-selection-placeholder").find("[name=map-dimensions]").find("[name=dimension-select][role=time]").find("option:selected").text() + ", ";
-        var totalClassifications = $("#matrix-selection-placeholder").find("[name=map-dimensions]").find("[name=dimension-select][role=classification]").length;
-        $("#matrix-selection-placeholder").find("[name=map-dimensions]").find("[name=dimension-select][role=classification]").each(function (index) {
+            $("#data-dataview-selected-table").find("[name=map-dimensions]").find("[name=dimension-select][role=metric]").find("option:selected").text() + ", " +
+            $("#data-dataview-selected-table").find("[name=map-dimensions]").find("[name=dimension-select][role=time]").find("option:selected").text() + ", ";
+        var totalClassifications = $("#data-dataview-selected-table").find("[name=map-dimensions]").find("[name=dimension-select][role=classification]").length;
+        $("#data-dataview-selected-table").find("[name=map-dimensions]").find("[name=dimension-select][role=classification]").each(function (index) {
             if (index != totalClassifications - 1) {
                 chartTitle = chartTitle + $(this).find("option:selected").text() + ", ";
             }
@@ -233,7 +237,7 @@ app.data.dataview.callback.mapData = function (response) {
                 for (x = 0; x < codes.length; x++) {
                     if (codes[x] != '-') {
                         valuesMinMax.push(values[x]);
-                        var statisticValue = $("#matrix-selection-placeholder").find("[name=dimension-container-map]").find("[name=dimension-select]").find("option:selected").val();
+                        var statisticValue = $("#data-dataview-selected-table").find("[name=dimension-container-map]").find("[name=dimension-select][role=metric]").find("option:selected").val();
                         var dataPoint = {
                             label: ds.Dimension(i).label,
                             name: ds.Dimension(i).Category(codes[x]).label,
@@ -254,7 +258,7 @@ app.data.dataview.callback.mapData = function (response) {
             });
             $.getJSON(mapUrl, function (geojson) {
                 // Initiate the chart
-                Highcharts.mapChart($('#matrix-selection-placeholder').find('[name=highmap-container]')[0], {
+                Highcharts.mapChart($('#data-dataview-selected-table').find('[name=highmap-container]')[0], {
                     chart: {
                         map: geojson,
                         height: 500
@@ -332,7 +336,8 @@ app.data.dataview.callback.mapData = function (response) {
 */
 app.data.dataview.ajax.data = function () {
     if (app.data.MtrCode) {
-        api.ajax.jsonrpc.request(app.config.url.api.public,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.public,
             "PxStat.Data.Cube_API.ReadDataset",
             app.data.dataset.apiParamsData,
             "app.data.dataview.callback.data",
@@ -344,7 +349,8 @@ app.data.dataview.ajax.data = function () {
     }
 
     else if (app.data.RlsCode) {
-        api.ajax.jsonrpc.request(app.config.url.api.private,
+        api.ajax.jsonrpc.request(
+            app.config.url.api.private,
             "PxStat.Data.Cube_API.ReadPreDataset",
             app.data.dataset.apiParamsData,
             "app.data.dataview.callback.data",
@@ -356,6 +362,52 @@ app.data.dataview.ajax.data = function () {
     }
 };
 
+
+app.data.dataview.ajax.format = function () {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.System.Settings.Format_API.Read",
+        {
+            "LngIsoCode": app.data.LngIsoCode,
+            "FrmDirection": C_APP_TS_FORMAT_DIRECTION_DOWNLOAD
+        },
+        "app.data.dataview.callback.format"
+    );
+}
+
+app.data.dataview.callback.format = function (response) {
+    if (response.error) {
+        // Handle the Error in the Response first
+        api.modal.error(response.error.message);
+    }
+
+    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+        api.modal.information(app.label.static["api-ajax-nodata"]);
+    }
+    else if (response.data) {
+        $("#data-dataview-row [name=download-select-dataset]").empty();
+        $.each(response.data, function (index, format) {
+            var formatDropdown = $("#data-dataview-templates").find("[name=download-dataset-format]").clone();
+            formatDropdown.attr(
+                {
+                    "frm-type": format.FrmType,
+                    "frm-version": format.FrmVersion
+                });
+            formatDropdown.find("[name=type]").text(format.FrmType);
+            formatDropdown.find("[name=version]").text(format.FrmVersion);
+
+            $("#data-view-container [name=download-select-dataset]").append(formatDropdown);
+        });
+
+        $("#data-dataview-row").find("[name=download-dataset-format]").once("click", function (e) {
+            e.preventDefault();
+            app.data.dataview.callback.resultsDownload($(this).attr("frm-type"), $(this).attr("frm-version"));
+        });
+    }
+    // Handle Exception
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+
+}
 /**
 * 
 * @param {*} response
@@ -366,6 +418,7 @@ app.data.dataview.callback.data = function (response) {
     } else if (response.data !== undefined) {
         var ds = JSONstat(response.data);
         app.data.dataview.callback.drawDatatable(ds);
+        app.data.dataview.ajax.format();
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -393,45 +446,19 @@ app.data.dataview.drawCallbackDrawDataTable = function () {
         }
     });
 
-    $("#data-view-container").find("[name=download-select-dataset-json]").once("click", function (e) {
-        e.preventDefault();
-        app.data.dataview.callback.resultsDownload(C_APP_TS_FORMAT_JSON_STAT);
-    });
-    $("#data-view-container").find("[name=download-select-dataset-px]").once("click", function (e) {
-        e.preventDefault();
-        app.data.dataview.callback.resultsDownload(C_APP_TS_FORMAT_PX);
-    });
-    $("#data-view-container").find("[name=download-select-dataset-csv]").once("click", function (e) {
-        e.preventDefault();
-        app.data.dataview.callback.resultsDownload(C_APP_FORMAT_CSV);
-    });
-
-
-    app.data.dataview.callback.resultsDownload = function (format) {
-        var apiParams = jQuery.extend({}, app.data.dataset.apiParamsData);
-        apiParams.format = format;
-        app.data.dataset.ajax.downloadDataset(apiParams);
-    }
-
     api.spinner.stop();
     $("#data-view-container").fadeIn();
-    //scroll to top of table
-    if (app.data.MtrCode) {
-        $('html, body').animate({
-            scrollTop: $("#data-view-container").offset().top
-        }, 1000);
-    }
-    //Need to fix this
-    /* else if (app.data.RlsCode) {
-        $('html, body').animate({
-            scrollTop: $("#data-view-container").offset().top
-        },
-            1000);
-    } */
-
-
 }
 
+/**
+ * Download results
+ */
+app.data.dataview.callback.resultsDownload = function (format, version) {
+    var apiParams = $.extend(true, {}, app.data.dataset.apiParamsData);
+    apiParams.FrmType = format;
+    apiParams.FrmVersion = version;
+    app.data.dataset.ajax.downloadDataset(apiParams);
+}
 
 /**
 * 
@@ -527,7 +554,7 @@ app.data.dataview.callback.drawDatatable = function (ds) {
         //Translate labels language
         language: app.label.plugin.datatable
     };
-    $("#data-view-container").find("[name=datatable]").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#data-view-container").find("[name=datatable]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
         app.data.dataview.drawCallbackDrawDataTable();
     });
 
@@ -539,6 +566,21 @@ app.data.dataview.callback.drawDatatable = function (ds) {
         offstyle: "neutral",
         width: C_APP_TOGGLE_LENGTH
     });
+
+    //scroll to top of table
+    if (app.data.MtrCode) {
+        $('html, body').animate({
+            scrollTop: $("#data-view-container").offset().top
+        }, 1000);
+    }
+    //Need to fix this
+    /* else if (app.data.RlsCode) {
+        $('html, body').animate({
+            scrollTop: $("#data-view-container").offset().top
+        },
+            1000);
+    } */
 };
+
 
 //#endregion

@@ -12,6 +12,7 @@ app.keyword.product.callback = {};
 app.keyword.product.modal = {};
 app.keyword.product.validation = {};
 
+
 //#endregion
 
 /**
@@ -215,6 +216,19 @@ app.keyword.drawCallback = function () {
     var apiParams = { KprCode: idn, PrcCode: prcCode, SbjCode: sbjCode };
     app.keyword.product.readUpdate(apiParams);
   });
+
+  //Call Synonyms when word is selected.
+  $("td.details-request-control i.fa.plus-control").css({ "color": "forestgreen" });
+  $("#keyword-product-read table").find("[name=" + C_APP_DATATABLE_EXTRA_INFO_LINK + "]").once("click", function (e) {
+    e.preventDefault();
+    var idn = $(this).attr("idn");
+    var rowIndexObj = $("[" + C_APP_DATATABLE_ROW_INDEX + "='" + idn + "']");
+    var dataTable = $("#keyword-product-read table").DataTable();
+    var dataTableRow = dataTable.row(rowIndexObj);
+    app.keyword.product.ajax.synonym(dataTableRow.data());
+    $("#keyword-product-extra-info").modal("show");
+  });
+
   // Display confirmation Modal on DELETE button click
   $("#keyword-product-read table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.keyword.product.modal.delete);
 }
@@ -227,8 +241,11 @@ app.keyword.product.drawDataTable = function (data) {
   if ($.fn.DataTable.isDataTable("#keyword-product-read table")) {
     app.library.datatable.reDraw("#keyword-product-read table", data);
   } else {
-
     var localOptions = {
+      // Add Row Index to feed the ExtraInfo modal 
+      createdRow: function (row, dataRow, dataIndex) {
+        $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+      },
       data: data,
       columns: [
         {
@@ -241,6 +258,24 @@ app.keyword.product.drawDataTable = function (data) {
               var attributes = { idn: row.KprCode, "kpr-value": row.KprValue }; //idn KprCode
               return app.library.html.link.edit(attributes, row.KprValue);
             }
+          }
+        },
+        {
+          data: null,
+          defaultContent: '',
+          sorting: false,
+          searchable: false,
+          "render": function (data, type, row, meta) {
+            return $("<a>", {
+              href: "#",
+              name: C_APP_DATATABLE_EXTRA_INFO_LINK,
+              "idn": meta.row,
+              html:
+                $("<i>", {
+                  "class": "fas fa-info-circle text-info"
+                }).get(0).outerHTML +
+                " " + app.label.static["details"]
+            }).get(0).outerHTML;
           }
         },
         {
@@ -278,7 +313,7 @@ app.keyword.product.drawDataTable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#keyword-product-read table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#keyword-product-read table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.keyword.drawCallback();
     });
 
@@ -311,7 +346,7 @@ app.keyword.product.modal.create = function () {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.product.ajax.getLanguagesCreate = function () {
-  api.ajax.jsonrpc.request(app.config.url.api.private,
+  api.ajax.jsonrpc.request(app.config.url.api.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.keyword.product.callback.getLanguagesCreate");
@@ -463,7 +498,7 @@ app.keyword.product.modal.update = function (keywordRecord) {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.product.ajax.getLanguagesUpdate = function () {
-  api.ajax.jsonrpc.request(app.config.url.api.private,
+  api.ajax.jsonrpc.request(app.config.url.api.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.keyword.product.callback.getLanguagesUpdate");
@@ -560,7 +595,7 @@ app.keyword.product.modal.delete = function () {
     idn: idn,
     KprValue: kprValue
   };
-  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [deletetedKeyword.KprValue]), app.keyword.product.ajax.delete, deletetedKeyword);
+  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [deletetedKeyword.KprValue]), app.keyword.product.ajax.delete, deletetedKeyword);
 };
 
 /**
@@ -638,7 +673,8 @@ app.keyword.product.validation.create = function () {
     errorPlacement: function (error, element) {
       $("#keyword-product-modal-create").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.keyword.product.ajax.create();
     }
   }).resetForm();
@@ -672,10 +708,82 @@ app.keyword.product.validation.update = function () {
     errorPlacement: function (error, element) {
       $("#keyword-product-modal-update").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.keyword.product.ajax.update();
     }
   }).resetForm();
 };
+
+//#endregion
+
+//#regionsynonymrender
+
+//Ajax call for synonym
+app.keyword.product.ajax.synonym = function (row) {
+  var KprValue = row.KprValue;
+  var callbackParam = {
+    KprValue: KprValue,
+
+  };
+  api.ajax.jsonrpc.request(
+    app.config.url.api.private,
+    "PxStat.System.Navigation.Keyword_API.ReadSynonym",
+    { "KrlValue": KprValue },
+    "app.keyword.product.callback.synonym",
+    callbackParam);
+}
+
+//Call back for synonyms
+app.keyword.product.callback.synonym = function (response, callbackParam) {
+  if (response.error) {
+    api.modal.error(response.error.message);
+  } else if (response.data !== undefined) {
+    //Add name of keyword selected
+    $("#keyword-product-extra-info").find("[name=keyword]").html(callbackParam.KprValue);
+    //Clear list card
+    $("#keyword-product-extra-info").find("[name=synonym-card]").empty();
+
+    //Get each language
+    $.each(response.data, function (key, language) {
+      //Clone card
+      var languageCard = $("#keyword-product-template").find("[name=synonym-language-card]").clone();
+      //Display the Language
+      languageCard.find(".card-header").text(language.LngIsoName);
+
+      //Check if any synonyms
+      if (language.Synonym.length) {
+
+        //Get Synonyms
+        $.each(language.Synonym, function (key, synonym) {
+
+
+          var synonymItem = $("<li>", {
+            "class": "list-group-item",
+            "html": synonym
+          });
+
+          languageCard.find("[name=synonym-group]").append(synonymItem);
+
+
+        });
+
+      }
+      else {
+        //Display if no synonyms
+        var synonymItem = $("<li>", {
+          "class": "list-group-item",
+          "html": app.label.static["no-synonyms"]
+        });
+        languageCard.find("[name=synonym-group]").append(synonymItem);
+      }
+
+      $("#keyword-product-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+
+    });
+
+  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+}
+
 
 //#endregion

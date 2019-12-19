@@ -4,14 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "Alpha 1.0.0";
-
-// Data formats
-const C_APP_FORMAT_CSV = "csv";
-// Data format extensions
-const C_APP_EXTENSION_JSON_STAT = "json";
-const C_APP_EXTENSION_PX = "px";
-const C_APP_EXTENSION_CSV = "csv";
+const C_APP_VERSION = "1.0.2 Beta";
 
 // URLs
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
@@ -22,7 +15,7 @@ const C_APP_URL_GITHUB_API_CUBE = "https://github.com/CSOIreland/PxStat/wiki/API
 PLEASE REFER TO https://shop.highsoft.com/highcharts
 PLEASE DO NOT SET app.config.plugin.highcharts.enabled UNLESS TO TRUE UNLESS YOU HAVE A VALID HIGHCHARTS LICENSE
 *******************************************************************************/
-const C_APP_HIGHCHARTS_NO_LICENSE_MESSAGE = "For Highcharts licensing options please refer to " + $("<a>", {
+const C_APP_HIGHCHARTS_NO_LICENSE_MESSAGE = $("<a>", {
     href: "https://www.highcharts.com",
     text: "https://www.highcharts.com",
     target: "_blank"
@@ -30,8 +23,6 @@ const C_APP_HIGHCHARTS_NO_LICENSE_MESSAGE = "For Highcharts licensing options pl
 
 const C_APP_API_SUCCESS = "success";
 const C_APP_API_JSONRPC_VERSION = "2.0";
-const C_APP_API_READ_DATASET_METHOD = "PxStat.Data.Cube_API.ReadDataset";
-const C_APP_API_READ_COLLECTION_METHOD = "PxStat.Data.Cube_API.ReadCollection";
 
 // Names
 const C_APP_NAME_LINK_EDIT = "link-edit";
@@ -84,8 +75,22 @@ const C_APP_TS_SIGNOFF_APPROVED = "APPROVED";
 const C_APP_TS_SIGNOFF_REJECTED = "REJECTED";
 
 //Formats (FRM_TYPE)
-const C_APP_TS_FORMAT_JSON_STAT = "JSON-stat";
-const C_APP_TS_FORMAT_PX = "PX";
+const C_APP_TS_FORMAT_TYPE_PX = "PX";
+const C_APP_TS_FORMAT_TYPE_JSONSTAT = "JSON-stat";
+const C_APP_TS_FORMAT_TYPE_CSV = "CSV";
+
+//Formats (FRM_DIRECTION)
+const C_APP_TS_FORMAT_DIRECTION_UPLOAD = "UPLOAD";
+const C_APP_TS_FORMAT_DIRECTION_DOWNLOAD = "DOWNLOAD";
+
+//Default formats
+const C_APP_FORMAT_TYPE_DEFAULT = C_APP_TS_FORMAT_TYPE_JSONSTAT;
+const C_APP_FORMAT_VERSION_DEFAULT = "2.0";
+
+// File extensions
+const C_APP_EXTENSION_PX = "px";
+const C_APP_EXTENSION_JSONSTAT = "json";
+const C_APP_EXTENSION_CSV = "csv";
 
 // Datatable
 const C_APP_DATATABLE_ROW_INDEX = "row-index";
@@ -116,6 +121,11 @@ const C_APP_UPDATEDATA_SOURCE_FILE_ALLOWED_TYPE = ['', 'text/x-pcaxis', 'text/pl
 const C_APP_UPDATE_PERIOD_FILE_ALLOWED_EXTENSION = ['.csv'];
 const C_APP_UPDATE_PERIOD_FILE_ALLOWED_TYPE = ['', 'text/csv', 'text/plain', "application/vnd.ms-excel"]; // CSV a registered MIME Type
 
+//CSV structure
+const C_APP_CSV_CODE = "CODE";
+const C_APP_CSV_VALUE = "VALUE";
+const C_APP_CSV_UNIT = "UNIT";
+const C_APP_CSV_DECIMAL = "DECIMAL";
 
 const C_APP_ANALYTIC_MODULE_HIGHCHARTS = "entity/analytic/js/analytic.library.highCharts.js";
 const C_APP_ANALYTIC_MODULE_GOOGLE = "entity/analytic/js/analytic.library.google.js";

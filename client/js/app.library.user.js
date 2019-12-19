@@ -57,7 +57,7 @@ app.library.user.modal.callback.read = function (response) {
     response.data = response.data[0];
     $("#modal-read-user").find("[name=ccn-username]").text(response.data.CcnUsername);
     $("#modal-read-user").find("[name=ccn-name]").text(response.data.CcnName);
-    $("#modal-read-user").find("[name=prv-value]").text(app.label.static[response.data.PrvValue]);
+    $("#modal-read-user").find("[name=prv-value]").text(app.label.datamodel.privilege[response.data.PrvValue]);
     $("#modal-read-user").find("[name=ccn-email]").html(app.library.html.email(response.data.CcnEmail));
 
     if (response.data.PrvCode != C_APP_PRIVILEGE_MODERATOR) {

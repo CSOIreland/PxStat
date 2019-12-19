@@ -26,7 +26,9 @@ app.release.panel.workInProgress.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Workflow.Workflow_API.ReadWorkInProgress",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.release.panel.workInProgress.callback.read");
 };
 
@@ -77,7 +79,7 @@ app.release.panel.workInProgress.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
-                        return app.library.html.link.edit(attributes, row.MtrCode);
+                        return app.library.html.link.edit(attributes, row.MtrCode, row.MtrTitle);
                     }
                 },
                 {
@@ -89,16 +91,22 @@ app.release.panel.workInProgress.callback.drawDataTable = function (data) {
                             "title": row.GrpName
                         }).get(0).outerHTML;
                     }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+                    }
                 }
             ],
-            order: [0, 'asc'],
+            order: [2, 'desc'],
             drawCallback: function (settings) {
                 app.release.panel.drawCallbackWorkInProgress();
             },
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#release-panel-workinprogress table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#release-panel-workinprogress table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.release.panel.drawCallbackWorkInProgress();
         });
     }
@@ -114,7 +122,9 @@ app.release.panel.awaitingResponse.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingResponse",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.release.panel.awaitingResponse.callback.read");
 };
 
@@ -165,7 +175,7 @@ app.release.panel.awaitingResponse.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
-                        return app.library.html.link.edit(attributes, row.MtrCode);
+                        return app.library.html.link.edit(attributes, row.MtrCode, row.MtrTitle);
                     }
                 },
                 {
@@ -181,7 +191,7 @@ app.release.panel.awaitingResponse.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return app.label.static[row.RqsValue]
+                        return app.label.datamodel.request[row.RqsValue]
                     }
                 }
             ],
@@ -194,7 +204,7 @@ app.release.panel.awaitingResponse.callback.drawDataTable = function (data) {
             language: app.label.plugin.datatable
         };
 
-        $("#release-panel-awaitingresponse table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#release-panel-awaitingresponse table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.release.panel.drawCallbackAwaitingResponse();
         });
     }
@@ -210,7 +220,9 @@ app.release.panel.awaitingSignoff.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingSignoff",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.release.panel.awaitingSignoff.callback.read");
 };
 
@@ -261,7 +273,7 @@ app.release.panel.awaitingSignoff.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
-                        return app.library.html.link.edit(attributes, row.MtrCode);
+                        return app.library.html.link.edit(attributes, row.MtrCode, row.MtrTitle);
                     }
                 },
                 {
@@ -277,7 +289,7 @@ app.release.panel.awaitingSignoff.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return app.label.static[row.RqsValue]
+                        return app.label.datamodel.request[row.RqsValue]
                     }
                 }
             ],
@@ -288,7 +300,7 @@ app.release.panel.awaitingSignoff.callback.drawDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#release-panel-awaitingsignoff table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#release-panel-awaitingsignoff table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.release.panel.drawCallbackAwaitingSignOff();
         });
     }

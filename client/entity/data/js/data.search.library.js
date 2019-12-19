@@ -42,7 +42,7 @@ app.data.search.callback.readNav = function (response) {
         api.modal.error(response.error.message);
     }
     else if (response.data !== undefined) {
-        $("#data-navigation").find("[name=search-results-items]").empty();
+        $("#data-navigation").find("[name=browse-subjects]").empty();
         $.each(response.data, function (key, sbjValue) {
             var subject = $("#data-search-templates").find("[name=navigation-subject-list]").clone();
             subject.find("[name=navigation-subject-link]").html($("<span>", {
@@ -59,7 +59,7 @@ app.data.search.callback.readNav = function (response) {
                 product.find("[name=product-release-count]").text(prcValue.PrcReleaseCount);
                 subject.find("[name=navigation-product-list]").append(product);
             });
-            $("#data-navigation").find("[name=search-results-items]").append(subject);
+            $("#data-navigation").find("[name=browse-subjects]").append(subject);
         });
         //EVENT ASSIGN
         // Add Click even for selecting Subject-Product at Browse Subjects menu.
@@ -68,7 +68,7 @@ app.data.search.callback.readNav = function (response) {
             //clear search box input
             $("#data-search-input").find("[name=search-input]").val('');
             //empty data screens
-            $("#matrix-selection-placeholder, #panel, #data-view-container").empty();
+            $("#data-dataview-selected-table, #panel, #data-view-container").empty();
             $("#data-accordion-api").hide();
             $("#data-latest-releases").remove();
             $("#data-accordion-collection-api").hide();
@@ -83,5 +83,7 @@ app.data.search.callback.readNav = function (response) {
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
+
+
 };
 //#endregion get navigation

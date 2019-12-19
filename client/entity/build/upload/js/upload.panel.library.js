@@ -20,7 +20,9 @@ app.build.upload_panel.format.ajax.read = function () {
   api.ajax.jsonrpc.request(
     app.config.url.api.private,
     "PxStat.System.Settings.Format_API.Read",
-    { LngIsoCode: null },
+    {
+      "FrmDirection": C_APP_TS_FORMAT_DIRECTION_UPLOAD
+    },
     "app.build.upload_panel.format.callback.read"
   );
 };
@@ -55,7 +57,7 @@ app.build.upload_panel.format.callback.drawDataTable = function (data) {
     language: app.label.plugin.datatable
   };
 
-  $("#build-upload-panel-container").find("table[name=format-table]").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions));
+  $("#build-upload-panel-container").find("table[name=format-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
 };
 //#endregion
 
@@ -84,7 +86,7 @@ app.build.upload_panel.copyright.drawDatatable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#build-upload-panel-container").find("table[name=copyright-table]").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions));
+    $("#build-upload-panel-container").find("table[name=copyright-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
   }
 };
 
@@ -133,7 +135,7 @@ app.build.upload_panel.drawDataTableFormats = function (data) {
     language: app.label.plugin.datatable
   };
 
-  $("#build-upload-panel-container").find("table[name=format-table]").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions));
+  $("#build-upload-panel-container").find("table[name=format-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
 
 };
 
@@ -144,7 +146,7 @@ app.build.upload_panel.drawDataTableFormats = function (data) {
  */
 app.build.upload_panel.language.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.build.upload_panel.language.callback.read"
@@ -170,7 +172,7 @@ app.build.upload_panel.language.callback.drawDataTable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#build-upload-panel-container").find("table[name=language-table]").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions));
+    $("#build-upload-panel-container").find("table[name=language-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
 
   }
 };

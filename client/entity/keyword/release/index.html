@@ -24,6 +24,7 @@
         <tr>
           <th label="release"></th>
           <th label="status"></th>
+          <th label="request"></th>
           <th label="live-from"></th>
           <th label="live-to"></th>
         </tr>
@@ -40,6 +41,7 @@
       <thead>
         <tr>
           <th label="keyword"></th>
+          <th label="synonym"></th>
           <th label="mandatory"></th>
           <th label="acronym"></th>
           <th></th>
@@ -121,12 +123,16 @@
           </label>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-neutral" data-dismiss="modal">
-            <i class="far fa-times-circle"></i> <span label="cancel"></span>
-          </button>
-          <button class="btn btn-primary text-light" type="submit">
-            <i class="fas fa-plus-circle"></i> <span label="add"></span>
-          </button>
+          <div class="container-fluid">
+            <div class="text-right">
+              <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+              </button>
+              <button class="btn btn-primary text-light" type="submit">
+                <i class="fas fa-plus-circle"></i> <span label="add"></span>
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -197,12 +203,16 @@
           </label>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-neutral" data-dismiss="modal">
-            <i class="far fa-times-circle"></i> <span label="cancel"></span>
-          </button>
-          <button class="btn btn-primary text-light" type="submit">
-            <i class="far fa-save"></i> <span label="update"></span>
-          </button>
+          <div class="container-fluid">
+            <div class="text-right">
+              <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+              </button>
+              <button class="btn btn-primary text-light" type="submit">
+                <i class="far fa-save"></i> <span label="update"></span>
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
@@ -240,6 +250,54 @@
 
 </div>
 
+<div id="keyword-release-extra-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header bg-primary">
+          <h5 class="modal-title text-light" label="synonym-list"></h5>
+          <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="border-top border-right border-left border-bottom row mx-0 mb-3">
+              <div class="bg-light border-right col-4 p-2 text-right font-weight-bold" label="keyword :"></div>
+              <span class="col-8 p-2">
+                <span name="keyword"></span>
+              </span>
+            </div>
+            <span name="synonym-card"></span>
+
+
+          </div>
+          <div class="modal-footer">
+            <div class="container-fluid">
+              <div class="text-right">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                  <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="keyword-release-synonym-template" style="display:none">
+  <div class="card mb-2" name="synonym-language-card">
+    <div class="card-header font-weight-bold"></div>
+    <div class="card-body p-0">
+      <ul class="list-group list-group-flush" name="synonym-group"></ul>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 <!-- Page specific CSS -->
 <link rel="stylesheet" href="entity/keyword/release/css/keyword.release.css" />
 <!-- Page specific JS -->
@@ -249,6 +307,7 @@
 <script src="entity/data/js/data.library.js"></script>
 <script src="entity/data/js/data.dataset.library.js"></script>
 <script src="entity/data/js/data.dataview.library.js"></script>
+<script src="entity/keyword/search/js/keyword.search.library.js"></script>
 
 <script src="entity/keyword/release/js/keyword.release.library.js"></script>
 <script src="entity/keyword/release/js/keyword.release.js"></script>

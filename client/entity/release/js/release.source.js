@@ -14,7 +14,7 @@ $(document).ready(function () {
 
     //empty dynamic data from modal when you close it
     $('#data-view-modal').on('hide.bs.modal', function (e) {
-        $(this).find("#matrix-selection-placeholder").empty();
+        $(this).find("#data-dataview-selected-table").empty();
         $(this).find("#data-view-container").empty();
     });
     // Translate labels language (Last to run)

@@ -53,10 +53,10 @@ app.dashboard.callback.ReadCurrentAccess = function (response) {
                 $("#dashboard-accordion").on('show.bs.collapse', function (e) {
                     $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
                 });
-                $("#collapse-awaiting-response").collapse('show');
-                $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-                    $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-                });
+                /*  $("#collapse-awaiting-response").collapse('show');
+                  $("#dashboard-accordion").on('show.bs.collapse', function (e) {
+                      $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
+                  });*/
                 break;
             case C_APP_PRIVILEGE_POWER_USER:
                 $("#collapse-awaiting-sign-off").collapse('show');
@@ -82,7 +82,9 @@ app.dashboard.workInProgress.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Workflow.Workflow_API.ReadWorkInProgress",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.dashboard.workInProgress.callback.read");
 };
 
@@ -107,9 +109,9 @@ app.dashboard.workInProgress.drawCallbackWorkInProgress = function () {
     $('[data-toggle="tooltip"]').tooltip();
 
     //Edit link click
-    $("#dashboard-panel-workinprogress table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
+    $("#dashboard-panel-workinprogress table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_EDIT + "]" link.
+        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
         $('.tooltip').remove();
 
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
@@ -144,7 +146,7 @@ app.dashboard.workInProgress.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
-                        return app.library.html.link.edit(attributes, row.MtrCode);
+                        return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
                     }
                 },
                 {
@@ -159,10 +161,6 @@ app.dashboard.workInProgress.callback.drawDataTable = function (data) {
 
                         return linkGroup;
                     }
-                },
-                {
-                    data: "Request",
-
                 },
                 {
                     data: null,
@@ -180,15 +178,13 @@ app.dashboard.workInProgress.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<span>", {
-                            class: "text-muted",
-                            text: moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display)
-                        }).get(0).outerHTML;
+                        return moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+
                     }
                 }
 
             ],
-            order: [4, 'desc'],
+            order: [3, 'desc'],
             drawCallback: function (settings) {
                 app.dashboard.workInProgress.drawCallbackWorkInProgress();
             },
@@ -196,7 +192,7 @@ app.dashboard.workInProgress.callback.drawDataTable = function (data) {
             language: app.label.plugin.datatable
         };
 
-        $("#dashboard-panel-workinprogress table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#dashboard-panel-workinprogress table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.dashboard.workInProgress.drawCallbackWorkInProgress();
         });
     }
@@ -212,7 +208,10 @@ app.dashboard.awaitingResponse.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingResponse",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+
+        },
         "app.dashboard.awaitingResponse.callback.read");
 };
 
@@ -239,9 +238,9 @@ app.dashboard.drawCallbackAwaitingResponse = function () {
     $('[data-toggle="tooltip"]').tooltip();
 
     //Edit link click
-    $("#dashboard-panel-awaitingresponse table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
+    $("#dashboard-panel-awaitingresponse table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_EDIT + "]" link.
+        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
         $('.tooltip').remove();
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
     });
@@ -268,7 +267,6 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
     if ($.fn.dataTable.isDataTable("#dashboard-panel-awaitingresponse table")) {
         app.library.datatable.reDraw("#dashboard-panel-awaitingresponse table", data);
     } else {
-
         var localOptions = {
             data: data,
             columns: [
@@ -276,7 +274,7 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
-                        return app.library.html.link.edit(attributes, row.MtrCode);
+                        return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
                     }
                 },
                 {
@@ -295,7 +293,7 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return app.label.static[row.RqsValue]
+                        return app.label.datamodel.request[row.RqsValue]
                     }
                 },
                 {
@@ -308,10 +306,7 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<span>", {
-                            class: "text-muted",
-                            text: moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display)
-                        }).get(0).outerHTML;
+                        return moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
                     }
                 },
                 {
@@ -330,10 +325,7 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<span>", {
-                            class: "text-muted",
-                            text: moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display)
-                        }).get(0).outerHTML;
+                        return moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
                     }
                 }
 
@@ -347,7 +339,7 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
             language: app.label.plugin.datatable
         };
 
-        $("#dashboard-panel-awaitingresponse table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#dashboard-panel-awaitingresponse table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.dashboard.drawCallbackAwaitingResponse();
         });
 
@@ -364,7 +356,9 @@ app.dashboard.awaitingSignoff.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingSignoff",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.dashboard.awaitingSignoff.callback.read");
 };
 
@@ -391,9 +385,9 @@ app.dashboard.drawCallbackAwaitingSignOff = function () {
     $('[data-toggle="tooltip"]').tooltip();
 
     //Edit link click
-    $("#dashboard-panel-awaitingsignoff table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
+    $("#dashboard-panel-awaitingsignoff table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_EDIT + "]" link.
+        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
         $('.tooltip').remove();
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
     });
@@ -427,7 +421,7 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
-                        return app.library.html.link.edit(attributes, row.MtrCode);
+                        return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
                     }
                 },
                 {
@@ -446,7 +440,7 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return app.label.static[row.RqsValue]
+                        return app.label.datamodel.request[row.RqsValue]
                     }
                 },
                 {
@@ -462,10 +456,7 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
                         if (row.WrqDatetime == null) {
                             return ""
                         } else {
-                            return $("<span>", {
-                                class: "text-muted",
-                                text: moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display)
-                            }).get(0).outerHTML;
+                            return moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
                         }
                     }
                 },
@@ -485,10 +476,7 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<span>", {
-                            class: "text-muted",
-                            text: moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display)
-                        }).get(0).outerHTML;
+                        return moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
                     }
                 }
 
@@ -500,7 +488,7 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#dashboard-panel-awaitingsignoff table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#dashboard-panel-awaitingsignoff table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.dashboard.drawCallbackAwaitingSignOff();
         });
     }
@@ -516,7 +504,9 @@ app.dashboard.liveReleases.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Workflow.Workflow_API.ReadLive",
-        null,
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.dashboard.liveReleases.callback.read");
 };
 
@@ -543,7 +533,7 @@ app.dashboard.drawCallbackliveReleases = function () {
     $('[data-toggle="tooltip"]').tooltip();
 
     //Edit link click
-    $("#dashboard-panel-livereleases table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
+    $("#dashboard-panel-livereleases table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
 
         $('.tooltip').remove();
@@ -562,6 +552,7 @@ app.dashboard.drawCallbackliveReleases = function () {
         app.analytic.ajax.readReferrer($(this).attr("mtr-code"), "#analytic-chart-modal [name=referrer-column-chart]");
         app.analytic.ajax.readTimeLine($(this).attr("mtr-code"), "#analytic-chart-modal [name=dates-line-chart]");
         app.analytic.ajax.readLanguage($(this).attr("mtr-code"), "#analytic-chart-modal [name=language-pie-chart]");
+        app.analytic.ajax.readFormat($(this).attr("mtr-code"), "#analytic-chart-modal [name=format-pie-chart]");
         $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("mtr-code") + " : " + $(this).attr("mtr-title"));
         $("#matrix-chart-modal").modal("show");
 
@@ -583,7 +574,7 @@ app.dashboard.liveReleases.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { "rls-code": row.RlsCode, "mtr-code": row.MtrCode };
-                        return app.library.html.link.edit(attributes, row.MtrCode);
+                        return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
                     }
                 },
                 {
@@ -602,11 +593,9 @@ app.dashboard.liveReleases.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<span>", {
-                            class: "text-muted",
-                            text: moment(row.RlsLiveDatimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display)
-                        }).get(0).outerHTML;
+                        return moment(row.RlsLiveDatimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
                     }
+
                 },
                 {
                     data: null,
@@ -648,7 +637,7 @@ app.dashboard.liveReleases.callback.drawDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#dashboard-panel-livereleases table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#dashboard-panel-livereleases table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.dashboard.drawCallbackliveReleases();
         });
     }

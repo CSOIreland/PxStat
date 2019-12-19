@@ -204,7 +204,7 @@ app.group.drawDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#group-read table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#group-read table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.group.drawCallbackGroup();
         });
         // Display Modal Create/Add Group on Create Add Group button
@@ -261,7 +261,8 @@ app.group.validation.create = function () {
         errorPlacement: function (error, element) {
             $("#group-modal-create-group [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.group.ajax.create();
         }
     }).resetForm(); // Validate Add Group - Modal - Add Group
@@ -329,7 +330,7 @@ app.group.callback.create = function (response, callbackParam) {
  */
 app.group.modal.delete = function (e) {
     var groupToDelete = $(this).attr("idn"); //idn
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [groupToDelete]), app.group.ajax.delete, groupToDelete);
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [groupToDelete]), app.group.ajax.delete, groupToDelete);
 };
 
 /**
@@ -471,7 +472,7 @@ app.group.drawDataTableMembersGroup = function (data, groupCode) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#group-members-read table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#group-members-read table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.group.drawCallbackGroupMember();
         });
         //set currentGroup attribute on button to know which group to add member to
@@ -596,7 +597,8 @@ app.group.validation.update = function () {
         errorPlacement: function (error, element) {
             $("#group-form-update-group [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.group.ajax.update();
         }
     }).resetForm();
@@ -667,7 +669,7 @@ app.group.membergroup.modal.delete = function () {
         CcnUsername: idn,
         GrpCode: $(this).attr("grp-code")
     };
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [idn]), app.group.membergroup.ajax.delete, deleteObj);
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [idn]), app.group.membergroup.ajax.delete, deleteObj);
 };
 
 /**
@@ -778,7 +780,8 @@ app.group.membergroup.modal.update = function (userRecord) {
  */
 app.group.membergroup.validation.update = function () {
     $("#group-modal-update-group-member").find("form").trigger("reset").validate({
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.group.membergroup.ajax.update();
         }
     }).resetForm();
@@ -930,7 +933,8 @@ app.group.membergroup.validation.create = function () {
         errorPlacement: function (error, element) {
             $("#group-modal-add-member [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.group.membergroup.ajax.create();
         }
     }).resetForm();

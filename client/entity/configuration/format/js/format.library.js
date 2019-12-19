@@ -43,16 +43,21 @@ app.format.callback.read = function (response) {
  * @param {*} data 
  */
 app.format.callback.drawDataTable = function (data) {
-
   var localOptions = {
     data: data,
     columns: [
       { data: "FrmType" },
-      { data: "FrmVersion" }
+      { data: "FrmVersion" },
+      {
+        data: null,
+        render: function (data, type, row) {
+          return app.label.datamodel.format[row.FrmDirection.toLowerCase()];
+        }
+      }
     ],
     "order": [[1, "desc"]],
     language: app.label.plugin.datatable
   };
-  $("#format-read-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions));
+  $("#format-read-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
 };
 //#endregion

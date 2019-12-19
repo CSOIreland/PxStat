@@ -20,14 +20,13 @@ $(document).ready(function () {
   $("#keyword-product-container").find("[name=select-main-product-search]").on('select2:clear', function (e) {
     $("#keyword-product-read").hide();
   });
-
+  // Load the side panel
+  api.content.load("#panel", "entity/keyword/search/index.html");
 
   //hide product-keyword Data Table
   $("#keyword-product-read").hide();
   //Update DropDown Subject
   app.keyword.product.readSubjects();
-  // Translate labels language (Last to run)
-  app.library.html.parseStaticLabel();
 
   $("#keyword-product-modal-create [name=acronym-toggle], #keyword-product-modal-update [name=acronym-toggle]").bootstrapToggle("destroy").bootstrapToggle({
     on: app.label.static["true"],
@@ -36,4 +35,12 @@ $(document).ready(function () {
     offstyle: "warning",
     width: C_APP_TOGGLE_LENGTH
   });
+
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+
+  // Translate labels language (Last to run)
+  app.library.html.parseStaticLabel();
+
+
 });

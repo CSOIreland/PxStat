@@ -203,6 +203,7 @@ app.analytic.ajax.readAnalytics = function () {
     app.analytic.ajax.readReferrer(null, "#analytic-chart [name=referrer-column-chart]");
     app.analytic.ajax.readTimeLine(null, "#analytic-chart [name=dates-line-chart]");
     app.analytic.ajax.readLanguage(null, "#analytic-chart [name=language-pie-chart]");
+    app.analytic.ajax.readFormat(null, "#analytic-chart [name=format-pie-chart]");
     $("#analytic-results").fadeIn();
 
 };
@@ -219,6 +220,7 @@ app.analytic.drawCallback = function () {
         app.analytic.ajax.readReferrer($(this).attr("idn"), "#analytic-chart-modal [name=referrer-column-chart]");
         app.analytic.ajax.readTimeLine($(this).attr("idn"), "#analytic-chart-modal [name=dates-line-chart]");
         app.analytic.ajax.readLanguage($(this).attr("idn"), "#analytic-chart-modal [name=language-pie-chart]");
+        app.analytic.ajax.readFormat(null, "#analytic-chart-modal [name=format-pie-chart]");
         $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("idn") + " : " + $(this).attr("data-original-title"));
         $("#matrix-chart-modal").modal("show");
     });
@@ -273,7 +275,7 @@ app.analytic.callback.readAnalytics = function (response) {
                 //Translate labels language
                 language: app.label.plugin.datatable
             };
-            $("#analytic-data table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            $("#analytic-data table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
                 app.analytic.drawCallback();
             });
         }
@@ -617,6 +619,7 @@ app.analytic.render.readTimeLine = function (data, selector) { };
  * Validation
  */
 app.analytic.validation.select = function () {
+
     $("#select-card").find("form").trigger("reset").validate({
         rules: {
             "nlt-masked-ip":
@@ -627,10 +630,69 @@ app.analytic.validation.select = function () {
         errorPlacement: function (error, element) {
             $("#select-card").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.analytic.ajax.readAnalytics();
         }
     }).resetForm();
 };
+
+//#endregion
+
+//#region format
+/**
+ * Get format analytics
+ * @param  {} MtrCode
+ * @param  {} selector
+ */
+app.analytic.ajax.readFormat = function (MtrCode, selector) {
+
+    MtrCode = MtrCode || null;
+    var SbjCode = $("#select-card").find("[name=select-subject]").val();
+    if (SbjCode != null && SbjCode.length == 0) {
+        SbjCode = null
+    }
+
+    var PrcCode = $("#select-card").find("[name=select-product]").val();
+    if (PrcCode != null && PrcCode.length == 0) {
+        PrcCode = null
+    }
+
+    api.ajax.jsonrpc.request(app.config.url.api.private,
+        "PxStat.Security.Analytic_API.ReadFormat",
+        {
+            "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
+            "DateTo": app.analytic.dateTo.format(app.config.mask.date.ajax),
+            "SbjCode": SbjCode,
+            "PrcCode": PrcCode,
+            "MtrCode": MtrCode,
+            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val()
+        },
+        "app.analytic.callback.readFromat",
+        selector,
+        null,
+        null,
+        { async: false }
+    );
+}
+
+/**
+ * Draw fromat pie chart
+ * @param  {} response
+ * @param  {} selector
+ */
+app.analytic.callback.readFromat = function (response, selector) {
+
+    if (response.error) {
+        api.modal.error(response.error.message);
+    } else if (response.data !== undefined) {
+        app.analytic.render.readFormat(response.data, selector);
+    }
+
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+//to be overridden 
+app.analytic.render.readFormat = function (data, selector) { };
 
 //#endregion

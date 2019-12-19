@@ -53,7 +53,7 @@ app.keyword.release.modal.create = function () {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.release.ajax.getLanguagesCreate = function () {
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.public,
         "PxStat.System.Settings.Language_API.Read",
         { LngIsoCode: null },
         "app.keyword.release.callback.getLanguagesCreate");
@@ -64,7 +64,7 @@ app.keyword.release.ajax.getLanguagesCreate = function () {
 */
 app.keyword.release.callback.getLanguagesCreate = function (response) {
     data = response.data;
-    $("#keyword-release-modal-create").find("[name=language]").append($("<option>", {
+    $("#keyword-release-modal-create").find("[name=language]").empty().append($("<option>", {
         "text": app.label.static["select-uppercase"],
         "disabled": "disabled",
         "selected": "selected"
@@ -144,7 +144,9 @@ app.keyword.release.ajax.matrixReadList = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
-        {},
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.keyword.release.callback.matrixReadList"
     );
 };
@@ -203,7 +205,10 @@ app.keyword.release.ajax.readRelease = function (selectedMtrCode) {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Release_API.ReadList",
-        { "MtrCode": selectedMtrCode },
+        {
+            "MtrCode": selectedMtrCode,
+            LngIsoCode: app.label.language.iso.code
+        },
         "app.keyword.release.callback.readReleaseList"
     );
 };
@@ -291,6 +296,12 @@ app.keyword.release.drawDataTableRelease = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
+                        return app.release.renderRequest(row.RqsCode);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
                         if (row.RlsLiveDatetimeFrom == null) {
                             return "";
                         }
@@ -317,7 +328,7 @@ app.keyword.release.drawDataTableRelease = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#keyword-release-table-release-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#keyword-release-table-release-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.keyword.drawCallbackRelease();
         });
     }
@@ -365,6 +376,20 @@ app.keyword.drawCallbackKeyword = function () {
 
         app.keyword.release.ajax.readUpdate(apiParams);
     });
+
+    //Call Synonyms when word is selected.
+    $("td.details-request-control i.fa.plus-control").css({ "color": "forestgreen" });
+    $("#keyword-release-table-release-keyword-container table").find("[name=" + C_APP_DATATABLE_EXTRA_INFO_LINK + "]").once("click", function (e) {
+        e.preventDefault();
+        var idn = $(this).attr("idn");
+        var rowIndexObj = $("[" + C_APP_DATATABLE_ROW_INDEX + "='" + idn + "']");
+        var dataTable = $("#keyword-release-table-release-keyword-container table").DataTable();
+        var dataTableRow = dataTable.row(rowIndexObj);
+        app.keyword.release.ajax.synonym(dataTableRow.data());
+        $("#keyword-release-extra-info").modal("show");
+    });
+
+
     // Display confirmation Modal on DELETE button click "release-keyword"
     $("#keyword-release-table-release-keyword-container table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.keyword.release.modal.delete);
 }
@@ -378,6 +403,10 @@ app.keyword.release.drawDataTable = function (data) {
         app.library.datatable.reDraw("#keyword-release-table-release-keyword-container table", data);
     } else {
         var localOptions = {
+            // Add Row Index to feed the ExtraInfo modal 
+            createdRow: function (row, dataRow, dataIndex) {
+                $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+            },
             data: data,
             columns: [
                 {
@@ -390,6 +419,24 @@ app.keyword.release.drawDataTable = function (data) {
                             var attributes = { idn: row.KrlCode, "krl-value": row.KrlValue }; //idn KrlCode
                             return app.library.html.link.edit(attributes, row.KrlValue);
                         }
+                    }
+                },
+                {
+                    data: null,
+                    defaultContent: '',
+                    sorting: false,
+                    searchable: false,
+                    "render": function (data, type, row, meta) {
+                        return $("<a>", {
+                            href: "#",
+                            name: C_APP_DATATABLE_EXTRA_INFO_LINK,
+                            "idn": meta.row,
+                            html:
+                                $("<i>", {
+                                    "class": "fas fa-info-circle text-info"
+                                }).get(0).outerHTML +
+                                " " + app.label.static["details"]
+                        }).get(0).outerHTML;
                     }
                 },
                 {
@@ -426,7 +473,7 @@ app.keyword.release.drawDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#keyword-release-table-release-keyword-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#keyword-release-table-release-keyword-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.keyword.drawCallbackKeyword();
         });
 
@@ -516,7 +563,7 @@ app.keyword.release.modal.update = function (keywordRecord) {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.release.ajax.getLanguagesUpdate = function () {
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.public,
         "PxStat.System.Settings.Language_API.Read",
         { LngIsoCode: null },
         "app.keyword.release.callback.getLanguagesUpdate");
@@ -554,7 +601,7 @@ app.keyword.release.modal.delete = function () {
         KrlValue: krlValue,
         RlsCode: rlsCode
     };
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [deletetedKeyword.KrlValue]), app.keyword.release.ajax.delete, deletetedKeyword);
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [deletetedKeyword.KrlValue]), app.keyword.release.ajax.delete, deletetedKeyword);
 };
 
 /**
@@ -634,7 +681,8 @@ app.keyword.release.validation.create = function () {
         errorPlacement: function (error, element) {
             $("#keyword-release-modal-create [name=" + element[0].name + "-error-holder").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.keyword.release.ajax.create();
         }
     }).resetForm();
@@ -668,7 +716,8 @@ app.keyword.release.validation.update = function () {
         errorPlacement: function (error, element) {
             $("#keyword-release-modal-update [name=" + element[0].name + "-error-holder").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.keyword.release.ajax.update();
         }
     }).resetForm();
@@ -728,3 +777,77 @@ app.keyword.release.callback.update = function (response, callbackParam) {
 };
 
 //#endregion
+
+
+//#regionsynonymrender
+
+//Ajax call for synonym
+app.keyword.release.ajax.synonym = function (row) {
+    var KrlValue = row.KrlValue;
+    var callbackParam = {
+        KrlValue: KrlValue,
+
+    };
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.System.Navigation.Keyword_API.ReadSynonym",
+        { "KrlValue": KrlValue },
+        "app.keyword.release.callback.synonym",
+        callbackParam);
+}
+
+//Call back for synonyms
+app.keyword.release.callback.synonym = function (response, callbackParam) {
+    if (response.error) {
+        api.modal.error(response.error.message);
+    } else if (response.data !== undefined) {
+
+
+        //Add name of keyword selected
+        $("#keyword-release-extra-info").find("[name=keyword]").html(callbackParam.KrlValue);
+        //Clear list card
+        $("#keyword-release-extra-info").find("[name=synonym-card]").empty();
+
+        //Get each language
+        $.each(response.data, function (key, language) {
+            //Clone card
+            var languageCard = $("#keyword-release-synonym-template").find("[name=synonym-language-card]").clone();
+            //Display the Language
+            languageCard.find(".card-header").text(language.LngIsoName);
+
+            //Check if any synonyms
+            if (language.Synonym.length) {
+
+                //Get Synonyms
+                $.each(language.Synonym, function (key, synonym) {
+
+
+                    var synonymItem = $("<li>", {
+                        "class": "list-group-item",
+                        "html": synonym
+                    });
+
+                    languageCard.find("[name=synonym-group]").append(synonymItem);
+
+
+                });
+
+            }
+            else {
+                //Display if no synonyms
+                var synonymItem = $("<li>", {
+                    "class": "list-group-item",
+                    "html": app.label.static["no-synonyms"]
+                });
+                languageCard.find("[name=synonym-group]").append(synonymItem);
+            }
+
+            $("#keyword-release-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+
+        });
+
+    } else api.modal.exception(app.label.static["api-ajax-exception"]);
+}
+
+
+  //#endregion

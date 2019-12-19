@@ -38,7 +38,7 @@ app.build.update.data.preview.drawCsvData = function () {
         //cannot use redraw as columns are dynamically created depending on the matrix. Have to destroy and re-initiate 
     }
 
-    $("#build-update-modal-preview-data [name=datatable]").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#build-update-modal-preview-data [name=datatable]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
         $("#build-update-modal-preview-data").find()
     });
     $("#build-update-modal-preview-data .modal-title").html(fileName + fileSizeFormated);

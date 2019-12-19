@@ -195,24 +195,24 @@ app.build.create.import.callback.read.drawProperties = function () {
         }
     };
 
-    $("#build-create-initiate-setup [name=frequency-code] option").each(function () {
-        if ($(this).value == frqCode) {
-            $(this).attr("selected", "selected")
+    $("#build-create-initiate-setup [name=frequency-code] > option").each(function () {
+        if (this.value == frqCode) {
+            $(this).attr("selected", "selected");
         }
         else {
-            $(this).removeAttr("selected")
+            $(this).removeAttr("selected");
         }
     });
 
     //get and set the copyright code
-    var cprCode = "CSO"; //get from JSON-stat once available
+    var cprCode = defaultData.extension.copyright.code;
 
-    $("#build-create-initiate-setup [name=copyright-code] option").each(function () {
-        if ($(this).value == cprCode) {
-            $(this).attr("selected", "selected")
+    $("#build-create-initiate-setup [name=copyright-code] > option").each(function () {
+        if (this.value == cprCode) {
+            $(this).attr("selected", "selected");
         }
         else {
-            $(this).removeAttr("selected")
+            $(this).removeAttr("selected");
         }
     });
 

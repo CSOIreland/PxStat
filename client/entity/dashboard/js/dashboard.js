@@ -26,7 +26,8 @@ $(document).ready(function () {
 
     // Check access to open relevant Accordion
     app.dashboard.ajax.ReadCurrentAccess();
-
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     //Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

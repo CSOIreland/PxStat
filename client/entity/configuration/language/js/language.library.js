@@ -16,7 +16,7 @@ app.language.callback = {};
  */
 app.language.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.language.callback.read"
@@ -100,7 +100,7 @@ app.language.drawDatatable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#language-read-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#language-read-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.language.drawCallback();
     });
 
@@ -126,7 +126,7 @@ app.language.modal.update = function (idn) {
  */
 app.language.ajax.readUpdate = function (idn) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: idn },
     "app.language.callback.readUpdate",
@@ -178,7 +178,8 @@ app.language.validation.update = function () {
     errorPlacement: function (error, element) {
       $("#language-modal-update").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.language.ajax.update();
     }
   }).resetForm();
@@ -266,7 +267,8 @@ app.language.validation.create = function () {
     errorPlacement: function (error, element) {
       $("#language-modal-create").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.language.ajax.create();
     }
   }).resetForm();
@@ -353,6 +355,6 @@ app.language.callback.delete = function (response, idn) {
  */
 app.language.modal.delete = function () {
   var idn = $(this).attr("idn");
-  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [idn]), app.language.ajax.delete, idn);
+  api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [idn]), app.language.ajax.delete, idn);
 };
 //#endregion

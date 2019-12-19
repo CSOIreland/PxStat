@@ -6,7 +6,7 @@ $(document).ready(function () {
     app.library.html.parseStaticLabel();
 
     //back to search results
-    $("#data-dataset-row").find("[name=back-to-select-results]").once("click", function () {
+    $("#data-dataset-row").find("[name=back-to-select-results] button").once("click", function () {
         app.data.dataset.callback.back();
     });
 });

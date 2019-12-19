@@ -58,13 +58,25 @@ jQuery.fn.onSanitiseForm = function (pEvent, pHtmlEntities) {
   if (!pHtmlEntities) {
     this.find("input, textarea").each(function () {
       $(this).off(pEvent).bind(pEvent, function () {
-        //strip HTMl
+        //strip HTML
         this.value = this.value.replace(C_APP_REGEX_NOHTML, "");
         //convert HTML entities
         this.value = $(this).html(this.value).text();
       });
     });
   }
+  return this;
+};
+
+/**
+ * Sanitise a form on submit
+ */
+jQuery.fn.sanitiseForm = function () {
+  this.find("input, textarea").each(function () {
+    //Trim
+    this.value = this.value.trim();
+  });
+
   return this;
 };
 /*******************************************************************************
@@ -77,7 +89,7 @@ Application - Plugin - Extend JQuery Validator - https://jqueryvalidation.org/
 jQuery.validator.addMethod("noLeadingTrailingSpace", function (value, element) {
   return this.optional(element) || /^([^\s][A-Za-z0-9.,\s]*[^\s])$/i.test(value);
   //return this.optional(element) || /^(?=[A-Za-z0-9])([A-Za-z0-9.,\h]*)(?<=[A-Za-z0-9])$/i.test(value);
-}, app.label.static["no-leading-trailing-space"]);
+}, app.label.static["no-spaces"]);
 
 /**
  * Validation required fields
@@ -102,7 +114,7 @@ jQuery.validator.addMethod("validPhoneNumber", function (value, element) {
   var pattern = new RegExp(app.config.regex.phone.pattern);
   return this.optional(element) || pattern.test(value);
   //app.config.regex.phone.pattern
-}, app.label.dynamic["invalid-phone-format"].sprintf([app.config.regex.phone.placeholder]));
+}, app.label.dynamic["invalid-format"].sprintf([app.config.regex.phone.placeholder]));
 
 
 /**
@@ -122,15 +134,15 @@ jQuery.validator.addMethod("validIp", function (value, element) {
 
 jQuery.validator.addMethod("notEqual", function (value, element, param) {
   return this.optional(element) || value != $(param).val();
-}, app.label.static["statistic-label-not-equal-to-error-message"]);
+}, app.label.static["statistic-error-message"]);
 
 
 /*******************************************************************************
 Application - Plugin - Extend JQuery Validator - https://jqueryvalidation.org/ - translate messages
 *******************************************************************************/
 
-jQuery.extend(jQuery.validator.messages, {
-  "url": app.label.static["please-enter-a-valid-url"]
+$.extend(true, jQuery.validator.messages, {
+  "url": app.label.static["valid-url"]
 });
 
 /*******************************************************************************
@@ -173,7 +185,7 @@ Application - Plugin - Datatable
 *******************************************************************************/
 
 // Extend the datatable configuration with the language parameters
-jQuery.extend(app.config.plugin.datatable, app.label.datatable);
+$.extend(true, app.config.plugin.datatable, app.label.datatable);
 
 /*******************************************************************************
 Application - Plugin - Highcharts
@@ -214,7 +226,7 @@ Application - Plugin - Cookie consent
 
 $(document).ready(function () {
   // Set the options from the config and the label
-  window.cookieconsent.initialise($.extend({}, app.config.plugin.cookieConsent, app.label.plugin.cookieConsent));
+  window.cookieconsent.initialise($.extend(true, {}, app.config.plugin.cookieConsent, app.label.plugin.cookieConsent));
 
   // Bind load
   $(".cc-link").one('click', function (e) {
@@ -225,3 +237,75 @@ $(document).ready(function () {
     $("#modal-read-privacy").modal("show");
   });
 });
+
+
+/*******************************************************************************
+Application - Plugin - Bootstrap breakpoint
+*******************************************************************************/
+$(document).ready(function () {
+  bsBreakpoints.toggle = function (breakPoint) {
+
+    //display breakpoint in hidden div in footer
+    $("#footer").find("[name=bs-breakpoint]").text(breakPoint);
+
+    switch (breakPoint) {
+      case "xSmall":
+      case "small":
+      case "medium":
+        //side panel for all entities
+        if (!$("#panel").is(':empty')) {
+          $("#panel").hide();
+          $("#panel-toggle").show();
+          $("#panel-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
+        }
+        else {
+          $("#panel-toggle").hide();
+        }
+
+        //move search input
+        if ($("#data-search-row").is(":visible")) {
+          $("#data-search-input").appendTo("#data-search-responsive")
+        };
+
+        //Collapse data navigation always on small
+        $("#data-navigation").find(".navbar-collapse").collapse('hide');
+
+        //if search results on page
+        if ($("#data-metadata-row").find("[name=search-results]").is(":visible") && !$("#data-metadata-row").find("[name=search-results]").is(":empty")) {
+          $("#data-filter-toggle").show();
+          $("#data-filter").hide();
+          $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
+        }
+
+        //if in data views
+        if (!$("#data-dataview-selected-table").is(":empty")) {
+          $("#data-filter-toggle").hide();
+        }
+
+        break;
+      case "large":
+      case "xLarge":
+      default:
+        //default position for search input
+        if ($("#data-search-row").is(":visible")) {
+          $("#data-search-input").appendTo("#data-search-row")
+        };
+
+        //always show panel
+        $("#panel").show();
+
+        //never show toggle buttons
+        $("#panel-toggle").hide();
+        $("#data-filter-toggle").hide();
+
+        //if search results on page
+        if ($("#data-metadata-row").find("[name=search-results]").is(":visible") && !$("#data-metadata-row").find("[name=search-results]").is(":empty")) {
+          $("#data-filter").show();
+          $("#data-navigation").find(".navbar-collapse").collapse('hide');
+        };
+        break;
+    }
+  }
+});
+
+

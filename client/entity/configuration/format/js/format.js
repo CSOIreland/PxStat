@@ -14,6 +14,9 @@ $(document).ready(function () {
   // Get data from API
   app.format.ajax.read();
 
+  //run bootstrap toggle to show/hide toggle button
+  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+
   // Last to run
   app.library.html.parseStaticLabel();
 });

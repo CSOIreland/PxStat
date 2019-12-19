@@ -99,7 +99,7 @@ app.copyright.drawDatatable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#copyright-read-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#copyright-read-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.copyright.drawCallback();
     });
   }
@@ -147,7 +147,8 @@ app.copyright.validation.create = function () {
     errorPlacement: function (error, element) {
       $("#copyright-modal-create").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.copyright.ajax.create();
       $("#copyright-modal-create").modal("hide");
     }
@@ -283,7 +284,8 @@ app.copyright.validation.update = function () {
     errorPlacement: function (error, element) {
       $("#copyright-modal-update").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
     },
-    submitHandler: function () {
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
       app.copyright.ajax.update();
     }
   }).resetForm();
@@ -345,7 +347,7 @@ app.copyright.callback.update = function (response, callbackParam) {
 app.copyright.modal.delete = function () {
   var idn = $(this).attr("idn");
   api.modal.confirm(
-    app.library.html.parseDynamicLabel("confirm-delete-record", [idn]),
+    app.library.html.parseDynamicLabel("confirm-delete", [idn]),
     app.copyright.ajax.delete,
     idn
   );

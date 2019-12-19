@@ -103,12 +103,12 @@
                                             <i class="fas fa-upload fa-2x"></i>
                                             <span name="upload-file-name"></span>
                                             <span name="upload-file-tip">
-                                                <strong><span label="choose-a"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
-                                                <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                                <strong><span label="choose"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                                <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                             </span>
                                             <br />
 
-                                            <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                            <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                                         </label>
                                     </div>
                                 </div>
@@ -124,17 +124,21 @@
                                 </div>
 
                             </div>
-                            <div class="card-footer d-flex justify-content-between">
-                                <a class="btn btn-primary" href="entity/build/create/csv/template-statistics.csv"><i class="fas fa-file-download"></i>
-                                    <span label="download-csv-template"></span>
-                                </a>
-                                <button name="upload-submit-statistics" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
-                                    <span label="add-statistics"></span>
-                                </button>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                                        <a class="btn btn-primary" href="entity/build/create/csv/template-statistics.csv"><i class="fas fa-file-download"></i>
+                                            <span label="download-csv-template"></span>
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                                        <button name="upload-submit-statistics" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
+                                            <span label="add-statistics"></span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -282,11 +286,11 @@
                                                         <i class="fas fa-upload fa-2x"></i>
                                                         <span name="upload-file-name"></span>
                                                         <span name="upload-file-tip">
-                                                            <strong><span label="choose-a"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
-                                                            <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                                            <strong><span label="choose"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                                            <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                                         </span>
                                                         <br />
-                                                        <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                                        <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                                                     </label>
                                                 </div>
                                             </div>
@@ -296,13 +300,20 @@
                                         <span class="serverValidationError text-danger" name="upload-error-holder"></span>
                                     </div>
                                 </div>
-                                <div class="card-footer d-flex justify-content-between">
-                                    <a class="btn btn-primary" href="entity/build/create/csv/template-classification-variables.csv"><i class="fas fa-file-download"></i>
-                                        <span label="download-csv-template"></span>
-                                    </a>
-                                    <button type="submit" name="upload-submit-classifications" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
-                                        <span label="add-classification"></span>
-                                    </button>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-4 text-left my-2">
+                                            <a class="btn btn-primary" href="entity/build/create/csv/template-classification-variables.csv"><i class="fas fa-file-download"></i>
+                                                <span label="download-csv-template"></span>
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-8 text-right my-2">
+                                            <button type="submit" name="upload-submit-classifications" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
+                                                <span label="add-classification"></span>
+                                            </button>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -336,7 +347,7 @@
             </div>
             <div class="modal-body">
                 <div class="input-group mb-3 input-group-lg">
-                    <input type="text" name="classifications-search-input" required="true" oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Required')" maxlength="20" class="form-control" placeholder="" autocomplete="off" aria-label="Recipient's username">
+                    <input type="text" name="classifications-search-input" required="true" oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Required')" maxlength="256" class="form-control" placeholder="" autocomplete="off" aria-label="Recipient's username">
                     <div class="input-group-append">
                         <button name="search-classifications-modal-search-button" class="btn btn-outline-secondary" type="button">
                             <span label="search"></span>
@@ -397,7 +408,7 @@
                             <span label="use"></span>
                         </button>
                         <button name="download-classification" type="button" class="btn btn-neutral"><i class="fas fa-file-download"></i>
-                            <span label="download-as-csv"></span>
+                            <span label="download-csv"></span>
                         </button>
                     </div>
                 </div>
@@ -504,11 +515,11 @@
                                             <i class="fas fa-upload fa-2x"></i>
                                             <span name="upload-file-name"></span>
                                             <span name="upload-file-tip">
-                                                <strong><span label="choose-a"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
-                                                <span class="box__dragndrop"> <span label="or-drag-it-here"></span></span>
+                                                <strong><span label="choose"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                                <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                             </span>
                                             <br />
-                                            <small class="text-muted"><span label="utf-8-encoding-and-max-file-size-of"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                            <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                                         </label>
                                     </div>
                                 </div>
@@ -524,16 +535,20 @@
                                 </div>
 
                             </div>
-                            <div class="card-footer d-flex justify-content-between">
-                                <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv"><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
-                                </a>
-                                <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
-                                    <span label="add-periods"></span>
-                                </button>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                                        <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv"><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                                        <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
+                                            <span label="add-periods"></span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -618,29 +633,41 @@
                     </h5>
                 </div>
                 <div id="" class="collapse" aria-labelledby="headingTwo" data-parent="">
-                    <div class="card-body">
-                        <div class="card border-bottom">
-                            <div class="card-body ">
-                                <table name="statistics-added-table" class="table table-striped hover display" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th label="code"></th>
-                                            <th label="value"></th>
-                                            <th label="unit"></th>
-                                            <th label="decimal"></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                    <div class="card border-bottom">
+                        <div class="card-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table name="statistics-added-table" class="table table-striped hover display" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th label="code"></th>
+                                                <th label="value"></th>
+                                                <th label="unit"></th>
+                                                <th label="decimal"></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
 
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="card-footer text-right bg-white">
-                                <button name="add-statistics" class="btn btn-primary text-light">
-                                    <i class="fas fa-plus-circle"></i>
-                                    <span label="add-statistics"></span>
-                                </button>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-4 text-left my-2">
+                                            <button name="delete-statistics" class="btn btn-outline-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                                <span label="delete-statistics"></span>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-8 text-right my-2">
+                                            <button name="add-statistics" class="btn btn-primary text-light">
+                                                <i class="fas fa-plus-circle"></i>
+                                                <span label="add-statistics"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -657,29 +684,43 @@
                 <div id="" class="collapse" aria-labelledby="headingThree" data-parent="">
                     <div class="card border-bottom">
                         <div class="card-body">
-                            <table name="classifications-added-table" class="table table-striped hover display" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th label="code"></th>
-                                        <th label="value"></th>
-                                        <th label="geojson-url"></th>
-                                        <th label="variables-no"></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <button name="search-classification" class="btn btn-primary text-light">
-                                <i class="fas fa-search"></i>
-                                <span label="search-classification"></span>
-                            </button>
-                            <button name="add-classification" class="btn btn-primary text-light">
-                                <i class="fas fa-plus-circle"></i>
-                                <span label="add-classifications"></span>
-                            </button>
+                            <div class="card">
+                                <div class="card-body">
+                                    <table name="classifications-added-table" class="table table-striped hover display" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th label="code"></th>
+                                                <th label="value"></th>
+                                                <th label="geojson-url"></th>
+                                                <th label="variables-no"></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-8 text-left my-2">
+                                            <button name="delete-classifications" class="btn btn-outline-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                                <span label="delete-classifications"></span>
+                                            </button>
+                                            <button name="search-classification" class="btn btn-primary text-light">
+                                                <i class="fas fa-search"></i>
+                                                <span label="search-classification"></span>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-4 text-right my-2">
+                                            <button name="add-classification" class="btn btn-primary text-light">
+                                                <i class="fas fa-plus-circle"></i>
+                                                <span label="add-classifications"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -695,35 +736,49 @@
                 <div id="" class="collapse" aria-labelledby="create-matrix-dimensions-periods-heading" data-parent="">
                     <div class="card border-bottom">
                         <div class="card-body">
-                            <table name="periods-added-table" class="table table-striped hover display" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th label="code"></th>
-                                        <th label="value"></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="card-footer text-right">
-                            <button name="add-periods" class="btn btn-primary text-light">
-                                <i class="fas fa-plus-circle"></i>
-                                <span label="add-periods"></span>
-                            </button>
+                            <div class="card">
+                                <div class="card-body">
+                                    <table name="periods-added-table" class="table table-striped hover display" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th label="code"></th>
+                                                <th label="value"></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-4 text-left my-2">
+                                            <button name="delete-periods" class="btn btn-outline-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                                <span label="delete-periods"></span>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-8 text-right my-2">
+                                            <button name="add-periods" class="btn btn-primary text-light">
+                                                <i class="fas fa-plus-circle"></i>
+                                                <span label="add-periods"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-
         </div>
 
     </div>
     <!--Create dropdown format template-->
-    <a name="create-submit" class="dropdown-item" href="#"></a>
+    <a name="create-submit" class="dropdown-item" href="#">
+        <span name="type"></span>
+        <span><small name="version" class="text-muted"></small></span>
+    </a>
 
 </div>
 

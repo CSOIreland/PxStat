@@ -57,7 +57,7 @@ app.build.update.dimension.drawStatistic = function (lngIsoCode, data) {
 
         };
 
-        $(table).DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.build.update.dimension.callback.drawStatistic();
         });
     }
@@ -156,7 +156,7 @@ app.build.update.dimension.drawClassification = function (lngIsoCode) {
                 app.build.update.dimension.callback.drawClassification(table, lngIsoCode, classificationsData);
             },
         };
-        $(table).DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.build.update.dimension.callback.drawClassification(table, lngIsoCode, classificationsData);
         });
     }
@@ -203,7 +203,7 @@ app.build.update.dimension.drawExistingPeriod = function (lngIsoCode, data) {
 
         };
 
-        $(table).DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.build.update.dimension.callback.drawExistingPeriod();
         });
     }
@@ -241,6 +241,14 @@ app.build.update.dimension.drawNewPeriod = function (lngIsoCode) {
         }
     });
 
+    //enable disable download csv data depending on new periods added 
+    if (!data.length) {
+        $("#build-update-matrix-data").find("[name=download-data-file-new], [name=download-data-file-all]").addClass("disabled");
+    }
+    else {
+        $("#build-update-matrix-data").find("[name=download-data-file-new], [name=download-data-file-all]").removeClass("disabled");
+    }
+
     var table = $("#build-update-dimension-nav-" + lngIsoCode).find("[name=periods-new]");
 
     if ($.fn.DataTable.isDataTable(table)) {
@@ -277,7 +285,7 @@ app.build.update.dimension.drawNewPeriod = function (lngIsoCode) {
 
         };
 
-        $(table).DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.build.update.dimension.callback.drawNewPeriod(table, lngIsoCode);
         });
 
@@ -291,7 +299,7 @@ app.build.update.dimension.drawNewPeriod = function (lngIsoCode) {
  * @param {*} params
  */
 app.build.update.dimension.modal.deleteNewPeriod = function (params) {
-    api.modal.confirm(app.library.html.parseDynamicLabel("update-sure-want-delete-time-period", [params.prdCode]),
+    api.modal.confirm(app.library.html.parseDynamicLabel("build-delete-time-period", [params.prdCode]),
         app.build.update.dimension.callback.deleteNewPeriod,
         params
     );
@@ -341,25 +349,7 @@ app.build.update.dimension.modal.editClassification = function (classification) 
             ]
         };
         //Initialize DataTable
-        $("#build-update-edit-classification table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions));
+        $("#build-update-edit-classification table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
     }
     $("#build-update-edit-classification").modal("show");
-};
-
-/**
- * Check for Duplicate codes.
- *
- * @param {*} codes
- * @returns
- */
-app.build.update.dimension.checkDuplicate = function (codes) {
-    var counts = [];
-    for (var i = 0; i <= codes.length; i++) {
-        if (counts[codes[i]] === undefined) {
-            counts[codes[i]] = 1;
-        } else {
-            return true;
-        }
-    }
-    return false;
 };

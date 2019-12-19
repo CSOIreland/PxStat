@@ -63,11 +63,16 @@ app.data.metadata.callback.readResults = function (response, params) {
     }
     else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
         $("#data-filter, #data-metadata-row [name=search-results]").empty();
-        api.modal.information(app.library.html.parseDynamicLabel("no-data-found", [$("#data-search-input").find("[name=search-input]").val()]));
-
+        $("#data-search-input").find("[name=no-search-results]").show();
+        $("#data-search-results-pagination [name=pagination]").hide();
+        $("#data-navigation").find(".navbar-collapse").collapse('show');
     }
     else if (response.data) {
         $("#data-filter, #data-metadata-row [name=search-results]").empty();
+        $("#data-search-input").find("[name=no-search-results]").hide();
+        $("#data-dataview-selected-table, #panel, #data-view-container").empty();
+        $("#data-accordion-api").hide();
+        $("#data-search-results-pagination").show();
         if (params.PrcCode) {
             //update breadcrumb
             if (app.data.MtrCode) {
@@ -309,6 +314,9 @@ app.data.metadata.callback.readResults = function (response, params) {
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
+
+    //run bootstrap toggle to show/hide toggle button
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 };
 
 
@@ -478,7 +486,7 @@ app.data.metadata.callback.drawResults = function (paginatedResults) {
 
         //reservation flag
         if (entry.RlsReservationFlag) {
-            resultItem.find("[name=reservation-flag]").removeClass("d-none");
+            resultItem.find("[name=reservation-flag], [name=under-reservation-header]").removeClass("d-none");
         }
 
         //analytical flag
@@ -530,4 +538,5 @@ app.data.metadata.callback.drawResults = function (paginatedResults) {
         app.data.dataset.ajax.readMetadata();
     });
     $('[data-toggle="tooltip"]').tooltip();
+
 };

@@ -33,7 +33,7 @@ app.alert.notice.callback.read = function (response) {
     }
     else if (response.data !== undefined) {
         $.each(response.data, function (i, item) {
-            var listItem = $("#alert-notice-templates").find("[name=alert-item]").clone();
+            var listItem = $("#alert-notice-template").find("[name=alert-item]").clone();
             listItem.find("[name=alert-message]").html(app.library.html.parseBbCode(item.LrtMessage));
             listItem.find("[name=alert-date]").html(app.library.html.parseBbCode(moment(item.LrtDatetime).format(app.config.mask.datetime.dateRangePicker)));
             $("#alert-list-group").append(listItem);

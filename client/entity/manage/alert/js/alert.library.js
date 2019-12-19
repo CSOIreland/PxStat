@@ -130,7 +130,7 @@ app.alert.callback.drawDatatable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#alert-container table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#alert-container table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.alert.drawCallback();
         });
 
@@ -355,7 +355,7 @@ app.alert.callback.update = function (response) {
  */
 app.alert.modal.delete = function () {
     var idn = $(this).attr("idn");
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete-record", [""]), app.alert.ajax.delete, idn);
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [""]), app.alert.ajax.delete, idn);
 };
 
 /**
@@ -422,7 +422,8 @@ app.alert.validation.create = function () {
         errorPlacement: function (error, element) {
             $("#alert-modal-create [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.alert.ajax.create();
         }
     }).resetForm();
@@ -454,7 +455,8 @@ app.alert.validation.update = function () {
         errorPlacement: function (error, element) {
             $("#alert-modal-update [name=" + element[0].name + "-error-holder]").append(error[0]);
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
             app.alert.ajax.update();
         }
     }).resetForm();

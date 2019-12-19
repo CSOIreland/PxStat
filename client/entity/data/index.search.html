@@ -1,10 +1,16 @@
-<div id="data-search-input" class="col-sm-12 my-4">
+<div id="data-search-input" class="col-sm-12 my-2">
     <div class="input-group input-group-lg">
         <input type="text" name="search-input" class="form-control p-4" placeholder="" aria-label="Search for data" aria-describedby="Search for data" autocomplete="off">
         <div class="input-group-append">
             <button name="data-search-input-button" class="btn btn-neutral" type="button">
                 <i class="fas fa-search"></i> <span label="search"></span>
             </button>
+        </div>
+    </div>
+    <div class="col-sm-12 mt-4 px-0" name="no-search-results" style="display: none;">
+        <div class="card border-warning">
+            <div class="card-body font-weight-bold">
+                <span label="no-data-found"></span></div>
         </div>
     </div>
 </div>
@@ -14,18 +20,18 @@
     <!-- Template: data-search-navigation-->
     <div name="navigation" class="col p-2">
         <nav class="navbar px-2">
-            <a class="w-100 p-1 text-light bg-primary rounded-top p-3" data-toggle="collapse" data-target="#navbarTreeView" href="#"><i class="fas fa-bars"></i>
+            <a class="w-100 p-1 text-light bg-primary rounded-top p-3" data-toggle="collapse" data-target="#data-browse-collapse" href="#"><i class="fas fa-bars"></i>
                 <span label="browse"></span>
             </a>
-            <div class="collapse navbar-collapse show" id="navbarTreeView">
-                <ul name="search-results-items" class="navbar-nav mr-auto search-results-items p-2 border rounded">
+            <div class="collapse navbar-collapse show" id="data-browse-collapse">
+                <ul name="browse-subjects" class="navbar-nav mr-auto p-2 border rounded">
                     <!-- Append => Template: search-results-item-->
                 </ul>
             </div>
         </nav>
     </div>
     <!-- Template: data-filter-template-->
-    <div class="col data-filter-template">
+    <div class="col">
         <div name="data-metadata-search-results-filter-sort-select"></div>
         <div name="data-metadata-search-results-filter-list-group"></div>
     </div>

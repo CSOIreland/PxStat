@@ -170,7 +170,7 @@ app.logging.drawDataTable = function (data) {
             //Translate labels language
             language: app.label.plugin.datatable
         };
-        $("#logging-result table").DataTable(jQuery.extend({}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        $("#logging-result table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.logging.drawCallback();
         });
 

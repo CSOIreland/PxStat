@@ -44,6 +44,7 @@ app.build.create.file.classification.content.data.JSON = null;
  * @param {*} inputObject
  */
 api.plugin.dragndrop.readFiles = function (files, inputObject) {
+
     var uploadDimension = inputObject.attr("id");
 
     // Read single file only
@@ -247,4 +248,5 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             break;
     };
 };
+
 //#endregion
