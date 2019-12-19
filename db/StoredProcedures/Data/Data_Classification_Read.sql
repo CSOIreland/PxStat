@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 19/03/2019
 -- Description:	Reads an individual Classification based on ClassificationID
--- exec Data_Classification_Read 198
+-- exec Data_Classification_Read 58
 -- =============================================
 CREATE
 	OR
@@ -45,7 +45,7 @@ BEGIN
 		GROUP BY CLS_ID
 		) countQuery
 		ON CLS_ID = clsID
-	WHERE CLS_ID = @ClsID
+	WHERE (CLS_ID = @ClsID)
 END
 GO
 

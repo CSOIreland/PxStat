@@ -13,19 +13,23 @@ CREATE
 	OR
 
 ALTER PROCEDURE Security_Analytic_Create @matrix NVARCHAR(20)
-	,@NltMaskedIp VARCHAR(11)
-	,@NltOs VARCHAR(32) = NULL
-	,@NltBrowser VARCHAR(32) = NULL
+	,@NltMaskedIp NVARCHAR(11)
+	,@NltOs NVARCHAR(32) = NULL
+	,@NltBrowser NVARCHAR(32) = NULL
 	,@NltBotFlag BIT
 	,@NltReferer NVARCHAR(256) = NULL
 	,@NltM2m BIT
 	,@NltDate DATE
 	,@LngIsoCode CHAR(2)
+	,@FrmType NVARCHAR(32)=NULL
+	,@FrmVersion NVARCHAR(32)=NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @MtrID INT
+	DECLARE @FrmID INT
+
 
 	SELECT @MtrID = MTR_ID
 	FROM TD_MATRIX
@@ -35,6 +39,14 @@ BEGIN
 		ON LNG_ID = MTR_LNG_ID
 			AND LNG_DELETE_FLAG = 0
 			AND LNG_ISO_CODE = @LngIsoCode
+
+	SELECT @FrmID =FRM_ID
+	FROM TS_FORMAT 
+	WHERE  @FrmType IS NOT NULL
+	AND @FrmVersion IS NOT NULL
+	AND FRM_DIRECTION='DOWNLOAD'
+	AND FRM_TYPE=@FrmType 
+	AND FRM_VERSION=@FrmVersion 
 
 	INSERT INTO TD_ANALYTIC (
 		NLT_MTR_ID
@@ -46,6 +58,7 @@ BEGIN
 		,NLT_M2M_FLAG
 		,NLT_DATE
 		,NLT_USER_FLAG
+		,NLT_FRM_ID 
 		)
 	VALUES (
 		@MtrID
@@ -62,6 +75,7 @@ BEGIN
 				THEN 1
 			ELSE 0
 			END
+		,@FrmID 
 		)
 
 	RETURN @@identity

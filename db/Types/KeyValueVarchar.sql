@@ -18,8 +18,8 @@ BEGIN
 END
 
 CREATE TYPE [dbo].[KeyValueVarchar] AS TABLE (
-	[Key] [varchar](256) NULL,
-	[Value] [varchar](256) NULL
+	[Key] [nvarchar](256) NULL,
+	[Value] [nvarchar](256) NULL
 	)
 GO
 

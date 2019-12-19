@@ -13,11 +13,27 @@ BEGIN
 	BEGIN
 		DROP PROCEDURE System_Navigation_Search
 	END
+	
+	IF EXISTS (
+			SELECT *
+			FROM sys.objects
+			WHERE object_id = OBJECT_ID(N'Data_Matrix_ReadDataByRelease')
+			)
+	BEGIN
+		DROP PROCEDURE Data_Matrix_ReadDataByRelease
+	END
+	
+	IF EXISTS (
+			SELECT *
+			FROM sys.objects
+			WHERE object_id = OBJECT_ID(N'Security_GroupAccount_ReadMultiple')
+			)
+	BEGIN
+		DROP PROCEDURE Security_GroupAccount_ReadMultiple
+	END
 
 	DROP TYPE [ValueVarchar]
 END
 
-CREATE TYPE [dbo].[ValueVarchar] AS TABLE ([Value] [varchar](256) NULL)
+CREATE TYPE [dbo].[ValueVarchar] AS TABLE ([Value] [nvarchar](256) NULL)
 GO
-
-

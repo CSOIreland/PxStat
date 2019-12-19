@@ -14,7 +14,7 @@ GO
 CREATE
 	OR
 
-ALTER PROCEDURE Data_Classification_Search @Search NVARCHAR(256)
+ALTER PROCEDURE Data_Classification_Search @Search ValueVarchar Readonly
 	,@LngIsoCode CHAR(2) = NULL
 AS
 BEGIN
@@ -73,12 +73,11 @@ BEGIN
 		GROUP BY CLS_ID
 		) countQuery
 		ON CLS_ID = clsID
-	WHERE (
-			CLS_VALUE LIKE '%' + @Search + '%'
-			OR VRB_VALUE LIKE '%' + @Search + '%'
-			OR CLS_CODE LIKE '%' + @Search + '%'
-			)
-		AND (
+	inner join (Select [Value] from @Search) search
+	on (CLS_VALUE like '%' +  search.[Value] + '%')
+	or VRB_VALUE like '%' +  search.[Value] + '%'
+	or CLS_CODE like '%' +  search.[Value] + '%'
+	WHERE  (
 			@LngIsoCode IS NULL
 			OR @LngId = MTR_LNG_ID
 			)

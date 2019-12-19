@@ -10,7 +10,7 @@ GO
 -- Description:	Lists all the live releases. The @LngIsoCodeDefault parameter is the default language for the system
 -- The optional parameter @LngIsoCodeRead is the preferred language for reading. If this is supplied it will return the matrix in the requested
 -- language if it exists. If the matrix doesn't exist in that language, then it returns the default language version of that matrix.
---EXEC Data_Release_ReadListLive 'en','ga','2019-09-10'
+--EXEC Data_Release_ReadListLive 'en','ga','2019-12-01'
 -- =============================================
 CREATE
 	OR
@@ -54,17 +54,23 @@ BEGIN
 	SELECT RLS_CODE AS RlsCode
 		,mtr.MTR_CODE AS MtrCode
 		,coalesce(lngMTR.LNG_ISO_CODE, TS_LANGUAGE.LNG_ISO_CODE) AS LngIsoCode
-		,coalesce(lngMtr.LNG_ISO_NAME,TS_LANGUAGE.LNG_ISO_NAME) AS LngIsoName
+		,coalesce(lngMtr.LNG_ISO_NAME, TS_LANGUAGE.LNG_ISO_NAME) AS LngIsoName
 		,coalesce(lngMTR.MTR_TITLE, mtr.MTR_TITLE) AS MtrTitle
 		,CPR_VALUE AS CprValue
 		,CPR_URL AS CprUrl
+		,CPR_CODE AS CprCode
 		,RLS_LIVE_DATETIME_FROM AS RlsLiveDatatimeFrom
 		,RLS_LIVE_DATETIME_TO AS RlsLiveDatatimeTo
 		,RLS_EMERGENCY_FLAG AS EmergencyFlag
+		,FRQ_CODE As FrqCode
+		,FRQ_VALUE As FrqValue
 	FROM TD_RELEASE rls
 	INNER JOIN VW_RELEASE_LIVE_NOW
 		ON VRN_RLS_ID = RLS_ID
-		and (@DateFrom is null or RLS_LIVE_DATETIME_FROM >=@DateFrom)
+			AND (
+				@DateFrom IS NULL
+				OR RLS_LIVE_DATETIME_FROM >= @DateFrom
+				)
 	INNER JOIN (
 		SELECT *
 		FROM TD_MATRIX
@@ -80,13 +86,15 @@ BEGIN
 	INNER JOIN TS_LANGUAGE
 		ON LNG_ID = MTR_LNG_ID
 			AND LNG_DELETE_FLAG = 0
+	INNER JOIN TD_FREQUENCY 
+	ON FRQ_MTR_ID=MTR_ID
 	LEFT JOIN (
 		SELECT MTR_CODE
 			,MTR_ID
 			,MTR_TITLE
 			,MTR_RLS_ID
 			,LNG_ISO_CODE
-			,LNG_ISO_NAME 
+			,LNG_ISO_NAME
 		FROM TD_MATRIX
 		INNER JOIN TS_LANGUAGE
 			ON MTR_LNG_ID = LNG_ID
@@ -95,7 +103,6 @@ BEGIN
 			AND MTR_DELETE_FLAG = 0
 		) lngMtr
 		ON lngMtr.MTR_CODE = mtr.MTR_CODE
-
 END
 GO
 

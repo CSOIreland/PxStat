@@ -8,12 +8,14 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 01/11/2018
 -- Description:	Reads Workflows Awaiting Signoff
--- exec Workflow_ReadAwaitingSignoff_dev 'okeeffene'
+-- exec Workflow_ReadAwaitingSignoff 'okeeffene','ss','en'
 -- =============================================
 CREATE
 	OR
 
 ALTER PROCEDURE Workflow_ReadAwaitingSignoff @CcnUsername NVARCHAR(256)
+	,@LngIsoCode CHAR(2)
+	,@LngIsoCodeDefault CHAR(2)
 	,@RlsCode INT = NULL
 AS
 BEGIN
@@ -33,7 +35,23 @@ BEGIN
 	INSERT INTO @GroupUserHasAccess
 	EXEC Security_Group_AccessList @CcnUsername
 
-	SELECT rls.RLS_CODE AS RlsCode
+	DECLARE @LngId INT
+	DECLARE @LngDefaultId INT
+
+	SET @LngId = (
+			SELECT LNG_ID
+			FROM TS_LANGUAGE
+			WHERE LNG_ISO_CODE = @LngIsoCode
+				AND LNG_DELETE_FLAG = 0
+			)
+	SET @LngDefaultId = (
+			SELECT LNG_ID
+			FROM TS_LANGUAGE
+			WHERE LNG_ISO_CODE = @LngIsoCodeDefault
+				AND LNG_DELETE_FLAG = 0
+			)
+
+	SELECT DISTINCT rls.RLS_CODE AS RlsCode
 		,mtr.MTR_CODE AS MtrCode
 		,grp.GRP_CODE AS GrpCode
 		,grp.GRP_NAME AS GrpName
@@ -45,11 +63,22 @@ BEGIN
 		,WRQ_DATETIME AS WrqDatetime
 		,DHT_DATETIME AS DhtDatetime
 		,CCN_USERNAME AS CcnUsername
+		,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle
 	FROM TD_RELEASE rls
 	INNER JOIN TD_MATRIX mtr
 		ON mtr.MTR_RLS_ID = rls.RLS_ID
 			AND rls.RLS_DELETE_FLAG = 0
 			AND mtr.MTR_DELETE_FLAG = 0
+	LEFT JOIN (
+		SELECT MTR_CODE
+			,MTR_TITLE
+			,MTR_RLS_ID
+		FROM TD_MATRIX
+		WHERE MTR_DELETE_FLAG = 0
+			AND MTR_LNG_ID = @LngId
+		) mtrLng
+		ON mtr.MTR_CODE = mtrLng.MTR_CODE
+			AND MTR.MTR_RLS_ID = mtrLng.MTR_RLS_ID
 	INNER JOIN TD_GROUP grp
 		ON rls.RLS_GRP_ID = grp.GRP_ID
 			AND grp.GRP_DELETE_FLAG = 0
@@ -74,7 +103,7 @@ BEGIN
 		ON WRS_DTG_ID = DHT_DTG_ID
 	INNER JOIN TS_AUDITING_TYPE
 		ON DHT_DTP_ID = DTP_ID
-			AND DTP_CODE  = 'CREATED'
+			AND DTP_CODE = 'CREATED'
 	INNER JOIN TD_ACCOUNT
 		ON CCN_ID = DHT_CCN_ID
 			AND CCN_DELETE_FLAG = 0
@@ -87,6 +116,10 @@ BEGIN
 		AND (
 			@RlsCode IS NULL
 			OR @RlsCode = rls.RLS_CODE
+			)
+		AND mtr.MTR_LNG_ID IN (
+			@LngId
+			,@LngDefaultId
 			)
 END
 GO

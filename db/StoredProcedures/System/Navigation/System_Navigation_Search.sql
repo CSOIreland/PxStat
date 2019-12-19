@@ -26,7 +26,6 @@ ALTER PROCEDURE System_Navigation_Search @LngIsoCode CHAR(2)
 	,@RlsReservationFlag BIT = NULL
 	,@RlsArchiveFlag BIT = NULL
 	,@RlsAnalyticalFlag BIT = NULL
-	
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -40,8 +39,6 @@ BEGIN
 	SET @MULTIPLIER_PRIORITY_3 = 1
 
 	DECLARE @LngID INT
-
-
 	--Check if an entity search term has been passed
 	DECLARE @EntitySearchNotNull BIT
 
@@ -108,6 +105,12 @@ BEGIN
 		ON SBJ_ID = SLG_SBJ_ID
 			AND SBJ_DELETE_FLAG = 0
 			AND SLG_LNG_ID = @LngID
+
+	DECLARE @synSearch TABLE ([Value] NVARCHAR(256))
+
+	INSERT INTO @synSearch
+	SELECT DISTINCT [value]
+	FROM @Search
 
 	--This is the Keyword search
 	-- The results are placed into the temporary table #KeywordsSearch
@@ -176,8 +179,13 @@ BEGIN
 				,RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
 				,count(*) * @MULTIPLIER_PRIORITY_1 AS score
 			FROM TD_KEYWORD_RELEASE krl
-			INNER JOIN @Search st
-				ON krl.KRL_VALUE = st.[VALUE]
+			INNER JOIN @synSearch st
+				ON krl.KRL_VALUE = st.[value]
+					OR krl.KRL_VALUE IN (
+						SELECT [key]
+						FROM @Search
+						WHERE [Value] = st.[Value]
+						)
 			INNER JOIN TD_RELEASE rls
 				ON krl.KRL_RLS_ID = rls.RLS_ID
 					AND rls.RLS_DELETE_FLAG = 0
@@ -194,8 +202,11 @@ BEGIN
 				,rls.RLS_ARCHIVE_FLAG
 				,rls.RLS_ANALYTICAL_FLAG
 				,rls.RLS_DEPENDENCY_FLAG
-				,krl.KRL_SINGULARISED_FLAG 
-			HAVING (count(*) = @SearchTermCount or krl.KRL_SINGULARISED_FLAG=0)
+				,krl.KRL_SINGULARISED_FLAG
+			HAVING (
+					count(*) = @SearchTermCount
+					OR krl.KRL_SINGULARISED_FLAG = 0
+					)
 			) releaseQuery
 		INNER JOIN TD_MATRIX
 			ON MTR_RLS_ID = RlsID
@@ -252,11 +263,16 @@ BEGIN
 				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
 				,RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
-				,KPR_SINGULARISED_FLAG As KprSingularisedFlag
+				,KPR_SINGULARISED_FLAG AS KprSingularisedFlag
 				,count(*) * @MULTIPLIER_PRIORITY_2 AS score
 			FROM TD_KEYWORD_PRODUCT kpr
-			INNER JOIN @Search st
-				ON kpr.KPR_VALUE = st.[VALUE]
+			INNER JOIN @synSearch st
+				ON kpr.KPR_VALUE = st.[value]
+					OR KPR_VALUE IN (
+						SELECT [key]
+						FROM @Search
+						WHERE [Value] = st.[Value]
+						)
 			INNER JOIN TD_PRODUCT prc
 				ON kpr.KPR_PRC_ID = prc.PRC_ID
 					AND prc.PRC_DELETE_FLAG = 0
@@ -278,7 +294,10 @@ BEGIN
 				,rls.RLS_ANALYTICAL_FLAG
 				,rls.RLS_DEPENDENCY_FLAG
 				,KPR_SINGULARISED_FLAG
-			HAVING (count(*) = @SearchTermCount or KPR_SINGULARISED_FLAG=0)
+			HAVING (
+					count(*) = @SearchTermCount
+					OR KPR_SINGULARISED_FLAG = 0
+					)
 			) productQuery
 		INNER JOIN TD_MATRIX
 			ON MTR_RLS_ID = RlsID
@@ -335,11 +354,16 @@ BEGIN
 				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
 				,RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
-				,KSB_SINGULARISED_FLAG As KsbSingularisedFlag
+				,KSB_SINGULARISED_FLAG AS KsbSingularisedFlag
 				,count(*) * @MULTIPLIER_PRIORITY_3 AS score
 			FROM TD_KEYWORD_SUBJECT ksb
-			INNER JOIN @Search st
-				ON ksb.KSB_VALUE = st.[VALUE]
+			INNER JOIN @synSearch st
+				ON ksb.KSB_VALUE = st.[value]
+					OR KSB_VALUE IN (
+						SELECT [key]
+						FROM @Search
+						WHERE [Value] = st.[Value]
+						)
 			INNER JOIN TD_SUBJECT sbj
 				ON ksb.KSB_SBJ_ID = sbj.SBJ_ID
 					AND sbj.SBJ_DELETE_FLAG = 0
@@ -363,7 +387,10 @@ BEGIN
 				,rls.RLS_ANALYTICAL_FLAG
 				,rls.RLS_DEPENDENCY_FLAG
 				,KSB_SINGULARISED_FLAG
-			HAVING (count(*) = @SearchTermCount OR KSB_SINGULARISED_FLAG=0)
+			HAVING (
+					count(*) = @SearchTermCount
+					OR KSB_SINGULARISED_FLAG = 0
+					)
 			) subjectQuery
 		INNER JOIN TD_MATRIX
 			ON MTR_RLS_ID = RlsID

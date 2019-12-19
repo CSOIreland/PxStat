@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 15/05/2019
 -- Description:	Returns a count of matrices queried per language
--- exec Security_Analytic_ReadLanguage '2019-04-13','2019-05-15','en','3',null,4,4
+-- exec Security_Analytic_ReadLanguage '2019-12-01','2019-12-13','en',null,null,1,1
 -- =============================================
 CREATE
 	OR
@@ -27,7 +27,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
 
-	SELECT LNG_ISO_CODE AS LngIsoCode
+	SELECT LNG_ISO_NAME AS LngIsoName
 		,count(*) AS lngCount
 	FROM TD_ANALYTIC
 	INNER JOIN TD_MATRIX
@@ -67,7 +67,7 @@ BEGIN
 			@PrcCode = PRC_CODE
 			OR @PrcCode IS NULL
 			)
-	GROUP BY LNG_ISO_CODE
+	GROUP BY LNG_ISO_NAME
 END
 GO
 

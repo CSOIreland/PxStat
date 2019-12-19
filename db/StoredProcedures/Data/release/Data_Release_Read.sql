@@ -8,11 +8,12 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
 -- Description:	Reads record(s) from the TD_Release & dependant tables
+-- exec Data_Release_Read 'okeeffene',7
 -- =============================================
 CREATE
 	OR
 
---exec Data_Stat_Release_Read_dev 'OKeeffeNe',null,178
+--exec Data_Release_Read 'OKeeffeNe',null,178
 ALTER PROCEDURE Data_Release_Read @CcnUsername NVARCHAR(256)
 	,@RlsCode INT = NULL
 	,@RlsID INT = NULL
@@ -51,6 +52,12 @@ BEGIN
 		,SBJ_VALUE SbjValue
 		,PRC_CODE PrcCode
 		,PRC_VALUE PrcValue
+		,RQS_CODE RqsCode
+		,RQS_VALUE RqsValue
+		,RSP_CODE RspCode
+		,RSP_VALUE RspValue
+		,SGN_CODE SgnCode
+		,SGN_VALUE SgnValue
 	FROM TD_MATRIX
 	INNER JOIN TD_RELEASE
 		ON RLS_ID = MTR_RLS_ID
@@ -69,6 +76,19 @@ BEGIN
 	LEFT JOIN TD_SUBJECT
 		ON SBJ_ID = PRC_SBJ_ID
 			AND SBJ_DELETE_FLAG = 0
+	LEFT JOIN TD_WORKFLOW_REQUEST 
+	ON RLS_ID=WRQ_RLS_ID 
+	AND WRQ_DELETE_FLAG=0
+	LEFT JOIN TS_REQUEST 
+	ON WRQ_RQS_ID =RQS_ID 
+	LEFT JOIN TD_WORKFLOW_RESPONSE 
+	ON WRS_WRQ_ID=WRQ_ID 
+	LEFT JOIN TS_RESPONSE 
+	ON WRS_RSP_ID=RSP_ID
+	LEFT JOIN TD_WORKFLOW_SIGNOFF 
+	ON WSG_WRS_ID=WRS_ID 
+	LEFT JOIN TS_SIGNOFF 
+	ON WSG_SGN_ID=SGN_ID 
 	WHERE MTR_DELETE_FLAG = 0
 		AND (
 			@RlsCode IS NULL
@@ -98,6 +118,12 @@ BEGIN
 		,SBJ_VALUE
 		,PRC_CODE
 		,PRC_VALUE
+		,RQS_CODE 
+		,RQS_VALUE
+		,RSP_CODE 
+		,RSP_VALUE
+		,SGN_CODE  
+		,SGN_VALUE 
 END
 GO
 

@@ -1,18 +1,19 @@
--- =============================================
---
--- =============================================
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE
 	OR
 
-ALTER PROCEDURE Data_Matrix_ReadDataByRelease @RlsCode VARCHAR(256)
-	,@LngIsoCode CHAR(2)
-	,@VrbCodeList KeyValueVarchar READONLY
+ALTER PROCEDURE [dbo].[Data_Matrix_ReadDataByRelease] @RlsCode VARCHAR(256)
 	,@SttCodeList ValueVarchar READONLY
 	,@PrdCodeList ValueVarchar READONLY
+	,@ClsVrbCodeList KeyValueVarchar READONLY
 AS
 BEGIN
-	DECLARE @ParmDefinition NVARCHAR(1000);
-	DECLARE @MatrixIdInt INT
+	DECLARE @MatrixIdInt AS INT;
 
 	SET @MatrixIdInt = (
 			SELECT MTR_ID
@@ -24,54 +25,53 @@ BEGIN
 				ON MTR_LNG_ID = LNG_ID
 					AND LNG_DELETE_FLAG = 0
 					AND (
-						@LngIsoCode IS NULL
-						OR @LngIsoCode = LNG_ISO_CODE
+						MTR_DATA_FLAG=1
 						)
 			WHERE RLS_CODE = @RlsCode
 				AND MTR_DELETE_FLAG = 0
-			)
+			);
 
-	DECLARE @StatList TABLE (stt_id INT INDEX IX_stt_sttlist NONCLUSTERED)
-	DECLARE @PeriodList TABLE (prd_id INT INDEX IX_prd_prdlist NONCLUSTERED)
-	DECLARE @ClsList TABLE (cls_id INT INDEX IX_cls_clslist NONCLUSTERED)
+	DECLARE @StatList TABLE (
+		stt_id INT NOT NULL
+		,PRIMARY KEY (stt_id)
+		);
+	DECLARE @PeriodList TABLE (
+		prd_id INT NOT NULL
+		,PRIMARY KEY (prd_id)
+		);
 	DECLARE @VrbList TABLE (
-		vrb_id INT INDEX IX_vrb_vrblist NONCLUSTERED
-		,cls_id INT INDEX IX_cls_vrblist NONCLUSTERED
-		,vrb_code NVARCHAR(256)
-		,cls_code NVARCHAR(256)
-		)
+		vrb_id INT NOT NULL
+		,PRIMARY KEY (vrb_id)
+		);
 
-	--create the @VrbList table
-	INSERT INTO @VrbList (
-		vrb_code
-		,cls_code
-		) (
-		SELECT [value]
-		,[key] FROM @VrbCodeList
-		)
+	--Populate the @VrbList table with the selected Key/Value pairs of Classification/Variable
+	INSERT INTO @VrbList (vrb_id) (
+		SELECT vrb.vrb_id FROM @ClsVrbCodeList AS ClsVrbCodeList INNER JOIN TD_CLASSIFICATION AS cls
+		ON ClsVrbCodeList.[Key] = cls.CLS_CODE INNER JOIN TD_VARIABLE AS vrb
+		ON cls.CLS_ID = vrb.VRB_CLS_ID
+			AND ClsVrbCodeList.[Value] = vrb.VRB_CODE WHERE cls.CLS_MTR_ID = @MatrixIdInt
+		);
 
-	--Do a correlated update (joins won't work to the @VrbCodeList parameter) for the rest of the data
-	UPDATE vlist
-	SET vlist.vrb_id = tdv.VRB_ID
-		,vlist.cls_id = tdv.VRB_CLS_ID
-	FROM @VrbList vlist
-	INNER JOIN TD_VARIABLE tdv
-		ON vlist.vrb_code = tdv.VRB_CODE
-	INNER JOIN TD_CLASSIFICATION cls
-		ON tdv.VRB_CLS_ID = cls.CLS_ID
-			AND cls.CLS_MTR_ID = @MatrixIdInt
-			AND cls.CLS_CODE = vlist.cls_code
+	--Complement the @VrbList table with the Variables taken form the non selected Classifications
+	INSERT INTO @VrbList (vrb_id) (
+		SELECT vrb.vrb_id FROM TD_CLASSIFICATION AS cls INNER JOIN TD_VARIABLE AS vrb
+		ON cls.CLS_ID = vrb.VRB_CLS_ID WHERE cls.CLS_MTR_ID = @MatrixIdInt
+		AND cls.CLS_CODE NOT IN (
+			SELECT [Key]
+			FROM @ClsVrbCodeList
+			)
+		);
 
-	--either restrict ourselves to the supplied statistic codes or get all of them if none are supplied
+	--Either restrict ourselves to the supplied statistic codes or get all of them if none are supplied
 	IF (
 			SELECT count(*)
 			FROM @SttCodeList
 			) = 0
 	BEGIN
-		INSERT INTO @StatList
+		INSERT INTO @StatList (stt_id)
 		SELECT stt_id
 		FROM TD_STATISTIC
-		WHERE STT_MTR_ID = @MatrixIdInt
+		WHERE STT_MTR_ID = @MatrixIdInt;
 	END
 	ELSE
 	BEGIN
@@ -82,157 +82,72 @@ BEGIN
 			AND STT_CODE IN (
 				SELECT [Value]
 				FROM @SttCodeList
-				)
+				);
 	END
 
-	--either restrict ourselves to the supplied period codes or get all of them if none are supplied
+	--Either restrict ourselves to the supplied period codes or get all of them if none are supplied
 	IF (
 			SELECT count(*)
 			FROM @PrdCodeList
 			) = 0
 	BEGIN
-		INSERT INTO @PeriodList
+		INSERT INTO @PeriodList (prd_id)
 		SELECT PRD_ID
 		FROM TD_PERIOD
 		INNER JOIN TD_FREQUENCY
-			ON PRD_FRQ_ID = FRQ_ID
-		WHERE FRQ_MTR_ID = @MatrixIdInt
+			ON FRQ_MTR_ID = @MatrixIdInt
+				AND PRD_FRQ_ID = FRQ_ID;
 	END
 	ELSE
 	BEGIN
 		INSERT INTO @PeriodList
 		SELECT PRD_ID
-		FROM TD_PERIOD
-		INNER JOIN TD_FREQUENCY
-			ON PRD_FRQ_ID = FRQ_ID
-		WHERE FRQ_MTR_ID = @MatrixIdInt
-			AND PRD_CODE IN (
+		FROM TD_FREQUENCY
+		INNER JOIN TD_PERIOD
+			ON FRQ_MTR_ID = @MatrixIdInt
+				AND PRD_FRQ_ID = FRQ_ID
+		WHERE PRD_CODE IN (
 				SELECT [Value]
 				FROM @PrdCodeList
-				)
+				);
 	END
 
-	--We assume that if a variable is not passed in for a given classification then we will want everything from that classification
-	INSERT INTO @ClsList
-	SELECT cls_id
-	FROM TD_CLASSIFICATION
-	WHERE CLS_MTR_ID = @MatrixIdInt
-		AND cls_id NOT IN (
-			SELECT cls_id
-			FROM @VrbList
-			)
-
-	DECLARE @cCount INT
+	--Count the Classifications for the HAVING clause
+	DECLARE @cCount AS INT;
 
 	SET @cCount = (
 			SELECT count(*)
-			FROM TD_CLASSIFICATION
-			WHERE cls_id IN (
-					SELECT DISTINCT vrb_cls_id
-					FROM td_variable
-					WHERE VRB_ID IN (
-							SELECT vrb_id
-							FROM @VrbList
-							)
-					)
+			FROM TD_CLASSIFICATION AS cls
+			WHERE cls.CLS_MTR_ID = @MatrixIdInt
+			);
+
+	SELECT TDT_ID AS TdtId
+		,TDT_STT_ID AS SttId
+		,TDT_PRD_ID AS PrdId
+		,TDT_VALUE AS TdtValue
+	FROM TD_DATA
+	INNER JOIN TM_DATA_CELL
+		ON TDT_MTR_ID = DTC_MTR_ID
+			AND TDT_IX = DTC_TDT_IX
+	WHERE TDT_MTR_ID = @MatrixIdInt
+		AND TDT_STT_ID IN (
+			SELECT stt_id
+			FROM @StatList
 			)
-
-	-- get a list of candidate data cells - there will be too many but we will order them anyway
-	DECLARE @otable TABLE (
-		tdt_id INT INDEX IX_tdt_otable NONCLUSTERED
-		,TDT_STT_ID INT
-		,TDT_PRD_ID INT
-		,cls_id INT
-		,vrb_id INT
-		,spc INT
-		)
-	--get an unordered list of the correct data cells
-	DECLARE @dtable TABLE (tdt_id INT INDEX IX_tdt_dtable NONCLUSTERED)
-
-	-- Fill the table with the correct data but unordered
-	INSERT INTO @dtable
-	SELECT TDT_ID
-	FROM TM_DATA_CELL
-	JOIN td_data
-		ON tdt_ix = dtc_tdt_ix
-	JOIN @PeriodList
-		ON TDT_PRD_ID = prd_id
-	JOIN @StatList
-		ON TDT_STT_ID = stt_id
-	JOIN TD_VARIABLE
-		ON TM_DATA_CELL.DTC_VRB_ID = VRB_ID
-	JOIN TD_CLASSIFICATION
-		ON VRB_CLS_ID = CLS_ID
-	WHERE td_data.TDT_MTR_ID = @MatrixIdInt
-		AND (
-			VRB_CLS_ID IN (
-				SELECT cls_id
-				FROM @ClsList
-				)
-			OR dtc_vrb_id IN (
-				SELECT vrb_id
-				FROM @VrbList
-				)
+		AND TDT_PRD_ID IN (
+			SELECT prd_id
+			FROM @PeriodList
 			)
-	GROUP BY tdt_id
-	HAVING count(tdt_id) > @cCount - 1
-
-	--Fills the table with some redundant data but correctly ordered
-	INSERT INTO @otable
-	SELECT q.*
-		,spc = row_number() OVER (
-			PARTITION BY 1 ORDER BY q.TDT_STT_ID
-				,q.TDT_PRD_ID
-				,q.cls_id
-				,q.vrb_id
+		AND DTC_VRB_ID IN (
+			SELECT vrb_id
+			FROM @VrbList
 			)
-	FROM (
-		SELECT TDT_ID
-			,TDT_STT_ID
-			,TDT_PRD_ID
-			,VRB_ID
-			,CLS_ID
-		FROM td_data
-		JOIN TM_DATA_CELL
-			ON tdt_ix = dtc_tdt_ix
-				AND TDT_MTR_ID = @MatrixIdInt
-		JOIN @PeriodList
-			ON TDT_PRD_ID = prd_id
-		JOIN @StatList
-			ON TDT_STT_ID = stt_id
-		JOIN TD_VARIABLE
-			ON TM_DATA_CELL.DTC_VRB_ID = VRB_ID
-		JOIN TD_CLASSIFICATION
-			ON VRB_CLS_ID = CLS_ID
-		WHERE td_data.TDT_MTR_ID = @MatrixIdInt
-			AND (
-				VRB_CLS_ID IN (
-					SELECT cls_id
-					FROM @ClsList
-					)
-				OR dtc_vrb_id IN (
-					SELECT vrb_id
-					FROM @VrbList
-					)
-				)
-		GROUP BY tdt_id
-			,TDT_VALUE
-			,TDT_STT_ID
-			,TDT_PRD_ID
-			,VRB_ID
-			,CLS_ID
-		) q
-
-	--finally we join the correct data list with the ordered list and order by the ordered list (Ordered SPC (Statistic, Period, Classification)
-	SELECT d.tdt_id
-		,tdt.TDT_VALUE AS TdtValue
-		,min(o.spc) AS ospc
-	FROM @otable o
-	INNER JOIN @dtable d
-		ON d.tdt_id = o.tdt_id
-	INNER JOIN TD_DATA tdt
-		ON d.tdt_id = tdt.TDT_ID
-	GROUP BY d.tdt_id
-		,tdt.TDT_VALUE
-	ORDER BY ospc
+	GROUP BY TDT_ID
+		,TDT_STT_ID
+		,TDT_PRD_ID
+		,TDT_VALUE
+	HAVING count(tdt_id) = @cCount;
 END
+GO
+
+
