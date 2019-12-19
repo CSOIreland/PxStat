@@ -3,11 +3,11 @@
 [![GitHub Watches](https://img.shields.io/github/watchers/goncaloperes/Project-CodeIgniter-CMS.svg?style=social&label=Watch&maxAge=2592000)](https://github.com/goncaloperes/Project-CodeIgniter-CMS/watchers)
 
 # PxStat
-PxStat is a **Data Dissemination Management System** especially designed for National Statistical Institutes and Statistical Organisations, developed by the [CSO](https://www.cso.ie) (Central Statistics Office, Ireland) with the support of the **PcAxis** statistical community and the collaboration of the **Open Source** community.
+PxStat is a **Data Dissemination Management System** especially designed for National Statistical Institutes and Statistical Organisations, developed by the [CSO](https://www.cso.ie) (Central Statistics Office, Ireland) with the support of the **PC-Axis** statistical community and the collaboration of the **Open Source** community.
 
 The system is powered by a lightweight engine and provides a modern, responsive and efficient Web Interface and Web Services (API) for managing and disseminating statistics.
 
-**Users** can run extensive meta-data searches , filter results, explore data by _"slicing and dicing"_, export results to different formats, visualise data over geographical layers, share their results and automate their processes by reading data via API queries. 
+**End-Users** can run extensive meta-data searches , filter results, explore data by _"slicing and dicing"_, export results to different formats, visualise data over geographical layers, share their results and automate their processes by reading data via API queries. 
 The outputs follow also the **Open Data** recommendations by providing access to multiple data formats (JSON-Stat, CSV, PX) and is ready to enable RDF and LOSD (Linked Open Statistical Data) to reach _"5 Star Linked Open Data"_.
 
 PxStat also empowers the **Data-Owners** to manage the publication of their data through a Workflow to identify & prevent issues before going Live, track and schedule Releases to implement Embargo policies, compare data and meta-data across Releases over time and monitor the consumption of data via analytical tools.
