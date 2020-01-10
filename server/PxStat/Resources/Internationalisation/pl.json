@@ -84,11 +84,11 @@
   },
   "email": {
     "body": {
-      "request-create": "[p]Nowe żądanie typu [b]{0}[/b] zostało przesłane przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}. {3}[/b] i oczekuje na zatwierdzenie.[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]",
-      "response-approve": "[p]Nowe żądanie typu [b]{0}[/b] zostało zatwierdzone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b] i oczekuje na wylogowanie.[/p] [p]Kliknij {4}, aby wyświetlić to żądanie.[/p]",
-      "response-reject": "[p]Wniosek o homologację typu [b]{0}[/b] został odrzucony przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]",
-      "signoff-approve": "[p]Wniosek o wypisanie się typu [b]{0}[/b] został zatwierdzony w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]",
-      "signoff-reject": "[p]Żądanie wypisania się typu [b]{0}[/b] zostało odrzucone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].[/p] [p]Kliknij {4}, aby wyświetlić ten przepływ pracy.[/p]"
+      "request-create": "Nowe żądanie typu [b]{0}[/b] zostało przesłane przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}. {3}[/b] i oczekuje na zatwierdzenie.\n Kliknij {4}, aby wyświetlić ten przepływ pracy.",
+      "response-approve": "Nowe żądanie typu [b]{0}[/b] zostało zatwierdzone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b] i oczekuje na wylogowanie.\n Kliknij {4}, aby wyświetlić to żądanie.",
+      "response-reject": "Wniosek o homologację typu [b]{0}[/b] został odrzucony przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Kliknij {4}, aby wyświetlić ten przepływ pracy.",
+      "signoff-approve": "Wniosek o wypisanie się typu [b]{0}[/b] został zatwierdzony w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Kliknij {4}, aby wyświetlić ten przepływ pracy.",
+      "signoff-reject": "Żądanie wypisania się typu [b]{0}[/b] zostało odrzucone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Kliknij {4}, aby wyświetlić ten przepływ pracy."
     },
     "subject": {
       "request-create": "{0} {1}.{2}: Oczekuje Na Zatwierdzenie",

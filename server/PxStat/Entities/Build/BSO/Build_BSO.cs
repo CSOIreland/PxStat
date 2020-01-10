@@ -734,7 +734,7 @@ namespace PxStat.Build
                 headerString.Add(new PxQuotedValue(cls.Code).ToPxString());
             }
 
-            headerString.Add(new PxQuotedValue(Utility.GetCustomConfig("APP_CSV_STATISTIC")).ToPxString());
+            headerString.Add(new PxQuotedValue(Utility.GetCustomConfig("APP_CSV_VALUE")).ToPxString());
             return (string.Join(",", headerString.ToArray()));
         }
 

@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 01/11/2018
 -- Description:	Reads Workflow History for a given Release Code
--- exec Workflow_ReadHistory 'okeeffene',3
+-- exec Workflow_ReadHistory 'okeeffene',43
 -- =============================================
 CREATE
 	OR

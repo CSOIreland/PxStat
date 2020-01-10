@@ -302,23 +302,13 @@ app.keyword.release.drawDataTableRelease = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        if (row.RlsLiveDatetimeFrom == null) {
-                            return "";
-                        }
-                        else {
-                            return moment(row.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display);
-                        }
+                        return row.RlsLiveDatetimeFrom ? moment(row.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "";
                     }
                 },
                 {
                     data: null,
                     render: function (data, type, row) {
-                        if (row.RlsLiveDatetimeTo == null) {
-                            return "";
-                        }
-                        else {
-                            return moment(row.RlsLiveDatetimeTo).format(app.config.mask.datetime.display);
-                        }
+                        return row.RlsLiveDatetimeTo ? moment(row.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "";
                     }
                 }
             ],

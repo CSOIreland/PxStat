@@ -24,6 +24,13 @@ BEGIN
 	DECLARE @eMessage VARCHAR(256)
 	DECLARE @updateCount INT
 
+	DECLARE @GroupUserHasAccess TABLE (GRP_ID INT NOT NULL);
+
+	INSERT INTO @GroupUserHasAccess
+	EXEC Security_Group_AccessList  @CcnUsername
+
+
+
 	SELECT @DtgID = WRQ_DTG_ID
 		,@WrqID = WRQ_ID
 	FROM (
@@ -52,38 +59,21 @@ BEGIN
 		RETURN
 	END
 
-	--This delete may only happen if there are no responses for the request
-	DECLARE @responseCount INT
 
-	-- Find out if there are any responses for the request
-	SET @responseCount = (
-			SELECT count(*)
-			FROM TD_WORKFLOW_RESPONSE rsp
-			WHERE rsp.WRS_WRQ_ID = @wrqID
-			)
-
-	--end this process if there are any responses for the request
-	IF @responseCount > 0
-	BEGIN
-		SET @eMessage = 'Active Response found for Workflow Request - delete refused - Release Code: ' + cast(isnull(@RlsCode, 0) AS VARCHAR)
-
-		RAISERROR (
-				@eMessage
-				,16
-				,1
-				)
-
-		RETURN
-	END
 
 	UPDATE TD_WORKFLOW_REQUEST
-	SET WRQ_DELETE_FLAG = 1
+	SET WRQ_DELETE_FLAG = 1,
+	WRQ_CURRENT_FLAG=0
 	FROM TD_WORKFLOW_REQUEST req
 	INNER JOIN TD_RELEASE rel
 		ON req.WRQ_RLS_ID = rel.RLS_ID
+	INNER JOIN @GroupUserHasAccess
+	ON rel.RLS_GRP_ID=GRP_ID 
 	WHERE rel.RLS_CODE = @RlsCode
 		AND rel.RLS_DELETE_FLAG = 0
 		AND req.WRQ_DELETE_FLAG = 0
+		AND req.WRQ_CURRENT_FLAG=1
+	 
 
 	SET @updateCount = @@rowcount
 

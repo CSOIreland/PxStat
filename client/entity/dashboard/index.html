@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="card  border-primary pb-1" id="dashboard-panel-awaitingresponse">
-        <div class="card-header bg-primary" id="headingTwo">
+        <div class="card-header bg-secondary" id="headingTwo">
             <h5 class="mb-0">
                 <button class="btn btn-link collapsed text-light" type="button" data-toggle="collapse" data-target="#collapse-awaiting-response" aria-expanded="false" aria-controls="collapse-awaiting-response">
                     <i name="dashboard-accordion-icon" class="fas fa-plus-circle"></i>
@@ -55,7 +55,7 @@
         </div>
     </div>
     <div class="card border-primary pb-1" id="dashboard-panel-awaitingsignoff">
-        <div class="card-header bg-primary" id="headingThree">
+        <div class="card-header bg-tertiary" id="headingThree">
             <h5 class="mb-0">
                 <button class="btn btn-link collapsed text-light" type="button" data-toggle="collapse" data-target="#collapse-awaiting-sign-off" aria-expanded="false" aria-controls="collapse-awaiting-sign-off">
                     <i name="dashboard-accordion-icon" class="fas fa-plus-circle"></i>
@@ -83,10 +83,39 @@
             </div>
         </div>
     </div>
+    <div class="card border-primary pb-1" id="dashboard-panel-pendinglive">
+        <div class="card-header bg-warning" id="headingFour">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed text-light" type="button" data-toggle="collapse" data-target="#collapse-pending-live" aria-expanded=" false" aria-controls="collapse-pending-live">
+                    <i name="dashboard-accordion-icon" class="fas fa-plus-circle"></i>
+                    <span name="" label="pending-live"></span>
+                </button>
+            </h5>
+        </div>
+        <div id="collapse-pending-live" class="collapse" aria-labelledby="headingFour" data-parent="#dashboard-accordion">
+            <div class="card-body mb-5">
+                <table class="table table-striped hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th label="table"></th>
+                            <th label="group"></th>
+                            <th label="request"></th>
+                            <th label="emergency"></th>
+                            <th label="publish-date"></th>
+                            <th label="approved-by"></th>
+                            <th label="approved-date"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="dashboard-panel-livereleases" class="card m-3 border-secondary">
-    <div class="card-header bg-secondary text-light" label="live-releases"></div>
+    <div class="card-header bg-danger text-light" label="live-releases"></div>
     <div>
         <div class="card-body mb-5">
             <table class="table table-striped hover" style="width:100%">

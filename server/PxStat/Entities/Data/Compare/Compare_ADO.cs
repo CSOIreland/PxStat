@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
+using System.Collections.Generic;
 
 namespace PxStat.Data
 {
@@ -37,7 +37,7 @@ namespace PxStat.Data
 
             if (reader.hasData)
             {
-                return reader.data[0].PreviousRlsCode;
+                return reader.data[0].RlsCode;
             }
 
             return 0;

@@ -195,13 +195,21 @@ app.build.update.callback.readFormat = function (response) {
 /**
  * 
  */
-app.build.update.callback.resetData = function () {
+app.build.update.callback.cancelData = function () {
     app.build.update.upload.file.content.data.JSON = null;
     $("#build-update-matrix-data").find("[name=build-update-upload-data]").val("");
     $("#build-update-matrix-data").find("[name=file-name]").empty().hide();
     $("#build-update-matrix-data").find("[name=file-tip]").show();
     $("#build-update-matrix-data").find("[name=preview-data]").prop("disabled", true);
     $("#build-update-matrix-data").find("[name=update]").prop("disabled", false);
+};
+
+/**
+ * 
+ */
+app.build.update.callback.resetData = function () {
+    $("#build-update-matrix-data").find("[name=build-update-upload-data]").val("");
+    app.build.update.callback.cancelData();
 };
 
 /**
@@ -331,6 +339,21 @@ app.build.update.callback.downloadData = function (response) {
 };
 
 
+
+app.build.update.cancelUpoadPeriod = function () {
+    //clean up 
+    app.build.update.upload.file.content.period.UTF8 = null;
+
+    $("#build-update-upload-periods").find("[name=file-name]").empty().hide();
+    $("#build-update-upload-periods").find("[name=file-tip]").show();
+    $("#build-update-upload-periods").find("[name=upload-submit-periods]").prop("disabled", true);
+};
+
+app.build.update.resetUpoadPeriod = function () {
+    $("#build-update-upload-periods-file").val("");
+    app.build.update.cancelUpoadPeriod();
+};
+
 /**
  * 
  */
@@ -437,7 +460,7 @@ app.build.update.validateManualPeriod = function () {
                 }));
                 isPeriodValid = false;
             }
-            else if (value.length > 256) {
+            else if (value.length > 256 || C_APP_REGEX_NODOUBLEQUOTE.test(value)) {
                 $('#build-update-manual-periods').find("[name=errors-card]").show();
                 $('#build-update-manual-periods').find("[name=errors]").append($("<li>", {
                     "class": "list-group-item",
@@ -497,8 +520,8 @@ app.build.update.hasDuplicate = function (codes, values, selector) {
  * 
  */
 app.build.update.addUploadPeriod = function () {
-    $('#build-update-upload-periods').find("[name=upload-period-errors-card]").hide();
-    $('#build-update-upload-periods').find("[name=upload-period-errors]").empty();
+    $('#build-update-upload-periods').find("[name=errors-card]").hide();
+    $('#build-update-upload-periods').find("[name=errors]").empty();
 
     var lngIsoCode = $("#build-update-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-code");
     app.build.update.upload.file.content.period.data.JSON = Papa.parse(app.build.update.upload.file.content.period.UTF8, {
@@ -550,10 +573,22 @@ app.build.update.addUploadPeriod = function () {
 app.build.update.validateUploadPeriod = function () {
     //check that csv contains data
     if (!app.build.update.upload.file.content.period.data.JSON.data.length) {
-        $("#build-update-upload-periods").find("[name=upload-period-errors-card]").show();
-        $('#build-update-upload-periods').find("[name=upload-period-errors]").append($("<li>", {
+        $("#build-update-upload-periods").find("[name=errors-card]").show();
+        $('#build-update-upload-periods').find("[name=errors]").append($("<li>", {
             "class": "list-group-item",
             "html": app.label.static["update-time-point"]
+        }));
+        return false;
+    };
+
+    var csvHeaders = app.build.update.upload.file.content.period.data.JSON.meta.fields;
+
+    //check that csv headers contain C_APP_CSV_CODE and C_APP_CSV_VALUE, both case sensitive
+    if (jQuery.inArray(C_APP_CSV_CODE, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
+        $("#build-update-upload-periods").find("[name=errors-card]").show();
+        $('#build-update-upload-periods').find("[name=errors]").append($("<li>", {
+            "class": "list-group-item",
+            "html": app.label.static["invalid-csv-format"]
         }));
         return false;
     };
@@ -565,9 +600,14 @@ app.build.update.validateUploadPeriod = function () {
         value[C_APP_CSV_VALUE] = value[C_APP_CSV_VALUE].trim();
 
         //check that variable lengths are valid
-        if (value[C_APP_CSV_CODE].length > 256 || value[C_APP_CSV_CODE].length == 0 || value[C_APP_CSV_VALUE].length > 256 || value[C_APP_CSV_VALUE].length == 0) {
-            $("#build-update-upload-periods").find("[name=upload-period-errors-card]").show();
-            $('#build-update-upload-periods').find("[name=upload-period-errors]").append($("<li>", {
+        if (value[C_APP_CSV_CODE].length > 256 ||
+            value[C_APP_CSV_CODE].length == 0 ||
+            value[C_APP_CSV_VALUE].length > 256 ||
+            value[C_APP_CSV_VALUE].length == 0 ||
+            C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_CODE]) ||
+            C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_VALUE])) {
+            $("#build-update-upload-periods").find("[name=errors-card]").show();
+            $('#build-update-upload-periods').find("[name=errors]").append($("<li>", {
                 "class": "list-group-item",
                 "html": app.library.html.parseDynamicLabel("update-invalid-variable", [key + 2])
             }));
@@ -580,17 +620,6 @@ app.build.update.validateUploadPeriod = function () {
         return false;
     }
 
-    var csvHeaders = app.build.update.upload.file.content.period.data.JSON.meta.fields;
-
-    //check that csv headers contain C_APP_CSV_CODE and C_APP_CSV_VALUE, both case sensitive
-    if (jQuery.inArray(C_APP_CSV_CODE, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
-        $("#build-update-upload-periods").find("[name=upload-period-errors-card]").show();
-        $('#build-update-upload-periods').find("[name=upload-period-errors]").append($("<li>", {
-            "class": "list-group-item",
-            "html": app.label.static["invalid-csv-format"]
-        }));
-        return false;
-    };
 
     return true;
 };
@@ -972,14 +1001,29 @@ app.build.update.validate.dimensionProperty = function (LngIsoCode) {
     $("#build-update-dimension-nav-" + LngIsoCode).find("form").trigger("reset").validate({
         rules: {
             "title-value": {
-                required: true
+                required: true,
+                normalizer: function (value) {
+                    value = value.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true);
+                    $(this).val(value);
+                    return value;
+                }
             },
             "frequency-value": {
                 required: true,
-                notEqual: $("#build-update-dimension-nav-" + LngIsoCode).find("[name=statistic-label]")
+                notEqual: $("#build-update-dimension-nav-" + LngIsoCode).find("[name=statistic-label]"),
+                normalizer: function (value) {
+                    value = value.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true);
+                    $(this).val(value);
+                    return value;
+                }
             },
             "statistic-label": {
-                required: true
+                required: true,
+                normalizer: function (value) {
+                    value = value.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true);
+                    $(this).val(value);
+                    return value;
+                }
             },
         },
         invalidHandler: function (event, validator) {
@@ -1003,7 +1047,12 @@ app.build.update.validate.classification = function () {
     $("#build-update-edit-classification").find("form").trigger("reset").validate({
         rules: {
             "cls-geo-url": {
-                url: true
+                url: true,
+                normalizer: function (value) {
+                    value = value.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true);
+                    $(this).val(value);
+                    return value;
+                }
             }
         },
         errorPlacement: function (error, element) {

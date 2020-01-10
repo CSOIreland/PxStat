@@ -94,7 +94,7 @@ app.analytic.render.readTimeLine = function (data, selector) {
         //var dataArray = [['Date', 'bots', 'users', 'm2m', 'total']];
         var dataArray = [['Date', app.label.static["bots"], app.label.static["users"], app.label.static["m2m"], app.label.static["total"]]];
         $.each(data, function (index, value) {
-            dataArray.push([moment(value.date).format(app.config.mask.date.display), value.NltBot, value.NltUser, value.NltM2m, value.Total]);
+            dataArray.push([value.date ? moment(value.date).format(app.config.mask.date.display) : "", value.NltBot, value.NltUser, value.NltM2m, value.Total]);
         });
         var options = {
             hAxis: { slantedText: true, slantedTextAngle: 50 }

@@ -6,15 +6,11 @@ $(document).ready(function () {
     app.build.create.dimension.ajax.readFormat();
 
     //On click add the statistic
-    $("#build-create-statistic").find("[name=manual-submit-statistics]").click(function () {
-        var LngIsoCode = $(this).attr("lng-iso-code");
-        app.build.create.dimension.submitManualStatistic(LngIsoCode);
-    });
+    $("#build-create-statistic").find("[name=manual-submit-statistics]").once("click", app.build.create.dimension.submitManualStatistic);
     //On click upload statistics
     $("#build-create-statistic").find("[name=upload-submit-statistics]").click(function (e) {
         e.preventDefault();
-        var LngIsoCode = $(this).attr("lng-iso-code");
-        app.build.create.dimension.submitUploadStatistic(LngIsoCode);
+        app.build.create.dimension.submitUploadStatistic();
     });
     //Add periods manually
     $("#build-create-new-periods").find("[name=manual-submit-periods]").once("click", app.build.create.dimension.addPeriodsManual);
@@ -30,7 +26,7 @@ $(document).ready(function () {
         $("#build-create-search-classiication").find("[name=search-classifications-list-table-container]").hide();
         $("#build-create-search-classiication").find("[name=read-classification-table-container]").hide();
         $("#build-create-search-classiication").find("[name=classifications-search-input]").val("");
-        $("#build-create-manual-classification").find("[name=manual-classification-errors]").empty();
+        $("#build-create-manual-classification").find("[name=errors]").empty();
     });
     $('#build-create-statistic').on('hidden.bs.modal', function (e) {
         $(this).find("[name=build-create-upload-statistic-file]").val("");
@@ -38,16 +34,16 @@ $(document).ready(function () {
         $(this).find("[name=upload-file-tip]").show();
         $(this).find("[name=upload-submit-statistics]").prop("disabled", true);
         $(this).find("[name=upload-si-errors]").empty();
-        $('#build-create-upload-si').find("[name=upload-si-errors-card]").hide();
-        $('#build-create-manual-si').find("[name=manual-si-errors-card]").hide();
+        $('#build-create-upload-si').find("[name=errors-card]").hide();
+        $('#build-create-manual-si').find("[name=errors-card]").hide();
     });
     $('#build-create-classification').on('hidden.bs.modal', function (e) {
         $(this).find("[name=build-create-upload-classification-file]").val("");
         $(this).find("[name=upload-file-name]").empty().hide();
         $(this).find("[name=upload-file-tip]").show();
         $(this).find("[name=upload-submit-classifications]").prop("disabled", true);
-        $('#build-create-manual-classification').find("[name=manual-classification-errors-card]").hide();
-        $('#build-create-upload-classification').find("[name=upload-classification-errors-card]").hide();
+        $('#build-create-manual-classification').find("[name=errors-card]").hide();
+        $('#build-create-upload-classification').find("[name=errors-card]").hide();
     });
     $('#build-create-new-periods').on('hidden.bs.modal', function (e) {
         $(this).find("[name=build-create-upload-periods-file]").val("");
@@ -55,7 +51,8 @@ $(document).ready(function () {
         $(this).find("[name=upload-file-tip]").show();
         $(this).find("[name=upload-submit-periods]").prop("disabled", true);
         $(this).find("[name=manual-periods-errors-card]").hide();
-        $(this).find("[name=upload-periods-errors-card]").hide();
+        $(this).find("[name=errors]").empty();
+        $(this).find("[name=errors-card]").hide();
     });
 
     //set up modals correctly when opened
@@ -97,6 +94,15 @@ $(document).ready(function () {
         );
     });
 
+    //reset upload classification file input
+    //Bind the classification upload reset button
+    $("#build-create-upload-classification").find("[name=upload-reset]").once("click", app.build.create.dimension.resetClassificationUpload);
+
+    //Bind the statistic upload reset button
+    $("#build-create-upload-si").find("[name=upload-reset]").once("click", app.build.create.dimension.resetStatisticUpload);
+
+    //Bind the period upload reset button
+    $("#build-create-upload-periods").find("[name=upload-reset]").once("click", app.build.create.dimension.resetPeriodUpload);
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

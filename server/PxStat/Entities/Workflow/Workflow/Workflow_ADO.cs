@@ -149,6 +149,32 @@ namespace PxStat.Workflow
             return output;
         }
 
+        internal ADO_readerOutput ReadPendingLive(ADO ado, string ccnUsername, Workflow_DTO dto)
+        {
+            ADO_readerOutput output = new ADO_readerOutput();
+
+            var inputParams = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
+                new ADO_inputParams() {name ="@LngIsoCode",value= dto.LngIsoCode },
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+            };
+
+            if (dto.RlsCode != default(int))
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@RlsCode", value = dto.RlsCode });
+            }
+
+            //Call the stored procedure
+            output = ado.ExecuteReaderProcedure("Workflow_ReadPendingLive", inputParams);
+
+
+
+
+            //return the list of entities that have been found
+            return output;
+        }
+
         /// <summary>
         /// Read workflows that are awaiting signoff
         /// </summary>

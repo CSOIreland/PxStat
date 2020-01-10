@@ -118,17 +118,7 @@ $(document).ready(function () {
     });
 
     //Bind the periods upload reset button
-    $("#build-update-new-periods").find("[name=upload-reset-periods]").once("click", function () {
-        //clean up 
-        app.build.update.upload.file.content.period.UTF8 = null;
-
-        $("#build-update-upload-periods").find("#build-update-upload-periods-file").val("");
-        $("#build-update-upload-periods").find("[name=build-update-upload-periods-file]").val("");
-        $("#build-update-upload-periods").find("[name=file-name]").empty().hide();
-        $("#build-update-upload-periods").find("[name=file-tip]").show();
-        $("#build-update-upload-periods").find("[name=upload-submit-periods]").prop("disabled", true);
-
-    });
+    $("#build-update-new-periods").find("[name=upload-reset-periods]").once("click", app.build.update.resetUpoadPeriod);
 
     //Bind the upload button
     $("#build-update-upload-file").find("[name=upload-source-file]").once("click", function () {

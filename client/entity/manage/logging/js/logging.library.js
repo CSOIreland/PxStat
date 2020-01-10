@@ -87,9 +87,9 @@ app.logging.drawDataTable = function (data) {
     new ClipboardJS('.cpy-btn');
     var datePicker = $("#logging-input").find("[name=input-date-range]").data('daterangepicker');
     var exportFileName = 'logging'
-        + "_" + moment(datePicker.startDate).format(app.config.mask.datetime.file)
-        + "_" + moment(datePicker.endDate).format(app.config.mask.datetime.file)
-        + "." + moment().format(app.config.mask.datetime.file);
+        + "_" + datePicker.startDate ? moment(datePicker.startDate).format(app.config.mask.datetime.file) : ""
+            + "_" + datePicker.endDate ? moment(datePicker.endDate).format(app.config.mask.datetime.file) : ""
+            + "." + moment().format(app.config.mask.datetime.file);
     if ($.fn.dataTable.isDataTable("#logging-result table")) {
         app.library.datatable.reDraw("#logging-result table", data);
     } else {
@@ -116,7 +116,7 @@ app.logging.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.LggDatetime).format(app.config.mask.datetime.display);
+                        return row.LggDatetime ? moment(row.LggDatetime).format(app.config.mask.datetime.display) : "";
                     }
                 },
                 {

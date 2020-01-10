@@ -91,7 +91,14 @@ namespace PxStat.System.Navigation
                 foreach (var cls in classifications)
                 {
                     dynamic RlsCls = new ExpandoObject();
-                    if (cls.RlsCode == release.RlsCode)
+                    string readLanguage = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                    //If this classification exists in the requested language, return it, otherwise return it in the default language
+                    if ((classifications.Where(x => (x.RlsCode == release.RlsCode && x.LngIsoCode == DTO.LngIsoCode)).Count() > 0))
+                    {
+                        readLanguage = DTO.LngIsoCode;
+                    }
+
+                    if (cls.RlsCode == release.RlsCode && (cls.LngIsoCode == readLanguage))
                     {
                         RlsCls.ClsCode = cls.ClsCode;
                         RlsCls.ClsValue = cls.ClsValue;
@@ -165,13 +172,15 @@ namespace PxStat.System.Navigation
         private IEnumerable<dynamic> GetClassifications(List<dynamic> rawList)
         {
             var classifications = (from t in rawList
+                                   orderby t.ClsId
                                    group t by new
                                    {
                                        t.RlsCode,
                                        t.ClsCode,
                                        t.ClsValue,
                                        t.ClsGeoFlag,
-                                       t.ClsGeoUrl
+                                       t.ClsGeoUrl,
+                                       t.LngIsoCode
                                    }
                             into grp
                                    select new
@@ -180,7 +189,9 @@ namespace PxStat.System.Navigation
                                        grp.Key.ClsCode,
                                        grp.Key.ClsValue,
                                        grp.Key.ClsGeoFlag,
-                                       grp.Key.ClsGeoUrl
+                                       grp.Key.ClsGeoUrl,
+                                       grp.Key.LngIsoCode
+
 
                                    }).ToList();
 

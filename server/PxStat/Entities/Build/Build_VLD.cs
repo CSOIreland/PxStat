@@ -332,6 +332,7 @@ namespace PxStat.Build
     /// </summary>
     internal class Dimension_VLD : AbstractValidator<Dimension_DTO>
     {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
         /// <summary>
         /// 
         /// </summary>
@@ -341,6 +342,7 @@ namespace PxStat.Build
 
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
             RuleFor(f => f.MtrTitle).NotEmpty().Length(1, 256);
+
             RuleFor(f => f.Contents).NotEmpty().Length(1, 256);
             RuleFor(f => f.StatisticLabel).NotEmpty().Length(1, 256);
             RuleFor(f => f.StatisticLabel).NotEqual(f => f.FrqValue).WithMessage("Statistic Label must not be the same as the Frequency Value");
@@ -353,6 +355,12 @@ namespace PxStat.Build
             RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD());
             RuleForEach(f => f.Statistics).SetValidator(new Statistic_VLD());
             RuleFor(f => f.Frequency).SetValidator(new Frequency_VLD());
+
+            //Does not contain inverted commas
+            RuleFor(f => f.MtrTitle).Matches(fchars);
+            RuleFor(f => f.MtrNote).Matches(fchars);
+            RuleFor(f => f.StatisticLabel).Matches(fchars);
+            RuleFor(f => f.FrqValue).Matches(fchars);
         }
     }
 
@@ -360,10 +368,14 @@ namespace PxStat.Build
 
     internal class Frequency_VLD : AbstractValidator<FrequencyRecordDTO_Create>
     {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
         internal Frequency_VLD()
         {
             RuleFor(x => x.Value).NotEmpty().Length(1, 256);
             RuleForEach(x => x.Period).SetValidator(new Period_VLD());
+
+            //Does not contain inverted commas
+            RuleFor(f => f.Value).Matches(fchars);
         }
     }
 
@@ -371,11 +383,16 @@ namespace PxStat.Build
 
     internal class Period_VLD : AbstractValidator<PeriodRecordDTO_Create>
     {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
         internal Period_VLD()
         {
             RuleFor(x => x.Code).NotEmpty().Length(1, 256);
             RuleFor(x => x.Value).NotEmpty().Length(1, 256);
             RuleFor(x => x.Code).Must(CustomValidations.NotReservedWord);
+
+            //Does not contain inverted commas
+            RuleFor(f => f.Code).Matches(fchars);
+            RuleFor(f => f.Value).Matches(fchars);
         }
     }
 
@@ -384,6 +401,7 @@ namespace PxStat.Build
     /// </summary>
     internal class Classification_VLD : AbstractValidator<ClassificationRecordDTO_Create>
     {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
         /// <summary>
         /// 
         /// </summary>
@@ -395,6 +413,33 @@ namespace PxStat.Build
             RuleFor(f => f.Variable).Must(CustomValidations.VariableCodeNotRepeated).WithMessage("Non unique VrbCode");
             RuleForEach(f => f.Variable).SetValidator(new Variable_VLD());
             RuleFor(f => f.Code).Must(CustomValidations.NotReservedWord);
+
+            //Does not contain inverted commas
+            RuleFor(f => f.Code).Matches(fchars);
+            RuleFor(f => f.Value).Matches(fchars);
+        }
+
+    }
+
+
+    /// <summary>
+    /// Classification validator for codes only
+    /// </summary>
+    internal class Classification_VLD_CodeOnly : AbstractValidator<ClassificationRecordDTO_Create>
+    {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
+        /// <summary>
+        /// 
+        /// </summary>
+        internal Classification_VLD_CodeOnly()
+        {
+            RuleFor(f => f.Code).NotEmpty().Length(1, 256);
+
+            RuleFor(f => f.Code).Must(CustomValidations.NotReservedWord);
+
+            //Does not contain inverted commas
+            RuleFor(f => f.Code).Matches(fchars);
+
         }
 
     }
@@ -404,6 +449,7 @@ namespace PxStat.Build
     /// </summary>
     internal class Variable_VLD : AbstractValidator<VariableRecordDTO_Create>
     {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
         /// <summary>
         /// 
         /// </summary>
@@ -411,6 +457,10 @@ namespace PxStat.Build
         {
             RuleFor(f => f.Code).NotEmpty().Length(1, 256);
             RuleFor(f => f.Value).NotEmpty().Length(1, 256);
+
+            //Does not contain inverted commas
+            RuleFor(f => f.Code).Matches(fchars);
+            RuleFor(f => f.Value).Matches(fchars);
         }
     }
 
@@ -419,6 +469,7 @@ namespace PxStat.Build
     /// </summary>
     internal class Statistic_VLD : AbstractValidator<StatisticalRecordDTO_Create>
     {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
         internal Statistic_VLD()
         {
             RuleFor(f => f.Code).NotEmpty().Length(1, 256);
@@ -426,6 +477,11 @@ namespace PxStat.Build
             RuleFor(f => f.Unit).NotEmpty().Length(1, 256); ;
             RuleFor(f => Convert.ToInt32(f.Decimal)).InclusiveBetween(0, 6);
             RuleFor(f => f.Code).Must(CustomValidations.NotReservedWord);
+
+            //Does not contain inverted commas
+            RuleFor(f => f.Code).Matches(fchars);
+            RuleFor(f => f.Value).Matches(fchars);
+            RuleFor(f => f.Unit).Matches(fchars);
         }
     }
 
@@ -522,7 +578,6 @@ namespace PxStat.Build
             RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
             RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
             RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
-            //RuleFor(f => f.Dimension).Must(CustomValidations.DimensionsValid).WithMessage("Invalid Dimensions");
             RuleFor(f => f.Dimension).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.FormatExists).WithMessage("Requested format/version not found in the system");
             RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
@@ -533,8 +588,31 @@ namespace PxStat.Build
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
 
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatForBuildUpdate);
+
+            RuleForEach(f => f.Dimension).SetValidator(new Build_VLD_BuildUpdateDimension());
+
         }
     }
+
+
+    /// <summary>
+    /// Dimension validator for Build Update
+    /// </summary>
+    internal class Build_VLD_BuildUpdateDimension : AbstractValidator<Dimension_DTO>
+    {
+        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
+        internal Build_VLD_BuildUpdateDimension()
+        {
+            RuleFor(f => f.MtrTitle).Matches(fchars).When(f => !string.IsNullOrEmpty(f.MtrTitle));
+            RuleFor(f => f.MtrNote).Matches(fchars).When(f => !string.IsNullOrEmpty(f.MtrNote));
+            RuleFor(f => f.StatisticLabel).Matches(fchars).When(f => !string.IsNullOrEmpty(f.StatisticLabel));
+
+            RuleFor(f => f.Frequency).SetValidator(new Frequency_VLD()).When(f => f.Frequency != null);
+            RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD_CodeOnly());
+
+        }
+    }
+
 
     /// <summary>
     /// 
@@ -754,6 +832,8 @@ namespace PxStat.Build
         /// <returns></returns>
         internal static bool StatisticCodeNotRepeated(IList<StatisticalRecordDTO_Create> dto)
         {
+            if (dto == null) return true;
+
             var query = from vars in dto
                         group vars by vars.Code into g
                         select new

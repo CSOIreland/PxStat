@@ -21,15 +21,14 @@ ALTER PROCEDURE Security_Analytic_Create @matrix NVARCHAR(20)
 	,@NltM2m BIT
 	,@NltDate DATE
 	,@LngIsoCode CHAR(2)
-	,@FrmType NVARCHAR(32)=NULL
-	,@FrmVersion NVARCHAR(32)=NULL
+	,@FrmType NVARCHAR(32) = NULL
+	,@FrmVersion NVARCHAR(32) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @MtrID INT
-	DECLARE @FrmID INT
-
+	DECLARE @MtrID AS INT;
+	DECLARE @FrmID AS INT;
 
 	SELECT @MtrID = MTR_ID
 	FROM TD_MATRIX
@@ -39,14 +38,15 @@ BEGIN
 		ON LNG_ID = MTR_LNG_ID
 			AND LNG_DELETE_FLAG = 0
 			AND LNG_ISO_CODE = @LngIsoCode
+			AND MTR_CODE = @matrix;
 
-	SELECT @FrmID =FRM_ID
-	FROM TS_FORMAT 
-	WHERE  @FrmType IS NOT NULL
-	AND @FrmVersion IS NOT NULL
-	AND FRM_DIRECTION='DOWNLOAD'
-	AND FRM_TYPE=@FrmType 
-	AND FRM_VERSION=@FrmVersion 
+	SELECT @FrmID = FRM_ID
+	FROM TS_FORMAT
+	WHERE @FrmType IS NOT NULL
+		AND @FrmVersion IS NOT NULL
+		AND FRM_DIRECTION = 'DOWNLOAD'
+		AND FRM_TYPE = @FrmType
+		AND FRM_VERSION = @FrmVersion;
 
 	INSERT INTO TD_ANALYTIC (
 		NLT_MTR_ID
@@ -58,7 +58,7 @@ BEGIN
 		,NLT_M2M_FLAG
 		,NLT_DATE
 		,NLT_USER_FLAG
-		,NLT_FRM_ID 
+		,NLT_FRM_ID
 		)
 	VALUES (
 		@MtrID
@@ -75,11 +75,8 @@ BEGIN
 				THEN 1
 			ELSE 0
 			END
-		,@FrmID 
-		)
+		,@FrmID
+		);
 
-	RETURN @@identity
+	RETURN @@identity;
 END
-GO
-
-

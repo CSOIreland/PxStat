@@ -33,3 +33,7 @@ label.mandatory:before, span.mandatory:before {
 .modal-full .modal-content {
     min-height: 100vh;
 }
+
+button:hover:disabled, a:hover:disabled {
+    cursor: not-allowed;
+}

@@ -1048,7 +1048,7 @@ namespace PxStat.Data
             bool contVariable = MainSpec.Statistic.Count > 1;
 
             baseKeywordList.Add(CreatePxElement("CHARSET", Utility.GetCustomConfig("APP_PX_DEFAULT_CHARSET")));
-            baseKeywordList.Add(CreatePxElement("AXIS-VERSION", Utility.GetCustomConfig("APP_PX_DEFAULT_AXIS-VERSION")));
+            baseKeywordList.Add(CreatePxElement("AXIS-VERSION", Utility.GetCustomConfig("APP_PX_DEFAULT_AXIS_VERSION")));
 
 
             baseKeywordList.Add(CreatePxElement("LANGUAGE", this.TheLanguage));
@@ -2018,7 +2018,6 @@ namespace PxStat.Data
             }
 
 
-            // start     
             jsStat.Label = spec.Contents;
 
 

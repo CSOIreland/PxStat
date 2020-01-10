@@ -22,7 +22,7 @@ namespace PxStat.Workflow
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser();
+            return IsPowerUser() || IsModerator();
         }
 
         /// <summary>

@@ -87,11 +87,11 @@
   },
   "email": {
     "body": {
-      "request-create": "[p]A new request of type [b]{0}[/b]  has been submitted against the Table [b]{1}[/b] Version [b]{2}.{3} [/b]and is awaiting approval.[/p] [p]View this workflow at {4}.[/p]",
-      "response-approve": "[p]A new request of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b] and is awaiting sign-off.[/p] [p]View this workflow at {4}.[/p]",
-      "response-reject": "[p]The request for approval of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].[/p] [p]View this workflow at {4}.[/p]",
-      "signoff-approve": "[p]The request for sign-off of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].[/p] [p]View this workflow at {4}.[/p]",
-      "signoff-reject": "[p]The request for sign-off of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].[/p] [p]View this workflow at {4}.[/p]"
+      "request-create": "A new request of type [b]{0}[/b]  has been submitted against the Table [b]{1}[/b] Version [b]{2}.{3} [/b]and is awaiting approval.\n View this workflow at {4}.",
+      "response-approve": "A new request of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b] and is awaiting sign-off.\n View this workflow at {4}.",
+      "response-reject": "The request for approval of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
+      "signoff-approve": "The request for sign-off of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
+      "signoff-reject": "The request for sign-off of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}."
     },
     "subject": {
       "request-create": "{0} {1}.{2}: Awaiting Approval",

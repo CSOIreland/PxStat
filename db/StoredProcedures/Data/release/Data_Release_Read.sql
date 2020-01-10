@@ -7,8 +7,8 @@ GO
 -- =============================================
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
--- Description:	Reads record(s) from the TD_Release & dependant tables
--- exec Data_Release_Read 'okeeffene',7
+-- Description:	Reads record(s) from the TD_Release & dependent tables
+-- exec Data_Release_Read 'okeeffene',35
 -- =============================================
 CREATE
 	OR
@@ -79,6 +79,7 @@ BEGIN
 	LEFT JOIN TD_WORKFLOW_REQUEST 
 	ON RLS_ID=WRQ_RLS_ID 
 	AND WRQ_DELETE_FLAG=0
+	AND WRQ_CURRENT_FLAG=1
 	LEFT JOIN TS_REQUEST 
 	ON WRQ_RQS_ID =RQS_ID 
 	LEFT JOIN TD_WORKFLOW_RESPONSE 
@@ -98,6 +99,7 @@ BEGIN
 			@RlsID IS NULL
 			OR @RlsID = RLS_ID
 			)
+
 	GROUP BY MTR_CODE
 		,RLS_CODE
 		,RLS_VERSION

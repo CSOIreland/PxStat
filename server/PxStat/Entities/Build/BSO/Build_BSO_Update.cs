@@ -79,7 +79,7 @@ namespace PxStat.Build
 
 
             //Get this matrix from the px file 
-            theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado); //new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
+            theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado);
 
 
 

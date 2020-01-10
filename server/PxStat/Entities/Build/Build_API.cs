@@ -51,28 +51,41 @@ namespace PxStat.Build
             return new Build_BSO_Read(jsonrpcRequest).Read().Response;
         }
 
+        /// <summary>
+        /// Validate the px and other data
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
         public static dynamic Validate(JSONRPC_API jsonrpcRequest)
         {
             return new Build_BSO_Validate(jsonrpcRequest).Read().Response;
         }
 
-
-        public static dynamic BuildRead(JSONRPC_API jsonrpcRequest)
-        {
-            return new Build_BSO_BuildRead(jsonrpcRequest).Read().Response;
-        }
-
+        /// <summary>
+        /// Get a csv template including only current periods of the px file
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
         public static dynamic ReadDatasetByExistingPeriods(JSONRPC_API jsonrpcRequest)
         {
             return new Build_BSO_ReadDatasetByExistingPeriods(jsonrpcRequest).Read().Response;
         }
 
+        /// <summary>
+        /// Get a csv template with the current periods (showing data) and the new periods with blank data
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
         public static dynamic ReadDatasetByAllPeriods(JSONRPC_API jsonrpcRequest)
         {
             return new Build_BSO_ReadDatasetByAllPeriods(jsonrpcRequest).Read().Response;
         }
 
-
+        /// <summary>
+        /// Get a csv template with only the new periods, showing blank data
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
         public static dynamic ReadDatasetByNewPeriods(JSONRPC_API jsonrpcRequest)
         {
             return new Build_BSO_ReadDatasetByNewPeriods(jsonrpcRequest).Read().Response;

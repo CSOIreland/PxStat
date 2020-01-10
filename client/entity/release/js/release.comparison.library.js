@@ -149,7 +149,7 @@ app.release.comparison.callback.readPreviousMatrix = function (response) {
         app.release.comparison.previousMatrixData = response.data;
         app.release.comparison.callback.styleDifferences();
         $("#release-comparison-report [name=mtr-title-previous]").empty().html(app.release.comparison.previousMatrixData.MtrTitle);
-        $("#release-comparison-report [name=dtg-create-datetime-previous]").empty().html(moment(app.release.comparison.previousMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display));
+        $("#release-comparison-report [name=dtg-create-datetime-previous]").empty().html(app.release.comparison.previousMatrixData.DtgCreateDatetime ? moment(app.release.comparison.previousMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
         $("#release-comparison-report [name=ccn-username-previous]").empty().html(app.library.html.link.user(app.release.comparison.previousMatrixData.CcnUsernameCreate));
         $("#release-comparison-report [name=frq-value-previous]").empty().html(app.release.comparison.previousMatrixData.FrqValue);
         $("#release-comparison-report [name=cpr-value-previous]").empty().html(app.release.comparison.previousMatrixData.CprValue);
@@ -242,7 +242,7 @@ app.release.comparison.callback.readCurrentMatrix = function (response) {
         app.release.comparison.currentMatrixData = response.data;
         app.release.comparison.callback.styleDifferences();
         $("#release-comparison-report [name=mtr-title-current]").empty().html(app.release.comparison.currentMatrixData.MtrTitle);
-        $("#release-comparison-report [name=dtg-create-datetime-current]").empty().html(moment(app.release.comparison.currentMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display));
+        $("#release-comparison-report [name=dtg-create-datetime-current]").empty().html(app.release.comparison.currentMatrixData.DtgCreateDatetime ? moment(app.release.comparison.currentMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
         $("#release-comparison-report [name=ccn-username-current]").empty().html(app.library.html.link.user(app.release.comparison.currentMatrixData.CcnUsernameCreate));
         $("#release-comparison-report [name=frq-value-current]").empty().html(app.release.comparison.currentMatrixData.FrqValue);
         $("#release-comparison-report [name=cpr-value-current]").empty().html(app.release.comparison.currentMatrixData.CprValue);

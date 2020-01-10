@@ -8,10 +8,10 @@ BEGIN
 	IF EXISTS (
 			SELECT *
 			FROM sys.objects
-			WHERE object_id = OBJECT_ID(N'System_Navigation_Search')
+			WHERE object_id = OBJECT_ID(N'Data_Classification_Search')
 			)
 	BEGIN
-		DROP PROCEDURE System_Navigation_Search
+		DROP PROCEDURE Data_Classification_Search
 	END
 	
 	IF EXISTS (

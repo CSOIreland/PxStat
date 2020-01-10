@@ -196,7 +196,7 @@ app.release.comment.callback.update = function (response) {
 * 
 */
 app.release.comment.delete = function () {
-    api.modal.confirm(app.label.static["confirm-delete"], app.release.comment.ajax.delete);
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [""]), app.release.comment.ajax.delete);
 };
 
 /**

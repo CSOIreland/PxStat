@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
 -- Description:	Returns the previous release for comparison given one release code
--- exec Data_Stat_Release_ReadPrevious 194
+-- exec Data_Release_ReadPrevious 66
 -- =============================================
 CREATE
 	OR
@@ -19,7 +19,6 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @MtrCode NVARCHAR(20)
-	DECLARE @PreviousRlsCode INT = NULL
 
 	SELECT @MtrCode = MTR_CODE
 	FROM TD_RELEASE
@@ -30,7 +29,8 @@ BEGIN
 	WHERE RLS_CODE = @RlsCode
 	GROUP BY MTR_CODE
 
-	SELECT TOP 1 @PreviousRlsCode = RLS_CODE
+	SELECT TOP 1 RLS_CODE as RlsCode
+
 	FROM TD_RELEASE
 	INNER JOIN TD_MATRIX
 		ON MTR_RLS_ID = RLS_ID
@@ -43,14 +43,6 @@ BEGIN
 		,RLS_VERSION DESC
 		,RLS_REVISION DESC
 
-	IF (@PreviousRlsCode IS NULL)
-	BEGIN
-		SELECT 0 AS PreviousRlsCode
-	END
-	ELSE
-	BEGIN
-		SELECT @PreviousRlsCode AS PreviousRlsCode
-	END
 END
 GO
 

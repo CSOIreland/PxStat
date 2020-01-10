@@ -398,6 +398,7 @@ app.build.create.initiate.setUpDimensions = function () {
                     }
                 };
 
+
                 //Don't use tinymce set content as 'once' change event within app.library.utility.initTinyMce won't trigger
                 $("#build-create-dimension-accordion-collapse-properties-" + item.value).find("[name=note-value]").val(importedSource.note.join(" "));
             }
@@ -408,7 +409,7 @@ app.build.create.initiate.setUpDimensions = function () {
     });
 
     //Initialize TinyMce after tabs re drawn.
-    app.library.utility.initTinyMce();
+    app.library.utility.initTinyMce(true);
 
     $('html, body').animate({ scrollTop: $('#build-create-dimensions').offset().top }, 1000);
 };

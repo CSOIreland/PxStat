@@ -131,6 +131,7 @@ BEGIN
 		,CprCode
 		,CprValue
 		,ClsCode
+		,ClsId 
 		,ClsValue
 		,ClsGeoFlag
 		,ClsGeoUrl
@@ -160,6 +161,7 @@ BEGIN
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
+			,CLS_ID AS ClsId
 			,CLS_VALUE AS ClsValue
 			,CLS_GEO_FLAG AS ClsGeoFlag
 			,CLS_GEO_URL AS ClsGeoUrl
@@ -246,6 +248,7 @@ BEGIN
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
+			,CLS_ID As ClsId
 			,CLS_VALUE AS ClsValue
 			,CLS_GEO_FLAG AS ClsGeoFlag
 			,CLS_GEO_URL AS ClsGeoUrl
@@ -337,6 +340,7 @@ BEGIN
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
+			,CLS_ID AS ClsId
 			,CLS_VALUE AS ClsValue
 			,CLS_GEO_FLAG AS ClsGeoFlag
 			,CLS_GEO_URL AS ClsGeoUrl
@@ -427,6 +431,7 @@ BEGIN
 		,CprCode
 		,CprValue
 		,ClsCode
+		,ClsId
 		,ClsValue
 		,ClsGeoFlag
 		,ClsGeoUrl
@@ -454,6 +459,7 @@ BEGIN
 		,CPR_CODE AS CprCode
 		,CPR_VALUE AS CprValue
 		,CLS_CODE AS ClsCode
+		,CLS_ID AS ClsId
 		,CLS_VALUE AS ClsValue
 		,CLS_GEO_FLAG AS ClsGeoFlag
 		,CLS_GEO_URL AS ClsGeoUrl
@@ -581,6 +587,7 @@ BEGIN
 				,CprCode
 				,CprValue
 				,ClsCode
+				,ClsId 
 				,ClsValue
 				,ClsGeoFlag
 				,ClsGeoUrl
@@ -607,6 +614,7 @@ BEGIN
 				,RlsAnalyticalFlag
 				,RlsDependencyFlag
 				,CprCode
+				,ClsId 
 				,CprValue
 				,ClsCode
 				,ClsValue

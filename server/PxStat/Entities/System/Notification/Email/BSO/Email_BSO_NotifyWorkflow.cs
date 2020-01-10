@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using API;
+﻿using API;
 using PxStat.Data;
 using PxStat.Resources;
 using PxStat.Security;
 using PxStat.Workflow;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 
 namespace PxStat.System.Notification
 {
@@ -228,7 +228,7 @@ namespace PxStat.System.Notification
         /// <returns></returns>
         private string getReleaseUrl(Release_DTO dto)
         {
-            return "[url=" + ConfigurationManager.AppSettings["APP_URL"] + "/" + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + dto.RlsVersion.ToString() + "." + dto.RlsVersion.ToString() + "[/url]";
+            return "[url=" + ConfigurationManager.AppSettings["APP_URL"] + "/" + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + " " + dto.RlsVersion.ToString() + "." + dto.RlsRevision.ToString() + "[/url]";
         }
 
     }

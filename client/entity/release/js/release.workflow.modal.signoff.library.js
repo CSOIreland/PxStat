@@ -54,16 +54,16 @@ app.release.workflow.modal.signoff.callback.read = function (response) {
                 $("#request-workflow-modal-signoff-publish [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-publish [name=wrq-emergency-flag]").html(app.library.html.boolean(response.data.WrqEmergencyFlag, true, true));
-                $("#request-workflow-modal-signoff-publish [name=wrq-datetime]").html(moment(response.data.WrqDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-publish [name=wrq-datetime]").html(response.data.WrqDatetime ? moment(response.data.WrqDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-publish [name=wrq-reservation-flag]").html(app.library.html.boolean(response.data.WrqReservationFlag, true, true));
                 $("#request-workflow-modal-signoff-publish [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
 
                 $("#request-workflow-modal-signoff-publish [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-signoff-publish [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-publish [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-publish [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
 
                 $("#request-workflow-modal-signoff-publish [name=rsp-create-username]").html(app.library.html.link.user(response.data.RspCcnCreateUsername));
-                $("#request-workflow-modal-signoff-publish [name=rsp-dtg-create-datetime]").html(moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-publish [name=rsp-dtg-create-datetime]").html(response.data.RspDtgCreateDatetime ? moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-publish [name=rsp-cmm-value]").html(app.library.html.parseBbCode(response.data.RspCmmValue));
                 break;
             case C_APP_TS_REQUEST_PROPERTY:
@@ -73,33 +73,33 @@ app.release.workflow.modal.signoff.callback.read = function (response) {
                 $("#request-workflow-modal-signoff-flag [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
 
                 $("#request-workflow-modal-signoff-flag [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-signoff-flag [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-flag [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-flag [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
 
                 $("#request-workflow-modal-signoff-flag [name=rsp-create-username]").html(app.library.html.link.user(response.data.RspCcnCreateUsername));
-                $("#request-workflow-modal-signoff-flag [name=rsp-dtg-create-datetime]").html(moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-flag [name=rsp-dtg-create-datetime]").html(response.data.RspDtgCreateDatetime ? moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-flag [name=rsp-cmm-value]").html(app.library.html.parseBbCode(response.data.RspCmmValue));
                 break;
             case C_APP_TS_REQUEST_DELETE:
                 $("#request-workflow-modal-signoff-delete [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-delete [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-signoff-delete [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-delete [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-delete [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
 
                 $("#request-workflow-modal-signoff-delete [name=rsp-create-username]").html(app.library.html.link.user(response.data.RspCcnCreateUsername));
-                $("#request-workflow-modal-signoff-delete [name=rsp-dtg-create-datetime]").html(moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-delete [name=rsp-dtg-create-datetime]").html(response.data.RspDtgCreateDatetime ? moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-delete [name=rsp-cmm-value]").html(app.library.html.parseBbCode(response.data.RspCmmValue));
                 break;
             case C_APP_TS_REQUEST_ROLLBACK:
                 $("#request-workflow-modal-signoff-rollback [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-rollback [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-signoff-rollback [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-rollback [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-rollback [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
 
                 $("#request-workflow-modal-signoff-rollback [name=rsp-create-username]").html(app.library.html.link.user(response.data.RspCcnCreateUsername));
-                $("#request-workflow-modal-signoff-rollback [name=rsp-dtg-create-datetime]").html(moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-signoff-rollback [name=rsp-dtg-create-datetime]").html(response.data.RspDtgCreateDatetime ? moment(response.data.RspDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-rollback [name=rsp-cmm-value]").html(app.library.html.parseBbCode(response.data.RspCmmValue));
                 break;
         }

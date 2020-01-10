@@ -70,10 +70,10 @@
                                     <span label="add-row"></span>
                                 </button>
 
-                                <div class="card mt-2 border-danger" name="manual-si-errors-card" style="display: none">
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                                     <div class="card-header bg-danger text-light" label="errors"></div>
                                     <div class="card-body">
-                                        <ul name="manual-si-errors" class="list-group mt-2">
+                                        <ul name="errors" class="list-group mt-2">
                                         </ul>
                                     </div>
                                 </div>
@@ -115,10 +115,10 @@
                                 <div class="border row mx-0">
                                     <span class="serverValidationError text-danger" name="upload-error-holder"></span>
                                 </div>
-                                <div class="card mt-2 border-danger" name="upload-si-errors-card" style="display: none">
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                                     <div class="card-header bg-danger text-light" label="errors"></div>
                                     <div class="card-body">
-                                        <ul name="upload-si-errors" class="list-group mt-2">
+                                        <ul name="errors" class="list-group mt-2">
                                         </ul>
                                     </div>
                                 </div>
@@ -132,6 +132,7 @@
                                         </a>
                                     </div>
                                     <div class="col-xs-12 col-sm-8 text-right my-2">
+                                        <button name="upload-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
                                         <button name="upload-submit-statistics" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
                                             <span label="add-statistics"></span>
                                         </button>
@@ -222,10 +223,10 @@
                                         </div>
                                     </div>
 
-                                    <div class="card mt-2 border-danger" name="manual-classification-errors-card" style="display: none">
+                                    <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                                         <div class="card-header bg-danger text-light" label="errors"></div>
                                         <div class="card-body">
-                                            <ul name="manual-classification-errors" class="list-group mt-2">
+                                            <ul name="errors" class="list-group mt-2">
                                             </ul>
                                         </div>
                                     </div>
@@ -295,6 +296,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="card-footer text-right">
+                                            <button name="upload-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
+                                        </div>
                                     </div>
                                     <div class="border row mx-0">
                                         <span class="serverValidationError text-danger" name="upload-error-holder"></span>
@@ -317,10 +321,10 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="card mt-2 border-danger" name="upload-classification-errors-card" style="display: none">
+                        <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                             <div class="card-header bg-danger text-light" label="errors"></div>
                             <div class="card-body">
-                                <ul name="upload-classification-errors" class="list-group mt-2">
+                                <ul name="errors" class="list-group mt-2">
                                 </ul>
                             </div>
                         </div>
@@ -485,10 +489,10 @@
                                 <button type="button" name="add-period-row" class="btn btn-secondary text-light"><i class="fas fa-plus-circle"></i>
                                     <span label="add-row"></span>
                                 </button>
-                                <div class="card mt-2 border-danger" name="manual-periods-errors-card" style="display: none">
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                                     <div class="card-header bg-danger text-light" label="errors"></div>
                                     <div class="card-body">
-                                        <ul name="manual-periods-errors" class="list-group mt-2">
+                                        <ul name="errors" class="list-group mt-2">
                                         </ul>
                                     </div>
                                 </div>
@@ -526,10 +530,10 @@
                                 <div class="border row mx-0">
                                     <span class="serverValidationError text-danger" name="upload-error-holder"></span>
                                 </div>
-                                <div class="card mt-2 border-danger" name="upload-periods-errors-card" style="display: none">
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
                                     <div class="card-header bg-danger text-light" label="errors"></div>
                                     <div class="card-body">
-                                        <ul name="upload-periods-errors" class="list-group mt-2">
+                                        <ul name="errors" class="list-group mt-2">
                                         </ul>
                                     </div>
                                 </div>
@@ -542,6 +546,7 @@
                                         </a>
                                     </div>
                                     <div class="col-xs-12 col-sm-8 text-right my-2">
+                                        <button name="upload-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
                                         <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
                                             <span label="add-periods"></span>
                                         </button>

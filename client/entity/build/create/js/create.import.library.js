@@ -15,11 +15,11 @@ app.build.create.import.validate.callback = {};
 /**
  *
  */
-app.build.create.import.reset = function () {
+app.build.create.import.cancel = function () {
     //clean up modal
     $("#build-create-import").find("[name=frequency-codes]").hide();
     $("#build-create-import").find("[name=frequency-warning]").hide();
-    $("#build-create-import").find("[name=build-create-import-file]").val("");
+
     $("#build-create-import").find("[name=upload-file-name]").empty().hide();
     $("#build-create-import").find("[name=upload-file-tip]").show();
     $("#build-create-import").find("[name=upload-error-card]").hide();
@@ -34,6 +34,11 @@ app.build.create.import.reset = function () {
     app.build.create.file.import.content.UTF8 = null;
     app.build.create.file.import.content.Base64 = null;
 };
+
+app.build.create.import.reset = function () {
+    $("#build-create-import").find("[name=build-create-import-file]").val("");
+    app.build.create.import.cancel();
+}
 
 /**
  *

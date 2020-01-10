@@ -201,8 +201,9 @@
     <Content Include="Resources\Internationalisation\keyword\keyword_en.json" />
     <Content Include="Resources\Internationalisation\keyword\keyword_ga.json" />
     <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
+    <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\Live.pubxml" />
-    <None Include="Properties\PublishProfiles\TEST.pubxml" />
+    <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
     <None Include="Resources\Internationalisation\keyword\dictionary_en.json" />
     <None Include="Resources\Internationalisation\keyword\dictionary_ga.json" />
@@ -229,7 +230,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Build\BSO\Build_BSO.cs" />
-    <Compile Include="Entities\Build\BSO\Build_BSO_BuildRead.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Create.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Read.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_ReadDatasetByAllPeriods.cs" />
@@ -258,6 +258,7 @@
     <Compile Include="Entities\Data\Compare\Compare_DTO.cs" />
     <Compile Include="Entities\Data\Compare\Compare_VLD.cs" />
     <Compile Include="Entities\Data\Compare\Compare_ADO.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadCollection.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreMetadata.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreDataset.cs" />
@@ -335,6 +336,7 @@
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ReadSynonym.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ResourceFactory.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_API.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workdflow_BSO_ReadPendingLive.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadLive.cs" />
     <Compile Include="Resources\Internationalisation\keyword\keyword_en.cs" />
     <Compile Include="Resources\Internationalisation\keyword\keyword_ga.cs" />

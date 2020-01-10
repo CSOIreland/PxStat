@@ -222,6 +222,8 @@ app.analytic.drawCallback = function () {
         app.analytic.ajax.readLanguage($(this).attr("idn"), "#analytic-chart-modal [name=language-pie-chart]");
         app.analytic.ajax.readFormat(null, "#analytic-chart-modal [name=format-pie-chart]");
         $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("idn") + " : " + $(this).attr("data-original-title"));
+        $("#matrix-chart-modal").find("[name=date-range]").html(app.analytic.dateFrom.format(app.config.mask.date.display)
+            + "    " + " - " + app.analytic.dateTo.format(app.config.mask.date.display));
         $("#matrix-chart-modal").modal("show");
     });
 }
@@ -260,7 +262,7 @@ app.analytic.callback.readAnalytics = function (response) {
                     {
                         data: null,
                         render: function (data, type, row) {
-                            return moment(row.PublishDate).format(app.config.mask.datetime.display);
+                            return row.PublishDate ? moment(row.PublishDate).format(app.config.mask.datetime.display) : "";
                         }
                     },
                     { data: "NltBot" },

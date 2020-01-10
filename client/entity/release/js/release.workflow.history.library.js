@@ -51,6 +51,9 @@ app.release.workflow.history.drawCallback = function () {
     $('[data-toggle="tooltip"]').tooltip();
     $("td.details-request-control i.fa.plus-control").css({ "color": "forestgreen" });
     app.library.datatable.showExtraInfo('#release-workflow-history table', app.release.workflow.history.render.extraInfo, app.release.workflow.history.render.extraInfoPost);
+
+    //Delete Request button click event. Passing function reference.
+    $("#release-workflow-history table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.release.workflow.history.delete);
     // Bootstrap tooltip
     $('[data-toggle="tooltip"]').tooltip();
 }
@@ -164,6 +167,15 @@ app.release.workflow.history.callback.drawDataTable = function (data) {
                 {
                     data: "WsgCmmValue",
                     visible: false
+                },
+                {
+                    data: null,
+                    sorting: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return app.library.html.deleteButton({ idn: row.RlsCode }, row.RspCode ? true : false);
+                    },
+                    "width": "1%"
                 }
             ],
             drawCallback: function (settings) {
@@ -261,13 +273,13 @@ app.release.workflow.history.render.extraInfo = function (row) {
     grid.find("[name=wrq-archive-flag]").empty().html(app.library.html.boolean(row.WrqArchiveFlag, true, true));
     grid.find("[name=wrq-cmm-value]").empty().html(app.library.html.parseBbCode(row.WrqCmmValue));
     grid.find("[name=wrq-dtg-create-datetime]").empty().html(row.WrqDtgCreateDatetime ? moment(row.WrqDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-    grid.find("[name=wrq-dtg-create-ccn-username]").empty().html(app.library.html.link.user(row.WrqDtgCreateCcnUsername));
+    grid.find("[name=wrq-create-username]").empty().html(app.library.html.link.user(row.WrqDtgCreateCcnUsername));
 
     // Response
     grid.find("[name=rsp-value]").empty().html(app.release.workflow.history.render.reply(row.RspCode, row.RspValue));
     grid.find("[name=wrs-cmm-value]").empty().html(app.library.html.parseBbCode(row.WrsCmmValue));
-    grid.find("[name=wrs-dtg-create-datetime]").empty().html(row.WrsDtgCreateDatetime ? moment(row.WrsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-    grid.find("[name=wrs-dtg-create-ccn-username]").empty().html(app.library.html.link.user(row.WrsDtgCreateCcnUsername));
+    grid.find("[name=wrs-create-datetime]").empty().html(row.WrsDtgCreateDatetime ? moment(row.WrsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+    grid.find("[name=wrs-create-username]").empty().html(app.library.html.link.user(row.WrsDtgCreateCcnUsername));
 
     // Signoff
     grid.find("[name=sgn-value]").empty().html(app.release.workflow.history.render.reply(row.SgnCode, row.SgnValue));
@@ -331,5 +343,59 @@ app.release.workflow.history.render.extraInfoPost = function (row) {
 
     //remove ID attribute used for the postCallbackFunction
     $("#extraInfoPost").removeAttr('id');
+};
+
+/**
+ * Delete User 
+ */
+app.release.workflow.history.delete = function () {
+    var idn = $(this).attr("idn");
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [""]), app.release.workflow.history.ajax.delete, idn);
+};
+
+/**
+ * AJAX call to Delete a specific entry 
+ * On AJAX success delete (Do reload table)
+ * @param {*} idn
+ */
+app.release.workflow.history.ajax.delete = function (idn) {
+    // Call the API by passing the idn to delete User from DB
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Workflow.WorkflowRequest_API.Delete",
+        { RlsCode: idn },
+        "app.release.workflow.history.callback.delete",
+        null,
+        null,
+        null,
+        { async: false }
+    );
+};
+
+/**
+* Callback from server for Delete request
+* @param {*} response
+*/
+app.release.workflow.history.callback.delete = function (response) {
+    //Redraw Data Table Workflow History with fresh data.
+    app.release.workflow.history.read();
+
+    if (response.error) {
+        api.modal.error(response.error.message);
+    } else if (response.data == C_APP_API_SUCCESS) {
+        var goToParams = {
+            "RlsCode": app.release.RlsCode,
+            "MtrCode": app.release.MtrCode
+        };
+        // Display Success Modal
+        api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [""]));
+        $("#modal-success").one('hidden.bs.modal', function (e) {
+            // Force page reload
+            api.content.goTo("entity/release/", "#nav-link-release", "#nav-link-release", goToParams);
+        });
+    }
+    // Handle Exception
+    else
+        api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 //#endregion

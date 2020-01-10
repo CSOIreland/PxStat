@@ -19,6 +19,10 @@ app.dashboard.awaitingSignoff = {};
 app.dashboard.awaitingSignoff.ajax = {};
 app.dashboard.awaitingSignoff.callback = {};
 
+app.dashboard.pendinglive = {};
+app.dashboard.pendinglive.ajax = {};
+app.dashboard.pendinglive.callback = {};
+
 app.dashboard.liveReleases = {};
 app.dashboard.liveReleases.ajax = {};
 app.dashboard.liveReleases.callback = {};
@@ -178,7 +182,7 @@ app.dashboard.workInProgress.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+                        return row.DhtDatetime ? moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
 
                     }
                 }
@@ -306,7 +310,7 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+                        return row.WrqDatetime ? moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
                     }
                 },
                 {
@@ -325,7 +329,7 @@ app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+                        return row.DhtDatetime ? moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
                     }
                 }
 
@@ -453,11 +457,9 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        if (row.WrqDatetime == null) {
-                            return ""
-                        } else {
-                            return moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
-                        }
+                        return row.WrqDatetime ? moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
+
+
                     }
                 },
                 {
@@ -476,7 +478,7 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+                        return row.DhtDatetime ? moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
                     }
                 }
 
@@ -490,6 +492,150 @@ app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
         };
         $("#dashboard-panel-awaitingsignoff table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.dashboard.drawCallbackAwaitingSignOff();
+        });
+    }
+};
+//#endregion
+
+//#region Read Pending Live
+
+/**
+*Call Ajax for read
+*/
+app.dashboard.pendinglive.ajax.read = function () {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Workflow.Workflow_API.ReadPendingLive",
+        {
+            LngIsoCode: app.label.language.iso.code
+        },
+        "app.dashboard.pendinglive.callback.read");
+};
+
+
+
+/**
+ * Callback for read
+ * @param {*} response
+ */
+app.dashboard.pendinglive.callback.read = function (response) {
+    if (response.error) {
+        app.dashboard.pendinglive.callback.drawDataTable();
+        api.modal.error(response.error.message);
+    } else if (response.data !== undefined) {
+        app.dashboard.pendinglive.callback.drawDataTable(response.data);
+    }
+    // Handle Exception
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+/**
+ * Draw Callback for Datatable
+ */
+app.dashboard.drawCallbackPendingLive = function () {
+    $('[data-toggle="tooltip"]').tooltip();
+
+    //Edit link click
+    $("#dashboard-panel-pendinglive table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+        e.preventDefault();
+        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
+        $('.tooltip').remove();
+        api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
+    });
+    //view group info
+    $("#dashboard-panel-pendinglive table").find("[name=group]").once("click", function (e) {
+        e.preventDefault();
+        app.library.group.modal.read($(this).attr("idn"));
+    });
+
+    //view user info
+    $("#dashboard-panel-pendinglive table").find("[name=approved-by]").once("click", function (e) {
+        e.preventDefault();
+        app.library.user.modal.read({ CcnUsername: $(this).attr("idn") });
+    });
+}
+
+/**
+ * Populate Data Table data
+ * @param {*} data
+ */
+app.dashboard.pendinglive.callback.drawDataTable = function (data) {
+
+    if ($.fn.dataTable.isDataTable("#dashboard-panel-pendinglive table")) {
+        app.library.datatable.reDraw("#dashboard-panel-pendinglive table", data);
+    } else {
+
+        var localOptions = {
+            data: data,
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
+                        return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        var linkGroup = $("<a>", {
+                            idn: data.GrpCode,
+                            name: "group",
+                            href: "#",
+                            html: data.GrpCode
+                        }).get(0).outerHTML;
+
+                        return linkGroup;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.label.datamodel.request[row.RqsValue]
+                    }
+                },
+                {
+                    data: null,
+                    type: "html",
+                    render: function (data, type, row) {
+                        return app.library.html.boolean(row.RlsEmergencyFlag, true, true);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.WrqDatetime ? moment(row.WrqDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        var userLink = $("<a>", {
+                            idn: data.CcnUsername,
+                            name: "approved-by",
+                            "href": "#",
+                            "html": data.CcnUsername
+                        }).get(0).outerHTML;
+
+                        return userLink;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.DhtDatetime ? moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
+                    }
+                }
+
+            ],
+            order: [4, 'asc'],
+            drawCallback: function (settings) {
+                app.dashboard.drawCallbackPendingLive();
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        $("#dashboard-panel-pendinglive table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.dashboard.drawCallbackPendingLive();
         });
     }
 };
@@ -553,7 +699,11 @@ app.dashboard.drawCallbackliveReleases = function () {
         app.analytic.ajax.readTimeLine($(this).attr("mtr-code"), "#analytic-chart-modal [name=dates-line-chart]");
         app.analytic.ajax.readLanguage($(this).attr("mtr-code"), "#analytic-chart-modal [name=language-pie-chart]");
         app.analytic.ajax.readFormat($(this).attr("mtr-code"), "#analytic-chart-modal [name=format-pie-chart]");
-        $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("mtr-code") + " : " + $(this).attr("mtr-title"));
+        $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("mtr-code") + " : " + $(this).attr("mtr-title"));// + "          "
+        //  + app.label.static["from"] + " : " + app.analytic.dateFrom.format(app.config.mask.date.display)
+        //  + "    " + app.label.static["to"] + " : " + app.analytic.dateTo.format(app.config.mask.date.display));
+        $("#matrix-chart-modal").find("[name=date-range]").html(app.analytic.dateFrom.format(app.config.mask.date.display)
+            + "    " + " - " + app.analytic.dateTo.format(app.config.mask.date.display));
         $("#matrix-chart-modal").modal("show");
 
     });
@@ -593,7 +743,7 @@ app.dashboard.liveReleases.callback.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.RlsLiveDatimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+                        return row.RlsLiveDatimeFrom ? moment(row.RlsLiveDatimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
                     }
 
                 },

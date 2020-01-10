@@ -73,8 +73,8 @@ app.data.dataview.callback.mapMetadata = function (response) {
                     $.each(data.Dimension(i).id, function (index, value) {
                         var option = $('<option>', {
                             value: value,
-                            text: data.Dimension(i).Category(index).label,
-                            title: data.Dimension(i).Category(index).label
+                            text: data.Dimension(i).Category(index).label + (data.Dimension(i).Category(index).unit ? " (" + data.Dimension(i).Category(index).unit.label + ")" : ""),
+                            title: data.Dimension(i).Category(index).label + (data.Dimension(i).Category(index).unit ? " (" + data.Dimension(i).Category(index).unit.label + ")" : ""),
                         });
                         dimensionContainer.find("select").append(option);
                     });

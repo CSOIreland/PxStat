@@ -33,6 +33,11 @@ namespace PxStat.Workflow
             return new Workflow_BSO_ReadLive(requestApi).Read().Response;
         }
 
+        public static dynamic ReadPendingLive(JSONRPC_API requestApi)
+        {
+            return new Workdflow_BSO_ReadPendingLive(requestApi).Read().Response;
+        }
+
         /// <summary>
         /// Entry point to the API method - Gets a list of all Workflows waiting signoff
         /// </summary>

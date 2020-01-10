@@ -130,10 +130,10 @@ app.tracing.drawDataTable = function (data) {
     new ClipboardJS('.cpy-btn');
     var datePicker = $("#tracing-input").find("[name=input-date-range]").data('daterangepicker');
     var exportFileName = 'tracing'
-        + "_" + moment(datePicker.startDate).format(app.config.mask.datetime.file)
-        + "_" + moment(datePicker.endDate).format(app.config.mask.datetime.file)
-        + "_" + $("#tracing-input").find("[name=select-authentication-type]").val()
-        + "." + moment().format(app.config.mask.datetime.file);
+        + "_" + datePicker.startDate ? moment(datePicker.startDate).format(app.config.mask.datetime.file) : ""
+            + "_" + datePicker.endDate ? moment(datePicker.endDate).format(app.config.mask.datetime.file) : ""
+            + "_" + $("#tracing-input").find("[name=select-authentication-type]").val()
+            + "." + moment().format(app.config.mask.datetime.file);
     if ($.fn.dataTable.isDataTable("#tracing-result table")) {
         app.library.datatable.reDraw("#tracing-result table", data);
     } else {
@@ -160,7 +160,7 @@ app.tracing.drawDataTable = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.TrcDatetime).format(app.config.mask.datetime.display);
+                        return row.TrcDatetime ? moment(row.TrcDatetime).format(app.config.mask.datetime.display) : "";
                     }
                 },
                 {

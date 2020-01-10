@@ -222,7 +222,7 @@ app.alert.callback.create = function (response) {
     if (response.error) {
         api.modal.error(response.error.message);
     } else if (response.data == C_APP_API_SUCCESS) {
-        api.modal.success(app.library.html.parseDynamicLabel("success-added", [""]));
+        api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
@@ -287,9 +287,10 @@ app.alert.modal.update = function (response) {
         maxDate.setFullYear(maxDate.getFullYear() + 5);
         maxDate.setHours(23, 59, 59, 999);
         //set up start and end dates for daterangepicker
+
         var defaultParams = {
-            "StartDate": moment(response.LrtDatetime).format(app.config.mask.datetime.display), //"18/12/2018 00:00:00"
-            "EndDate": moment(response.LrtDatetime).format(app.config.mask.datetime.display),
+            "StartDate": response.LrtDatetime ? moment(response.LrtDatetime).format(app.config.mask.datetime.display) : "", //"18/12/2018 00:00:00"
+            "EndDate": response.LrtDatetime ? moment(response.LrtDatetime).format(app.config.mask.datetime.display) : "",
             "MaxDate": moment(maxDate).format(app.config.mask.datetime.display),
             "Selector": "#alert-modal-update [name=lrt-datetime-update]"
         };
@@ -341,7 +342,7 @@ app.alert.callback.update = function (response) {
     if (response.error) {
         api.modal.error(response.error.message);
     } else if (response.data == C_APP_API_SUCCESS) {
-        api.modal.success(app.library.html.parseDynamicLabel("success-updated", [""]));
+        api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
@@ -391,7 +392,7 @@ app.alert.callback.delete = function (response) {
         api.modal.error(response.error.message);
     } else if (response.data == C_APP_API_SUCCESS) {
         // Display Success Modal
-        api.modal.success(app.library.html.parseDynamicLabel("success-deleted", [""]));
+        api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [""]));
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);

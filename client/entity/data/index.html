@@ -72,7 +72,6 @@
                     <thead>
                         <tr>
                             <th label="table"></th>
-                            <th label="frequency"></th>
                             <th label="title"></th>
                             <th label="language"></th>
                             <th></th>
@@ -132,6 +131,23 @@
 
 <div id="data-search-results-pagination" class="m-3 mb-4 d-flex flex-row-reverse">
     <ul name="pagination" class="mb-4 pagination"></ul>
+</div>
+
+<div id="data-latest-releases-templates" style="display: none;">
+    <div name="title-column">
+        <div class="row">
+            <div class="col" name="title"> </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <span name="classifications"></span> <span name="time" class="badge badge-secondary mr-1 text-light"></span> <span name="time-span" class="badge badge-neutral mr-1"></span>
+            </div>
+        </div>
+    </div>
+
+    <span name="classification" class="badge badge-tertiary mr-1 mt-1"></span>
+
+
 </div>
 <!-- Page specific CSS -->
 <link rel="stylesheet" href="entity/data/css/data.css">

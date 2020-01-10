@@ -58,12 +58,12 @@ app.release.workflow.modal.response.callback.read = function (response) {
                 $("#request-workflow-modal-response-publish [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-response-publish [name=wrq-emergency-flag]").html(app.library.html.boolean(response.data.WrqEmergencyFlag, true, true));
-                $("#request-workflow-modal-response-publish [name=wrq-datetime]").html(moment(response.data.WrqDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-response-publish [name=wrq-datetime]").html(response.data.WrqDatetime ? moment(response.data.WrqDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-response-publish [name=wrq-reservation-flag]").html(app.library.html.boolean(response.data.WrqReservationFlag, true, true));
                 $("#request-workflow-modal-response-publish [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
 
                 $("#request-workflow-modal-response-publish [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-publish [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-response-publish [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-response-publish [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_PROPERTY:
@@ -73,21 +73,21 @@ app.release.workflow.modal.response.callback.read = function (response) {
                 $("#request-workflow-modal-response-flag [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
 
                 $("#request-workflow-modal-response-flag [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-flag [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-response-flag [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-response-flag [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_DELETE:
                 $("#request-workflow-modal-response-delete [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-response-delete [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-delete [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-response-delete [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-response-delete [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_ROLLBACK:
                 $("#request-workflow-modal-response-rollback [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
 
                 $("#request-workflow-modal-response-rollback [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-rollback [name=rqs-dtg-create-datetime]").html(moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display));
+                $("#request-workflow-modal-response-rollback [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-response-rollback [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
                 break;
         }

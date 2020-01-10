@@ -299,7 +299,7 @@ app.build.update.dimension.drawNewPeriod = function (lngIsoCode) {
  * @param {*} params
  */
 app.build.update.dimension.modal.deleteNewPeriod = function (params) {
-    api.modal.confirm(app.library.html.parseDynamicLabel("build-delete-time-period", [params.prdCode]),
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-delete", [params.prdCode]),
         app.build.update.dimension.callback.deleteNewPeriod,
         params
     );

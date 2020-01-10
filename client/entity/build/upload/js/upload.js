@@ -11,7 +11,7 @@ $(document).ready(function () {
   app.build.upload.validation.create();
   app.build.upload.validation.frequency();
   //Bind the cancel button
-  $("#build-upload-container").find("[name=upload-btn-cancel]").once("click", app.build.upload.clear);
+  $("#build-upload-container").find("[name=upload-btn-cancel]").once("click", app.build.upload.reset);
   //Bind the preview button
   $("#build-upload-container").find("[name=upload-btn-preview]").once("click", function () {
     if (app.build.upload.file.size > app.config.upload.threshold.soft) {

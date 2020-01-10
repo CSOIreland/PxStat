@@ -93,7 +93,7 @@ app.data.callback.readLatestReleases = function (response) {
     if (response.error) {
         // Handle the Error in the Response first
         api.modal.error(response.error.message);
-    } else if (response.data !== undefined || (Array.isArray(response.data.link.item) && !response.data.link.item)) {
+    } else if (response.data !== undefined && response.data && response.data.link && Array.isArray(response.data.link.item)) {
         var data = response.data.link.item;
         app.data.callback.drawLatestReleases(data);
     }
@@ -127,11 +127,11 @@ app.data.callback.drawLatestReleases = function (data) {
     if ($.fn.dataTable.isDataTable("#data-latest-releases table")) {
         app.library.datatable.reDraw("#data-latest-releases table", data);
     } else {
-
         var localOptions = {
-            order: [[5, 'desc']],
+            order: [[4, 'desc']],
             data: data,
             "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
+            "pageLength": 25,
             createdRow: function (row, data, dataIndex) {
                 $(row).attr("mtr-code", data.extension.matrix).attr("lng-iso-code", data.extension.language.code);
             },
@@ -151,29 +151,49 @@ app.data.callback.drawLatestReleases = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return $("<a>", {
-                            class: "badge badge-secondary mr-1 text-light",
-                            text: data.extension.frequency.name
-                        }).get(0).outerHTML;
-                    }
-                },
-                {
-                    data: null,
-                    render: function (data, type, row) {
-                        return $("<a>", {
+                        var titleRow = $("#data-latest-releases-templates").find("[name=title-column]").clone();
+                        //get title
+                        titleRow.find("[name=title]").html($("<a>", {
                             name: "link",
                             "mtr-code": data.extension.matrix,
                             "lng-iso-code": data.extension.language.code,
                             text: data.label,
                             href: "#",
-                        }).get(0).outerHTML;
+                        }).get(0).outerHTML);
+
+                        //get time dimension
+                        titleRow.find("[name=time]").text(data.dimension[data.role.time[0]].label);
+
+                        //get classifications and time span
+                        $.each(data.dimension, function (index, dimension) {
+                            //classifications
+                            if (index != data.role.time[0] && index != data.role.metric[0]) {
+                                var classificationPill = $("#data-latest-releases-templates").find("[name=classification]").clone();
+                                classificationPill.text(dimension.label);
+                                titleRow.find("[name=classifications]").append(classificationPill.get(0).outerHTML);
+                            }
+
+                            //time span
+                            if (index == data.role.time[0]) {
+
+                                titleRow.find("[name=time-span]").text(
+                                    function () {
+                                        var firstTimeVal = dimension.category.index[0];
+                                        var lastTimeVal = dimension.category.index[dimension.category.index.length - 1];
+                                        return "[" + dimension.category.label[firstTimeVal] + " - " + dimension.category.label[lastTimeVal] + "]";
+                                    }
+                                );
+                            }
+                        });
+
+                        return titleRow.get(0).outerHTML
                     }
                 },
                 {
                     data: null,
                     render: function (data, type, row) {
                         return $("<span>", {
-                            class: "badge badge-primary p-1",
+                            class: "badge badge-primary",
                             text: data.extension.language.name
                         }).get(0).outerHTML;
                     }
@@ -200,8 +220,7 @@ app.data.callback.drawLatestReleases = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.updated, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
-
+                        return row.updated ? moment(row.updated, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
                     }
                 }
             ],

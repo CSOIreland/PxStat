@@ -52,6 +52,7 @@ BEGIN
 			OR (@GrpCode = grp.GRP_CODE)
 			)
 		AND grp.GRP_DELETE_FLAG = 0
+	ORDER BY GRP_CODE
 END
 GO
 

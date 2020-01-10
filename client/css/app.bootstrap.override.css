@@ -18,6 +18,14 @@ a[disabled] {
   text-decoration: none;
 }
 
+/* Increase font-size and padding for accessibility*/
+
+.badge {
+  font-size: 90%;
+  font-weight: normal;
+  padding: 0.5rem !important;
+}
+
 /* Strech Buttons to fit the -sm size */
 
 @media (max-width: 576px) {

@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "1.0.2 Beta";
+const C_APP_VERSION = "1.1.0 Beta";
 
 // URLs
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
@@ -44,6 +44,7 @@ const C_APP_REGEX_NUMERIC = /[^0-9]/gi;
 const C_APP_REGEX_ALPHANUMERIC = /[^a-z0-9]/gi;
 const C_APP_REGEX_ALPHANUMERIC_DIACRITIC = /[^a-záéíóúÁÉÍÓÚ0-9]/gi;
 const C_APP_REGEX_NOSPACE = /[\s]/gi;
+const C_APP_REGEX_NODOUBLEQUOTE = /[\"]/gi;
 
 // Cookies
 const C_COOKIE_LANGUAGE = "language";

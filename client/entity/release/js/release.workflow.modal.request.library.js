@@ -290,7 +290,15 @@ app.release.workflow.modal.request.checkDatetime = function () {
         "timePicker": isEmergency ? true : false,
         "timePicker24Hour": true,
         "timePickerIncrement": 1,
-        "locale": app.label.plugin.daterangepicker
+        "locale": app.label.plugin.daterangepicker,
+        "isInvalidDate": function (date) {
+            if (isEmergency) {
+                return false;
+            } else {
+                // Filter by Embargo Days
+                return $.inArray(date.toDate().getDay(), app.config.embargo.day) == -1;
+            }
+        }
     }).val(moment(date).format(app.config.mask.datetime.display)).once("change", function () {
         var isEmergency = $("#request-workflow-modal-request-publish [name=wrq-emergency-flag]").prop("checked");
         if (!isEmergency) {

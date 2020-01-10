@@ -982,7 +982,7 @@ app.group.membergroup.callback.create = function (response, callbackParam) {
         $("#group-modal-add-member").find("[name=group-input-add-member-name]").text("");
         $("#group-modal-add-member").find("[name=group-input-add-member-approve-flag]").bootstrapToggle('off');
         //$("#group-modal-add-member").find("[name=group-input-add-member-approve-flag]").prop('checked');
-        api.modal.success(app.library.html.parseDynamicLabel("success-added", [callbackParam.CcnUsername]));
+        api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.CcnUsername]));
     } else {
         $("#group-modal-add-member").modal("hide");
         api.modal.exception(app.label.static["api-ajax-exception"]);

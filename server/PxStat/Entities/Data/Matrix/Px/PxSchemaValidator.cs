@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using API;
 using FluentValidation;
 using PxParser.Resources.Parser;
-using API;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PxStat.Data.Px
 {
@@ -118,7 +118,6 @@ namespace PxStat.Data.Px
             SetRuleLenghtMinMax("MATRIX", 1, 20, errorMessageLenMinMax);
             SetRuleRegEx("MATRIX", regularExpressionAphaNumeric, errorMessageAlphaNumeric);
 
-
             SetRuleLenghtMinMax("SOURCE", 1, 256, errorMessageLenMinMax);
             SetRuleLenghtMinMax("UNITS", 1, 256, errorMessageLenMinMax);  // list only with subkeys or languages
 
@@ -164,6 +163,7 @@ namespace PxStat.Data.Px
             PxElementMustExist("MATRIX");
             PxElementMustExist("UNITS");
             PxElementMustExist("VALUES");
+            PxElementMustExist("SOURCE");
 
             RuleForEach(x => x.Keywords).SetValidator(new KeywordValidator());
         }

@@ -215,17 +215,31 @@ app.build.update.upload.validate.dataFile = function () {
  * @returns
  */
 api.plugin.dragndrop.readFiles = function (files, inputObject) {
+    var uploadId = inputObject.attr("id");
     // Read single file only
     var file = files[0];
     if (!file) {
+
+        //clean up input if no files
+        switch (uploadId) {
+            case "build-update-upload-file-input":
+                app.build.update.upload.reset();
+                return;
+
+            case "build-update-upload-periods-file":
+                app.build.update.cancelUpoadPeriod();
+                return;
+
+            case "build-update-upload-data":
+                app.build.update.callback.cancelData();
+                return;
+        }
         return;
     }
 
-    // info on screen 
-    inputObject.parent().find("[name=file-tip]").hide();
-    inputObject.parent().find("[name=file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+    var fileExt = file.name.match(/\.[0-9a-z]+$/i)[0];
 
-    var uploadId = inputObject.attr("id");
+
 
     switch (uploadId) {
         case "build-update-upload-file-input":
@@ -239,6 +253,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             app.build.update.upload.Signature = null;
             app.build.update.upload.file.content.source.UTF8 = null;
             app.build.update.upload.file.content.source.Base64 = null;
+            app.build.update.callback.resetData();
 
             $("#build-update-upload-file").find("[name=upload-error]").empty();
             $("#build-update-upload-file").find("[name=upload-error-card]").hide();
@@ -252,7 +267,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 
             app.build.update.upload.file.content.source.name = file.name;
             app.build.update.upload.file.content.source.size = file.size;
-            var fileExt = file.name.match(/\.[0-9a-z]+$/i)[0];
+
 
             // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
             if ($.inArray(fileExt.toLowerCase(), C_APP_UPDATEDATASET_FILE_ALLOWED_EXTENSION) == -1) {
@@ -273,6 +288,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB"]));
                 return;
             }
+            // info on screen 
+            inputObject.parent().find("[name=file-tip]").hide();
+            inputObject.parent().find("[name=file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
 
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
@@ -315,7 +334,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             app.build.update.upload.file.content.period.UTF8 = null;
             $("#build-update-upload-periods").find("[name=upload-submit-periods]").prop("disabled", true);
 
-            var fileExt = file.name.match(/\.[0-9a-z]+$/i)[0];
+
 
             // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
             if ($.inArray(fileExt.toLowerCase(), C_APP_UPDATEDATASET_DATA_FILE_ALLOWED_EXTENSION) == -1) {
@@ -336,6 +355,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB"]));
                 return;
             }
+            // info on screen 
+            inputObject.parent().find("[name=file-tip]").hide();
+            inputObject.parent().find("[name=file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
 
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
@@ -359,8 +382,6 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             app.build.update.upload.file.content.data.name = file.name;
             app.build.update.upload.file.content.data.size = file.size;
 
-            var fileExt = file.name.match(/\.[0-9a-z]+$/i)[0];
-
             // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
             if ($.inArray(fileExt.toLowerCase(), C_APP_UPDATEDATASET_DATA_FILE_ALLOWED_EXTENSION) == -1) {
                 // Show Error
@@ -380,6 +401,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB"]));
                 return;
             }
+            // info on screen 
+            inputObject.parent().find("[name=file-tip]").hide();
+            inputObject.parent().find("[name=file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
 
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
@@ -934,14 +959,17 @@ app.build.update.upload.drawProperties = function () {
                     $('#build-update-manual-periods table').find("tbody").find("tr").each(function (index, value) {
                         $(this).find("th").first().text(index + 1);
                     });
-                    $('#build-update-manual-periods').find("[name=manual-si-errors-card]").hide();
-                    $('#build-update-manual-periods').find("[name=manual-si-errors]").empty();
+                    $('#build-update-manual-periods').find("[name=errors-card]").hide();
+                    $('#build-update-manual-periods').find("[name=errors]").empty();
                 });
                 $('#build-update-manual-periods table').editableTableWidget();
+
             });
             $("#build-update-manual-periods").find("[name=add-period-row]").trigger("click");
 
             $("#build-update-new-periods").modal("show");
+
+
         });
     });
 
@@ -967,7 +995,7 @@ app.build.update.upload.drawProperties = function () {
     });
 
     // Initiate all text areas as tinyMCE
-    app.library.utility.initTinyMce();
+    app.library.utility.initTinyMce(true);
 };
 
 /**  

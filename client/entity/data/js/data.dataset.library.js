@@ -110,8 +110,8 @@ app.data.dataset.callback.drawTableSelection = function (data) {
         matrixSelection.find("[name=updated-date-and-time]").addClass("d-none");
     }
     else {
-        matrixSelection.find("[name=updated-date]").text(moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.date.display));
-        matrixSelection.find("[name=updated-time]").text(moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.time.display));
+        matrixSelection.find("[name=updated-date]").text(data.updated ? moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.date.display) : "");
+        matrixSelection.find("[name=updated-time]").text(data.updateDate ? moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.time.display) : "");
     }
     // emergency flag
     if (data.extension.emergency) {
@@ -221,14 +221,12 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     matrixSelection.find("[name=data-total-cells]").text(app.library.utility.formatNumber(app.data.dataset.totalCount));
     $("#data-dataview-selected-table").html(matrixSelection.get(0).outerHTML);
     //select all
-    $("#data-dataview-selected-table").find("input[type='checkbox']").once("change", function () {
+    $("#data-dataview-selected-table").find("input[name=select-all]").once("change", function () {
         var dimension = $(this).attr("idn");
         var select = $("#data-dataview-selected-table").find("select[idn='" + dimension + "']");
-        if ($(this).is(':checked')) {
-            select.find("option:enabled[filtered='true']").prop('selected', true);
-        } else {
-            select.find('option:enabled').prop('selected', false);
-        }
+        //clear filter
+        $("#data-dataview-selected-table").find("input[name=dimension-filter][idn='" + dimension + "']").val("").trigger("search");
+        select.find("option:enabled").prop('selected', $(this).is(':checked'));
         app.data.dataset.callback.countSelection();
         app.data.dataset.callback.buildApiParams();
     });
@@ -257,7 +255,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
 
 
     //filter
-    $("#data-dataview-selected-table").find("[type=search]").once("keyup", function () {
+    $("#data-dataview-selected-table").find("[name=dimension-filter]").once("keyup search", function () {
         var dimension = $(this).attr("idn");
         var selectAll = $("#data-dataview-selected-table").find("input[name=select-all][idn='" + dimension + "']");
         var select = $("#data-dataview-selected-table").find("select[idn='" + dimension + "']");
@@ -359,10 +357,10 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     //show data
     $("#data-dataview-selected-table").find("[name=show-data]").once("click", function () {
         if (app.data.dataset.selectionCount >= app.config.entity.data.threshold.hard) {
-            api.modal.information(app.library.html.parseDynamicLabel("records-exceeds-limit", [app.library.utility.formatNumber(app.data.dataset.selectionCount), app.config.entity.data.threshold.hard]));
+            api.modal.information(app.library.html.parseDynamicLabel("error-read-exceeded", [app.library.utility.formatNumber(app.data.dataset.selectionCount), app.config.entity.data.threshold.hard]));
         }
         else if (app.data.dataset.selectionCount >= app.config.entity.data.threshold.soft) {
-            api.modal.confirm(app.library.html.parseDynamicLabel("confirm", [app.library.utility.formatNumber(app.data.dataset.selectionCount)]), app.data.dataview.ajax.data);
+            api.modal.confirm(app.library.html.parseDynamicLabel("confirm-read", [app.library.utility.formatNumber(app.data.dataset.selectionCount)]), app.data.dataview.ajax.data);
         }
         else {
             //AJAX call get Data Set
@@ -553,7 +551,7 @@ app.data.dataset.callback.countSelection = function () {
 
         //if any option clicked check if select all should be ticked or not
         if (totalOptions == selectedOptions) { // all selected
-            $("#data-dataview-selected-table").find("input[type=checkbox][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', true);
+            $("#data-dataview-selected-table").find("input[name=select-all][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', true);
             count = count * totalOptions;
         }
         else if (selectedOptions == 0) {
@@ -561,7 +559,7 @@ app.data.dataset.callback.countSelection = function () {
         }
         else {
             count = count * $(this).find('option:selected').length;
-            $("#data-dataview-selected-table").find("input[type=checkbox][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', false);
+            $("#data-dataview-selected-table").find("input[name=select-all][idn='" + dimension.replace("'", "\\'") + "']").prop('checked', false);
         }
     });
     app.data.dataset.selectionCount = count;

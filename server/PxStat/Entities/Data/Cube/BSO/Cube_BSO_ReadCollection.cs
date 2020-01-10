@@ -54,8 +54,20 @@ namespace PxStat.Data
                 return true;
             }
 
-            return ExecuteReadCollection(Ado, DTO, Response);
+            //return ExecuteReadCollection(Ado, DTO, Response);
+
+            Cube_BSO cBso = new Cube_BSO();
+
+
+            Response.data = cBso.ExecuteReadCollectionMetadata(Ado, DTO.language, DTO.datefrom);
+
+
+
+            return true;
         }
+
+
+
 
         /// <summary>
         /// 
@@ -86,7 +98,7 @@ namespace PxStat.Data
 
             DateTime minDateItem = default(DateTime);
 
-            var minimum = dbData.Where(x => x.RlsLiveDatatimeFrom > DateTime.Now).Min(x => x.RlsLiveDatatimeFrom);
+            var minimum = dbData.Where(x => x.RlsLiveDatetimeFrom > DateTime.Now).Min(x => x.RlsLiveDatetimeFrom);
 
             if (minimum != null)
             {
@@ -134,7 +146,7 @@ namespace PxStat.Data
                     Href = new Uri(string.Format("{0}/{1}/{2}", ConfigurationManager.AppSettings["APP_URL"], Utility.GetCustomConfig("APP_COOKIELINK_TABLE"), element.MtrCode)),
                     Class = ItemClass.Dataset,
                     Label = element.MtrTitle,
-                    Updated = DataAdaptor.ConvertToString(element.RlsLiveDatatimeFrom),
+                    Updated = DataAdaptor.ConvertToString(element.RlsLiveDatetimeFrom),
 
                     Extension = new Dictionary<string, object>()
                 };

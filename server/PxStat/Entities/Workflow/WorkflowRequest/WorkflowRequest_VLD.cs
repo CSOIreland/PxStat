@@ -1,6 +1,9 @@
-﻿using FluentValidation;
+﻿using API;
+using FluentValidation;
 using PxStat.Resources;
 using System;
+using System.Globalization;
+using System.Linq;
 
 namespace PxStat.Workflow
 {
@@ -14,11 +17,18 @@ namespace PxStat.Workflow
         {
             //Mandatory - RqsCode - Mandatory for all RqsCodes
             RuleFor(f => f.RqsCode).Length(1, 32).WithMessage("Invalid Request Code").WithName("RequestCodeValidation");
-            //Mandatory - CmmValue - Mandatory for all RqsCodes 
+            //Optional - CmmValue
             RuleFor(f => f.CmmValue).Length(1, 1024).When(f => !string.IsNullOrEmpty(f.CmmValue) || f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_ROLLBACK) || f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_DELETE)).WithMessage("Invalid Comment Value").WithName("CommentValueValidation");
 
             //Mandatory - WrqDatetime - Mandatory for Publish
-            RuleFor(f => f.WrqDatetime).Must(f => !(f.Equals(default(DateTime)))).WithMessage("Invalid Request Date").WithName("WrqRequestDateValidation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH)); ;
+            RuleFor(f => f.WrqDatetime).Must(f => !(f.Equals(default(DateTime)))).WithMessage("Invalid Request Date").WithName("WrqRequestDateValidation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
+
+            //Date must be one of the allowed days of the week for publish (except emergencies) for publish
+            RuleFor(f => f).Must(CustomValidationsWorkflowRequest.IsEmbargoDate).WithMessage("Embargo date violation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
+            //Time must be the configured allowed time (except emergencies) for publish
+            RuleFor(f => f).Must(CustomValidationsWorkflowRequest.IsEmbargoTime).WithMessage("Embargo time violation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
+
+            RuleFor(f => f.WrqDatetime).Must(f => !(f.Equals(default(DateTime)))).WithMessage("Invalid Request Date").WithName("WrqRequestDateValidation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
             //Mandatory - RlsCode - Mandatory for All RqsCodes
             RuleFor(f => f.RlsCode).NotEmpty().WithMessage("Invalid Release Code").WithName("WrqReleaseCodeValidation");
             //Mandatory - WrqEmergencyFlag - Mandatory for Publish
@@ -55,6 +65,47 @@ namespace PxStat.Workflow
         {
             //Mandatory - RlsCode
             RuleFor(f => f.RlsCode).NotEmpty();
+        }
+    }
+
+    /// <summary>
+    /// Custom validations for WrqWorkflow
+    /// </summary>
+    internal static class CustomValidationsWorkflowRequest
+    {
+        /// <summary>
+        /// For a workflow publish, the date must be one of the allowed days of the week (typically Monday to Friday) except for emergencies
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal static bool IsEmbargoDate(WorkflowRequest_DTO dto)
+        {
+            bool isEmergency = dto.WrqEmergencyFlag.HasValue && dto.WrqEmergencyFlag.Value;
+
+            if (isEmergency) return true;
+
+            int[] days = Array.ConvertAll(Utility.GetCustomConfig("APP_PX_EMBARGO_DAYS").Split(','), x => int.Parse(x));
+
+            if (days.Contains((int)dto.WrqDatetime.DayOfWeek)) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// For a workflow publish, the time must correspond to a specific time as represented in the config (except for emergencies)
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal static bool IsEmbargoTime(WorkflowRequest_DTO dto)
+        {
+            DateTime etime = DateTime.ParseExact(Utility.GetCustomConfig("APP_PX_EMBARGO_TIME"), "HH:mm",
+                                        CultureInfo.InvariantCulture);
+
+            return (etime.Hour == dto.WrqDatetime.Hour && etime.Minute == dto.WrqDatetime.Minute && etime.Second == dto.WrqDatetime.Second);
+        }
+
+        internal static bool IsNotPast(WorkflowRequest_DTO dto)
+        {
+            return dto.WrqDatetime > DateTime.Now;
         }
     }
 

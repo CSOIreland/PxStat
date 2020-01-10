@@ -10,6 +10,7 @@ $(document).ready(function () {
     app.dashboard.workInProgress.ajax.read();
     app.dashboard.awaitingResponse.ajax.read();
     app.dashboard.awaitingSignoff.ajax.read();
+    app.dashboard.pendinglive.ajax.read();
     app.dashboard.liveReleases.ajax.read();
 
     //Changing plus to minus

@@ -30,10 +30,10 @@ app.analytic.render.readBrowser = function (data, selector) {
                 },
                 chartOptions: {
                     title: {
-                        text: "browsers: " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
+                        text: app.label.static["browser"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
-                filename: "browsers" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
+                filename: app.label.static["browser"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
             credits: {
                 enabled: false
@@ -85,11 +85,10 @@ app.analytic.render.readLanguage = function (data, selector) {
             exporting: {
                 chartOptions: {
                     title: {
-                        text: "language"
-                    }, subtitle: {
-                        text: "export-label"
-                    },
-                }
+                        text: app.label.static["language"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
+                    }
+                },
+                filename: app.label.static["language"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
             credits: {
                 enabled: false
@@ -149,10 +148,10 @@ app.analytic.render.readOs = function (data, selector) {
                 },
                 chartOptions: {
                     title: {
-                        text: "o-s" + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
+                        text: app.label.static["os"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
-                filename: "os" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
+                filename: app.label.static["os"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
             credits: {
                 enabled: false
@@ -213,10 +212,10 @@ app.analytic.render.readReferrer = function (data, selector) {
                 },
                 chartOptions: {
                     title: {
-                        text: "referrer-xxx2" + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
+                        text: app.label.static["referrer"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
-                filename: "referrer-xxx3" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
+                filename: app.label.static["referrer"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
             credits: {
                 enabled: false
@@ -255,10 +254,10 @@ app.analytic.render.readTimeLine = function (data, selector) {
                 },
                 chartOptions: {
                     title: {
-                        text: "timeline" + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
+                        text: app.label.static["timeline"] + ":" + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
-                filename: "time-line" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
+                filename: app.label.static["timeline"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
             title: {
                 text: ''
@@ -290,7 +289,7 @@ app.analytic.render.readTimeLine = function (data, selector) {
             data: []
         };
         $.each(data, function (index, value) {
-            options.xAxis.categories.push(moment(value.date).format(app.config.mask.date.display));
+            options.xAxis.categories.push(value.date ? moment(value.date).format(app.config.mask.date.display) : "");
             bots.data.push(value.NltBot);
             M2M.data.push(value.NltM2m);
             users.data.push(value.NltUser);
@@ -337,10 +336,10 @@ app.analytic.render.readFormat = function (data, selector) {
                 },
                 chartOptions: {
                     title: {
-                        text: "format: " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
+                        text: app.label.static["format"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
-                filename: "format" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
+                filename: app.label.static["format"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
             credits: {
                 enabled: false

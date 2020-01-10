@@ -19,6 +19,7 @@ namespace PxStat.Resources
             //Set the tags that we are interested in translating
             var parser = new BBCodeParser(new[]
                 {
+                //  a newline is automatically parsed when \n is encountered. Hence [p] is not necessary.
                     new BBTag("b", "<b>", "</b>"),
                     new BBTag("i", "<i>", "</i>"),
                     new BBTag("u", "<u>", "</u>"),

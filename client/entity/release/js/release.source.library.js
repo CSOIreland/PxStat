@@ -44,7 +44,7 @@ app.release.source.callback.read = function (response) {
 
         app.release.fileContent = data.MtrInput;
         app.release.fileType = data.FrmType;
-        app.release.fileName = data.MtrCode + "_v" + data.RlsVersion + "." + data.RlsRevision + "_" + moment(data.DtgCreateDatetime).format(app.config.mask.datetime.file) + "." + data.FrmType.toLowerCase();
+        app.release.fileName = data.MtrCode + "_v" + data.RlsVersion + "." + data.RlsRevision + "_" + data.DtgCreateDatetime ? moment(data.DtgCreateDatetime).format(app.config.mask.datetime.file) : "" + "." + data.FrmType.toLowerCase();
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -58,7 +58,7 @@ app.release.source.render = function (data) {
     $("#release-source").hide().fadeIn();
 
     $("#release-source [name=mtr-title]").empty().html(data.MtrTitle);
-    $("#release-source [name=dtg-create-datetime]").empty().html(moment(data.DtgCreateDatetime).format(app.config.mask.datetime.display));
+    $("#release-source [name=dtg-create-datetime]").empty().html(data.DtgCreateDatetime ? moment(data.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
     $("#release-source [name=ccn-username]").empty().html(app.library.html.link.user(data.CcnUsernameCreate));
 
     $("#release-source [name=frq-value]").empty().html(data.FrqValue);
@@ -67,7 +67,7 @@ app.release.source.render = function (data) {
     $("#release-source [name=mtr-official-flag]").empty().html(app.library.html.boolean(data.MtrOfficialFlag, true, true));
 
     $("#release-source [name=mtr-note]").empty().html(app.library.html.parseBbCode(data.MtrNote));
-    $("#release-source [name=dtg-create-datetime]").empty().html(moment(data.DtgCreateDatetime).format(app.config.mask.datetime.display));
+    $("#release-source [name=dtg-create-datetime]").empty().html(data.DtgCreateDatetime ? moment(data.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
 
     // Display Data in modal (reuse code app.data.dataset)
     $("#release-source").find("[name=view-data]").once("click", function (e) {
@@ -133,14 +133,17 @@ app.release.source.languageOnChange = function () {
  * 
  */
 app.release.source.download = function () {
+    var fileExtension = "";
     switch (app.release.fileType.toLowerCase()) {
         case 'json':
             var mimeType = "application/json";
             var fileData = JSON.stringify(app.release.fileContent);
+            fileExtension = C_APP_EXTENSION_JSONSTAT;
             break;
         default:
             var mimeType = "text/plain";
             var fileData = app.release.fileContent;
+            fileExtension = C_APP_EXTENSION_PX;
             break;
     }
 
@@ -148,7 +151,7 @@ app.release.source.download = function () {
     var downloadUrl = URL.createObjectURL(blob);
     var a = document.createElement("a");
     a.href = downloadUrl;
-    a.download = app.release.fileName;
+    a.download = app.release.fileName + '.' + fileExtension;
 
     if (document.createEvent) {
         // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent

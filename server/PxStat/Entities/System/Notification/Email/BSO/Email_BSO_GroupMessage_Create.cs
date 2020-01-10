@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using PxStat.Template;
-using API;
+﻿using API;
 using PxStat.Security;
-using System.Net.Mail;
-using System.Configuration;
+using PxStat.Template;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 
 namespace PxStat.System.Notification

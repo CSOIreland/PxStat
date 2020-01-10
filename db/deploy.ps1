@@ -335,7 +335,7 @@ ForEach ($file in $files)
     {
         try
         {
-            Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -Variable @("DB_DATA=$DbData") -serverinstance $server -database $DbData -ErrorAction Stop
+            Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
             "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
             $successCount = $successCount + 1
         }
@@ -371,7 +371,7 @@ ForEach ($file in $files)
     {
         try
         {
-            Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -serverinstance $server -ErrorAction Stop
+            Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -Variable @("DB_DATA=$DbData") -serverinstance $server -ErrorAction Stop
             "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
             $successCount = $successCount + 1
         }

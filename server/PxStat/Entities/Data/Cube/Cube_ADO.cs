@@ -101,5 +101,33 @@ namespace PxStat.Data
             return null;
         }
 
+        internal List<dynamic> ReadCollectionMetadata(string languageCode, DateTime DateFrom)
+        {
+            var inputParams = new List<ADO_inputParams>();
+
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") });
+
+            if (!string.IsNullOrEmpty(languageCode))
+            {
+                inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeRead", value = languageCode });
+            }
+
+            if (DateFrom != default(DateTime))
+            {
+                inputParams.Add(new ADO_inputParams { name = "@DateFrom", value = DateFrom });
+            }
+
+
+            var output = ado.ExecuteReaderProcedure("Data_Release_ReadCollection", inputParams);
+
+            if (output.hasData)
+            {
+                return output.data;
+            }
+
+            return null;
+        }
+
+
     }
 }

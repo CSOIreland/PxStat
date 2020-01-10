@@ -56,7 +56,7 @@ namespace PxStat.Data
         [JsonProperty("updated", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string Updated { get; set; }
 
-        [JsonProperty("value", Required = Required.Always)]
+        [JsonProperty("value", Required = Required.DisallowNull)]
         public JsonStatValue Value { get; set; }
 
         [JsonProperty("version", Required = Required.Always)]
@@ -236,6 +236,7 @@ namespace PxStat.Data
 
         public static implicit operator JsonStatValue(List<ValueElement> AnythingArray) => new JsonStatValue { AnythingArray = AnythingArray };
         public static implicit operator JsonStatValue(Dictionary<string, ValueElement> AnythingMap) => new JsonStatValue { AnythingMap = AnythingMap };
+
     }
 
     /// <summary>

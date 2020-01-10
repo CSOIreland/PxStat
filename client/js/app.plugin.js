@@ -57,12 +57,14 @@ jQuery.fn.onSanitiseForm = function (pEvent, pHtmlEntities) {
 
   if (!pHtmlEntities) {
     this.find("input, textarea").each(function () {
-      $(this).off(pEvent).bind(pEvent, function () {
-        //strip HTML
-        this.value = this.value.replace(C_APP_REGEX_NOHTML, "");
-        //convert HTML entities
-        this.value = $(this).html(this.value).text();
-      });
+      if (!$(this).is(':file')) {
+        $(this).off(pEvent).bind(pEvent, function () {
+          //strip HTML
+          this.value = this.value.replace(C_APP_REGEX_NOHTML, "");
+          //convert HTML entities
+          this.value = $(this).html(this.value).text();
+        });
+      }
     });
   }
   return this;
@@ -73,8 +75,10 @@ jQuery.fn.onSanitiseForm = function (pEvent, pHtmlEntities) {
  */
 jQuery.fn.sanitiseForm = function () {
   this.find("input, textarea").each(function () {
-    //Trim
-    this.value = this.value.trim();
+    if (!$(this).is(':file')) {
+      //Trim
+      this.value = this.value.trim();
+    }
   });
 
   return this;
@@ -176,7 +180,7 @@ Application - Plugin - JQuery extensions
 //Unbind all events prior to binding a new event using .on
 (function ($) {
   $.fn.once = function () {
-    return this.off(arguments[0]).on.apply(this, arguments);
+    return this.off(arguments[0]).on(arguments[0], arguments[1]);
   };
 })(jQuery);
 

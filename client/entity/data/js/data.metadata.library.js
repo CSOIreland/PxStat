@@ -458,9 +458,9 @@ app.data.metadata.callback.drawResults = function (paginatedResults) {
         resultItem.attr("mtr-code", entry.MtrCode).attr("lng-iso-code", entry.LngIsoCode);
         resultItem.find("[name=mtr-title]").text(entry.MtrTitle);
 
-        //release date & time
-        resultItem.find("[name=from-date]").text(moment(entry.RlsLiveDatetimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.date.display));
-        resultItem.find("[name=from-time]").text(moment(entry.RlsLiveDatetimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.time.display));
+        //release date & time   
+        resultItem.find("[name=from-date]").text(entry.RlsLiveDatetimeFrom ? moment(entry.RlsLiveDatetimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.date.display) : "");
+        resultItem.find("[name=from-time]").text(entry.RlsLiveDatetimeFrom ? moment(entry.RlsLiveDatetimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.time.display) : "");
         if (entry.RlsEmergencyFlag) {
             resultItem.find("[name=emergency-flag]").removeClass("d-none");
         }
@@ -512,17 +512,19 @@ app.data.metadata.callback.drawResults = function (paginatedResults) {
         //frequency pill
         var frequency = $("#data-metadata-templates").find("[name=frequency]").clone();
         frequency.text(entry.FrqValue);
+
         resultItem.find("[name=dimensions]").append(frequency);
 
         //frequency span
         var frequencySpan = $("#data-metadata-templates").find("[name=frequency-span]").clone();
-        frequencySpan.text(function () {
-            var periodsArray = entry.period;
-            periodsArray.sort();
-            var prdValueMin = periodsArray[0];
-            var prdValueMax = periodsArray[periodsArray.length - 1];
-            return "[" + prdValueMin + "-" + prdValueMax + "]";
-        });
+        frequencySpan.text(
+            function () {
+                var periodsArray = entry.period;
+                periodsArray.sort();
+                var prdValueMin = periodsArray[0];
+                var prdValueMax = periodsArray[periodsArray.length - 1];
+                return "[" + prdValueMin + "-" + prdValueMax + "]";
+            });
         resultItem.find("[name=dimensions]").append(frequencySpan);
 
         // copyright

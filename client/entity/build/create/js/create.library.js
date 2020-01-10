@@ -44,18 +44,30 @@ app.build.create.file.classification.content.data.JSON = null;
  * @param {*} inputObject
  */
 api.plugin.dragndrop.readFiles = function (files, inputObject) {
-
     var uploadDimension = inputObject.attr("id");
-
     // Read single file only
     var file = files[0];
     if (!file) {
+        //clean up input if no files
+        switch (uploadDimension) {
+            case "build-create-import-file":
+                app.build.create.import.cancel();
+                return;
+
+            case "build-create-upload-statistic-file":
+                app.build.create.dimension.cancelStatisticUpload();
+                return;
+
+            case "build-create-upload-classification-file":
+                app.build.create.dimension.cancelClassificationUpload();
+                return;
+            case "build-create-upload-periods-file":
+                app.build.create.dimension.cancelPeriodUpload();
+                return;
+        }
         return;
     };
 
-    // info on screen 
-    inputObject.parent().find("[name=upload-file-tip]").hide();
-    inputObject.parent().find("[name=upload-file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
     var fileExt = file.name.match(/\.[0-9a-z]+$/i)[0];
 
     switch (uploadDimension) {
@@ -85,6 +97,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 return;
             };
 
+            // info on screen 
+            inputObject.parent().find("[name=upload-file-tip]").hide();
+            inputObject.parent().find("[name=upload-file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
             readerUTF8.onload = function (e) {
@@ -102,6 +118,8 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             break;
         case "build-create-upload-classification-file":
 
+            $("#build-create-upload-classification").find("[name=errors-card]").hide();
+            $("#build-create-upload-classification").find("[name=errors]").empty();
             app.build.create.file.classification.content.UTF8 = null;
 
             // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
@@ -126,6 +144,11 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 $("#build-create-upload-classification").find("[name=upload-submit-classifications]").prop("disabled", true);
                 return;
             };
+
+            // info on screen 
+            inputObject.parent().find("[name=upload-file-tip]").hide();
+            inputObject.parent().find("[name=upload-file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
             readerUTF8.onload = function (e) {
@@ -142,6 +165,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 
             break;
         case "build-create-upload-periods-file":
+
+            $("#build-create-upload-periods").find("[name=errors]").empty();
+            $("#build-create-upload-periods").find("[name=errors-card]").hide();
+
             app.build.create.file.period.content.UTF8 = null;
 
             // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
@@ -166,6 +193,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 $("#build-create-upload-periods").find("[name=upload-submit-periods]").prop("disabled", true);
                 return;
             };
+
+            // info on screen 
+            inputObject.parent().find("[name=upload-file-tip]").hide();
+            inputObject.parent().find("[name=upload-file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
 
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
@@ -212,6 +243,11 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 $("#build-create-import").find("[name=parse-source-file]").prop("disabled", true);
                 return;
             };
+
+            // info on screen 
+            inputObject.parent().find("[name=upload-file-tip]").hide();
+            inputObject.parent().find("[name=upload-file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
             readerUTF8.onload = function (e) {

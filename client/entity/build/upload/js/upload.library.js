@@ -26,7 +26,7 @@ app.build.upload.file.content.Base64 = null;
 
 //#region Miscellaneous
 /**
- * When user cancel
+ * Cancel the Upload only
  */
 app.build.upload.cancel = function () {
     // Change button to Validate
@@ -34,11 +34,15 @@ app.build.upload.cancel = function () {
     // Clear file preview
     $("#build-upload-container").find("[name=upload-file-preview]").empty();
     $("#build-upload-container").find("[name=upload-file-preview-card]").hide();
-    // Clear File errors
+    // Clear file errors
     $("#build-upload-container").find("[name=upload-select-group-error-holder]").empty();
-    $("#build-upload-container").find("[name=upload-file-error-holder]").empty();
     $("#build-upload-container").find("[name=upload-error]").empty();
     $("#build-upload-container").find("[name=upload-error-card]").hide();
+    // Clear file details
+    $("#build-upload-container").find("[name=upload-file-name]").empty().hide();
+    $("#build-upload-container").find("[name=upload-file-tip]").show();
+    $("#build-upload-container").find("[name=upload-btn-validate]").prop("disabled", true);
+    $("#build-upload-container").find("[name=upload-btn-preview]").prop("disabled", true);
     // Invalidate frequency
     app.build.upload.FrqValue = null;
     app.build.upload.FrqCode = null;
@@ -53,17 +57,16 @@ app.build.upload.cancel = function () {
 };
 
 /**
- * Clear entire page
+ * Reset entire upload page
  */
-app.build.upload.clear = function () {
-    app.build.upload.cancel();
-    $("#build-upload-container").find("[name=build-upload-file]").val("");
-    $("#build-upload-container").find("[name=upload-file-name]").empty().hide();
-    $("#build-upload-container").find("[name=upload-file-tip]").show();
-    $("#build-upload-container").find("[name=upload-btn-preview]").prop("disabled", true);
-
+app.build.upload.reset = function () {
     // Clear Group selection
     $("#build-upload-container").find("[name=upload-select-group]").val("").trigger('change');
+
+    // Clear input file 
+    $("#build-upload-container").find("[name=build-upload-file]").val("");
+    // Clear Upload
+    app.build.upload.cancel();
 };
 
 /**
@@ -114,13 +117,12 @@ app.build.upload.setDataPicker = function () {
  */
 app.build.upload.validation.file = function () {
     if (!app.build.upload.file.content.UTF8 || !app.build.upload.file.content.Base64) {
-        $("#build-upload-container").find("[name=upload-file-error-holder]").empty();
-        $("#build-upload-container").find("[name=upload-file-error-holder]").html(app.label.static["mandatory"]);
+        $("#build-upload-container").find("[name=upload-btn-validate]").prop("disabled", true);
         $("#build-upload-container").find("[name=upload-btn-preview]").prop("disabled", true);
         return false;
     } else {
-        $("#build-upload-container").find("[name=upload-file-error-holder]").empty();
         $("#build-upload-container").find("[name=upload-btn-preview]").prop("disabled", false);
+        $("#build-upload-container").find("[name=upload-btn-validate]").prop("disabled", false);
         return true;
     }
 };
@@ -384,7 +386,7 @@ app.build.upload.callback.create = function (response) {
         $("#build-upload-container").find("[name=upload-error-card]").fadeIn();
         api.modal.error(errorOutput);
     } else if (response.data == C_APP_API_SUCCESS) {
-        app.build.upload.clear();
+        app.build.upload.reset();
         // No Duplicate found, upload completed
         api.modal.success(app.library.html.parseDynamicLabel("success-file-uploaded", [""]));
         app.build.upload.setDataPicker();
@@ -412,7 +414,7 @@ app.build.upload.preview = function () {
  * @param {*} inputObject
  */
 api.plugin.dragndrop.readFiles = function (files, inputObject) {
-    // Reset screen first
+    // Cancel upload first
     app.build.upload.cancel();
 
     // Read single file only
@@ -420,10 +422,6 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
     if (!file) {
         return;
     }
-
-    // Info on screen 
-    inputObject.parent().find("[name=upload-file-tip]").hide();
-    inputObject.parent().find("[name=upload-file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
 
     // set namespaced variables
     app.build.upload.file.name = file.name;
@@ -464,6 +462,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
         $("#build-upload-container").find("[name=upload-btn-preview]").prop("disabled", true);
         return;
     }
+    // Info on screen 
+    inputObject.parent().find("[name=upload-file-tip]").hide();
+    inputObject.parent().find("[name=upload-file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
 
     // Read file into an UTF8 string
     var readerUTF8 = new FileReader();
@@ -607,6 +608,7 @@ app.build.upload.callback.uploadHistory = function (response) {
         app.library.datatable.reDraw("#build-upload-history table", data);
     } else {
         var localOptions = {
+            order: [[6, 'desc']],
             data: data,
             columns: [
                 {
@@ -663,11 +665,11 @@ app.build.upload.callback.uploadHistory = function (response) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return moment(row.CreateDateTime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display);
+                        return row.CreateDateTime ? moment(row.CreateDateTime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
+
                     }
                 }
             ],
-            order: [5, 'desc'],
             drawCallback: function (settings) {
                 app.build.upload.drawCallbackUploadHistory();
             },
