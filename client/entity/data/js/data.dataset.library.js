@@ -76,25 +76,48 @@ app.data.dataset.callback.readMetadata = function (response) {
             }]);
         };
 
-
-
         if (app.data.MtrCode) {
             app.data.dataset.callback.readMatrixNotes(data);
         }
         app.data.dataset.callback.drawTableSelection(data);
+        app.data.dataview.ajax.format();
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
+app.data.dataset.confirmSoftThreshold = function (pMessage, pCallbackMethod, pCallbackParams) {
+
+    // Set the body of the Modal - Empty the container first
+    $("#data-dataview-confirm-soft").find(C_API_SELECTOR_MODAL_BODY).empty().html(pMessage);
+
+    $("#modal-button-confirm-data").once("click", function () {
+        // Run the Callback function
+        pCallbackMethod(pCallbackParams);
+
+        // Close the Modal
+        $("#data-dataview-confirm-soft").modal('hide');
+    });
+
+    // Display the Modal
+    $("#data-dataview-confirm-soft").modal();
+};
+
+app.data.dataset.confirmHardThreshold = function (pMessage) {
+    // Set the body of the Modal
+    $("#data-dataview-confirm-hard").find(C_API_SELECTOR_MODAL_BODY).empty().html(pMessage);
+
+    // Display the Modal
+    $("#data-dataview-confirm-hard").modal();
+}
 /**
 * 
 * @param {*} data
 */
 app.data.dataset.callback.drawTableSelection = function (data) {
     //hide no search results message
-    $("#data-search-input").find("[name=no-search-results]").hide();
-    $("#data-search-input [name=search-input]").val("");
+    $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").hide();
+    $("#data-search-row-desktop [name=search-input], #data-search-row-responsive [name=search-input]").val("");
 
     //hide back button if viewing data from release entity
     if (app.data.RlsCode) {
@@ -196,9 +219,9 @@ app.data.dataset.callback.drawTableSelection = function (data) {
                 dimensionContainer.find("select").append(option);
             });
             dimensionContainer.find("select").attr("idn", data.id[i]).attr("role", data.Dimension(i).role).attr("sort", "desc");
-            //reverse select so most recent time first
+            //reverse select based on codes so most recent time first
             dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
-                return $(x).text() < $(y).text() ? 1 : -1;
+                return $(x).val() < $(y).val() ? 1 : -1;
             }));
         }
         else {
@@ -357,10 +380,10 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     //show data
     $("#data-dataview-selected-table").find("[name=show-data]").once("click", function () {
         if (app.data.dataset.selectionCount >= app.config.entity.data.threshold.hard) {
-            api.modal.information(app.library.html.parseDynamicLabel("error-read-exceeded", [app.library.utility.formatNumber(app.data.dataset.selectionCount), app.config.entity.data.threshold.hard]));
+            app.data.dataset.confirmHardThreshold(app.library.html.parseDynamicLabel("error-read-exceeded", [app.library.utility.formatNumber(app.data.dataset.selectionCount), app.config.entity.data.threshold.hard]));
         }
         else if (app.data.dataset.selectionCount >= app.config.entity.data.threshold.soft) {
-            api.modal.confirm(app.library.html.parseDynamicLabel("confirm-read", [app.library.utility.formatNumber(app.data.dataset.selectionCount)]), app.data.dataview.ajax.data);
+            app.data.dataset.confirmSoftThreshold(app.library.html.parseDynamicLabel("confirm-read", [app.library.utility.formatNumber(app.data.dataset.selectionCount)]), app.data.dataview.ajax.data);
         }
         else {
             //AJAX call get Data Set
@@ -477,14 +500,13 @@ app.data.dataset.callback.readMatrixNotes = function (data) {
 
     // Run Sharethis.
     app.data.sharethis(data.extension.matrix);
-
     app.data.dataset.ajax.format();
 
 };
 
 app.data.dataset.ajax.format = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.public,
         "PxStat.System.Settings.Format_API.Read",
         {
             // "LngIsoCode": null,

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using API;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using API;
 using System.Text.RegularExpressions;
 
 namespace PxParser.Resources.Parser
@@ -574,6 +574,16 @@ namespace PxParser.Resources.Parser
         public PxDoubleValue(double value)
         {
             this.DoubleValue = value;
+        }
+
+        public PxDoubleValue(string value)
+        {
+            double output;
+            if (double.TryParse(value, out output))
+            {
+                this.DoubleValue = output;
+            }
+
         }
 
         /// <summary>

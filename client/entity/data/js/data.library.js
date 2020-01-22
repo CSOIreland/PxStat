@@ -130,8 +130,7 @@ app.data.callback.drawLatestReleases = function (data) {
         var localOptions = {
             order: [[4, 'desc']],
             data: data,
-            "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]],
-            "pageLength": 25,
+            "pageLength": app.config.entity.data.numberLatestReleases,
             createdRow: function (row, data, dataIndex) {
                 $(row).attr("mtr-code", data.extension.matrix).attr("lng-iso-code", data.extension.language.code);
             },

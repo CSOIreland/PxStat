@@ -24,7 +24,7 @@ app.build.create.dimension.periodsManualValid = true;
  */
 app.build.create.dimension.ajax.readFormat = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.public,
         "PxStat.System.Settings.Format_API.Read",
         {
             "LngIsoCode": null,
@@ -1544,7 +1544,7 @@ app.build.create.dimension.callback.useClassification = function (variables) {
 app.build.create.dimension.callback.downloadClassification = function (variables) {
     var fileData = [];
     $.each(variables, function (i, row) {
-        fileData.push({ [C_APP_CSV_CODE]: row.VrbCode, C_APP_CSV_VALUE: row.VrbValue });
+        fileData.push({ [C_APP_CSV_CODE]: row.VrbCode, [C_APP_CSV_VALUE]: row.VrbValue });
     });
     var mimeType = "text/plain";
     var pom = document.createElement('a');

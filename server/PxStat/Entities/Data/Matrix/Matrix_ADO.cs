@@ -198,12 +198,11 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="jsonrpcRequest">The request param</param>
         /// <returns>TODO</returns>
-        internal IList<dynamic> ReadCodeList(string userName, string lngIsoCode)
+        internal IList<dynamic> ReadCodeList(string userName)
         {
             var inputParams = new List<ADO_inputParams>()
-            { new ADO_inputParams { name = "@CcnUsername", value = userName },
-              new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
-              new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") }
+            {
+                new ADO_inputParams { name = "@CcnUsername", value = userName }
             };
 
             var reader = ado.ExecuteReaderProcedure("Data_Matrix_ReadCodeList", inputParams);

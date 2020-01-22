@@ -16,7 +16,7 @@ namespace PxStat.Security
         {
             string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
             //Optional - GrpCode
-            RuleFor(f => f.GrpCode).Matches(alphaNumericRegex).NotEmpty().Length(1, 32).When(f => !string.IsNullOrEmpty(f.GrpCode)).WithMessage("Invalid Group Code").WithName("GroupCodeValidation");
+            RuleFor(f => f.GrpCode).Matches(alphaNumericRegex).NotEmpty().Length(1, 32).When(f => !string.IsNullOrEmpty(f.GrpCode)).WithMessage("Invalid Group Code");
         }
     }
 
@@ -27,7 +27,7 @@ namespace PxStat.Security
         {
             string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
             //Optional - GrpCode
-            RuleFor(f => f.GrpCode).Matches(alphaNumericRegex).NotEmpty().Length(1, 32).When(f => !string.IsNullOrEmpty(f.GrpCode)).WithMessage("Invalid Group Code").WithName("GroupCodeValidation");
+            RuleFor(f => f.GrpCode).Matches(alphaNumericRegex).NotEmpty().Length(1, 32).When(f => !string.IsNullOrEmpty(f.GrpCode)).WithMessage("Invalid Group Code");
 
         }
     }

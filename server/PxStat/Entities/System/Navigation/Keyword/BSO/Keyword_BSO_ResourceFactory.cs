@@ -60,7 +60,7 @@ namespace PxStat.System.Navigation
                     string lngIsoCode = resourceKey.Substring(Utility.GetCustomConfig("APP_INTERNATIONALISATION_SYNONYM_FILE").Length, 2);
                     //Check that the resource file corresponds with a language in the system
                     Language_BSO lBso = new Language_BSO();
-                    if (lBso.Read(lngIsoCode) != null)
+                    if (lBso.Read(lngIsoCode).LngIsoCode != null)
                         GetSynonyms(lngIsoCode);
                 }
             }

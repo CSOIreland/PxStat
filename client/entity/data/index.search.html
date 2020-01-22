@@ -1,21 +1,23 @@
-<div id="data-search-input" class="col-sm-12 my-2">
-    <div class="input-group input-group-lg">
-        <input type="text" name="search-input" class="form-control p-4" placeholder="" aria-label="Search for data" aria-describedby="Search for data" autocomplete="off">
-        <div class="input-group-append">
-            <button name="data-search-input-button" class="btn btn-neutral" type="button">
-                <i class="fas fa-search"></i> <span label="search"></span>
-            </button>
-        </div>
-    </div>
-    <div class="col-sm-12 mt-4 px-0" name="no-search-results" style="display: none;">
-        <div class="card border-warning">
-            <div class="card-body font-weight-bold">
-                <span label="no-data-found"></span></div>
-        </div>
-    </div>
-</div>
+<div name="search-input-group-holder" class="col-sm-12 my-2"></div>
 
 <div id="data-search-templates" style="display:none">
+
+    <div name="search-input-group">
+        <div class="input-group input-group-lg">
+            <input type="text" name="search-input" class="form-control p-4" placeholder="" aria-label="Search for data" aria-describedby="Search for data" autocomplete="off">
+            <div class="input-group-append">
+                <button name="data-search-input-button" class="btn btn-neutral" type="button">
+                    <i class="fas fa-search"></i> <span label="search"></span>
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-12 mt-4 px-0" name="no-search-results" style="display: none;">
+            <div class="card border-warning">
+                <div class="card-body font-weight-bold">
+                    <span label="no-data-found"></span></div>
+            </div>
+        </div>
+    </div>
 
     <!-- Template: data-search-navigation-->
     <div name="navigation" class="col p-2">

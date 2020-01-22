@@ -176,6 +176,8 @@ app.navigation.layout.set = function (isDataEntity) {
       //any entity except data entity
       $("#body").removeClass("order-last").addClass("order-first").removeClass("col-sm-9").addClass("col-sm-8");
       $("#sidebar").removeClass("col-sm-3").addClass("col-sm-4").removeClass("bg-sidebar");
+      //hide responsive serach
+      $("#data-search-row-responsive").hide();
       break;
   }
 };
@@ -183,7 +185,6 @@ app.navigation.layout.set = function (isDataEntity) {
 
 app.navigation.breadcrumb.set = function (breadcrumb) {
   breadcrumb = breadcrumb || [];
-  //dataNavigation = dataNavigation || {};
 
   $("#breadcrumb-nav").find("[name=breadcrumb-list]").empty();
   var homeLink = $("#navigation-templates").find("[name=home]").clone();

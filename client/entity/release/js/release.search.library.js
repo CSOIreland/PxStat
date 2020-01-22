@@ -25,9 +25,7 @@ app.release.search.ajax.readMatrixList = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
-        {
-            LngIsoCode: app.label.language.iso.code
-        },
+        null,
         "app.release.search.callback.readMatrixList");
 };
 

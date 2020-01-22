@@ -267,9 +267,11 @@ $(document).ready(function () {
         }
 
         //move search input
-        if ($("#data-search-row").is(":visible")) {
-          $("#data-search-input").appendTo("#data-search-responsive")
-        };
+        if ($("#data-search-row-desktop").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
+          $("#data-search-row-responsive").show();
+          $("#data-search-row-desktop").hide();
+          $("[name=search-input]:visible").focus();
+        }
 
         //Collapse data navigation always on small
         $("#data-navigation").find(".navbar-collapse").collapse('hide');
@@ -291,9 +293,16 @@ $(document).ready(function () {
       case "xLarge":
       default:
         //default position for search input
-        if ($("#data-search-row").is(":visible")) {
-          $("#data-search-input").appendTo("#data-search-row")
+        if ($("#data-search-row-desktop").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
+          $("#data-search-row-desktop").show();
+          $("#data-search-row-responsive").hide();
+          $("[name=search-input]:visible").focus();
         };
+
+        if ($("#panel").is(":empty")) {
+          $("#data-navigation").find(".navbar-collapse").collapse('show');
+        }
+
 
         //always show panel
         $("#panel").show();

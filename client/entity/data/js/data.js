@@ -14,11 +14,30 @@ $(document).ready(function () {
     //populate colection api  
     app.data.callback.drawCollectionApiDetails();
     $("#data-accordion-collection-api").show();
-    api.content.load("#data-search-row", "entity/data/index.search.html");
+    api.content.load("#data-search-row-desktop", "entity/data/index.search.html");
     api.content.load("#data-metadata-row", "entity/data/index.metadata.html");
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
     api.content.load("#data-dataview-row", "entity/data/index.dataview.html");
     api.content.load("#data-sharethis-row", "entity/data/index.sharethis.html");
+
+    //set up search inputs
+    $("#data-search-row-responsive, #data-search-row-desktop [name=search-input-group-holder]").html(
+        $("#data-search-templates").find("[name=search-input-group]").clone().get(0).outerHTML
+    );
+
+    $("#data-search-row-desktop [name=search-input], #data-search-row-responsive [name=search-input]").attr('placeholder', app.label.static["search-for-data"]);
+
+    //sync search boxes
+    $("#data-search-row-desktop [name=search-input]").on("input", function () {
+        $("#data-search-row-responsive [name=search-input]").val(this.value);
+    });
+
+    $("#data-search-row-responsive [name=search-input]").on("input", function () {
+        $("#data-search-row-desktop [name=search-input]").val(this.value);
+    });
+
+    //run bootstrap toggle to show/hide search inputs
+    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 
     //initiate all copy to clipboard 
     new ClipboardJS("#data-accordion-api [name=copy-api-info], #data-accordion-api [name=copy-api-object], #data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object], #data-sharethis [name=copy-link-info]");

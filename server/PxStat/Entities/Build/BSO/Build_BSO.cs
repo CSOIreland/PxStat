@@ -363,7 +363,16 @@ namespace PxStat.Build
 
                 tdRow["TDT_MTR_ID"] = dataSpec.MatrixId;
                 tdRow["TDT_IX"] = counter;
-                tdRow["TDT_VALUE"] = theMatrixData.Cells[counter].Value.ToString();
+                double outDouble;
+                var v = theMatrixData.Cells[counter].Value.ToString();
+                if (Double.TryParse(v, out outDouble))
+                {
+                    var s = (int)tdRow["decimals"];
+                    tdRow["TDT_VALUE"] = DecimalPlaceDouble(outDouble, s);
+
+                }
+                else
+                    tdRow["TDT_VALUE"] = theMatrixData.Cells[counter].Value.ToString();
 
                 tdData.Rows.Add(tdRow);
 
@@ -408,7 +417,16 @@ namespace PxStat.Build
 
         }
 
-
+        private string DecimalPlaceDouble(double d, int decimalPlaces)
+        {
+            if (decimalPlaces == 0) return d.ToString("0");
+            string format = "0.";
+            for (int i = 0; i < decimalPlaces; i++)
+            {
+                format = format + "0";
+            }
+            return d.ToString(format);
+        }
 
         /// <summary>
         /// Populates an individual DataItem_DTO from a DimensionValue_DTO object
@@ -434,6 +452,7 @@ namespace PxStat.Build
                         case DimensionType.STATISTIC:
 
                             tdRow["TDT_STT_ID"] = pxFileMatrix.MainSpec.Statistic.Where(x => x.Code == v.key).FirstOrDefault().StatisticalProductId;
+                            tdRow["decimals"] = pxFileMatrix.MainSpec.Statistic.Where(x => x.Code == v.key).FirstOrDefault().Decimal;
                             break;
                         case DimensionType.PERIOD:
 
@@ -483,6 +502,7 @@ namespace PxStat.Build
             dataTable.Columns.Add("TDT_IX", typeof(int));
             dataTable.Columns.Add("TDT_PRD_ID", typeof(int));
             dataTable.Columns.Add("TDT_MTR_ID", typeof(int));
+            dataTable.Columns.Add("decimals", typeof(int));
 
             return dataTable;
 
@@ -1425,6 +1445,7 @@ internal class DimensionValue_DTO
     /// 
     /// </summary>
     internal DimensionType dimType { get; set; }
+
 
     /// <summary>
     /// 

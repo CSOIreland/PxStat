@@ -3,7 +3,6 @@ using Pidgin;
 using PxStat;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
@@ -26,17 +25,14 @@ namespace PxParser.Resources.Parser
         static readonly Parser<char, char> Quote = Char('"');
         static readonly Parser<char, char> Comma = Char(',');
         static readonly Parser<char, char> SemiColon = Char(';');
-        static readonly Parser<char, char> CommaWhitespace = Comma.Between(SkipWhitespaces);
 
         static readonly Parser<char, char> TheKeyValueSeparator = Char('=');
         static readonly Parser<char, char> LBracket = Char('(');
         static readonly Parser<char, char> RBracket = Char(')');
-        static readonly Parser<char, char> TokenSubkey = Token(c => c != '(' && c != ')');
 
         static readonly Parser<char, string> LineBreak = String("\r\n");
         static readonly Parser<char, Unit> SkipEndOfLine = LineBreak.SkipMany().Labelled("SkipEndOfLine");
         static readonly Parser<char, Unit> SkipWhiteSpaceEndOfLine = SkipWhitespaces.Then(SkipEndOfLine);
-        static readonly Parser<char, char> SemiColonWhitespaceLineBreak = SemiColon.Between(SkipWhiteSpaceEndOfLine);
 
         static readonly Parser<char, string> SemiColonLineBreak = OneOf(Try(String(";\r\n")), String("\r\n;"));
 
@@ -49,51 +45,12 @@ namespace PxParser.Resources.Parser
         static readonly Parser<char, char> LSBracket = Char('[');
         static readonly Parser<char, char> RSBracket = Char(']');
 
-        static readonly Parser<char, char> QuoteLinebreakQuote = Quote.Then(LineBreak).Then(Quote);
 
-        // Different Value Types
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static double ConvertStringToDouble(string str)
-        {
-            return double.Parse(str, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="left">10</param>
-        /// <param name="right">59</param>
-        /// <returns></returns>
-        public static double CreateFloat(long left, long right)
-        {
-            string sr = right.ToString();
-            int n = sr.Length;
-            double m = System.Math.Pow(10, n);
-            double result = left + right * (1 / m);
-            return result;
-        }
 
-        static readonly Parser<char, Maybe<char>> Sign = (Char('-').Or(Char('+'))).Optional();
-        static readonly Parser<char, Maybe<char>> FloatingPointSeparator = Char('.').Optional();
-
-        static readonly Parser<char, double> FloatingPoint =
-            Map(
-                (sign, left, separator, right)
-                    => (sign.HasValue && sign.Value == '-'
-                        ? -CreateFloat(left, (separator.HasValue && right.HasValue) ? right.Value : 0)
-                        : CreateFloat(left, (separator.HasValue && right.HasValue) ? right.Value : 0)),
-                Sign,
-                UnsignedLong(10),
-                FloatingPointSeparator,
-                UnsignedLong(10).Optional()
-            );
 
         static readonly Parser<char, IPxSingleElement> PxDoubleValue =
-            FloatingPoint.Select<IPxSingleElement>(value => new PxDoubleValue(value)).Labelled("decimal literal");
+            Real.Select<IPxSingleElement>(value => new PxDoubleValue(value)).Labelled("decimal literal");
 
         static readonly Parser<char, string> QuotedValue =
            Token(c => c != '"')
@@ -109,6 +66,7 @@ namespace PxParser.Resources.Parser
             .ManyString()
             .Between(Quote);
 
+
         static readonly Parser<char, string> Confidential =
            String(Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"))
             .Between(Quote);
@@ -120,9 +78,11 @@ namespace PxParser.Resources.Parser
 
         static readonly Parser<char, IPxSingleElement> PxQuotedDataValue = QuotedDataValue.Select<IPxSingleElement>(s => new PxQuotedValue(s));
 
+
         static readonly Parser<char, IPxSingleElement> PxConfidential = Confidential.Select<IPxSingleElement>(s => new PxDotValue());
 
         static readonly Parser<char, IPxSingleElement> PxQuotedValue = QuotedValue.Select<IPxSingleElement>(s => new PxQuotedValue(s));
+
 
         static readonly Parser<char, IPxSingleElement> PxQuotedValueMultiline = QuotedValueMultiline.Select<IPxSingleElement>(s => new PxQuotedValueMultiline(s));
 
@@ -135,6 +95,7 @@ namespace PxParser.Resources.Parser
         static readonly Parser<char, IPxSingleElement> ADataValue = Try(PxDoubleValue).Or(Try(PxConfidential).Or(Try(PxQuotedDataValue)));// here
 
         static readonly Parser<char, string> ADataSeparator = OneOf(Try(Pidgin.Parser.String(" ").Then(LineBreak)), Try(Pidgin.Parser.String(" ")));
+
 
         static readonly Parser<char, IPxMultipleElements> ADataRepresentation =
             ADataValue.SeparatedAndOptionallyTerminated(ADataSeparator).Select<IPxMultipleElements>(values => new PxDataValue(new List<IPxSingleElement>(values)))

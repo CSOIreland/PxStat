@@ -365,7 +365,7 @@ app.data.dataview.ajax.data = function () {
 
 app.data.dataview.ajax.format = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.public,
         "PxStat.System.Settings.Format_API.Read",
         {
             "LngIsoCode": app.data.LngIsoCode,
@@ -385,7 +385,7 @@ app.data.dataview.callback.format = function (response) {
         api.modal.information(app.label.static["api-ajax-nodata"]);
     }
     else if (response.data) {
-        $("#data-dataview-row [name=download-select-dataset]").empty();
+        $("#data-view-container [name=download-select-dataset], #data-dataview-confirm-soft [name=download-select-dataset], #data-dataview-confirm-hard [name=download-select-dataset]").empty();
         $.each(response.data, function (index, format) {
             var formatDropdown = $("#data-dataview-templates").find("[name=download-dataset-format]").clone();
             formatDropdown.attr(
@@ -396,12 +396,13 @@ app.data.dataview.callback.format = function (response) {
             formatDropdown.find("[name=type]").text(format.FrmType);
             formatDropdown.find("[name=version]").text(format.FrmVersion);
 
-            $("#data-view-container [name=download-select-dataset]").append(formatDropdown);
+            $("#data-view-container [name=download-select-dataset], #data-dataview-confirm-soft [name=download-select-dataset], #data-dataview-confirm-hard [name=download-select-dataset]").append(formatDropdown);
         });
 
-        $("#data-dataview-row").find("[name=download-dataset-format]").once("click", function (e) {
+        $("#data-dataview-row [name=download-dataset-format], #data-dataview-confirm-soft [name=download-dataset-format], #data-dataview-confirm-hard [name=download-dataset-format]").once("click", function (e) {
             e.preventDefault();
             app.data.dataview.callback.resultsDownload($(this).attr("frm-type"), $(this).attr("frm-version"));
+            $("#data-dataview-confirm-soft, #data-dataview-confirm-hard ").modal("hide");
         });
     }
     // Handle Exception
@@ -419,6 +420,7 @@ app.data.dataview.callback.data = function (response) {
         var ds = JSONstat(response.data);
         app.data.dataview.callback.drawDatatable(ds);
         app.data.dataview.ajax.format();
+
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -573,13 +575,13 @@ app.data.dataview.callback.drawDatatable = function (ds) {
             scrollTop: $("#data-view-container").offset().top
         }, 1000);
     }
-    //Need to fix this
-    /* else if (app.data.RlsCode) {
-        $('html, body').animate({
-            scrollTop: $("#data-view-container").offset().top
+    //In modal view
+    else if (app.data.RlsCode) {
+        $('#data-view-modal').animate({
+            scrollTop: $('#data-dataview-selected-table')[0].scrollHeight
         },
             1000);
-    } */
+    }
 };
 
 

@@ -10,7 +10,7 @@ namespace PxStat.Data
     {
         public Matrix_VLD_ReadCodeList()
         {
-            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+
         }
     }
 

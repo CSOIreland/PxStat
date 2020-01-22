@@ -211,13 +211,13 @@ app.build.create.import.callback.read.drawProperties = function () {
 
     //get and set the copyright code
     var cprCode = defaultData.extension.copyright.code;
+    //make unselected by default
+    $("#build-create-initiate-setup [name=copyright-code]").val("select");
 
+    //if valid copyright, select this
     $("#build-create-initiate-setup [name=copyright-code] > option").each(function () {
         if (this.value == cprCode) {
             $(this).attr("selected", "selected");
-        }
-        else {
-            $(this).removeAttr("selected");
         }
     });
 
@@ -242,5 +242,8 @@ app.build.create.import.callback.read.drawProperties = function () {
             $(this).prop("checked", false);
         }
     });
+
+    //always check default language
+    $("[name=lng-group][value=" + app.config.language.iso.code + "]").prop("checked", true);
 }
 

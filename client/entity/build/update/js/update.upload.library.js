@@ -49,9 +49,7 @@ app.build.update.upload.ajax.matrixLookup = function () {
     // Change app.config.language.iso.code to the selected one
     api.ajax.jsonrpc.request(app.config.url.api.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
-        {
-            LngIsoCode: app.label.language.iso.code
-        },
+        null,
         "app.build.update.upload.callback.matrixLookup");
 };
 
@@ -92,12 +90,7 @@ app.build.update.upload.callback.drawMatrix = function (data) {
         var localOptions = {
             data: data,
             columns: [
-                {
-                    data: null,
-                    render: function (_data, _type, row) {
-                        return app.library.html.tooltip(row.MtrCode, row.MtrTitle);
-                    }
-                },
+                { data: "MtrCode" },
             ],
             drawCallback: function (settings) {
                 app.build.update.upload.callback.drawCallbackDrawMatrix();
@@ -705,6 +698,19 @@ app.build.update.upload.callback.readInput = function (response) {
     else if (response.data !== undefined) {
         app.build.update.ajax.response = response.data;
         $("#build-update-upload-file").find("[name=upload-error-card]").hide();
+
+
+        //check that we have default language in the response
+        var languages = [];
+        $(app.build.update.ajax.response).each(function (key, value) {
+            var data = JSONstat(value);
+            languages.push(data.extension.language.code);
+        });
+
+        if (jQuery.inArray(app.config.language.iso.code, languages) == -1) {
+            api.modal.error(app.library.html.parseDynamicLabel("update-source-invalid-language", [app.config.language.iso.name]));
+            return;
+        }
         app.build.update.upload.drawProperties();
     }
     else api.modal.exception(app.label.static["api-ajax-exception"]);

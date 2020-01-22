@@ -875,10 +875,14 @@ namespace PxStat.Data
             /// <param name="maps"></param>
             private void LoopClassifications(IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes, List<ClassificationRecordDTO_Create> retValue, IEnumerable<string> dimensionValues, IList<KeyValuePair<string, IList<IPxSingleElement>>> maps)
             {
+                //We need this to ensure classification codes do not coincidentally end up calculating the same code:
+                int dimensionCounter = 0;
+
                 foreach (var value in dimensionValues)
                 {
+
                     // if we do not have Domain, code is same as dimension, can also be an iterator...
-                    string code = value;
+                    string code = "";
 
                     if (domain != null && domain.Any())
                     {
@@ -936,13 +940,14 @@ namespace PxStat.Data
                         ++i;
                     }
                     //If there's no code, get one based on the hash of the classification plus its variable
-                    if (code.Equals(value))
+                    if (code.Length == 0)
                     {
+                        dimensionCounter++;
+
                         int hash = classificationRecord.GetHashCode();
                         foreach (var vrb in classificationRecord.Variable)
                             hash = hash ^ vrb.Code.GetHashCode();
-                        // hash = hash ^ vrb.GetHashCode();
-                        classificationRecord.Code = Utility.GetMD5(hash.ToString());
+                        classificationRecord.Code = Utility.GetMD5(hash.ToString()) + dimensionCounter.ToString();
                     }
 
                     retValue.Add(classificationRecord);
@@ -1065,7 +1070,7 @@ namespace PxStat.Data
 
             baseKeywordList.Add(CreatePxElement("OFFICIAL-STATISTICS", this.IsOfficialStatistic ? Utility.GetCustomConfig("APP_PX_TRUE") : Utility.GetCustomConfig("APP_PX_FALSE")));
 
-            baseKeywordList.Add(CreatePxElement("DECIMALS", this.MainSpec.Statistic.Max(x => x.Decimal)));
+            baseKeywordList.Add(CreatePxElement("DECIMALS", this.MainSpec.Statistic.Min(x => x.Decimal)));
 
             baseKeywordList.Add(CreatePxElement("MATRIX", Code));
 

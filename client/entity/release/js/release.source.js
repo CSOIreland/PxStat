@@ -12,12 +12,6 @@ $(document).ready(function () {
     api.content.load("#data-view-modal #data-dataset-row", "entity/data/index.dataset.html");
     api.content.load("#data-view-modal #data-dataview-row", "entity/data/index.dataview.html");
 
-    //empty dynamic data from modal when you close it
-    $('#data-view-modal').on('hide.bs.modal', function (e) {
-        $(this).find("#data-dataview-selected-table").empty();
-        $(this).find("#data-view-container").empty();
-    });
-    // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });
 

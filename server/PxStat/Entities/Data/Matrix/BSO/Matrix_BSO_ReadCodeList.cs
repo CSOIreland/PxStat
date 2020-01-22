@@ -33,7 +33,7 @@ namespace PxStat.Data
         protected override bool Execute()
         {
             var adoMatrix = new Matrix_ADO(Ado);
-            var list = adoMatrix.ReadCodeList(SamAccountName, DTO.LngIsoCode);
+            var list = adoMatrix.ReadCodeList(SamAccountName);
             Response.data = list;
 
             return true;

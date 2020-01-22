@@ -18,7 +18,7 @@ app.build.upload_panel.format.callback = {};
  */
 app.build.upload_panel.format.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.public,
     "PxStat.System.Settings.Format_API.Read",
     {
       "FrmDirection": C_APP_TS_FORMAT_DIRECTION_UPLOAD

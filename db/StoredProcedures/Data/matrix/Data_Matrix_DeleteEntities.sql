@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 10/07/2019
 -- Description:	Hard deletes all data associated with all soft deleted matrixes
--- exec Data_Matrix_Delete Data_Matrix_DeleteEntities
+-- exec Data_Matrix_DeleteEntities
 -- =============================================
 CREATE
 	OR
@@ -17,19 +17,12 @@ ALTER PROCEDURE Data_Matrix_DeleteEntities
 AS
 BEGIN
 	SET NOCOUNT ON;
+	SET IMPLICIT_TRANSACTIONS  OFF;
 
-	DECLARE @MatrixIds TABLE (
-		MtrId INT
-		,MtrDtgId INT
-		,Rownum INT
-		)
+	DECLARE @MatrixIds TABLE (MtrId INT)
 
 	INSERT INTO @MatrixIds
 	SELECT MTR_Id
-		,MTR_DTG_ID
-		,ROW_NUMBER() OVER (
-			ORDER BY MTR_ID
-			) AS RowNum
 	FROM TD_MATRIX
 	WHERE MTR_DELETE_FLAG = 1
 

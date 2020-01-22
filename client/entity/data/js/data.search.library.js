@@ -66,7 +66,7 @@ app.data.search.callback.readNav = function (response) {
         $("#data-navigation").find("[name=navigation-product-item]").once("click", function (e) {
             e.preventDefault();
             //clear search box input
-            $("#data-search-input").find("[name=search-input]").val('');
+            $("#data-search-row-desktop [name=search-input], #data-search-row-responsive [name=search-input]").val('');
             //empty data screens
             $("#data-dataview-selected-table, #panel, #data-view-container").empty();
             $("#data-accordion-api").hide();

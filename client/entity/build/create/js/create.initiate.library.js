@@ -27,9 +27,7 @@ app.build.create.initiate.ajax.matrixLookup = function () {
     // Change app.config.language.iso.code to the selected one
     api.ajax.jsonrpc.request(app.config.url.api.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
-        {
-            LngIsoCode: app.label.language.iso.code
-        },
+        null,
         "app.build.create.initiate.callback.matrixLookup");
 };
 
@@ -70,12 +68,7 @@ app.build.create.initiate.callback.drawMatrix = function (data) {
         var localOptions = {
             data: data,
             columns: [
-                {
-                    data: null,
-                    render: function (_data, _type, row) {
-                        return app.library.html.tooltip(row.MtrCode, row.MtrTitle);
-                    }
-                },
+                { data: "MtrCode" }
             ],
             drawCallback: function (settings) {
                 app.build.create.initiate.drawCallbackDrawMatrix();
@@ -257,7 +250,8 @@ app.build.create.initiate.callback.readCopyright = function (response) {
     $("#build-create-initiate-setup").find("[name=copyright-code]").append($("<option>", {
         "text": app.label.static["select-uppercase"],
         "disabled": "disabled",
-        "selected": "selected"
+        "selected": "selected",
+        "value": "select"
     }));
 
     $.each(data, function (key, value) {

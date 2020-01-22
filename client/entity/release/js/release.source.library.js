@@ -72,6 +72,9 @@ app.release.source.render = function (data) {
     // Display Data in modal (reuse code app.data.dataset)
     $("#release-source").find("[name=view-data]").once("click", function (e) {
         e.preventDefault();
+        //clean modal of previous HTML
+        $("#data-view-modal").find("#data-dataview-selected-table").empty();
+        $("#data-view-modal").find("#data-view-container").empty();
         //DO NOT Pass User SELECTED language from app.label.language.iso.code
         //Drop down list available langues for the Release (Matrix langues)
         app.data.init($("#release-source [name=lng-iso-code] option:selected").val(), null, app.release.RlsCode, app.release.MtrCode);
@@ -172,7 +175,7 @@ app.release.source.download = function () {
  */
 app.release.source.view = function () {
     if (app.release.fileContent.length > app.config.upload.threshold.soft) {
-        api.modal.confirm(app.library.html.parseDynamicLabel("confirm-file", [app.library.utility.formatNumber(Math.ceil(app.release.fileContent.length / 1024)) + " KB"]),
+        api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [app.library.utility.formatNumber(Math.ceil(app.release.fileContent.length / 1024)) + " KB"]),
             app.release.source.callback.view)
     }
     else {

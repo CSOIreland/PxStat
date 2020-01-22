@@ -562,12 +562,15 @@ app.library.utility.initTinyMce = function (stripDoubleQuotes) {
           tinymce.get(this.id).setContent(content.replace(C_APP_REGEX_NODOUBLEQUOTE, ""));
         }
 
-        tinymce.triggerSave();
-
         //move cursor to end of textarea
         editor.focus();
         editor.selection.select(editor.getBody(), true);
         editor.selection.collapse(false);
+      });
+
+      //trigger save on focus out so that cursor focus doesn't move
+      editor.off('focusout').on('focusout', function () {
+        tinymce.triggerSave();
       });
 
       // Do nothing when submitting the form

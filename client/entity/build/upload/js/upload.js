@@ -16,7 +16,7 @@ $(document).ready(function () {
   $("#build-upload-container").find("[name=upload-btn-preview]").once("click", function () {
     if (app.build.upload.file.size > app.config.upload.threshold.soft) {
       var fileSizeKB = app.library.utility.formatNumber(Math.ceil(app.build.upload.file.size / 1024)) + " KB";
-      api.modal.confirm(app.library.html.parseDynamicLabel("confirm-file", [fileSizeKB]), app.build.upload.preview);
+      api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [fileSizeKB]), app.build.upload.preview);
     }
     else {
       // Preview file content

@@ -30,7 +30,7 @@ label.mandatory:before, span.mandatory:before {
     margin: 0 auto;
 }
 
-.modal-full .modal-content {
+.modal-full>.modal-content {
     min-height: 100vh;
 }
 

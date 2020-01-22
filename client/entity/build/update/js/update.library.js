@@ -144,7 +144,7 @@ app.build.update.callback.readCopyright = function (response) {
  */
 app.build.update.ajax.readFormat = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.public,
         "PxStat.System.Settings.Format_API.Read",
         {
             "LngIsoCode": null,

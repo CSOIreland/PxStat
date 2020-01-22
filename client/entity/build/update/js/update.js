@@ -24,7 +24,7 @@ $(document).ready(function () {
     //Bind the preview button
     $("#build-update-upload-file").find("[name=file-data-view]").once("click", function () {
         if (app.build.update.upload.file.content.source.size > app.config.upload.threshold.soft) {
-            api.modal.confirm(app.library.html.parseDynamicLabel("confirm-file", [app.library.utility.formatNumber(Math.ceil(app.build.update.upload.file.content.source.size / 1024)) + " KB"]),
+            api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [app.library.utility.formatNumber(Math.ceil(app.build.update.upload.file.content.source.size / 1024)) + " KB"]),
                 app.build.update.upload.previewSource)
         }
         else {
@@ -100,7 +100,7 @@ $(document).ready(function () {
     //bind data preview button
     $("#build-update-matrix-data").find("[name=preview-data]").once("click", function () {
         if (app.build.update.upload.file.content.data.size > app.config.upload.threshold.soft) {
-            api.modal.confirm(app.library.html.parseDynamicLabel("confirm-file", [app.library.utility.formatNumber(Math.ceil(app.build.update.upload.file.content.data.size / 1024)) + " KB"]),
+            api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [app.library.utility.formatNumber(Math.ceil(app.build.update.upload.file.content.data.size / 1024)) + " KB"]),
                 app.build.update.callback.previewData)
         }
         else {

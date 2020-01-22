@@ -22,7 +22,12 @@ namespace PxStat.System.Settings
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            return true;
+        }
+
+        protected override bool HasUserToBeAuthenticated()
+        {
+            return false;
         }
 
         /// <summary>

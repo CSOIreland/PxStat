@@ -24,9 +24,9 @@ namespace PxStat.Workflow
             RuleFor(f => f.WrqDatetime).Must(f => !(f.Equals(default(DateTime)))).WithMessage("Invalid Request Date").WithName("WrqRequestDateValidation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
 
             //Date must be one of the allowed days of the week for publish (except emergencies) for publish
-            RuleFor(f => f).Must(CustomValidationsWorkflowRequest.IsEmbargoDate).WithMessage("Embargo date violation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
+            RuleFor(f => f).Must(CustomValidationsWorkflowRequest.IsEmbargoDate).WithMessage("Embargo date violation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH)).When(f => f.WrqEmergencyFlag == false);
             //Time must be the configured allowed time (except emergencies) for publish
-            RuleFor(f => f).Must(CustomValidationsWorkflowRequest.IsEmbargoTime).WithMessage("Embargo time violation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
+            RuleFor(f => f).Must(CustomValidationsWorkflowRequest.IsEmbargoTime).WithMessage("Embargo time violation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH)).When(f => f.WrqEmergencyFlag == false);
 
             RuleFor(f => f.WrqDatetime).Must(f => !(f.Equals(default(DateTime)))).WithMessage("Invalid Request Date").WithName("WrqRequestDateValidation").When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH));
             //Mandatory - RlsCode - Mandatory for All RqsCodes
@@ -97,6 +97,8 @@ namespace PxStat.Workflow
         /// <returns></returns>
         internal static bool IsEmbargoTime(WorkflowRequest_DTO dto)
         {
+            bool isEmergency = dto.WrqEmergencyFlag.HasValue && dto.WrqEmergencyFlag.Value;
+
             DateTime etime = DateTime.ParseExact(Utility.GetCustomConfig("APP_PX_EMBARGO_TIME"), "HH:mm",
                                         CultureInfo.InvariantCulture);
 

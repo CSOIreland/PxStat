@@ -29,15 +29,30 @@ namespace PxStat.System.Navigation
             dynamic results = new List<ExpandoObject>();
             results.Add(GetListForLanguage(Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"), synonymSets));
 
-            foreach (var s in synonymSets)
+            Language_ADO lAdo = new Language_ADO(Ado);
+            var languages = lAdo.Read(new Language_DTO_Read());
+
+            //foreach (var s in synonymSets)
+            //{
+            foreach (var l in languages.data)
             {
-                dynamic result = new ExpandoObject();
-                result.LngIsoCode = s.Key;
+                //  if (synonymSets.ContainsKey(l.LngIsoCode))
+                // {
+                if (l.LngIsoCode != Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"))
+                    results.Add(GetListForLanguage(l.LngIsoCode, synonymSets));
+                //}
+                //else
+                // {
 
+                // }
 
-                if (s.Key != Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"))
-                    results.Add(GetListForLanguage(s.Key, synonymSets));
             }
+            //}
+
+
+
+
+
 
             Response.data = results;
             return true;
@@ -48,10 +63,17 @@ namespace PxStat.System.Navigation
             dynamic result = new ExpandoObject();
             result.LngIsoCode = lngIsoCode;
             result.LngIsoName = new Language_BSO().Read(lngIsoCode).LngIsoName;
-            List<Synonym> languageSynonyms = synonyms[lngIsoCode].Where(x => x.match == DTO.KrlValue).ToList();
-            result.Synonym = languageSynonyms.Select(x => x.lemma).ToList();
+            List<Synonym> languageSynonyms = new List<Synonym>();
+            if (synonyms.ContainsKey(lngIsoCode))
+            {
+                languageSynonyms = synonyms[lngIsoCode].Where(x => x.match == DTO.KrlValue).ToList();
+                result.Synonym = languageSynonyms.Select(x => x.lemma).ToList();
+            }
+            else result.Synonym = languageSynonyms;
             return result;
         }
+
+
 
     }
 }

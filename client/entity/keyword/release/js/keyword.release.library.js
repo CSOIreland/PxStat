@@ -144,9 +144,7 @@ app.keyword.release.ajax.matrixReadList = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
-        {
-            LngIsoCode: app.label.language.iso.code
-        },
+        null,
         "app.keyword.release.callback.matrixReadList"
     );
 };

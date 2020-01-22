@@ -31,10 +31,10 @@ app.data.metadata.ajax.readNavigationResults = function (apiParams) {
 */
 app.data.metadata.ajax.readSearch = function (Search) {
     //The "Search" value is not sending null value. The value is string or empty string.
-    Search = Search || $("#data-search-input").find("[name=search-input]").val();
+    Search = Search || $("#data-search-row-desktop").find("[name=search-input]").val();
     if (Search) {
         // Populate the search input to make the search noticeable
-        $("#data-search-input").find("[name=search-input]").val(Search);
+        $("#data-search-row-desktop").find("[name=search-input]").val(Search);
     }
     api.ajax.jsonrpc.request(app.config.url.api.public,
         "PxStat.System.Navigation.Navigation_API.Search",
@@ -63,13 +63,13 @@ app.data.metadata.callback.readResults = function (response, params) {
     }
     else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
         $("#data-filter, #data-metadata-row [name=search-results]").empty();
-        $("#data-search-input").find("[name=no-search-results]").show();
+        $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").show();
         $("#data-search-results-pagination [name=pagination]").hide();
         $("#data-navigation").find(".navbar-collapse").collapse('show');
     }
     else if (response.data) {
         $("#data-filter, #data-metadata-row [name=search-results]").empty();
-        $("#data-search-input").find("[name=no-search-results]").hide();
+        $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").hide();
         $("#data-dataview-selected-table, #panel, #data-view-container").empty();
         $("#data-accordion-api").hide();
         $("#data-search-results-pagination").show();

@@ -94,10 +94,13 @@ namespace PxStat.System.Notification
         {
             var listToParse = new List<eMail_KeyValuePair>();
 
+            List<string> grpCodes = new List<string>();
+            grpCodes=DTO.GroupCodes.Select(s => (string)s.GrpCode).ToList();
+
             listToParse.Add(new eMail_KeyValuePair() { key = "{title}", value = title });
             listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{grouplist}", value = DTO.GroupCodes.Any() ? String.Join(", ", DTO.GroupCodes) : Label.Get("static.all-groups") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{grouplist}", value = grpCodes.Any() ? String.Join(", ", grpCodes) : Label.Get("static.all-groups") });
             listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = ConfigurationManager.AppSettings["APP_NAME"] });
             listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = ConfigurationManager.AppSettings["APP_URL"] });
 
