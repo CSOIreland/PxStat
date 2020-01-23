@@ -42,13 +42,14 @@ $password =[Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropSe
 
 #Declare DB_DATA
 Write-Host "" 
-Write-Host "Choose the name of the Database to update (eg. pxstat.live):"  
+Write-Host "Type the name of the Database to update (eg. pxstat.live):"  
 
 $DbData = Read-host 
 
 #Declare DB_VERSION
 Write-Host "" 
-Write-Host "Choose the version of the Script to run (eg. 1.1.0) or press Enter to skip this step:"  
+Write-Host "Type the Version number (eg. 1.1.0) you are updating from:"  
+Write-Host "(You can find this information at the bottom-right of the Application's footer):"  
 
 $DbVersion = Read-host 
 
@@ -61,28 +62,34 @@ Write-Host ""
 # ********************************************************************************
 if($DbVersion.length -gt 0) {
 	#Extract the databse.sql file into an object
-	$files = Get-ChildItem -recurse $scriptDir\Scripts\$DbVersion.sql
+	$files = Get-ChildItem -recurse $scriptDir\Scripts\*.sql | Sort-Object
 
 	$successCount = 0
 	$errorCount = 0
 
 	ForEach ($file in $files)
 		{
-			try
-			{
-				Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
-				"SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
-				$successCount = $successCount + 1
-			}
-			catch
-			{
-				$ErrorMessage = $_.Exception.Message
-				Write-Host "ERROR $file - $ErrorMessage"
-				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-				"" | out-file $scriptDir\update.log -Append
-				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-				$errorCount = $errorCount + 1
-				Continue
+        if($file.Name -gt "$DbVersion.sql") 
+            {
+				try
+				{
+                    Write-Host "Running: $($file.Name)"
+					
+					Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
+					"SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
+					$successCount = $successCount + 1
+					
+				}
+				catch
+				{
+					$ErrorMessage = $_.Exception.Message
+					Write-Host "ERROR $file - $ErrorMessage"
+					"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+					"" | out-file $scriptDir\update.log -Append
+					"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+					$errorCount = $errorCount + 1
+					Continue
+				}
 			}
 		}
 
