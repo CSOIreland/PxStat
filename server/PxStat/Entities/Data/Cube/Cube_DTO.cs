@@ -100,16 +100,18 @@ namespace PxStat.Data
             else this.language = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
 
             Format = new Format_DTO_Read();
-            if (parameters.FrmType != null && parameters.FrmVersion != null)
+            if (parameters.format != null)
             {
 
-                Format.FrmType = parameters.FrmType;
+                if (parameters.format.type != null)
+                    Format.FrmType = parameters.format.type;
                 Format.FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
 
                 if (Format.FrmType == Constants.C_SYSTEM_JSON_NAME)
                     Format.FrmType = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
                 Format.FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
-                Format.FrmVersion = parameters.FrmVersion;
+                if (parameters.format.version != null)
+                    Format.FrmVersion = parameters.format.version;
             }
 
 

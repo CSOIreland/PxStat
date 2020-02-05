@@ -8,6 +8,7 @@ using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static PxStat.Data.Matrix;
 
 namespace PxStat.Build
@@ -357,8 +358,10 @@ namespace PxStat.Build
             RuleFor(f => f.Frequency).SetValidator(new Frequency_VLD());
 
             //Does not contain inverted commas
-            RuleFor(f => f.MtrTitle).Matches(fchars);
-            RuleFor(f => f.MtrNote).Matches(fchars);
+
+
+            RuleFor(f => f.MtrTitle).Must(CustomValidations.ValidateIgnoreEscapeChars);
+            RuleFor(f => f.MtrNote).Must(CustomValidations.ValidateIgnoreEscapeChars);
             RuleFor(f => f.StatisticLabel).Matches(fchars);
             RuleFor(f => f.FrqValue).Matches(fchars);
         }
@@ -600,12 +603,14 @@ namespace PxStat.Build
     /// </summary>
     internal class Build_VLD_BuildUpdateDimension : AbstractValidator<Dimension_DTO>
     {
-        readonly string fchars = Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
+
+
         internal Build_VLD_BuildUpdateDimension()
         {
-            RuleFor(f => f.MtrTitle).Matches(fchars).When(f => !string.IsNullOrEmpty(f.MtrTitle));
-            RuleFor(f => f.MtrNote).Matches(fchars).When(f => !string.IsNullOrEmpty(f.MtrNote));
-            RuleFor(f => f.StatisticLabel).Matches(fchars).When(f => !string.IsNullOrEmpty(f.StatisticLabel));
+
+            RuleFor(f => f.MtrTitle).Must(CustomValidations.ValidateIgnoreEscapeChars);
+            RuleFor(f => f.MtrNote).Must(CustomValidations.ValidateIgnoreEscapeChars);
+            RuleFor(f => f.StatisticLabel).Must(CustomValidations.ValidateIgnoreEscapeChars).When(f => !string.IsNullOrEmpty(f.StatisticLabel));
 
             RuleFor(f => f.Frequency).SetValidator(new Frequency_VLD()).When(f => f.Frequency != null);
             RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD_CodeOnly());
@@ -681,6 +686,13 @@ namespace PxStat.Build
         {
 
             return (!Constants.C_SYSTEM_RESERVED_WORD().Contains(strWord.ToLower()));
+
+        }
+
+        internal static bool ValidateIgnoreEscapeChars(string readString)
+        {
+
+            return Regex.IsMatch(Regex.Escape(readString), Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS"));
 
         }
 

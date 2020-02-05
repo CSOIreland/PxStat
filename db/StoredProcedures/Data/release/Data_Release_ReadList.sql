@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Create date: 9 Nov 2018
 -- Description:	Reads a list of releases for a given matrix code and username
---exec Data_Release_ReadList 'okeeffene','FINA','ga','en'
+--exec Data_Release_ReadList 'okeeffene','AHM04X','en','en'
 -- =============================================
 CREATE
 	OR

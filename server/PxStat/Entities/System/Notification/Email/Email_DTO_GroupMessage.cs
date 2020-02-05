@@ -27,7 +27,7 @@ namespace PxStat.System.Notification
                 foreach (var g in parameters.GroupCodes)
                 {
                     Group_DTO_Read gDto = new Group_DTO_Read();
-                    gDto.GrpCode = g.GrpCode.ToString();
+                    gDto.GrpCode = g;
                     GroupCodes.Add(gDto);
                 }
             }

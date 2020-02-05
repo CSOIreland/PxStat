@@ -173,8 +173,11 @@ namespace PxStat.Workflow
 
                 Email_BSO_NotifyWorkflow notifyReject = new Email_BSO_NotifyWorkflow();
 
-
-                notifyReject.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
+                try
+                {
+                    notifyReject.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
+                }
+                catch { }
 
                 return true;
             }
@@ -262,9 +265,12 @@ namespace PxStat.Workflow
                     //Delete the future release if it exists and set the current to_date to null
                     //Otherwise delete the current release and make the previous release current by setting its to_date to null
 
-                    if (adoRelease.IsLiveNext(dtoRelease.RlsCode))//this is a future release
+                    if (adoRelease.IsLiveNext(dtoRelease.RlsCode))//this is a future release so get the previous release to roll back to (even if that previous is now historical)
                     {
-                        Release_DTO dtoNowRelease = Release_ADO.GetReleaseDTO(adoRelease.ReadLiveNow(DTO.RlsCode));
+
+                        Compare_ADO cAdo = new Compare_ADO(Ado);
+                        Release_DTO dtoNowRelease = Release_ADO.GetReleaseDTO(adoRelease.Read(cAdo.ReadPreviousRelease(DTO.RlsCode), SamAccountName));
+
 
                         dtoNowRelease.RlsLiveDatetimeTo = default(DateTime);
                         int rows = adoRelease.Update(dtoNowRelease, SamAccountName);
@@ -283,7 +289,7 @@ namespace PxStat.Workflow
                         //This isn't a future release - it had better be a Live Now (with a previous)
                         if (!adoRelease.IsLiveNow(dtoRelease.RlsCode))
                         {
-                            //If the request is neither a Live Now nor a Live Next release then there's a problem
+                            //If the request is neither a Live Now release then there's a problem
                             Log.Instance.Debug("Can't delete the Release, RlsCode:" + dtoRelease.RlsCode + ". Release is not current live");
                             Response.error = Label.Get("error.delete");
                             return false;
@@ -354,18 +360,13 @@ namespace PxStat.Workflow
                     dtoRelease.RlsCode = DTO.RlsCode;
                     Request_ADO adoRequest = new Request_ADO();
 
-                    if (adoRelease.IsLiveNext(dtoRelease.RlsCode)) //this is a future release
+                    if (adoRelease.IsLiveNow(dtoRelease.RlsCode))
                     {
-                        //Is this a future release?
-                        //If so we must set the Date To in the release to now. This effectively closes the current release
-
-                        //We must get the Live Now release for the Live next
                         Release_DTO dtoNowRelease = Release_ADO.GetReleaseDTO(adoRelease.ReadLiveNow(dtoRequest.RlsCode));
 
-                        //There might not be a Live Now release if the LiveNext release is the first ever release
+                        //Set the toDate to now, thus setting the release to historical
                         if (dtoNowRelease != null)
                         {
-
                             dtoNowRelease.RlsLiveDatetimeTo = DateTime.Now;
                             int updateCount = adoRelease.Update(dtoNowRelease, SamAccountName);
                             if (updateCount == 0)
@@ -377,50 +378,47 @@ namespace PxStat.Workflow
 
                         }
 
-                        //dtoRelease is the currently requested release. As things stand, this will be deleted in the delete section below
+                        //Delete the search keywords for this release
+                        krbAdo.Delete(Ado, DTO.RlsCode, null, true);
+
                     }
-                    else if (adoRelease.IsLiveNow(dtoRelease.RlsCode))
+                    else if (adoRelease.IsLiveNext(dtoRelease.RlsCode) || adoRelease.IsWip(dtoRelease.RlsCode))
                     {
+                        //Delete the search keywords for this release
+                        krbAdo.Delete(Ado, DTO.RlsCode, null, true);
 
-
-
-                        dtoRelease = Release_ADO.GetReleaseDTO(adoRelease.ReadLiveNow(dtoRequest.RlsCode));
-
-                        //dtoRelease will be deleted in the delete section below. This deletes the Live Now version
-
+                        // We may now proceed with the soft delete
+                        if (bsoDelete.Delete(Ado, DTO.RlsCode, SamAccountName, true) == 0)
+                        {
+                            Log.Instance.Debug("Can't delete the Release, RlsCode:" + DTO.RlsCode);
+                            Response.error = Label.Get("error.delete");
+                            return false;
+                        }
                     }
-                    else if (!adoRelease.IsWip(dtoRelease.RlsCode))
+                    else
                     {
                         //Only LiveNow, LiveNext and WIP releases can be deleted. Anything else means there's a problem.
                         Log.Instance.Debug("Can't delete the Release - invalid release status, RlsCode:" + DTO.RlsCode);
                         Response.error = Label.Get("error.delete");
                         return false;
-
                     }
 
-                    // We may now proceed with the soft delete
-                    if (bsoDelete.Delete(Ado, DTO.RlsCode, SamAccountName, true) == 0)
-                    {
-                        Log.Instance.Debug("Can't delete the Release, RlsCode:" + DTO.RlsCode);
-                        Response.error = Label.Get("error.delete");
-                        return false;
-                    }
-
-                    //Delete the search keywords for this release
-                    krbAdo.Delete(Ado, DTO.RlsCode, null, true);
                     break;
 
                 case Constants.C_WORKFLOW_REQUEST_ROLLBACK:
-
-                    if (bsoDelete.Delete(Ado, DTO.RlsCode, SamAccountName, true) == 0)
+                    // Only Live Next gets soft deleted, while Live Now is turned historical above
+                    if (adoRelease.IsLiveNext(dtoRelease.RlsCode))
                     {
-                        Log.Instance.Debug("Can't delete the Release, RlsCode:" + DTO.RlsCode);
-                        Response.error = Label.Get("error.delete");
-                        return false;
-                    }
+                        if (bsoDelete.Delete(Ado, DTO.RlsCode, SamAccountName, true) == 0)
+                        {
+                            Log.Instance.Debug("Can't delete the Release, RlsCode:" + DTO.RlsCode);
+                            Response.error = Label.Get("error.delete");
+                            return false;
+                        }
 
-                    //Delete the search keywords for this release
-                    krbAdo.Delete(Ado, DTO.RlsCode, null, true);
+                        //Delete the search keywords for this release
+                        krbAdo.Delete(Ado, DTO.RlsCode, null, true);
+                    }
                     break;
 
             }
@@ -431,8 +429,23 @@ namespace PxStat.Workflow
             Response.data = JSONRPC.success;
             Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
 
+            // Clean up caching
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + DTO.RlsCode);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + DTO.RlsCode);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + DTO.RlsCode);
 
-            notify.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + DTO.RlsCode);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + DTO.RlsCode);
+
+
+            try
+            {
+                notify.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
+            }
+            catch { }
+
+
+
             return true;
         }
 

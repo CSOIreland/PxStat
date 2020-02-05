@@ -110,8 +110,10 @@ app.data.dataview.getMapSelection = function () {
 
     var localParams = {
         "language": app.data.LngIsoCode,
-        "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
-        "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
+        "format": {
+            "type": C_APP_FORMAT_TYPE_DEFAULT,
+            "version": C_APP_FORMAT_VERSION_DEFAULT
+        },
         "role": {
             "time": [
                 $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=time]").attr("idn")
@@ -457,8 +459,8 @@ app.data.dataview.drawCallbackDrawDataTable = function () {
  */
 app.data.dataview.callback.resultsDownload = function (format, version) {
     var apiParams = $.extend(true, {}, app.data.dataset.apiParamsData);
-    apiParams.FrmType = format;
-    apiParams.FrmVersion = version;
+    apiParams.format.type = format;
+    apiParams.format.version = version;
     app.data.dataset.ajax.downloadDataset(apiParams);
 }
 
@@ -531,7 +533,7 @@ app.data.dataview.callback.drawDatatable = function (ds) {
     });
     tableColumns.push({
         "data": 'value',
-        "type": "natural-nohtml",
+        "type": "data",
         "class": "text-right",
         "defaultContent": app.config.entity.data.datatable.null,
         "render": function (data, type, row, meta) {

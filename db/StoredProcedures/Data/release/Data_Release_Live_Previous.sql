@@ -9,7 +9,7 @@ GO
 -- Create date: 14/11/2018
 -- Description:	Read the previous live release based on the current RlsCode
 -- The returned release entry must have the same Ma trix Code as that of the input RlsCode
--- exec Data_Release_Live_Previous 63
+-- exec Data_Release_Live_Previous 70
 -- =============================================
 CREATE
 	OR

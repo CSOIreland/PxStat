@@ -24,8 +24,10 @@ app.data.dataset.ajax.readMetadata = function () {
             "PxStat.Data.Cube_API.ReadMetadata",
             {
                 "matrix": app.data.MtrCode,
-                "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
-                "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
+                "format": {
+                    "type": C_APP_FORMAT_TYPE_DEFAULT,
+                    "version": C_APP_FORMAT_VERSION_DEFAULT
+                },
                 "language": app.data.LngIsoCode,
                 "m2m": false
             },
@@ -40,8 +42,10 @@ app.data.dataset.ajax.readMetadata = function () {
             "PxStat.Data.Cube_API.ReadPreMetadata",
             {
                 "release": app.data.RlsCode,
-                "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
-                "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
+                "format": {
+                    "type": C_APP_FORMAT_TYPE_DEFAULT,
+                    "version": C_APP_FORMAT_VERSION_DEFAULT
+                },
                 "language": app.data.LngIsoCode,
                 "m2m": false
             },
@@ -405,8 +409,10 @@ app.data.dataset.callback.drawTableSelection = function (data) {
             $("#data-dataview-selected-table").find("[name=card-footer]").removeClass("d-flex").addClass("d-none");
             var apiParams = {
                 "language": app.data.LngIsoCode,
-                "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
-                "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
+                "format": {
+                    "type": C_APP_FORMAT_TYPE_DEFAULT,
+                    "version": C_APP_FORMAT_VERSION_DEFAULT
+                },
                 "m2m": false
             };
             if (app.data.MtrCode) {
@@ -554,10 +560,13 @@ app.data.dataset.callback.fullDownload = function (format, version) {
     var apiParams = {
         "matrix": app.data.MtrCode,
         "language": app.data.LngIsoCode,
-        "FrmType": format,
-        "FrmVersion": version,
+        "format": {
+            "type": format,
+            "version": version
+        },
         "m2m": false
     };
+
     app.data.dataset.ajax.downloadDataset(apiParams);
 }
 
@@ -606,8 +615,10 @@ app.data.dataset.callback.buildApiParams = function () {
     }
     var localParams = {
         "language": app.data.LngIsoCode,
-        "FrmType": C_APP_FORMAT_TYPE_DEFAULT,
-        "FrmVersion": C_APP_FORMAT_VERSION_DEFAULT,
+        "format": {
+            "type": C_APP_FORMAT_TYPE_DEFAULT,
+            "version": C_APP_FORMAT_VERSION_DEFAULT
+        },
         "role": {
             "time": [
                 $("#data-dataview-selected-table").find("[name=dimension-containers]").find("select[role=time]").attr("idn")
@@ -719,7 +730,7 @@ app.data.dataset.callback.downloadDataset = function (response, apiParams) {
         var mimeType = "";
         var fileData = null;
         var fileExtension = null;
-        switch (apiParams.FrmType) {
+        switch (apiParams.format.type) {
             case C_APP_TS_FORMAT_TYPE_PX:
                 mimeType = "text/plain";
                 fileData = data;

@@ -66,7 +66,6 @@ namespace PxStat.Build
 
             matrix.Cells = GetBlankCells(matrix);
 
-            matrix.SortMatrixMetadataSpc();
 
             //We should be able to validate the newly created matrix now...
             MatrixValidator mValidator = new MatrixValidator();

@@ -45,7 +45,6 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
-        [CacheRead(CAS_REPOSITORY = Resources.Constants.C_CAS_DATA_COMPARE_READ_PREVIOUS_RELEASE, DOMAIN = "RlsCode")]
         public static dynamic ReadPreviousRelease(JSONRPC_API jsonrpcRequest)
         {
             return new Compare_BSO_ReadPreviousRelease(jsonrpcRequest).Read().Response;

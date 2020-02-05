@@ -270,7 +270,6 @@ $(document).ready(function () {
         if ($("#data-search-row-desktop").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
           $("#data-search-row-responsive").show();
           $("#data-search-row-desktop").hide();
-          $("[name=search-input]:visible").focus();
         }
 
         //Collapse data navigation always on small
@@ -296,7 +295,6 @@ $(document).ready(function () {
         if ($("#data-search-row-desktop").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
           $("#data-search-row-desktop").show();
           $("#data-search-row-responsive").hide();
-          $("[name=search-input]:visible").focus();
         };
 
         if ($("#panel").is(":empty")) {
@@ -319,6 +317,33 @@ $(document).ready(function () {
         break;
     }
   }
+});
+
+/*******************************************************************************
+Application - Plugin - Datatable data sorting
+*******************************************************************************/
+
+jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+  "data-asc": function (a, b) {
+    a = a.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
+    b = b.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
+    return jQuery.fn.dataTableExt.oSort["natural-nohtml-asc"](a, b);
+  },
+  "data-desc": function (a, b) {
+    a = a.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
+    b = b.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
+    return jQuery.fn.dataTableExt.oSort["natural-nohtml-desc"](a, b);
+  }
+});
+
+/*******************************************************************************
+Application - Plugin - Back button detection
+*******************************************************************************/
+window.addEventListener("beforeunload", function (event) {
+  // Cancel the event as stated by the standard.
+  event.preventDefault();
+  // Chrome requires returnValue to be set.
+  event.returnValue = '';
 });
 
 

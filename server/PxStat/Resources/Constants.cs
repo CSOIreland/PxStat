@@ -147,7 +147,6 @@ namespace PxStat.Resources
         internal const string C_CAS_DATA_COMPARE_READ_AMENDMENT = "PxStat.Data.Compare_API.ReadAmendment";
         internal const string C_CAS_DATA_COMPARE_READ_DELETION = "PxStat.Data.Compare_API.ReadDeletion";
         internal const string C_CAS_DATA_COMPARE_READ_ADDITION = "PxStat.Data.Compare_API.ReadAddition";
-        internal const string C_CAS_DATA_COMPARE_READ_PREVIOUS_RELEASE = "PxStat.Data.Compare_API.ReadPreviousRelease";
 
         internal const string C_CAS_DATA_CUBE_READ_PRE_DATASET = "PxStat.Data.Cube_API.ReadPreDataset";
         internal const string C_CAS_DATA_CUBE_READ_PRE_METADATA = "PxStat.Data.Cube_API.ReadPreMetadata";

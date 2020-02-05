@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "1.2.0 Beta";
+const C_APP_VERSION = "1.3.0";
 
 // URLs
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
@@ -33,7 +33,7 @@ const C_APP_NAME_LINK_INTERNAL = "link-internal";
 const C_APP_NAME_LINK_ANALYTIC = "link-analytic";
 
 // RegEx
-const C_APP_REGEX_EMAIL = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+const C_APP_REGEX_EMAIL = /^([\w-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|([\w-\.\+]+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
 const C_APP_REGEX_IP_MASK = /^\d{1,3}\.\d{1,3}\.\d{1,3}$|^\d{1,3}\.\d{1,3}\.?$|^\d{1,3}\.?$/;
 const C_APP_REGEX_IP = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 const C_APP_REGEX_BBCODE_NOT_ALLOWED = /\[\/?(img|code|color|quote)\]/gi;

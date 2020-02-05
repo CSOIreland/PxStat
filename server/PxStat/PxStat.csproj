@@ -296,7 +296,7 @@
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateAnalyticalFlag.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateDependencyFlag.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateProduct.cs" />
-    <Compile Include="Entities\Data\Release\Release_ADO _wf.cs" />
+    <Compile Include="Entities\Data\Release\Release_ADO _Workflow.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadCurrentAccess.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsApprover.cs" />

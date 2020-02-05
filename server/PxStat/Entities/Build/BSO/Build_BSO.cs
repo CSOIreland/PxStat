@@ -981,7 +981,6 @@ namespace PxStat.Build
             foreach (var c in theMatrixData.Cells)
             {
                 dynamic cl = new ExpandoObject();
-                //cl.TdtValue = c.Value.ToString() == Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") ? null : c.Value.ToString();
                 cl.TdtValue = c.Value.ToString() == null ? Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") : c.Value.ToString();
                 cells.Add(cl);
 
@@ -991,6 +990,16 @@ namespace PxStat.Build
             return theMatrixData;
         }
 
+        /// <summary>
+        /// Get the csv items expressed as a list of DataItem_DTO
+        /// </summary>
+        /// <param name="stats"></param>
+        /// <param name="periods"></param>
+        /// <param name="classifications"></param>
+        /// <param name="variables"></param>
+        /// <param name="theSpec"></param>
+        /// <param name="DTO"></param>
+        /// <returns></returns>
         private List<DataItem_DTO> GetInputObjectsJson(Dictionary<string, string> stats, Dictionary<string, string> periods, Dictionary<string, string> classifications, Dictionary<string, string> variables, Specification theSpec, BuildUpdate_DTO DTO)
         {
             List<DataItem_DTO> buildList = new List<DataItem_DTO>();

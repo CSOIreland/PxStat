@@ -719,7 +719,17 @@ namespace PxStat.Data
             /// <returns></returns>
             private string TranslateValue(PxDocument doc, string value, string lngIsoCodeFrom, string lngIsoCodeTo)
             {
+                //Translation request is trivial, we don't need to translate
+                if (lngIsoCodeTo == null) return null;
+
+                //Get a translation
                 var mainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatchesNullable("VALUES", lngIsoCodeFrom);
+
+
+                //No translation, get the version from the top language
+                if (mainValues == null) mainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatchesNullable("VALUES", null);
+
+
 
                 if (mainValues == null) return null;
 

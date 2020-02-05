@@ -178,6 +178,7 @@ app.navigation.layout.set = function (isDataEntity) {
       $("#sidebar").removeClass("col-sm-3").addClass("col-sm-4").removeClass("bg-sidebar");
       //hide responsive serach
       $("#data-search-row-responsive").hide();
+      $("#share-this").empty();
       break;
   }
 };

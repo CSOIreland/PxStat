@@ -103,7 +103,7 @@ namespace PxStat.Workflow
 
                 case Constants.C_WORKFLOW_REQUEST_ROLLBACK:
 
-                    ////Release must be CURRENT LIVE OR NEXT LIVE and PREVIOUS LIVE must exist
+                    //Release must be CURRENT LIVE OR NEXT LIVE and PREVIOUS must exist
                     if ((!adoRelease.IsLiveNow(dtoRequest.RlsCode) && !adoRelease.IsLiveNext(dtoRequest.RlsCode)) || !adoRelease.HasPrevious(dtoRequest.RlsCode))
                     {
                         Log.Instance.Debug("Can't create a ROLLBACK Request because (a) the Request is neither live nor pending-live or (b) there is no valid Release to roll back to.");
@@ -153,7 +153,11 @@ namespace PxStat.Workflow
             if (dtoWrqList.Count == 1)
             {
                 Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
-                notify.EmailRequest(dtoWrqList[0], releaseDTO);
+                try
+                {
+                    notify.EmailRequest(dtoWrqList[0], releaseDTO);
+                }
+                catch { }
             }
             else
                 Log.Instance.Error("Email failed");

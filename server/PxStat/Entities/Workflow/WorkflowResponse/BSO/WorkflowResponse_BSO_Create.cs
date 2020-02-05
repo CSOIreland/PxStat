@@ -1,7 +1,7 @@
 ﻿using API;
 using PxStat.Data;
-using PxStat.Template;
 using PxStat.System.Notification;
+using PxStat.Template;
 using System.Collections.Generic;
 
 namespace PxStat.Workflow
@@ -127,7 +127,12 @@ namespace PxStat.Workflow
             Release_DTO releaseDTO = Release_ADO.GetReleaseDTO(releaseAdo.Read(DTO.RlsCode, SamAccountName));
 
             Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
-            notify.EmailResponse(dtoWrqList[0], DTO, releaseDTO);
+            try
+            {
+                notify.EmailResponse(dtoWrqList[0], DTO, releaseDTO);
+            }
+            catch
+            { }
             return true;
         }
     }

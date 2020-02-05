@@ -1,7 +1,7 @@
 ﻿using API;
 using PxStat.Data;
-using PxStat.Template;
 using PxStat.Resources;
+using PxStat.Template;
 using System.Collections.Generic;
 
 namespace PxStat.Workflow
@@ -83,7 +83,7 @@ namespace PxStat.Workflow
             bool isLiveNow = adoRelease.IsLiveNow(DTO.RlsCode);
             bool isLiveNext = adoRelease.IsLiveNext(DTO.RlsCode);
             bool isWip = adoRelease.IsWip(DTO.RlsCode);
-            bool hasLivePrevious = adoRelease.HasPrevious(DTO.RlsCode);
+            bool hasPrevious = adoRelease.HasPrevious(DTO.RlsCode);
 
 
 
@@ -91,17 +91,17 @@ namespace PxStat.Workflow
             if (isWip)
                 list = Constants.C_WORKFLOW_REQUEST_WIP();
 
-            else if (isLiveNow && hasLivePrevious)
+            else if (isLiveNow && hasPrevious)
                 list = Constants.C_WORKFLOW_REQUEST_LIVE_NOW_WITH_PREVIOUS();
 
-            else if (isLiveNow && !hasLivePrevious)
+            else if (isLiveNow && !hasPrevious)
                 list = Constants.C_WORKFLOW_REQUEST_LIVE_NOW_WITHOUT_PREVIOUS();
 
 
-            else if (isLiveNext && hasLivePrevious)
+            else if (isLiveNext && hasPrevious)
                 list = Constants.C_WORKFLOW_REQUEST_LIVE_NEXT_WITH_PREVIOUS();
 
-            else if (isLiveNext && !hasLivePrevious)
+            else if (isLiveNext && !hasPrevious)
                 list = Constants.C_WORKFLOW_REQUEST_LIVE_NEXT_WITHOUT_PREVIOUS();
 
             else //default - return a blank list
