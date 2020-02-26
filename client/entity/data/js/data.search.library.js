@@ -35,55 +35,46 @@ app.data.search.ajax.readNav = function (lngIsoCode) {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.data.search.callback.readNav = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (response.data !== undefined) {
-        $("#data-navigation").find("[name=browse-subjects]").empty();
-        $.each(response.data, function (key, sbjValue) {
-            var subject = $("#data-search-templates").find("[name=navigation-subject-list]").clone();
-            subject.find("[name=navigation-subject-link]").html($("<span>", {
-                html: $("<i>", {
-                    class: "far fa-folder mr-2"
-                }).get(0).outerHTML + sbjValue.SbjValue
-            })
-            );
-            $.each(sbjValue.product, function (key, prcValue) {
-                var product = $("#data-search-templates").find("[name=navigation-product-item]").clone();
-                product.attr("prc-code", prcValue.PrcCode);
-                product.attr("lng-iso-code", app.label.language.iso.code);
-                product.find("[name=product-name]").text(prcValue.PrcValue);
-                product.find("[name=product-release-count]").text(prcValue.PrcReleaseCount);
-                subject.find("[name=navigation-product-list]").append(product);
-            });
-            $("#data-navigation").find("[name=browse-subjects]").append(subject);
+app.data.search.callback.readNav = function (data) {
+    $("#data-navigation").find("[name=browse-subjects]").empty();
+    $.each(data, function (key, sbjValue) {
+        var subject = $("#data-search-templates").find("[name=navigation-subject-list]").clone();
+        subject.find("[name=navigation-subject-link]").html($("<span>", {
+            html: $("<i>", {
+                class: "far fa-folder mr-2"
+            }).get(0).outerHTML + sbjValue.SbjValue
+        })
+        );
+        $.each(sbjValue.product, function (key, prcValue) {
+            var product = $("#data-search-templates").find("[name=navigation-product-item]").clone();
+            product.attr("prc-code", prcValue.PrcCode);
+            product.attr("lng-iso-code", app.label.language.iso.code);
+            product.find("[name=product-name]").text(prcValue.PrcValue);
+            product.find("[name=product-release-count]").text(prcValue.PrcReleaseCount);
+            subject.find("[name=navigation-product-list]").append(product);
         });
-        //EVENT ASSIGN
-        // Add Click even for selecting Subject-Product at Browse Subjects menu.
-        $("#data-navigation").find("[name=navigation-product-item]").once("click", function (e) {
-            e.preventDefault();
-            //clear search box input
-            $("#data-search-row-desktop [name=search-input], #data-search-row-responsive [name=search-input]").val('');
-            //empty data screens
-            $("#data-dataview-selected-table, #panel, #data-view-container").empty();
-            $("#data-accordion-api").hide();
-            $("#data-latest-releases").remove();
-            $("#data-accordion-collection-api").hide();
-            var apiParams = {
-                "PrcCode": $(this).attr("prc-code"),
-                "LngIsoCode": $(this).attr("lng-iso-code")
-            };
-            app.data.metadata.ajax.readNavigationResults(apiParams);
-            //Collapse navigation
-            $("#data-navigation").find(".navbar-collapse").collapse('hide');
-        });
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-
-
+        $("#data-navigation").find("[name=browse-subjects]").append(subject);
+    });
+    //EVENT ASSIGN
+    // Add Click even for selecting Subject-Product at Browse Subjects menu.
+    $("#data-navigation").find("[name=navigation-product-item]").once("click", function (e) {
+        e.preventDefault();
+        //clear search box input
+        $("#data-search-row-desktop [name=search-input], #data-search-row-responsive [name=search-input]").val('');
+        //empty data screens
+        $("#data-dataview-selected-table, #panel, #data-view-container").empty();
+        $("#data-accordion-api").hide();
+        $("#data-latest-releases").remove();
+        $("#data-accordion-collection-api").hide();
+        var apiParams = {
+            "PrcCode": $(this).attr("prc-code"),
+            "LngIsoCode": $(this).attr("lng-iso-code")
+        };
+        app.data.metadata.ajax.readNavigationResults(apiParams);
+        //Collapse navigation
+        $("#data-navigation").find(".navbar-collapse").collapse('hide');
+    });
 };
 //#endregion get navigation

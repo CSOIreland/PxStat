@@ -24,26 +24,17 @@ app.tracing.ajax.readType = function () {
 
 /**
  * Callback read Type dropdown
- * @param {*} response 
+ * @param {*} data 
  */
-app.tracing.callback.readType = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-        // Do nothing
-    }
-    else if (response.data) {
-        // Handle the Data in the Response then
+app.tracing.callback.readType = function (data) {
+    if (data && Array.isArray(data) && data.length) {
         var option = $("<option>", {
             "value": "",
             "text": app.label.static["any"],
             "selected": "selected"
         });
         $("#tracing-input").find("[name=select-authentication-type]").append(option);
-        $.each(response.data, function (_index, element) {
+        $.each(data, function (_index, element) {
             var option = $("<option>", {
                 "value": element.AuthenticationType,
                 "text": app.label.static[element.AuthenticationType.toLowerCase()]
@@ -52,8 +43,11 @@ app.tracing.callback.readType = function (response) {
         });
         $("#tracing-input").find("[name=select-authentication-type]").prop('disabled', false);
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Handle no data
+    else {
+        api.modal.information(app.label.static["api-ajax-nodata"]);
+        // Do nothing
+    }
 };
 
 /**
@@ -105,20 +99,11 @@ app.tracing.ajax.read = function () {
 };
 
 /**
- * Handle response from api
- * @param {*} response 
+ * Handle data from api
+ * @param {*} data 
  */
-app.tracing.callback.read = function (response) {
-
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    } else if (response.data || response.data == null) {
-        // Handle the Data in the Response then
-        app.tracing.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.tracing.callback.read = function (data) {
+    app.tracing.drawDataTable(data);
 };
 
 /**

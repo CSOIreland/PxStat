@@ -55,17 +55,11 @@ app.build.update.upload.ajax.matrixLookup = function () {
 
 /**
 * * Callback subject read
-* @param  {} response
+* @param  {} data
 */
-app.build.update.upload.callback.matrixLookup = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Handle the Data in the Response then
-        app.build.update.upload.callback.drawMatrix(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.update.upload.callback.matrixLookup = function (data) {
+    // Handle the Data
+    app.build.update.upload.callback.drawMatrix(data);
 };
 
 /**
@@ -170,14 +164,13 @@ app.build.update.upload.validate.dataFile = function () {
 
     //get default language JsonStat
     var dimensionCodes = [];
-    $(app.build.update.ajax.response).each(function (key, value) {
-        var data = JSONstat(value);
-        if (data.extension.language.code == app.config.language.iso.code) {
+    $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
+        if (jsonStat.extension.language.code == app.config.language.iso.code) {
             //get dimension codes from default JsonStat
-            for (i = 0; i < data.length; i++) {
-                if (data.Dimension(i).role != "time") {
+            for (i = 0; i < jsonStat.length; i++) {
+                if (jsonStat.Dimension(i).role != "time") {
                     //don't add the time code to dimension code array 
-                    dimensionCodes.push(data.id[i]);
+                    dimensionCodes.push(jsonStat.id[i]);
                 }
             };
         };
@@ -247,9 +240,6 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             app.build.update.upload.file.content.source.UTF8 = null;
             app.build.update.upload.file.content.source.Base64 = null;
             app.build.update.callback.resetData();
-
-            $("#build-update-upload-file").find("[name=upload-error]").empty();
-            $("#build-update-upload-file").find("[name=upload-error-card]").hide();
 
             //Reset Frequency and Copyright dropdowns every time you drop a new file in
             $("#build-update-properties [name=frequency-code]").val();
@@ -435,7 +425,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 /**
  *
  */
-app.build.update.upload.validate.ajax.read = function (callbackOnSuccess, unitsPerSecond) {
+app.build.update.upload.validate.ajax.read = function (callback, unitsPerSecond) {
 
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
@@ -445,7 +435,7 @@ app.build.update.upload.validate.ajax.read = function (callbackOnSuccess, unitsP
             "FrqValueTimeval": app.build.update.upload.FrqValue,
             "MtrInput": app.build.update.upload.file.content.source.Base64
         },
-        callbackOnSuccess,
+        callback,
         null,
         null,
         null,
@@ -461,41 +451,18 @@ app.build.update.upload.validate.ajax.read = function (callbackOnSuccess, unitsP
 /**
  * 
  */
-app.build.update.upload.validate.callback.uploadSource = function (response) {
-    if (response.error) {
-        var errorOutput = $("<ul>", {
-            class: "list-group"
-        });
-        if (Array.isArray(response.error.message)) {
-            $.each(response.error.message, function (_index, value) {
-                var error = $("<li>", {
-                    class: "list-group-item",
-                    html: value.ErrorMessage
-                });
-                errorOutput.append(error);
-            });
-        } else {
-            var error = $("<li>", {
-                class: "list-group-item",
-                html: response.error.message
-            });
-            errorOutput.append(error);
-        }
-
-        $("#build-update-upload-file").find("[name=upload-error]").html(errorOutput.get(0).outerHTML);
-        $("#build-update-upload-file").find("[name=upload-error-card]").fadeIn();
-        api.modal.error(errorOutput);
-    } else if (response.data) {
-        if (response.data.Signature) {
+app.build.update.upload.validate.callback.uploadSource = function (data) {
+    if (data) {
+        if (data.Signature) {
             // Store for later use
-            app.build.update.upload.Signature = response.data.Signature;
+            app.build.update.upload.Signature = data.Signature;
             app.build.update.upload.ajax.read();
         }
         else {
             // Populate the Frequency list
             $("#build-update-modal-frequency").find("[name=frequency-radio-group]").empty();
 
-            $.each(response.data.FrqValueCandidate, function (key, value) {
+            $.each(data.FrqValueCandidate, function (key, value) {
                 $("#build-update-modal-frequency").find("[name=frequency-radio-group]").append(function () {
                     return $("<li>", {
                         "class": "list-group-item",
@@ -507,8 +474,6 @@ app.build.update.upload.validate.callback.uploadSource = function (response) {
                     }).get(0).outerHTML;
                 });
             });
-            // Run validation
-            app.build.update.validate.frequencyModal();
             // Show the modal
             $("#build-update-modal-frequency").modal("show");
         }
@@ -519,11 +484,11 @@ app.build.update.upload.validate.callback.uploadSource = function (response) {
 /**
  * 
  */
-app.build.update.upload.validate.callback.downloadDataTemplate = function (response) {
+app.build.update.upload.validate.callback.downloadDataTemplate = function (data) {
     // N.B. This is a silent validation to cathc hacks only
-    if (response.data && response.data.Signature) {
+    if (data && data.Signature) {
         // Store for later use
-        app.build.update.upload.Signature = response.data.Signature;
+        app.build.update.upload.Signature = data.Signature;
         app.build.update.ajax.downloadDataTemplate();
     }
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -532,11 +497,11 @@ app.build.update.upload.validate.callback.downloadDataTemplate = function (respo
 /**
  * 
  */
-app.build.update.upload.validate.callback.downloadAllData = function (response) {
+app.build.update.upload.validate.callback.downloadAllData = function (data) {
     // N.B. This is a silent validation to cathc hacks only
-    if (response.data && response.data.Signature) {
+    if (data && data.Signature) {
         // Store for later use
-        app.build.update.upload.Signature = response.data.Signature;
+        app.build.update.upload.Signature = data.Signature;
 
         var params = {
             "MtrInput": app.build.update.upload.file.content.source.Base64,
@@ -566,11 +531,11 @@ app.build.update.upload.validate.callback.downloadAllData = function (response) 
 /**
  * 
  */
-app.build.update.upload.validate.callback.downloadNewData = function (response) {
+app.build.update.upload.validate.callback.downloadNewData = function (data) {
     // N.B. This is a silent validation to cathc hacks only
-    if (response.data && response.data.Signature) {
+    if (data && data.Signature) {
         // Store for later use
-        app.build.update.upload.Signature = response.data.Signature;
+        app.build.update.upload.Signature = data.Signature;
 
         var params = {
             "MtrInput": app.build.update.upload.file.content.source.Base64,
@@ -600,11 +565,11 @@ app.build.update.upload.validate.callback.downloadNewData = function (response) 
 /**
  * 
  */
-app.build.update.upload.validate.callback.downloadExistingData = function (response) {
+app.build.update.upload.validate.callback.downloadExistingData = function (data) {
     // N.B. This is a silent validation to cathc hacks only
-    if (response.data && response.data.Signature) {
+    if (data && data.Signature) {
         // Store for later use
-        app.build.update.upload.Signature = response.data.Signature;
+        app.build.update.upload.Signature = data.Signature;
 
         var params = {
             "MtrInput": app.build.update.upload.file.content.source.Base64,
@@ -630,19 +595,18 @@ app.build.update.upload.validate.callback.downloadExistingData = function (respo
 /**
  * 
  */
-app.build.update.upload.validate.callback.updateOutput = function (response) {
+app.build.update.upload.validate.callback.updateOutput = function (data) {
     // N.B. This is a silent validation to cathc hacks only
-    if (response.data && response.data.Signature) {
+    if (data && data.Signature) {
         // Store for later use
-        app.build.update.upload.Signature = response.data.Signature;
+        app.build.update.upload.Signature = data.Signature;
         app.build.update.ajax.updateOutput();
     }
     else api.modal.exception(app.label.static["api-ajax-exception"]);
 }
 
 /**
- *Get JSON-stat from px file
- *
+ * Get JSON-stat from px file
  */
 app.build.update.upload.ajax.read = function () {
     api.ajax.jsonrpc.request(
@@ -664,63 +628,41 @@ app.build.update.upload.ajax.read = function () {
 /**  
  * 
  */
-app.build.update.upload.callback.readInput = function (response) {
-    //put JSON-stat into namespace variable for future use    
-    if (response.error) {
-        var errorOutput = $("<ul>", {
-            class: "list-group"
-        });
-        if (Array.isArray(response.error.message)) {
-            $.each(response.error.message, function (_index, value) {
-                var error = $("<li>", {
-                    class: "list-group-item",
-                    html: value.ErrorMessage
-                });
-                errorOutput.append(error);
-            });
-        } else {
-            var error = $("<li>", {
-                class: "list-group-item",
-                html: response.error.message
-            });
-            errorOutput.append(error);
-        }
-        api.modal.error(errorOutput);
+app.build.update.upload.callback.readInput = function (data) {
+    if (data && Array.isArray(data) && data.length) {
+        //put JSON-stat into namespace variable for future use    
+        app.build.update.ajax.data = data;
 
-        $("#build-update-upload-file").find("[name=upload-error]").html(errorOutput.get(0).outerHTML);
-        $("#build-update-upload-file").find("[name=upload-error-card]").fadeIn();
-    }
-
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-        // Do nothing 
-    }
-    else if (response.data !== undefined) {
-        app.build.update.ajax.response = response.data;
-        $("#build-update-upload-file").find("[name=upload-error-card]").hide();
-
-
-        //check that we have default language in the response
         var languages = [];
-        $(app.build.update.ajax.response).each(function (key, value) {
-            var data = JSONstat(value);
-            languages.push(data.extension.language.code);
+        $(app.build.update.ajax.data).each(function (key, value) {
+            var jsonStat = JSONstat(value);
+            if (jsonStat.length) {
+                app.build.update.ajax.jsonStat.push(jsonStat);
+                languages.push(jsonStat.extension.language.code);
+            }
+            else {
+                languages = [];
+                api.modal.exception(app.label.static["api-ajax-exception"]);
+                return;
+            }
         });
 
-        if (jQuery.inArray(app.config.language.iso.code, languages) == -1) {
+        //check that we have default language in the data
+        if (languages.length && jQuery.inArray(app.config.language.iso.code, languages) == -1) {
             api.modal.error(app.library.html.parseDynamicLabel("update-source-invalid-language", [app.config.language.iso.name]));
             return;
         }
         app.build.update.upload.drawProperties();
     }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
 };
 
 /**
  * 
  */
 app.build.update.upload.drawProperties = function () {
-    $("#build-update-dimensions").find("[name=update-error-card]").hide();
     $("#build-update-upload-file").find("[name=upload-source-file]").prop("disabled", true);
     $("#build-update-dimensions").fadeIn();
     $("#build-update-properties [name=lng-list-group]").empty();
@@ -736,15 +678,14 @@ app.build.update.upload.drawProperties = function () {
 
     app.build.update.data.Dimension = [];
     app.build.update.upload.file.content.source.languages = [];
-    $(app.build.update.ajax.response).each(function (key, value) {
-        var data = JSONstat(value);
+    $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
         app.build.update.upload.file.content.source.languages.push(
             {
-                lngIsoCode: data.extension.language.code,
-                lngIsoName: data.extension.language.name
+                lngIsoCode: jsonStat.extension.language.code,
+                lngIsoName: jsonStat.extension.language.name
             }
         );
-        var lngIsoCode = data.extension.language.code;
+        var lngIsoCode = jsonStat.extension.language.code;
 
         app.build.update.data.Dimension.push({
             "LngIsoCode": lngIsoCode,
@@ -761,24 +702,24 @@ app.build.update.upload.drawProperties = function () {
         // Set properties from the Default language
         if (lngIsoCode == app.config.language.iso.code) {
             //set matrix properties from default language JSON-stat
-            $("#build-update-properties [name=mtr-value]").val(data.extension.matrix);
+            $("#build-update-properties [name=mtr-value]").val(jsonStat.extension.matrix);
 
             //set frequency code to value from px file
             $("#build-update-properties [name=frequency-code] > option").each(function () {
-                if (this.value == data.role.time[0]) {
+                if (this.value == jsonStat.role.time[0]) {
                     $("#build-update-properties [name=frequency-code]").val(this.value);
                 }
             });
 
             //set copyright to value from px file
             $("#build-update-properties [name=copyright-code] > option").each(function () {
-                if (this.text == data.extension.copyright.name) {
+                if (this.text == jsonStat.extension.copyright.name) {
                     $("#build-update-properties [name=copyright-code]").val(this.value);
                 }
             });
 
             //set official statistics to value from px file
-            if (data.extension.official) {
+            if (jsonStat.extension.official) {
                 $("#build-update-properties [name=official-flag]").prop('checked', true);
             }
 
@@ -795,7 +736,7 @@ app.build.update.upload.drawProperties = function () {
             width: C_APP_TOGGLE_LENGTH
         });
 
-        var lngIsoValue = data.extension.language.name;
+        var lngIsoValue = jsonStat.extension.language.name;
         $("#build-update-properties [name=lng-list-group]").append(
             $("<li>", {
                 "class": "list-group-item",
@@ -843,64 +784,64 @@ app.build.update.upload.drawProperties = function () {
         $("#build-update-matrix-dimensions").find("[name=tab-content]").append(tabContent.get(0).outerHTML);
 
         //initiate validation after tab content drawn
-        app.build.update.validate.dimensionProperty(data.extension.language.code);
+        app.build.update.validate.dimensionProperty(jsonStat.extension.language.code);
 
         //set content of tab from JSON-stat
         var statisticsData = [];
         var periodsDataExisting = [];
-        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=title-value]").val(data.label);
-        for (i = 0; i < data.length; i++) {
+        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=title-value]").val(jsonStat.label);
+        for (i = 0; i < jsonStat.length; i++) {
 
-            var dimension = data.Dimension(i);
-            if (data.Dimension(i).role == "metric") {
+            var dimension = jsonStat.Dimension(i);
+            if (jsonStat.Dimension(i).role == "metric") {
                 $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=statistic-label]").val(dimension.label);
 
                 //set up statistics object for datatable
-                $.each(data.Dimension(i).id, function (index, value) {
+                $.each(jsonStat.Dimension(i).id, function (index, value) {
                     statisticsData.push(
                         {
                             "SttCode": value,
-                            "SttValue": data.Dimension(i).Category(index).label,
-                            "SttUnit": data.Dimension(i).Category(index).unit.label,
-                            "SttDecimal": data.Dimension(i).Category(index).unit.decimals
+                            "SttValue": jsonStat.Dimension(i).Category(index).label,
+                            "SttUnit": jsonStat.Dimension(i).Category(index).unit.label,
+                            "SttDecimal": jsonStat.Dimension(i).Category(index).unit.decimals
                         }
                     );
                 });
             }
 
-            if (data.Dimension(i).role == "time") {
+            if (jsonStat.Dimension(i).role == "time") {
                 $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=frequency-value]").val(dimension.label);
                 //set up periods object for datatable
-                $.each(data.Dimension(i).id, function (index, value) {
+                $.each(jsonStat.Dimension(i).id, function (index, value) {
                     periodsDataExisting.push(
                         {
                             "PrdCode": value,
-                            "PrdValue": data.Dimension(i).Category(index).label
+                            "PrdValue": jsonStat.Dimension(i).Category(index).label
                         }
                     );
                 });
             }
-            if (data.Dimension(i).role == "classification") {
+            if (jsonStat.Dimension(i).role == "classification" || jsonStat.Dimension(i).role == "geo") {
                 var mapUrl = null;
-                if (data.Dimension(i).link) {
-                    mapUrl = data.Dimension(i).link.enclosure[0].href;
+                if (jsonStat.Dimension(i).link) {
+                    mapUrl = jsonStat.Dimension(i).link.enclosure[0].href;
                 }
                 //classification datatable object read from app.build.update.data as we might be updating this object
                 $.each(app.build.update.data.Dimension, function (dimensionIndex, value) {
                     if (value.LngIsoCode == lngIsoCode) {
                         var classification = {
-                            "ClsCode": data.id[i],
-                            "ClsValue": data.Dimension(i).label,
+                            "ClsCode": jsonStat.id[i],
+                            "ClsValue": jsonStat.Dimension(i).label,
                             "ClsGeoUrl": mapUrl,
                             "Variable": []
                         };
 
 
-                        $.each(data.Dimension(i).id, function (index, value) {
+                        $.each(jsonStat.Dimension(i).id, function (index, value) {
                             classification.Variable.push(
                                 {
                                     "VrbCode": value,
-                                    "VrbValue": data.Dimension(i).Category(index).label
+                                    "VrbValue": jsonStat.Dimension(i).Category(index).label
                                 }
                             );
                         });
@@ -912,7 +853,7 @@ app.build.update.upload.drawProperties = function () {
         };
 
         //Don't use tinymce set content as 'once' change event within app.library.utility.initTinyMce won't trigger
-        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=note-value]").val(data.note.join(" "));
+        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=note-value]").val(jsonStat.note.join(" "));
 
         //draw dimension datatables
         app.build.update.dimension.drawStatistic(lngIsoCode, statisticsData);

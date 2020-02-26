@@ -33,15 +33,10 @@ app.release.workflow.history.ajax.read = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.workflow.history.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.workflow.history.callback.drawDataTable(response.data);
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.workflow.history.callback.read = function (data) {
+    app.release.workflow.history.callback.drawDataTable(data);
 };
 
 /**
@@ -364,9 +359,9 @@ app.release.workflow.history.ajax.delete = function (idn) {
         app.config.url.api.private,
         "PxStat.Workflow.WorkflowRequest_API.Delete",
         { RlsCode: idn },
-        "app.release.workflow.history.callback.delete",
+        "app.release.workflow.history.callback.deleteOnSuccess",
         null,
-        null,
+        "app.release.workflow.history.callback.deleteOnError",
         null,
         { async: false }
     );
@@ -374,15 +369,13 @@ app.release.workflow.history.ajax.delete = function (idn) {
 
 /**
 * Callback from server for Delete request
-* @param {*} response
+* @param {*} data
 */
-app.release.workflow.history.callback.delete = function (response) {
+app.release.workflow.history.callback.deleteOnSuccess = function (data) {
     //Redraw Data Table Workflow History with fresh data.
     app.release.workflow.history.read();
 
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+    if (data == C_APP_API_SUCCESS) {
         var goToParams = {
             "RlsCode": app.release.RlsCode,
             "MtrCode": app.release.MtrCode
@@ -397,5 +390,14 @@ app.release.workflow.history.callback.delete = function (response) {
     // Handle Exception
     else
         api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+* Callback from server for Delete request
+* @param {*} error
+*/
+app.release.workflow.history.callback.deleteOnError = function (error) {
+    //Redraw Data Table Workflow History with fresh data.
+    app.release.workflow.history.read();
 };
 //#endregion

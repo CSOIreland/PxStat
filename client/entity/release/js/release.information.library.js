@@ -36,36 +36,30 @@ app.release.information.ajax.read = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.release.information.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        //Store in namespace for late use
-        app.release.SbjCode = response.data.SbjCode;
-        app.release.PrcCode = response.data.PrcCode;
-        app.release.RlsReservationFlag = response.data.RlsReservationFlag;
-        app.release.RlsArchiveFlag = response.data.RlsArchiveFlag;
+app.release.information.callback.read = function (data) {
+    //Store in namespace for late use
+    app.release.SbjCode = data.SbjCode;
+    app.release.PrcCode = data.PrcCode;
+    app.release.RlsReservationFlag = data.RlsReservationFlag;
+    app.release.RlsArchiveFlag = data.RlsArchiveFlag;
 
-        app.release.isLive = app.release.checkStatusLive(response.data);
-        app.release.isPending = app.release.checkStatusPending(response.data);
-        app.release.isHistorical = app.release.checkStatusHistorical(response.data);
+    app.release.isLive = app.release.checkStatusLive(data);
+    app.release.isPending = app.release.checkStatusPending(data);
+    app.release.isHistorical = app.release.checkStatusHistorical(data);
 
 
-        app.release.isWorkInProgress = app.release.checkStatusWorkInProgress(response.data);
-        app.release.isAwaitingResponse = app.release.checkStatusAwaitingResponse(response.data);
-        app.release.isAwaitingSignOff = app.release.checkStatusAwaitingSignOff(response.data);
+    app.release.isWorkInProgress = app.release.checkStatusWorkInProgress(data);
+    app.release.isAwaitingResponse = app.release.checkStatusAwaitingResponse(data);
+    app.release.isAwaitingSignOff = app.release.checkStatusAwaitingSignOff(data);
 
-        app.release.information.render(response.data);
-        app.release.property.render(response.data);
-        app.release.comment.render(response.data);
-        app.release.reason.render();
-        app.release.workflow.modal.signoff.checkNavigation();
-        app.release.workflow.read();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    app.release.information.render(data);
+    app.release.property.render(data);
+    app.release.comment.render(data);
+    app.release.reason.render();
+    app.release.workflow.modal.signoff.checkNavigation();
+    app.release.workflow.read();
 };
 
 
@@ -172,11 +166,12 @@ app.release.information.ajax.updateAnalyticalFlag = function () {
         null,
         null,
         { async: false });
-};
-app.release.information.callback.updateAnalyticalFlag = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+};	   
+/**
+* @param {*} data
+*/
+app.release.information.callback.updateAnalyticalFlag = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -200,12 +195,10 @@ app.release.information.ajax.updateDependencyFlag = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.release.information.callback.updateDependencyFlag = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+app.release.information.callback.updateDependencyFlag = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
 using PxStat.Resources;
+using System.Collections.Generic;
 
 namespace PxStat.Security
 {
@@ -124,15 +124,16 @@ namespace PxStat.Security
         /// <param name="isApprover"></param>
         /// <param name="prvCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadReleaseUsers(ADO ado, int rlsCode, bool isApprover, string prvCode = null)
+        internal ADO_readerOutput ReadReleaseUsers(ADO ado, int rlsCode, bool? isApprover, string prvCode = null)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             { new ADO_inputParams() { name = "@RlsCode", value = rlsCode } };
 
-
-            if (isApprover)
+            if (isApprover != null)
             {
-                paramList.Add(new ADO_inputParams() { name = "@GccApproveFlag", value = true });
+
+                paramList.Add(new ADO_inputParams() { name = "@GccApproveFlag", value = (bool)isApprover });
+
 
             }
 

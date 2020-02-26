@@ -4,10 +4,12 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "1.3.0";
+const C_APP_VERSION = "2.0.0";
 
 // URLs
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
+const C_APP_URL_GITHUB_RELEASE_TAG = "https://github.com/CSOIreland/PxStat/releases/tag/{0}";
+const C_APP_URL_GITHUB_REPORT_ISSUE = "https://github.com/CSOIreland/PxStat/issues/new/choose";
 const C_APP_URL_GITHUB_API_CUBE = "https://github.com/CSOIreland/PxStat/wiki/API-Cube";
 
 //Charts + Maps
@@ -79,6 +81,7 @@ const C_APP_TS_SIGNOFF_REJECTED = "REJECTED";
 const C_APP_TS_FORMAT_TYPE_PX = "PX";
 const C_APP_TS_FORMAT_TYPE_JSONSTAT = "JSON-stat";
 const C_APP_TS_FORMAT_TYPE_CSV = "CSV";
+const C_APP_TS_FORMAT_TYPE_XLSX = "XLSX";
 
 //Formats (FRM_DIRECTION)
 const C_APP_TS_FORMAT_DIRECTION_UPLOAD = "UPLOAD";
@@ -90,8 +93,15 @@ const C_APP_FORMAT_VERSION_DEFAULT = "2.0";
 
 // File extensions
 const C_APP_EXTENSION_PX = "px";
-const C_APP_EXTENSION_JSONSTAT = "json";
+const C_APP_EXTENSION_JSON = "json";
 const C_APP_EXTENSION_CSV = "csv";
+const C_APP_EXTENSION_XLSX = "xlsx";
+
+// File Mimetype
+const C_APP_MIMETYPE_PX = "text/plain";
+const C_APP_MIMETYPE_JSON = "application/json";
+const C_APP_MIMETYPE_CSV = "text/csv";
+const C_APP_MIMETYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 // Datatable
 const C_APP_DATATABLE_ROW_INDEX = "row-index";
@@ -137,3 +147,6 @@ const C_APP_TOGGLE_LENGTH = 100;
 
 //GeoJson
 const C_APP_GEOJSON_FEATURE_COLLECTION = "FeatureCollection";
+
+//Datetime 
+const C_APP_DATETIME_DEFAULT = "0001-01-01T0:00:00.000Z";

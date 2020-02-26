@@ -53,21 +53,17 @@ app.release.comparison.ajax.readRlsCodePrevious = function () {
 
 /**
  * Populate app.release.RlsCodePrevious and call readPreviousRelease
- * @param {*} response
+ * @param {*} data
  */
-app.release.comparison.callback.readRlsCodePrevious = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.release.comparison.callback.readRlsCodePrevious = function (data) {
+    if (data) {
+        app.release.RlsCodePrevious = data;
+        $("#release-source").find("[name=compare-release]").prop("disabled", false);
+    }
+    else {
         app.release.RlsCodePrevious = null;
         $("#release-source").find("[name=compare-release]").prop("disabled", true);
-    } else if (response.data) {
-        app.release.RlsCodePrevious = response.data;
-        $("#release-source").find("[name=compare-release]").prop("disabled", false);
-
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 
 };
 /**
@@ -91,32 +87,25 @@ app.release.comparison.ajax.readPreviousRelease = function () {
 
 /**
  * Draw previous release information
- * @param  {} response
+ * @param  {} data
 */
-app.release.comparison.callback.readPreviousRelease = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.comparison.previousReleaseData = response.data;
-        app.release.comparison.callback.styleDifferences();
-        //Information
-        $("#release-comparison-report [name=rls-version-previous]").empty().html(app.release.comparison.previousReleaseData.RlsVersion);
-        $("#release-comparison-report [name=rls-revision-previous]").empty().html(app.release.comparison.previousReleaseData.RlsRevision);
-        $("#release-comparison-report [name=status-previous]").empty().html(app.release.renderStatus(app.release.comparison.previousReleaseData));
-        $("#release-comparison-report [name=rls-live-datetime-from-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
-        $("#release-comparison-report [name=rls-live-datetime-to-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
-        $("#release-comparison-report [name=rls-emergency-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsEmergencyFlag, true, true));
-        $("#release-comparison-report [name=grp-name-previous]").empty().html(app.library.html.link.group(app.release.comparison.previousReleaseData.GrpCode));
-        $("#release-comparison-report [name=sbj-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.SbjCode + ") " + app.release.comparison.previousReleaseData.SbjValue);
-        $("#release-comparison-report [name=prc-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.PrcCode + ") " + app.release.comparison.previousReleaseData.PrcValue);
-        $("#release-comparison-report [name=rls-analytical-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsAnalyticalFlag, true, true));
-        $("#release-comparison-report [name=rls-dependency-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsDependencyFlag, true, true));
-        $("#release-comparison-report [name=rls-reservation-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsReservationFlag, true, true));
-        $("#release-comparison-report [name=rls-archive-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsArchiveFlag, true, true));
-
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.comparison.callback.readPreviousRelease = function (data) {
+    app.release.comparison.previousReleaseData = data;
+    app.release.comparison.callback.styleDifferences();
+    //Information
+    $("#release-comparison-report [name=rls-version-previous]").empty().html(app.release.comparison.previousReleaseData.RlsVersion);
+    $("#release-comparison-report [name=rls-revision-previous]").empty().html(app.release.comparison.previousReleaseData.RlsRevision);
+    $("#release-comparison-report [name=status-previous]").empty().html(app.release.renderStatus(app.release.comparison.previousReleaseData));
+    $("#release-comparison-report [name=rls-live-datetime-from-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=rls-live-datetime-to-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=rls-emergency-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsEmergencyFlag, true, true));
+    $("#release-comparison-report [name=grp-name-previous]").empty().html(app.library.html.link.group(app.release.comparison.previousReleaseData.GrpCode));
+    $("#release-comparison-report [name=sbj-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.SbjCode + ") " + app.release.comparison.previousReleaseData.SbjValue);
+    $("#release-comparison-report [name=prc-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.PrcCode + ") " + app.release.comparison.previousReleaseData.PrcValue);
+    $("#release-comparison-report [name=rls-analytical-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsAnalyticalFlag, true, true));
+    $("#release-comparison-report [name=rls-dependency-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsDependencyFlag, true, true));
+    $("#release-comparison-report [name=rls-reservation-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsReservationFlag, true, true));
+    $("#release-comparison-report [name=rls-archive-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsArchiveFlag, true, true));
 };
 
 /**
@@ -140,25 +129,18 @@ app.release.comparison.ajax.readPreviousMatrix = function () {
 
 /**
  * Draw previous matrix information
- * @param  {} response
+ * @param  {} data
 */
-app.release.comparison.callback.readPreviousMatrix = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.comparison.previousMatrixData = response.data;
-        app.release.comparison.callback.styleDifferences();
-        $("#release-comparison-report [name=mtr-title-previous]").empty().html(app.release.comparison.previousMatrixData.MtrTitle);
-        $("#release-comparison-report [name=dtg-create-datetime-previous]").empty().html(app.release.comparison.previousMatrixData.DtgCreateDatetime ? moment(app.release.comparison.previousMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-        $("#release-comparison-report [name=ccn-username-previous]").empty().html(app.library.html.link.user(app.release.comparison.previousMatrixData.CcnUsernameCreate));
-        $("#release-comparison-report [name=frq-value-previous]").empty().html(app.release.comparison.previousMatrixData.FrqValue);
-        $("#release-comparison-report [name=cpr-value-previous]").empty().html(app.release.comparison.previousMatrixData.CprValue);
-        $("#release-comparison-report [name=mtr-official-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousMatrixData.MtrOfficialFlag, true, true));
-        $("#release-comparison-report [name=mtr-note-previous]").empty().html(app.library.html.parseBbCode(app.release.comparison.previousMatrixData.MtrNote));
-
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.comparison.callback.readPreviousMatrix = function (data) {
+    app.release.comparison.previousMatrixData = data;
+    app.release.comparison.callback.styleDifferences();
+    $("#release-comparison-report [name=mtr-title-previous]").empty().html(app.release.comparison.previousMatrixData.MtrTitle);
+    $("#release-comparison-report [name=dtg-create-datetime-previous]").empty().html(app.release.comparison.previousMatrixData.DtgCreateDatetime ? moment(app.release.comparison.previousMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=ccn-username-previous]").empty().html(app.library.html.link.user(app.release.comparison.previousMatrixData.CcnUsernameCreate));
+    $("#release-comparison-report [name=frq-value-previous]").empty().html(app.release.comparison.previousMatrixData.FrqValue);
+    $("#release-comparison-report [name=cpr-value-previous]").empty().html(app.release.comparison.previousMatrixData.CprValue);
+    $("#release-comparison-report [name=mtr-official-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousMatrixData.MtrOfficialFlag, true, true));
+    $("#release-comparison-report [name=mtr-note-previous]").empty().html(app.library.html.parseBbCode(app.release.comparison.previousMatrixData.MtrNote));
 };
 
 /**
@@ -182,32 +164,26 @@ app.release.comparison.ajax.readCurrentRelease = function () {
 
 /**
  * Draw current release information
- * @param  {} response
+ * @param  {} data
 */
-app.release.comparison.callback.readCurrentRelease = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.comparison.currentReleaseData = response.data;
-        app.release.comparison.callback.styleDifferences();
-        //Information
-        $("#release-comparison-report [name=rls-version-current]").empty().html(app.release.comparison.currentReleaseData.RlsVersion);
-        $("#release-comparison-report [name=rls-revision-current]").empty().html(app.release.comparison.currentReleaseData.RlsRevision);
-        $("#release-comparison-report [name=status-current]").empty().html(app.release.renderStatus(app.release.comparison.currentReleaseData));
-        $("#release-comparison-report [name=request-current]").empty().html(app.release.renderRequest(app.release.comparison.currentReleaseData.RqsCode));
-        $("#release-comparison-report [name=rls-live-datetime-from-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
-        $("#release-comparison-report [name=rls-live-datetime-to-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
-        $("#release-comparison-report [name=rls-emergency-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsEmergencyFlag, true, true));
-        $("#release-comparison-report [name=grp-name-current]").empty().html(app.library.html.link.group(app.release.comparison.currentReleaseData.GrpCode));
-        $("#release-comparison-report [name=sbj-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.SbjCode + ") " + app.release.comparison.currentReleaseData.SbjValue);
-        $("#release-comparison-report [name=prc-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.PrcCode + ") " + app.release.comparison.currentReleaseData.PrcValue);
-        $("#release-comparison-report [name=rls-analytical-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsAnalyticalFlag, true, true));
-        $("#release-comparison-report [name=rls-dependency-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsDependencyFlag, true, true));
-        $("#release-comparison-report [name=rls-reservation-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsReservationFlag, true, true));
-        $("#release-comparison-report [name=rls-archive-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsArchiveFlag, true, true));
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.comparison.callback.readCurrentRelease = function (data) {
+    app.release.comparison.currentReleaseData = data;
+    app.release.comparison.callback.styleDifferences();
+    //Information
+    $("#release-comparison-report [name=rls-version-current]").empty().html(app.release.comparison.currentReleaseData.RlsVersion);
+    $("#release-comparison-report [name=rls-revision-current]").empty().html(app.release.comparison.currentReleaseData.RlsRevision);
+    $("#release-comparison-report [name=status-current]").empty().html(app.release.renderStatus(app.release.comparison.currentReleaseData));
+    $("#release-comparison-report [name=request-current]").empty().html(app.release.renderRequest(app.release.comparison.currentReleaseData.RqsCode));
+    $("#release-comparison-report [name=rls-live-datetime-from-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=rls-live-datetime-to-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=rls-emergency-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsEmergencyFlag, true, true));
+    $("#release-comparison-report [name=grp-name-current]").empty().html(app.library.html.link.group(app.release.comparison.currentReleaseData.GrpCode));
+    $("#release-comparison-report [name=sbj-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.SbjCode + ") " + app.release.comparison.currentReleaseData.SbjValue);
+    $("#release-comparison-report [name=prc-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.PrcCode + ") " + app.release.comparison.currentReleaseData.PrcValue);
+    $("#release-comparison-report [name=rls-analytical-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsAnalyticalFlag, true, true));
+    $("#release-comparison-report [name=rls-dependency-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsDependencyFlag, true, true));
+    $("#release-comparison-report [name=rls-reservation-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsReservationFlag, true, true));
+    $("#release-comparison-report [name=rls-archive-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsArchiveFlag, true, true));
 };
 
 
@@ -233,24 +209,18 @@ app.release.comparison.ajax.readCurrentMatrix = function () {
 
 /**
  * Draw current matrix information
- * @param  {} response
+ * @param  {} data
 */
-app.release.comparison.callback.readCurrentMatrix = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.comparison.currentMatrixData = response.data;
-        app.release.comparison.callback.styleDifferences();
-        $("#release-comparison-report [name=mtr-title-current]").empty().html(app.release.comparison.currentMatrixData.MtrTitle);
-        $("#release-comparison-report [name=dtg-create-datetime-current]").empty().html(app.release.comparison.currentMatrixData.DtgCreateDatetime ? moment(app.release.comparison.currentMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-        $("#release-comparison-report [name=ccn-username-current]").empty().html(app.library.html.link.user(app.release.comparison.currentMatrixData.CcnUsernameCreate));
-        $("#release-comparison-report [name=frq-value-current]").empty().html(app.release.comparison.currentMatrixData.FrqValue);
-        $("#release-comparison-report [name=cpr-value-current]").empty().html(app.release.comparison.currentMatrixData.CprValue);
-        $("#release-comparison-report [name=mtr-official-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentMatrixData.MtrOfficialFlag, true, true));
-        $("#release-comparison-report [name=mtr-note-current]").empty().html(app.library.html.parseBbCode(app.release.comparison.currentMatrixData.MtrNote));
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.comparison.callback.readCurrentMatrix = function (data) {
+    app.release.comparison.currentMatrixData = data;
+    app.release.comparison.callback.styleDifferences();
+    $("#release-comparison-report [name=mtr-title-current]").empty().html(app.release.comparison.currentMatrixData.MtrTitle);
+    $("#release-comparison-report [name=dtg-create-datetime-current]").empty().html(app.release.comparison.currentMatrixData.DtgCreateDatetime ? moment(app.release.comparison.currentMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=ccn-username-current]").empty().html(app.library.html.link.user(app.release.comparison.currentMatrixData.CcnUsernameCreate));
+    $("#release-comparison-report [name=frq-value-current]").empty().html(app.release.comparison.currentMatrixData.FrqValue);
+    $("#release-comparison-report [name=cpr-value-current]").empty().html(app.release.comparison.currentMatrixData.CprValue);
+    $("#release-comparison-report [name=mtr-official-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentMatrixData.MtrOfficialFlag, true, true));
+    $("#release-comparison-report [name=mtr-note-current]").empty().html(app.library.html.parseBbCode(app.release.comparison.currentMatrixData.MtrNote));
 };
 
 /**
@@ -398,19 +368,12 @@ app.release.comparison.ajax.readAmendment = function () {
 };
 
 /**
- * Call function to draw datatable with response
- * @param  {} response
+ * Call function to draw datatable with data
+ * @param  {} data
  */
-app.release.comparison.callback.readAmendment = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) { // null is for datatable usually  
-        app.release.comparison.callback.readComparison(response, "#comparison-datatable-amendment");
-        app.release.comparison.ajax.readDeletion();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-
+app.release.comparison.callback.readAmendment = function (data) {
+    app.release.comparison.callback.readComparison(data, "#comparison-datatable-amendment");
+    app.release.comparison.ajax.readDeletion();
 };
 //#endregion
 
@@ -438,19 +401,12 @@ app.release.comparison.ajax.readDeletion = function () {
 };
 
 /**
- * Call function to draw datatable with response
- * @param  {} response
+ * Call function to draw datatable with data
+ * @param  {} data
  */
-app.release.comparison.callback.readDeletion = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) { // null is for datatable usually
-        app.release.comparison.callback.readComparison(response, "#comparison-datatable-deletion");
-        app.release.comparison.ajax.readAddition();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-
+app.release.comparison.callback.readDeletion = function (data) {
+    app.release.comparison.callback.readComparison(data, "#comparison-datatable-deletion");
+    app.release.comparison.ajax.readAddition();
 };
 //#endregion
 
@@ -478,19 +434,11 @@ app.release.comparison.ajax.readAddition = function () {
 };
 
 /**
- * Call function to draw datatable with response
- * @param  {} response
+ * Call function to draw datatable with data
+ * @param  {} data
  */
-app.release.comparison.callback.readAddition = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) { // null is for datatable usually
-        app.release.comparison.callback.readComparison(response, "#comparison-datatable-addition");
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-
-
+app.release.comparison.callback.readAddition = function (data) {
+    app.release.comparison.callback.readComparison(data, "#comparison-datatable-addition");
 };
 //#endregion
 
@@ -548,13 +496,12 @@ app.release.comparison.drawCallbackReadComparsion = function () {
 //#region draw comparison table
 /**
  * Draw datatable for each comparison
- * @param  {} response
+ * @param  {} data
  * @param  {} selector
  */
-app.release.comparison.callback.readComparison = function (response, selector) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data) {
+app.release.comparison.callback.readComparison = function (data, selector) {
+    data = data ? JSONstat(data) : data;
+    if (data && data.length) {
         // Start the spinner manually because the rendering of the Comparison may take a long time
         api.spinner.start();
         var table = $("#release-comparison-templates").find("[name=comparison-table]").clone();
@@ -563,9 +510,7 @@ app.release.comparison.callback.readComparison = function (response, selector) {
             $(selector).find("[name=comparison-table]").DataTable().destroy();
             //cannot use redraw as columns are dynamically created depending on the matrix. Have to destroy and re-initiate 
         }
-        //Create object form JSONstat.
-        var ds = JSONstat(response.data);
-        var exportFileName = ds.extension.matrix;
+        var exportFileName = data.extension.matrix;
         //set export file name
         switch (selector) {
             case "#comparison-datatable-addition":
@@ -581,17 +526,17 @@ app.release.comparison.callback.readComparison = function (response, selector) {
                 break;
 
             default:
-                exportFileName = ds.extension.matrix + "." + moment().format(app.config.mask.datetime.file)
+                exportFileName = data.extension.matrix + "." + moment().format(app.config.mask.datetime.file)
                 break;
         }
-        var jsonTableLabel = ds.toTable({
+        var jsonTableLabel = data.toTable({
             type: 'arrobj',
             meta: true,
             status: true,
             unit: true,
             content: "label"
         });
-        var jsonTableId = ds.toTable({
+        var jsonTableId = data.toTable({
             type: 'arrobj',
             meta: true,
             status: true,
@@ -599,33 +544,15 @@ app.release.comparison.callback.readComparison = function (response, selector) {
             content: "id"
         });
 
-        //loop through data arrays to figure out which items you need to remove, status == undefined
-        var rowsToRemoveLabel = [];
-        var rowsToRemoveId = [];
-        $.each(jsonTableLabel.data, function (index, element) {
-            var status = element.status;
-            if (status == "false") {
-                rowsToRemoveLabel.push(index);
-            }
+        //loop through data arrays to figure out which items you need to remove, status == false
+        jsonTableId.data = $.grep(jsonTableId.data, function (value, index) {
+            return value.status == "false" ? false : true;
+        });
+        jsonTableLabel.data = $.grep(jsonTableLabel.data, function (value, index) {
+            return value.status == "false" ? false : true;
         });
 
-        $.each(jsonTableId.data, function (index, element) {
-            var status = element.status;
-            if (status == "false") {
-                rowsToRemoveId.push(index);
-            }
-        });
-
-        //Now remove unwanted items from array
-        for (var i = rowsToRemoveLabel.length - 1; i >= 0; i--) {
-            jsonTableLabel.data.splice(rowsToRemoveLabel[i], 1);
-        }
-
-        for (var i = rowsToRemoveId.length - 1; i >= 0; i--) {
-            jsonTableId.data.splice(rowsToRemoveId[i], 1);
-        }
-
-        var numDimensions = ds.length;
+        var numDimensions = data.length;
         var tableColumns = [];
 
 
@@ -633,18 +560,18 @@ app.release.comparison.callback.readComparison = function (response, selector) {
             var codeSpan = $('<span>', {
                 "name": "code",
                 "class": "badge badge-pill badge-neutral mx-2 d-none",
-                "text": ds.id[i]
+                "text": data.id[i]
             }).get(0).outerHTML;
 
             var tableHeading = $("<th>", {
-                "html": ds.Dimension(i).label + codeSpan
+                "html": data.Dimension(i).label + codeSpan
             });
 
             //Data Table header
             $(selector).find("[name=comparison-table] thead tr").append(tableHeading);
 
             tableColumns.push({
-                data: ds.id[i],
+                data: data.id[i],
                 render: function (data, type, row, meta) {
                     var dimensionLabel = jsonTableId.meta.id[meta.col];
                     var codeSpan = $('<span>', {
@@ -755,69 +682,62 @@ app.release.comparison.drawCallbackReasonList = function () {
     app.library.datatable.showExtraInfo('#release-comparison-reason table', app.release.comparison.drawExtraInformation);
 }
 /**
- * Draw comparison responses
- * @param  {} response
+ * Draw comparison
+ * @param  {} data
  */
-app.release.comparison.callback.readReasonList = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var data = response.data;
-        // Populate Release Reason
-        if ($.fn.dataTable.isDataTable("#release-comparison-reason table")) {
-            app.library.datatable.reDraw("#release-comparison-reason table", data);
-        } else {
-            var localOptions = {
-                // Add Row Index to feed the ExtraInfo modal 
-                createdRow: function (row, dataRow, dataIndex) {
-                    $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+app.release.comparison.callback.readReasonList = function (data) {
+    // Populate Release Reason
+    if ($.fn.dataTable.isDataTable("#release-comparison-reason table")) {
+        app.library.datatable.reDraw("#release-comparison-reason table", data);
+    } else {
+        var localOptions = {
+            // Add Row Index to feed the ExtraInfo modal 
+            createdRow: function (row, dataRow, dataIndex) {
+                $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+            },
+            data: data,
+            columns: [
+                {
+                    data: "RsnCode"
                 },
-                data: data,
-                columns: [
-                    {
-                        data: "RsnCode"
-                    },
-                    {
-                        data: null,
-                        defaultContent: '',
-                        sorting: false,
-                        searchable: false,
-                        "render": function (data, type, row, meta) {
-                            return $("<a>", {
-                                href: "#",
-                                name: C_APP_DATATABLE_EXTRA_INFO_LINK,
-                                "idn": meta.row,
-                                html:
-                                    $("<i>", {
-                                        "class": "fas fa-info-circle text-info"
-                                    }).get(0).outerHTML + " " + app.label.static["description"]
-                            }).get(0).outerHTML;
-                        }
-                    },
-                    {
-                        data: "RsnValueInternal",
-                        "visible": false,
-                        "searchable": true
-                    },
-                    {
-                        data: "RsnValueExternal",
-                        "visible": false,
-                        "searchable": true
-                    },
-                ],
-                drawCallback: function (settings) {
-                    app.release.comparison.drawCallbackReasonList();
+                {
+                    data: null,
+                    defaultContent: '',
+                    sorting: false,
+                    searchable: false,
+                    "render": function (data, type, row, meta) {
+                        return $("<a>", {
+                            href: "#",
+                            name: C_APP_DATATABLE_EXTRA_INFO_LINK,
+                            "idn": meta.row,
+                            html:
+                                $("<i>", {
+                                    "class": "fas fa-info-circle text-info"
+                                }).get(0).outerHTML + " " + app.label.static["description"]
+                        }).get(0).outerHTML;
+                    }
                 },
-                //Translate labels language
-                language: app.label.plugin.datatable
-            };
-            $("#release-comparison-reason table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+                {
+                    data: "RsnValueInternal",
+                    "visible": false,
+                    "searchable": true
+                },
+                {
+                    data: "RsnValueExternal",
+                    "visible": false,
+                    "searchable": true
+                },
+            ],
+            drawCallback: function (settings) {
                 app.release.comparison.drawCallbackReasonList();
-            });
-        }
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        $("#release-comparison-reason table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.release.comparison.drawCallbackReasonList();
+        });
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**

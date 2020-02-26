@@ -57,50 +57,44 @@ app.keyword.product.readSubjects = function () {
 
 /**
  * Keyword Product callback read Subjects
- * @param {*} response 
+ * @param {*} data 
  */
-app.keyword.product.callback.readSubjects = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Load Select2
-    $("#keyword-product-container").find("[name=select-main-subject-search]").empty().append($("<option>")).select2({
-      minimumInputLength: 0,
-      allowClear: true,
-      width: '100%',
-      placeholder: app.label.static["start-typing"],
-      data: app.keyword.product.mapDataSubject(response.data)
-    });
+app.keyword.product.callback.readSubjects = function (data) {
+  // Load Select2
+  $("#keyword-product-container").find("[name=select-main-subject-search]").empty().append($("<option>")).select2({
+    minimumInputLength: 0,
+    allowClear: true,
+    width: '100%',
+    placeholder: app.label.static["start-typing"],
+    data: app.keyword.product.mapDataSubject(data)
+  });
 
-    $("#keyword-product-container").find("[name=select-main-subject-search]").prop('disabled', false).focus();
+  $("#keyword-product-container").find("[name=select-main-subject-search]").prop('disabled', false).focus();
 
-    //Update Subject search Search functionality
-    $("#keyword-product-container").find("[name=select-main-subject-search]").on('select2:select', function (e) {
-      var selectedSubject = e.params.data;
-      if (selectedSubject) {
-        // Some item from your model is active!
-        if (selectedSubject.id.toLowerCase() == $("#keyword-product-container").find("[name=select-main-subject-search]").val().toLowerCase()) {
-          $("#keyword-product-modal-create").find("[name='sbj-code']").val(selectedSubject.SbjCode);
-          $("#keyword-product-modal-update").find("[name='sbj-code']").val(selectedSubject.SbjCode);
-          app.keyword.product.readProducts(selectedSubject.SbjCode);
-        }
-        else {
-          $("#keyword-product-container").find("[name=select-main-product-search]").val("");
-          $("#keyword-product-container").find("[name=select-main-product-search]").text("");
-          $("#keyword-product-container").find("[name=select-main-product-search]").prop('disabled', true);
-          $("#keyword-product-read").hide();
-        }
-      } else {
-        // Nothing is active so it is a new value (or maybe empty value)
+  //Update Subject search Search functionality
+  $("#keyword-product-container").find("[name=select-main-subject-search]").on('select2:select', function (e) {
+    var selectedSubject = e.params.data;
+    if (selectedSubject) {
+      // Some item from your model is active!
+      if (selectedSubject.id.toLowerCase() == $("#keyword-product-container").find("[name=select-main-subject-search]").val().toLowerCase()) {
+        $("#keyword-product-modal-create").find("[name='sbj-code']").val(selectedSubject.SbjCode);
+        $("#keyword-product-modal-update").find("[name='sbj-code']").val(selectedSubject.SbjCode);
+        app.keyword.product.readProducts(selectedSubject.SbjCode);
+      }
+      else {
         $("#keyword-product-container").find("[name=select-main-product-search]").val("");
         $("#keyword-product-container").find("[name=select-main-product-search]").text("");
         $("#keyword-product-container").find("[name=select-main-product-search]").prop('disabled', true);
         $("#keyword-product-read").hide();
       }
-    });
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+    } else {
+      // Nothing is active so it is a new value (or maybe empty value)
+      $("#keyword-product-container").find("[name=select-main-product-search]").val("");
+      $("#keyword-product-container").find("[name=select-main-product-search]").text("");
+      $("#keyword-product-container").find("[name=select-main-product-search]").prop('disabled', true);
+      $("#keyword-product-read").hide();
+    }
+  });
 };
 
 /**
@@ -113,59 +107,63 @@ app.keyword.product.readProducts = function (subjectCode) {
   api.ajax.jsonrpc.request(app.config.url.api.private,
     "PxStat.System.Navigation.Product_API.Read",
     { SbjCode: subjectCode },
-    "app.keyword.product.callback.readProducts");
+    "app.keyword.product.callback.readProductsOnSuccess",
+    null,
+    "app.keyword.product.callback.readProductsOnError");
 };
 
 /**
  * Keyword Product callback read Products
- * @param {*} response 
+ * @param {*} data 
  */
-app.keyword.product.callback.readProducts = function (response) {
-
+app.keyword.product.callback.readProductsOnSuccess = function (data) {
   $("#keyword-product-read").hide();
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Load Select2
-    $("#keyword-product-container").find("[name=select-main-product-search]").empty().append($("<option>")).select2({
-      minimumInputLength: 0,
-      allowClear: true,
-      width: '100%',
-      placeholder: app.label.static["start-typing"],
-      data: app.keyword.product.mapDataProduct(response.data)
 
-    });
+  // Load Select2
+  $("#keyword-product-container").find("[name=select-main-product-search]").empty().append($("<option>")).select2({
+    minimumInputLength: 0,
+    allowClear: true,
+    width: '100%',
+    placeholder: app.label.static["start-typing"],
+    data: app.keyword.product.mapDataProduct(data)
 
-    $("#keyword-product-container").find("[name=select-main-product-search]").prop('disabled', false).focus();
+  });
 
-    //Update Subject search Search functionality
-    $("#keyword-product-container").find("[name=select-main-product-search]").on('select2:select', function (e) {
-      var selectedProduct = e.params.data;
-      if (selectedProduct) {
-        // Some item from your model is active!
-        if (selectedProduct.id.toLowerCase() == $("#keyword-product-container").find("[name=select-main-product-search]").val().toLowerCase()) {
-          //we do have SbjCode at Product selected.
-          $("#keyword-product-modal-create").find("[name='prc-code']").val(selectedProduct.PrcCode);
-          $("#keyword-product-modal-update").find("[name='prc-code']").val(selectedProduct.PrcCode);
-          var sbjCode = $("#keyword-product-modal-create").find("[name='sbj-code']").val();
-          $("#keyword-product-modal-create").find("[name='prc-value']").text(selectedProduct.PrcValue);
-          $("#keyword-product-modal-update").find("[name='prc-value']").text(selectedProduct.PrcValue);
-          app.keyword.product.ajax.read(sbjCode, selectedProduct.PrcCode);
-          $("#keyword-product-read").fadeIn();
-          //Scroll to Table
-          $('html, body').animate({ scrollTop: $('#keyword-product-read').offset().top }, 1000);
-        }
-        else {
-          $("#keyword-product-read").hide();
-        }
-      } else {
-        // Nothing is active so it is a new value (or maybe empty value)
+  $("#keyword-product-container").find("[name=select-main-product-search]").prop('disabled', false).focus();
+
+  //Update Subject search Search functionality
+  $("#keyword-product-container").find("[name=select-main-product-search]").on('select2:select', function (e) {
+    var selectedProduct = e.params.data;
+    if (selectedProduct) {
+      // Some item from your model is active!
+      if (selectedProduct.id.toLowerCase() == $("#keyword-product-container").find("[name=select-main-product-search]").val().toLowerCase()) {
+        //we do have SbjCode at Product selected.
+        $("#keyword-product-modal-create").find("[name='prc-code']").val(selectedProduct.PrcCode);
+        $("#keyword-product-modal-update").find("[name='prc-code']").val(selectedProduct.PrcCode);
+        var sbjCode = $("#keyword-product-modal-create").find("[name='sbj-code']").val();
+        $("#keyword-product-modal-create").find("[name='prc-value']").text(selectedProduct.PrcValue);
+        $("#keyword-product-modal-update").find("[name='prc-value']").text(selectedProduct.PrcValue);
+        app.keyword.product.ajax.read(sbjCode, selectedProduct.PrcCode);
+        $("#keyword-product-read").fadeIn();
+        //Scroll to Table
+        $('html, body').animate({ scrollTop: $('#keyword-product-read').offset().top }, 1000);
+      }
+      else {
         $("#keyword-product-read").hide();
       }
-    });
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+    } else {
+      // Nothing is active so it is a new value (or maybe empty value)
+      $("#keyword-product-read").hide();
+    }
+  });
+};
+
+/**
+ * Keyword Product callback read Products
+ * @param {*} error 
+ */
+app.keyword.product.callback.readProductsOnError = function (error) {
+  $("#keyword-product-read").hide();
 };
 
 //#endregion
@@ -178,27 +176,22 @@ app.keyword.product.callback.readProducts = function (response) {
  */
 app.keyword.product.ajax.read = function (sbjCode, prcCode) {
   // Get data from API and Draw the Data Table for product 
-  api.ajax.jsonrpc.request(app.config.url.api.private,
+  api.ajax.jsonrpc.request(
+    app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_Product_API.Read",
-    { "SbjCode": sbjCode, "PrcCode": prcCode },
+    {
+      "SbjCode": sbjCode,
+      "PrcCode": prcCode
+    },
     "app.keyword.product.callback.read");
 };
 
 /**
  * Callback function when the Product Read call is successful.
- * @param {*} response
+ * @param {*} data
  */
-app.keyword.product.callback.read = function (response) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    app.keyword.product.drawDataTable();
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.keyword.product.drawDataTable(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.keyword.product.callback.read = function (data) {
+  app.keyword.product.drawDataTable(data);
 };
 
 /**
@@ -225,7 +218,7 @@ app.keyword.drawCallback = function () {
     var rowIndexObj = $("[" + C_APP_DATATABLE_ROW_INDEX + "='" + idn + "']");
     var dataTable = $("#keyword-product-read table").DataTable();
     var dataTableRow = dataTable.row(rowIndexObj);
-    app.keyword.product.ajax.synonym(dataTableRow.data());
+    app.keyword.product.ajax.readSynonym(dataTableRow.data());
     $("#keyword-product-extra-info").modal("show");
   });
 
@@ -355,8 +348,7 @@ app.keyword.product.ajax.getLanguagesCreate = function () {
 /**
 *  Populate language drop down for create.
 */
-app.keyword.product.callback.getLanguagesCreate = function (response) {
-  data = response.data;
+app.keyword.product.callback.getLanguagesCreate = function (data) {
   $("#keyword-product-modal-create").find("[name=language]").empty().append($("<option>", {
     "text": app.label.static["select-uppercase"],
     "disabled": "disabled",
@@ -394,10 +386,10 @@ app.keyword.product.ajax.create = function () {
   api.ajax.jsonrpc.request(app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_Product_API.Create",
     apiParams,
-    "app.keyword.product.callback.create",
+    "app.keyword.product.callback.createOnSuccess",
     callbackParam,
-    null,
-    null,
+    "app.keyword.product.callback.createOnError",
+    callbackParam,
     { async: false }
   );
 };
@@ -407,10 +399,10 @@ app.keyword.product.ajax.create = function () {
  */
 /**
  * * Create/Add Product to Table after Ajax success call
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.keyword.product.callback.create = function (response, callbackParam) {
+app.keyword.product.callback.createOnSuccess = function (data, callbackParam) {
   //Redraw Data Table Product with fresh data.
   var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
   var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
@@ -419,16 +411,26 @@ app.keyword.product.callback.create = function (response, callbackParam) {
   // Hide modal
   $("#keyword-product-modal-create").modal("hide");
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.KprValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * Create/Add Product to Table after Ajax success call
+ */
+/**
+ * * Create/Add Product to Table after Ajax success call
+ * @param  {} error
+ */
+app.keyword.product.callback.createOnError = function (error) {
+  //Redraw Data Table Product with fresh data.
+  var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
+  var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
+  app.keyword.product.ajax.read(SbjCode, PrcCode);
 };
 //#endregion
 
@@ -440,30 +442,29 @@ app.keyword.product.callback.create = function (response, callbackParam) {
 */
 app.keyword.product.readUpdate = function (apiParams) {
   // Get data from API and Draw the Data Table for Reason. Populate date to the modal "reason-modal-update"
-  api.ajax.jsonrpc.request(app.config.url.api.private,
-    "PxStat.System.Navigation.Keyword_Product_API.Read", apiParams, "app.keyword.product.callback.readKeyword");
+  api.ajax.jsonrpc.request(
+    app.config.url.api.private,
+    "PxStat.System.Navigation.Keyword_Product_API.Read",
+    apiParams,
+    "app.keyword.product.callback.readUpdate");
 };
 
 /**
  * Populate Product data to Update Modal
- * @param {*} response 
+ * @param {*} data 
  */
-app.keyword.product.callback.readKeyword = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-
+app.keyword.product.callback.readUpdate = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
+    app.keyword.product.modal.update(data);
+  } else {
     //Redraw Data Table Product with fresh data.
     var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
     var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
     app.keyword.product.ajax.read(SbjCode, PrcCode);
-  } else if (response.data) {
-    response.data = response.data[0];
-    app.keyword.product.modal.update(response.data);
+
+    api.modal.information(app.label.static["api-ajax-nodata"]);
   }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -507,8 +508,7 @@ app.keyword.product.ajax.getLanguagesUpdate = function () {
 /**
 *  Populate language drop down for create.
 */
-app.keyword.product.callback.getLanguagesUpdate = function (response) {
-  data = response.data;
+app.keyword.product.callback.getLanguagesUpdate = function (data) {
   $("#keyword-product-modal-update").find("[name=language]").empty().append($("<option>", {
     "text": app.label.static["select-uppercase"],
     "disabled": "disabled",
@@ -545,13 +545,14 @@ app.keyword.product.ajax.update = function () {
     PrcCode: prcCode,
     SbjCode: sbjCode
   };
+
   api.ajax.jsonrpc.request(app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_Product_API.Update",
     apiParams,
-    "app.keyword.product.callback.update",
+    "app.keyword.product.callback.updateOnSuccess",
     callbackParam,
-    null,
-    null,
+    "app.keyword.product.callback.updateOnError",
+    callbackParam,
     { async: false }
   );
 };
@@ -559,10 +560,10 @@ app.keyword.product.ajax.update = function () {
 /**
  * * Update Product Callback
  * After AJAX call.
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.keyword.product.callback.update = function (response, callbackParam) {
+app.keyword.product.callback.updateOnSuccess = function (data, callbackParam) {
   //Redraw Data Table Product with fresh data.
   var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
   var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
@@ -571,17 +572,27 @@ app.keyword.product.callback.update = function (response, callbackParam) {
   //Hide modal #keyword-product-modal-update
   $("#keyword-product-modal-update").modal("hide");
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data) {
-    // Display Information Modal
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.KprValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * * Update Product Callback
+ * After AJAX call.
+ * @param  {} error
+ */
+app.keyword.product.callback.updateOnError = function (error) {
+  //Redraw Data Table Product with fresh data.
+  var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
+  var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
+  app.keyword.product.ajax.read(SbjCode, PrcCode);
+
+  //Hide modal #keyword-product-modal-update
+  $("#keyword-product-modal-update").modal("hide");
 };
 
 //#endregion
@@ -611,9 +622,9 @@ app.keyword.product.ajax.delete = function (deletetedKeyword) {
   api.ajax.jsonrpc.request(app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_Product_API.Delete",
     apiParams,
-    "app.keyword.product.callback.delete",
+    "app.keyword.product.callback.deleteOnSuccess",
     deletetedKeyword,
-    null,
+    "app.keyword.product.callback.deleteOnError",
     null,
     { async: false }
   );
@@ -621,24 +632,32 @@ app.keyword.product.ajax.delete = function (deletetedKeyword) {
 
 /**
  * Callback from server for Delete Product Keyword
- * @param {*} response
+ * @param {*} data
  * @param {*} deletetedKeyword
  */
-app.keyword.product.callback.delete = function (response, deletetedKeyword) {
+app.keyword.product.callback.deleteOnSuccess = function (data, deletetedKeyword) {
   //Redraw Data Table Product with fresh data.
   var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
   var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
   app.keyword.product.ajax.read(SbjCode, PrcCode);
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data) {
-    // Display Information Modal
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [deletetedKeyword.KprValue]));
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+  } else {
+    api.modal.exception(app.label.static["api-ajax-exception"]);
+  }
+};
+
+/**
+ * Callback from server for Delete Product Keyword
+ * @param {*} error
+ */
+app.keyword.product.callback.deleteOnError = function (error) {
+  //Redraw Data Table Product with fresh data.
+  var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
+  var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
+  app.keyword.product.ajax.read(SbjCode, PrcCode);
 };
 
 //#endregion
@@ -720,7 +739,7 @@ app.keyword.product.validation.update = function () {
 //#regionsynonymrender
 
 //Ajax call for synonym
-app.keyword.product.ajax.synonym = function (row) {
+app.keyword.product.ajax.readSynonym = function (row) {
   var KprValue = row.KprValue;
   var callbackParam = {
     KprValue: KprValue,
@@ -730,59 +749,47 @@ app.keyword.product.ajax.synonym = function (row) {
     app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_API.ReadSynonym",
     { "KrlValue": KprValue },
-    "app.keyword.product.callback.synonym",
+    "app.keyword.product.callback.readSynonym",
     callbackParam);
 }
 
 //Call back for synonyms
-app.keyword.product.callback.synonym = function (response, callbackParam) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    //Add name of keyword selected
-    $("#keyword-product-extra-info").find("[name=keyword]").html(callbackParam.KprValue);
-    //Clear list card
-    $("#keyword-product-extra-info").find("[name=synonym-card]").empty();
+app.keyword.product.callback.readSynonym = function (data, callbackParam) {
+  //Add name of keyword selected
+  $("#keyword-product-extra-info").find("[name=keyword]").html(callbackParam.KprValue);
+  //Clear list card
+  $("#keyword-product-extra-info").find("[name=synonym-card]").empty();
 
-    //Get each language
-    $.each(response.data, function (key, language) {
-      //Clone card
-      var languageCard = $("#keyword-product-template").find("[name=synonym-language-card]").clone();
-      //Display the Language
-      languageCard.find(".card-header").text(language.LngIsoName);
+  //Get each language
+  $.each(data, function (key, language) {
+    //Clone card
+    var languageCard = $("#keyword-product-template").find("[name=synonym-language-card]").clone();
+    //Display the Language
+    languageCard.find(".card-header").text(language.LngIsoName);
 
-      //Check if any synonyms
-      if (language.Synonym.length) {
-
-        //Get Synonyms
-        $.each(language.Synonym, function (key, synonym) {
-
-
-          var synonymItem = $("<li>", {
-            "class": "list-group-item",
-            "html": synonym
-          });
-
-          languageCard.find("[name=synonym-group]").append(synonymItem);
-
-
-        });
-
-      }
-      else {
-        //Display if no synonyms
+    //Check if any synonyms
+    if (language.Synonym.length) {
+      //Get Synonyms
+      $.each(language.Synonym, function (key, synonym) {
         var synonymItem = $("<li>", {
           "class": "list-group-item",
-          "html": app.label.static["no-synonyms"]
+          "html": synonym
         });
+
         languageCard.find("[name=synonym-group]").append(synonymItem);
-      }
+      });
 
-      $("#keyword-product-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+    } else {
+      //Display if no synonyms
+      var synonymItem = $("<li>", {
+        "class": "list-group-item",
+        "html": app.label.static["no-synonyms"]
+      });
+      languageCard.find("[name=synonym-group]").append(synonymItem);
+    }
 
-    });
-
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+    $("#keyword-product-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+  });
 }
 
 

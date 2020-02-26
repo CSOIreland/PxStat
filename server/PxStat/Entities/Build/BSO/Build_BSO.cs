@@ -139,6 +139,89 @@ namespace PxStat.Build
         }
 
 
+        internal List<DataItem_DTO> GetMatrixDataItems(Matrix theMatrix, string lngIsoCode)
+        {
+
+
+
+            if (lngIsoCode != null)
+            {
+                pxSpec = theMatrix.GetSpecFromLanguage(lngIsoCode);
+                if (pxSpec == null) pxSpec = theMatrix.MainSpec;
+                pxSpec.Frequency = theMatrix.MainSpec.Frequency;
+            }
+            else
+                pxSpec = theMatrix.MainSpec;
+
+            List<DimensionValue_DTO> dimensions = new List<DimensionValue_DTO>();
+
+
+            DimensionValue_DTO sVal = new DimensionValue_DTO();
+            sVal.dimType = DimensionType.STATISTIC;
+            foreach (StatisticalRecordDTO_Create stat in pxSpec.Statistic)
+            {
+                DimensionDetail_DTO detail = new DimensionDetail_DTO();
+                detail.key = stat.Code;
+                detail.value = stat.Value;
+                detail.dimensionValue = sVal;
+                sVal.details.Add(detail);
+            }
+            dimensions.Add(sVal);
+
+
+            DimensionValue_DTO pVal = new DimensionValue_DTO();
+            pVal.dimType = DimensionType.PERIOD;
+            foreach (PeriodRecordDTO_Create per in pxSpec.Frequency.Period)
+            {
+                DimensionDetail_DTO detail = new DimensionDetail_DTO();
+                detail.key = per.Code;
+                detail.value = per.Value;
+                detail.dimensionValue = pVal;
+                pVal.details.Add(detail);
+            }
+            dimensions.Add(pVal);
+
+            foreach (ClassificationRecordDTO_Create cls in pxSpec.Classification)
+            {
+                DimensionValue_DTO cVal = new DimensionValue_DTO();
+                cVal.dimType = DimensionType.CLASSIFICATION;
+                cVal.code = cls.Code;
+                cVal.value = cls.Value;
+                foreach (var vrb in cls.Variable)
+                {
+                    DimensionDetail_DTO detail = new DimensionDetail_DTO();
+                    detail.key = vrb.Code;
+                    detail.value = vrb.Value;
+                    detail.dimensionValue = cVal;
+                    cVal.details.Add(detail);
+                }
+                dimensions.Add(cVal);
+
+            }
+
+            var graph = CartesianProduct(dimensions[0].details.ToArray());
+
+            for (int i = 1; i < dimensions.Count; i++)
+            {
+                graph = CartesianProduct(graph.ToArray(), dimensions[i].details.ToArray());
+            }
+
+            List<DataItem_DTO> itemList = new List<DataItem_DTO>();
+
+            int counter = 0;
+            foreach (var item in graph)
+            {
+                DataItem_DTO dto = new DataItem_DTO();
+                populateDataItem(ref dto, item, true);
+                dto.sortWord = dto.sortWord + counter;
+                dto.dataValue = theMatrix.Cells[counter].TdtValue.ToString();
+                itemList.Add(dto);
+                counter++;
+            }
+
+            return itemList;
+        }
+
         /// <summary>
         /// Gets a list of DataItem_DTO from the metadata of a Matrix
         /// </summary>

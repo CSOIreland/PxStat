@@ -3,7 +3,14 @@ Footer
 *******************************************************************************/
 $(document).ready(function () {
     // Set Version in Footer
-    $("#footer").find("[name=version]").html(C_APP_VERSION);
+    $("#footer").find("[name=version]").html(
+        $("<a>", {
+            "href": C_APP_URL_GITHUB_RELEASE_TAG.sprintf([C_APP_VERSION]),
+            "text": C_APP_VERSION,
+            "target": "_blank",
+            "rel": "noreferrer" // Best practice for cross-origin links
+        }).get(0).outerHTML
+    );
 
     // Append footer links
     var numLinks = app.config.url.footer.length;
@@ -44,7 +51,18 @@ $(document).ready(function () {
             "target": "_blank",
             "rel": "noreferrer" // Best practice for cross-origin links
         }).get(0).outerHTML
+    ).append(" | ");
+
+    // Append the (mandatory) Report an Issue link
+    $("#footer").find("[name=links]").append(
+        $("<a>", {
+            "href": C_APP_URL_GITHUB_REPORT_ISSUE,
+            "text": app.label.static['report-issue'],
+            "target": "_blank",
+            "rel": "noreferrer" // Best practice for cross-origin links
+        }).get(0).outerHTML
     );
+
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

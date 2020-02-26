@@ -19,25 +19,24 @@
       "parse-error": "Błąd Przetwarzania:",
       "unexpected": "Nieoczekiwany znak {0} znaleziony w rzędzie {1}, kolumna {2}",
       "expected": "Wartość Oczekiwana: {0}",
-      "eof": "EOF",
-      "unmatched-parameters": "Failed to reconcile request parameters with available data"
+      "eof": "Kod końca dokumentu (EOF)",
+      "unmatched-parameters": "Nie udało się uzgodnić parametrów żądania z dostępnymi danymi"
     }
   },
   "px": {
-
     "build": {
       "language": "Podanego języka nie znaleziono w dostarczonym pliku px."
     },
     "duplicate": "masz zamiar przesłać nową wersję istniejącej Tabeli &quot;{0}&quot;. Jesteś pewny?",
     "duplicate-different-group": "masz zamiar przesłać nową wersję istniejącej Tabeli &quot;{0}&quot; i zmienić grupę z &quot;{1}&quot; na &quot;{2}&quot;. Jesteś pewny?",
-
     "integrity": {
       "data": "PX Integralność: danych &quot;{Data}&quot; jest niepoprawna.",
       "size": "PX Integralność: &quot;{Expected}&quot; oczekiwane komórki danych, ale &quot;{Found}&quot; znaleziono dla języka &quot;{Language}&quot;.",
       "language": "Język",
       "expected": "Spodziewany",
       "found": "Znaleziono",
-      "source": "Źródło"
+      "source": "Źródło",
+      "codes": " Znaleziono zduplikowane kody."
     },
     "authentication": {
       "authenticated": "ZALEGALIZOWANY",
@@ -45,10 +44,8 @@
       "anonymous": "ANONIMOWY",
       "any": "KAŻDY"
     },
-
     "parse": "Analiza PX: dane wejściowe zawierają niepoprawną składnię.",
     "pendinglive": "Tabela &quot;{0}&quot; oczekuje na wydanie na żywo. Zaczekaj na wydanie przejdzie w stan wydania przed wgraniem nowej wersji wydania.",
-
     "schema": {
       "key-alphanumeric": "Schemat PX: słowo kluczowe {0} musi być alfanumeryczne.",
       "key-any-of": "Schemat PX: dane wejściowe muszą zawierać klucz &quot;{0}&quot; albo &quot;{1}&quot;.",
@@ -66,7 +63,6 @@
       "source-invalid": "Ustawienie PX [SOURCE]: &quot;{PropertyValue}&quot; jest niepoprawna.",
       "sources-invalid": "Ustawienie PX [SOURCE]: &quot;{Source}&quot; jest niepoprawna."
     },
-
     "workflow": "Tabela &quot;{0}&quot; praca w toku. Zaczekaj na zakończenie przepływu pracy przed przesłaniem nowej wersji."
   },
   "default": {
@@ -75,7 +71,8 @@
       "code": " KOD",
       "header": "Wartość,Jednostka",
       "unit": "JEDNOSTKA",
-      "value": "WARTOŚĆ"
+      "value": "WARTOŚĆ",
+      "separator": ","
     },
     "statistic": "Statystyka",
     "subject-area": "n/a",
@@ -84,11 +81,11 @@
   },
   "email": {
     "body": {
-      "request-create": "Nowe żądanie typu [b]{0}[/b] zostało przesłane przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}. {3}[/b] i oczekuje na zatwierdzenie.\n Kliknij {4}, aby wyświetlić ten przepływ pracy.",
-      "response-approve": "Nowe żądanie typu [b]{0}[/b] zostało zatwierdzone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b] i oczekuje na wylogowanie.\n Kliknij {4}, aby wyświetlić to żądanie.",
-      "response-reject": "Wniosek o homologację typu [b]{0}[/b] został odrzucony przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Kliknij {4}, aby wyświetlić ten przepływ pracy.",
-      "signoff-approve": "Wniosek o wypisanie się typu [b]{0}[/b] został zatwierdzony w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Kliknij {4}, aby wyświetlić ten przepływ pracy.",
-      "signoff-reject": "Żądanie wypisania się typu [b]{0}[/b] zostało odrzucone przeciwko Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Kliknij {4}, aby wyświetlić ten przepływ pracy."
+      "request-create": "Nowe żądanie typu [b]{0}[/b] zostało przesłane przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3} [/b] i oczekuje na zatwierdzenie.\n Wyświetlić ten przepływ pracy w {4}.",
+      "response-approve": "Nowe żądanie typu [b]{0}[/b] zostało zatwierdzone przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b] i oczekuje na podpis.\n Wyświetlić ten przepływ pracy w {4}.",
+      "response-reject": "Wniosek o zatwierdzenie typu [b]{0}[/b] został odrzucony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
+      "signoff-approve": "Wniosek o podpisanie się typu [b]{0}[/b] został zatwierdzony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
+      "signoff-reject": "Wniosek o podpisanie się typu [b]{0}[/b] został odrzucony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}."
     },
     "subject": {
       "request-create": "{0} {1}.{2}: Oczekuje Na Zatwierdzenie",

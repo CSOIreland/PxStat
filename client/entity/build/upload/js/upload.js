@@ -9,7 +9,6 @@ $(document).ready(function () {
   app.build.upload.ajax.selectGroup();
   //define validation
   app.build.upload.validation.create();
-  app.build.upload.validation.frequency();
   //Bind the cancel button
   $("#build-upload-container").find("[name=upload-btn-cancel]").once("click", app.build.upload.reset);
   //Bind the preview button
@@ -23,22 +22,23 @@ $(document).ready(function () {
       app.build.upload.preview();
     }
   });
-  //Bind the validate frequency button
-  $("#build-upload-modal-frequency").find("[name=btn-validate]").once("click", function () {
-
-  });
 
   // Initiate Drag n Drop plugin
   api.plugin.dragndrop.initiate(document, window);
   //set up date picker
-  app.build.upload.setDataPicker();
+  app.build.upload.setDatePicker();
 
   $('#build-upload-modal-preview').on('hide.bs.modal', function (e) {
     $("#build-upload-modal-preview .modal-title").empty();
     $("#build-upload-modal-preview .modal-body").empty();
   });
 
-  $('#build-upload-modal-frequency').on('show.bs.modal', app.build.upload.ajax.getFrequencyCodes);
+  // Get the Frequecy Codes 
+  app.build.upload.ajax.getFrequencyCodes();
+
+  $('#build-upload-modal-frequency').on('show.bs.modal', function () {
+    app.build.upload.validation.frequency();
+  });
 
   // Set the max file-size in the Upload box
   $("#build-upload-container").find("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB").show();

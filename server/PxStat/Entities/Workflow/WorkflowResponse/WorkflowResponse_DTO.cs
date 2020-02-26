@@ -28,6 +28,12 @@ namespace PxStat.Workflow
         public string CmmValue { get; set; }
 
         /// <summary>
+        /// User account details of the person responding
+        /// </summary>
+        public Security.ActiveDirectory_DTO ResponseAccount { get; set; }
+
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parameters"></param>

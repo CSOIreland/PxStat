@@ -449,11 +449,6 @@ app.library.bootstrap.accordianToggleIcon = function () {
 };
 //#endregion
 
-//#region Message
-
-//#endregion
-
-
 //#region Utility
 
 /**
@@ -647,6 +642,7 @@ app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_S
   }
   return false;
 };
+
 /**
  * Check for duplicate items in an array
  */
@@ -665,5 +661,39 @@ app.library.utility.arrayHasDuplicate = function (items) {
     }
   }
   return false;
+};
+
+/**
+ * Download a dynamic resource
+ */
+app.library.utility.download = function (fileName, fileData, fileExtension, mimeType, isBase64) {
+  mimeType = mimeType || null;
+  isBase64 = isBase64 || false;
+
+  if (isBase64) {
+    // split by the ;base64, definition
+    var dataStruct = fileData.split(';base64,');
+    // Convert data Array/Byte
+    fileData = atob(dataStruct[1]);
+    // Convert data String/Array Byte
+    fileData = fileData.s2ab();
+    // remove the data: definition
+    mimeType = dataStruct[0].substring(5);
+  }
+
+  var blob = new Blob([fileData], { type: mimeType });
+  var downloadUrl = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = downloadUrl;
+  a.download = fileName + '.' + fileExtension;
+  if (document.createEvent) {
+    // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
+    var event = document.createEvent('MouseEvents');
+    event.initEvent('click', true, true);
+    a.dispatchEvent(event);
+  }
+  else {
+    a.click();
+  }
 };
 //#endregion

@@ -60,48 +60,41 @@ app.user.UpdateFields = function (activeUserRecord) {
 
 /**
  * Call back from searchUser
- * @param  {} response
+ * @param  {} data
   */
-app.user.callback.searchUser = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (response.data !== undefined) {
-    // Show modal
-    $("#user-modal-create").modal("show");
+app.user.callback.searchUser = function (data) {
+  // Show modal
+  $("#user-modal-create").modal("show");
 
-    // Load select2
-    $("#user-modal-create").find("[name=user-select-create-search]").empty().append($("<option>")).select2({
-      dropdownParent: $('#user-modal-create'),
-      minimumInputLength: 0,
-      allowClear: true,
-      width: '100%',
-      placeholder: app.label.static["start-typing"],
-      data: app.user.MapData(response.data)
-    });
+  // Load select2
+  $("#user-modal-create").find("[name=user-select-create-search]").empty().append($("<option>")).select2({
+    dropdownParent: $('#user-modal-create'),
+    minimumInputLength: 0,
+    allowClear: true,
+    width: '100%',
+    placeholder: app.label.static["start-typing"],
+    data: app.user.MapData(data)
+  });
 
-    // Enable and Focus Search input
-    $("#user-modal-create").find("[name=user-select-create-search]").prop('disabled', false).focus();
+  // Enable and Focus Search input
+  $("#user-modal-create").find("[name=user-select-create-search]").prop('disabled', false).focus();
 
-    //Update User Search functionality
-    $("#user-modal-create").find("[name=user-select-create-search]").on('select2:select', function (e) {
-      var selectedObject = e.params.data;
-      if (selectedObject) {
-        // Some item from your model is active!
-        if (selectedObject.id.toLowerCase() == $("#user-modal-create").find("[name=user-select-create-search]").val().toLowerCase()) {
-          // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
-          app.user.UpdateFields(selectedObject);
-        }
-        else {
-          app.user.UpdateFields(null);
-        }
-      } else {
+  //Update User Search functionality
+  $("#user-modal-create").find("[name=user-select-create-search]").on('select2:select', function (e) {
+    var selectedObject = e.params.data;
+    if (selectedObject) {
+      // Some item from your model is active!
+      if (selectedObject.id.toLowerCase() == $("#user-modal-create").find("[name=user-select-create-search]").val().toLowerCase()) {
+        // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
+        app.user.UpdateFields(selectedObject);
+      }
+      else {
         app.user.UpdateFields(null);
       }
-    });
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+    } else {
+      app.user.UpdateFields(null);
+    }
+  });
 };
 
 /**
@@ -118,22 +111,13 @@ app.user.ajax.read = function () {
 
 /**
  * Callback function when the User Read call is successful.
- * @param  {} response
+ * @param  {} data
   */
-app.user.callback.read = function (response) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    app.user.drawUserDataTable();
-    api.modal.error(response.error.message);
-    $("#user-modal-create").modal("hide");
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.user.drawUserDataTable(response.data);
-    $("#user-modal-create").modal("hide");
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.user.callback.read = function (data) {
+  app.user.drawUserDataTable(data);
+  $("#user-modal-create").modal("hide");
 };
+
 /**
  * Draw Callback for Datatable
  */
@@ -246,36 +230,24 @@ app.user.ajax.createRoleType = function () {
     app.config.url.api.private,
     "PxStat.Security.Privilege_API.Read",
     null,
-    "app.user.callback.createDropDownPrivilege");
+    "app.user.callback.createRoleType");
 };
 
 /**
  * Fill dropdown for privilege types
- * @param {*} response  
+ * @param {*} data  
  */
-app.user.callback.createDropDownPrivilege = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (response.data) {
-    if (response.data.length) {
-      $("#user-modal-create").find("[name=user-select-create-type]").empty().append($('<option>', {
-        disabled: "disabled",
-        selected: "selected",
-        value: "",
-        text: app.label.static["select-uppercase"]
-      }));
-      //Fill rest of select with role types
-      $.each(response.data, function (_key, entry) {
-        $("#user-modal-create").find("[name=user-select-create-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
-      });
-    } else {
-      api.modal.exception(app.label.static["api-ajax-nodata"]);
-    }
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
-  //api.spinner.stop();
+app.user.callback.createRoleType = function (data) {
+  $("#user-modal-create").find("[name=user-select-create-type]").empty().append($('<option>', {
+    disabled: "disabled",
+    selected: "selected",
+    value: "",
+    text: app.label.static["select-uppercase"]
+  }));
+  //Fill rest of select with role types
+  $.each(data, function (_key, entry) {
+    $("#user-modal-create").find("[name=user-select-create-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
+  });
 };
 
 /**
@@ -369,9 +341,9 @@ app.user.ajax.create = function () {
     app.config.url.api.private,
     "PxStat.Security.Account_API.Create",
     apiParams,
-    "app.user.callback.create",
+    "app.user.callback.createOnSuccess",
     callbackParam,
-    null,
+    "app.user.callback.createOnError",
     null,
     { async: false }
   );
@@ -379,23 +351,31 @@ app.user.ajax.create = function () {
 
 /**
  * Create User to Table after Ajax success call
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
   */
-app.user.callback.create = function (response, callbackParam) {
+app.user.callback.createOnSuccess = function (data, callbackParam) {
   //Redraw Data Table for Create User
   app.user.ajax.read();
-  if (response.error) {
-    $("#user-modal-create").modal("hide");
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
-    //Close modal
-    $("#user-modal-create").modal("hide");
+  //Close modal
+  $("#user-modal-create").modal("hide");
+
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.CcnUsername]));
   } else {
-    $("#user-modal-create").modal("hide");
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * Create User to Table after Ajax success call
+ * @param  {} error
+  */
+app.user.callback.createOnError = function (error) {
+  //Redraw Data Table for Create User
+  app.user.ajax.read();
+  //Close modal
+  $("#user-modal-create").modal("hide");
 };
 
 //#endregion
@@ -411,34 +391,23 @@ app.user.ajax.updateRoleType = function (selectedPrvCode) {
     app.config.url.api.private,
     "PxStat.Security.Privilege_API.Read",
     null,
-    "app.user.callback.updateDropDownPrivilege",
+    "app.user.callback.updateRoleType",
     selectedPrvCode);
 };
 
 /**
  * Fill dropdown for privilege types
- * @param {*} response 
+ * @param {*} data 
  * @param {*} selectedPrvCode 
  */
-app.user.callback.updateDropDownPrivilege = function (response, selectedPrvCode) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (response.data) {
-    if (response.data.length) {
-      $("#user-modal-update").find("[name=user-select-update-type]").empty(); //clear previous list of user types
-      //fill rest of select with role types
-      $.each(response.data, function (_key, entry) {
-        $("#user-modal-update").find("[name=user-select-update-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
-      });
-      //set default to be selected
-      $("#user-modal-update").find("[name=user-select-update-type]").val(selectedPrvCode);
-    } else {
-      api.modal.exception(app.label.static["api-ajax-nodata"]);
-    }
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.user.callback.updateRoleType = function (data, selectedPrvCode) {
+  $("#user-modal-update").find("[name=user-select-update-type]").empty(); //clear previous list of user types
+  //fill rest of select with role types
+  $.each(data, function (_key, entry) {
+    $("#user-modal-update").find("[name=user-select-update-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
+  });
+  //set default to be selected
+  $("#user-modal-update").find("[name=user-select-update-type]").val(selectedPrvCode);
 };
 
 /**
@@ -559,24 +528,18 @@ app.user.ajax.updateReadUser = function (apiParams) {
 
 /**
  * Populate User data to Update Modal
- * @param {*} response 
+ * @param {*} data 
  */
-app.user.callback.updateReadUser = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.user.callback.updateReadUser = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
+
+    app.user.modal.update(data);
+  } else {
     api.modal.information(app.label.static["api-ajax-nodata"]);
     // Force reload
     app.user.ajax.read();
   }
-  else if (response.data) {
-    response.data = response.data[0];
-
-    app.user.modal.update(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -634,9 +597,9 @@ app.user.ajax.update = function () {
     app.config.url.api.private,
     "PxStat.Security.Account_API.Update",
     apiParams,
-    "app.user.callback.update",
+    "app.user.callback.updateOnSuccess",
     callbackParam,
-    null,
+    "app.user.callback.updateOnError",
     null,
     { async: false }
   );
@@ -645,29 +608,36 @@ app.user.ajax.update = function () {
 /**
  * Update User Callback
  * After AJAX call.
- * @param {*} response 
+ * @param {*} data 
  * @param {*} callbackParam
  */
-app.user.callback.update = function (response, callbackParam) {
-  if (response.error) {
-    $("#user-modal-update").modal("hide");
-    api.modal.error(response.error.message);
-    // Force reload
-    app.user.ajax.read();
-  } else if (response.data == C_APP_API_SUCCESS) {
-    app.user.ajax.read();
+app.user.callback.updateOnSuccess = function (data, callbackParam) {
+  $("#user-modal-update").modal("hide");
+  // Force reload
+  app.user.ajax.read();
+
+  if (data == C_APP_API_SUCCESS) {
     //Clear fields at user-modal-update Modal. Do not delete. Required for User Select2 functionality.
     $("#user-modal-update").find("[name=ccn-user-name-update]").text("");
     $("#user-modal-update").find("[name=ccn-name-update]").text("");
     $("#user-modal-update").find("[name=ccn-email-update]").text("");
     $("#user-modal-update").find("[name=user-select-update-type] option:selected").text("");
     $("#user-modal-update").find("[name=user-select-update-type] option:selected").val("");
-    $("#user-modal-update").modal("hide");
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.CcnUsername]));
   } else {
-    $("#user-modal-update").modal("hide");
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * Update User Callback
+ * After AJAX call.
+ * @param {*} error 
+ */
+app.user.callback.updateOnError = function (error) {
+  $("#user-modal-update").modal("hide");
+  // Force reload
+  app.user.ajax.read();
 };
 //#endregion
 //#region Delete User
@@ -692,10 +662,10 @@ app.user.ajax.delete = function (idn) {
   api.ajax.jsonrpc.request(
     app.config.url.api.private,
     "PxStat.Security.Account_API.Delete",
-    apiParams,
-    "app.user.callback.delete",
+    { CcnUsername: idn },
+    "app.user.callback.deleteOnSuccess",
     idn,
-    null,
+    "app.user.callback.deleteOnError",
     null,
     { async: false }
   );
@@ -703,21 +673,28 @@ app.user.ajax.delete = function (idn) {
 
 /**
 * Callback from server for Delete User
-* @param {*} response
+* @param {*} data
 * @param {*} idn
 */
-app.user.callback.delete = function (response, idn) {
+app.user.callback.deleteOnSuccess = function (data, idn) {
   //Redraw Data Table User with fresh data.
   app.user.ajax.read();
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
   }
   // Handle Exception
   else api.modal.exception(app.label.static["api-ajax-exception"]);
-  return;
+};
+
+/**
+* Callback from server for Delete User
+* @param {*} error
+*/
+app.user.callback.deleteOnError = function (error) {
+  //Redraw Data Table User with fresh data.
+  app.user.ajax.read();
 };
 
 //#endregion

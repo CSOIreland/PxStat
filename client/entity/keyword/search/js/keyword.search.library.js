@@ -30,53 +30,46 @@ app.keyword.search.ajax.searchSynonym = function () {
 }
 
 //Call back for synonyms
-app.keyword.search.callback.searchSynonym = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
+app.keyword.search.callback.searchSynonym = function (data) {
+    //Clear list card
+    $("#keyword-search-synonym-request").find("[name=synonym-card]").empty();
+
+    //Get each language
+    $.each(data, function (key, language) {
+        //Clone card
+        var languageCard = $("#keyword-search-template").find("[name=synonym-language-card]").clone();
+        //Display the Language
+        languageCard.find(".card-header").text(language.LngIsoName);
+
+        //Check if any synonyms
+        if (language.Synonym.length) {
+
+            //Get Synonyms
+            $.each(language.Synonym, function (key, synonym) {
 
 
-        //Clear list card
-        $("#keyword-search-synonym-request").find("[name=synonym-card]").empty();
-
-        //Get each language
-        $.each(response.data, function (key, language) {
-            //Clone card
-            var languageCard = $("#keyword-search-template").find("[name=synonym-language-card]").clone();
-            //Display the Language
-            languageCard.find(".card-header").text(language.LngIsoName);
-
-            //Check if any synonyms
-            if (language.Synonym.length) {
-
-                //Get Synonyms
-                $.each(language.Synonym, function (key, synonym) {
-
-
-                    var synonymItem = $("<li>", {
-                        "class": "list-group-item",
-                        "html": synonym
-                    });
-                    languageCard.find("[name=synonym-group]").append(synonymItem);
-
-                });
-
-            }
-            else {
-                //Display if no synonyms
                 var synonymItem = $("<li>", {
                     "class": "list-group-item",
-                    "html": app.label.static["no-synonyms"]
+                    "html": synonym
                 });
                 languageCard.find("[name=synonym-group]").append(synonymItem);
-            }
 
-            $("#keyword-search-synonym-request").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
-            $("#keyword-search-synonym-request").find("[name=synonym-card]").show();
+            });
 
-        });
+        }
+        else {
+            //Display if no synonyms
+            var synonymItem = $("<li>", {
+                "class": "list-group-item",
+                "html": app.label.static["no-synonyms"]
+            });
+            languageCard.find("[name=synonym-group]").append(synonymItem);
+        }
 
-    } else api.modal.exception(app.label.static["api-ajax-exception"]);
+        $("#keyword-search-synonym-request").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+        $("#keyword-search-synonym-request").find("[name=synonym-card]").show();
+
+    });
 }
 
 

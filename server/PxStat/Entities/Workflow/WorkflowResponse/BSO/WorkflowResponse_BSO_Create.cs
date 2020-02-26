@@ -126,6 +126,12 @@ namespace PxStat.Workflow
             Release_ADO releaseAdo = new Release_ADO(Ado);
             Release_DTO releaseDTO = Release_ADO.GetReleaseDTO(releaseAdo.Read(DTO.RlsCode, SamAccountName));
 
+            Security.ActiveDirectory_DTO responseUser = new Security.ActiveDirectory_DTO() { CcnUsername = SamAccountName  };
+            Security.ActiveDirectory_ADO accAdo = new Security.ActiveDirectory_ADO();
+            Security.Account_DTO_Read accDto = new Security.Account_DTO_Read() { CcnUsername = responseUser.CcnUsername };
+
+            DTO.ResponseAccount  = accAdo.GetUser(Ado, accDto);
+
             Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
             try
             {

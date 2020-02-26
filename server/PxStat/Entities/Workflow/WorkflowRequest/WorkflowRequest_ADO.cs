@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
 using PxStat.Resources;
 using System;
+using System.Collections.Generic;
 
 namespace PxStat.Workflow
 {
@@ -31,6 +31,12 @@ namespace PxStat.Workflow
 
             foreach (var element in reader.data)
             {
+                Security.ActiveDirectory_DTO requestUser = new Security.ActiveDirectory_DTO() { CcnUsername = ReadString(element.CcnUsername) };
+                Security.ActiveDirectory_ADO accAdo = new Security.ActiveDirectory_ADO();
+                Security.Account_DTO_Read accDto = new Security.Account_DTO_Read() { CcnUsername = requestUser.CcnUsername };
+
+                requestUser = accAdo.GetUser(ado, accDto);
+
                 resultList.Add(
                     new WorkflowRequest_DTO()
                     {
@@ -40,10 +46,12 @@ namespace PxStat.Workflow
                         WrqArchiveFlag = ReadBool(element.WrqArchiveFlag),
                         WrqCurrentFlag = ReadBool(element.WrqCurrentFlag),
                         RqsCode = ReadString(element.RqsCode),
-                        RqsValue = ReadString(element.RqsValue)
+                        RqsValue = ReadString(element.RqsValue),
+                        RequestAccount = requestUser
                     }
 
                     );
+
             }
             return resultList;
         }

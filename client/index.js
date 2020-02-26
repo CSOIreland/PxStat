@@ -55,7 +55,7 @@ $(document).ready(function () {
   });
   bsBreakpoints.init();
 
-
+  // Responsivness
   $("#panel-toggle").once("click", function (e) {
     $("#panel").slideToggle("slow", function () {
       if ($("#panel").is(":visible")) {
@@ -68,6 +68,7 @@ $(document).ready(function () {
     });
   });
 
+  // Responsivness
   $("#data-filter-toggle").once("click", function (e) {
     $("#data-filter").slideToggle("slow", function () {
       if ($("#data-filter").is(":visible")) {

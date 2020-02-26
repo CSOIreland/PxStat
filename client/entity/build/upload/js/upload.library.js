@@ -36,8 +36,6 @@ app.build.upload.cancel = function () {
     $("#build-upload-container").find("[name=upload-file-preview-card]").hide();
     // Clear file errors
     $("#build-upload-container").find("[name=upload-select-group-error-holder]").empty();
-    $("#build-upload-container").find("[name=upload-error]").empty();
-    $("#build-upload-container").find("[name=upload-error-card]").hide();
     // Clear file details
     $("#build-upload-container").find("[name=upload-file-name]").empty().hide();
     $("#build-upload-container").find("[name=upload-file-tip]").show();
@@ -89,7 +87,7 @@ app.build.upload.setValidateBtn = function () {
 /**
  * Set up date picker
  */
-app.build.upload.setDataPicker = function () {
+app.build.upload.setDatePicker = function () {
     var start = moment();
     var end = moment();
     app.build.upload.ajax.uploadHistory(start, end);
@@ -197,9 +195,9 @@ app.build.upload.ajax.validate = function () {
         app.config.url.api.private,
         "PxStat.Data.Matrix_API.Validate",
         obj2send,
-        "app.build.upload.callback.validate",
+        "app.build.upload.callback.validateOnSuccess",
         null,
-        null,
+        "app.build.upload.callback.validateOnError",
         null,
         {
             async: false,
@@ -213,49 +211,23 @@ app.build.upload.ajax.validate = function () {
 
 /**
  * Validate and upload px files
- * @param {*} response
+ * @param {*} data
  */
-app.build.upload.callback.validate = function (response) {
+app.build.upload.callback.validateOnSuccess = function (data) {
     // Hide Frequency modal anyway
     $("#build-upload-modal-frequency").modal("hide");
-
-    if (response.error) {
-        var errorOutput = $("<ul>", {
-            class: "list-group"
-        });
-        if (Array.isArray(response.error.message)) {
-            $.each(response.error.message, function (_index, value) {
-                var error = $("<li>", {
-                    class: "list-group-item",
-                    html: value.ErrorMessage
-                });
-                errorOutput.append(error);
-            });
-        } else {
-            var error = $("<li>", {
-                class: "list-group-item",
-                html: response.error.message
-            });
-            errorOutput.append(error);
-        }
-        // Disable Validate Button
-        $("#build-upload-container").find("[name=upload-btn-validate]").prop("disabled", true);
-
-        $("#build-upload-container").find("[name=upload-error]").html(errorOutput.get(0).outerHTML);
-        $("#build-upload-container").find("[name=upload-error-card]").fadeIn();
-        api.modal.error(errorOutput);
-    } else if (response.data) {
+    if (data) {
         // Check for signature
-        if (response.data.Signature) {
-            app.build.upload.file.signature = response.data.Signature;
+        if (data.Signature) {
+            app.build.upload.file.signature = data.Signature;
             // Change button to Upload
             app.build.upload.setUploadBtn();
             api.modal.success(app.library.html.parseDynamicLabel("success-file-validated", [app.build.upload.file.name]));
-        } else if (Array.isArray(response.data.FrqValueCandidate) && response.data.FrqValueCandidate.length) {
+        } else if (Array.isArray(data.FrqValueCandidate) && data.FrqValueCandidate.length) {
             // Populate the Frequency list
             $("#build-upload-modal-frequency").find("[name=frequency-radio-group]").empty();
 
-            $.each(response.data.FrqValueCandidate, function (key, value) {
+            $.each(data.FrqValueCandidate, function (key, value) {
                 $("#build-upload-modal-frequency").find("[name=frequency-radio-group]").append(function () {
                     return $("<li>", {
                         "class": "list-group-item",
@@ -271,6 +243,18 @@ app.build.upload.callback.validate = function (response) {
 
         } else api.modal.exception(app.label.static["api-ajax-exception"]);
     } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Validate and upload px files
+ * @param {*} error
+ */
+app.build.upload.callback.validateOnError = function (error) {
+    // Hide Frequency modal anyway
+    $("#build-upload-modal-frequency").modal("hide");
+
+    // Disable Validate Button
+    $("#build-upload-container").find("[name=upload-btn-validate]").prop("disabled", true);
 };
 
 /**
@@ -290,17 +274,8 @@ app.build.upload.ajax.getFrequencyCodes = function () {
  * 
  */
 
-app.build.upload.callback.getFrequencyCodes = function (response) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-        // Do nothing 
-    }
-    else if (response.data !== undefined) {
-        data = response.data;
+app.build.upload.callback.getFrequencyCodes = function (data) {
+    if (data && Array.isArray(data) && data.length) {
         // Map API data to select dropdown  model for main Subject search and update Subject search
         $("#build-upload-modal-frequency").find("[name=frq-code]").empty().append($("<option>", {
             "text": app.label.static["select-uppercase"],
@@ -316,11 +291,9 @@ app.build.upload.callback.getFrequencyCodes = function (response) {
         });
 
         $("#build-upload-modal-frequency").find("[name=frq-code]").prop('disabled', false);
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
     }
-
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-
 }
 
 /**
@@ -341,9 +314,9 @@ app.build.upload.ajax.create = function (overwrite) {
         app.config.url.api.private,
         "PxStat.Data.Matrix_API.Create",
         obj2send,
-        "app.build.upload.callback.create",
+        "app.build.upload.callback.createOnSuccess",
         null,
-        null,
+        "app.build.upload.callback.createOnError",
         null,
         {
             async: false,
@@ -356,44 +329,29 @@ app.build.upload.ajax.create = function (overwrite) {
 
 /**
  * Create and upload px files
- * @param {*} response
+ * @param {*} data
  */
-app.build.upload.callback.create = function (response) {
-    if (response.error) {
-        var errorOutput = $("<ul>", {
-            class: "list-group"
-        });
-        if (Array.isArray(response.error.message)) {
-            $.each(response.error.message, function (_index, value) {
-                var error = $("<li>", {
-                    class: "list-group-item",
-                    html: value.ErrorMessage
-                });
-                errorOutput.append(error);
-            });
-        } else {
-            var error = $("<li>", {
-                class: "list-group-item",
-                html: response.error.message
-            });
-            errorOutput.append(error);
-        }
-        // Change button to Upload
-        app.build.upload.setValidateBtn();
-        // Disable Validate Button
-        $("#build-upload-container").find("[name=upload-btn-validate]").prop("disabled", true);
-        $("#build-upload-container").find("[name=upload-error]").html(errorOutput.get(0).outerHTML);
-        $("#build-upload-container").find("[name=upload-error-card]").fadeIn();
-        api.modal.error(errorOutput);
-    } else if (response.data == C_APP_API_SUCCESS) {
+app.build.upload.callback.createOnSuccess = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         app.build.upload.reset();
         // No Duplicate found, upload completed
         api.modal.success(app.library.html.parseDynamicLabel("success-file-uploaded", [""]));
-        app.build.upload.setDataPicker();
-    } else if (response.data != C_APP_API_SUCCESS) {
+        app.build.upload.setDatePicker();
+    } else {
         // Duplicate found, prompt to complete
-        api.modal.confirm(response.data, app.build.upload.ajax.create, true);
-    } else api.modal.exception(app.label.static["api-ajax-exception"]);
+        api.modal.confirm(data, app.build.upload.ajax.create, true);
+    }
+};
+
+/**
+ * Create and upload px files
+ * @param {*} error
+ */
+app.build.upload.callback.createOnError = function (error) {
+    // Change button to Upload
+    app.build.upload.setValidateBtn();
+    // Disable Validate Button
+    $("#build-upload-container").find("[name=upload-btn-validate]").prop("disabled", true);
 };
 //#endregion
 
@@ -514,26 +472,20 @@ app.build.upload.ajax.selectGroup = function () {
 
 /**
  * Set upload Select Group
- * @param {*} response
+ * @param {*} data
  */
-app.build.upload.callback.selectGroup = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Load select2
-        $("#build-upload-container").find("[name=upload-select-group]").empty().append($("<option>")).select2({
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.build.upload.callback.mapData(response.data)
-        });
+app.build.upload.callback.selectGroup = function (data) {
+    // Load select2
+    $("#build-upload-container").find("[name=upload-select-group]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.build.upload.callback.mapData(data)
+    });
 
-        // Enable and Focus Search input
-        $("#build-upload-container").find("[name=upload-select-group]").prop('disabled', false).focus();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Enable and Focus Search input
+    $("#build-upload-container").find("[name=upload-select-group]").prop('disabled', false).focus();
 };
 
 /**
@@ -600,10 +552,9 @@ app.build.upload.drawCallbackUploadHistory = function () {
 
 /**
  * Draw Upload History
- * @param  {} response
+ * @param  {} data
   */
-app.build.upload.callback.uploadHistory = function (response) {
-    data = response.data;
+app.build.upload.callback.uploadHistory = function (data) {
     if ($.fn.dataTable.isDataTable("#build-upload-history table")) {
         app.library.datatable.reDraw("#build-upload-history table", data);
     } else {

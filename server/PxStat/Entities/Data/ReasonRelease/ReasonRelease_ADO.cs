@@ -49,14 +49,19 @@ namespace PxStat.Data
             {
                 new ADO_inputParams() {name= "@RlsCode",value=reasonRelease.RlsCode},
                 new ADO_inputParams() {name= "@RsnCode",value=reasonRelease.RsnCode},
-                new ADO_inputParams() {name= "@CmmValue",value=reasonRelease.CmmValue },
+
                 new ADO_inputParams() {name= "@CcnUsername",value=userName},
             };
 
+            if (reasonRelease.CmmValue != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@CmmValue", value = reasonRelease.CmmValue });
+
             // A return parameter is required for the operation
-            ADO_returnParam retParam = new ADO_returnParam();
-            retParam.name = "return";
-            retParam.value = 0;
+            ADO_returnParam retParam = new ADO_returnParam
+            {
+                name = "return",
+                value = 0
+            };
 
             //Attempting to create the new entity
             ado.ExecuteNonQueryProcedure("Data_Reason_Release_Create", inputParamList, ref retParam);
@@ -78,14 +83,19 @@ namespace PxStat.Data
             {
                 new ADO_inputParams() {name= "@RlsCode",value=reasonRelease.RlsCode},
                 new ADO_inputParams() {name= "@RsnCode",value=reasonRelease.RsnCode},
-                new ADO_inputParams() {name= "@CmmValue",value=reasonRelease.CmmValue },
                 new ADO_inputParams() {name= "@CcnUsername",value=userName},
             };
 
+            if (reasonRelease.CmmValue != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@CmmValue", value = reasonRelease.CmmValue });
+
+
             // A return parameter is required for the operation
-            ADO_returnParam retParam = new ADO_returnParam();
-            retParam.name = "return";
-            retParam.value = 0;
+            ADO_returnParam retParam = new ADO_returnParam
+            {
+                name = "return",
+                value = 0
+            };
 
             //Attempting to create the new entity
             ado.ExecuteNonQueryProcedure("Data_Reason_Release_Update", inputParamList, ref retParam);

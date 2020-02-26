@@ -15,7 +15,7 @@ CREATE
 
 ALTER PROCEDURE Data_Reason_Release_Create @RlsCode INT
 	,@RsnCode NVARCHAR(32)
-	,@CmmValue NVARCHAR(1024)
+	,@CmmValue NVARCHAR(1024) = NULL
 	,@CcnUsername NVARCHAR(256)
 AS
 BEGIN
@@ -74,50 +74,53 @@ BEGIN
 		RETURN 0
 	END
 
-	-- Do the create Audit for the Comment and get the new DtgID from the stored procedure
-	EXEC @ReasonReleaseCommentDtgID = Security_Auditing_Create @CcnUsername
-
-	-- Check for problems with the audit stored procedure
-	IF @ReasonReleaseCommentDtgID = 0
-		OR @ReasonReleaseCommentDtgID IS NULL
+	IF @CmmValue IS NOT NULL
 	BEGIN
-		SET @errorMessage = 'Error in calling Security_Auditing_Create' + @errorDetails
+		-- Do the create Audit for the Comment and get the new DtgID from the stored procedure
+		EXEC @ReasonReleaseCommentDtgID = Security_Auditing_Create @CcnUsername
 
-		RAISERROR (
-				@errorMessage
-				,16
-				,1
-				)
+		-- Check for problems with the audit stored procedure
+		IF @ReasonReleaseCommentDtgID = 0
+			OR @ReasonReleaseCommentDtgID IS NULL
+		BEGIN
+			SET @errorMessage = 'Error in calling Security_Auditing_Create' + @errorDetails
 
-		RETURN 0
+			RAISERROR (
+					@errorMessage
+					,16
+					,1
+					)
+
+			RETURN 0
+		END
+
+		-- Create the comment for the ReleaseReason
+		INSERT INTO TD_COMMENT (
+			CMM_VALUE
+			,CMM_DTG_ID
+			,CMM_DELETE_FLAG
+			)
+		VALUES (
+			@CmmValue
+			,@ReasonReleaseCommentDtgID
+			,0
+			)
+
+		IF @@IDENTITY = 0
+		BEGIN
+			SET @errorMessage = 'Unable to create comment' + @errorDetails
+
+			RAISERROR (
+					@errorMessage
+					,16
+					,1
+					)
+
+			RETURN 0
+		END
+
+		SET @commentID = @@IDENTITY
 	END
-
-	-- Create the comment for the ReleaseReason
-	INSERT INTO TD_COMMENT (
-		CMM_VALUE
-		,CMM_DTG_ID
-		,CMM_DELETE_FLAG
-		)
-	VALUES (
-		@CmmValue
-		,@ReasonReleaseCommentDtgID
-		,0
-		)
-
-	IF @@IDENTITY = 0
-	BEGIN
-		SET @errorMessage = 'Unable to create comment' + @errorDetails
-
-		RAISERROR (
-				@errorMessage
-				,16
-				,1
-				)
-
-		RETURN 0
-	END
-
-	SET @commentID = @@IDENTITY
 
 	-- Create the ReasonRelease entry
 	INSERT INTO TM_REASON_RELEASE (

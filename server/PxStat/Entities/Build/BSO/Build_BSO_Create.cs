@@ -85,7 +85,6 @@ namespace PxStat.Build
                     Response.data = resultPx;
                     break;
 
-                case Resources.Constants.C_SYSTEM_JSON_NAME:
                 case Resources.Constants.C_SYSTEM_JSON_STAT_NAME:
                     dynamic result = new ExpandoObject();
                     List<JRaw> jsonData = new List<JRaw>();

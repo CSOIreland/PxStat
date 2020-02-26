@@ -104,12 +104,10 @@ app.release.comment.ajax.create = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.release.comment.callback.create = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+app.release.comment.callback.create = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [""]));
         app.release.read();
     }
@@ -176,12 +174,10 @@ app.release.comment.ajax.update = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.release.comment.callback.update = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+app.release.comment.callback.update = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
         app.release.read();
     }
@@ -216,12 +212,10 @@ app.release.comment.ajax.delete = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.release.comment.callback.delete = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+app.release.comment.callback.delete = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [""]));
         app.release.read();
     }

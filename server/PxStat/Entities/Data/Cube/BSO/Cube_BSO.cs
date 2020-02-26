@@ -10,6 +10,25 @@ namespace PxStat.Data
 {
     internal class Cube_BSO
     {
+
+        internal Role UpdateRoleFromMetadata(ADO theAdo, Cube_DTO_Read dto)
+        {
+            Cube_ADO cAdo = new Cube_ADO(theAdo);
+            dto.role = new Role();
+            var roleDictionary = cAdo.ReadDimensionRoles(Utility.GetCustomConfig("APP_CSV_STATISTIC"), dto.matrix);
+            if (roleDictionary.ContainsKey("time"))
+            {
+                dto.role.Time = new List<string>();
+                dto.role.Time.Add(roleDictionary["time"]);
+            }
+            if (roleDictionary.ContainsKey("metric"))
+            {
+                dto.role.Metric = new List<string>();
+                dto.role.Metric.Add(roleDictionary["metric"]);
+            }
+
+            return dto.role;
+        }
         /// <summary>
         /// Get the collection with metadata
         /// </summary>

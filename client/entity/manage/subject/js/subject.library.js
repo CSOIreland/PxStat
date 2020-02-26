@@ -28,17 +28,10 @@ app.subject.ajax.read = function () {
 
 /**
  * * Callback subject read
- * @param  {} response
+ * @param  {} data
  */
-app.subject.callback.read = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.subject.drawDataTable(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.subject.callback.read = function (data) {
+  app.subject.drawDataTable(data);
 };
 
 /**
@@ -195,9 +188,9 @@ app.subject.ajax.create = function () {
     app.config.url.api.private,
     "PxStat.System.Navigation.Subject_API.Create",
     apiParams,
-    "app.subject.callback.create",
+    "app.subject.callback.createOnSuccess",
     callbackParam,
-    null,
+    "app.subject.callback.createOnError",
     null,
     { async: false }
   );
@@ -205,22 +198,27 @@ app.subject.ajax.create = function () {
 
 /**
  * callback for create new subject
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.subject.callback.create = function (response, callbackParam) {
+app.subject.callback.createOnSuccess = function (data, callbackParam) {
   //Refresh the table
   app.subject.ajax.read();
 
-  if (response.error) {
-    // Handle the Error in the Response first
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
-    // Handle the Data in the Response then
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.SbjValue]));
   }
   // Handle Exception
   else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * callback for create new subject
+ * @param  {} error
+ */
+app.subject.callback.createOnError = function (error) {
+  //Refresh the table
+  app.subject.ajax.read();
 };
 
 //#endregion
@@ -244,26 +242,20 @@ app.subject.ajax.readUpdate = function (idn) {
 
 /**
  * Show modal after ajax call
- * @param  {} response
+ * @param  {} data
  */
-app.subject.callback.readUpdate = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-    // Force reload
-    app.subject.ajax.read();
-  }
-  else if (response.data) {
-    response.data = response.data[0];
+app.subject.callback.readUpdate = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
 
     //validate Update subject form
     app.subject.validation.update();
     //Display of Modal update
-    app.subject.modal.update(response.data);
+    app.subject.modal.update(data);
   } else {
-    api.modal.exception(app.label.static["api-ajax-exception"]);
+    api.modal.information(app.label.static["api-ajax-nodata"]);
+    // Force reload
+    app.subject.ajax.read();
   }
 };
 
@@ -319,9 +311,9 @@ app.subject.ajax.update = function () {
     app.config.url.api.private,
     "PxStat.System.Navigation.Subject_API.Update",
     apiParams,
-    "app.subject.callback.update",
+    "app.subject.callback.updateOnSuccess",
     callbackParam,
-    null,
+    "app.subject.callback.updateOnError",
     null,
     { async: false }
   );
@@ -329,21 +321,29 @@ app.subject.ajax.update = function () {
 
 /**
  * callback after ajax update
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.subject.callback.update = function (response, callbackParam) {
+app.subject.callback.updateOnSuccess = function (data, callbackParam) {
   $("#subject-modal-update").modal("hide");
   //Refresh the table
   app.subject.ajax.read();
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.SbjValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * callback after ajax update
+ * @param  {} error
+ */
+app.subject.callback.updateOnError = function (error) {
+  $("#subject-modal-update").modal("hide");
+  //Refresh the table
+  app.subject.ajax.read();
 };
 
 //#endregion
@@ -375,8 +375,13 @@ app.subject.ajax.delete = function (objToSend) {
     SbjValue: objToSend.SbjValue
   };
   // A Subject is deleted always against the default Language
-  api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.System.Navigation.Subject_API.Delete", apiParams, "app.subject.callback.delete", callbackParam,
-    null,
+  api.ajax.jsonrpc.request(
+    app.config.url.api.private,
+    "PxStat.System.Navigation.Subject_API.Delete",
+    apiParams,
+    "app.subject.callback.deleteOnSuccess",
+    callbackParam,
+    "app.subject.callback.deleteOnError",
     null,
     { async: false }
   );
@@ -384,17 +389,24 @@ app.subject.ajax.delete = function (objToSend) {
 
 /**
  * Callback after delete
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.subject.callback.delete = function (response, callbackParam) {
+app.subject.callback.deleteOnSuccess = function (data, callbackParam) {
   //Refresh the table
   app.subject.ajax.read();
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.SbjValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Callback after delete
+ * @param  {} error
+ */
+app.subject.callback.deleteOnError = function (error) {
+  //Refresh the table
+  app.subject.ajax.read();
 };
 //#endregion

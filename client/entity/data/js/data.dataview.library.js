@@ -36,14 +36,13 @@ app.data.dataview.ajax.mapMetadata = function (apiParams) {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.data.dataview.callback.mapMetadata = function (response) {
+app.data.dataview.callback.mapMetadata = function (data) {
+    data = data ? JSONstat(data) : data;
+
     //FIXME: Does not show MAP if User SELECTED language pl (matrix in en only)
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var data = JSONstat(response.data);
+    if (data && data.length) {
         var geo = data.role.geo[0];
 
         $("#data-dataview-selected-table").find("[name=map-dimensions]").empty();
@@ -209,14 +208,12 @@ app.data.dataview.ajax.mapData = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.data.dataview.callback.mapData = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var ds = JSONstat(response.data);
-        var statisticLabel = ds.role.metric[0];
+app.data.dataview.callback.mapData = function (data) {
+    data = data ? JSONstat(data) : data;
+    if (data && data.length) {
+        var statisticLabel = data.role.metric[0];
         var chartTitle = app.data.fileNamePrefix + ": " +
             $("#data-dataview-selected-table").find("[name=map-dimensions]").find("[name=dimension-select][role=metric]").find("option:selected").text() + ", " +
             $("#data-dataview-selected-table").find("[name=map-dimensions]").find("[name=dimension-select][role=time]").find("option:selected").text() + ", ";
@@ -229,26 +226,25 @@ app.data.dataview.callback.mapData = function (response) {
                 chartTitle = chartTitle + $(this).find("option:selected").text();
             }
         });
-        for (i = 0; i < ds.length; i++) {
-            if (ds.Dimension(i).link) {
-                var mapUrl = ds.Dimension(i).link.enclosure[0].href;
-                var codes = ds.Dimension(i).id;
-                var values = ds.value;
+        for (i = 0; i < data.length; i++) {
+
+            if (data.Dimension(i).role == "geo") {
+                var mapUrl = data.Dimension(i).link.enclosure[0].href;
+                var codes = data.Dimension(i).id;
+                var values = data.value;
                 var valuesMinMax = []; //to set min and max of colour axis
-                var data = [];
+                var dataPoints = [];
                 for (x = 0; x < codes.length; x++) {
-                    if (codes[x] != '-') {
-                        valuesMinMax.push(values[x]);
-                        var statisticValue = $("#data-dataview-selected-table").find("[name=dimension-container-map]").find("[name=dimension-select][role=metric]").find("option:selected").val();
-                        var dataPoint = {
-                            label: ds.Dimension(i).label,
-                            name: ds.Dimension(i).Category(codes[x]).label,
-                            value: values[x],
-                            code: codes[x],
-                            unit: ds.Dimension(statisticLabel).Category(statisticValue).unit.label
-                        };
-                        data.push(dataPoint);
-                    }
+                    valuesMinMax.push(values[x]);
+                    var statisticValue = $("#data-dataview-selected-table").find("[name=dimension-container-map]").find("[name=dimension-select][role=metric]").find("option:selected").val();
+                    var dataPoint = {
+                        label: data.Dimension(i).label,
+                        name: data.Dimension(i).Category(codes[x]).label,
+                        value: values[x],
+                        code: codes[x],
+                        unit: data.Dimension(statisticLabel).Category(statisticValue).unit.label
+                    };
+                    dataPoints.push(dataPoint);
                 }
             }
             var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
@@ -285,7 +281,7 @@ app.data.dataview.callback.mapData = function (response) {
                         maxColor: app.config.plugin.highmaps.maxColor
                     },
                     series: [{
-                        data: data,
+                        data: dataPoints,
                         nullInteraction: true,
                         joinBy: [app.config.plugin.highmaps.featureIdentifier, 'code'],
                         states: {
@@ -377,18 +373,10 @@ app.data.dataview.ajax.format = function () {
     );
 }
 
-app.data.dataview.callback.format = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    }
-
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
-    else if (response.data) {
+app.data.dataview.callback.format = function (data) {
+    if (data && Array.isArray(data) && data.length) {
         $("#data-view-container [name=download-select-dataset], #data-dataview-confirm-soft [name=download-select-dataset], #data-dataview-confirm-hard [name=download-select-dataset]").empty();
-        $.each(response.data, function (index, format) {
+        $.each(data, function (index, format) {
             var formatDropdown = $("#data-dataview-templates").find("[name=download-dataset-format]").clone();
             formatDropdown.attr(
                 {
@@ -407,22 +395,19 @@ app.data.dataview.callback.format = function (response) {
             $("#data-dataview-confirm-soft, #data-dataview-confirm-hard ").modal("hide");
         });
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Handle no data
+    else api.modal.information(app.label.static["api-ajax-nodata"]);
 
 }
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.data.dataview.callback.data = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var ds = JSONstat(response.data);
-        app.data.dataview.callback.drawDatatable(ds);
+app.data.dataview.callback.data = function (data) {
+    data = data ? JSONstat(data) : data;
+    if (data && data.length) {
+        app.data.dataview.callback.drawDatatable(data);
         app.data.dataview.ajax.format();
-
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -466,9 +451,9 @@ app.data.dataview.callback.resultsDownload = function (format, version) {
 
 /**
 * 
-* @param {*} ds
+* @param {*} data
 */
-app.data.dataview.callback.drawDatatable = function (ds) {
+app.data.dataview.callback.drawDatatable = function (data) {
     api.spinner.start();
 
     if ($.fn.DataTable.isDataTable("#data-view-container [name=datatable]")) {
@@ -476,35 +461,35 @@ app.data.dataview.callback.drawDatatable = function (ds) {
         //cannot use redraw as columns are dynamically created depending on the matrix. Have to destroy and re-initiate 
     }
     var dataContainer = $("#data-dataview-templates").find("[name=data-view]").clone();
-    var jsonTableLabel = ds.toTable({
+    var jsonTableLabel = data.toTable({
         type: 'arrobj',
         meta: true,
         unit: true,
         content: "label"
     });
-    var jsonTableId = ds.toTable({
+    var jsonTableId = data.toTable({
         type: 'arrobj',
         meta: true,
         unit: true,
         content: "id"
     });
-    var numDimensions = ds.length;
+    var numDimensions = data.length;
     var tableColumns = [];
     for (i = 0; i < numDimensions; i++) { //build columns
         var codeSpan = $('<span>', {
             "name": "code",
             "class": "badge badge-pill badge-neutral mx-2 d-none",
-            "text": ds.id[i]
+            "text": data.id[i]
         }).get(0).outerHTML;
 
         var tableHeading = $("<th>", {
-            "html": ds.Dimension(i).label + codeSpan
+            "html": data.Dimension(i).label + codeSpan
         });
         //Data Table header
         dataContainer.find("[name=datatable]").find("[name=header-row]").append(tableHeading);
 
         tableColumns.push({
-            data: ds.id[i],
+            data: data.id[i],
             "createdCell": function (td, cellData, rowData, row, col) {
                 $(td).attr("data-order", cellData);
             },
@@ -571,16 +556,17 @@ app.data.dataview.callback.drawDatatable = function (ds) {
         width: C_APP_TOGGLE_LENGTH
     });
 
-    //scroll to top of table
+    //scroll to top of datatable -- Data entity
     if (app.data.MtrCode) {
         $('html, body').animate({
             scrollTop: $("#data-view-container").offset().top
         }, 1000);
     }
-    //In modal view
+
+    //scroll to bottom of table selection - modal
     else if (app.data.RlsCode) {
         $('#data-view-modal').animate({
-            scrollTop: $('#data-dataview-selected-table')[0].scrollHeight
+            scrollTop: $('#data-dataset-row')[0].scrollHeight
         },
             1000);
     }

@@ -59,6 +59,9 @@ namespace PxStat.Workflow
         /// Current flag
         /// </summary>
         public bool WrqCurrentFlag { get; set; }
+
+        public Security.ActiveDirectory_DTO RequestAccount { get; set; }
+
         #endregion
 
         /// <summary>

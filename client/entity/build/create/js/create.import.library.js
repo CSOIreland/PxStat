@@ -11,18 +11,13 @@ app.build.create.import.validate.ajax = {};
 app.build.create.import.validate.callback = {};
 //#endregion
 
-
 /**
  *
  */
 app.build.create.import.cancel = function () {
     //clean up modal
-    $("#build-create-import").find("[name=frequency-codes]").hide();
-    $("#build-create-import").find("[name=frequency-warning]").hide();
-
     $("#build-create-import").find("[name=upload-file-name]").empty().hide();
     $("#build-create-import").find("[name=upload-file-tip]").show();
-    $("#build-create-import").find("[name=upload-error-card]").hide();
 
     // Disable Parse Button
     $("#build-create-import").find("[name=parse-source-file]").prop("disabled", true);
@@ -44,10 +39,6 @@ app.build.create.import.reset = function () {
  *
  */
 app.build.create.import.validate.ajax.read = function () {
-
-    app.build.create.file.import.FrqCode = $("#build-create-import").find("[name=frq-code]").val();
-    app.build.create.file.import.FrqValue = $("#build-create-import").find("[name=frq-value]:checked").val() || null;
-
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Build.Build_API.Validate",
@@ -69,41 +60,19 @@ app.build.create.import.validate.ajax.read = function () {
     api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.create.file.import.content.Base64.length, app.config.upload.unitsPerSecond.read));
 };
 
-app.build.create.import.validate.callback.read = function (response) {
-    if (response.error) {
-        var errorOutput = $("<ul>", {
-            class: "list-group"
-        });
-        if (Array.isArray(response.error.message)) {
-            $.each(response.error.message, function (_index, value) {
-                var error = $("<li>", {
-                    class: "list-group-item",
-                    html: value.ErrorMessage
-                });
-                errorOutput.append(error);
-            });
-        } else {
-            var error = $("<li>", {
-                class: "list-group-item",
-                html: response.error.message
-            });
-            errorOutput.append(error);
-        }
-        api.modal.error(errorOutput);
-    } else if (response.data) {
-        if (response.data.Signature) {
+app.build.create.import.validate.callback.read = function (data) {
+    if (data) {
+        if (data.Signature) {
             // Store for later use
-            app.build.create.file.import.Signature = response.data.Signature;
+            app.build.create.file.import.Signature = data.Signature;
             app.build.create.import.ajax.read();
         }
         else {
-            $("#build-create-import").find("[name=frequency-codes]").show();
-            $("#build-create-import").find("[name=frequency-warning]").show();
             // Populate the Frequency list
-            $("#build-create-import").find("[name=frequency-radio-group]").empty();
+            $("#build-create-modal-frequency").find("[name=frequency-radio-group]").empty();
 
-            $.each(response.data.FrqValueCandidate, function (key, value) {
-                $("#build-create-import").find("[name=frequency-radio-group]").append(function () {
+            $.each(data.FrqValueCandidate, function (key, value) {
+                $("#build-create-modal-frequency").find("[name=frequency-radio-group]").append(function () {
                     return $("<li>", {
                         "class": "list-group-item",
                         "html": $("<input>", {
@@ -114,9 +83,8 @@ app.build.create.import.validate.callback.read = function (response) {
                     }).get(0).outerHTML;
                 });
             });
-            // Run validation
-            // app.build.update.validate.frequencyModal();
-
+            // Show the modal
+            $("#build-create-modal-frequency").modal("show");
         }
     }
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -141,48 +109,19 @@ app.build.create.import.ajax.read = function () {
         { async: false });
 };
 
-app.build.create.import.callback.read = function (response) {
-    //put JSON-stat into namespace variable for future use    
-    if (response.error) {
-        var errorOutput = $("<ul>", {
-            class: "list-group"
-        });
-        if (Array.isArray(response.error.message)) {
-            $.each(response.error.message, function (_index, value) {
-                var error = $("<li>", {
-                    class: "list-group-item",
-                    html: value.ErrorMessage
-                });
-                errorOutput.append(error);
-            });
-        } else {
-            var error = $("<li>", {
-                class: "list-group-item",
-                html: response.error.message
-            });
-            errorOutput.append(error);
-        }
-        api.modal.error(errorOutput);
-
-        $("#build-create-import").find("[name=upload-error]").html(errorOutput.get(0).outerHTML);
-        $("#build-create-import").find("[name=upload-error-card]").fadeIn();
-    }
-
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-        // Do nothing 
-    }
-    else if (response.data !== undefined) {
+app.build.create.import.callback.read = function (data) {
+    if (data && Array.isArray(data) && data.length) {
         $("#build-create-import").modal("hide");
         app.build.create.file.import.content.JsonStat = [];
-        //parse each JSON-stat response and push to namespace varaiable
-        $.each(response.data, function (index, data) {
+        //parse each JSON-stat data and push to namespace varaiable
+        $.each(data, function (index, data) {
             app.build.create.file.import.content.JsonStat.push(JSONstat(data))
         });
         app.build.create.import.callback.read.drawProperties();
 
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
     }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 app.build.create.import.callback.read.drawProperties = function () {
@@ -200,24 +139,22 @@ app.build.create.import.callback.read.drawProperties = function () {
         }
     };
 
+    //make unselected by default
+    $("#build-create-initiate-setup [name=frequency-code]").val("select");
     $("#build-create-initiate-setup [name=frequency-code] > option").each(function () {
         if (this.value == frqCode) {
-            $(this).attr("selected", "selected");
-        }
-        else {
-            $(this).removeAttr("selected");
+            $("#build-create-initiate-setup [name=frequency-code]").val(this.value);
+            return;
         }
     });
 
-    //get and set the copyright code
-    var cprCode = defaultData.extension.copyright.code;
     //make unselected by default
     $("#build-create-initiate-setup [name=copyright-code]").val("select");
-
     //if valid copyright, select this
     $("#build-create-initiate-setup [name=copyright-code] > option").each(function () {
-        if (this.value == cprCode) {
-            $(this).attr("selected", "selected");
+        if (this.value == defaultData.extension.copyright.code) {
+            $("#build-create-initiate-setup [name=copyright-code]").val(this.value);
+            return;
         }
     });
 
@@ -247,3 +184,30 @@ app.build.create.import.callback.read.drawProperties = function () {
     $("[name=lng-group][value=" + app.config.language.iso.code + "]").prop("checked", true);
 }
 
+/**
+ * Bind validation for frequency validation
+ */
+app.build.create.import.validate.frequencyModal = function () {
+    $("#build-create-modal-frequency form").trigger("reset").validate({
+        rules: {
+            "frq-value": {
+                required: true
+            },
+            "frq-code": {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            $("#build-create-modal-frequency [name=" + element[0].name + "-error-holder]").append(error[0]);
+        },
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
+            $("#build-create-modal-frequency").modal("hide");
+            // Store for later use
+            app.build.create.file.import.FrqCode = $("#build-create-modal-frequency").find("[name=frq-code]").val();
+            app.build.create.file.import.FrqValue = $("#build-create-modal-frequency").find("[name=frq-value]:checked").val();
+
+            app.build.create.import.validate.ajax.read();
+        }
+    }).resetForm();
+};

@@ -312,10 +312,8 @@ app.build.update.dimension.modal.deleteNewPeriod = function (params) {
 app.build.update.dimension.callback.deleteNewPeriod = function (params) {
     $.each(app.build.update.data.Dimension, function (index, dimension) {
         if (dimension.LngIsoCode == params.lngIsoCode) {
-            $.each(dimension.Frequency.Period, function (index, variable) {
-                if (variable.PrdCode == params.prdCode) {
-                    dimension.Frequency.Period.splice(index, 1);
-                }
+            dimension.Frequency.Period = $.grep(dimension.Frequency.Period, function (value, index) {
+                return value.PrdCode == params.prdCode ? false : true;
             });
         }
     });

@@ -29,21 +29,17 @@ app.release.reason.ajax.readCode = function (RsnCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.reason.callback.readCode = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-  } else if (response.data) {
-    response.data = response.data[0];
+app.release.reason.callback.readCode = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
 
-    $("#release-reason-modal-create [name=rsn-value-internal]").html(app.library.html.parseBbCode(response.data.RsnValueInternal));
-    $("#release-reason-modal-create [name=rsn-value-external]").html(app.library.html.parseBbCode(response.data.RsnValueExternal));
+    $("#release-reason-modal-create [name=rsn-value-internal]").html(app.library.html.parseBbCode(data.RsnValueInternal));
+    $("#release-reason-modal-create [name=rsn-value-external]").html(app.library.html.parseBbCode(data.RsnValueExternal));
   }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+  // Handle no data
+  else api.modal.information(app.label.static["api-ajax-nodata"]);
 };
 
 /**
@@ -66,30 +62,24 @@ app.release.reason.ajax.readCodeList = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.reason.callback.readCodeList = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    $("#release-reason-modal-create").find("[name=rsn-code]").empty().append($('<option>', {
-      disabled: "disabled",
-      selected: "selected",
-      value: "",
-      text: app.label.static["select-uppercase"]
-    }));
+app.release.reason.callback.readCodeList = function (data) {
+  $("#release-reason-modal-create").find("[name=rsn-code]").empty().append($('<option>', {
+    disabled: "disabled",
+    selected: "selected",
+    value: "",
+    text: app.label.static["select-uppercase"]
+  }));
 
-    $.each(response.data, function (index, row) {
-      var option = $("<option>", {
-        "value": row.RsnCode,
-        "text": row.RsnCode,
-        "class": "text-capitalize"
-      });
-      $("#release-reason-modal-create [name=rsn-code]").append(option);
+  $.each(data, function (index, row) {
+    var option = $("<option>", {
+      "value": row.RsnCode,
+      "text": row.RsnCode,
+      "class": "text-capitalize"
     });
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+    $("#release-reason-modal-create [name=rsn-code]").append(option);
+  });
 };
 
 /**
@@ -172,84 +162,76 @@ app.release.reason.drawCallback = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.reason.callback.readList = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    var data = response.data;
+app.release.reason.callback.readList = function (data) {
+  // Populate Release Reason
+  $("#release-reason").hide().fadeIn();
 
-    // Populate Release Reason
-    $("#release-reason").hide().fadeIn();
-
-    if ($.fn.dataTable.isDataTable("#release-reason table")) {
-      app.library.datatable.reDraw("#release-reason table", data);
-    } else {
-      var localOptions = {
-        // Add Row Index to feed the ExtraInfo modal 
-        createdRow: function (row, dataRow, dataIndex) {
-          $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+  if ($.fn.dataTable.isDataTable("#release-reason table")) {
+    app.library.datatable.reDraw("#release-reason table", data);
+  } else {
+    var localOptions = {
+      // Add Row Index to feed the ExtraInfo modal 
+      createdRow: function (row, dataRow, dataIndex) {
+        $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+      },
+      data: data,
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row) {
+            return app.library.html.link.edit({ idn: row.RsnCode }, row.RsnCode);
+          }
         },
-        data: data,
-        columns: [
-          {
-            data: null,
-            render: function (data, type, row) {
-              return app.library.html.link.edit({ idn: row.RsnCode }, row.RsnCode);
-            }
-          },
-          {
-            data: null,
-            defaultContent: '',
-            sorting: false,
-            searchable: false,
-            "render": function (data, type, row, meta) {
-              return $("<a>", {
-                href: "#",
-                name: C_APP_DATATABLE_EXTRA_INFO_LINK,
-                "idn": meta.row,
-                html:
-                  $("<i>", {
-                    "class": "fas fa-info-circle text-info"
-                  }).get(0).outerHTML + " " + app.label.static["description"]
-              }).get(0).outerHTML;
-            }
-          },
-          {
-            data: "RsnValueInternal",
-            "visible": false,
-            "searchable": true
-          },
-          {
-            data: "RsnValueExternal",
-            "visible": false,
-            "searchable": true
-          },
-          {
-            data: null,
-            sorting: false,
-            searchable: false,
-            render: function (data, type, row) {
-              // Disable button if WIP
-              return app.library.html.deleteButton({ idn: row.RsnCode }, app.release.isWorkInProgress || app.release.isAwaitingResponse || app.release.isAwaitingSignOff ? false : true);
-            },
-            "width": "1%"
-          }],
-        drawCallback: function (settings) {
-          app.release.reason.drawCallback();
-
+        {
+          data: null,
+          defaultContent: '',
+          sorting: false,
+          searchable: false,
+          "render": function (data, type, row, meta) {
+            return $("<a>", {
+              href: "#",
+              name: C_APP_DATATABLE_EXTRA_INFO_LINK,
+              "idn": meta.row,
+              html:
+                $("<i>", {
+                  "class": "fas fa-info-circle text-info"
+                }).get(0).outerHTML + " " + app.label.static["description"]
+            }).get(0).outerHTML;
+          }
         },
-        //Translate labels language
-        language: app.label.plugin.datatable
-      };
-      $("#release-reason table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+        {
+          data: "RsnValueInternal",
+          "visible": false,
+          "searchable": true
+        },
+        {
+          data: "RsnValueExternal",
+          "visible": false,
+          "searchable": true
+        },
+        {
+          data: null,
+          sorting: false,
+          searchable: false,
+          render: function (data, type, row) {
+            // Disable button if WIP
+            return app.library.html.deleteButton({ idn: row.RsnCode }, app.release.isWorkInProgress || app.release.isAwaitingResponse || app.release.isAwaitingSignOff ? false : true);
+          },
+          "width": "1%"
+        }],
+      drawCallback: function (settings) {
         app.release.reason.drawCallback();
-      });
-    }
+
+      },
+      //Translate labels language
+      language: app.label.plugin.datatable
+    };
+    $("#release-reason table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+      app.release.reason.drawCallback();
+    });
   }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -284,29 +266,27 @@ app.release.reason.ajax.read = function (RsnCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.reason.callback.read = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-    // Force reload
-    app.release.reason.ajax.readCodeList();
-  } else if (response.data) {
-    response.data = response.data[0];
+app.release.reason.callback.read = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
 
-    $("#release-reason-modal-update [name=rsn-code]").html(response.data.RsnCode).attr("idn", response.data.RsnCode);
-    $("#release-reason-modal-update [name=rsn-value-internal]").html(app.library.html.parseBbCode(response.data.RsnValueInternal));
-    $("#release-reason-modal-update [name=rsn-value-external]").html(app.library.html.parseBbCode(response.data.RsnValueExternal));
+    $("#release-reason-modal-update [name=rsn-code]").html(data.RsnCode).attr("idn", data.RsnCode);
+    $("#release-reason-modal-update [name=rsn-value-internal]").html(app.library.html.parseBbCode(data.RsnValueInternal));
+    $("#release-reason-modal-update [name=rsn-value-external]").html(app.library.html.parseBbCode(data.RsnValueExternal));
 
     var tinyMceId = $("#release-reason-modal-update [name=cmm-value]").attr("id");
-    tinymce.get(tinyMceId).setContent(response.data.CmmValue);
+    tinymce.get(tinyMceId).setContent(data.CmmValue);
 
     $("#release-reason-modal-update").modal("show");
   }
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+  // Handle no data
+  else {
+    api.modal.information(app.label.static["api-ajax-nodata"]);
+    // Force reload
+    app.release.reason.ajax.readCodeList();
+  }
 };
 
 /**
@@ -324,14 +304,7 @@ app.release.reason.update = function (idn) {
 app.release.reason.validation.update = function () {
   $("#release-reason-modal-update form").trigger("reset").validate({
     ignore: [],
-    rules: {
-      "cmm-value": {
-        required: function (element) {
-          tinymce.triggerSave();
-          return true;
-        }
-      }
-    },
+    rules: {},
     errorPlacement: function (error, element) {
       $("#release-reason-modal-update [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
@@ -350,7 +323,7 @@ app.release.reason.ajax.update = function () {
   var RsnCode = $("#release-reason-modal-update [name=rsn-code]").attr("idn");
 
   var tinyMceId = $("#release-reason-modal-update [name=cmm-value]").attr("id");
-  var CmmValue = tinymce.get(tinyMceId).getContent();
+  var CmmValue = tinymce.get(tinyMceId).getContent().trim().length ? tinymce.get(tinyMceId).getContent().trim() : null;
 
   api.ajax.jsonrpc.request(
     app.config.url.api.private,
@@ -365,13 +338,11 @@ app.release.reason.ajax.update = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  * @param {*} RsnCode
  */
-app.release.reason.callback.update = function (response, RsnCode) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+app.release.reason.callback.update = function (data, RsnCode) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [RsnCode]));
     app.release.reason.ajax.readList();
   } else {
@@ -398,13 +369,11 @@ app.release.reason.ajax.delete = function (RsnCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  * @param {*} params
  */
-app.release.reason.callback.delete = function (response, params) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+app.release.reason.callback.delete = function (data, params) {
+  if (data == C_APP_API_SUCCESS) {
     // Refresh datatable
     app.release.reason.ajax.readList();
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [params.RsnCode]));
@@ -433,12 +402,6 @@ app.release.reason.validation.create = function () {
     rules: {
       "rsn-code": {
         required: true
-      },
-      "cmm-value": {
-        required: function (element) {
-          tinymce.triggerSave();
-          return true;
-        }
       }
     },
     errorPlacement: function (error, element) {
@@ -463,27 +426,34 @@ app.release.reason.ajax.create = function () {
     app.config.url.api.private,
     "PxStat.Data.ReasonRelease_API.Create",
     { "RlsCode": app.release.RlsCode, "RsnCode": RsnCode, "CmmValue": CmmValue, "LngIsoCode": app.label.language.iso.code },
-    "app.release.reason.callback.create",
+    "app.release.reason.callback.createOnSuccess",
     RsnCode,
-    null,
+    "app.release.reason.callback.createOnError",
     null,
     { async: false });
 };
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  * @param {*} RsnCode
  */
-app.release.reason.callback.create = function (response, RsnCode) {
+app.release.reason.callback.createOnSuccess = function (data, RsnCode) {
   $("#release-reason-modal-create").modal("hide");
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     app.release.reason.ajax.readList();
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [RsnCode]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+* 
+ * @param {*} error
+ */
+app.release.reason.callback.createOnError = function (error) {
+  $("#release-reason-modal-create").modal("hide");
 };
 //#endregion

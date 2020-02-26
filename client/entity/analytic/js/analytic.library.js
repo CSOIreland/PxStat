@@ -57,37 +57,31 @@ app.analytic.ajax.readSubject = function () {
 
 /**
  * Populate subjects dropdown
- * @param  {} response
+ * @param  {} data
  */
-app.analytic.callback.readSubject = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        $("#select-card").find("[name=select-subject]").empty().append($("<option>")).select2({
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.analytic.callback.mapSubjectData(response.data)
-        });
+app.analytic.callback.readSubject = function (data) {
+    $("#select-card").find("[name=select-subject]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.analytic.callback.mapSubjectData(data)
+    });
 
-        // Enable and Focus Seach input
-        $("#select-card").find("[name=select-subject]").prop('disabled', false)
+    // Enable and Focus Seach input
+    $("#select-card").find("[name=select-subject]").prop('disabled', false)
 
-        $("#select-card").find("[name=select-subject]").on('select2:select', function (e) {
-            $("#analytic-results").hide();
-            app.analytic.ajax.readProduct();
-        });
+    $("#select-card").find("[name=select-subject]").on('select2:select', function (e) {
+        $("#analytic-results").hide();
+        app.analytic.ajax.readProduct();
+    });
 
-        $("#select-card").find("[name=select-subject]").on('select2:unselect', function (e) {
-            $("#select-card").find("[name=select-product]").empty();
-            // Disable product 
-            $("#select-card").find("[name=select-product]").prop('disabled', true);
-            $("#analytic-results").hide();
-        });
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    $("#select-card").find("[name=select-subject]").on('select2:unselect', function (e) {
+        $("#select-card").find("[name=select-product]").empty();
+        // Disable product 
+        $("#select-card").find("[name=select-product]").prop('disabled', true);
+        $("#analytic-results").hide();
+    });
 };
 
 /**
@@ -119,36 +113,29 @@ app.analytic.ajax.readProduct = function () {
 
 /**
  * Populate products dropdown
- * @param  {} response
+ * @param  {} data
  */
-app.analytic.callback.readProduct = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        $("#select-card").find("[name=select-product]").empty().append($("<option>")).select2({
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.analytic.callback.mapProductData(response.data)
-        });
+app.analytic.callback.readProduct = function (data) {
+    $("#select-card").find("[name=select-product]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.analytic.callback.mapProductData(data)
+    });
 
-        // Enable 
-        $("#select-card").find("[name=select-product]").prop('disabled', false);
+    // Enable 
+    $("#select-card").find("[name=select-product]").prop('disabled', false);
 
-        $("#select-card").find("[name=select-product]").on('select2:select', function (e) {
-            $("#analytic-results").hide();
-            app.analytic.PrcCode = e.params.data.PrcCode;
-        });
+    $("#select-card").find("[name=select-product]").on('select2:select', function (e) {
+        $("#analytic-results").hide();
+        app.analytic.PrcCode = e.params.data.PrcCode;
+    });
 
-        $("#select-card").find("[name=select-product]").on('select2:unselect', function (e) {
-            $("#analytic-results").hide();
-            app.analytic.PrcCode = null;
-        });
-
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    $("#select-card").find("[name=select-product]").on('select2:unselect', function (e) {
+        $("#analytic-results").hide();
+        app.analytic.PrcCode = null;
+    });
 };
 
 /**
@@ -201,7 +188,7 @@ app.analytic.ajax.readAnalytics = function () {
     app.analytic.ajax.readBrowser(null, "#analytic-chart [name=browser-pie-chart]");
     app.analytic.ajax.readOs(null, "#analytic-chart [name=operating-system-pie-chart]");
     app.analytic.ajax.readReferrer(null, "#analytic-chart [name=referrer-column-chart]");
-    app.analytic.ajax.readTimeLine(null, "#analytic-chart [name=dates-line-chart]");
+    app.analytic.ajax.readTimeline(null, "#analytic-chart [name=dates-line-chart]");
     app.analytic.ajax.readLanguage(null, "#analytic-chart [name=language-pie-chart]");
     app.analytic.ajax.readFormat(null, "#analytic-chart [name=format-pie-chart]");
     $("#analytic-results").fadeIn();
@@ -215,10 +202,10 @@ app.analytic.drawCallback = function () {
     $('[data-toggle="tooltip"]').tooltip();
     $("#analytic-data").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();
+        app.analytic.ajax.readTimeline($(this).attr("idn"), "#analytic-chart-modal [name=dates-line-chart]");
+        app.analytic.ajax.readReferrer($(this).attr("idn"), "#analytic-chart-modal [name=referrer-column-chart]");
         app.analytic.ajax.readBrowser($(this).attr("idn"), "#analytic-chart-modal [name=browser-pie-chart]");
         app.analytic.ajax.readOs($(this).attr("idn"), "#analytic-chart-modal [name=operating-system-pie-chart]");
-        app.analytic.ajax.readReferrer($(this).attr("idn"), "#analytic-chart-modal [name=referrer-column-chart]");
-        app.analytic.ajax.readTimeLine($(this).attr("idn"), "#analytic-chart-modal [name=dates-line-chart]");
         app.analytic.ajax.readLanguage($(this).attr("idn"), "#analytic-chart-modal [name=language-pie-chart]");
         app.analytic.ajax.readFormat(null, "#analytic-chart-modal [name=format-pie-chart]");
         $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("idn") + " : " + $(this).attr("data-original-title"));
@@ -230,81 +217,75 @@ app.analytic.drawCallback = function () {
 
 /**
  * Draw analytics datatable
- * @param  {} response
+ * @param  {} data
  */
-app.analytic.callback.readAnalytics = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
+app.analytic.callback.readAnalytics = function (data) {
+    if ($.fn.dataTable.isDataTable("#analytic-data table")) {
+        app.library.datatable.reDraw("#analytic-data table", data);
+    } else {
 
-        if ($.fn.dataTable.isDataTable("#analytic-data table")) {
-            app.library.datatable.reDraw("#analytic-data table", response.data);
-        } else {
-
-            var localOptions = {
-                data: response.data,
-                columns: [
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return app.library.html.link.edit({ idn: row.MtrCode }, row.MtrCode, row.MtrTitle);
-                        }
-                    },
-                    { data: "SbjValue" },
-
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return row.PrcCode + "(" + row.PrcValue + ")";
-
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return row.PublishDate ? moment(row.PublishDate).format(app.config.mask.datetime.display) : "";
-                        }
-                    },
-                    { data: "NltBot" },
-                    { data: "NltM2m" },
-                    { data: "NltUser" },
-                    { data: "Total" }
-                ],
-                drawCallback: function (settings) {
-                    api.spinner.stop();
-                    app.analytic.drawCallback();
+        var localOptions = {
+            data: data,
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.library.html.link.edit({ idn: row.MtrCode }, row.MtrCode, row.MtrTitle);
+                    }
                 },
-                //Translate labels language
-                language: app.label.plugin.datatable
-            };
-            $("#analytic-data table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+                { data: "SbjValue" },
+
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.PrcCode + "(" + row.PrcValue + ")";
+
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.PublishDate ? moment(row.PublishDate).format(app.config.mask.datetime.display) : "";
+                    }
+                },
+                { data: "NltBot" },
+                { data: "NltM2m" },
+                { data: "NltUser" },
+                { data: "Total" }
+            ],
+            drawCallback: function (settings) {
+                api.spinner.stop();
                 app.analytic.drawCallback();
-            });
-        }
-        var totalBot = 0;
-        var totalM2M = 0;
-        var totalUsers = 0;
-        $("#summary-card").find("[name=analytic-sum-bots]").text(function () {
-            $.each(response.data, function (index, value) {
-                totalBot = totalBot + value.NltBot;
-            });
-            return app.library.utility.formatNumber(totalBot)
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        $("#analytic-data table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.analytic.drawCallback();
         });
-        $("#summary-card").find("[name=analytic-sum-m2m]").text(function () {
-            $.each(response.data, function (index, value) {
-                totalM2M = totalM2M + value.NltM2m;
-            });
-            return app.library.utility.formatNumber(totalM2M)
-        });
-        $("#summary-card").find("[name=analytic-sum-users]").text(function () {
-            $.each(response.data, function (index, value) {
-                totalUsers = totalUsers + value.NltUser;
-            });
-            return app.library.utility.formatNumber(totalUsers)
-        });
-        $("#summary-card").find("[name=analytic-sum-totals]").text(app.library.utility.formatNumber(totalBot + totalM2M + totalUsers));
     }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    var totalBot = 0;
+    var totalM2M = 0;
+    var totalUsers = 0;
+    $("#summary-card").find("[name=analytic-sum-bots]").text(function () {
+        $.each(data, function (index, value) {
+            totalBot = totalBot + value.NltBot;
+        });
+        return app.library.utility.formatNumber(totalBot)
+    });
+    $("#summary-card").find("[name=analytic-sum-m2m]").text(function () {
+        $.each(data, function (index, value) {
+            totalM2M = totalM2M + value.NltM2m;
+        });
+        return app.library.utility.formatNumber(totalM2M)
+    });
+    $("#summary-card").find("[name=analytic-sum-users]").text(function () {
+        $.each(data, function (index, value) {
+            totalUsers = totalUsers + value.NltUser;
+        });
+        return app.library.utility.formatNumber(totalUsers)
+    });
+    $("#summary-card").find("[name=analytic-sum-totals]").text(app.library.utility.formatNumber(totalBot + totalM2M + totalUsers));
 };
 //#endregion
 
@@ -347,18 +328,11 @@ app.analytic.ajax.readBrowser = function (MtrCode, selector) {
 
 /**
  * Draw browser pie chart
- * @param  {} response
+ * @param  {} data
  * @param  {} selector
  */
-app.analytic.callback.readBrowser = function (response, selector) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.analytic.render.readBrowser(response.data, selector);
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.analytic.callback.readBrowser = function (data, selector) {
+    app.analytic.render.readBrowser(data, selector);
 };
 
 //to be overridden 
@@ -406,20 +380,11 @@ app.analytic.ajax.readOs = function (MtrCode, selector) {
 
 /**
  * Draw Os pie chart
- * @param  {} response
+ * @param  {} data
  * @param  {} selector
  */
-app.analytic.callback.readOs = function (response, selector) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-
-        app.analytic.render.readOs(response.data, selector)
-
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.analytic.callback.readOs = function (data, selector) {
+    app.analytic.render.readOs(data, selector);
 };
 
 //to be overridden 
@@ -466,20 +431,11 @@ app.analytic.ajax.readReferrer = function (MtrCode, selector) {
 
 /**
  * Draw referrer chart
- * @param  {} response
+ * @param  {} data
  * @param  {} selector
  */
-app.analytic.callback.readReferrer = function (response, selector) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-
-        app.analytic.render.readReferrer(response.data, selector)
-
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.analytic.callback.readReferrer = function (data, selector) {
+    app.analytic.render.readReferrer(data, selector);
 };
 
 //to be overridden 
@@ -531,20 +487,11 @@ app.analytic.ajax.readLanguage = function (MtrCode, selector) {
 
 /**
  * Draw language pie chart
- * @param  {} response
+ * @param  {} data
  * @param  {} selector
  */
-app.analytic.callback.readLanguage = function (response, selector) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-
-        app.analytic.render.readLanguage(response.data, selector)
-
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.analytic.callback.readLanguage = function (data, selector) {
+    app.analytic.render.readLanguage(data, selector);
 };
 
 //to be overridden 
@@ -558,7 +505,7 @@ app.analytic.render.readLanguage = function (data, selector) { };
  * @param  {} MtrCode
  * @param  {} selector
  */
-app.analytic.ajax.readTimeLine = function (MtrCode, selector) {
+app.analytic.ajax.readTimeline = function (MtrCode, selector) {
     MtrCode = MtrCode || null;
 
     var SbjCode = $("#select-card").find("[name=select-subject]").val();
@@ -581,7 +528,7 @@ app.analytic.ajax.readTimeLine = function (MtrCode, selector) {
             "MtrCode": MtrCode,
             "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val()
         },
-        "app.analytic.callback.readTimeLine",
+        "app.analytic.callback.readTimeline",
         selector,
         null,
         null,
@@ -591,19 +538,11 @@ app.analytic.ajax.readTimeLine = function (MtrCode, selector) {
 
 /**
  * Draw timeline chart
- * @param  {} response
+ * @param  {} data
  * @param  {} selector
  */
-app.analytic.callback.readTimeLine = function (response, selector) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.analytic.render.readTimeLine(response.data, selector)
-
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.analytic.callback.readTimeline = function (data, selector) {
+    app.analytic.render.readTimeline(data, selector);
 };
 
 //to be overridden 
@@ -612,7 +551,7 @@ app.analytic.callback.readTimeLine = function (response, selector) {
 * @param {*} data
 * @param {*} selector
 */
-app.analytic.render.readTimeLine = function (data, selector) { };
+app.analytic.render.readTimeline = function (data, selector) { };
 //#endregion
 
 //#region validation
@@ -680,18 +619,11 @@ app.analytic.ajax.readFormat = function (MtrCode, selector) {
 
 /**
  * Draw fromat pie chart
- * @param  {} response
+ * @param  {} data
  * @param  {} selector
  */
-app.analytic.callback.readFromat = function (response, selector) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.analytic.render.readFormat(response.data, selector);
-    }
-
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.analytic.callback.readFromat = function (data, selector) {
+    app.analytic.render.readFormat(data, selector);
 };
 
 //to be overridden 

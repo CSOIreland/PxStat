@@ -32,8 +32,8 @@ namespace PxStat.Data
         {
             //Mandatory - RsnCode
             RuleFor(f => f.RsnCode).NotEmpty().Length(1, 32).WithMessage("Invalid Reason Code").WithName("ReasonCodeValidation");
-            //Mandatory - CmmValue
-            RuleFor(f => f.CmmValue).NotEmpty().Length(1, 1024).WithMessage("Invalid ReasonRelease Comment").WithName("ReasonReleaseCommentValidation");
+            //Optional - CmmValue
+            RuleFor(f => f.CmmValue).Length(1, 1024).When(f => !string.IsNullOrEmpty(f.CmmValue)).WithMessage("Invalid ReasonRelease Comment").WithName("ReasonReleaseCommentValidation");
             //Mandatory - RlsCode
             RuleFor(f => f.RlsCode).NotEmpty();
         }
@@ -51,8 +51,8 @@ namespace PxStat.Data
         {
             //Mandatory - RsnCode
             RuleFor(f => f.RsnCode).NotEmpty().Length(1, 32).WithMessage("Invalid Reason Code").WithName("ReasonCodeValidation");
-            //Mandatory - CmmValue
-            RuleFor(f => f.CmmValue).NotEmpty().Length(1, 1024).WithMessage("Invalid ReasonRelease Comment").WithName("ReasonReleaseCommentValidation");
+            //Mandator - CmmValue (Mandatory because comments are the only thing that can be updated)
+            RuleFor(f => f.CmmValue).Length(1, 1024).When(f => !string.IsNullOrEmpty(f.CmmValue)).WithMessage("Invalid ReasonRelease Comment").WithName("ReasonReleaseCommentValidation");
             //Mandatory - RlsCode
             RuleFor(f => f.RlsCode).NotEmpty();
         }

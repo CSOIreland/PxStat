@@ -89,7 +89,7 @@ app.analytic.render.readReferrer = function (data, selector) {
  * @param  {} data
  * @param  {} selector
  */
-app.analytic.render.readTimeLine = function (data, selector) {
+app.analytic.render.readTimeline = function (data, selector) {
     google.charts.setOnLoadCallback(function () {
         //var dataArray = [['Date', 'bots', 'users', 'm2m', 'total']];
         var dataArray = [['Date', app.label.static["bots"], app.label.static["users"], app.label.static["m2m"], app.label.static["total"]]];

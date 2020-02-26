@@ -94,24 +94,20 @@ app.group.UpdateFields = function (activeMemberRecord) {
    */
 app.group.ajax.read = function () {
     // Get data from API and Draw the Data Table for Group 
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.Group_API.Read", { CcnUsername: null }, "app.group.callbackGroupRead");
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.Group_API.Read",
+        { CcnUsername: null },
+        "app.group.callbackGroupRead");
 };
 
 /**
  * Callback function when the Group Read call is successful.
- * @param {*} response
+ * @param {*} data
  */
-app.group.callbackGroupRead = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        app.group.drawDataTableGroup();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Draw datatable
-        app.group.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.group.callbackGroupRead = function (data) {
+    // Draw datatable
+    app.group.drawDataTable(data);
 };
 
 /**
@@ -247,7 +243,6 @@ app.group.validation.create = function () {
             "grp-name": {
                 required: true
             },
-
             "grp-contact-phone":
             {
                 validPhoneNumber: true
@@ -294,9 +289,9 @@ app.group.ajax.create = function () {
         app.config.url.api.private,
         "PxStat.Security.Group_API.Create",
         apiParams,
-        "app.group.callback.create",
+        "app.group.callback.createOnSuccess",
         callbackParam,
-        null,
+        "app.group.callback.createOnError",
         null,
         { async: false }
     );
@@ -304,21 +299,33 @@ app.group.ajax.create = function () {
 
 /**
  * Create/Add Group to Table after Ajax success call
- * @param {*} response
+ * @param {*} data
  * @param {*} callbackParam
  */
-app.group.callback.create = function (response, callbackParam) {
+app.group.callback.createOnSuccess = function (data, callbackParam) {
     //Redraw Data Table for Create/Add User
     app.group.ajax.read();
     //hide the accordion
     $("#accordion-group").hide();
     //Close modal
     $("#group-modal-create-group").modal("hide");
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.GrpCode]));
     } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Create/Add Group to Table after Ajax success call
+ * @param {*} error
+ */
+app.group.callback.createOnError = function (error) {
+    //Redraw Data Table for Create/Add User
+    app.group.ajax.read();
+    //hide the accordion
+    $("#accordion-group").hide();
+    //Close modal
+    $("#group-modal-create-group").modal("hide");
 };
 //#endregion 
 
@@ -347,8 +354,13 @@ app.group.ajax.delete = function (groupToDelete) {
     };
 
     // Call the API by passing the idn to delete Group from DB
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.Group_API.Delete", apiParams, "app.group.callback.delete", callbackParam,
-        null,
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.Group_API.Delete",
+        apiParams,
+        "app.group.callback.deleteOnSuccess",
+        callbackParam,
+        "app.group.callback.deleteOnError",
         null,
         { async: false }
     );
@@ -356,21 +368,31 @@ app.group.ajax.delete = function (groupToDelete) {
 
 /**
 * Callback from server for Delete Group
-* @param {*} response
+* @param {*} data
 * @param {*} callbackParam
 */
-app.group.callback.delete = function (response, callbackParam) {
+app.group.callback.deleteOnSuccess = function (data, callbackParam) {
     //Redraw Data Table Group with fresh data.
     app.group.ajax.read();
     // Hide the group in case it was open
     $("#accordion-group").hide();
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.GrpCode]));
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+* Callback from server for Delete Group
+* @param {*} error
+*/
+app.group.callback.deleteOnError = function (error) {
+    //Redraw Data Table Group with fresh data.
+    app.group.ajax.read();
+    // Hide the group in case it was open
+    $("#accordion-group").hide();
 };
 
 //#endregion Delete Group
@@ -388,19 +410,11 @@ app.group.membergroup.ajax.read = function (groupCode) {
 
 /**
  * * Callback function when the Members Group Read call is successful.
- * @param {*} response 
+ * @param {*} data 
  * @param {*} groupCode 
  */
-app.group.callbackMembersGroupRead = function (response, groupCode) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Handle the Data in the Response then
-        app.group.drawDataTableMembersGroup(response.data, groupCode);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.group.callbackMembersGroupRead = function (data, groupCode) {
+    app.group.drawDataTableMembersGroup(data, groupCode);
 };
 
 /**
@@ -506,25 +520,20 @@ app.group.ajax.readGroup = function (groupCode) {
 
 /**
  * Populate Group data for Update form
- * @param {*} response 
+ * @param {*} data 
  */
-app.group.callback.readgroup = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.group.callback.readgroup = function (data) {
+    if (data && Array.isArray(data) && data.length) {
+        data = data[0];
+
+        app.group.readgroup(data);
+    } else {
+        // Handle no data
         api.modal.information(app.label.static["api-ajax-nodata"]);
         // Force reload
         app.group.ajax.read();
         $("#accordion-group").hide();
     }
-    else if (response.data) {
-        response.data = response.data[0];
-
-        app.group.readgroup(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -629,8 +638,13 @@ app.group.ajax.update = function () {
         GrpCodeOld: currentGroup,
     };
     //Ajax call to add Add Group 
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.Group_API.Update", apiParams, "app.group.callback.update", callbackParam,
-        null,
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.Group_API.Update",
+        apiParams,
+        "app.group.callback.updateOnSuccess",
+        callbackParam,
+        "app.group.callback.updateOnError",
         null,
         { async: false }
     );
@@ -639,21 +653,32 @@ app.group.ajax.update = function () {
 /**
  * Update Group Callback
  * After AJAX call.
- * @param  {} response 
+ * @param  {} data 
  * @param  {} callbackParam 
  */
-app.group.callback.update = function (response, callbackParam) {
+app.group.callback.updateOnSuccess = function (data, callbackParam) {
     //Redraw  Data Table
     app.group.ajax.read();
     //hide the accordion
     $("#accordion-group").hide();
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.GrpCodeOld]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+};
+
+/**
+ * Update Group Callback
+ * After AJAX call.
+ * @param  {} error
+ */
+app.group.callback.updateOnError = function (error) {
+    //Redraw  Data Table
+    app.group.ajax.read();
+    //hide the accordion
+    $("#accordion-group").hide();
 };
 
 //#endregion
@@ -687,29 +712,43 @@ app.group.membergroup.ajax.delete = function (rowToDelete) {
         GrpCode: rowToDelete.GrpCode
     };
     // Call the API by passing the idn to delete
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.GroupAccount_API.Delete", apiParams, "app.group.membergroup.callback.delete", callbackParam,
-        null,
-        null,
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.GroupAccount_API.Delete",
+        apiParams,
+        "app.group.membergroup.callback.deleteOnSuccess",
+        callbackParam,
+        "app.group.membergroup.callback.deleteOnError",
+        callbackParam,
         { async: false }
     );
 };
 
 /**
  * Callback from server for Delete Member of group (Members Group)
- * @param {*} response
+ * @param {*} data
  * @param {*} callbackParam
  */
-app.group.membergroup.callback.delete = function (response, callbackParam) {
+app.group.membergroup.callback.deleteOnSuccess = function (data, callbackParam) {
     app.group.ajax.read(); //Number of member change for Group.    //Redraw Data Table Members of Group with fresh data.
     app.group.membergroup.ajax.read(callbackParam.GrpCode);
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.CcnUsername]));
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Callback from server for Delete Member of group (Members Group)
+ * @param {*} error
+ * @param {*} callbackParam
+ */
+app.group.membergroup.callback.deleteOnError = function (error, callbackParam) {
+    app.group.ajax.read(); //Number of member change for Group.    //Redraw Data Table Members of Group with fresh data.
+    app.group.membergroup.ajax.read(callbackParam.GrpCode);
 };
 
 
@@ -719,35 +758,34 @@ app.group.membergroup.callback.delete = function (response, callbackParam) {
 
 /**
  * Member Group read User for Update 
- * @param {*} response
+ * @param {*} apiParams
  * @param {*} callbackParam
  */
 app.group.membergroup.readUpdate = function (apiParams, callbackParam) {
     // Get data from API and Draw the Data Table for Reason. Populate date to the modal "reason-modal-update"
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.GroupAccount_API.Read", apiParams, "app.group.membergroup.callback.readUpdate", callbackParam);
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.GroupAccount_API.Read",
+        apiParams,
+        "app.group.membergroup.callback.readUpdate",
+        callbackParam);
 };
 
 /**
  * Update Member/User fields.
- * @param {*} response 
+ * @param {*} data 
  * @param {*} callbackParam
   */
-app.group.membergroup.callback.readUpdate = function (response, callbackParam) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.group.membergroup.callback.readUpdate = function (data, callbackParam) {
+    if (data && Array.isArray(data) && data.length) {
+        data = data[0];
+
+        app.group.membergroup.modal.update(data);
+    } else {
         api.modal.information(app.label.static["api-ajax-nodata"]);
         // Force reload
         app.group.membergroup.ajax.read(callbackParam.GrpCode);
     }
-    else if (response.data) {
-        response.data = response.data[0];
-
-        app.group.membergroup.modal.update(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -805,8 +843,13 @@ app.group.membergroup.ajax.update = function () {
         GrpCode: grpCode
     };
     // CAll Ajax to Edit. Get the fresh new data. Redraw table
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.GroupAccount_API.Update", apiParams, "app.group.membergroup.callback.update", callbackParam,
-        null,
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.GroupAccount_API.Update",
+        apiParams,
+        "app.group.membergroup.callback.updateOnSuccess",
+        callbackParam,
+        "app.group.membergroup.callback.updateOnError",
         null,
         { async: false }
     );
@@ -815,17 +858,16 @@ app.group.membergroup.ajax.update = function () {
 /**
  * Update Member (at to the Group) Callback
  * After AJAX call.
- * @param {*} response 
+ * @param {*} data 
  * @param {*} callbackParam 
  */
-app.group.membergroup.callback.update = function (response, callbackParam) {
+app.group.membergroup.callback.updateOnSuccess = function (data, callbackParam) {
     //Redraw Members Group DataTable with fresh data
     app.group.membergroup.ajax.read(callbackParam.GrpCode);
     //Modal hide
     $("#group-modal-update-group-member").modal("hide");
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         //Clear fields at modal-update-user Modal
         $("#group-modal-update-group-member").find("[name=ccn-user-name]").text("");
         $("#group-modal-update-group-member").find("[name=grp-name]").text("");
@@ -834,6 +876,19 @@ app.group.membergroup.callback.update = function (response, callbackParam) {
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+};
+
+/**
+ * Update Member (at to the Group) Callback
+ * After AJAX call.
+ * @param {*} error 
+ * @param {*} callbackParam 
+ */
+app.group.membergroup.callback.updateOnError = function (error, callbackParam) {
+    //Redraw Members Group DataTable with fresh data
+    app.group.membergroup.ajax.read(callbackParam.GrpCode);
+    //Modal hide
+    $("#group-modal-update-group-member").modal("hide");
 };
 //#endregion
 
@@ -854,14 +909,19 @@ app.group.membergroup.modal.create = function () {
     //Flush error labels - do not delete required for Member search functionality (select2)
     $(".error").empty();
     $("#group-modal-add-member").find("[name=group-input-add-member-search-error-holder]").empty();
-    // Call the API to get AD user names 
-    var apiParams = null;
-    var apiParams = { CcnUsername: null, "PrvCode": C_APP_PRIVILEGE_MODERATOR }; // Only MODERATOR allow to be meber of the group.
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.Account_API.Read", apiParams, "app.group.membergroup.callback.searchUser", null,
+    // Call the API to get AD user names
+    // Only a MODERATOR can be member of a group. 
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.Account_API.Read",
+        { CcnUsername: null, "PrvCode": C_APP_PRIVILEGE_MODERATOR },
+        "app.group.membergroup.callback.searchUser",
+        { CcnUsername: null, "PrvCode": C_APP_PRIVILEGE_MODERATOR },
         null,
         null,
         { async: false } // We need this for Modal Create, even is API Read Method .
     );
+
     //Username Search functionality for Member (Group) - Create only
     $("#group-modal-add-member").find("[name=group-input-add-member-search]").on('select2:select', function (e) {
         var current = e.params.data;
@@ -884,30 +944,23 @@ app.group.membergroup.modal.create = function () {
 
 /**
  * Populate data to searchUser
- * @param {*} response 
+ * @param {*} data 
   */
-app.group.membergroup.callback.searchUser = function (response) {
-    var currentGroup = $("#group-members-read").find("[name=button-create]").attr("current-group");
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Load select2
-        $("#group-modal-add-member").find("[name=group-input-add-member-search]").empty().append($("<option>")).select2({
-            dropdownParent: $('#group-modal-add-member'),
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.group.MapData(response.data)
-        });
+app.group.membergroup.callback.searchUser = function (data) {
+    // Load select2
+    $("#group-modal-add-member").find("[name=group-input-add-member-search]").empty().append($("<option>")).select2({
+        dropdownParent: $('#group-modal-add-member'),
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.group.MapData(data)
+    });
 
-        // Enable and Focus Search input
-        $("#group-modal-add-member").find("[name=group-input-add-member-search]").prop('disabled', false).focus();
-        // Validate Create/Add Member - Modal - "group-modal-add-member"
-        app.group.membergroup.validation.create();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Enable and Focus Search input
+    $("#group-modal-add-member").find("[name=group-input-add-member-search]").prop('disabled', false).focus();
+    // Validate Create/Add Member - Modal - "group-modal-add-member"
+    app.group.membergroup.validation.create();
 };
 
 /**
@@ -957,26 +1010,30 @@ app.group.membergroup.ajax.create = function () {
         GrpCode: currentGroup
     };
     // Do not Redraw table for Add User
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.GroupAccount_API.Create", apiParams, "app.group.membergroup.callback.create", callbackParam,
-        null,
-        null,
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.GroupAccount_API.Create",
+        apiParams,
+        "app.group.membergroup.callback.createOnSuccess",
+        callbackParam,
+        "app.group.membergroup.callback.createOnError",
+        callbackParam,
         { async: false }
     );
 };
 
 /**
  * Create/Add Member to Group after Ajax success call
- * @param {*} response 
+ * @param {*} data 
  * @param {*} callbackParam 
  */
-app.group.membergroup.callback.create = function (response, callbackParam) {
+app.group.membergroup.callback.createOnSuccess = function (data, callbackParam) {
     app.group.ajax.read(); // Number of member change for Group.    
     app.group.membergroup.ajax.read(callbackParam.GrpCode);
-    if (response.error) {
-        $("#group-modal-add-member").modal("hide");
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
-        $("#group-modal-add-member").modal("hide");
+
+    $("#group-modal-add-member").modal("hide");
+
+    if (data == C_APP_API_SUCCESS) {
         //clear fields at Modal group-modal-add-member
         $("#group-modal-add-member").find("[name=group-input-add-member-username]").text("");
         $("#group-modal-add-member").find("[name=group-input-add-member-name]").text("");
@@ -984,9 +1041,20 @@ app.group.membergroup.callback.create = function (response, callbackParam) {
         //$("#group-modal-add-member").find("[name=group-input-add-member-approve-flag]").prop('checked');
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.CcnUsername]));
     } else {
-        $("#group-modal-add-member").modal("hide");
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+};
+
+/**
+ * Create/Add Member to Group after Ajax success call
+ * @param {*} error
+ * @param {*} callbackParam
+ */
+app.group.membergroup.callback.createOnError = function (error, callbackParam) {
+    app.group.ajax.read(); // Number of member change for Group.    
+    app.group.membergroup.ajax.read(callbackParam.GrpCode);
+
+    $("#group-modal-add-member").modal("hide");
 };
 
 //#endregion

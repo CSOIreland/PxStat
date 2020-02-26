@@ -7,6 +7,7 @@ namespace PxStat.Data
     /// </summary>
     public class Cube_API
     {
+
         /// <summary>
         /// Reads a live dataset based on specific criteria. 
         /// </summary>

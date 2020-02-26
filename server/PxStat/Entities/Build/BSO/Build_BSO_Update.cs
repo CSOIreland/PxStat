@@ -25,10 +25,6 @@ namespace PxStat.Build
 
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        List<DataItem_DTO> requestItems;
 
 
 

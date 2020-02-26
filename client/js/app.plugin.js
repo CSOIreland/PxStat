@@ -117,7 +117,6 @@ jQuery.validator.addMethod("validEmailAddress", function (value, element) {
 jQuery.validator.addMethod("validPhoneNumber", function (value, element) {
   var pattern = new RegExp(app.config.regex.phone.pattern);
   return this.optional(element) || pattern.test(value);
-  //app.config.regex.phone.pattern
 }, app.label.dynamic["invalid-format"].sprintf([app.config.regex.phone.placeholder]));
 
 
@@ -199,7 +198,19 @@ if (app.config.plugin.highcharts.enabled
   && !jQuery.isEmptyObject(app.label.plugin.highcharts.lang)) {
   Highcharts.setOptions({
     // Extend the Highcharts lang 
-    lang: app.label.plugin.highcharts.lang
+    lang: app.label.plugin.highcharts.lang,
+    credits: app.config.plugin.highcharts.credits,
+    exporting: {
+      buttons: {
+        contextButton: {
+          text: app.label.static["download"],
+          onclick: function () {
+            window._avoidbeforeunload = true;
+            this.exportChart();
+          }
+        }
+      }
+    }
   });
 }
 
@@ -340,10 +351,13 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
 Application - Plugin - Back button detection
 *******************************************************************************/
 window.addEventListener("beforeunload", function (event) {
-  // Cancel the event as stated by the standard.
-  event.preventDefault();
-  // Chrome requires returnValue to be set.
-  event.returnValue = '';
+  if (!window._avoidbeforeunload) {
+    // Cancel the event as stated by the standard.
+    event.preventDefault();
+    // Chrome requires returnValue to be set.
+    event.returnValue = '';
+  }
+
+  // reset anyway
+  window._avoidbeforeunload = false
 });
-
-

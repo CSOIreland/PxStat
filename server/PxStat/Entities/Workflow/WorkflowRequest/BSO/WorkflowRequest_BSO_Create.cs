@@ -59,8 +59,10 @@ namespace PxStat.Workflow
             }
 
             Request_ADO adoRequest = new Request_ADO();
-            Request_DTO dtoRequest = new Request_DTO();
-            dtoRequest.RlsCode = DTO.RlsCode;
+            Request_DTO dtoRequest = new Request_DTO
+            {
+                RlsCode = DTO.RlsCode
+            };
 
             Release_ADO adoRelease = new Release_ADO(Ado);
 

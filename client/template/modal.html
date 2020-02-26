@@ -221,9 +221,16 @@
         <p></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-neutral" data-dismiss="modal">
-          <i class="far fa-times-circle"></i> <span label="close"></span>
-        </button>
+        <div class="container-fluid">
+          <div class="text-right">
+            <button type="button" name="clipboard" class="btn btn-light" data-clipboard-target="#modal-error .modal-body p">
+              <i class="far fa-copy"></i> <span label="copy-to-clipboard"></span>
+            </button>
+            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+              <i class="far fa-times-circle"></i> <span label="close"></span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

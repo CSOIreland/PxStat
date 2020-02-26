@@ -44,27 +44,21 @@ app.library.user.modal.readCurrent = function () {
 
 /**
  * Populate User data to read user details
- * @param {*} response
+ * @param {*} data
  */
-app.library.user.modal.callback.read = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-  }
-  else if (response.data) {
-    response.data = response.data[0];
-    $("#modal-read-user").find("[name=ccn-username]").text(response.data.CcnUsername);
-    $("#modal-read-user").find("[name=ccn-name]").text(response.data.CcnName);
-    $("#modal-read-user").find("[name=prv-value]").text(app.label.datamodel.privilege[response.data.PrvValue]);
-    $("#modal-read-user").find("[name=ccn-email]").html(app.library.html.email(response.data.CcnEmail));
+app.library.user.modal.callback.read = function (data) {
+  if (data && (Array.isArray(data) && data.length)) {
+    data = data[0];
+    $("#modal-read-user").find("[name=ccn-username]").text(data.CcnUsername);
+    $("#modal-read-user").find("[name=ccn-name]").text(data.CcnName);
+    $("#modal-read-user").find("[name=prv-value]").text(app.label.datamodel.privilege[data.PrvValue]);
+    $("#modal-read-user").find("[name=ccn-email]").html(app.library.html.email(data.CcnEmail));
 
-    if (response.data.PrvCode != C_APP_PRIVILEGE_MODERATOR) {
+    if (data.PrvCode != C_APP_PRIVILEGE_MODERATOR) {
       //user is admin or power user, no groups, hide row using d-none
       $("#modal-read-user").find("[name=container-list]").hide();
     } else {
-      app.library.user.modal.buildGroupList(response.data);
+      app.library.user.modal.buildGroupList(data);
       $("#modal-read-user").find("[name=container-list]").show();
     }
 
@@ -72,7 +66,7 @@ app.library.user.modal.callback.read = function (response) {
     $("#modal-read-user").find("[name=notification]").off("change");
 
     // If the user if the current one, then allow toggle notifications
-    if (response.data.CcnUsername == app.library.user.data.CcnUsername) {
+    if (data.CcnUsername == app.library.user.data.CcnUsername) {
       //initiate toggle buttons
       $("#modal-read-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
@@ -83,7 +77,7 @@ app.library.user.modal.callback.read = function (response) {
       });
 
       //Set state of bootstrapToggle button
-      $("#modal-read-user").find("[name=notification]").bootstrapToggle(response.data.CcnNotificationFlag ? "on" : "off");
+      $("#modal-read-user").find("[name=notification]").bootstrapToggle(data.CcnNotificationFlag ? "on" : "off");
       // Enable the notification
       $("#modal-read-user").find("[name=notification]").bootstrapToggle("enable");
       // Bind change event on toggle notification
@@ -101,7 +95,7 @@ app.library.user.modal.callback.read = function (response) {
       });
 
       //Set state of bootstrapToggle button
-      $("#modal-read-user").find("[name=notification]").bootstrapToggle(response.data.CcnNotificationFlag ? "on" : "off");
+      $("#modal-read-user").find("[name=notification]").bootstrapToggle(data.CcnNotificationFlag ? "on" : "off");
       // Disable the notification
       $("#modal-read-user").find("[name=notification]").bootstrapToggle("disable");
     }
@@ -110,9 +104,9 @@ app.library.user.modal.callback.read = function (response) {
     $("#modal-read-group").modal("hide");
     $("#modal-read-user").modal("show");
   }
-  // Handle Exception
+  // Handle no data
   else
-    api.modal.exception(app.label.static["api-ajax-exception"]);
+    api.modal.information(app.label.static["api-ajax-nodata"]);
 };
 
 /**
@@ -174,7 +168,7 @@ app.library.user.modal.ajax.update = function () {
     { CcnNotificationFlag: $("#modal-read-user").find("[name=notification]").prop('checked') },
     "app.library.user.modal.callback.update",
     null,
-    null,
+    "app.library.user.modal.callback.updateOnError",
     null,
     { async: false }
   );
@@ -183,22 +177,26 @@ app.library.user.modal.ajax.update = function () {
 /**
  * Update User Callback
  * After AJAX call.
- * @param {*} response 
- * @param {*} callbackParam
+ * @param {*} data 
  */
-app.library.user.modal.callback.update = function (response) {
-  if (response.error) {
-    $("#modal-read-user").modal("hide");
-    api.modal.error(response.error.message);
-    // Force reload
-    app.library.user.modal.readCurrent();
-  } else if (response.data == C_APP_API_SUCCESS) {
-
+app.library.user.modal.callback.update = function (data) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
-  } else {
-    // $("#user-modal-update").modal("hide");
-    api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+  // Handle exception
+  else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Update User Callback on Error
+ * After AJAX call.
+ * @param {*} error 
+ */
+app.library.user.modal.callback.updateOnError = function (error) {
+  // Hide modal
+  $("#modal-read-user").modal("hide");
+  // Force reload
+  app.library.user.modal.readCurrent();
 };
 //#endregion
 

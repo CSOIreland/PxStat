@@ -16,27 +16,18 @@ app.analytic.render.readBrowser = function (data, selector) {
             dataArray[0].data[i] = { "name": key, "y": el };
             i += 1;
         });
-        var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
-        var highchartLineOptions = {
+        var highchartLocalOptions = {
             chart: {
                 renderTo: $(selector)[0],//'browser-pie-char',
                 type: 'pie'
             },
             exporting: {
-                buttons: {
-                    contextButton: {
-                        menuItems: buttons.slice(1, 4)
-                    }
-                },
                 chartOptions: {
                     title: {
                         text: app.label.static["browser"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
                 filename: app.label.static["browser"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
-            },
-            credits: {
-                enabled: false
             },
             plotOptions: {
                 pie: {
@@ -50,8 +41,8 @@ app.analytic.render.readBrowser = function (data, selector) {
             },
             series: dataArray
         };
-        var chr = new Highcharts.Chart(highchartLineOptions);
-        chr.setTitle({ text: "" });
+        // Set the title inline to center it on export
+        new Highcharts.Chart($.extend(true, {}, Highcharts.getOptions(), highchartLocalOptions)).setTitle({ text: "" });
     }
 
     else {
@@ -77,7 +68,7 @@ app.analytic.render.readLanguage = function (data, selector) {
             dataArray[0].data[i] = { "name": key, "y": el };
             i += 1;
         });
-        var highchartLineOptions = {
+        var highchartLocalOptions = {
             chart: {
                 renderTo: $(selector)[0],//'browser-pie-char',
                 type: 'pie'
@@ -89,9 +80,6 @@ app.analytic.render.readLanguage = function (data, selector) {
                     }
                 },
                 filename: app.label.static["language"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
-            },
-            credits: {
-                enabled: false
             },
             plotOptions: {
                 pie: {
@@ -105,8 +93,8 @@ app.analytic.render.readLanguage = function (data, selector) {
             },
             series: dataArray
         };
-        var chr = new Highcharts.Chart(highchartLineOptions);
-        chr.setTitle({ text: "" });
+        // Set the title inline to center it on export
+        new Highcharts.Chart($.extend(true, {}, Highcharts.getOptions(), highchartLocalOptions)).setTitle({ text: "" });
     }
 
     else {
@@ -134,27 +122,18 @@ app.analytic.render.readOs = function (data, selector) {
             dataArray[0].data[i] = { "name": key, "y": el };
             i += 1;
         });
-        var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
-        var highchartLineOptions = {
+        var highchartLocalOptions = {
             chart: {
                 renderTo: $(selector)[0],//'browser-pie-char',
                 type: 'pie'
             },
             exporting: {
-                buttons: {
-                    contextButton: {
-                        menuItems: buttons.slice(1, 4)
-                    }
-                },
                 chartOptions: {
                     title: {
                         text: app.label.static["os"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
                 filename: app.label.static["os"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
-            },
-            credits: {
-                enabled: false
             },
             plotOptions: {
                 pie: {
@@ -168,8 +147,8 @@ app.analytic.render.readOs = function (data, selector) {
             },
             series: dataArray
         };
-        var chr = new Highcharts.Chart(highchartLineOptions);
-        chr.setTitle({ text: "" });
+        // Set the title inline to center it on export
+        new Highcharts.Chart($.extend(true, {}, Highcharts.getOptions(), highchartLocalOptions)).setTitle({ text: "" });
     }
 
     else {
@@ -198,18 +177,12 @@ app.analytic.render.readReferrer = function (data, selector) {
             dataArray[0].data[i] = { "name": key, "y": data[key] };
             i += 1;
         }
-        var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
-        var highchartLineOptions = {
+        var highchartLocalOptions = {
             chart: {
                 renderTo: $(selector)[0],
                 type: 'column'
             },
             exporting: {
-                buttons: {
-                    contextButton: {
-                        menuItems: buttons.slice(1, 4)
-                    }
-                },
                 chartOptions: {
                     title: {
                         text: app.label.static["referrer"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
@@ -217,15 +190,12 @@ app.analytic.render.readReferrer = function (data, selector) {
                 },
                 filename: app.label.static["referrer"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
-            credits: {
-                enabled: false
-            },
             yAxis: { title: { text: app.label.static["hits"] } },
             xAxis: { categories: labels },
             series: dataArray
         };
-        var chr = new Highcharts.Chart(highchartLineOptions);
-        chr.setTitle({ text: "" });
+        // Set the title inline to center it on export
+        new Highcharts.Chart($.extend(true, {}, Highcharts.getOptions(), highchartLocalOptions)).setTitle({ text: "" });
     }
     else {
         $(selector).html(app.label.static["highcharts-licensing"] + C_APP_HIGHCHARTS_NO_LICENSE_MESSAGE)
@@ -237,30 +207,21 @@ app.analytic.render.readReferrer = function (data, selector) {
  * @param  {} data
  * @param  {} selector
  */
-app.analytic.render.readTimeLine = function (data, selector) {
+app.analytic.render.readTimeline = function (data, selector) {
     if (app.config.plugin.highcharts.enabled) {
-        var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
-        var options = {
+        var highchartLocalOptions = {
 
             chart: {
                 type: 'spline',
                 renderTo: $(selector)[0],
             },
             exporting: {
-                buttons: {
-                    contextButton: {
-                        menuItems: buttons.slice(1, 4)
-                    }
-                },
                 chartOptions: {
                     title: {
-                        text: app.label.static["timeline"] + ":" + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
+                        text: app.label.static["hits"] + ":" + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
-                filename: app.label.static["timeline"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
-            },
-            title: {
-                text: ''
+                filename: app.label.static["hits"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
             },
             xAxis: {
                 categories: []
@@ -289,14 +250,16 @@ app.analytic.render.readTimeLine = function (data, selector) {
             data: []
         };
         $.each(data, function (index, value) {
-            options.xAxis.categories.push(value.date ? moment(value.date).format(app.config.mask.date.display) : "");
+            highchartLocalOptions.xAxis.categories.push(value.date ? moment(value.date).format(app.config.mask.date.display) : "");
             bots.data.push(value.NltBot);
             M2M.data.push(value.NltM2m);
             users.data.push(value.NltUser);
             total.data.push(value.Total);
         });
-        options.series.push(bots, M2M, users, total);
-        var chr = new Highcharts.Chart(options);
+        highchartLocalOptions.series.push(bots, M2M, users, total);
+
+        // Set the title inline to center it on export
+        new Highcharts.Chart($.extend(true, {}, Highcharts.getOptions(), highchartLocalOptions)).setTitle({ text: "" });
     }
     else {
         $(selector).html(app.label.static["highcharts-licensing"] + C_APP_HIGHCHARTS_NO_LICENSE_MESSAGE);
@@ -322,27 +285,19 @@ app.analytic.render.readFormat = function (data, selector) {
             dataArray[0].data[i] = { "name": key, "y": el };
             i += 1;
         });
-        var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
-        var highchartLineOptions = {
+
+        var highchartLocalOptions = {
             chart: {
                 renderTo: $(selector)[0],//'format-pie-char',
                 type: 'pie'
             },
             exporting: {
-                buttons: {
-                    contextButton: {
-                        menuItems: buttons.slice(1, 4)
-                    }
-                },
                 chartOptions: {
                     title: {
                         text: app.label.static["format"] + ": " + app.analytic.dateFrom.format(app.config.mask.date.display) + " - " + app.analytic.dateTo.format(app.config.mask.date.display)
                     }
                 },
                 filename: app.label.static["format"] + "-" + app.analytic.dateFrom.format(app.config.mask.datetime.file) + "-" + app.analytic.dateTo.format(app.config.mask.datetime.file)
-            },
-            credits: {
-                enabled: false
             },
             plotOptions: {
                 pie: {
@@ -356,8 +311,9 @@ app.analytic.render.readFormat = function (data, selector) {
             },
             series: dataArray
         };
-        var chr = new Highcharts.Chart(highchartLineOptions);
-        chr.setTitle({ text: "" });
+
+        // Set the title inline to center it on export
+        new Highcharts.Chart($.extend(true, {}, Highcharts.getOptions(), highchartLocalOptions)).setTitle({ text: "" });
     }
 
     else {

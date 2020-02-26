@@ -15,7 +15,6 @@ $(document).ready(function () {
     api.plugin.dragndrop.initiate(document, window);
 
     app.build.update.validate.matrixProperty();
-    app.build.update.validate.frequencyModal();
 
     app.build.update.ajax.readFormat();
     app.build.update.ajax.readFrequency();
@@ -158,6 +157,10 @@ $(document).ready(function () {
         $("#build-update-upload-periods").removeClass("show active");
         $(this).find("[name=manual-tab]").addClass("active show").attr("aria-selected", "true");
         $(this).find("[name=upload-tab]").removeClass("active show").attr("aria-selected", "false");
+    });
+
+    $('#build-update-modal-frequency').on('show.bs.modal', function () {
+        app.build.update.validate.frequencyModal();
     });
 
     //run bootstrap toggle to show/hide toggle button

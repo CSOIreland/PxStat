@@ -103,19 +103,12 @@ app.release.ajax.isModerator = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.callback.isModerator = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (response.data !== undefined) {
-    // Store for later use
-    app.release.isModerator = response.data;
-    app.release.ajax.isApprover();
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.callback.isModerator = function (data) {
+  // Store for later use
+  app.release.isModerator = data;
+  app.release.ajax.isApprover();
 };
 
 /**
@@ -136,21 +129,13 @@ app.release.ajax.isApprover = function () {
 /**
  * 
  */
-app.release.callback.isApprover = function (response) {
+app.release.callback.isApprover = function (data) {
+  // Store for later use
+  app.release.isApprover = data;
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (response.data !== undefined) {
-    // Store for later use
-    app.release.isApprover = response.data;
-
-    app.release.information.read();
-    app.release.source.read();
-    app.release.workflow.history.read();
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+  app.release.information.read();
+  app.release.source.read();
+  app.release.workflow.history.read();
 };
 
 //#endregion
@@ -307,7 +292,7 @@ app.release.renderStatus = function (data) {
     }).get(0).outerHTML;
   }
 
-  //Awaiting response
+  //Awaiting Response
   if (app.release.checkStatusAwaitingResponse(data)) {
     return $("<span>", {
       class: "badge badge-secondary",
@@ -315,7 +300,7 @@ app.release.renderStatus = function (data) {
     }).get(0).outerHTML;
   }
 
-  //Awaiting sign-off
+  //Awaiting Sign-off
   if (app.release.checkStatusAwaitingSignOff(data)) {
     return $("<span>", {
       class: "badge badge-tertiary",

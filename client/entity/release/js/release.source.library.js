@@ -6,6 +6,7 @@ Custom JS application specific
 app.release = app.release || {};
 
 app.release.source = {};
+app.release.data = {};
 app.release.source.ajax = {};
 app.release.source.callback = {};
 //#endregion
@@ -32,22 +33,14 @@ app.release.source.ajax.read = function (LngIsoCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.source.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var data = response.data;
+app.release.source.callback.read = function (data) {
+    app.release.source.render(data);
 
-        app.release.source.render(data);
-
-        app.release.fileContent = data.MtrInput;
-        app.release.fileType = data.FrmType;
-        app.release.fileName = data.MtrCode + "_v" + data.RlsVersion + "." + data.RlsRevision + "_" + data.DtgCreateDatetime ? moment(data.DtgCreateDatetime).format(app.config.mask.datetime.file) : "" + "." + data.FrmType.toLowerCase();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    app.release.fileContent = data.MtrInput;
+    app.release.fileType = data.FrmType;
+    app.release.fileName = data.MtrCode + "_" + data.RlsVersion + "_" + data.RlsRevision + "_" + (data.DtgCreateDatetime ? moment(data.DtgCreateDatetime).format(app.config.mask.datetime.file) : "");
 };
 
 /**
@@ -69,18 +62,6 @@ app.release.source.render = function (data) {
     $("#release-source [name=mtr-note]").empty().html(app.library.html.parseBbCode(data.MtrNote));
     $("#release-source [name=dtg-create-datetime]").empty().html(data.DtgCreateDatetime ? moment(data.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
 
-    // Display Data in modal (reuse code app.data.dataset)
-    $("#release-source").find("[name=view-data]").once("click", function (e) {
-        e.preventDefault();
-        //clean modal of previous HTML
-        $("#data-view-modal").find("#data-dataview-selected-table").empty();
-        $("#data-view-modal").find("#data-view-container").empty();
-        //DO NOT Pass User SELECTED language from app.label.language.iso.code
-        //Drop down list available langues for the Release (Matrix langues)
-        app.data.init($("#release-source [name=lng-iso-code] option:selected").val(), null, app.release.RlsCode, app.release.MtrCode);
-        app.data.dataset.ajax.readMetadata();
-        $('#data-view-modal').modal('show');
-    });
 };
 //#endregion
 
@@ -94,31 +75,31 @@ app.release.source.ajax.readLanguage = function () {
         app.config.url.api.private,
         "PxStat.System.Settings.Language_API.ReadListByRelease",
         { "RlsCode": app.release.RlsCode },
-        "app.release.source.callback.readLanguage",
+        "app.release.source.callback.readLanguageOnSuccess",
         null,
-        null,
+        "app.release.source.callback.readLanguageOnError",
         null,
         { async: false });
 };
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.source.callback.readLanguage = function (response) {
+app.release.source.callback.readLanguageOnSuccess = function (data) {
     $("#release-source [name=lng-iso-code]").empty();
+    $.each(data, function (index, value) {
+        $("#release-source [name=lng-iso-code]").append($('<option>', { value: value.LngIsoCode, text: value.LngIsoName }));
+    });
+    app.release.source.languageOnChange();
+};
 
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (response.data !== undefined) {
-        $.each(response.data, function (index, value) {
-            $("#release-source [name=lng-iso-code]").append($('<option>', { value: value.LngIsoCode, text: value.LngIsoName }));
-        });
-        app.release.source.languageOnChange();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+/**
+* 
+ * @param {*} error
+ */
+app.release.source.callback.readLanguageOnError = function (error) {
+    $("#release-source [name=lng-iso-code]").empty();
 };
 
 /**
@@ -136,34 +117,18 @@ app.release.source.languageOnChange = function () {
  * 
  */
 app.release.source.download = function () {
-    var fileExtension = "";
-    switch (app.release.fileType.toLowerCase()) {
-        case 'json':
-            var mimeType = "application/json";
-            var fileData = JSON.stringify(app.release.fileContent);
-            fileExtension = C_APP_EXTENSION_JSONSTAT;
+    switch (app.release.fileType) {
+        case C_APP_TS_FORMAT_TYPE_PX:
+            // Download the file
+            app.library.utility.download(app.release.fileName, app.release.fileContent, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
+            break;
+        case C_APP_TS_FORMAT_TYPE_JSONSTAT:
+            // Download the file
+            app.library.utility.download(app.release.fileName, JSON.stringify(app.release.fileContent), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
             break;
         default:
-            var mimeType = "text/plain";
-            var fileData = app.release.fileContent;
-            fileExtension = C_APP_EXTENSION_PX;
+            api.modal.exception(app.label.static["api-ajax-exception"]);
             break;
-    }
-
-    var blob = new Blob([fileData], { type: mimeType });
-    var downloadUrl = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = app.release.fileName + '.' + fileExtension;
-
-    if (document.createEvent) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        a.dispatchEvent(event);
-    }
-    else {
-        a.click();
     }
 };
 //#endregion
@@ -190,4 +155,22 @@ app.release.source.callback.view = function () {
     api.content.load("#release-source-preview .modal-body", "entity/release/index.source.preview.html");
     api.spinner.stop();
 };
+//#endregion
+
+//#region view data
+
+/**
+ * 
+ */
+app.release.data.view = function () {
+    //clean modal of previous HTML
+    $("#data-view-modal").find("#data-dataview-selected-table").empty();
+    $("#data-view-modal").find("#data-view-container").empty();
+    //DO NOT Pass User SELECTED language from app.label.language.iso.code
+    //Drop down list available langues for the Release (Matrix langues)
+    app.data.init($("#release-source [name=lng-iso-code] option:selected").val(), null, app.release.RlsCode, app.release.MtrCode);
+    app.data.dataset.ajax.readMetadata();
+    $('#data-view-modal').modal('show');
+};
+
 //#endregion

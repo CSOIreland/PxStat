@@ -71,53 +71,48 @@ app.product.ajax.readSubject = function (SbjCode) {
 
 /**
  * Callback from api Read Subject
- * @param  {} response
+ * @param  {} data
  * @param {*} SbjCode 
  */
-app.product.callback.readSubject = function (response, SbjCode) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (response.data !== undefined) {
-    // Load select2
-    $("#product-container").find("[name=select-main-subject-search]").empty().append($("<option>")).select2({
-      minimumInputLength: 0,
-      allowClear: true,
-      width: '100%',
-      placeholder: app.label.static["start-typing"],
-      data: app.product.mapData(response.data)
-    });
+app.product.callback.readSubject = function (data, SbjCode) {
+  // Load select2
+  $("#product-container").find("[name=select-main-subject-search]").empty().append($("<option>")).select2({
+    minimumInputLength: 0,
+    allowClear: true,
+    width: '100%',
+    placeholder: app.label.static["start-typing"],
+    data: app.product.mapData(data)
+  });
 
-    // Enable and Focus Search input
-    $("#product-container").find("[name=select-main-subject-search]").prop('disabled', false).focus();
+  // Enable and Focus Search input
+  $("#product-container").find("[name=select-main-subject-search]").prop('disabled', false).focus();
 
-    $("#product-container").find("[name=select-main-subject-search]").on('select2:select', function (e) {
-      var selectedObject = e.params.data;
-      if (selectedObject) {
-        // Some item from your model is active!
-        if (selectedObject.id.toLowerCase() == $("#product-container").find("[name=select-main-subject-search]").val().toLowerCase()) {
-          // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
-          // set values for Create Product button.
-          $("#product-modal-create").find("[name='idn']").val(selectedObject.SbjCode);
-          $("#product-card-read").find("[name=button-create]").attr("idn", selectedObject.SbjCode);
-          var subject = { SbjCode: selectedObject.SbjCode, SbjValue: selectedObject.SbjValue };
-          //Read Products for searched Subject.
-          app.product.ajax.read(subject);
-        }
-        else {
-          $("#product-card-read").hide();
-          $("#product-release-modal").hide();
-        }
-      } else {
-        // Nothing is active so it is a new value (or maybe empty value)
+  $("#product-container").find("[name=select-main-subject-search]").on('select2:select', function (e) {
+    var selectedObject = e.params.data;
+    if (selectedObject) {
+      // Some item from your model is active!
+      if (selectedObject.id.toLowerCase() == $("#product-container").find("[name=select-main-subject-search]").val().toLowerCase()) {
+        // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
+        // set values for Create Product button.
+        $("#product-modal-create").find("[name='idn']").val(selectedObject.SbjCode);
+        $("#product-card-read").find("[name=button-create]").attr("idn", selectedObject.SbjCode);
+        var subject = { SbjCode: selectedObject.SbjCode, SbjValue: selectedObject.SbjValue };
+        //Read Products for searched Subject.
+        app.product.ajax.read(subject);
+      }
+      else {
         $("#product-card-read").hide();
         $("#product-release-modal").hide();
       }
-    });
-    if (SbjCode) {
-      app.product.load(SbjCode);
+    } else {
+      // Nothing is active so it is a new value (or maybe empty value)
+      $("#product-card-read").hide();
+      $("#product-release-modal").hide();
     }
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+  });
+  if (SbjCode) {
+    app.product.load(SbjCode);
+  }
 };
 
 /**
@@ -138,14 +133,10 @@ app.product.ajax.read = function (subject) {
 
 /**
  * Call back from api to handle product
- * @param  {} response
+ * @param  {} data
  */
-app.product.callback.read = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    app.product.drawDataTableProduct(response.data);
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.product.callback.read = function (data) {
+  app.product.drawDataTableProduct(data);
 };
 
 /**
@@ -284,25 +275,19 @@ app.product.ajax.readSubjectCreate = function (idn) {
 
 /**
  * Callback read Subject
- * @param  {} response
+ * @param  {} data
  */
-app.product.callback.readSubjectCreate = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.product.callback.readSubjectCreate = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
+
+    app.product.modal.create(data);
+  } else {
     api.modal.information(app.label.static["api-ajax-nodata"]);
     // Reload
     app.product.load();
   }
-  else if (response.data) {
-    response.data = response.data[0];
-
-    app.product.modal.create(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
-};
+}
 
 /**
  * Modal for create new product
@@ -337,9 +322,9 @@ app.product.ajax.create = function () {
     app.config.url.api.private,
     "PxStat.System.Navigation.Product_API.Create",
     apiParam,
-    "app.product.callback.create",
+    "app.product.callback.createOnSuccess",
     callbackParam,
-    null,
+    "app.product.callback.createOnError",
     null,
     { async: false }
   );
@@ -347,21 +332,31 @@ app.product.ajax.create = function () {
 
 /**
  * Callback Ajax call to create new product
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.product.callback.create = function (response, callbackParam) {
+app.product.callback.createOnSuccess = function (data, callbackParam) {
   // Hide modal
   $("#product-modal-create").modal("hide");
 
   // Refresh list of products
   app.product.load();
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.PrcValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Callback Ajax call to create new product
+ * @param  {} error
+ */
+app.product.callback.createOnError = function (error) {
+  // Hide modal
+  $("#product-modal-create").modal("hide");
+
+  // Refresh list of products
+  app.product.load();
 };
 
 //#endregion
@@ -394,16 +389,10 @@ app.product.ajax.readSubjectUpdate = function () {
 
 /**
  * Callback read Subject for Update 
- * @param  {} response
+ * @param  {} data
  */
-app.product.callback.readSubjectUpdate = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-  }
-  else if (response.data) {
+app.product.callback.readSubjectUpdate = function (data) {
+  if (data && Array.isArray(data) && data.length) {
     // Product validation for update
     app.product.validation.update();
 
@@ -414,7 +403,7 @@ app.product.callback.readSubjectUpdate = function (response) {
       allowClear: true,
       width: '100%',
       placeholder: app.label.static["start-typing"],
-      data: app.product.mapData(response.data)
+      data: app.product.mapData(data)
     });
 
     // Enable and Focus Search input
@@ -432,8 +421,10 @@ app.product.callback.readSubjectUpdate = function (response) {
       }
     });
   }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+  // Handle no data
+  else {
+    api.modal.information(app.label.static["api-ajax-nodata"]);
+  }
 };
 
 /**
@@ -454,21 +445,17 @@ app.product.ajax.readUpdate = function (PrcCode) {
 
 /**
  * Populate modal with product details
- * @param  {} response
+ * @param  {} data
  */
-app.product.callback.readUpdate = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.product.callback.readUpdate = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
+    app.product.modal.readUpdate(data);
+  } else {
     api.modal.information(app.label.static["api-ajax-nodata"]);
     // Reload
     app.product.load();
   }
-  else if (response.data) {
-    response.data = response.data[0];
-    app.product.modal.readUpdate(response.data);
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -513,9 +500,9 @@ app.product.ajax.update = function () {
     app.config.url.api.private,
     "PxStat.System.Navigation.Product_API.Update",
     apiParams,
-    "app.product.callback.update",
+    "app.product.callback.updateOnSuccess",
     callbackParam,
-    null,
+    "app.product.callback.updateOnError",
     null,
     { async: false }
   );
@@ -523,23 +510,33 @@ app.product.ajax.update = function () {
 
 /**
  * Callback after update
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.product.callback.update = function (response, callbackParam) {
+app.product.callback.updateOnSuccess = function (data, callbackParam) {
   // Hide modal
   $("#product-modal-update").modal("hide");
 
   // Refresh list of products
   app.product.load();
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.PrcValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * Callback after update
+ * @param  {} error
+ */
+app.product.callback.updateOnError = function (error) {
+  // Hide modal
+  $("#product-modal-update").modal("hide");
+
+  // Refresh list of products
+  app.product.load();
 };
 //#endregion
 
@@ -563,9 +560,9 @@ app.product.ajax.delete = function (productToDelete) {
     app.config.url.api.private,
     "PxStat.System.Navigation.Product_API.Delete",
     { PrcCode: productToDelete.idn },
-    "app.product.callback.delete",
+    "app.product.callback.deleteOnSuccess",
     productToDelete,
-    null,
+    "app.product.callback.deleteOnError",
     null,
     { async: false }
   );
@@ -573,18 +570,25 @@ app.product.ajax.delete = function (productToDelete) {
 
 /**
  * Product delete
- * @param {*} response 
+ * @param {*} data 
  * @param {*} productToDelete 
  */
-app.product.callback.delete = function (response, productToDelete) {
+app.product.callback.deleteOnSuccess = function (data, productToDelete) {
   // Refresh list of products
   app.product.load();
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [productToDelete.PrcValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Product delete
+ * @param {*} error 
+ */
+app.product.callback.deleteOnError = function (error) {
+  // Refresh list of products
+  app.product.load();
 };
 //#endregion
 
@@ -608,19 +612,11 @@ app.product.ajax.readMatrixByProduct = function (callbackParam) {
 
 /**
  * Handle data from Ajax
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.product.callback.readMatrixByProduct = function (response, callbackParam) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.product.drawReleaseByProductDataTable(response.data, callbackParam);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.product.callback.readMatrixByProduct = function (data, callbackParam) {
+  app.product.drawReleaseByProductDataTable(data, callbackParam);
 };
 
 /**

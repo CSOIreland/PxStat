@@ -37,63 +37,57 @@ app.release.workflow.modal.response.ajax.read = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.workflow.modal.response.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-
-        app.release.workflow.request.render();
-    }
-    else if (response.data) {
-        response.data = response.data[0];
+app.release.workflow.modal.response.callback.read = function (data) {
+    if (data && Array.isArray(data) && data.length) {
+        data = data[0];
         // Store for later use
-        app.release.workflow.modal.response.RqsCode = response.data.RqsCode;
-        switch (response.data.RqsCode) {
+        app.release.workflow.modal.response.RqsCode = data.RqsCode;
+        switch (data.RqsCode) {
             case C_APP_TS_REQUEST_PUBLISH:
-                $("#request-workflow-modal-response-publish [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
+                $("#request-workflow-modal-response-publish [name=rqs-value]").html(app.label.datamodel.request[data.RqsValue]);
 
-                $("#request-workflow-modal-response-publish [name=wrq-emergency-flag]").html(app.library.html.boolean(response.data.WrqEmergencyFlag, true, true));
-                $("#request-workflow-modal-response-publish [name=wrq-datetime]").html(response.data.WrqDatetime ? moment(response.data.WrqDatetime).format(app.config.mask.datetime.display) : "");
-                $("#request-workflow-modal-response-publish [name=wrq-reservation-flag]").html(app.library.html.boolean(response.data.WrqReservationFlag, true, true));
-                $("#request-workflow-modal-response-publish [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
+                $("#request-workflow-modal-response-publish [name=wrq-emergency-flag]").html(app.library.html.boolean(data.WrqEmergencyFlag, true, true));
+                $("#request-workflow-modal-response-publish [name=wrq-datetime]").html(data.WrqDatetime ? moment(data.WrqDatetime).format(app.config.mask.datetime.display) : "");
+                $("#request-workflow-modal-response-publish [name=wrq-reservation-flag]").html(app.library.html.boolean(data.WrqReservationFlag, true, true));
+                $("#request-workflow-modal-response-publish [name=wrq-archive-flag]").html(app.library.html.boolean(data.WrqArchiveFlag, true, true));
 
-                $("#request-workflow-modal-response-publish [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-publish [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-                $("#request-workflow-modal-response-publish [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
+                $("#request-workflow-modal-response-publish [name=rqs-create-username]").html(app.library.html.link.user(data.RqsCcnCreateUsername));
+                $("#request-workflow-modal-response-publish [name=rqs-dtg-create-datetime]").html(data.RqsDtgCreateDatetime ? moment(data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+                $("#request-workflow-modal-response-publish [name=rqs-cmm-value]").html(app.library.html.parseBbCode(data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_PROPERTY:
-                $("#request-workflow-modal-response-flag [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
+                $("#request-workflow-modal-response-flag [name=rqs-value]").html(app.label.datamodel.request[data.RqsValue]);
 
-                $("#request-workflow-modal-response-flag [name=wrq-reservation-flag]").html(app.library.html.boolean(response.data.WrqReservationFlag, true, true));
-                $("#request-workflow-modal-response-flag [name=wrq-archive-flag]").html(app.library.html.boolean(response.data.WrqArchiveFlag, true, true));
+                $("#request-workflow-modal-response-flag [name=wrq-reservation-flag]").html(app.library.html.boolean(data.WrqReservationFlag, true, true));
+                $("#request-workflow-modal-response-flag [name=wrq-archive-flag]").html(app.library.html.boolean(data.WrqArchiveFlag, true, true));
 
-                $("#request-workflow-modal-response-flag [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-flag [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-                $("#request-workflow-modal-response-flag [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
+                $("#request-workflow-modal-response-flag [name=rqs-create-username]").html(app.library.html.link.user(data.RqsCcnCreateUsername));
+                $("#request-workflow-modal-response-flag [name=rqs-dtg-create-datetime]").html(data.RqsDtgCreateDatetime ? moment(data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+                $("#request-workflow-modal-response-flag [name=rqs-cmm-value]").html(app.library.html.parseBbCode(data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_DELETE:
-                $("#request-workflow-modal-response-delete [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
+                $("#request-workflow-modal-response-delete [name=rqs-value]").html(app.label.datamodel.request[data.RqsValue]);
 
-                $("#request-workflow-modal-response-delete [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-delete [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-                $("#request-workflow-modal-response-delete [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
+                $("#request-workflow-modal-response-delete [name=rqs-create-username]").html(app.library.html.link.user(data.RqsCcnCreateUsername));
+                $("#request-workflow-modal-response-delete [name=rqs-dtg-create-datetime]").html(data.RqsDtgCreateDatetime ? moment(data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+                $("#request-workflow-modal-response-delete [name=rqs-cmm-value]").html(app.library.html.parseBbCode(data.RqsCmmValue));
                 break;
             case C_APP_TS_REQUEST_ROLLBACK:
-                $("#request-workflow-modal-response-rollback [name=rqs-value]").html(app.label.datamodel.request[response.data.RqsValue]);
+                $("#request-workflow-modal-response-rollback [name=rqs-value]").html(app.label.datamodel.request[data.RqsValue]);
 
-                $("#request-workflow-modal-response-rollback [name=rqs-create-username]").html(app.library.html.link.user(response.data.RqsCcnCreateUsername));
-                $("#request-workflow-modal-response-rollback [name=rqs-dtg-create-datetime]").html(response.data.RqsDtgCreateDatetime ? moment(response.data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-                $("#request-workflow-modal-response-rollback [name=rqs-cmm-value]").html(app.library.html.parseBbCode(response.data.RqsCmmValue));
+                $("#request-workflow-modal-response-rollback [name=rqs-create-username]").html(app.library.html.link.user(data.RqsCcnCreateUsername));
+                $("#request-workflow-modal-response-rollback [name=rqs-dtg-create-datetime]").html(data.RqsDtgCreateDatetime ? moment(data.RqsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+                $("#request-workflow-modal-response-rollback [name=rqs-cmm-value]").html(app.library.html.parseBbCode(data.RqsCmmValue));
                 break;
         }
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Handle no data
+    else {
+        api.modal.information(app.label.static["api-ajax-nodata"]);
+        app.release.workflow.request.render();
+    }
 };
 
 /**
@@ -232,13 +226,10 @@ app.release.workflow.modal.response.ajax.create = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.workflow.modal.response.callback.create = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (response.data == C_APP_API_SUCCESS) {
+app.release.workflow.modal.response.callback.create = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         var goToParams = {
             "RlsCode": app.release.RlsCode,
             "MtrCode": app.release.MtrCode

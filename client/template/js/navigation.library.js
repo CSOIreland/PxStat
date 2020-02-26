@@ -44,20 +44,17 @@ app.navigation.access.ajax.set = function () {
 
 /**
  * Set the navigation
- * @param {*} response 
+ * @param {*} data 
  */
-app.navigation.access.callback.set = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.navigation.access.callback.set = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
+    // Render the Navigation
+    app.navigation.access.render(data.PrvCode)
+  }
+  else
     // Anonymous or Not Registered user
     app.navigation.user.remove();
-  } else if (response.data) {
-    response.data = response.data[0];
-    // Render the Navigation
-    app.navigation.access.render(response.data.PrvCode)
-  }
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -234,29 +231,27 @@ app.navigation.access.check = function (PrvCodeList) {
 };
 /**
  * Check access callback against current user
- * @param {*} response 
+ * @param {*} data 
  * @param {*} PrvCodeList 
  */
-app.navigation.access.callback.check = function (response, PrvCodeList) {
+app.navigation.access.callback.check = function (data, PrvCodeList) {
   PrvCodeList = PrvCodeList || [];
   // Add Administrator privilege by default;
   // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
   if ($.inArray(C_APP_PRIVILEGE_ADMINISTRATOR, PrvCodeList) == -1)
     PrvCodeList.push(C_APP_PRIVILEGE_ADMINISTRATOR);
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    // Force page reload
-    window.location.href = window.location.pathname;
-  } else if (response.data) {
-    response.data = response.data[0];
+
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
 
     // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
-    if ($.inArray(response.data.PrvCode, PrvCodeList) == -1) {
+    if ($.inArray(data.PrvCode, PrvCodeList) == -1) {
       // Force page reload
       window.location.href = window.location.pathname;
     }
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+  } else
+    // Force page reload
+    window.location.href = window.location.pathname;
 };
 //#endregion
 
@@ -288,28 +283,25 @@ app.navigation.user.ajax.read = function () {
 
 /**
  * Populate User data to Navigation Bar
- * @param {*} response 
+ * @param {*} data 
  */
-app.navigation.user.callback.read = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    app.navigation.user.remove();
-  } else if (response.data) {
-    response.data = response.data[0];
+app.navigation.user.callback.read = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
 
     // Store for later user
-    app.library.user.data.CcnUsername = response.data.CcnUsername;
-    app.library.user.data.CcnName = response.data.CcnName;
-    app.library.user.data.CcnPrvCode = response.data.PrvCode;
+    app.library.user.data.CcnUsername = data.CcnUsername;
+    app.library.user.data.CcnName = data.CcnName;
+    app.library.user.data.CcnPrvCode = data.PrvCode;
     // Set name on screen
-    $("#nav-user").find("[name=name]").text(response.data.CcnName);
+    $("#nav-user").find("[name=name]").text(data.CcnName);
 
     // Show user details on click
     $("#nav-user").on("click", function (event) {
       app.library.user.modal.readCurrent();
     });
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+  } else
+    app.navigation.user.remove();
 };
 
 //#endregion
@@ -334,47 +326,40 @@ app.navigation.language.ajax.read = function () {
 
 /**
 * Fill dropdown for Language
-* @param {*} response 
+* @param {*} data 
 */
-app.navigation.language.callback.read = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (response.data !== undefined) {
-    // Empty dropdown
-    $("#nav-language").find("[name=dropdown]").empty();
+app.navigation.language.callback.read = function (data) {
+  // Empty dropdown
+  $("#nav-language").find("[name=dropdown]").empty();
 
-    // Populate the selection and the dropdown with alternative options
-    $.each(response.data, function (_key, _entry) {
-      if (app.label.language.iso.code == this.LngIsoCode) {
-        $("#nav-language").find("[name=selection]").text(this.LngIsoName);
-      } else {
-        $("#nav-language").find("[name=dropdown]").append(
-          $("<a>", {
-            href: "#",
-            class: "dropdown-item",
-            code: this.LngIsoCode,
-            name: this.LngIsoName,
-            text: this.LngIsoName
-          }).get(0).outerHTML);
-      }
-    });
+  // Populate the selection and the dropdown with alternative options
+  $.each(data, function (_key, _entry) {
+    if (app.label.language.iso.code == this.LngIsoCode) {
+      $("#nav-language").find("[name=selection]").text(this.LngIsoName);
+    } else {
+      $("#nav-language").find("[name=dropdown]").append(
+        $("<a>", {
+          href: "#",
+          class: "dropdown-item",
+          code: this.LngIsoCode,
+          name: this.LngIsoName,
+          text: this.LngIsoName
+        }).get(0).outerHTML);
+    }
+  });
 
-    //Add event to language dropdown menu
-    $("#nav-language").find("[name=dropdown] a").once('click', function () {
+  //Add event to language dropdown menu
+  $("#nav-language").find("[name=dropdown] a").once('click', function () {
 
-      // Set the selected language
-      app.label.language.iso.code = $(this).attr('code');
-      app.label.language.iso.name = $(this).attr('name');
+    // Set the selected language
+    app.label.language.iso.code = $(this).attr('code');
+    app.label.language.iso.name = $(this).attr('name');
 
-      Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie);
+    Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie);
 
-      // Force page reload
-      window.location.href = window.location.pathname;
-    });
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Force page reload
+    window.location.href = window.location.pathname;
+  });
 };
 
 //#endregion

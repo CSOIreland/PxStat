@@ -65,6 +65,25 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        ///  Get a list of Matrix codes based on rights of user groups
+        /// </summary>
+        /// <param name="prcCode"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput ReadByGroup(string grpCode, string lngIsoCode)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@GrpCode", value = grpCode },
+                new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") }
+
+            };
+
+            return ado.ExecuteReaderProcedure("Data_Matrix_ReadByGroup", inputParams);
+        }
+
+
+
+        /// <summary>
         ///  Get a list of Matrix codes based on usage of products
         /// </summary>
         /// <param name="prcCode"></param>

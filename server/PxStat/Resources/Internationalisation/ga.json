@@ -78,7 +78,8 @@
       "code": " CODE",
       "header": "Unit,Value",
       "unit": "UNIT",
-      "value": "VALUE"
+      "value": "VALUE",
+      "separator": ","
     },
     "statistic": "Statistic",
     "subject-area": "n/a",

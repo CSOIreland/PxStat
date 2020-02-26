@@ -34,6 +34,10 @@ $(document).ready(function () {
     //initiate validation for setup
     app.build.create.initiate.validation.setup();
 
+    $('#build-create-modal-frequency').on('show.bs.modal', function () {
+        app.build.create.import.validate.frequencyModal();
+    });
+
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

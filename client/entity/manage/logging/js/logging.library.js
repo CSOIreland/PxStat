@@ -57,26 +57,12 @@ app.logging.ajax.read = function () {
 };
 
 /**
- * Handle response from api
- * @param {*} response 
+ * Handle data from api
+ * @param {*} data 
  */
-app.logging.callback.read = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    } else if (response.data || response.data == null) {
-        // Handle the Data in the Response then
-        app.logging.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.logging.callback.read = function (data) {
+    app.logging.drawDataTable(data);
 };
-
-/**
- * Draw Callback for Datatable
- */
-app.logging.drawCallback = function () {
-}
 
 /**
  * Draw datatable from result data

@@ -137,26 +137,6 @@ app.reason.drawReasonDataTable = function (data) {
 };
 
 /**
- * Callback function when the Reason Read call is successful.
- * @param {*} response
- */
-app.reason.callback.read = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        app.reason.drawReasonDataTable();
-        api.modal.error(response.error.message);
-        $("#reason-modal-create").modal("hide");
-    } else if (response.data !== undefined) {
-        // Handle the Data in the Response then
-        app.reason.drawReasonDataTable(response.data);
-        $("modal-create-reason").modal("hide");
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-    return;
-};
-
-/**
    * Get data from API and Draw the Data Table for Reason. Ajax call. 
    */
 app.reason.ajax.read = function () {
@@ -168,7 +148,28 @@ app.reason.ajax.read = function () {
             RsnCode: null,
             LngIsoCode: app.label.language.iso.code
         },
-        "app.reason.callback.read");
+        "app.reason.callback.readOnSuccess",
+        null,
+        "app.reason.callback.readOnError",
+        null);
+};
+
+/**
+ * Callback function when the Reason Read call is successful.
+ * @param {*} data
+ */
+app.reason.callback.readOnSuccess = function (data) {
+    app.reason.drawReasonDataTable(data);
+    $("modal-create-reason").modal("hide");
+};
+
+/**
+ * Callback function when the Reason Read call is successful.
+ * @param {*} error
+ */
+app.reason.callback.readOnError = function (error) {
+    app.reason.drawReasonDataTable();
+    $("#reason-modal-create").modal("hide");
 };
 
 //#endregion
@@ -198,9 +199,9 @@ app.reason.ajax.delete = function (idn) {
         app.config.url.api.private,
         "PxStat.System.Settings.Reason_API.Delete",
         apiParams,
-        "app.reason.callback.delete",
+        "app.reason.callback.deleteOnSuccess",
         idn,
-        null,
+        "app.reason.callback.deleteOnError",
         null,
         { async: false }
     );
@@ -208,21 +209,28 @@ app.reason.ajax.delete = function (idn) {
 
 /**
 * Callback from server for Delete Reason
-* @param {*} response
+* @param {*} data
 * @param {*} idn
 */
-app.reason.callback.delete = function (response, idn) {
+app.reason.callback.deleteOnSuccess = function (data, idn) {
     //Redraw Data Table Reason with fresh data.
     app.reason.ajax.read();
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
-    return;
+};
+
+/**
+* Callback from server for Delete Reason
+* @param {*} error
+*/
+app.reason.callback.deleteOnError = function (error) {
+    //Redraw Data Table Reason with fresh data.
+    app.reason.ajax.read();
 };
 
 //#endregion
@@ -261,9 +269,9 @@ app.reason.ajax.create = function () {
         app.config.url.api.private,
         "PxStat.System.Settings.Reason_API.Create",
         apiParams,
-        "app.reason.callback.create",
+        "app.reason.callback.createOnSuccess",
         callbackParam,
-        null,
+        "app.reason.callback.createOnError",
         null,
         { async: false }
     );
@@ -271,23 +279,31 @@ app.reason.ajax.create = function () {
 
 /**
 * Create Reason to Table after Ajax success call
-* @param {*} response
+* @param {*} data
 * @param {*} callbackParam
 */
-app.reason.callback.create = function (response, callbackParam) {
+app.reason.callback.createOnSuccess = function (data, callbackParam) {
     //Redraw Data Table for Create Reason
     app.reason.ajax.read();
-    if (response.error) {
-        $("#reason-modal-create").modal("hide");
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+    $("#reason-modal-create").modal("hide");
+
+    if (data == C_APP_API_SUCCESS) {
         //Close modal
-        $("#reason-modal-create").modal("hide");
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.RsnCode]));
-    } else {
-        $("#reason-modal-create").modal("hide");
+    } else
         api.modal.exception(app.label.static["api-ajax-exception"]);
-    }
+};
+
+/**
+* Create Reason to Table after Ajax success call
+* @param {*} error
+* @param {*} callbackParam
+*/
+app.reason.callback.createOnError = function (error) {
+    //Redraw Data Table for Create Reason
+    app.reason.ajax.read();
+    $("#reason-modal-create").modal("hide");
+
 };
 
 //#endregion
@@ -311,24 +327,20 @@ app.reason.ajax.readReason = function (idn) {
 
 /**
 * Populate Reason data to Update Modal (reason-modal-update)
-* @param {*} response 
+* @param {*} data 
 */
-app.reason.callback.readReason = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
+app.reason.callback.readReason = function (data) {
+    if (data && Array.isArray(data) && data.length) {
+        data = data[0];
+
+        app.reason.modal.updateReason(data);
     }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+    // Handle no data
+    else {
         api.modal.information(app.label.static["api-ajax-nodata"]);
         // Force reload
         app.reason.ajax.read();
     }
-    else if (response.data) {
-        response.data = response.data[0];
-
-        app.reason.modal.updateReason(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -373,9 +385,9 @@ app.reason.ajax.update = function () {
         app.config.url.api.private,
         "PxStat.System.Settings.Reason_API.Update",
         apiParams,
-        "app.reason.callback.update",
+        "app.reason.callback.updateOnSuccess",
         callbackParam,
-        null,
+        "app.reason.callback.updateOnError",
         null,
         { async: false }
     );
@@ -383,21 +395,28 @@ app.reason.ajax.update = function () {
 
 /**
  * Call back after update complete
- * @param  {*} response
+ * @param  {*} data
  * @param  {*} callbackParam 
  */
-app.reason.callback.update = function (response, callbackParam) {
+app.reason.callback.updateOnSuccess = function (data, callbackParam) {
     app.reason.ajax.read();
     $("#reason-modal-update").modal("hide");
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.RsnCode]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
 };
 
+/**
+ * Call back after update complete
+ * @param  {*} error
+ */
+app.reason.callback.updateOnError = function (error) {
+    app.reason.ajax.read();
+    $("#reason-modal-update").modal("hide");
+};
 
 //#endregion
 

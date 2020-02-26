@@ -23,6 +23,46 @@ namespace PxStat.Data
             this.ado = ado;
         }
 
+        internal Dictionary<string, string> ReadDimensionRoles(string contvariable, string matrix = null, int rlsCode = 0, string lngIsoCode = null)
+        {
+            var inputParams = new List<ADO_inputParams>();
+
+            Dictionary<string, string> dimDictionary = new Dictionary<string, string>();
+
+            inputParams.Add(new ADO_inputParams { name = "@ContentVariable", value = contvariable });
+
+            if (matrix != null)
+            {
+                inputParams.Add(new ADO_inputParams { name = "@MtrCode", value = matrix });
+            }
+            else
+            {
+                inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = rlsCode });
+                if (lngIsoCode != null)
+                {
+                    inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode });
+                }
+                else
+                    inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") });
+            }
+
+            var output = ado.ExecuteReaderProcedure("Data_Matrix_ReadDimensionRole", inputParams);
+
+            foreach (var role in output.data)
+            {
+
+                if (!DBNull.Value.Equals(role.ROLE))
+                {
+                    if (!dimDictionary.ContainsKey(role.ROLE))
+                        dimDictionary.Add(role.ROLE, role.CODE);
+                }
+            }
+
+            return dimDictionary;
+
+
+        }
+
         /// <summary>
         /// Fill a Matrix based on available dimensions
         /// </summary>

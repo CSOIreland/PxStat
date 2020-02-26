@@ -1,4 +1,5 @@
 ﻿using API;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Newtonsoft.Json;
 using PxParser.Resources.Parser;
 using PxStat.Build;
@@ -285,6 +286,7 @@ namespace PxStat.Data
             /// <param name="matrixDto"></param>
             internal Specification(ADO ado, Matrix_DTO matrixDto)
             {
+
                 Language = matrixDto.LngIsoCode;
                 Contents = matrixDto.MtrTitle;
                 NotesAsString = matrixDto.MtrNote;
@@ -392,6 +394,11 @@ namespace PxStat.Data
             /// <summary>
             /// class property
             /// </summary>
+            public string MatrixCode { get; internal set; }
+
+            /// <summary>
+            /// class property
+            /// </summary>
             public string Source { get; internal set; }
 
             /// <summary>
@@ -467,6 +474,7 @@ namespace PxStat.Data
                 Title = doc.GetStringElementValue("TITLE", language);
                 Values = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
+                MatrixCode = doc.GetStringElementValue("MATRIX");
 
                 MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
 
@@ -559,6 +567,7 @@ namespace PxStat.Data
                 Title = doc.GetStringElementValue("TITLE", language);
                 Values = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
+                MatrixCode = doc.GetStringElementValue("MATRIX");
 
                 MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
 
@@ -1025,11 +1034,12 @@ namespace PxStat.Data
                 }
                 else
                 {
+
                     // if there is only one statistical product we have no subkeys
                     var unit = doc.GetStringElementValue("UNITS", language);
-                    var code = "0";
-                    var statisticalRecord = new StatisticalRecordDTO_Create() { Code = code, Unit = unit, Value = Contents, Decimal = Decimals };
-                    statisticalRecord.Code = Utility.GetMD5((statisticalRecord.GetHashCode() ^ statisticalRecord.Unit.GetHashCode() ^ statisticalRecord.Decimal.GetHashCode()).ToString());
+
+                    var statisticalRecord = new StatisticalRecordDTO_Create() { Unit = unit, Value = Contents, Decimal = Decimals };
+                    statisticalRecord.Code = this.MatrixCode;
                     if (precisions != null)
                     {
                         KeyValuePair<string, IList<IPxSingleElement>> precisionValue = precisions.FirstOrDefault(i => i.Key == Contents);
@@ -1578,6 +1588,7 @@ namespace PxStat.Data
                 if (clsCounter >= (theSpec.Classification.Count - 1))
                 {
                     clsLines.Add(line + ',' + new PxQuotedValue(vrb.Code).ToPxString() + ',' + new PxQuotedValue(vrb.Value).ToPxString());
+
                 }
                 else
                 {
@@ -1586,58 +1597,73 @@ namespace PxStat.Data
                     clsCounter++;
                     string oldLine = line;
                     line = line + ',' + new PxQuotedValue(vrb.Code).ToPxString() + ',' + new PxQuotedValue(vrb.Value).ToPxString();
+
+
                     ClassificationRecordDTO_Create nextCls = theSpec.Classification.ElementAt(clsCounter);
                     appendClassification(nextCls, clsLines, clsCounter, line, lngIsoCode);
 
                     //we're finished with the classification so back to where we were...
                     clsCounter--;
                     line = oldLine;
+
                 }
             }
         }
-        /// <summary>
-        /// Get the data expressed in csv format
-        /// </summary>
-        /// <returns></returns>
-        internal StringBuilder GetCSVObject(string lngIsoCode = null)
+
+        internal string GetXlsxObject(string lngIsoCode = null)
         {
+            Xlsx xl = new Xlsx();
+            return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode));
+
+        }
+
+        internal string GetCsvObject(string lngIsoCode = null)
+        {
+            Xlsx xl = new Xlsx();
+            return xl.GetCsv(GetMatrixSheet(lngIsoCode), "\"");
+        }
+
+        internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null)
+        {
+
+            List<List<XlsxValue>> rowLists = new List<List<XlsxValue>>();
+
+            lngIsoCode = lngIsoCode == null ? Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") : lngIsoCode;
+
             Specification theSpec;
             if (lngIsoCode != null)
             {
                 theSpec = this.GetSpecFromLanguage(lngIsoCode);
+                if (theSpec == null) theSpec = this.MainSpec;
                 theSpec.Frequency = MainSpec.Frequency;
             }
             else
                 theSpec = this.MainSpec;
-            int cellCounter = 0;
-            StringBuilder sb = new StringBuilder();
-            //This BOM (Byte Order Marker) must be inserted in order to default Excel to reading in utf-8
-            sb.Append('\uFEFF');
-            List<string> clsLines = new List<string>();
-            if (headerString == null) headerString = new List<string>();
 
-            ClassificationRecordDTO_Create cDto = theSpec.Classification.FirstOrDefault();
-
-            headerString.Add(new PxQuotedValue(Utility.GetCustomConfig("APP_CSV_STATISTIC")).ToPxString());
-            headerString.Add(new PxQuotedValue(Utility.GetCustomConfig("APP_CSV_STATISTIC") + Utility.GetCustomConfig("APP_CSV_DIVIDER") + (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic"))).ToPxString());
-
-            headerString.Add(new PxQuotedValue(theSpec.Frequency.Code).ToPxString());
-            headerString.Add(new PxQuotedValue(theSpec.Frequency.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + theSpec.Frequency.Value).ToPxString());
+            List<XlsxValue> rowList = new List<XlsxValue>();
+            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC") });
+            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC") + Utility.GetCustomConfig("APP_CSV_DIVIDER") + (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")) });
+            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code });
+            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + theSpec.Frequency.Value });
 
             foreach (var cls in theSpec.Classification)
             {
-                headerString.Add(new PxQuotedValue(cls.Code).ToPxString());
-                headerString.Add(new PxQuotedValue(cls.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + cls.Value).ToPxString());
-
+                rowList.Add(new XlsxValue() { Value = cls.Code });
+                rowList.Add(new XlsxValue() { Value = cls.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + cls.Value });
             }
 
-            headerString.Add(new PxQuotedValue(Utility.GetCustomConfig("APP_CSV_UNIT")).ToPxString());
-            headerString.Add(new PxQuotedValue(Utility.GetCustomConfig("APP_CSV_VALUE")).ToPxString());
+            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_UNIT") });
+            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_VALUE") });
 
-            //Get the classification data
-            appendClassification(cDto, clsLines, 0, "", lngIsoCode);
+            rowLists.Add(rowList);
 
-            sb.AppendLine(string.Join(",", headerString.ToArray()));
+            ClassificationRecordDTO_Create cDto = theSpec.Classification.FirstOrDefault();
+            List<string> clsLines = new List<string>();
+            int cellCounter = 0;
+
+            List<List<string>> clsList = new List<List<string>>();
+
+
 
             IEnumerable<ValueElement> cells;
 
@@ -1646,27 +1672,38 @@ namespace PxStat.Data
 
 
 
-            if (cells.Count() == 0) return sb;
+            if (cells.Count() > 0)
 
-
-
-            foreach (var stat in theSpec.Statistic)
             {
-                foreach (var per in theSpec.Frequency.Period)
+                Build_BSO bBso = new Build_BSO();
+                List<DataItem_DTO> matrixItems = bBso.GetMatrixDataItems(this, lngIsoCode);
+
+                foreach (var dto in matrixItems)
                 {
-                    foreach (string s in clsLines)
+                    List<XlsxValue> rowlist = new List<XlsxValue>
                     {
-                        dynamic cell = Cells[cellCounter];
-
-                        sb.AppendLine(new PxQuotedValue(stat.Code).ToPxString() + ',' + new PxQuotedValue(stat.Value).ToPxString() + ',' + new PxQuotedValue(per.Code).ToPxString() + ',' + new PxQuotedValue(per.Value).ToPxString() + s + ',' + new PxQuotedValue(stat.Unit).ToPxString() + ',' + new PxQuotedValue(cell.TdtValue.ToString()).ToPxString());
-
-                        cellCounter++;
+                        new XlsxValue() { Value = dto.statistic.Code },
+                        new XlsxValue() { Value = dto.statistic.Value },
+                        new XlsxValue() { Value = dto.period.Code },
+                        new XlsxValue() { Value = dto.period.Value }
+                    };
+                    foreach (var cls in dto.classifications)
+                    {
+                        rowlist.Add(new XlsxValue() { Value = cls.Variable[0].Code });
+                        rowlist.Add(new XlsxValue() { Value = cls.Variable[0].Value });
                     }
+                    rowlist.Add(new XlsxValue() { Value = dto.statistic.Unit });
+                    dynamic cell = Cells[cellCounter];
+                    rowlist.Add(new XlsxValue() { Value = cell.TdtValue.ToString() == Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") ? "" : cell.TdtValue.ToString(), DataType = CellValues.Number });
+
+                    cellCounter++;
+                    rowLists.Add(rowlist);
                 }
             }
-
-            return sb;
+            return rowLists;
         }
+
+
 
         /// <summary>
         /// Get a matrix from a Cube DTO
@@ -1789,7 +1826,7 @@ namespace PxStat.Data
         /// <returns></returns>
         private bool DimensionExistinList(Dimension dimension, List<string> list)
         {
-            return list.Contains(dimension.Id);
+            return list == null ? false : list.Contains(dimension.Id);
         }
 
 
@@ -2200,7 +2237,7 @@ namespace PxStat.Data
                     {
                         jsStat.Role.Geo = new List<string>();
                     }
-                    jsStat.Role.Geo.Add(aDimension.Value);
+                    jsStat.Role.Geo.Add(aDimension.Code);
 
                     theDimension.Link = new Link()
                     {

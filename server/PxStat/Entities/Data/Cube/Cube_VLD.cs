@@ -4,6 +4,14 @@ using PxStat.Build;
 
 namespace PxStat.Data
 {
+
+    internal class Cube_VLD_ReadXlsx : AbstractValidator<Cube_DTO_Read>
+    {
+        public Cube_VLD_ReadXlsx()
+        {
+        }
+    }
+
     /// <summary>
     /// Validator for Cube_DTO_Read
     /// </summary>

@@ -25,24 +25,18 @@ app.email.ajax.selectGroup = function () {
 
 /**
  * Set email Select Group
- * @param {*} response
+ * @param {*} data
  */
-app.email.callback.selectGroup = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Load select2
-        $("#email-container").find("[name=group]").empty().append($("<option>")).select2({
-            minimumInputLength: 0,
-            width: '100%',
-            placeholder: app.label.static["all-groups"],
-            data: app.email.callback.mapData(response.data)
-        });
-        // Enable and Focus Search input
-        $("#email-container").find("[name=group]").prop('disabled', false).focus();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.email.callback.selectGroup = function (data) {
+    // Load select2
+    $("#email-container").find("[name=group]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        width: '100%',
+        placeholder: app.label.static["all-groups"],
+        data: app.email.callback.mapData(data)
+    });
+    // Enable and Focus Search input
+    $("#email-container").find("[name=group]").prop('disabled', false).focus();
 };
 
 /**
@@ -128,13 +122,11 @@ app.email.ajax.create = function () {
 
 /**
  * Create User to Table after Ajax success call
- * @param  {} response
+ * @param  {} data
  * 
   */
-app.email.callback.create = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+app.email.callback.create = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         //Close modal
         api.modal.success(app.label.static["email-sent"]);
         //Reset screen

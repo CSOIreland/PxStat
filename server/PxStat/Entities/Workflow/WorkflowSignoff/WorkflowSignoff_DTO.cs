@@ -31,6 +31,11 @@
         public string MtrCode { get; set; }
 
         /// <summary>
+        /// User account details of the person signing off
+        /// </summary>
+        public Security.ActiveDirectory_DTO SignoffAccount { get; set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parameters"></param>

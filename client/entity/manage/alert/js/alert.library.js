@@ -49,28 +49,27 @@ app.alert.ajax.read = function () {
             RsnCode: null,
             LngIsoCode: app.label.language.iso.code
         },
-        "app.alert.callback.read",
+        "app.alert.callback.readOnSuccess",
         null,
-        null,
+        "app.alert.callback.readOnError",
         null,
         { async: false });
 };
 
 /**
  * Callback function when the Alert Read call is successful.
- * @param {*} response
+ * @param {*} data
  */
-app.alert.callback.read = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        app.alert.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Handle the Data in the Response then
-        app.alert.callback.drawDatatable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.alert.callback.readOnSuccess = function (data) {
+    app.alert.callback.drawDatatable(data);
+};
+
+/**
+ * Callback function on error
+ * @param {*} error
+ */
+app.alert.callback.readOnError = function (error) {
+    app.alert.callback.drawDatatable();
 };
 
 /**
@@ -205,27 +204,41 @@ app.alert.ajax.create = function () {
         app.config.url.api.private,
         "PxStat.System.Navigation.Alert_API.Create",
         apiParams,
-        "app.alert.callback.create"
+        "app.alert.callback.createOnSuccess",
+        null,
+        "app.alert.callback.createOnError",
+        null
     );
 };
 
 /**
 * Create Alert to Table after Ajax success call
-* @param {*} response 
+* @param {*} data 
 */
-app.alert.callback.create = function (response) {
+app.alert.callback.createOnSuccess = function (data) {
     //Redraw Data Table for Create Reason
     app.alert.ajax.read();
     api.content.load("#alert", "entity/manage/alert/index.notice.html");
+
     //Close modal
     $("#alert-modal-create").modal("hide");
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+};
+/**
+* @param {*} error 
+*/
+app.alert.callback.createOnError = function (error) {
+    //Redraw Data Table for Create Reason
+    app.alert.ajax.read();
+    api.content.load("#alert", "entity/manage/alert/index.notice.html");
+
+    //Close modal
+    $("#alert-modal-create").modal("hide");
 };
 
 //#endregion
@@ -247,36 +260,26 @@ app.alert.ajax.readUpdate = function (idn) {
 
 /**
 * Populate Alert data to Update Modal (alert-modal-update)
-* @param {*} response 
+* @param {*} data 
 */
-app.alert.callback.readUpdate = function (response) {
-    app.alert.ajax.read();
-    api.content.load("#alert", "entity/manage/alert/index.notice.html");
-    if (response.error) {
-        api.modal.error(response.error.message);
+app.alert.callback.readUpdate = function (data) {
+    if (data && Array.isArray(data) && data.length) {
+        app.alert.modal.update(data[0]);
     }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
-    else if (response.data) {
-        response.data = response.data[0];
-
-        app.alert.modal.update(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Handle no data
+    else api.modal.information(app.label.static["api-ajax-nodata"]);
 };
 
 /**
 * Populate Alert data to Update Modal (alert-modal-update)
-* @param {*} response 
+* @param {*} data 
 */
-app.alert.modal.update = function (response) {
+app.alert.modal.update = function (data) {
     //Validation alert update and reset form
     app.alert.validation.update();
     //Update fields values
-    $("#alert-modal-update").find("[name=lrt-code-update]").val(response.LrtCode);
-    $("#alert-modal-update").find("[name=lrt-datetime-update]").val(response.LrtDatetime);
+    $("#alert-modal-update").find("[name=lrt-code-update]").val(data.LrtCode);
+    $("#alert-modal-update").find("[name=lrt-datetime-update]").val(data.LrtDatetime);
     //Show Update Modal
     $("#alert-modal-update").modal("show");
     //Set focus on Update new modal
@@ -289,15 +292,15 @@ app.alert.modal.update = function (response) {
         //set up start and end dates for daterangepicker
 
         var defaultParams = {
-            "StartDate": response.LrtDatetime ? moment(response.LrtDatetime).format(app.config.mask.datetime.display) : "", //"18/12/2018 00:00:00"
-            "EndDate": response.LrtDatetime ? moment(response.LrtDatetime).format(app.config.mask.datetime.display) : "",
+            "StartDate": data.LrtDatetime ? moment(data.LrtDatetime).format(app.config.mask.datetime.display) : "", //"18/12/2018 00:00:00"
+            "EndDate": data.LrtDatetime ? moment(data.LrtDatetime).format(app.config.mask.datetime.display) : "",
             "MaxDate": moment(maxDate).format(app.config.mask.datetime.display),
             "Selector": "#alert-modal-update [name=lrt-datetime-update]"
         };
         app.alert.initialiseDatePicker(defaultParams);
         // Must be Id selector
         var tinyMceId = $("#alert-modal-update").find("[name=lrt-message-update]").attr("id");
-        tinymce.get(tinyMceId).setContent(response.LrtMessage);
+        tinymce.get(tinyMceId).setContent(data.LrtMessage);
     });
 };
 
@@ -323,9 +326,9 @@ app.alert.ajax.update = function () {
         app.config.url.api.private,
         "PxStat.System.Navigation.Alert_API.Update",
         apiParams,
-        "app.alert.callback.update",
+        "app.alert.callback.updateOnSuccess",
         null,
-        null,
+        "app.alert.callback.updateOnError",
         null,
         { async: false }
     );
@@ -333,19 +336,28 @@ app.alert.ajax.update = function () {
 
 /**
  * Call back after update complete
- * @param  {*} response
+ * @param  {*} data
  */
-app.alert.callback.update = function (response) {
+app.alert.callback.updateOnSuccess = function (data) {
     app.alert.ajax.read();
     api.content.load("#alert", "entity/manage/alert/index.notice.html");
     $("#alert-modal-update").modal("hide");
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+};
+
+/**
+ * Call back after update complete
+ * @param  {*} error
+ */
+app.alert.callback.updateOnError = function (error) {
+    app.alert.ajax.read();
+    api.content.load("#alert", "entity/manage/alert/index.notice.html");
+    $("#alert-modal-update").modal("hide");
 };
 
 //#endregion
@@ -372,9 +384,9 @@ app.alert.ajax.delete = function (idn) {
         {
             LrtCode: idn
         },
-        "app.alert.callback.delete",
+        "app.alert.callback.deleteOnSuccess",
         null,
-        null,
+        "app.alert.callback.deleteOnError",
         null,
         { async: false }
     );
@@ -382,20 +394,29 @@ app.alert.ajax.delete = function (idn) {
 
 /**
 * Callback from server for Delete Alert
-* @param {*} response
+* @param {*} data
 */
-app.alert.callback.delete = function (response) {
+app.alert.callback.deleteOnSuccess = function (data) {
     //Redraw Data Table alert with fresh data.
     app.alert.ajax.read();
     api.content.load("#alert", "entity/manage/alert/index.notice.html");
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+
+    if (data == C_APP_API_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [""]));
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+* Callback from server for Delete Alert on Error
+* @param {*} error
+*/
+app.alert.callback.deleteOnError = function (error) {
+    //Redraw Data Table alert with fresh data.
+    app.alert.ajax.read();
+    api.content.load("#alert", "entity/manage/alert/index.notice.html");
 };
 
 //#endregion

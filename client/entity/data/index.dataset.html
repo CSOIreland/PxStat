@@ -1,9 +1,11 @@
 <div class="col px-2">
     <div name="back-to-select-results" class="row mx-0 mb-2 mw-100">
-        <div class="col pl-2"><button class="btn btn-warning" type="submit">
+        <div class="col pl-2">
+            <button class="btn btn-warning" type="submit">
                 <i class="fas fa-angle-left"></i>
                 <span label="back"></span>
-            </button></div>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -84,49 +86,51 @@
     <div name="matrix-selection" class="row mx-0">
         <div class="col p-2">
             <div name="table-selection-card" class="card mb-4">
-                <!-- Data Table data View-->
                 <div class="card-header">
-                    <div class="row px-2">
+                    <!-- Top aligned -->
+                    <div class="row px-2 order-1 order-lg-1 order-md-1 order-sm-1">
                         <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
                             <h5 name="mtr-title" class="mb-1"></h5>
                         </div>
-                        <div class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1" name="updated-date-and-time"> <small><i name="emergency-flag" class="fas fa-exclamation-triangle text-warning mr-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="emergency-release"></i>
-                                <span label="last-updated"></span><span>: </span><b name="updated-date" class="mr-1"></b><span name="updated-time"></span>
+                        <div name="updated-date-and-time" class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1">
+                            <small>
+                                <i name="emergency-flag" class="fas fa-exclamation-triangle text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="emergency-release"></i>
+                                <span label="last-updated"></span>: <b name="updated-date"></b> <span name="updated-time"></span>
                             </small>
                         </div>
                     </div>
-                    <div class="row px-2">
-                        <div class="col-xl-8 col-sm-12 px-0">
+
+                    <!-- Mid aligned -->
+                    <div class="row px-2 order-2 order-lg-2 order-md-2 order-sm-2">
+                        <div class="col-4 px-0 order-1 my-auto">
                             <h6 class="mb-1">
-                                <span>
-                                    <span name="mtr-code"></span> <i name="unofficial-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
-                                    <i name="geo-flag" class="fas fa-globe text-tertiary d-none" data-toggle="tooltip" data-original-title="" label-tooltip="map"></i>
-                                </span>
+                                <span name="mtr-code"></span>
+                                <i name="official-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
+                                <i name="geo-flag" class="fas fa-globe text-tertiary ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
                             </h6>
                         </div>
-                        <div class="col-xl-4 col-sm-12 text-sm-left text-xl-right px-0">
-                            <span>
-                                <i name="archive-flag" class="fas fa-file-archive text-dark mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="archived"></i>
-                                <i name="reservation-flag" class="fas fa-exclamation text-danger mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="under-reservation"></i>
-                                <i name="analytical-flag" class="fas fa-chart-line text-warning mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="analytical"></i>
-                                <i name="dependency-flag" class="fab fa-hubspot text-tertiary mx-1 d-none" data-toggle="tooltip" data-original-title="" label-tooltip="dependency"></i>
+                        <div class="col-8 px-0 order-2 text-right my-auto">
+                            <p name="search-result-icons" class="mb-1">
+                                <i name="archive-flag" class="fas fa-file-archive text-dark mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
+                                <i name="reservation-flag" class="fas fa-exclamation text-danger mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
+                                <i name="analytical-flag" class="fas fa-chart-line text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
+                                <i name="dependency-flag" class="fab fa-hubspot text-tertiary mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="dependency"></i>
                                 <span name="language" class="badge badge-primary"></span>
-                            </span>
+                            </p>
                         </div>
                     </div>
 
-                </div>
-
-                <div class="card-header">
-                    <div class="row px-2">
-                        <div class="col-xl-8 col-sm-12 px-0"><span name="dimensions"></span>
-                            <span><span name="dimension-time" class="badge badge-secondary mr-1 mt-1 text-light"></span><span name="dimension-time-span" class="badge badge-neutral mr-1 mt-1"></span></span>
+                    <!-- Bottom aligned -->
+                    <div class="row px-2 order-3 order-lg-3 order-md-3 order-sm-3">
+                        <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-1 my-auto">
+                            <span name="dimensions"></span>
                         </div>
-                        <div class="col-xl-4 col-sm-12 text-sm-left text-xl-right px-0">
-                            <small><a name="copyright" href="" target="_blank"></a></small>
+                        <div class="col-12 col-lg-4 col-md-12 col-sm-12 px-0 order-2 mt-2 text-lg-right text-md-left">
+                            <small>
+                                <a name="copyright" href="" target="_blank"></a>
+                            </small>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="card-header bg-danger text-light d-none p-2" name="under-reservation-header">

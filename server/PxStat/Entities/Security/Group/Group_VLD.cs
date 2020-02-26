@@ -52,7 +52,7 @@ namespace PxStat.Security
             //Optional - GrpContactPhone
             RuleFor(f => f.GrpContactPhone).Matches(phoneRegex).When(f => !string.IsNullOrEmpty(f.GrpContactPhone)).WithMessage("Invalid Group Contact Phone Number").WithName("GrpContactPhoneValidation");
             //Optional - GrpContactEmail
-            RuleFor(f => f.GrpContactEmail).Matches(emailRegex).When(f => !string.IsNullOrEmpty(f.GrpContactEmail)).WithMessage("Invalid Group Contact Email").WithName("GrpContactEmailValidation");
+            RuleFor(f => f.GrpContactEmail).Matches(emailRegex).WithMessage("Invalid Group Contact Email").WithName("GrpContactEmailValidation");
         }
     }
 
@@ -81,7 +81,7 @@ namespace PxStat.Security
             //Optional - GrpContactPhone
             RuleFor(f => f.GrpContactPhone).Matches(phoneRegex).When(f => !string.IsNullOrEmpty(f.GrpContactPhone)).WithMessage("Invalid Group Contact Phone Number").WithName("GrpContactPhoneValidation");
             //Optional - GrpContactEmail
-            RuleFor(f => f.GrpContactEmail).Matches(emailRegex).When(f => !string.IsNullOrEmpty(f.GrpContactEmail)).WithMessage("Invalid Group Contact Email").WithName("GrpContactEmailValidation");
+            RuleFor(f => f.GrpContactEmail).NotEmpty().Matches(emailRegex).WithMessage("Invalid Group Contact Email").WithName("GrpContactEmailValidation");
         }
     }
 

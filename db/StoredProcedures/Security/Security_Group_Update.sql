@@ -15,9 +15,9 @@ CREATE
 ALTER PROCEDURE Security_Group_Update @GrpCodeOld NVARCHAR(32)
 	,@GrpCodeNew NVARCHAR(32)
 	,@GrpName NVARCHAR(256)
-	,@GrpContactName NVARCHAR(256) = NULL
-	,@GrpContactPhone NVARCHAR(256) = NULL
-	,@GrpContactEmail NVARCHAR(256) = NULL
+	,@GrpContactName NVARCHAR(256)=NULL 
+	,@GrpContactPhone NVARCHAR(256)=NULL
+	,@GrpContactEmail NVARCHAR(256) 
 	,@UpdateCcnUsername NVARCHAR(256)
 AS
 BEGIN

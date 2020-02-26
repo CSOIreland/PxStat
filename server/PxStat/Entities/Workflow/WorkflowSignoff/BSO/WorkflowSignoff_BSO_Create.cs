@@ -93,6 +93,13 @@ namespace PxStat.Workflow
                 return false;
             }
 
+            Security.ActiveDirectory_DTO signoffUser = new Security.ActiveDirectory_DTO() { CcnUsername = SamAccountName };
+            Security.ActiveDirectory_ADO accAdo = new Security.ActiveDirectory_ADO();
+            Security.Account_DTO_Read accDto = new Security.Account_DTO_Read() { CcnUsername = signoffUser.CcnUsername };
+
+            DTO.SignoffAccount = accAdo.GetUser(Ado, accDto);
+
+
             var adoSignoff = new WorkflowSignoff_ADO();
 
             //Create a comment
@@ -136,8 +143,8 @@ namespace PxStat.Workflow
 
             Account_BSO aBso = new Account_BSO();
 
-            moderators = aBso.getReleaseUsers(DTO.RlsCode, false);
-            powerUsers = aBso.getUsersOfPrivilege(Resources.Constants.C_SECURITY_PRIVILEGE_POWER_USER);
+            moderators = aBso.getReleaseUsers(DTO.RlsCode, null);
+            powerUsers = aBso.getUsersOfPrivilege(Constants.C_SECURITY_PRIVILEGE_POWER_USER);
 
             //Is this a Reject?
             if (DTO.SgnCode.Equals(Constants.C_WORKFLOW_STATUS_REJECT))
@@ -265,6 +272,8 @@ namespace PxStat.Workflow
                     //Delete the future release if it exists and set the current to_date to null
                     //Otherwise delete the current release and make the previous release current by setting its to_date to null
 
+
+
                     if (adoRelease.IsLiveNext(dtoRelease.RlsCode))//this is a future release so get the previous release to roll back to (even if that previous is now historical)
                     {
 
@@ -317,7 +326,23 @@ namespace PxStat.Workflow
                             return false;
                         }
 
+
+                        //Do the rollback of the current release
+                        dtoRelease.RlsVersion = dtoPrevious.RlsVersion;
+                        dtoRelease.RlsLiveDatetimeFrom = default(DateTime);
+
+                        rows = adoRelease.Update(dtoRelease, SamAccountName);
+                        if (rows == 0)
+                        {
+                            Log.Instance.Debug("Can't update the Release, RlsCode:" + dtoRelease.RlsCode);
+                            Response.error = Label.Get("error.update");
+                            return false;
+                        }
+
+                        adoRelease.IncrementRevision(dtoRelease.RlsCode, SamAccountName);
                     }
+
+
                     break;
 
                 default:
@@ -406,6 +431,24 @@ namespace PxStat.Workflow
                     break;
 
                 case Constants.C_WORKFLOW_REQUEST_ROLLBACK:
+
+                    //First, if there is a WIP ahead of this live release then that WIP must be deleted
+                    Release_ADO releaseAdo = new Release_ADO(Ado);
+                    var releaseDTORead = new Release_DTO_Read() { MtrCode = dtoRelease.MtrCode };
+                    var latestRelease = releaseAdo.ReadLatest(releaseDTORead);
+                    if (latestRelease != null)
+                    {
+                        if (dtoRelease.RlsCode != latestRelease.RlsCode)
+                        {
+                            if (bsoDelete.Delete(Ado, latestRelease.RlsCode, SamAccountName, true) == 0)
+                            {
+                                Log.Instance.Debug("Can't delete the Release, RlsCode:" + latestRelease.RlsCode);
+                                Response.error = Label.Get("error.delete");
+                                return false;
+                            }
+                        }
+                    }
+
                     // Only Live Next gets soft deleted, while Live Now is turned historical above
                     if (adoRelease.IsLiveNext(dtoRelease.RlsCode))
                     {

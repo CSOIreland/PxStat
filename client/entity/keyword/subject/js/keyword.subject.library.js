@@ -43,42 +43,36 @@ app.keyword.subject.ajax.readSubject = function () {
 };
 /**
  * Callback
- * @param {*} response 
+ * @param {*} data 
  */
-app.keyword.subject.callback.readSubject = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    //Load Select2
-    $("#keyword-subject-container").find("select[name=select-main-subject-search]").empty().append($("<option>")).select2({
-      minimumInputLength: 0,
-      allowClear: true,
-      width: '100%',
-      placeholder: app.label.static["start-typing"],
-      data: app.keyword.subject.mapDataSubject(response.data)
-    });
+app.keyword.subject.callback.readSubject = function (data) {
+  //Load Select2
+  $("#keyword-subject-container").find("select[name=select-main-subject-search]").empty().append($("<option>")).select2({
+    minimumInputLength: 0,
+    allowClear: true,
+    width: '100%',
+    placeholder: app.label.static["start-typing"],
+    data: app.keyword.subject.mapDataSubject(data)
+  });
 
-    $("#keyword-subject-container").find("select[name=select-main-subject-search]").prop('disabled', false).focus();
+  $("#keyword-subject-container").find("select[name=select-main-subject-search]").prop('disabled', false).focus();
 
-    //Update Subject search Search functionality
-    $("#keyword-subject-container").find("select[name=select-main-subject-search]").on('select2:select', function (e) {
-      var selectedSubject = e.params.data;
-      if (selectedSubject) {
-        // Some item from your model is active!
-        if (selectedSubject.id.toLowerCase() == $("#keyword-subject-container").find("select[name=select-main-subject-search]").val().toLowerCase()) {
-          app.keyword.subject.ajax.read(selectedSubject.SbjCode);
-        }
-        else {
-          $("#keyword-subject-read").hide();
-        }
-      } else {
-        // Nothing is active so it is a new value (or maybe empty value)
+  //Update Subject search Search functionality
+  $("#keyword-subject-container").find("select[name=select-main-subject-search]").on('select2:select', function (e) {
+    var selectedSubject = e.params.data;
+    if (selectedSubject) {
+      // Some item from your model is active!
+      if (selectedSubject.id.toLowerCase() == $("#keyword-subject-container").find("select[name=select-main-subject-search]").val().toLowerCase()) {
+        app.keyword.subject.ajax.read(selectedSubject.SbjCode);
+      }
+      else {
         $("#keyword-subject-read").hide();
       }
-    });
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+    } else {
+      // Nothing is active so it is a new value (or maybe empty value)
+      $("#keyword-subject-read").hide();
+    }
+  });
 };
 
 //#endregion
@@ -99,18 +93,13 @@ app.keyword.subject.ajax.read = function (SbjCode) {
 
 /**
  * Callback Subject Ajax read data 
- * @param {*} response
+ * @param {*} data
  */
-app.keyword.subject.callback.read = function (response) {
+app.keyword.subject.callback.read = function (data) {
   $("#subject-keyword-card").show();
-  if (response.error) {
-    app.keyword.subject.callback.drawDataTable();
-    api.modal.error(response.error.message);
-  }
-  else if (response.data !== undefined) {
-    app.keyword.subject.callback.drawDataTable(response.data);
-  }
   $("#keyword-subject-read").fadeIn();
+
+  app.keyword.subject.callback.drawDataTable(data);
 };
 
 
@@ -255,24 +244,19 @@ app.keyword.subject.ajax.readUpdate = function (idn) {
 
 /**
  * * Callback read
- * @param  {} response
+ * @param  {} data
  */
-app.keyword.subject.callback.readUpdate = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.keyword.subject.callback.readUpdate = function (data) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
+
+    app.keyword.subject.modal.update(data);
+  } else {
     api.modal.information(app.label.static["api-ajax-nodata"]);
 
     var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
     app.keyword.subject.ajax.read(selectedSubject.SbjCode);
   }
-  else if (response.data) {
-    response.data = response.data[0];
-
-    app.keyword.subject.modal.update(response.data);
-  }
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -324,9 +308,9 @@ app.keyword.subject.ajax.update = function () {
     app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Update",
     apiParams,
-    "app.keyword.subject.callback.update",
+    "app.keyword.subject.callback.updateOnSuccess",
     callbackParam,
-    null,
+    "app.keyword.subject.callback.updateOnError",
     null,
     { async: false }
   );
@@ -334,22 +318,31 @@ app.keyword.subject.ajax.update = function () {
 
 /**
  * Callback update Keyword for Subject
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.keyword.subject.callback.update = function (response, callbackParam) {
+app.keyword.subject.callback.updateOnSuccess = function (data, callbackParam) {
   $("#keyword-subject-modal-update").modal("hide");
 
   var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
   app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.KsbValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * Callback update Keyword for Subject
+ * @param  {} error
+ */
+app.keyword.subject.callback.updateOnError = function (error) {
+  $("#keyword-subject-modal-update").modal("hide");
+
+  var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
+  app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 };
 
 /**
@@ -365,8 +358,7 @@ app.keyword.subject.ajax.getLanguagesUpdate = function () {
 /**
 *  Populate language drop down for create.
 */
-app.keyword.subject.callback.getLanguagesUpdate = function (response) {
-  data = response.data;
+app.keyword.subject.callback.getLanguagesUpdate = function (data) {
   $("#keyword-subject-modal-update").find("[name=language]").empty().append($("<option>", {
     "text": app.label.static["select-uppercase"],
     "disabled": "disabled",
@@ -442,9 +434,9 @@ app.keyword.subject.ajax.delete = function (deletedKeyword) {
     app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Delete",
     apiParams,
-    "app.keyword.subject.callback.delete",
+    "app.keyword.subject.callback.deleteOnSuccess",
     deletedKeyword,
-    null,
+    "app.keyword.subject.callback.deleteOnError",
     null,
     { async: false }
   );
@@ -452,18 +444,25 @@ app.keyword.subject.ajax.delete = function (deletedKeyword) {
 
 /**
  *Ajax callback for delete
- * @param  {} response
+ * @param  {} data
  * @param  {} deletedKeyword
  */
-app.keyword.subject.callback.delete = function (response, deletedKeyword) {
+app.keyword.subject.callback.deleteOnSuccess = function (data, deletedKeyword) {
   var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
   app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [deletedKeyword.KsbValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ *Ajax callback for delete
+ * @param  {} error
+ */
+app.keyword.subject.callback.deleteOnError = function (error) {
+  var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
+  app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 };
 //#endregion
 
@@ -505,8 +504,7 @@ app.keyword.subject.ajax.getLanguagesCreate = function () {
 /**
 *  Populate language drop down for create.
 */
-app.keyword.subject.callback.getLanguagesCreate = function (response) {
-  data = response.data;
+app.keyword.subject.callback.getLanguagesCreate = function (data) {
   $("#keyword-subject-modal-create").find("[name=language]").empty().append($("<option>", {
     "text": app.label.static["select-uppercase"],
     "disabled": "disabled",
@@ -578,9 +576,9 @@ app.keyword.subject.ajax.create = function () {
     app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Create",
     apiParams,
-    "app.keyword.subject.callback.create",
+    "app.keyword.subject.callback.createOnSuccess",
     callbackParam,
-    null,
+    "app.keyword.subject.callback.createOnError",
     null,
     { async: false }
   );
@@ -588,20 +586,29 @@ app.keyword.subject.ajax.create = function () {
 
 /**
    * Create keyword
-   * @param {*} response 
+   * @param {*} data 
    * @param {*} callbackParam 
    */
-app.keyword.subject.callback.create = function (response, callbackParam) {
+app.keyword.subject.callback.createOnSuccess = function (data, callbackParam) {
   $("#keyword-subject-modal-create").modal("hide");
 
   var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
   app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.KsbValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+   * Create keyword
+   * @param {*} error 
+   */
+app.keyword.subject.callback.createOnError = function (error) {
+  $("#keyword-subject-modal-create").modal("hide");
+
+  var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
+  app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 };
 //#endregion
 
@@ -618,59 +625,47 @@ app.keyword.subject.ajax.synonym = function (row) {
     app.config.url.api.private,
     "PxStat.System.Navigation.Keyword_API.ReadSynonym",
     { "KrlValue": KsbValue },
-    "app.keyword.subject.callback.synonym",
+    "app.keyword.subject.callback.readSynonym",
     callbackParam);
 }
 
 //Call back for synonyms
-app.keyword.subject.callback.synonym = function (response, callbackParam) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
+app.keyword.subject.callback.readSynonym = function (data, callbackParam) {
+  //Add name of keyword selected
+  $("#keyword-subject-extra-info").find("[name=keyword]").html(callbackParam.KsbValue);
+  //Clear list card
+  $("#keyword-subject-extra-info").find("[name=synonym-card]").empty();
 
+  //Get each language
+  $.each(data, function (key, language) {
+    //Clone card
+    var languageCard = $("#keyword-subject-template").find("[name=synonym-language-card]").clone();
+    //Display the Language
+    languageCard.find(".card-header").text(language.LngIsoName);
 
-    //Add name of keyword selected
-    $("#keyword-subject-extra-info").find("[name=keyword]").html(callbackParam.KsbValue);
-    //Clear list card
-    $("#keyword-subject-extra-info").find("[name=synonym-card]").empty();
-
-    //Get each language
-    $.each(response.data, function (key, language) {
-      //Clone card
-      var languageCard = $("#keyword-subject-template").find("[name=synonym-language-card]").clone();
-      //Display the Language
-      languageCard.find(".card-header").text(language.LngIsoName);
-
-      //Check if any synonyms
-      if (language.Synonym.length) {
-
-        //Get Synonyms
-        $.each(language.Synonym, function (key, synonym) {
-
-
-          var synonymItem = $("<li>", {
-            "class": "list-group-item",
-            "html": synonym
-          });
-          languageCard.find("[name=synonym-group]").append(synonymItem);
-
-        });
-
-      }
-      else {
-        //Display if no synonyms
+    //Check if any synonyms
+    if (language.Synonym.length) {
+      //Get Synonyms
+      $.each(language.Synonym, function (key, synonym) {
         var synonymItem = $("<li>", {
           "class": "list-group-item",
-          "html": app.label.static["no-synonyms"]
+          "html": synonym
         });
         languageCard.find("[name=synonym-group]").append(synonymItem);
-      }
+      });
+    }
+    else {
+      //Display if no synonyms
+      var synonymItem = $("<li>", {
+        "class": "list-group-item",
+        "html": app.label.static["no-synonyms"]
+      });
+      languageCard.find("[name=synonym-group]").append(synonymItem);
+    }
 
-      $("#keyword-subject-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+    $("#keyword-subject-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
 
-    });
-
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+  });
 }
 
 
@@ -692,53 +687,41 @@ app.keyword.subject.ajax.searchSynonym = function () {
 }
 
 //Call back for synonyms
-app.keyword.subject.callback.searchSynonym = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
+app.keyword.subject.callback.searchSynonym = function (data) {
+  //Clear list card
+  $("#keyword-subject-synonym-request").find("[name=synonym-card]").empty();
 
+  //Get each language
+  $.each(data, function (key, language) {
+    //Clone card
+    var languageCard = $("#keyword-search-template").find("[name=synonym-language-card]").clone();
+    //Display the Language
+    languageCard.find(".card-header").text(language.LngIsoName);
 
-    //Clear list card
-    $("#keyword-subject-synonym-request").find("[name=synonym-card]").empty();
-
-    //Get each language
-    $.each(response.data, function (key, language) {
-      //Clone card
-      var languageCard = $("#keyword-search-template").find("[name=synonym-language-card]").clone();
-      //Display the Language
-      languageCard.find(".card-header").text(language.LngIsoName);
-
-      //Check if any synonyms
-      if (language.Synonym.length) {
-
-        //Get Synonyms
-        $.each(language.Synonym, function (key, synonym) {
-
-
-          var synonymItem = $("<li>", {
-            "class": "list-group-item",
-            "html": synonym
-          });
-          languageCard.find("[name=synonym-group]").append(synonymItem);
-
-        });
-
-      }
-      else {
-        //Display if no synonyms
+    //Check if any synonyms
+    if (language.Synonym.length) {
+      //Get Synonyms
+      $.each(language.Synonym, function (key, synonym) {
         var synonymItem = $("<li>", {
           "class": "list-group-item",
-          "html": app.label.static["no-synonyms"]
+          "html": synonym
         });
         languageCard.find("[name=synonym-group]").append(synonymItem);
-      }
+      });
+    }
+    else {
+      //Display if no synonyms
+      var synonymItem = $("<li>", {
+        "class": "list-group-item",
+        "html": app.label.static["no-synonyms"]
+      });
+      languageCard.find("[name=synonym-group]").append(synonymItem);
+    }
 
-      $("#keyword-subject-synonym-request").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
-      $("#keyword-subject-synonym-request").find("[name=synonym-card]").show();
+    $("#keyword-subject-synonym-request").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+    $("#keyword-subject-synonym-request").find("[name=synonym-card]").show();
 
-    });
-
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+  });
 }
 
 

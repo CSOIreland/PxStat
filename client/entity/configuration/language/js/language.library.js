@@ -19,27 +19,29 @@ app.language.ajax.read = function () {
     app.config.url.api.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
-    "app.language.callback.read"
+    "app.language.callback.readOnSuccess",
+    null,
+    "app.language.callback.readOnError",
+    null
   );
 };
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.language.callback.read = function (response) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    app.language.drawDatatable();
-    api.modal.error(response.error.message);
-    $("#language-modal-create").modal("hide");
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.language.drawDatatable(response.data);
-    $("#language-modal-create").modal("hide");
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.language.callback.readOnSuccess = function (data) {
+  app.language.drawDatatable(data);
+  $("#language-modal-create").modal("hide");
+};
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.language.callback.readOnError = function (error) {
+  app.language.drawDatatable();
+  $("#language-modal-create").modal("hide");
 };
 
 /**
@@ -136,30 +138,27 @@ app.language.ajax.readUpdate = function (idn) {
 
 /**
  * * Callback read
- * @param  {} response
+ * @param  {} data
  * @param  {} idn 
  */
-app.language.callback.readUpdate = function (response, idn) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-    // Force reload
-    app.language.ajax.read();
-  }
-  else if (response.data) {
-    response.data = response.data[0];
+app.language.callback.readUpdate = function (data, idn) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
 
     // Define Validation for Edit
     app.language.validation.update();
 
     $("#language-modal-update form").find("[name=lng-iso-code]").text(idn);
-    $("#language-modal-update form").find("[name=lng-iso-name]").val(response.data.LngIsoName);
+    $("#language-modal-update form").find("[name=lng-iso-name]").val(data.LngIsoName);
 
     $("#language-modal-update").modal("show");
   }
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+  else {
+    // Handle no data
+    api.modal.information(app.label.static["api-ajax-nodata"]);
+    // Force reload
+    app.language.ajax.read();
+  }
 };
 
 /**
@@ -204,9 +203,9 @@ app.language.ajax.update = function () {
     app.config.url.api.private,
     "PxStat.System.Settings.Language_API.Update",
     apiParams,
-    "app.language.callback.update",
+    "app.language.callback.updateOnSuccess",
     callbackParam,
-    null,
+    "app.language.callback.updateOnError",
     null,
     { async: false }
   );
@@ -214,21 +213,31 @@ app.language.ajax.update = function () {
 
 /**
  * * Callback from server, after update
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  *  
  */
-app.language.callback.update = function (response, callbackParam) {
+app.language.callback.updateOnSuccess = function (data, callbackParam) {
   $("#language-modal-update").modal("hide");
   // Reload the data
   app.language.ajax.read();
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.LngIsoCode]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * * Callback from server, after update
+ * @param  {} error
+ *  
+ */
+app.language.callback.updateOnError = function (error) {
+  $("#language-modal-update").modal("hide");
+  // Reload the data
+  app.language.ajax.read();
 };
 //#endregion
 
@@ -292,9 +301,9 @@ app.language.ajax.create = function () {
     app.config.url.api.private,
     "PxStat.System.Settings.Language_API.Create",
     apiParams,
-    "app.language.callback.create",
+    "app.language.callback.createOnSuccess",
     callbackParam,
-    null,
+    "app.language.callback.createOnError",
     null,
     { async: false }
   );
@@ -302,17 +311,24 @@ app.language.ajax.create = function () {
 
 /**
  * Ajax call for create
- * @param {*} response
+ * @param {*} data
  * @param {*} callbackParam
  */
-app.language.callback.create = function (response, callbackParam) {
+app.language.callback.createOnSuccess = function (data, callbackParam) {
   app.language.ajax.read();
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     $("#language-modal-create").modal("hide");
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.LngIsoCode]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Ajax call for create
+ * @param {*} error
+ */
+app.language.callback.createOnError = function (error) {
+  app.language.ajax.read();
 };
 
 //#endregion
@@ -328,9 +344,9 @@ app.language.ajax.delete = function (idn) {
     app.config.url.api.private,
     "PxStat.System.Settings.Language_API.Delete",
     apiParams,
-    "app.language.callback.delete",
+    "app.language.callback.deleteOnSuccess",
     idn,
-    null,
+    "app.language.callback.deleteOnError",
     null,
     { async: false }
   );
@@ -338,16 +354,23 @@ app.language.ajax.delete = function (idn) {
 
 /**
  *Ajax callback for delete
- * @param {*} response
+ * @param {*} data
  * @param {*} idn
  */
-app.language.callback.delete = function (response, idn) {
+app.language.callback.deleteOnSuccess = function (data, idn) {
   app.language.ajax.read();
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ *Ajax callback for delete
+ * @param {*} error
+ */
+app.language.callback.deleteOnError = function (error) {
+  app.language.ajax.read();
 };
 
 /**

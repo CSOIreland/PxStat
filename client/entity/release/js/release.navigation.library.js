@@ -43,56 +43,50 @@ app.release.navigation.ajax.readSubject = function (SbjCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  * @param {*} params
  */
-app.release.navigation.callback.readSubject = function (response, params) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Load select2
-        $("#release-navigation-modal").find("[name=sbj-code]").empty().append($("<option>")).select2({
-            dropdownParent: $('#release-navigation-modal'),
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.release.navigation.mapDataSubject(response.data)
-        });
+app.release.navigation.callback.readSubject = function (data, params) {
+    // Load select2
+    $("#release-navigation-modal").find("[name=sbj-code]").empty().append($("<option>")).select2({
+        dropdownParent: $('#release-navigation-modal'),
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.release.navigation.mapDataSubject(data)
+    });
 
-        // Enable and Focus Search input
-        $("#release-navigation-modal").find("[name=sbj-code]").prop('disabled', false);
+    // Enable and Focus Search input
+    $("#release-navigation-modal").find("[name=sbj-code]").prop('disabled', false);
 
-        //Update Subject search Search functionality
-        $("#release-navigation-modal").find("[name=sbj-code]").on('select2:select', function (e) {
-            var selectedObject = e.params.data;
-            if (selectedObject) {
-                // Some item from your model is active!
-                if (selectedObject.id.toLowerCase() == $("#release-navigation-modal").find("[name=sbj-code]").val().toLowerCase()) {
-                    // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
-                    app.release.navigation.ajax.readProduct(selectedObject.id);
-                }
-                else {
-                    // Disable Product if the Subject does not match
-                    $("#release-navigation-modal [name=prc-code]").prop('disabled', true);
-                }
-            } else {
+    //Update Subject search Search functionality
+    $("#release-navigation-modal").find("[name=sbj-code]").on('select2:select', function (e) {
+        var selectedObject = e.params.data;
+        if (selectedObject) {
+            // Some item from your model is active!
+            if (selectedObject.id.toLowerCase() == $("#release-navigation-modal").find("[name=sbj-code]").val().toLowerCase()) {
+                // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
+                app.release.navigation.ajax.readProduct(selectedObject.id);
+            }
+            else {
                 // Disable Product if the Subject does not match
                 $("#release-navigation-modal [name=prc-code]").prop('disabled', true);
             }
-        });
-
-        // Set Subject if any
-        if (params.SbjCode) {
-            /*  Multi-steps:
-            *  1. Set the Value
-            *  2. Trigger Change to display the set Value above
-            */
-            $("#release-navigation-modal").find("[name=sbj-code]").val(app.release.SbjCode).trigger("change");
+        } else {
+            // Disable Product if the Subject does not match
+            $("#release-navigation-modal [name=prc-code]").prop('disabled', true);
         }
+    });
+
+    // Set Subject if any
+    if (params.SbjCode) {
+        /*  Multi-steps:
+        *  1. Set the Value
+        *  2. Trigger Change to display the set Value above
+        */
+        $("#release-navigation-modal").find("[name=sbj-code]").val(app.release.SbjCode).trigger("change");
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -114,38 +108,32 @@ app.release.navigation.ajax.readProduct = function (SbjCode, PrcCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  * @param {*} params
  */
-app.release.navigation.callback.readProduct = function (response, params) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Load select2
-        $("#release-navigation-modal").find("[name=prc-code]").empty().append($("<option>")).select2({
-            dropdownParent: $('#release-navigation-modal'),
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.release.navigation.mapDataProduct(response.data)
-        });
+app.release.navigation.callback.readProduct = function (data, params) {
+    // Load select2
+    $("#release-navigation-modal").find("[name=prc-code]").empty().append($("<option>")).select2({
+        dropdownParent: $('#release-navigation-modal'),
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.release.navigation.mapDataProduct(data)
+    });
 
-        // Enable Search input
-        $("#release-navigation-modal").find("[name=prc-code]").prop('disabled', false);
+    // Enable Search input
+    $("#release-navigation-modal").find("[name=prc-code]").prop('disabled', false);
 
-        // Set Product if any
-        if (params.PrcCode) {
-            /*  Multi-steps:
-            *  1. Set the Value
-            *  2. Trigger Change to display the set Value above
-            *  3. Trigger type: 'select2:select' to load the Select2 object 
-            */
-            $("#release-navigation-modal").find("[name=prc-code]").val(params.PrcCode).trigger("change");
-        }
+    // Set Product if any
+    if (params.PrcCode) {
+        /*  Multi-steps:
+        *  1. Set the Value
+        *  2. Trigger Change to display the set Value above
+        *  3. Trigger type: 'select2:select' to load the Select2 object 
+        */
+        $("#release-navigation-modal").find("[name=prc-code]").val(params.PrcCode).trigger("change");
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -191,12 +179,10 @@ app.release.navigation.ajax.update = function (PrcCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.navigation.callback.update = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+app.release.navigation.callback.update = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
         app.release.information.read();
     }

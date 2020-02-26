@@ -46,11 +46,12 @@ app.data.init = function (LngIsoCode, MtrCode, RlsCode, filenamePrefix) {
 /**
 * 
 */
-app.data.setDataPicker = function () {
+app.data.setDatePicker = function () {
     var startDate = moment().subtract(29, 'days');
     app.data.collection.params.datefrom = startDate.format(app.config.mask.date.ajax);
     app.data.ajax.readLatestReleases();
     $('#latest-releases-date-picker span').html(startDate.format(app.config.mask.date.display));
+
     $('#latest-releases-date-picker').daterangepicker({
         showCustomRangeLabel: false,
         singleDatePicker: true,
@@ -87,15 +88,11 @@ app.data.ajax.readLatestReleases = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.data.callback.readLatestReleases = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined && response.data && response.data.link && Array.isArray(response.data.link.item)) {
-        var data = response.data.link.item;
-        app.data.callback.drawLatestReleases(data);
+app.data.callback.readLatestReleases = function (data) {
+    if (data && data.link && Array.isArray(data.link.item)) {
+        app.data.callback.drawLatestReleases(data.link.item);
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -151,6 +148,10 @@ app.data.callback.drawLatestReleases = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         var titleRow = $("#data-latest-releases-templates").find("[name=title-column]").clone();
+                        // Workaround for a (weird) Chrome bug when downloading and printing when not in the data entity
+                        if (!titleRow.length)
+                            return "";
+
                         //get title
                         titleRow.find("[name=title]").html($("<a>", {
                             name: "link",
@@ -168,6 +169,10 @@ app.data.callback.drawLatestReleases = function (data) {
                             //classifications
                             if (index != data.role.time[0] && index != data.role.metric[0]) {
                                 var classificationPill = $("#data-latest-releases-templates").find("[name=classification]").clone();
+                                // Workaround for a (weird) Chrome bug when downloading and printing when not in the data entity
+                                if (!classificationPill.length)
+                                    return "";
+
                                 classificationPill.text(dimension.label);
                                 titleRow.find("[name=classifications]").append(classificationPill.get(0).outerHTML);
                             }

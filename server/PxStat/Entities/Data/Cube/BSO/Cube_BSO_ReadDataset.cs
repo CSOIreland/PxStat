@@ -50,6 +50,7 @@ namespace PxStat.Data
             }
             ////See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO);
+
             if (cache.hasData)
             {
                 Response.data = cache.data;
@@ -63,8 +64,9 @@ namespace PxStat.Data
                 return true;
             }
             //The Language of the received data may be different from the request - so we make sure it corresponds to the language of the dataset
+            string requestLanguage = DTO.language;
             DTO.language = items.LngIsoCode;
-            var data = ExecuteReadDataset(Ado, DTO, result, Response);
+            var data = ExecuteReadDataset(Ado, DTO, result, Response, requestLanguage);
             return data;
         }
 
@@ -76,8 +78,11 @@ namespace PxStat.Data
         /// <param name="releaseDto"></param>
         /// <param name="theResponse"></param>
         /// <returns></returns>
-        internal static bool ExecuteReadDataset(ADO theAdo, Cube_DTO_Read theDto, Release_DTO releaseDto, JSONRPC_Output theResponse)
+        internal static bool ExecuteReadDataset(ADO theAdo, Cube_DTO_Read theDto, Release_DTO releaseDto, JSONRPC_Output theResponse, string requestLanguage)
         {
+            //if the role details haven't been supplied then look it up from the metadata in the database
+            if (theDto.role == null)
+                theDto.role = new Cube_BSO().UpdateRoleFromMetadata(theAdo, theDto);
 
             var theMatrix = new Matrix(theAdo, releaseDto, theDto.language).ApplySearchCriteria(theDto);
             if (theMatrix == null)
@@ -102,10 +107,13 @@ namespace PxStat.Data
                     theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
                     break;
                 case DatasetFormat.Csv:
-                    theResponse.data = matrix.GetCSVObject().ToString();
+                    theResponse.data = matrix.GetCsvObject(requestLanguage);
                     break;
                 case DatasetFormat.Px:
                     theResponse.data = matrix.GetPxObject().ToString();
+                    break;
+                case DatasetFormat.Xlsx:
+                    theResponse.data = matrix.GetXlsxObject(requestLanguage);
                     break;
             }
 
@@ -116,5 +124,6 @@ namespace PxStat.Data
             return true;
 
         }
+
     }
 }

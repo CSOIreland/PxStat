@@ -230,13 +230,10 @@ app.release.workflow.modal.request.ajax.create = function (RqsCode) {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.workflow.modal.request.callback.create = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (response.data == C_APP_API_SUCCESS) {
+app.release.workflow.modal.request.callback.create = function (data) {
+    if (data == C_APP_API_SUCCESS) {
         var goToParams = {
             "RlsCode": app.release.RlsCode,
             "MtrCode": app.release.MtrCode

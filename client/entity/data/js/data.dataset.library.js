@@ -59,14 +59,12 @@ app.data.dataset.ajax.readMetadata = function () {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.data.dataset.callback.readMetadata = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data) {
-        var data = JSONstat(response.data);
+app.data.dataset.callback.readMetadata = function (data) {
+    data = data ? JSONstat(data) : data;
 
+    if (data && data.length) {
         if (app.data.MtrCode) {
             app.navigation.breadcrumb.set([data.extension.subject.value, {
                 "text": data.extension.product.value,
@@ -133,12 +131,12 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     matrixSelection.find("[name=mtr-title]").text(data.label);
     matrixSelection.find("[name=mtr-code]").text(data.extension.matrix);
     //update date
-    if (data.updated == app.config.mask.datetime.default) {
+    if (!data.updated || data.updated == C_APP_DATETIME_DEFAULT) {
         matrixSelection.find("[name=updated-date-and-time]").addClass("d-none");
     }
     else {
         matrixSelection.find("[name=updated-date]").text(data.updated ? moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.date.display) : "");
-        matrixSelection.find("[name=updated-time]").text(data.updateDate ? moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.time.display) : "");
+        matrixSelection.find("[name=updated-time]").text(data.updated ? moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.time.display) : "");
     }
     // emergency flag
     if (data.extension.emergency) {
@@ -151,7 +149,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     }
     //official flag
     if (!data.extension.official) {
-        matrixSelection.find("[name=unofficial-flag]").removeClass("d-none");
+        matrixSelection.find("[name=official-flag]").removeClass("d-none");
     }
     //analytical flag
     if (data.extension.analytical) {
@@ -171,20 +169,32 @@ app.data.dataset.callback.drawTableSelection = function (data) {
     }
     //Add badge for language.
     matrixSelection.find("[name=language]").text(data.extension.language.name);
-    //dimension pills
+
+    //dimension pill
     for (i = 0; i < data.length; i++) {
-        if (data.Dimension(i).role == "classification") {
+        if (data.Dimension(i).role == "classification" || data.Dimension(i).role == "geo") {
             var dimension = $("#data-dataset-templates").find("[name=dimension]").clone();
             dimension.text(data.Dimension(i).label);
             matrixSelection.find("[name=dimensions]").append(dimension);
         }
+    }
+
+    for (i = 0; i < data.length; i++) {
         if (data.Dimension(i).role == "time") {
-            matrixSelection.find("[name=dimension-time]").text(data.Dimension(i).label);
-            matrixSelection.find("[name=dimension-time-span]").text(function () {
+            //frequency pill
+            var frequency = $("#data-metadata-templates").find("[name=frequency]").clone();
+            frequency.text(data.Dimension(i).label);
+            matrixSelection.find("[name=dimensions]").append(frequency);
+
+            //frequency span
+            var frequencySpan = $("#data-metadata-templates").find("[name=frequency-span]").clone();
+            frequencySpan.text(function () {
                 return "[" + data.Dimension(i).Category(0).label + " - " + data.Dimension(i).Category(data.Dimension(i).length - 1).label + "]";
             });
+            matrixSelection.find("[name=dimensions]").append(frequencySpan);
         }
     }
+
     //copyright
     matrixSelection.find("[name=copyright]").html(
         $("<i>", {
@@ -406,7 +416,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
             $(this).find("[name=text]").text(app.label.static.data);
             $("#data-dataview-selected-table").find("[name=map-container]").removeClass("d-none");
             $("#data-dataview-selected-table").find("[name=dimension-containers]").addClass("d-none");
-            $("#data-dataview-selected-table").find("[name=card-footer]").removeClass("d-flex").addClass("d-none");
+            $("#data-dataview-selected-table").find("[name=card-footer]").hide();
             var apiParams = {
                 "language": app.data.LngIsoCode,
                 "format": {
@@ -431,7 +441,7 @@ app.data.dataset.callback.drawTableSelection = function (data) {
             $(this).find("[name=text]").text("Map");
             $("#data-dataview-selected-table").find("[name=map-container]").addClass("d-none");
             $("#data-dataview-selected-table").find("[name=dimension-containers]").removeClass("d-none");
-            $("#data-dataview-selected-table").find("[name=card-footer]").addClass("d-flex").removeClass("d-none");
+            $("#data-dataview-selected-table").find("[name=card-footer]").show();
             app.data.dataset.callback.buildApiParams();
         }
     });
@@ -522,18 +532,10 @@ app.data.dataset.ajax.format = function () {
     );
 }
 
-app.data.dataset.callback.format = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    }
-
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
-    else if (response.data) {
+app.data.dataset.callback.format = function (data) {
+    if (data && Array.isArray(data) && data.length) {
         $("#panel [name=matrix-notes]").find().empty();
-        $.each(response.data, function (index, format) {
+        $.each(data, function (index, format) {
             var formatLink = $("#data-dataset-templates").find("[name=download-dataset-format]").clone();
             formatLink.attr(
                 {
@@ -550,8 +552,8 @@ app.data.dataset.callback.format = function (response) {
             app.data.dataset.callback.fullDownload($(this).attr("frm-type"), $(this).attr("frm-version"));
         });
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Handle no data
+    else api.modal.information(app.label.static["api-ajax-nodata"]);
 
 }
 
@@ -719,57 +721,33 @@ app.data.dataset.ajax.downloadDataset = function (apiParams) {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 * @param {*} apiParams
 */
-app.data.dataset.callback.downloadDataset = function (response, apiParams) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var data = response.data;
-        var mimeType = "";
-        var fileData = null;
-        var fileExtension = null;
-        switch (apiParams.format.type) {
-            case C_APP_TS_FORMAT_TYPE_PX:
-                mimeType = "text/plain";
-                fileData = data;
-                fileExtension = C_APP_EXTENSION_PX;
-                break;
-            case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-                mimeType = "application/json";
-                fileData = JSON.stringify(data);
-                fileExtension = C_APP_EXTENSION_JSONSTAT;
-                break;
-            case C_APP_TS_FORMAT_TYPE_CSV:
-                mimeType = "text/plain";
-                fileData = data;
-                fileExtension = C_APP_EXTENSION_CSV;
-                break;
-            default:
-                api.modal.exception(app.label.static["api-ajax-exception"]);
-                return;
-                break;
-        }
+app.data.dataset.callback.downloadDataset = function (data, apiParams) {
+    var fileName = app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file);
 
-        var blob = new Blob([fileData], { type: mimeType });
-        var downloadUrl = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + '.' + fileExtension;
-
-        if (document.createEvent) {
-            // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-            var event = document.createEvent('MouseEvents');
-            event.initEvent('click', true, true);
-            a.dispatchEvent(event);
-        }
-        else {
-            a.click();
-        }
+    switch (apiParams.format.type) {
+        case C_APP_TS_FORMAT_TYPE_PX:
+            // Download the file
+            app.library.utility.download(fileName, data, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
+            break;
+        case C_APP_TS_FORMAT_TYPE_JSONSTAT:
+            // Download the file
+            app.library.utility.download(fileName, JSON.stringify(data), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
+            break;
+        case C_APP_TS_FORMAT_TYPE_CSV:
+            // Download the file
+            app.library.utility.download(fileName, data, C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
+            break;
+        case C_APP_TS_FORMAT_TYPE_XLSX:
+            // Download the file
+            app.library.utility.download(fileName, data, C_APP_EXTENSION_XLSX, null, true);
+            break;
+        default:
+            api.modal.exception(app.label.static["api-ajax-exception"]);
+            break;
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 //#endregion

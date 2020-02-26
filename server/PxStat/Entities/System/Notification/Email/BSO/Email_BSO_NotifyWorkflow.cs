@@ -38,10 +38,11 @@ namespace PxStat.System.Notification
                 email.Bcc.Add(person);
             }
 
+            string rqsvalue = Label.Get("workflow.request." + requestDTO.RqsValue);
 
             string releaseUrl = getReleaseUrl(releaseDTO);
             String subject = string.Format(Label.Get("email.subject.request-create"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-            String body = string.Format(Label.Get("email.body.request-create"), requestDTO.RqsValue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl);
+            String body = string.Format(Label.Get("email.body.request-create"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, requestDTO.RequestAccount.CcnEmail, requestDTO.RequestAccount.CcnUsername, requestDTO.RequestAccount.CcnName);
 
             sendMail(email, ConfigurationManager.AppSettings["APP_NAME"], subject, body);
 
@@ -60,22 +61,40 @@ namespace PxStat.System.Notification
 
             Account_BSO aBso = new Account_BSO();
 
-            ADO_readerOutput moderators = new ADO_readerOutput();
-            ADO_readerOutput powerUsers = new ADO_readerOutput();
+            ADO_readerOutput recipients = new ADO_readerOutput();
 
-            moderators = aBso.getReleaseUsers(releaseDTO.RlsCode, false);
+            string subject = "";
+            string body = "";
+            string releaseUrl = getReleaseUrl(releaseDTO);
+            string rqsvalue = Label.Get("workflow.request." + requestDTO.RqsValue);
+            switch (rspDTO.RspCode)
+            {
 
 
+                case Constants.C_WORKFLOW_STATUS_APPROVE:
+                    //Send the email to power users only
+                    recipients = aBso.getUsersOfPrivilege(Resources.Constants.C_SECURITY_PRIVILEGE_POWER_USER);
 
-            if (rspDTO.RspCode == Constants.C_WORKFLOW_STATUS_APPROVE)
-                powerUsers = aBso.getUsersOfPrivilege(Resources.Constants.C_SECURITY_PRIVILEGE_POWER_USER);
+                    subject = string.Format(Label.Get("email.subject.response-approve"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
+                    body = string.Format(Label.Get("email.body.response-approve"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, rspDTO.ResponseAccount.CcnEmail, rspDTO.ResponseAccount.CcnUsername, rspDTO.ResponseAccount.CcnName);
 
+                    break;
+
+                case Constants.C_WORKFLOW_STATUS_REJECT:
+
+                    //Send the email to 
+                    recipients = aBso.getReleaseUsers(releaseDTO.RlsCode, false);
+
+                    subject = string.Format(Label.Get("email.subject.response-reject"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
+                    body = string.Format(Label.Get("email.body.response-reject"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, rspDTO.ResponseAccount.CcnEmail, rspDTO.ResponseAccount.CcnUsername, rspDTO.ResponseAccount.CcnName);
+
+                    break;
+            }
             List<string> allEmails = new List<string>();
 
 
-            allEmails.AddRange(getEmailAddresses(powerUsers));
+            allEmails.AddRange(getEmailAddresses(recipients));
 
-            allEmails.AddRange(getEmailAddresses(moderators));
 
             if (allEmails.Count == 0) return;
 
@@ -83,30 +102,6 @@ namespace PxStat.System.Notification
             {
                 email.Bcc.Add(person);
             }
-
-
-            string subject = "";
-            string body = "";
-            string releaseUrl = getReleaseUrl(releaseDTO);
-            switch (rspDTO.RspCode)
-            {
-
-
-                case Constants.C_WORKFLOW_STATUS_APPROVE:
-
-                    subject = string.Format(Label.Get("email.subject.response-approve"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.response-approve"), requestDTO.RqsValue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl);
-
-                    break;
-
-                case Constants.C_WORKFLOW_STATUS_REJECT:
-
-                    subject = string.Format(Label.Get("email.subject.response-reject"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.response-reject"), requestDTO.RqsValue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl);
-
-                    break;
-            }
-
 
 
             sendMail(email, ConfigurationManager.AppSettings["APP_NAME"], subject, body);
@@ -138,11 +133,12 @@ namespace PxStat.System.Notification
             string subject = "";
             string body = "";
             string releaseUrl = getReleaseUrl(releaseDTO);
+            string rqsvalue = Label.Get("workflow.request." + requestDTO.RqsValue);
             switch (sgnDTO.SgnCode)
             {
                 case Constants.C_WORKFLOW_STATUS_APPROVE:
                     subject = string.Format(Label.Get("email.subject.signoff-approve"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.signoff-approve"), requestDTO.RqsValue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl);
+                    body = string.Format(Label.Get("email.body.signoff-approve"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, sgnDTO.SignoffAccount.CcnEmail, sgnDTO.SignoffAccount.CcnUsername, sgnDTO.SignoffAccount.CcnName);
 
 
                     break;
@@ -150,7 +146,7 @@ namespace PxStat.System.Notification
                 case Constants.C_WORKFLOW_STATUS_REJECT:
 
                     subject = string.Format(Label.Get("email.subject.signoff-reject"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.signoff-reject"), requestDTO.RqsValue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl);
+                    body = string.Format(Label.Get("email.body.signoff-reject"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, sgnDTO.SignoffAccount.CcnEmail, sgnDTO.SignoffAccount.CcnUsername, sgnDTO.SignoffAccount.CcnName);
 
 
 

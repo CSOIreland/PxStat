@@ -33,22 +33,26 @@ app.release.panel.workInProgress.ajax.read = function () {
         {
             LngIsoCode: app.label.language.iso.code
         },
-        "app.release.panel.workInProgress.callback.read");
+        "app.release.panel.workInProgress.callback.readOnSuccess",
+        null,
+        "app.release.panel.workInProgress.callback.readOnError",
+        null);
 };
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.release.panel.workInProgress.callback.read = function (response) {
-    if (response.error) {
-        app.release.panel.workInProgress.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.panel.workInProgress.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.panel.workInProgress.callback.readOnSuccess = function (data) {
+    app.release.panel.workInProgress.callback.drawDataTable(data);
+};
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.release.panel.workInProgress.callback.readOnError = function (error) {
+    app.release.panel.workInProgress.callback.drawDatatable();
 };
 
 /**
@@ -98,6 +102,7 @@ app.release.panel.workInProgress.callback.drawDataTable = function (data) {
                 },
                 {
                     data: null,
+                    visible: false,
                     render: function (data, type, row) {
                         return row.DhtDatetime ? moment(row.DhtDatetime, app.config.mask.datetime.ajax).format(app.config.mask.datetime.display) : "";
                     }
@@ -129,22 +134,26 @@ app.release.panel.awaitingResponse.ajax.read = function () {
         {
             LngIsoCode: app.label.language.iso.code
         },
-        "app.release.panel.awaitingResponse.callback.read");
+        "app.release.panel.awaitingResponse.callback.readOnSuccess",
+        null,
+        "app.release.panel.awaitingResponse.callback.readOnError",
+        null);
 };
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.release.panel.awaitingResponse.callback.read = function (response) {
-    if (response.error) {
-        app.release.panel.awaitingResponse.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.panel.awaitingResponse.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.panel.awaitingResponse.callback.readOnSuccess = function (data) {
+    app.release.panel.awaitingResponse.callback.drawDataTable(data);
+};
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.release.panel.awaitingResponse.callback.readOnError = function (error) {
+    app.release.panel.awaitingResponse.callback.drawDatatable();
 };
 
 /**
@@ -227,22 +236,26 @@ app.release.panel.awaitingSignoff.ajax.read = function () {
         {
             LngIsoCode: app.label.language.iso.code
         },
-        "app.release.panel.awaitingSignoff.callback.read");
+        "app.release.panel.awaitingSignoff.callback.readOnSuccess",
+        null,
+        "app.release.panel.awaitingSignoff.callback.readOnError",
+        null);
 };
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.release.panel.awaitingSignoff.callback.read = function (response) {
-    if (response.error) {
-        app.release.panel.awaitingSignoff.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.panel.awaitingSignoff.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.panel.awaitingSignoff.callback.readOnSuccess = function (data) {
+    app.release.panel.awaitingSignoff.callback.drawDataTable(data);
+};
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.release.panel.awaitingSignoff.callback.readOnError = function (error) {
+    app.release.panel.awaitingSignoff.callback.drawDatatable();
 };
 
 /**
@@ -323,22 +336,26 @@ app.release.panel.pendingLive.ajax.read = function () {
         {
             LngIsoCode: app.label.language.iso.code
         },
-        "app.release.panel.pendingLive.callback.read");
+        "app.release.panel.pendingLive.callback.readOnSuccess",
+        null,
+        "app.release.panel.pendingLive.callback.readOnError",
+        null);
 };
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.release.panel.pendingLive.callback.read = function (response) {
-    if (response.error) {
-        app.release.panel.pendingLive.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.release.panel.pendingLive.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.release.panel.pendingLive.callback.readOnSuccess = function (data) {
+    app.release.panel.pendingLive.callback.drawDataTable(data);
+};
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.release.panel.pendingLive.callback.readOnError = function (error) {
+    app.release.panel.pendingLive.callback.drawDatatable();
 };
 
 /**

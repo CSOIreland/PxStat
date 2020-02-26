@@ -40,8 +40,8 @@ namespace PxStat.Resources
 
         internal const string C_SYSTEM_PX_NAME = "PX";
         internal const string C_SYSTEM_JSON_STAT_NAME = "JSON-stat";
-        internal const string C_SYSTEM_JSON_NAME = "json";
         internal const string C_SYSTEM_CSV_NAME = "CSV";
+        internal const string C_SYSTEM_XLSX_NAME = "XLSX";
 
 
         private const string C_SYSTEM_CODE_RESERVED_WORD_VALUE = "Value";

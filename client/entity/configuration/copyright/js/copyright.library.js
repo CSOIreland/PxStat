@@ -26,14 +26,10 @@ app.copyright.ajax.read = function () {
 
 /**
  * Callback from server after reading data
- * @param  {} response
+ * @param  {} data
  */
-app.copyright.callback.read = function (response) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    app.copyright.drawDatatable(response.data);
-  } else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.copyright.callback.read = function (data) {
+  app.copyright.drawDatatable(data);
 };
 
 /**
@@ -176,9 +172,9 @@ app.copyright.ajax.create = function () {
     app.config.url.api.private,
     "PxStat.System.Settings.Copyright_API.Create",
     apiParams,
-    "app.copyright.callback.create",
+    "app.copyright.callback.createOnSuccess",
     callbackParam,
-    null,
+    "app.copyright.callback.createOnError",
     null,
     { async: false }
   );
@@ -186,17 +182,25 @@ app.copyright.ajax.create = function () {
 
 /**
  * Callback form server after adding data
- * @param {*} response
+ * @param {*} data
  * @param {*} callbackParam
  */
-app.copyright.callback.create = function (response, callbackParam) {
+app.copyright.callback.createOnSuccess = function (data, callbackParam) {
   app.copyright.ajax.read();
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     $("#copyright-modal-create").modal("hide");
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.CprValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Callback form server after adding data
+ * @param {*} error
+ * @param {*} callbackParam
+ */
+app.copyright.callback.createOnError = function (error) {
+  app.copyright.ajax.read();
 };
 
 //#endregion
@@ -227,32 +231,29 @@ app.copyright.ajax.readUpdate = function (idn) {
 
 /**
  * Set up modal for update
- * @param  {} response
+ * @param  {} data
  * @param  {} idn
  */
-app.copyright.callback.readUpdate = function (response, idn) {
-  if (response.error) {
-    api.modal.error(response.error.message);
-  }
-  else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-    api.modal.information(app.label.static["api-ajax-nodata"]);
-    // Force reload
-    app.copyright.ajax.read();
-  }
-  else if (response.data) {
-    response.data = response.data[0];
+app.copyright.callback.readUpdate = function (data, idn) {
+  if (data && Array.isArray(data) && data.length) {
+    data = data[0];
     //Add validation and reset form 
     app.copyright.validation.update();
     //Store OLD value of idn (CprCode) in attribute.
     $("#copyright-modal-update").find("form [name=idn]").val(idn);
     $("#copyright-modal-update").find("[name=cpr-code]").val(idn);
     //Update fields values
-    $("#copyright-modal-update").find("[name=cpr-value]").val(response.data.CprValue);
-    $("#copyright-modal-update").find("[name=cpr-url]").val(response.data.CprUrl);
+    $("#copyright-modal-update").find("[name=cpr-value]").val(data.CprValue);
+    $("#copyright-modal-update").find("[name=cpr-url]").val(data.CprUrl);
     //Show modal
     $("#copyright-modal-update").modal("show");
   }
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+  else {
+    // Handle no data
+    api.modal.information(app.label.static["api-ajax-nodata"]);
+    // Force reload
+    app.copyright.ajax.read();
+  }
 };
 
 /**
@@ -312,9 +313,9 @@ app.copyright.ajax.update = function () {
     app.config.url.api.private,
     "PxStat.System.Settings.Copyright_API.Update",
     apiParams,
-    "app.copyright.callback.update",
+    "app.copyright.callback.updateOnSuccess",
     callbackParam,
-    null,
+    "app.copyright.callback.updateOnError",
     null,
     { async: false }
   );
@@ -322,19 +323,28 @@ app.copyright.ajax.update = function () {
 
 /**
  * Callback after update
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.copyright.callback.update = function (response, callbackParam) {
+app.copyright.callback.updateOnSuccess = function (data, callbackParam) {
   app.copyright.ajax.read();
   $("#copyright-modal-update").modal("hide");
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.CprCodeOld]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
+};
+
+/**
+ * Callback after update
+ * @param  {} error
+ * @param  {} callbackParam
+ */
+app.copyright.callback.updateOnError = function (error) {
+  app.copyright.ajax.read();
+  $("#copyright-modal-update").modal("hide");
 };
 
 //#endregion
@@ -365,9 +375,9 @@ app.copyright.ajax.delete = function (idn) {
     app.config.url.api.private,
     "PxStat.System.Settings.Copyright_API.Delete",
     apiParams,
-    "app.copyright.callback.delete",
+    "app.copyright.callback.deleteOnSuccess",
     idn,
-    null,
+    "app.copyright.callback.deleteOnError",
     null,
     { async: false }
   );
@@ -375,16 +385,23 @@ app.copyright.ajax.delete = function (idn) {
 
 /**
  * Callback for delete
- * @param {*} response
+ * @param {*} data
  * @param {*} idn
  */
-app.copyright.callback.delete = function (response, idn) {
+app.copyright.callback.deleteOnSuccess = function (data, idn) {
   app.copyright.ajax.read();
-  if (response.error) {
-    api.modal.error(response.error.message);
-  } else if (response.data == C_APP_API_SUCCESS) {
+
+  if (data == C_APP_API_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
+};
+
+/**
+ * Callback for delete
+ * @param {*} error
+ */
+app.copyright.callback.deleteOnError = function (error) {
+  app.copyright.ajax.read();
 };
 
 //#endregion

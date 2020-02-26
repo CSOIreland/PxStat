@@ -9,8 +9,9 @@ $(document).ready(function () {
     app.navigation.layout.set(false);
     app.navigation.breadcrumb.set([app.label.static["keywords"], app.label.static["releases"]]);
     // Load HTML for Data Set Modal 
-    api.content.load("#dataViewModal #data-dataset-row", "entity/data/index.dataset.html");
-    api.content.load("#dataViewModal #data-dataview-row", "entity/data/index.dataview.html");
+    api.content.load("#keyword-release-data-modal", "entity/data/index.modal.html");
+    api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
+    api.content.load("#data-dataview-row", "entity/data/index.dataview.html");
     // Load the side panel
     api.content.load("#panel", "entity/keyword/search/index.html");
 

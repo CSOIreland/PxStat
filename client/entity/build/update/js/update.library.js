@@ -6,7 +6,8 @@ app.build = app.build || {};
 app.build.update = {};
 
 app.build.update.ajax = {};
-app.build.update.ajax.response = [];
+app.build.update.ajax.data = [];
+app.build.update.ajax.jsonStat = [];
 app.build.update.callback = {};
 
 app.build.update.matrixLookup = {};
@@ -45,49 +46,37 @@ app.build.update.ajax.readFrequency = function () {
 
 /**
  * Fill dropdown for frequency Select
- * @param {*} response 
+ * @param {*} data 
  */
-app.build.update.callback.readFrequency = function (response) {
-    $("#build-update-properties [name=frequency-code]").empty();
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-        // Do nothing 
-    }
-    else if (response.data !== undefined) {
-        // Set in Properties
-        $("#build-update-properties [name=frequency-code]").append($("<option>", {
-            "text": app.label.static["select-uppercase"],
-            "value": "SELECT",
-            "disabled": "disabled",
-            "selected": "selected"
-        }));
+app.build.update.callback.readFrequency = function (data) {
+    // Set in Properties
+    $("#build-update-properties").find("[name=frequency-code]").empty().append($("<option>", {
+        "text": app.label.static["select-uppercase"],
+        "value": "SELECT",
+        "disabled": "disabled",
+        "selected": "selected"
+    }));
 
-        $.each(response.data, function (key, value) {
-            $("#build-update-properties [name=frequency-code]").append($("<option>", {
-                "value": value.FrqCode,
-                "text": value.FrqCode + " - " + app.label.static[value.FrqValue]
-            }));
-        });
+    // Set in Modal
+    $("#build-update-modal-frequency").find("[name=frq-code]").empty().append($("<option>", {
+        "text": app.label.static["select-uppercase"],
+        "disabled": "disabled",
+        "selected": "selected"
+    }));
+
+    $.each(data, function (key, value) {
+        // Set in Properties
+        $("#build-update-properties").find("[name=frequency-code]").append($("<option>", {
+            "value": value.FrqCode,
+            "text": value.FrqCode + " - " + app.label.static[value.FrqValue]
+        }));
 
         // Set in Modal
         $("#build-update-modal-frequency").find("[name=frq-code]").append($("<option>", {
-            "text": app.label.static["select-uppercase"],
-            "disabled": "disabled",
-            "selected": "selected"
+            "value": value.FrqCode,
+            "text": value.FrqCode + " - " + app.label.static[value.FrqValue]
         }));
-
-        $.each(response.data, function (key, value) {
-            $("#build-update-modal-frequency").find("[name=frq-code]").append($("<option>", {
-                "value": value.FrqCode,
-                "text": value.FrqCode + " - " + app.label.static[value.FrqValue]
-            }));
-        });
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    });
 };
 
 /**
@@ -109,34 +98,21 @@ app.build.update.ajax.readCopyright = function () {
 /**
  * 
  */
-app.build.update.callback.readCopyright = function (response) {
-    $("#build-update-properties [name=copyright-code]").empty();
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-        // Do nothing 
-    }
-    else if (response.data !== undefined) {
-        data = response.data;
-        // Map API data to select dropdown  model for main Subject search and update Subject search
-        $("#build-update-properties [name=copyright-code]").append($("<option>", {
-            "text": app.label.static["select-uppercase"],
-            "value": "SELECT",
-            "disabled": "disabled",
-            "selected": "selected"
-        }));
+app.build.update.callback.readCopyright = function (data) {
+    // Map API data to select dropdown  model for main Subject search and update Subject search
+    $("#build-update-properties [name=copyright-code]").empty().append($("<option>", {
+        "text": app.label.static["select-uppercase"],
+        "value": "SELECT",
+        "disabled": "disabled",
+        "selected": "selected"
+    }));
 
-        $.each(data, function (key, value) {
-            $("#build-update-properties [name=copyright-code]").append($("<option>", {
-                "value": value.CprCode,
-                "text": value.CprValue,
-            }));
-        });
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    $.each(data, function (key, value) {
+        $("#build-update-properties [name=copyright-code]").append($("<option>", {
+            "value": value.CprCode,
+            "text": value.CprValue,
+        }));
+    });
 };
 
 /**
@@ -156,40 +132,28 @@ app.build.update.ajax.readFormat = function () {
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.build.update.callback.readFormat = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    }
+app.build.update.callback.readFormat = function (data) {
+    $.each(data, function (index, format) {
+        var formatDropdown = $("#build-update-dimension-metadata-templates").find("[name=create-submit]").clone();
+        formatDropdown.attr(
+            {
+                "frm-type": format.FrmType,
+                "frm-version": format.FrmVersion
+            });
 
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
-    else if (response.data) {
-        $.each(response.data, function (index, format) {
-            var formatDropdown = $("#build-update-dimension-metadata-templates").find("[name=create-submit]").clone();
-            formatDropdown.attr(
-                {
-                    "frm-type": format.FrmType,
-                    "frm-version": format.FrmVersion
-                });
+        formatDropdown.find("[name=type]").text(format.FrmType);
+        formatDropdown.find("[name=version]").text(format.FrmVersion);
 
-            formatDropdown.find("[name=type]").text(format.FrmType);
-            formatDropdown.find("[name=version]").text(format.FrmVersion);
+        $("#build-update-dimensions [name=format-list]").append(formatDropdown);
+    });
 
-            $("#build-update-dimensions [name=format-list]").append(formatDropdown);
-        });
-
-        $("#build-update-dimensions").find("[name=create-submit]").once("click", function (e) {
-            app.build.update.data.FrmType = $(this).attr("frm-type");
-            app.build.update.data.FrmVersion = $(this).attr("frm-version");
-            app.build.update.updateOutput();
-        });
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    $("#build-update-dimensions").find("[name=create-submit]").once("click", function (e) {
+        app.build.update.data.FrmType = $(this).attr("frm-type");
+        app.build.update.data.FrmVersion = $(this).attr("frm-version");
+        app.build.update.updateOutput();
+    });
 };
 
 /**
@@ -246,28 +210,10 @@ app.build.update.ajax.downloadDataTemplate = function () {
 /**
  * 
  */
-app.build.update.callback.downloadDataTemplate = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var blob = new Blob([response.data.template], { type: "text/plain" });
-        var downloadUrl = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = response.data.MtrCode + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + "." + app.label.static["template"].toLowerCase() + ".csv";
-
-        if (document.createEvent) {
-            // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-            var event = document.createEvent('MouseEvents');
-            event.initEvent('click', true, true);
-            a.dispatchEvent(event);
-        }
-        else {
-            a.click();
-        }
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.update.callback.downloadDataTemplate = function (data) {
+    var fileName = data.MtrCode + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + "." + app.label.static["template"].toLowerCase();
+    // Download the file
+    app.library.utility.download(fileName, data.template, C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 };
 
 /**
@@ -314,28 +260,10 @@ app.build.update.ajax.downloadExistingData = function (params) {
 
 };
 
-app.build.update.callback.downloadData = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        var blob = new Blob([response.data.csv], { type: "text/plain" });
-        var downloadUrl = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = response.data.MtrCode + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + "." + app.label.static["data"].toLowerCase() + ".csv";
-
-        if (document.createEvent) {
-            // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-            var event = document.createEvent('MouseEvents');
-            event.initEvent('click', true, true);
-            a.dispatchEvent(event);
-        }
-        else {
-            a.click();
-        }
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.update.callback.downloadData = function (data) {
+    var fileName = data.MtrCode + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + "." + app.label.static["data"].toLowerCase();
+    // Download the file
+    app.library.utility.download(fileName, data.csv, C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 };
 
 
@@ -490,14 +418,13 @@ app.build.update.hasDuplicate = function (codes, values, selector) {
     });
 
     //Append codes and values existing source
-    $(app.build.update.ajax.response).each(function (key, value) {
-        var data = JSONstat(value);
-        if (lngIsoCode == data.extension.language.code) {
-            for (i = 0; i < data.length; i++) {
-                if (data.Dimension(i).role == "time") {
-                    $.each(data.Dimension(i).id, function (index, period) {
+    $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
+        if (lngIsoCode == jsonStat.extension.language.code) {
+            for (i = 0; i < jsonStat.length; i++) {
+                if (jsonStat.Dimension(i).role == "time") {
+                    $.each(jsonStat.Dimension(i).id, function (index, period) {
                         codes.push(period);
-                        values.push(data.Dimension(i).Category(index).label);
+                        values.push(jsonStat.Dimension(i).Category(index).label);
                     });
                 }
             }
@@ -635,10 +562,9 @@ app.build.update.updateOutput = function () {
         validationErrors.push(app.label.static["update-properties"]);
     }
     //for each language, run validation to check for errors with dimension properties
-    $(app.build.update.ajax.response).each(function (key, response) {
-        var data = JSONstat(response);
-        var lngIsoCode = data.extension.language.code;
-        var lngIsoName = data.extension.language.name;
+    $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
+        var lngIsoCode = jsonStat.extension.language.code;
+        var lngIsoName = jsonStat.extension.language.name;
         $("#build-update-dimension-nav-" + lngIsoCode).find("[type=submit]").trigger("click");
         if (!app.build.update.validate.isDimensionPropertyValid) {
             validationErrors.push(app.library.html.parseDynamicLabel("update-dimension-properties", [lngIsoName]));
@@ -646,19 +572,17 @@ app.build.update.updateOutput = function () {
     });
     if (!validationErrors.length) {
         //validate for no duplicate dimension labels 
-
-        $(app.build.update.ajax.response).each(function (key, response) {
+        $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
             var dimensionLabels = [];
-            var data = JSONstat(response);
-            dimensionLabels.push($("#build-update-dimension-nav-collapse-properties-" + data.extension.language.code + " [name=frequency-value]").val());
-            dimensionLabels.push($("#build-update-dimension-nav-collapse-properties-" + data.extension.language.code + " [name=statistic-label]").val());
-            for (i = 0; i < data.length; i++) {
-                if (data.Dimension(i).role == "classification") {
-                    dimensionLabels.push(data.Dimension(i).label);
+            dimensionLabels.push($("#build-update-dimension-nav-collapse-properties-" + jsonStat.extension.language.code + " [name=frequency-value]").val());
+            dimensionLabels.push($("#build-update-dimension-nav-collapse-properties-" + jsonStat.extension.language.code + " [name=statistic-label]").val());
+            for (i = 0; i < jsonStat.length; i++) {
+                if (jsonStat.Dimension(i).role == "classification") {
+                    dimensionLabels.push(jsonStat.Dimension(i).label);
                 }
             }
             if (app.library.utility.arrayHasDuplicate(dimensionLabels)) {
-                validationErrors.push(app.library.html.parseDynamicLabel("build-dimension", [data.extension.language.name]));
+                validationErrors.push(app.library.html.parseDynamicLabel("build-dimension", [jsonStat.extension.language.name]));
             }
         });
     }
@@ -691,13 +615,11 @@ app.build.update.updateOutput = function () {
 
     }
     if (!validationErrors.length) {
-        var data = null;
-
         if (app.build.update.upload.file.content.data.JSON != null) {
-            data = app.build.update.upload.file.content.data.JSON.data;
-        };
-        //no errors, proceed to get updated px file from server
-        $("#build-update-dimensions").find("[name=update-error-card]").hide();
+            jsonStat = app.build.update.upload.file.content.data.JSON.data;
+        } else {
+            jsonStat = null;
+        }
 
         //populate json data object
         app.build.update.data = $.extend(true, app.build.update.data, {
@@ -707,12 +629,12 @@ app.build.update.updateOutput = function () {
             "FrqValueTimeval": $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val(),
             "MtrOfficialFlag": $("#build-update-properties").find("[name=official-flag]").prop('checked'),
             "CprCode": $("#build-update-properties").find("[name=copyright-code]").val(),
-            "Data": data
+            "Data": jsonStat
         });
 
         //build properties to dimensions 
-        $(app.build.update.ajax.response).each(function (key, value) {
-            var lngIsoCode = value.extension.language.code;
+        $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
+            var lngIsoCode = jsonStat.extension.language.code;
             var tinyMceId = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode).find("[name=note-value]").attr("id");
             var noteValue = tinymce.get(tinyMceId).getContent();
             $(app.build.update.data.Dimension).each(function (key, value) {
@@ -746,9 +668,6 @@ app.build.update.updateOutput = function () {
             errorOutput.append(error);
         });
         api.modal.error(errorOutput);
-
-        $("#build-update-dimensions").find("[name=update-error]").html(errorOutput.get(0).outerHTML);
-        $("#build-update-dimensions").find("[name=update-error-card]").fadeIn();
     }
 };
 
@@ -816,14 +735,13 @@ app.build.update.ajax.updateOutput = function () {
 
     //remove data properties not need by api, value columns may be included in data csv template
     var dimensionCodes = [];
-    $(app.build.update.ajax.response).each(function (key, value) {
-        var data = JSONstat(value);
-        if (data.extension.language.code == app.config.language.iso.code) {
+    $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
+        if (jsonStat.extension.language.code == app.config.language.iso.code) {
             //get dimension codes from default JsonStat
-            for (i = 0; i < data.length; i++) {
-                if (data.Dimension(i).role != "time") {
+            for (i = 0; i < jsonStat.length; i++) {
+                if (jsonStat.Dimension(i).role != "time") {
                     //don't add the time code to dimension code array 
-                    dimensionCodes.push(data.id[i]);
+                    dimensionCodes.push(jsonStat.id[i]);
                 }
             };
         };
@@ -857,74 +775,35 @@ app.build.update.ajax.updateOutput = function () {
 };
 
 /**
- *Download updated bx file from response
+ *Download updated bx file from data
  *
- * @param {*} response
+ * @param {*} data
  */
-app.build.update.callback.updateOutput = function (response, format) {
-
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
-    else if (response.data) {
-
-        var mimeType = "";
-        var fileExtension = "";
+app.build.update.callback.updateOutput = function (data, format) {
+    if (data && Array.isArray(data) && data.length) {
         var fileName = $("#build-update-properties [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
 
         switch (format) {
-            case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-                mimeType = "application/json";
-                fileExtension = C_APP_EXTENSION_JSONSTAT;
-                break;
             case C_APP_TS_FORMAT_TYPE_PX:
-                mimeType = "text/plain";
-                fileExtension = C_APP_EXTENSION_PX;
+                $.each(data, function (index, file) {
+                    // Download the file
+                    app.library.utility.download(fileName, file, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
+                });
+                break;
+            case C_APP_TS_FORMAT_TYPE_JSONSTAT:
+                $.each(data, function (index, file) {
+                    // Download the file
+                    app.library.utility.download(fileName, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
+                });
                 break;
             default:
                 api.modal.exception(app.label.static["api-ajax-exception"]);
-                return;
                 break;
         };
 
-        $.each(response.data, function (index, file) {
-            var fileData = null;
-            switch (format) {
-                case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-                    fileData = JSON.stringify(file);
-                    //Append language iso code
-                    fileName += "." + JSONstat(file).extension.language.code;
-                    break;
-                case C_APP_TS_FORMAT_TYPE_PX:
-                    fileData = file;
-                    break;
-            };
-
-            var blob = new Blob([fileData], { type: mimeType });
-            var downloadUrl = URL.createObjectURL(blob);
-            var a = document.createElement("a");
-            a.href = downloadUrl;
-            a.download = fileName + '.' + fileExtension;
-            if (document.createEvent) {
-                // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-                var event = document.createEvent('MouseEvents');
-                event.initEvent('click', true, true);
-                a.dispatchEvent(event);
-            }
-            else {
-                a.click();
-            }
-        });
-
-        api.modal.success(app.label.static["update-success"]);
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-
 };
 
 /**

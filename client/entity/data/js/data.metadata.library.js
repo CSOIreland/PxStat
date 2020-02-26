@@ -52,22 +52,14 @@ app.data.metadata.ajax.readSearch = function (Search) {
 
 /**
 * 
-* @param {*} response
+* @param {*} data
 */
-app.data.metadata.callback.readResults = function (response, params) {
+app.data.metadata.callback.readResults = function (data, params) {
     //always reset breadcrumb
     app.navigation.breadcrumb.set([]);
     params = params || {};
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        $("#data-filter, #data-metadata-row [name=search-results]").empty();
-        $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").show();
-        $("#data-search-results-pagination [name=pagination]").hide();
-        $("#data-navigation").find(".navbar-collapse").collapse('show');
-    }
-    else if (response.data) {
+
+    if (data && Array.isArray(data) && data.length) {
         $("#data-filter, #data-metadata-row [name=search-results]").empty();
         $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").hide();
         $("#data-dataview-selected-table, #panel, #data-view-container").empty();
@@ -76,13 +68,13 @@ app.data.metadata.callback.readResults = function (response, params) {
         if (params.PrcCode) {
             //update breadcrumb
             if (app.data.MtrCode) {
-                app.navigation.breadcrumb.set([response.data[0].SbjValue, {
-                    "text": response.data[0].PrcValue,
+                app.navigation.breadcrumb.set([data[0].SbjValue, {
+                    "text": data[0].PrcValue,
                     "goTo": {
                         "pRelativeURL": "entity/data/",
                         "pNav_link_SelectorToHighlight": "#nav-link-data",
                         "pParams": {
-                            "PrcCode": response.data[0].PrcCode
+                            "PrcCode": data[0].PrcCode
                         }
                     }
                 }]);
@@ -93,7 +85,7 @@ app.data.metadata.callback.readResults = function (response, params) {
             //update breadcrumb with copyright value
             if (app.data.MtrCode) {
                 app.navigation.breadcrumb.set([{
-                    "text": response.data[0].CprValue,
+                    "text": data[0].CprValue,
                     "goTo": {
                         "pRelativeURL": "entity/data/",
                         "pNav_link_SelectorToHighlight": "#nav-link-data",
@@ -106,14 +98,14 @@ app.data.metadata.callback.readResults = function (response, params) {
         }
 
         // Implement GoTo
-        if (params.MtrCode && response.data.length == 1) {
+        if (params.MtrCode && data.length == 1) {
             //collapse latest releases
             $("#data-latest-releases").remove();
             $("#data-accordion-collection-api").hide();
             //collapse navigation
             $("#data-navigation").find(".navbar-collapse").collapse("hide");
 
-            app.data.init(response.data[0].LngIsoCode, response.data[0].MtrCode, null, response.data[0].MtrCode);
+            app.data.init(data[0].LngIsoCode, data[0].MtrCode, null, data[0].MtrCode);
             app.data.dataset.ajax.readMetadata();
 
             $("#data-metadata-row, #data-filter, #data-search-results-pagination [name=pagination]").hide();
@@ -122,7 +114,7 @@ app.data.metadata.callback.readResults = function (response, params) {
             return;
         }
         $("#data-filter").empty();
-        app.data.metadata.searchResults = response.data;
+        app.data.metadata.searchResults = data;
         var searchResultsSort = $("#data-metadata-templates").find("[name=search-results-sort]").clone();
         searchResultsSort.find("[name=search-results-sort-select]").empty().append($('<option>', {
             selected: "selected",
@@ -312,8 +304,13 @@ app.data.metadata.callback.readResults = function (response, params) {
         });
         app.data.metadata.callback.filterResults();
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // Handle no data
+    else {
+        $("#data-filter, #data-metadata-row [name=search-results]").empty();
+        $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").show();
+        $("#data-search-results-pagination [name=pagination]").hide();
+        $("#data-navigation").find(".navbar-collapse").collapse('show');
+    }
 
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
@@ -332,7 +329,7 @@ app.data.metadata.callback.filterResults = function () {
     //subjectsSelected
     $("#data-filter").find("[filter-type=subject]").find("[name=filter-list-item]").each(function (index) {
         if ($(this).attr("active") == "true") {
-            //FIXME: Server response return int. The jQuery.inArray is strict compare, see code below.
+            // Server return int. The jQuery.inArray is strict compare, see code below.
             subjectsSelected.push(parseInt($(this).attr("sbj-code")));
         }
     });

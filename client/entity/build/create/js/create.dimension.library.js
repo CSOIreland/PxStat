@@ -36,89 +36,79 @@ app.build.create.dimension.ajax.readFormat = function () {
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.build.create.dimension.callback.readFormat = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        api.modal.error(response.error.message);
-    }
-
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
-    else if (response.data) {
-        app.build.create.dimension.callback.drawFormat(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.create.dimension.callback.readFormat = function (data) {
+    app.build.create.dimension.callback.drawFormat(data);
 };
 
 /**
  * Draw dropdown
- * @param {*} response
+ * @param {*} data
  */
-app.build.create.dimension.callback.drawFormat = function (response) {
-    $.each(response, function (index, format) {
-        var formatDropdown = $("#build-create-dimension-metadata-templates").find("[name=create-submit]").clone();
-        formatDropdown.attr(
-            {
-                "frm-type": format.FrmType,
-                "frm-version": format.FrmVersion
-            });
+app.build.create.dimension.callback.drawFormat = function (data) {
+    if (data && Array.isArray(data) && data.length) {
+        $.each(data, function (index, format) {
+            var formatDropdown = $("#build-create-dimension-metadata-templates").find("[name=create-submit]").clone();
+            formatDropdown.attr(
+                {
+                    "frm-type": format.FrmType,
+                    "frm-version": format.FrmVersion
+                });
 
-        formatDropdown.find("[name=type]").text(format.FrmType);
-        formatDropdown.find("[name=version]").text(format.FrmVersion);
+            formatDropdown.find("[name=type]").text(format.FrmType);
+            formatDropdown.find("[name=version]").text(format.FrmVersion);
 
-        $("#build-create-matrix-dimensions [name=format-list]").append(formatDropdown);
-    });
-
-    $("#build-create-matrix-dimensions").find("[name=create-submit]").once("click", function (e) {
-        e.preventDefault();
-        $.each(app.build.create.initiate.languages, function (key, language) {
-            $("#build-create-dimension-accordion-" + language.code).find("[type=submit]").trigger("click");
+            $("#build-create-matrix-dimensions [name=format-list]").append(formatDropdown);
         });
-        if (app.build.create.dimension.propertiesValid) {
-            app.build.create.initiate.data.FrmType = $(this).attr("frm-type");
-            app.build.create.initiate.data.FrmVersion = $(this).attr("frm-version");
-            app.build.create.dimension.buildDataObject();
-        };
-    });
+
+        $("#build-create-matrix-dimensions").find("[name=create-submit]").once("click", function (e) {
+            e.preventDefault();
+            $.each(app.build.create.initiate.languages, function (key, value) {
+                $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[type=submit]").trigger("click");
+            });
+            if (app.build.create.dimension.propertiesValid) {
+                app.build.create.initiate.data.FrmType = $(this).attr("frm-type");
+                app.build.create.initiate.data.FrmVersion = $(this).attr("frm-version");
+                app.build.create.dimension.buildDataObject();
+            };
+        });
+    }
 };
 //#endregion
 //#region draw tabs 
 app.build.create.dimension.drawTabs = function () {
     //each accordion must have unique id to toggle, each collapse must unique id. Use language code to build unique id's
 
-    $("#build-create-dimensions").find("[name=dimension-error-card]").hide();
     $("#build-create-dimensions").find("[name=nav-tab]").empty();
     $("#build-create-dimensions").find("[name=tab-content]").empty();
     // Tabs item item
     $.each(app.build.create.initiate.languages, function (key, value) {
         var tabLanguageItem = $("#build-create-dimension-metadata-templates").find("[name=nav-lng-tab-item]").clone(); // Tabs item item
         //Set values
-        tabLanguageItem.attr("lng-iso-code", value.code);
-        tabLanguageItem.attr("id", "build-create-dimension-nav-" + value.code + "-tab");
-        tabLanguageItem.attr("href", "#build-create-dimension-nav-" + value.code);
-        tabLanguageItem.attr("aria-controls", "nav-" + value.code);
-        tabLanguageItem.text(value.name);
+        tabLanguageItem.attr("lng-iso-code", value.LngIsoCode);
+        tabLanguageItem.attr("lng-iso-name", value.LngIsoName);
+        tabLanguageItem.attr("id", "build-create-dimension-nav-" + value.LngIsoCode + "-tab");
+        tabLanguageItem.attr("href", "#build-create-dimension-nav-" + value.LngIsoCode);
+        tabLanguageItem.attr("aria-controls", "nav-" + value.LngIsoCode);
+        tabLanguageItem.text(value.LngIsoName);
         if (key === 0) {
             tabLanguageItem.addClass("active show");
         }
         $("#build-create-dimensions #nav-tab").append(tabLanguageItem.get(0).outerHTML);
         var tabContent = $("#build-create-dimension-metadata-templates").find("[name=nav-lng-tab-item-content]").clone();
-        tabContent.attr("id", "build-create-dimension-nav-" + value.code);
+        tabContent.attr("id", "build-create-dimension-nav-" + value.LngIsoCode);
 
 
-        tabContent.attr("lng-iso-code", value.code);
+        tabContent.attr("lng-iso-code", value.LngIsoCode);
         if (key === 0) {
             tabContent.addClass("active show");
         }
-        tabContent.find(".accordion").attr("id", "build-create-dimension-accordion-" + value.code);
+        tabContent.find(".accordion").attr("id", "build-create-dimension-accordion-" + value.LngIsoCode);
         $.each(tabContent.find("[name=dimension-collapse]"), function () {
-            $(this).find(".collapse").attr("data-parent", "#" + "build-create-dimension-accordion-" + value.code);
-            $(this).find(".collapse").attr("id", "build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.code);
-            $(this).find(".card-header").find(".btn-link").attr("data-target", "#build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.code);
+            $(this).find(".collapse").attr("data-parent", "#" + "build-create-dimension-accordion-" + value.LngIsoCode);
+            $(this).find(".collapse").attr("id", "build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.LngIsoCode);
+            $(this).find(".card-header").find(".btn-link").attr("data-target", "#build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.LngIsoCode);
             $(this).find(".card-header").find(".btn-link").attr("aria-controls", "collapse-" + $(this).attr("card"));
         });
 
@@ -129,14 +119,14 @@ app.build.create.dimension.drawTabs = function () {
     });
     //Draw tab content for each language
     $.each(app.build.create.initiate.languages, function (key, value) {
-        app.build.create.dimension.validation.properties(value.code);
-        $("#build-create-dimension-accordion-" + value.code).on('hide.bs.collapse show.bs.collapse', function (e) {
-            $("#build-create-dimension-accordion-" + value.code).find("[type=submit]").trigger("click");
+        app.build.create.dimension.validation.properties(value.LngIsoCode);
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).on('hide.bs.collapse show.bs.collapse', function (e) {
+            $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[type=submit]").trigger("click");
             if (!app.build.create.dimension.propertiesValid) { //keep open while invalid
                 e.preventDefault();
             }
         });
-        $("#build-create-dimension-accordion-" + value.code).find("[name=add-statistics]").once("click", function () {
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=add-statistics]").once("click", function () {
             $('#build-create-manual-si table').find("tbody").empty();
             $('#build-create-manual-si').find("[name=errors-card]").hide();
             $('#build-create-manual-si').find("[name=errors]").empty();
@@ -187,11 +177,11 @@ app.build.create.dimension.drawTabs = function () {
             $("#build-create-manual-si").find("[name=add-statistic-row]").trigger("click");
             $("#build-create-statistic").modal("show");
         });
-        $("#build-create-dimension-accordion-" + value.code).find("[name=search-classification]").once("click", function () {
-            $("#build-create-search-classiication").find("[name=search-classification-language]").text(value.name);
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=search-classification]").once("click", function () {
+            $("#build-create-search-classiication").find("[name=search-classification-language]").text(value.LngIsoName);
             $("#build-create-search-classiication").modal("show");
         });
-        $("#build-create-dimension-accordion-" + value.code).find("[name=add-classification]").once("click", function () {
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=add-classification]").once("click", function () {
             $('#build-create-manual-classification table').find("tbody").empty();
             $('#build-create-manual-classification').find("[name=errors]").empty();
             $('#build-create-manual-classification').find("[name=errors-card]").hide();
@@ -239,7 +229,7 @@ app.build.create.dimension.drawTabs = function () {
 
 
         });
-        $("#build-create-dimension-accordion-" + value.code).find("[name=add-periods]").once("click", function () {
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=add-periods]").once("click", function () {
 
             $('#build-create-manual-periods table').find("tbody").empty();
             $('#build-create-manual-periods').find("[name=manual-periods-errors-card]").hide();
@@ -290,23 +280,23 @@ app.build.create.dimension.drawTabs = function () {
             $("#build-create-new-periods").modal("show");
         });
 
-        $("#build-create-dimension-accordion-" + value.code).find("[name=delete-statistics]").once("click", function () {
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=delete-statistics]").once("click", function () {
             api.modal.confirm(
-                app.library.html.parseDynamicLabel("confirm-delete-statistics", [$("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-code")]),
+                app.library.html.parseDynamicLabel("confirm-delete-statistics", [$("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-name")]),
                 app.build.create.dimension.deleteAllStatistics
             );
         });
 
-        $("#build-create-dimension-accordion-" + value.code).find("[name=delete-classifications]").once("click", function () {
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=delete-classifications]").once("click", function () {
             api.modal.confirm(
-                app.library.html.parseDynamicLabel("confirm-delete-classifications", [$("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-code")]),
+                app.library.html.parseDynamicLabel("confirm-delete-classifications", [$("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-name")]),
                 app.build.create.dimension.deleteAllClassifications
             );
         });
 
-        $("#build-create-dimension-accordion-" + value.code).find("[name=delete-periods]").once("click", function () {
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=delete-periods]").once("click", function () {
             api.modal.confirm(
-                app.library.html.parseDynamicLabel("confirm-delete-periods", [$("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-code")]),
+                app.library.html.parseDynamicLabel("confirm-delete-periods", [$("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-name")]),
                 app.build.create.dimension.callback.deleteAllPeriods
             );
         });
@@ -319,28 +309,27 @@ app.build.create.dimension.drawTabs = function () {
 app.build.create.dimension.clearTabs = function () {
     //clear the properties
     $.each(app.build.create.initiate.languages, function (key, value) {
-        app.build.create.dimension.validation.properties(value.code);
+        app.build.create.dimension.validation.properties(value.LngIsoCode);
         $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
             dimension.Statistic = [];
             dimension.Classification = [];
             dimension.Frequency.Period = [];
         });
-        $("#build-create-dimensions").find("[name=dimension-error-card]").hide();
-        app.build.create.dimension.drawStatistics(value.code);
-        app.build.create.dimension.drawClassifications(value.code);
-        app.build.create.dimension.drawPeriods(value.code);
+        app.build.create.dimension.drawStatistics(value.LngIsoCode);
+        app.build.create.dimension.drawClassifications(value.LngIsoCode);
+        app.build.create.dimension.drawPeriods(value.coLngIsoCodede);
         //set default language as active tab
-        if (value.code == app.config.language.iso.code) {
-            $("#build-create-dimension-nav-" + value.code + "-tab").addClass("active show");
+        if (value.LngIsoCode == app.config.language.iso.code) {
+            $("#build-create-dimension-nav-" + value.LngIsoCode + "-tab").addClass("active show");
         }
         else {
-            $("#build-create-dimension-nav-" + value.code + "-tab").removeClass("active show");
+            $("#build-create-dimension-nav-" + value.LngIsoCode + "-tab").removeClass("active show");
         }
         //set properties accordion to be open
-        $("#build-create-dimension-accordion-collapse-properties-" + value.code + "").addClass("show");
-        $("#build-create-dimension-accordion-collapse-statistics-" + value.code + "").removeClass("show");
-        $("#build-create-dimension-accordion-collapse-classifications-" + value.code + "").removeClass("show");
-        $("#build-create-dimension-accordion-collapse-periods-" + value.code + "").removeClass("show");
+        $("#build-create-dimension-accordion-collapse-properties-" + value.LngIsoCode + "").addClass("show");
+        $("#build-create-dimension-accordion-collapse-statistics-" + value.LngIsoCode + "").removeClass("show");
+        $("#build-create-dimension-accordion-collapse-classifications-" + value.LngIsoCode + "").removeClass("show");
+        $("#build-create-dimension-accordion-collapse-periods-" + value.LngIsoCode + "").removeClass("show");
     });
 };
 
@@ -466,12 +455,11 @@ app.build.create.dimension.modal.deleteStatistic = function (params) {
  */
 app.build.create.dimension.deleteStatistic = function (params) {
     $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
-        if (dimension.LngIsoCode == params.LngIsoCode) { //find the data based on the LngIsoCode
-            data = dimension.Statistic;
-            $(data).each(function (key, value) {
-                if (value.SttCode == params.sttCode) { //find the record to delete
-                    data.splice(key, 1);
-                }
+        //find the data based on the LngIsoCode
+        if (dimension.LngIsoCode == params.LngIsoCode) {
+            //find the record to delete
+            dimension.Statistic = $.grep(dimension.Statistic, function (value, index) {
+                return value.SttCode == params.sttCode ? false : true;
             });
         }
     });
@@ -995,12 +983,11 @@ app.build.create.dimension.callback.viewClassification = function (data) {
  */
 app.build.create.dimension.deleteClassification = function (params) {
     $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
-        if (dimension.LngIsoCode == params.LngIsoCode) { //find the data based on the LngIsoCode
-            data = dimension.Classification;
-            $(data).each(function (key, value) {
-                if (value.ClsCode == params.ClsCode) { //find the record to delete
-                    data.splice(key, 1);
-                }
+        //find the data based on the LngIsoCode
+        if (dimension.LngIsoCode == params.LngIsoCode) {
+            //find the record to delete
+            dimension.Classification = $.grep(dimension.Classification, function (value, index) {
+                return value.ClsCode == params.ClsCode ? false : true;
             });
         }
     });
@@ -1064,14 +1051,10 @@ app.build.create.dimension.ajax.searchClassifications = function (lngIsoCode) {
 /**
  * Get classification details returned from Search.
  *
- * @param {*} response
+ * @param {*} data
  */
-app.build.create.dimension.callback.searchClassifications = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.build.create.dimension.callback.drawSearchClassifications(response.data);
-    } else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.create.dimension.callback.searchClassifications = function (data) {
+    app.build.create.dimension.callback.drawSearchClassifications(data);
 };
 
 /**
@@ -1410,15 +1393,10 @@ app.build.create.dimension.callback.classificationHasInvalidVariables = function
 
 /**
  * Callback from server after reading data : app.build.create.dimension.callback.readClassification
- * @param  {} response
+ * @param  {} data
  */
-app.build.create.dimension.callback.readClassification = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.build.create.dimension.callback.drawClassification(response.data);
-    } else api.modal.exception(app.label.static["api-ajax-exception"]);
-
+app.build.create.dimension.callback.readClassification = function (data) {
+    app.build.create.dimension.callback.drawClassification(data);
 };
 
 
@@ -1530,7 +1508,7 @@ app.build.create.dimension.callback.useClassification = function (variables) {
         });
     }
     else {
-        api.modal.error("Duplicate classification");
+        api.modal.error(app.label.static["create-duplicate-classification"]);
     }
     app.build.create.dimension.drawClassifications(lngIsoCode);
 };
@@ -1546,19 +1524,10 @@ app.build.create.dimension.callback.downloadClassification = function (variables
     $.each(variables, function (i, row) {
         fileData.push({ [C_APP_CSV_CODE]: row.VrbCode, [C_APP_CSV_VALUE]: row.VrbValue });
     });
-    var mimeType = "text/plain";
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(Papa.unparse(fileData)));
-    pom.setAttribute('download', variables[0].ClsCode + ".csv");
-    if (document.createEvent) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
-    }
-    else {
-        pom.click();
-    }
+
+    // Download the file
+    //app.library.utility.download(variables[0].ClsCode, encodeURIComponent(Papa.unparse(fileData)), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
+    app.library.utility.download(variables[0].ClsCode, Papa.unparse(fileData), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 };
 //#endregion
 //#region periods
@@ -1881,10 +1850,8 @@ app.build.create.dimension.modal.deletePeriod = function (params) {
 app.build.create.dimension.callback.deletePeriod = function (params) {
     $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
         if (dimension.LngIsoCode == params.lngIsoCode) {
-            $.each(dimension.Frequency.Period, function (index, variable) {
-                if (variable.PrdCode == params.prdCode) {
-                    dimension.Frequency.Period.splice(index, 1);
-                }
+            dimension.Frequency.Period = $.grep(dimension.Frequency.Period, function (value, index) {
+                return value.PrdCode == params.prdCode ? false : true;
             });
         }
     });
@@ -1916,9 +1883,9 @@ app.build.create.dimension.buildDataObject = function () {
         var dimensionValues = [];
         var lngIsoCode = dimension.LngIsoCode;
         var lngIsoName = null;
-        $.each(app.build.create.initiate.languages, function (key, language) {
-            if (lngIsoCode == language.code) {
-                lngIsoName = language.name;
+        $.each(app.build.create.initiate.languages, function (key, value) {
+            if (lngIsoCode == value.LngIsoCode) {
+                lngIsoName = value.LngIsoName;
             }
         });
         //MtrTitle
@@ -1967,7 +1934,7 @@ app.build.create.dimension.buildDataObject = function () {
         }
         //check if number of classifications are equal for all languages
         if (!numClassifications.every((val, i, arr) => val === arr[0])) {
-            errors.push(label.static["create-classification"]);
+            errors.push(app.label.static["create-classification"]);
         }
     }
     if (!errors.length) {
@@ -1990,9 +1957,9 @@ app.build.create.dimension.buildDataObject = function () {
         $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
             var lngIsoCode = dimension.LngIsoCode;
             var lngIsoName = null;
-            $.each(app.build.create.initiate.languages, function (key, language) {
-                if (lngIsoCode == language.code) {
-                    lngIsoName = language.name;
+            $.each(app.build.create.initiate.languages, function (key, value) {
+                if (lngIsoCode == value.LngIsoCode) {
+                    lngIsoName = value.LngIsoName;
                 }
             });
             var statisticCodes = [];
@@ -2052,9 +2019,9 @@ app.build.create.dimension.buildDataObject = function () {
                 //loop through dimensions and find variable codes for other languages for this classification
                 $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
                     if (dimension.LngIsoCode != app.config.language.iso.code) { //not default language
-                        $.each(app.build.create.initiate.languages, function (key, language) {
-                            if (dimension.LngIsoCode == language.code) {
-                                compareLngIsoName = language.name;
+                        $.each(app.build.create.initiate.languages, function (key, value) {
+                            if (dimension.LngIsoCode == value.LngIsoCode) {
+                                compareLngIsoName = value.LngIsoName;
                             }
                         });
 
@@ -2110,9 +2077,9 @@ app.build.create.dimension.buildDataObject = function () {
                 var lngIsoCode = dimension.LngIsoCode;
                 var lngIsoName = null;
                 //get language name for error description
-                $.each(app.build.create.initiate.languages, function (key, language) {
-                    if (lngIsoCode == language.code) {
-                        lngIsoName = language.name;
+                $.each(app.build.create.initiate.languages, function (key, value) {
+                    if (lngIsoCode == value.LngIsoCode) {
+                        lngIsoName = value.LngIsoName;
                     }
                 });
                 var periodCodes = [];
@@ -2130,12 +2097,9 @@ app.build.create.dimension.buildDataObject = function () {
         }
     }
     if (!errors.length) {
-        $("#build-create-dimensions").find("[name=dimension-error-card]").hide();
         app.build.create.dimension.ajax.create(app.build.create.initiate.data);
     }
     else {
-        $("#build-create-dimensions").find("[name=dimension-error]").empty();
-        $("#build-create-dimensions").find("[name=dimension-error-card]").show();
         var errorOutput = $("<ul>", {
             class: "list-group"
         });
@@ -2146,7 +2110,6 @@ app.build.create.dimension.buildDataObject = function () {
             });
             errorOutput.append(error);
         });
-        $("#build-create-dimensions").find("[name=dimension-error]").html(errorOutput.get(0).outerHTML);
         api.modal.error(errorOutput);
     }
 };
@@ -2171,72 +2134,32 @@ app.build.create.dimension.ajax.create = function (params) {
 /**
  *Download px file
  *
- * @param {*} response
+ * @param {*} data
  */
-app.build.create.dimension.callback.create = function (response, format) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
-    else if (response.data) {
-
-        var mimeType = "";
-        var fileExtension = "";
+app.build.create.dimension.callback.create = function (data, format) {
+    if (data && Array.isArray(data) && data.length) {
         var fileName = $("#build-create-initiate-setup [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
 
         switch (format) {
             case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-                mimeType = "application/json";
-                fileExtension = C_APP_EXTENSION_JSONSTAT;
+                $.each(data, function (index, file) {
+                    // Download the file
+                    app.library.utility.download(fileName + "." + JSONstat(file).extension.language.code, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
+                });
                 break;
             case C_APP_TS_FORMAT_TYPE_PX:
-                mimeType = "text/plain";
-                fileExtension = C_APP_EXTENSION_PX;
+                $.each(data, function (index, file) {
+                    // Download the file
+                    app.library.utility.download(fileName, file, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
+                });
                 break;
             default:
                 api.modal.exception(app.label.static["api-ajax-exception"]);
-                return;
                 break;
         };
-
-        $.each(response.data, function (index, file) {
-            var fileData = null;
-            switch (format) {
-                case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-                    fileData = JSON.stringify(file);
-                    //Append language iso code
-                    fileName += "." + JSONstat(file).extension.language.code;
-                    break;
-                case C_APP_TS_FORMAT_TYPE_PX:
-                    fileData = file;
-                    break;
-            };
-
-            var blob = new Blob([fileData], { type: mimeType });
-            var downloadUrl = URL.createObjectURL(blob);
-            var a = document.createElement("a");
-            a.href = downloadUrl;
-            a.download = fileName + '.' + fileExtension;
-            if (document.createEvent) {
-                // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-                var event = document.createEvent('MouseEvents');
-                event.initEvent('click', true, true);
-                a.dispatchEvent(event);
-            }
-            else {
-                a.click();
-            }
-        });
-
-
-
-        api.modal.success(app.label.static["create-success"]);
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 //#endregion

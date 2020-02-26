@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
 -- Description:	Reads record(s) from the TD_Release & dependant tables
--- exec Data_Stat_Release_ReadLatest '000031Y'
+-- exec Data_Release_ReadLatest 'nea06'
 -- =============================================
 CREATE
 	OR

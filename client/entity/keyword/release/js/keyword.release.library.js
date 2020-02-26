@@ -62,8 +62,7 @@ app.keyword.release.ajax.getLanguagesCreate = function () {
 /**
 *  Populate language drop down for create.
 */
-app.keyword.release.callback.getLanguagesCreate = function (response) {
-    data = response.data;
+app.keyword.release.callback.getLanguagesCreate = function (data) {
     $("#keyword-release-modal-create").find("[name=language]").empty().append($("<option>", {
         "text": app.label.static["select-uppercase"],
         "disabled": "disabled",
@@ -100,30 +99,25 @@ app.keyword.release.ajax.create = function () {
     api.ajax.jsonrpc.request(app.config.url.api.private,
         "PxStat.System.Navigation.Keyword_Release_API.Create",
         apiParams,
-        "app.keyword.release.callback.create",
+        "app.keyword.release.callback.createOnSuccess",
         callbackParam,
-        null,
+        "app.keyword.release.callback.createOnError",
         null,
         { async: false }
     );
 };
 
 /**
- * Create keyword.release to Table after Ajax success call
- */
-/**
  * 
  * * Create keyword.release to Table after Ajax success call
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.keyword.release.callback.create = function (response, callbackParam) {
+app.keyword.release.callback.createOnSuccess = function (data, callbackParam) {
     $("#keyword-release-modal-create").modal("hide");
     app.keyword.release.ajax.read();
 
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+    if (data == C_APP_API_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.KrlValue]));
     } else {
@@ -131,6 +125,15 @@ app.keyword.release.callback.create = function (response, callbackParam) {
     }
 };
 
+/**
+ * 
+ * * Create keyword.release to Table after Ajax success call
+ * @param  {} error
+ */
+app.keyword.release.callback.createOnError = function (error) {
+    $("#keyword-release-modal-create").modal("hide");
+    app.keyword.release.ajax.read();
+};
 //#endregion
 
 
@@ -151,46 +154,40 @@ app.keyword.release.ajax.matrixReadList = function () {
 
 /**
  * Callback matrix Read List
- * @param {*} response
+ * @param {*} data
  */
-app.keyword.release.callback.matrixReadList = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Load Select2
-        $("#keyword-release-container").find("[name=keyword-release-matrix-search]").empty().append($("<option>")).select2({
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.keyword.release.mapDataMatrix(response.data)
-        });
+app.keyword.release.callback.matrixReadList = function (data) {
+    // Load Select2
+    $("#keyword-release-container").find("[name=keyword-release-matrix-search]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.keyword.release.mapDataMatrix(data)
+    });
 
-        $("#keyword-release-container").find("[name=keyword-release-matrix-search]").prop('disabled', false).focus();
+    $("#keyword-release-container").find("[name=keyword-release-matrix-search]").prop('disabled', false).focus();
 
-        //Update Subject search Search functionality
-        $("#keyword-release-container").find("[name=keyword-release-matrix-search]").on('select2:select', function (e) {
-            var selectedMatrix = e.params.data;
-            if (selectedMatrix) {
-                // Some item from your model is active!
-                if (selectedMatrix.id.toLowerCase() == $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val().toLowerCase()) {
-                    app.keyword.release.ajax.readRelease(selectedMatrix.id);
-                    $("#keyword-release-table-release-container").show();
-                    $("#keyword-release-table-release-keyword-container").hide();
-                }
-                else {
-                    $("#keyword-release-table-release-container").hide();
-                    $("#keyword-release-table-release-keyword-container").hide();
-                }
-            } else {
-                // Nothing is active so it is a new value (or maybe empty value)
+    //Update Subject search Search functionality
+    $("#keyword-release-container").find("[name=keyword-release-matrix-search]").on('select2:select', function (e) {
+        var selectedMatrix = e.params.data;
+        if (selectedMatrix) {
+            // Some item from your model is active!
+            if (selectedMatrix.id.toLowerCase() == $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val().toLowerCase()) {
+                app.keyword.release.ajax.readRelease(selectedMatrix.id);
+                $("#keyword-release-table-release-container").show();
+                $("#keyword-release-table-release-keyword-container").hide();
+            }
+            else {
                 $("#keyword-release-table-release-container").hide();
                 $("#keyword-release-table-release-keyword-container").hide();
             }
-        });
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+        } else {
+            // Nothing is active so it is a new value (or maybe empty value)
+            $("#keyword-release-table-release-container").hide();
+            $("#keyword-release-table-release-keyword-container").hide();
+        }
+    });
 };
 
 
@@ -213,20 +210,11 @@ app.keyword.release.ajax.readRelease = function (selectedMtrCode) {
 
 /**
  * Callback read Release List
- * @param {*} response
+ * @param {*} data
  */
-app.keyword.release.callback.readReleaseList = function (response) {
-    if (response.error) {
-        // Handle the Error in the Response first
-        app.keyword.release.drawDataTableRelease();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Handle the Data in the Response then
-        app.keyword.release.drawDataTableRelease(response.data);
-        $("#keyword-release-table-release-container").hide().fadeIn();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.keyword.release.callback.readReleaseList = function (data) {
+    app.keyword.release.drawDataTableRelease(data);
+    $("#keyword-release-table-release-container").hide().fadeIn();
 };
 
 /**
@@ -336,18 +324,14 @@ app.keyword.release.ajax.read = function () {
 
 /**
  * Callback function when the keyword-release Read call is successful.
- * @param {*} response
+ * @param {*} data
  */
-app.keyword.release.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data) {
-        // Handle the Data in the Response then
-        app.keyword.release.drawDataTable(response.data);
-        $("#keyword-release-table-release-keyword-container").hide().fadeIn();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.keyword.release.callback.read = function (data) {
+    app.keyword.release.drawDataTable(data);
+    $("#keyword-release-table-release-keyword-container").hide().fadeIn();
+    $('html, body').animate({
+        scrollTop: $("#keyword-release-table-release-keyword-container").offset().top
+    }, 1000);
 };
 
 /**
@@ -476,7 +460,7 @@ app.keyword.release.drawDataTable = function (data) {
             //Server exception TODO: Retest after service update.
             app.data.init(app.label.language.iso.code, null, $(this).attr('rls-code'), $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val());
             app.data.dataset.ajax.readMetadata();
-            $('#dataViewModal').modal('show');
+            $('#data-view-modal').modal('show');
         });
     }
 };
@@ -497,23 +481,18 @@ app.keyword.release.ajax.readUpdate = function (apiParams) {
 
 /**
  * Populate keyword.release data to Update Modal
- * @param {*} response 
+ * @param {*} data 
  */
-app.keyword.release.callback.readKeyword = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
+app.keyword.release.callback.readKeyword = function (data) {
+    if (data && Array.isArray(data) && data.length) {
+        data = data[0];
+
+        app.keyword.release.modal.update(data);
+    } else {
         api.modal.information(app.label.static["api-ajax-nodata"]);
         // Force reload
         app.keyword.release.ajax.read();
-    } else if (response.data) {
-        response.data = response.data[0];
-
-        app.keyword.release.modal.update(response.data);
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
@@ -560,8 +539,7 @@ app.keyword.release.ajax.getLanguagesUpdate = function () {
 /**
 *  Populate language drop down for create.
 */
-app.keyword.release.callback.getLanguagesUpdate = function (response) {
-    data = response.data;
+app.keyword.release.callback.getLanguagesUpdate = function (data) {
     $("#keyword-release-modal-update").find("[name=language]").empty().append($("<option>", {
         "text": app.label.static["select-uppercase"],
         "disabled": "disabled",
@@ -606,12 +584,13 @@ app.keyword.release.ajax.delete = function (deletetedKeyword) {
         KrlValue: deletetedKeyword.KrlValue
     };
     // Call the API by passing the idn to delete keyword.release from DB
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
         "PxStat.System.Navigation.Keyword_Release_API.Delete",
         apiParams,
-        "app.keyword.release.callback.delete",
+        "app.keyword.release.callback.deleteOnSuccess",
         callbackParam,
-        null,
+        "app.keyword.release.callback.deleteOnError",
         null,
         { async: false }
     );
@@ -619,16 +598,14 @@ app.keyword.release.ajax.delete = function (deletetedKeyword) {
 
 /**
  * Callback from server for Delete keyword.release Keyword
- * @param {*} response
+ * @param {*} data
  * * @param {*} callbackParam
  */
-app.keyword.release.callback.delete = function (response, callbackParam) {
+app.keyword.release.callback.deleteOnSuccess = function (data, callbackParam) {
     //Redraw Data Table keyword.release with fresh data.
     app.keyword.release.ajax.read();
 
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
+    if (data == C_APP_API_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.KrlValue]));
     }
@@ -636,7 +613,14 @@ app.keyword.release.callback.delete = function (response, callbackParam) {
     else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
-
+/**
+ * Callback from server for Delete keyword.release Keyword
+ * @param {*} error
+ */
+app.keyword.release.callback.deleteOnError = function (error) {
+    //Redraw Data Table keyword.release with fresh data.
+    app.keyword.release.ajax.read();
+};
 //#endregion
 
 
@@ -734,9 +718,9 @@ app.keyword.release.ajax.update = function () {
     api.ajax.jsonrpc.request(app.config.url.api.private,
         "PxStat.System.Navigation.Keyword_Release_API.Update",
         apiParams,
-        "app.keyword.release.callback.update",
+        "app.keyword.release.callback.updateOnSuccess",
         callbackParam,
-        null,
+        "app.keyword.release.callback.updateOnError",
         null,
         { async: false }
     );
@@ -745,23 +729,31 @@ app.keyword.release.ajax.update = function () {
 /**
  * * Update keyword.release Callback
  * After AJAX call.
- * @param  {} response
+ * @param  {} data
  * @param  {} callbackParam
  */
-app.keyword.release.callback.update = function (response, callbackParam) {
+app.keyword.release.callback.updateOnSuccess = function (data, callbackParam) {
     //Redraw Data Table keyword.release with fresh data.  
-
+    app.keyword.release.ajax.read();
     $("#keyword-release-modal-update").modal("hide");
 
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data == C_APP_API_SUCCESS) {
-        app.keyword.release.ajax.read();
+    if (data == C_APP_API_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.KrlValue]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+};
+
+/**
+ * * Update keyword.release Callback
+ * After AJAX call.
+ * @param  {} error
+ */
+app.keyword.release.callback.updateOnError = function (error) {
+    //Redraw Data Table keyword.release with fresh data.  
+    app.keyword.release.ajax.read();
+    $("#keyword-release-modal-update").modal("hide");
 };
 
 //#endregion
@@ -780,61 +772,54 @@ app.keyword.release.ajax.synonym = function (row) {
         app.config.url.api.private,
         "PxStat.System.Navigation.Keyword_API.ReadSynonym",
         { "KrlValue": KrlValue },
-        "app.keyword.release.callback.synonym",
+        "app.keyword.release.callback.readSynonym",
         callbackParam);
 }
 
 //Call back for synonyms
-app.keyword.release.callback.synonym = function (response, callbackParam) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
+app.keyword.release.callback.readSynonym = function (data, callbackParam) {
+    //Add name of keyword selected
+    $("#keyword-release-extra-info").find("[name=keyword]").html(callbackParam.KrlValue);
+    //Clear list card
+    $("#keyword-release-extra-info").find("[name=synonym-card]").empty();
+
+    //Get each language
+    $.each(data, function (key, language) {
+        //Clone card
+        var languageCard = $("#keyword-release-synonym-template").find("[name=synonym-language-card]").clone();
+        //Display the Language
+        languageCard.find(".card-header").text(language.LngIsoName);
+
+        //Check if any synonyms
+        if (language.Synonym.length) {
+
+            //Get Synonyms
+            $.each(language.Synonym, function (key, synonym) {
 
 
-        //Add name of keyword selected
-        $("#keyword-release-extra-info").find("[name=keyword]").html(callbackParam.KrlValue);
-        //Clear list card
-        $("#keyword-release-extra-info").find("[name=synonym-card]").empty();
-
-        //Get each language
-        $.each(response.data, function (key, language) {
-            //Clone card
-            var languageCard = $("#keyword-release-synonym-template").find("[name=synonym-language-card]").clone();
-            //Display the Language
-            languageCard.find(".card-header").text(language.LngIsoName);
-
-            //Check if any synonyms
-            if (language.Synonym.length) {
-
-                //Get Synonyms
-                $.each(language.Synonym, function (key, synonym) {
-
-
-                    var synonymItem = $("<li>", {
-                        "class": "list-group-item",
-                        "html": synonym
-                    });
-
-                    languageCard.find("[name=synonym-group]").append(synonymItem);
-
-
-                });
-
-            }
-            else {
-                //Display if no synonyms
                 var synonymItem = $("<li>", {
                     "class": "list-group-item",
-                    "html": app.label.static["no-synonyms"]
+                    "html": synonym
                 });
+
                 languageCard.find("[name=synonym-group]").append(synonymItem);
-            }
 
-            $("#keyword-release-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
 
-        });
+            });
 
-    } else api.modal.exception(app.label.static["api-ajax-exception"]);
+        }
+        else {
+            //Display if no synonyms
+            var synonymItem = $("<li>", {
+                "class": "list-group-item",
+                "html": app.label.static["no-synonyms"]
+            });
+            languageCard.find("[name=synonym-group]").append(synonymItem);
+        }
+
+        $("#keyword-release-extra-info").find("[name=synonym-card]").append(languageCard).get(0).outerHTML;
+
+    });
 }
 
 

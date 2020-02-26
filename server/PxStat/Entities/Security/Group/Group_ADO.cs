@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
+using System.Collections.Generic;
 
 namespace PxStat.Security
 {
@@ -191,14 +191,7 @@ namespace PxStat.Security
             };
 
             ADO_readerOutput output = ado.ExecuteReaderProcedure("Security_Group_Read", paramList);
-            if (output.hasData)
-            {
-                return true; // the entity in question exists in the database already
-            }
-            else
-            {
-                return false; // the entity in question doesn't already exist in the database
-            }
+            return output.hasData;
 
         }
 
@@ -222,16 +215,8 @@ namespace PxStat.Security
 
             ado.ExecuteNonQueryProcedure("Security_Group_Usage", paramList, ref retParam);
 
-            if (retParam.value == 0)
-            {
-                //This record is not in use 
-                return false;
-            }
-            else
-            {
-                //This record is in use 
-                return true;
-            }
+            return retParam.value == 0;
+
         }
     }
 }

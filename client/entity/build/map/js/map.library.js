@@ -37,8 +37,8 @@ app.map.ajax.read = function (geoJsonURL) {
         beforeSend: function (xhr) {
             api.spinner.start();
         },
-        success: function (response) {
-            app.map.callback.read(response);
+        success: function (geoJson) {
+            app.map.callback.read(geoJson);
             api.spinner.stop();
         },
         error: function (xhr) {
@@ -51,19 +51,19 @@ app.map.ajax.read = function (geoJsonURL) {
 /** 
  * 
  */
-app.map.callback.read = function (response) {
-    if (response.type != C_APP_GEOJSON_FEATURE_COLLECTION) {
+app.map.callback.read = function (geoJson) {
+    if (geoJson.type != C_APP_GEOJSON_FEATURE_COLLECTION) {
         $("#build-map-modal").find("[name=download-classification]").prop("disabled", true);
         api.modal.error(app.label.static["geojson-invalid-format"]);
     }
     else {
         $("#build-map-modal").modal("show");
 
-        app.map.drawDatatable(response);
-        app.map.drawMap(response);
+        app.map.drawDatatable(geoJson);
+        app.map.drawMap(geoJson);
 
         $("#build-map-modal").find("[name=download-classification]").prop("disabled", false).once("click", function () {
-            app.map.download(response);
+            app.map.download(geoJson);
         });
     };
 };
@@ -71,9 +71,9 @@ app.map.callback.read = function (response) {
 /** 
  * 
  */
-app.map.drawDatatable = function (response) {
+app.map.drawDatatable = function (geoJson) {
     var data = [];
-    $.each(response.features, function (index, feature) {
+    $.each(geoJson.features, function (index, feature) {
         data.push({
             [C_APP_CSV_CODE]: feature.properties[app.config.plugin.highmaps.featureIdentifier],
             [C_APP_CSV_VALUE]: feature.properties[app.config.plugin.highmaps.featureName],
@@ -105,7 +105,7 @@ app.map.drawDatatable = function (response) {
 /** 
  * 
  */
-app.map.drawMap = function (response) {
+app.map.drawMap = function (geoJson) {
     $("#build-map-modal [name=map]").highcharts("Map", {
         chart: {
             height: 600
@@ -132,7 +132,7 @@ app.map.drawMap = function (response) {
             nullColor: '#BCE4E3',
             borderColor: "#1D345C",
             nullInteraction: true,
-            mapData: response,
+            mapData: geoJson,
         }],
         tooltip: {
             allowHTML: true,
@@ -153,25 +153,15 @@ app.map.drawMap = function (response) {
 /** 
  * 
  */
-app.map.download = function (response) {
+app.map.download = function (geoJson) {
     var data = [];
-    $.each(response.features, function (index, feature) {
+    $.each(geoJson.features, function (index, feature) {
         data.push({
             [C_APP_CSV_CODE]: feature.properties[app.config.plugin.highmaps.featureIdentifier],
             [C_APP_CSV_VALUE]: feature.properties[app.config.plugin.highmaps.featureName],
         });
     });
-    var mimeType = "text/plain";
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(Papa.unparse(data)));
-    pom.setAttribute('download', app.map.ClsCode + ".csv");
-    if (document.createEvent) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
-    }
-    else {
-        pom.click();
-    }
+
+    // Download the file
+    app.library.utility.download(app.map.ClsCode + '.geojson', encodeURIComponent(Papa.unparse(data)), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 }

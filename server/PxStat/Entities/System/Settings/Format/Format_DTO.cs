@@ -51,7 +51,10 @@ namespace PxStat.System.Settings
             [Description(Constants.C_SYSTEM_JSON_STAT_NAME)]
             JSONstat,
             [Description(Constants.C_SYSTEM_CSV_NAME)]
-            CSV
+            CSV,
+            [Description(Constants.C_SYSTEM_XLSX_NAME)]
+            XLSX
+
         };
 
 

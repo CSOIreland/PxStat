@@ -66,7 +66,7 @@ namespace PxStat.Build
             matrixPxFile.Cells = cells;
 
 
-            result.csv = matrixPxFile.GetCSVObject(DTO.LngIsoCode).ToString();
+            result.csv = matrixPxFile.GetCsvObject(DTO.LngIsoCode);
             result.MtrCode = matrixPxFile.Code;
             Response.data = result;
 

@@ -23,19 +23,10 @@ app.format.ajax.read = function () {
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.format.callback.read = function (response) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    app.format.callback.drawDataTable(response.data);
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.format.callback.drawDataTable(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.format.callback.read = function (data) {
+  app.format.callback.drawDataTable(data);
 };
 
 /**

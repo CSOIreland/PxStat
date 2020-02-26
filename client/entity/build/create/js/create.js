@@ -12,8 +12,13 @@ $(document).ready(function () {
     api.content.load("#build-create-dimensions", "entity/build/create/index.dimension.html");
     api.content.load("#build-create-map", "entity/build/map/index.html");
 
+    var uploadThreshold = app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB";
     // Set the max file-size in the Upload box
-    $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB").show();
+    $("#build-create-upload-si").find("[name=upload-file-max-size]").html(uploadThreshold);
+    $("#build-create-upload-classification").find("[name=upload-file-max-size]").html(uploadThreshold);
+    $("#build-create-upload-periods").find("[name=upload-file-max-size]").html(uploadThreshold);
+    $("#build-create-import").find("[name=upload-file-max-size]").html(uploadThreshold);
+
     // Initiate Drag n Drop plugin
     api.plugin.dragndrop.initiate(document, window);
     //run bootstrap toggle to show/hide toggle button

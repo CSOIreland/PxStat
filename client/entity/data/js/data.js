@@ -10,7 +10,9 @@ $(document).ready(function () {
     app.data.goTo.PrcCode = api.content.getParam("PrcCode");
     app.data.goTo.CprCode = api.content.getParam("CprCode");
     app.data.goTo.MtrCode = api.content.getParam("MtrCode");
-    app.data.setDataPicker();
+
+    app.data.setDatePicker();
+
     //populate colection api  
     app.data.callback.drawCollectionApiDetails();
     $("#data-accordion-collection-api").show();

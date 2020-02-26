@@ -58,7 +58,7 @@ namespace PxStat.Build
 
             dynamic result = new ExpandoObject();
 
-            result.csv = theMatrixData.GetCSVObject(DTO.LngIsoCode).ToString();
+            result.csv = theMatrixData.GetCsvObject(DTO.LngIsoCode);
             result.MtrCode = theMatrixData.Code;
             Response.data = result;
 

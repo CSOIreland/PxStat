@@ -78,7 +78,8 @@
       "code": " CODE",
       "header": "Unit,Value",
       "unit": "UNIT",
-      "value": "VALUE"
+      "value": "VALUE",
+      "separator": ","
     },
     "statistic": "Statistic",
     "subject-area": "n/a",
@@ -87,11 +88,11 @@
   },
   "email": {
     "body": {
-      "request-create": "A new request of type [b]{0}[/b]  has been submitted against the Table [b]{1}[/b] Version [b]{2}.{3} [/b]and is awaiting approval.\n View this workflow at {4}.",
-      "response-approve": "A new request of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b] and is awaiting sign-off.\nView this workflow at {4}.",
-      "response-reject": "The request for approval of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
-      "signoff-approve": "The request for sign-off of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
-      "signoff-reject": "The request for sign-off of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}."
+      "request-create": "A new request of type [b]{0}[/b] has been submitted by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3} [/b]and is awaiting approval.\n View this workflow at {4}.",
+      "response-approve": "A new request of type [b]{0}[/b] has been approved by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b] and is awaiting sign-off.\nView this workflow at {4}.",
+      "response-reject": "The request for approval of type [b]{0}[/b] has been rejected by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
+      "signoff-approve": "The request for sign-off of type [b]{0}[/b] has been approved by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
+      "signoff-reject": "The request for sign-off of type [b]{0}[/b] has been rejected by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}."
     },
     "subject": {
       "request-create": "{0} {1}.{2}: Awaiting Approval",
@@ -99,6 +100,14 @@
       "response-reject": "{0} {1}.{2}: Approval Rejected",
       "signoff-approve": "{0} {1}.{2}: Sign-off Approved",
       "signoff-reject": "{0} {1}.{2}: Sign-off Rejected"
+    }
+  },
+  "workflow": {
+    "request": {
+      "publish": "Publish",
+      "rollback": "Rollback",
+      "delete": "Delete",
+      "update-properties": "Update Properties"
     }
   }
 }

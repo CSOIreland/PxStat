@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
-using API;
+﻿using API;
+using Newtonsoft.Json;
+using PxStat.Data;
 using PxStat.Template;
 
 namespace PxStat.Security
@@ -54,13 +55,45 @@ namespace PxStat.Security
                 Response.error = Label.Get("error.update");
                 return false;
             }
-
+            FlushAssociatedMatrixes(Ado, DTO);
             Log.Instance.Debug("Group updated: " + JsonConvert.SerializeObject(DTO));
 
             Response.data = JSONRPC.success;
 
             return true;
         }
+
+        /// <summary>
+        /// If an update has taken place, we must flush the caches for all associated matrixes (because the contact details are part of the matrix)
+        /// </summary>
+        /// <param name="Ado"></param>
+        /// <param name="dto"></param>
+        private void FlushAssociatedMatrixes(ADO Ado, Group_DTO_Update dto)
+        {
+            Matrix_ADO mAdo = new Matrix_ADO(Ado);
+
+            //Get all the matrixes for Group
+            var readGroupAccess = mAdo.ReadByGroup(dto.GrpCodeOld, Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"));
+
+            if (!readGroupAccess.hasData) return;
+
+
+            //look maybe at ensuring there are no dupes (or maybe a switch to first return only live data..)
+            foreach (var matrix in readGroupAccess.data)
+            {
+
+                if (matrix.IsLive)
+                {
+                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.MtrCode);
+                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.MtrCode);
+                }
+            }
+
+            foreach (var matrix in readGroupAccess.data)
+            {
+                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + matrix.RlsCode);
+                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + matrix.RlsCode);
+            }
+        }
     }
 }
-

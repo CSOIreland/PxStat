@@ -29,18 +29,10 @@ app.build.upload_panel.format.ajax.read = function () {
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.build.upload_panel.format.callback.read = function (response) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.build.upload_panel.format.callback.drawDataTable(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.upload_panel.format.callback.read = function (data) {
+  app.build.upload_panel.format.callback.drawDataTable(data);
 };
 
 /**
@@ -104,18 +96,10 @@ app.build.upload_panel.copyright.ajax.read = function () {
 
 /**
  * Callback from server after reading data
- * @param {*} response
+ * @param {*} data
  */
-app.build.upload_panel.copyright.callback.read = function (response) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.build.upload_panel.copyright.drawDatatable(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.upload_panel.copyright.callback.read = function (data) {
+  app.build.upload_panel.copyright.drawDatatable(data);
 };
 //#endregion
 
@@ -179,18 +163,10 @@ app.build.upload_panel.language.callback.drawDataTable = function (data) {
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.build.upload_panel.language.callback.read = function (response) {
-  if (response.error) {
-    // Handle the Error in the Response first
-    api.modal.error(response.error.message);
-  } else if (response.data !== undefined) {
-    // Handle the Data in the Response then
-    app.build.upload_panel.language.callback.drawDataTable(response.data);
-  }
-  // Handle Exception
-  else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.upload_panel.language.callback.read = function (data) {
+  app.build.upload_panel.language.callback.drawDataTable(data);
 };
 
 //#endregion

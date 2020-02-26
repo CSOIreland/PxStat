@@ -46,35 +46,29 @@ app.dashboard.ajax.ReadCurrentAccess = function () {
     );
 };
 
-app.dashboard.callback.ReadCurrentAccess = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data) {
-        response.data = response.data[0];
-        switch (response.data.PrvCode) {
-            case C_APP_PRIVILEGE_MODERATOR:
-                $("#collapse-work-in-progress").collapse('show');
-                $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-                    $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-                });
-                /*  $("#collapse-awaiting-response").collapse('show');
-                  $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-                      $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-                  });*/
-                break;
-            case C_APP_PRIVILEGE_POWER_USER:
-                $("#collapse-awaiting-sign-off").collapse('show');
-                $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-                    $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-                });
-                break;
-            case C_APP_PRIVILEGE_ADMINISTRATOR:
-            default:
-                // Leave all collapsed by default
-                break;
-        }
+app.dashboard.callback.ReadCurrentAccess = function (data) {
+    switch (data[0].PrvCode) {
+        case C_APP_PRIVILEGE_MODERATOR:
+            $("#collapse-work-in-progress").collapse('show');
+            $("#dashboard-accordion").on('show.bs.collapse', function (e) {
+                $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
+            });
+            /*  $("#collapse-awaiting-response").collapse('show');
+              $("#dashboard-accordion").on('show.bs.collapse', function (e) {
+                  $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
+              });*/
+            break;
+        case C_APP_PRIVILEGE_POWER_USER:
+            $("#collapse-awaiting-sign-off").collapse('show');
+            $("#dashboard-accordion").on('show.bs.collapse', function (e) {
+                $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
+            });
+            break;
+        case C_APP_PRIVILEGE_ADMINISTRATOR:
+        default:
+            // Leave all collapsed by default
+            break;
     }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 //#region Work in Progress
@@ -94,16 +88,10 @@ app.dashboard.workInProgress.ajax.read = function () {
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.dashboard.workInProgress.callback.read = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.dashboard.workInProgress.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.dashboard.workInProgress.callback.read = function (data) {
+    app.dashboard.workInProgress.drawDataTable(data);
 };
 
 /**
@@ -138,7 +126,7 @@ app.dashboard.workInProgress.drawCallbackWorkInProgress = function () {
  * Populate Data Table data
  * @param {*} data
  */
-app.dashboard.workInProgress.callback.drawDataTable = function (data) {
+app.dashboard.workInProgress.drawDataTable = function (data) {
     if ($.fn.dataTable.isDataTable("#dashboard-panel-workinprogress table")) {
         app.library.datatable.reDraw("#dashboard-panel-workinprogress table", data);
     } else {
@@ -216,23 +204,26 @@ app.dashboard.awaitingResponse.ajax.read = function () {
             LngIsoCode: app.label.language.iso.code
 
         },
-        "app.dashboard.awaitingResponse.callback.read");
+        "app.dashboard.awaitingResponse.callback.readOnSuccess",
+        null,
+        "app.dashboard.awaitingResponse.callback.readOnError",
+        null);
 };
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.dashboard.awaitingResponse.callback.read = function (response) {
-    if (response.error) {
-        app.dashboard.awaitingResponse.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
+app.dashboard.awaitingResponse.callback.readOnSuccess = function (data) {
+    app.dashboard.awaitingResponse.drawDataTable(data);
+};
 
-        app.dashboard.awaitingResponse.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.dashboard.awaitingResponse.callback.readOnError = function (error) {
+    app.dashboard.awaitingResponse.drawDataTable();
 };
 
 /**
@@ -267,7 +258,7 @@ app.dashboard.drawCallbackAwaitingResponse = function () {
  * Populate Data Table data
  * @param {*} data
  */
-app.dashboard.awaitingResponse.callback.drawDataTable = function (data) {
+app.dashboard.awaitingResponse.drawDataTable = function (data) {
     if ($.fn.dataTable.isDataTable("#dashboard-panel-awaitingresponse table")) {
         app.library.datatable.reDraw("#dashboard-panel-awaitingresponse table", data);
     } else {
@@ -363,24 +354,26 @@ app.dashboard.awaitingSignoff.ajax.read = function () {
         {
             LngIsoCode: app.label.language.iso.code
         },
-        "app.dashboard.awaitingSignoff.callback.read");
+        "app.dashboard.awaitingSignoff.callback.readOnSuccess",
+        null,
+        "app.dashboard.awaitingSignoff.callback.readOnError",
+        null);
 };
-
-
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.dashboard.awaitingSignoff.callback.read = function (response) {
-    if (response.error) {
-        app.dashboard.awaitingSignoff.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.dashboard.awaitingSignoff.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.dashboard.awaitingSignoff.callback.readOnSuccess = function (data) {
+    app.dashboard.awaitingSignoff.drawDataTable(data);
+};
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.dashboard.awaitingSignoff.callback.readOnError = function (error) {
+    app.dashboard.awaitingSignoff.drawDataTable();
 };
 /**
  * Draw Callback for Datatable
@@ -412,7 +405,7 @@ app.dashboard.drawCallbackAwaitingSignOff = function () {
  * Populate Data Table data
  * @param {*} data
  */
-app.dashboard.awaitingSignoff.callback.drawDataTable = function (data) {
+app.dashboard.awaitingSignoff.drawDataTable = function (data) {
 
     if ($.fn.dataTable.isDataTable("#dashboard-panel-awaitingsignoff table")) {
         app.library.datatable.reDraw("#dashboard-panel-awaitingsignoff table", data);
@@ -509,25 +502,28 @@ app.dashboard.pendinglive.ajax.read = function () {
         {
             LngIsoCode: app.label.language.iso.code
         },
-        "app.dashboard.pendinglive.callback.read");
+        "app.dashboard.pendinglive.callback.readOnSuccess",
+        null,
+        "app.dashboard.pendinglive.callback.readOnError",
+        null);
 };
-
-
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.dashboard.pendinglive.callback.read = function (response) {
-    if (response.error) {
-        app.dashboard.pendinglive.callback.drawDataTable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.dashboard.pendinglive.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.dashboard.pendinglive.callback.readOnSuccess = function (data) {
+    app.dashboard.pendinglive.drawDataTable(data);
 };
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.dashboard.pendinglive.callback.readOnError = function (error) {
+    app.dashboard.pendinglive.drawDataTable();
+};
+
 /**
  * Draw Callback for Datatable
  */
@@ -558,7 +554,7 @@ app.dashboard.drawCallbackPendingLive = function () {
  * Populate Data Table data
  * @param {*} data
  */
-app.dashboard.pendinglive.callback.drawDataTable = function (data) {
+app.dashboard.pendinglive.drawDataTable = function (data) {
 
     if ($.fn.dataTable.isDataTable("#dashboard-panel-pendinglive table")) {
         app.library.datatable.reDraw("#dashboard-panel-pendinglive table", data);
@@ -653,24 +649,26 @@ app.dashboard.liveReleases.ajax.read = function () {
         {
             LngIsoCode: app.label.language.iso.code
         },
-        "app.dashboard.liveReleases.callback.read");
+        "app.dashboard.liveReleases.callback.readOnSuccess",
+        null,
+        "app.dashboard.liveReleases.callback.readOnError",
+        null);
 };
-
-
 
 /**
  * Callback for read
- * @param {*} response
+ * @param {*} data
  */
-app.dashboard.liveReleases.callback.read = function (response) {
-    if (response.error) {
-        app.dashboard.liveReleases.callback.drawDatatable();
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        app.dashboard.liveReleases.callback.drawDataTable(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.dashboard.liveReleases.callback.readOnSuccess = function (data) {
+    app.dashboard.liveReleases.drawDataTable(data);
+};
+
+/**
+ * Callback for read
+ * @param {*} error
+ */
+app.dashboard.liveReleases.callback.readOnError = function (error) {
+    app.dashboard.liveReleases.drawDataTable();
 };
 /**
  * Draw Callback for Datatable
@@ -696,7 +694,7 @@ app.dashboard.drawCallbackliveReleases = function () {
         app.analytic.ajax.readBrowser($(this).attr("mtr-code"), "#analytic-chart-modal [name=browser-pie-chart]");
         app.analytic.ajax.readOs($(this).attr("mtr-code"), "#analytic-chart-modal [name=operating-system-pie-chart]");
         app.analytic.ajax.readReferrer($(this).attr("mtr-code"), "#analytic-chart-modal [name=referrer-column-chart]");
-        app.analytic.ajax.readTimeLine($(this).attr("mtr-code"), "#analytic-chart-modal [name=dates-line-chart]");
+        app.analytic.ajax.readTimeline($(this).attr("mtr-code"), "#analytic-chart-modal [name=dates-line-chart]");
         app.analytic.ajax.readLanguage($(this).attr("mtr-code"), "#analytic-chart-modal [name=language-pie-chart]");
         app.analytic.ajax.readFormat($(this).attr("mtr-code"), "#analytic-chart-modal [name=format-pie-chart]");
         $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("mtr-code") + " : " + $(this).attr("mtr-title"));// + "          "
@@ -713,7 +711,7 @@ app.dashboard.drawCallbackliveReleases = function () {
  * Populate Data Table data
  * @param {*} data
  */
-app.dashboard.liveReleases.callback.drawDataTable = function (data) {
+app.dashboard.liveReleases.drawDataTable = function (data) {
     if ($.fn.dataTable.isDataTable("#dashboard-panel-livereleases table")) {
         app.library.datatable.reDraw("#dashboard-panel-livereleases table", data);
     } else {
@@ -757,14 +755,14 @@ app.dashboard.liveReleases.callback.drawDataTable = function (data) {
                 },
                 {
                     data: null,
-                    type: "html",
+                    type: "natural",
                     render: function (data, type, row) {
                         return app.library.html.boolean(row.MtrOfficialFlag, true, true);
                     }
                 },
                 {
                     data: null,
-                    type: "html",
+                    type: "natural",
                     render: function (data, type, row) {
                         return app.library.html.boolean(row.RlsReservationFlag, true, true);
 
@@ -772,7 +770,7 @@ app.dashboard.liveReleases.callback.drawDataTable = function (data) {
                 },
                 {
                     data: null,
-                    type: "html",
+                    type: "natural",
                     render: function (data, type, row) {
                         return app.library.html.boolean(row.RlsArchiveFlag, true, true);
 

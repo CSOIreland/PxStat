@@ -105,11 +105,9 @@ namespace PxStat.Data
 
                 if (parameters.format.type != null)
                     Format.FrmType = parameters.format.type;
+
                 Format.FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
 
-                if (Format.FrmType == Constants.C_SYSTEM_JSON_NAME)
-                    Format.FrmType = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
-                Format.FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
                 if (parameters.format.version != null)
                     Format.FrmVersion = parameters.format.version;
             }
@@ -124,6 +122,13 @@ namespace PxStat.Data
             {
                 this.dimension = this.GetJsonObject<IList<Dimension>>(parameters.dimension, Converter.Settings);
             }
+
+            //to iterate through a set of potentially anyonymous objects
+            //foreach (var v in (Newtonsoft.Json.Linq.JContainer)parameters.dimension)
+            //{
+            //    var vv = v.Path; returns the name of the object
+            //}
+
 
             // Default language
             if (string.IsNullOrEmpty(this.language))
@@ -160,5 +165,6 @@ namespace PxStat.Data
         public const string JsonStat = Constants.C_SYSTEM_JSON_STAT_NAME;
         public const string Px = Constants.C_SYSTEM_PX_NAME;
         public const string Csv = Constants.C_SYSTEM_CSV_NAME;
+        public const string Xlsx = Constants.C_SYSTEM_XLSX_NAME;
     }
 }

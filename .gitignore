@@ -1,0 +1,7 @@
+/client/config/config.live.json
+/client/config/config.test.json
+/client/config/config.uat.json
+/server/PxStat/Properties/PublishProfiles/DEV.pubxml
+/server/PxStat/Properties/PublishProfiles/Live.pubxml
+/server/PxStat/Properties/PublishProfiles/TEST.pubxml
+/server/PxStat/Properties/PublishProfiles/UAT.pubxml

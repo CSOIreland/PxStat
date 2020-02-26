@@ -1,7 +1,5 @@
 ﻿using API;
-using PxStat.Security;
 using System;
-using System.Collections.Generic;
 
 
 namespace PxStat.Security
@@ -16,7 +14,7 @@ namespace PxStat.Security
         /// <param name="isApprover"></param>
         /// <param name="prvCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput getReleaseUsers(int rlsCode, bool isApprover, string prvCode = null)
+        internal ADO_readerOutput getReleaseUsers(int rlsCode, bool? isApprover, string prvCode = null)
         {
             ADO ado = new ADO("defaultConnection");
             try

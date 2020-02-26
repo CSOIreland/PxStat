@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
+using System.Collections.Generic;
 
 // Keep it under the PxStat name space because it's globally used
 namespace PxStat
@@ -15,12 +14,13 @@ namespace PxStat
         /// </summary>
         /// <param name="errors"></param>
         /// <returns></returns>
-        internal static IList<ErrorValidationFailure> GetValidationFailure(IList<ValidationFailure> errors)
+        internal static IList<string> GetValidationFailure(IList<ValidationFailure> errors)
         {
-            var failures = new List<ErrorValidationFailure>();
+
+            var failures = new List<string>();
             foreach (var error in errors)
             {
-                failures.Add(new ErrorValidationFailure(error));
+                failures.Add(new ErrorValidationFailure(error).ErrorMessage);
             }
 
             return failures;

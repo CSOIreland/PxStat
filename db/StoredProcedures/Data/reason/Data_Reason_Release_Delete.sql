@@ -67,9 +67,13 @@ BEGIN
 		AND rsr.RSR_RSN_ID = @RsnId
 		AND rsr.RSR_DELETE_FLAG = 0
 
+IF @commentId IS NOT NULL AND @commentId>0
+BEGIN			
 	SELECT @ReasonReleaseCommentDtgID = cmm.CMM_DTG_ID
 	FROM TD_COMMENT cmm
 	WHERE CMM_ID = @commentId
+
+	
 
 	--soft delete the comment
 	UPDATE TD_COMMENT
@@ -100,6 +104,7 @@ BEGIN
 			RETURN 0
 		END
 	END
+END
 
 	--soft delete the ReasonRelease
 	UPDATE TM_REASON_RELEASE

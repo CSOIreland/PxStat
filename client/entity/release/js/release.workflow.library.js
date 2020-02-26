@@ -49,28 +49,23 @@ app.release.workflow.request.ajax.readType = function () {
 
 /**
  * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.workflow.request.callback.readType = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        $("#release-workflow-request [name=rqs-code]").empty();
-        // Add default option
-        var defaultOption = $("<option>", {
-            "value": "",
-            "text": app.label.static["select-uppercase"],
+app.release.workflow.request.callback.readType = function (data) {
+    $("#release-workflow-request [name=rqs-code]").empty();
+    // Add default option
+    var defaultOption = $("<option>", {
+        "value": "",
+        "text": app.label.static["select-uppercase"],
+    });
+    $("#release-workflow-request [name=rqs-code]").append(defaultOption);
+    $.each(data, function (i, row) {
+        var option = $("<option>", {
+            "value": row.RqsCode,
+            "text": app.label.datamodel.request[row.RqsValue]
         });
-        $("#release-workflow-request [name=rqs-code]").append(defaultOption);
-        $.each(response.data, function (i, row) {
-            var option = $("<option>", {
-                "value": row.RqsCode,
-                "text": app.label.datamodel.request[row.RqsValue]
-            });
-            $("#release-workflow-request [name=rqs-code]").append(option);
-        });
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+        $("#release-workflow-request [name=rqs-code]").append(option);
+    });
 };
 //#endregion
 

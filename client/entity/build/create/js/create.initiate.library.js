@@ -33,17 +33,11 @@ app.build.create.initiate.ajax.matrixLookup = function () {
 
 /**
 * * Callback subject read
-* @param  {} response
+* @param  {} data
 */
-app.build.create.initiate.callback.matrixLookup = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Handle the Data in the Response then
-        app.build.create.initiate.callback.drawMatrix(response.data);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.create.initiate.callback.matrixLookup = function (data) {
+    // Handle the Data
+    app.build.create.initiate.callback.drawMatrix(data);
 };
 
 /**
@@ -109,30 +103,18 @@ app.build.create.initiate.ajax.readLanguage = function () {
 /**
  * Callback from server for read languages
  *
- * @param {*} response
+ * @param {*} data
  */
-app.build.create.initiate.callback.readLanguage = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    }
-    else if (!response.data || (Array.isArray(response.data) && !response.data.length)) {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-        // Do nothing 
-    }
-    else if (response.data !== undefined) {
-        // Create Language check boxes
-        app.build.create.initiate.callback.drawLanguage(response);
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+app.build.create.initiate.callback.readLanguage = function (data) {
+    app.build.create.initiate.callback.drawLanguage(data);
 };
 
 /**
  * Draw screen for languages
  *
- * @param {*} response
+ * @param {*} data
  */
-app.build.create.initiate.callback.drawLanguage = function (response) {
+app.build.create.initiate.callback.drawLanguage = function (data) {
     // Clear pervious Check boxes items
     var languageItems = $("#build-create-initiate-setup").find("[name=lng-checkbox-group]");
 
@@ -152,22 +134,25 @@ app.build.create.initiate.callback.drawLanguage = function (response) {
         }).get(0).outerHTML;
         return defaultLng;
     });
-    // Check boxes containerCheck 
-    $.each(response.data, function (key, value) {
-        if (value.LngIsoCode != app.config.language.iso.code) {
-            languageItems.append(function () {
-                return $("<li>", {
-                    "class": "list-group-item",
-                    "html": $("<input>", {
-                        "type": "checkbox",
-                        "name": "lng-group",
-                        "value": value.LngIsoCode,
-                        "lngName": value.LngIsoName
-                    }).get(0).outerHTML + " " + value.LngIsoName
-                }).get(0).outerHTML;
-            });
-        }
-    });
+
+    if (data && Array.isArray(data) && data.length) {
+        // Check boxes containerCheck 
+        $.each(data, function (key, value) {
+            if (value.LngIsoCode != app.config.language.iso.code) {
+                languageItems.append(function () {
+                    return $("<li>", {
+                        "class": "list-group-item",
+                        "html": $("<input>", {
+                            "type": "checkbox",
+                            "name": "lng-group",
+                            "value": value.LngIsoCode,
+                            "lngName": value.LngIsoName
+                        }).get(0).outerHTML + " " + value.LngIsoName
+                    }).get(0).outerHTML;
+                });
+            }
+        });
+    }
 };
 
 
@@ -188,11 +173,10 @@ app.build.create.initiate.ajax.readFrequency = function () {
 
 /**
  * Fill dropdown for frequency Select
- * @param {*} response 
+ * @param {*} data 
  * @param {*} selectedPrvCode 
  */
-app.build.create.initiate.frequencySelect = function (response) {
-    data = response.data;
+app.build.create.initiate.frequencySelect = function (data) {
     //Set in properties
     $("#build-create-initiate-setup").find("[name=frequency-code]").append($("<option>", {
         "text": app.label.static["select-uppercase"],
@@ -208,14 +192,14 @@ app.build.create.initiate.frequencySelect = function (response) {
     });
 
     // Set in Modal
-    $("#build-create-import").find("[name=frq-code]").append($("<option>", {
+    $("#build-create-modal-frequency").find("[name=frq-code]").append($("<option>", {
         "text": app.label.static["select-uppercase"],
         "disabled": "disabled",
         "selected": "selected"
     }));
 
-    $.each(response.data, function (key, value) {
-        $("#build-create-import").find("[name=frq-code]").append($("<option>", {
+    $.each(data, function (key, value) {
+        $("#build-create-modal-frequency").find("[name=frq-code]").append($("<option>", {
             "value": value.FrqCode,
             "text": value.FrqCode + " - " + app.label.static[value.FrqValue]
         }));
@@ -241,12 +225,10 @@ app.build.create.initiate.ajax.readCopyright = function () {
 /**
  * Callback from server - reading copyrights to display in dropdown
  *
- * @param {*} response
+ * @param {*} data
  */
-app.build.create.initiate.callback.readCopyright = function (response) {
-    data = response.data;
+app.build.create.initiate.callback.readCopyright = function (data) {
     // Map API data to select dropdown  model for main Subject search and update Subject search
-
     $("#build-create-initiate-setup").find("[name=copyright-code]").append($("<option>", {
         "text": app.label.static["select-uppercase"],
         "disabled": "disabled",
@@ -276,8 +258,8 @@ app.build.create.initiate.setUpDimensions = function () {
 
     $(languages).each(function (key, item) {
         app.build.create.initiate.languages.push({
-            "code": item.value,
-            "name": item.attributes.lngname.value
+            "LngIsoCode": item.value,
+            "LngIsoName": item.attributes.lngname.value
         });
 
         app.build.create.initiate.data.Dimension.push(

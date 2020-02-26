@@ -31,51 +31,45 @@ app.release.search.ajax.readMatrixList = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.search.callback.readMatrixList = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Load select2
-        $("#release-search").find("[name=mtr-code]").empty().append($("<option>")).select2({
-            minimumInputLength: 0,
-            allowClear: true,
-            width: '100%',
-            placeholder: app.label.static["start-typing"],
-            data: app.release.search.mapData(response.data)
-        });
+app.release.search.callback.readMatrixList = function (data) {
+    // Load select2
+    $("#release-search").find("[name=mtr-code]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.release.search.mapData(data)
+    });
 
-        // Enable and Focus Seach input
-        $("#release-search").find("[name=mtr-code]").prop('disabled', false).focus();
+    // Enable and Focus Seach input
+    $("#release-search").find("[name=mtr-code]").prop('disabled', false).focus();
 
-        //Update Subject search Search functionality
-        $("#release-search").find("[name=mtr-code]").on('select2:select', function (e) {
-            var selectedObject = e.params.data;
-            if (selectedObject) {
-                // Some item from your model is active!
-                if (selectedObject.id.toLowerCase() == $("#release-search").find("[name=mtr-code]").val().toLowerCase()) {
-                    // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
+    //Update Subject search Search functionality
+    $("#release-search").find("[name=mtr-code]").on('select2:select', function (e) {
+        var selectedObject = e.params.data;
+        if (selectedObject) {
+            // Some item from your model is active!
+            if (selectedObject.id.toLowerCase() == $("#release-search").find("[name=mtr-code]").val().toLowerCase()) {
+                // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
 
-                    // Store the MtrCode for later use
-                    app.release.MtrCode = selectedObject.id;
-                    app.release.search.readReleaseList();
-                }
-                else {
-                    // Hide the list of releases
-                    $("#release-list-card").hide();
-                }
-            } else {
+                // Store the MtrCode for later use
+                app.release.MtrCode = selectedObject.id;
+                app.release.search.readReleaseList();
+            }
+            else {
                 // Hide the list of releases
                 $("#release-list-card").hide();
             }
-        });
+        } else {
+            // Hide the list of releases
+            $("#release-list-card").hide();
+        }
+    });
 
-        // goTo 
-        app.release.goTo.load();
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    // goTo 
+    app.release.goTo.load();
 };
 //#endregion
 
@@ -125,72 +119,66 @@ app.release.search.drawCallbackReleaseList = function () {
 
 /**
 * 
- * @param {*} response
+ * @param {*} data
  */
-app.release.search.callback.readReleaseList = function (response) {
-    if (response.error) {
-        api.modal.error(response.error.message);
-    } else if (response.data !== undefined) {
-        // Show the card
-        $("#release-search-result").hide().fadeIn();
+app.release.search.callback.readReleaseList = function (data) {
+    // Show the card
+    $("#release-search-result").hide().fadeIn();
 
-        // Set Matrix code in the Header
-        $("#release-search-result .card-header").html(app.release.MtrCode);
+    // Set Matrix code in the Header
+    $("#release-search-result .card-header").html(app.release.MtrCode);
 
-        // Draw datatable
-        if ($.fn.dataTable.isDataTable("#release-search-result table")) {
-            app.library.datatable.reDraw("#release-search-result table", response.data);
-        } else {
+    // Draw datatable
+    if ($.fn.dataTable.isDataTable("#release-search-result table")) {
+        app.library.datatable.reDraw("#release-search-result table", data);
+    } else {
 
-            var localOptions = {
-                order: [[0, 'desc']],
-                data: response.data,
-                columns: [
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return app.library.html.link.edit({ idn: row.RlsCode }, row.RlsVersion + "." + row.RlsRevision);
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return app.release.renderStatus(row);
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return app.release.renderRequest(row.RqsCode);
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return !row.RlsLiveDatetimeFrom ? row.RlsLiveDatetimeFrom : moment(row.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display);
-                        }
-                    },
-                    {
-                        data: null,
-                        render: function (data, type, row) {
-                            return !row.RlsLiveDatetimeTo ? row.RlsLiveDatetimeTo : moment(row.RlsLiveDatetimeTo).format(app.config.mask.datetime.display);
-                        }
+        var localOptions = {
+            order: [[0, 'desc']],
+            data: data,
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.library.html.link.edit({ idn: row.RlsCode }, row.RlsVersion + "." + row.RlsRevision);
                     }
-                ],
-                drawCallback: function (settings) {
-                    app.release.search.drawCallbackReleaseList();
                 },
-                //Translate labels language
-                language: app.label.plugin.datatable
-            };
-
-            $("#release-search-result table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.release.renderStatus(row);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.release.renderRequest(row.RqsCode);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return !row.RlsLiveDatetimeFrom ? row.RlsLiveDatetimeFrom : moment(row.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return !row.RlsLiveDatetimeTo ? row.RlsLiveDatetimeTo : moment(row.RlsLiveDatetimeTo).format(app.config.mask.datetime.display);
+                    }
+                }
+            ],
+            drawCallback: function (settings) {
                 app.release.search.drawCallbackReleaseList();
-            });
-        }
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+
+        $("#release-search-result table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.release.search.drawCallbackReleaseList();
+        });
     }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
 /**
