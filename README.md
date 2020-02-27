@@ -16,6 +16,7 @@ PxStat also empowers the **Data-Owners** to manage the publication of their data
 The Wiki centrally hosts all the technicall and business information about the system:
 * [Requirements](https://github.com/CSOIreland/PxStat/wiki/Requirements)
 * [Installation](https://github.com/CSOIreland/PxStat/wiki/Installation)
+* [Update](Update)
 * [Configuration](https://github.com/CSOIreland/PxStat/wiki/Configuration)
 * [API](https://github.com/CSOIreland/PxStat/wiki/API)
 * [Developer](https://github.com/CSOIreland/PxStat/wiki/Developer)
