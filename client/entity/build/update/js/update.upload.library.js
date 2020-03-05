@@ -180,10 +180,9 @@ app.build.update.upload.validate.dataFile = function () {
     dimensionCodes.push($("#build-update-properties [name=frequency-code]").val());
 
     var csvHeaders = app.build.update.upload.file.content.data.JSON.meta.fields;
-
     //check that dimension codes are in csv header codes
     $(dimensionCodes).each(function (key, code) {
-        if (jQuery.inArray(code, csvHeaders) == -1) {
+        if (jQuery.inArray(code, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
             isValid = false;
             return false;
         };
@@ -852,8 +851,8 @@ app.build.update.upload.drawProperties = function () {
             }
         };
 
-        //Don't use tinymce set content as 'once' change event within app.library.utility.initTinyMce won't trigger
-        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=note-value]").val(jsonStat.note.join(" "));
+        //Don't use tinymce setContent becasue tinyMce must be initiated only after all language tabs are drawn
+        $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=note-value]").val(jsonStat.note.join("\r\n"));
 
         //draw dimension datatables
         app.build.update.dimension.drawStatistic(lngIsoCode, statisticsData);

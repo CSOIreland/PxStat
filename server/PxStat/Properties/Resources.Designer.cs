@@ -123,12 +123,11 @@ namespace PxStat.Properties {
         ///  &quot;excluded&quot;: {
         ///    &quot;article&quot;: [ &quot;the&quot;, &quot;an&quot;, &quot;a&quot; ],
         ///    &quot;preposition&quot;: [ &quot;of&quot;, &quot;in&quot;, &quot;to&quot;, &quot;for&quot;, &quot;with&quot;, &quot;on&quot;, &quot;at&quot;, &quot;from&quot;, &quot;by&quot;, &quot;about&quot;, &quot;as&quot;, &quot;into&quot;, &quot;like&quot;, &quot;through&quot;, &quot;after&quot;, &quot;over&quot;, &quot;between&quot;, &quot;out&quot;, &quot;against&quot;, &quot;during&quot;, &quot;without&quot;, &quot;before&quot;, &quot;under&quot;, &quot;around&quot;, &quot;among&quot;, &quot;and&quot;, &quot;or&quot; ],
-        ///    &quot;interrogative&quot;: [ &quot;how&quot;, &quot;where&quot;, &quot;what&quot;, &quot;why&quot;, &quot;when&quot;, &quot;who&quot;, &quot;which&quot;, &quot;many&quot; ],
+        ///    &quot;interrogative&quot;: [ &quot;how&quot;, &quot;where&quot;, &quot;what&quot;, &quot;why&quot;, &quot;when&quot;, &quot;who&quot;, &quot;which&quot;, &quot;much&quot;, &quot;many&quot; ],
         ///    &quot;miscellaneous&quot;: [ &quot;has&quot;, &quot;have&quot;, &quot;is&quot;, &quot;are&quot;, &quot;not&quot; ],
         ///    &quot;regex&quot;: &quot;[^a-zA-Z\\d\\s:]&quot;
         ///  },
-        ///  &quot;inflection&quot;: {
-        ///  ....
+        ///  &quot;infle....
         /// </summary>
         internal static string keyword_en {
             get {
@@ -185,7 +184,7 @@ namespace PxStat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{&quot;match&quot;:&quot;abstract&quot;,&quot;lemma&quot;:&quot;abstraction&quot;},{&quot;match&quot;:&quot;abstraction&quot;,&quot;lemma&quot;:&quot;abstraction&quot;},{&quot;match&quot;:&quot;aim&quot;,&quot;lemma&quot;:&quot;object&quot;},{&quot;match&quot;:&quot;object&quot;,&quot;lemma&quot;:&quot;object&quot;},{&quot;match&quot;:&quot;objective&quot;,&quot;lemma&quot;:&quot;object&quot;},{&quot;match&quot;:&quot;target&quot;,&quot;lemma&quot;:&quot;object&quot;},{&quot;match&quot;:&quot;unit&quot;,&quot;lemma&quot;:&quot;unit&quot;},{&quot;match&quot;:&quot;all&quot;,&quot;lemma&quot;:&quot;whole&quot;},{&quot;match&quot;:&quot;altogether&quot;,&quot;lemma&quot;:&quot;whole&quot;},{&quot;match&quot;:&quot;completely&quot;,&quot;lemma&quot;:&quot;whole&quot;},{&quot;match&quot;:&quot;entirely&quot;,&quot;lemma&quot;:&quot;whole&quot;},{&quot;match&quot;:&quot;right&quot;,&quot;lemma&quot;:&quot;whole&quot;},{&quot;match&quot;:&quot;totally&quot;,&quot;lemma&quot;:&quot;whole&quot;},{&quot;match&quot;....
+        ///   Looks up a localized string similar to [{&quot;match&quot;:&quot;mutilate&quot;,&quot;lemma&quot;:&quot;mutilation&quot;},{&quot;match&quot;:&quot;prank&quot;,&quot;lemma&quot;:&quot;prankster&quot;},{&quot;match&quot;:&quot;hope&quot;,&quot;lemma&quot;:&quot;despair&quot;},{&quot;match&quot;:&quot;ascetically&quot;,&quot;lemma&quot;:&quot;ascetic&quot;},{&quot;match&quot;:&quot;withdraw&quot;,&quot;lemma&quot;:&quot;withdrawer&quot;},{&quot;match&quot;:&quot;Jamaican&quot;,&quot;lemma&quot;:&quot;Jamaica&quot;},{&quot;match&quot;:&quot;ionize&quot;,&quot;lemma&quot;:&quot;ionization&quot;},{&quot;match&quot;:&quot;susceptible&quot;,&quot;lemma&quot;:&quot;susceptibleness&quot;},{&quot;match&quot;:&quot;sorriness&quot;,&quot;lemma&quot;:&quot;sorry&quot;},{&quot;match&quot;:&quot;ascertain&quot;,&quot;lemma&quot;:&quot;ascertainable&quot;},{&quot;match&quot;:&quot;express&quot;,&quot;lemma&quot;:&quot;local&quot;},{&quot;match&quot;:&quot;punt&quot;,&quot;lemma&quot;:&quot;punter&quot;},{&quot;match&quot;:&quot;evade&quot;,&quot;lemma&quot;:&qu....
         /// </summary>
         internal static string synonym_en {
             get {
@@ -194,7 +193,7 @@ namespace PxStat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{&quot;match&quot;:&quot;mactíre&quot;,&quot;lemma&quot;:&quot;faolchú&quot;},{&quot;match&quot;:&quot;mactíre&quot;,&quot;lemma&quot;:&quot;mactíre&quot;},{&quot;match&quot;:&quot;madra&quot;,&quot;lemma&quot;:&quot;gadhar&quot;},{&quot;match&quot;:&quot;madra&quot;,&quot;lemma&quot;:&quot;cú&quot;}].
+        ///   Looks up a localized string similar to [{&quot;match&quot;:&quot;ab&quot;,&quot;lemma&quot;:&quot;ab&quot;},{&quot;match&quot;:&quot;abacas&quot;,&quot;lemma&quot;:&quot;abacas&quot;},{&quot;match&quot;:&quot;abacht&quot;,&quot;lemma&quot;:&quot;abacht&quot;},{&quot;match&quot;:&quot;abairt&quot;,&quot;lemma&quot;:&quot;abairt&quot;},{&quot;match&quot;:&quot;abairtín&quot;,&quot;lemma&quot;:&quot;abairt&quot;},{&quot;match&quot;:&quot;frása&quot;,&quot;lemma&quot;:&quot;abairt&quot;},{&quot;match&quot;:&quot;abairt&quot;,&quot;lemma&quot;:&quot;abairtín&quot;},{&quot;match&quot;:&quot;abairtín&quot;,&quot;lemma&quot;:&quot;abairtín&quot;},{&quot;match&quot;:&quot;frása&quot;,&quot;lemma&quot;:&quot;abairtín&quot;},{&quot;match&quot;:&quot;ábaltacht&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:&quot;acmhainn&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:&quot;bua&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:&quot;cumas&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:....
         /// </summary>
         internal static string synonym_ga {
             get {

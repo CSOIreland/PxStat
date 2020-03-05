@@ -107,6 +107,16 @@ namespace PxStat.Build
                         return false;
                     }
                     var specCls = spec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
+                    if (specCls == null)
+                    {
+                        Log.Instance.Debug("Classfication code not found in the Matrix Classifications: " + cls.Code);
+                        return false;
+                    }
+                    if (cls.Variable.Count == 0)
+                    {
+                        Log.Instance.Debug("No variables found for item Classifications: " + cls.Code);
+                        return false;
+                    }
                     //if the classification in the csv contains a variable not found in the corresponding classification of the matrix...
                     if (specCls.Variable.Where(x => x.Code == cls.Variable[0].Code).Count() == 0)
                     {

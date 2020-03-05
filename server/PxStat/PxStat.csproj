@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.0.0\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.0.1\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
@@ -184,6 +184,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Resources\eMail\template_GroupMessage.html" />
+    <EmbeddedResource Include="Resources\image.png" />
     <Content Include="Resources\regexes\bots.yml" />
     <Content Include="Resources\regexes\client\browsers.yml" />
     <Content Include="Resources\regexes\client\browser_engine.yml" />
@@ -580,6 +581,7 @@
     <Compile Include="Resources\Sanitizer.cs" />
     <Compile Include="Resources\Error.cs" />
     <Compile Include="Resources\Xlsx.cs" />
+    <Compile Include="Resources\XlsxUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

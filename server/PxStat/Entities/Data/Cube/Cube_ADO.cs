@@ -38,13 +38,15 @@ namespace PxStat.Data
             else
             {
                 inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = rlsCode });
-                if (lngIsoCode != null)
-                {
-                    inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode });
-                }
-                else
-                    inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") });
+
             }
+
+            if (lngIsoCode != null)
+            {
+                inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode });
+            }
+            else
+                inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") });
 
             var output = ado.ExecuteReaderProcedure("Data_Matrix_ReadDimensionRole", inputParams);
 

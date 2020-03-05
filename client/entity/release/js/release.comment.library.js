@@ -18,32 +18,41 @@ app.release.comment.callback = {};
 * @param {*} data
 */
 app.release.comment.render = function (data) {
-    app.release.comment.validation.update();
-    if (data.CmmValue) {
-        $("#release-comment [name=create]").hide();
-        $("#release-comment [name=update]").show();
-        $("#release-comment [name=delete]").prop("disabled", false);
-        $("#release-comment [name=cmm-value]").empty().html(app.library.html.parseBbCode(data.CmmValue)).show();
-
-        var tinyMceId = $("#release-comment-modal-update [name=cmm-value]").attr("id");
-        tinymce.get(tinyMceId).setContent(data.CmmValue);
-
-        $("#release-comment-modal-update [name=cmm-value-update]").val(data.CmmValue);
-
-    } else {
-        $("#release-comment [name=create]").show();
-        $("#release-comment [name=update]").hide();
-        $("#release-comment [name=delete]").prop("disabled", true);
-        $("#release-comment [name=cmm-value]").empty().hide();
-
-        var tinyMceId = $("#release-comment-modal-create [name=cmm-value]").attr("id");
-        tinymce.get(tinyMceId).setContent("");
-    }
-
     if (app.release.isModerator || app.release.isHistorical) {
         $("#release-comment [name=create]").prop("disabled", true);
         $("#release-comment [name=update]").prop("disabled", true);
         $("#release-comment [name=delete]").prop("disabled", true);
+    } else {
+        $("#release-comment [name=create]").prop("disabled", false);
+        $("#release-comment [name=update]").prop("disabled", false);
+        $("#release-comment [name=delete]").prop("disabled", false);
+    }
+
+    // Update
+    if (data.CmmValue) {
+        app.release.comment.validation.update();
+        $("#release-comment [name=create]").hide();
+        $("#release-comment [name=update]").show();
+
+        $("#release-comment [name=delete]").prop("disabled", false);
+
+        var tinyMceId = $("#release-comment-modal-update [name=cmm-value]").attr("id");
+        tinymce.get(tinyMceId).setContent(data.CmmValue);
+
+        $("#release-comment [name=cmm-value]").empty().html(app.library.html.parseBbCode(data.CmmValue)).show();
+    }
+    // Create
+    else {
+        app.release.comment.validation.create();
+        $("#release-comment [name=create]").show();
+        $("#release-comment [name=update]").hide();
+
+        $("#release-comment [name=delete]").prop("disabled", true);
+
+        var tinyMceId = $("#release-comment-modal-create [name=cmm-value]").attr("id");
+        tinymce.get(tinyMceId).setContent("");
+
+        $("#release-comment [name=cmm-value]").empty().hide();
     }
 
     $("#release-comment").hide().fadeIn();
@@ -56,14 +65,13 @@ app.release.comment.render = function (data) {
 */
 app.release.comment.create = function () {
     $("#release-comment-modal-create").modal("show");
-    app.release.comment.validation.create();
 };
 
 /**
 *
 */
 app.release.comment.validation.create = function () {
-    $("#release-comment-modal-create form").trigger("reset").validate({
+    $("#release-comment-modal-create form").trigger("reset").onSanitiseForm().validate({
         ignore: [],
         rules: {
             "cmm-value": {
@@ -79,7 +87,6 @@ app.release.comment.validation.create = function () {
         submitHandler: function (form) {
             $(form).sanitiseForm();
             app.release.comment.ajax.create();
-            $("#release-comment-modal-create").modal("hide");
         }
     }).resetForm();
 };
@@ -109,6 +116,7 @@ app.release.comment.ajax.create = function () {
 app.release.comment.callback.create = function (data) {
     if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [""]));
+        $("#release-comment-modal-create").modal("hide");
         app.release.read();
     }
     // Handle Exception
@@ -122,11 +130,6 @@ app.release.comment.callback.create = function (data) {
 * 
 */
 app.release.comment.update = function () {
-    var cmmValue = $("#release-comment-modal-update [name=cmm-value-update]").val();
-    var tinyMceId = $("#release-comment-modal-update [name=cmm-value]").attr("id");
-    tinymce.get(tinyMceId).setContent(cmmValue);
-    // Empty error. (Do not delete.)
-    $("#release-comment-modal-update [name=cmm-value-error-holder]").empty();
     $("#release-comment-modal-update").modal("show");
 };
 
@@ -134,7 +137,7 @@ app.release.comment.update = function () {
 * 
 */
 app.release.comment.validation.update = function () {
-    $("#release-comment-modal-update form").trigger("reset").validate({
+    $("#release-comment-modal-update form").trigger("reset").onSanitiseForm().validate({
         ignore: [],
         rules: {
             "cmm-value": {
@@ -150,7 +153,6 @@ app.release.comment.validation.update = function () {
         submitHandler: function (form) {
             $(form).sanitiseForm();
             app.release.comment.ajax.update();
-            $("#release-comment-modal-update").modal("hide");
         }
     }).resetForm();
 };
@@ -161,6 +163,7 @@ app.release.comment.validation.update = function () {
 app.release.comment.ajax.update = function () {
     var tinyMceId = $("#release-comment-modal-update [name=cmm-value]").attr("id");
     var CmmValue = tinymce.get(tinyMceId).getContent();
+
     api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Release_API.UpdateComment",
@@ -179,6 +182,7 @@ app.release.comment.ajax.update = function () {
 app.release.comment.callback.update = function (data) {
     if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
+        $("#release-comment-modal-update").modal("hide");
         app.release.read();
     }
     // Handle Exception

@@ -8,7 +8,7 @@ GO
 -- Author:	Paulo Patricio
 -- Read date: 12 Nov 2018
 -- Description:	Reads record(s) from 
--- exec Workflow_ReadWorkInProgress 'okeeffene','en','en'
+-- exec Workflow_ReadWorkInProgress 'okeeffene','en','en',99
 -- =============================================
 CREATE
 	OR
@@ -42,7 +42,7 @@ BEGIN
 				AND LNG_DELETE_FLAG = 0
 			)
 
-	SELECT q.RlsCode
+	SELECT distinct q.RlsCode
 		,q.MtrCode
 		,q.GrpCode
 		,q.GrpName
@@ -57,7 +57,7 @@ BEGIN
 			,GRP_NAME GrpName
 			,CCN_USERNAME CcnUsername
 			,RQS_VALUE AS RqsValue
-			,max(DHT_DATETIME) DhtDatetime
+			,max(convert(nvarchar,DHT_DATETIME,120)) DhtDatetime
 			,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle
 			,MTR_LNG_ID
 			,WRQ_ID 

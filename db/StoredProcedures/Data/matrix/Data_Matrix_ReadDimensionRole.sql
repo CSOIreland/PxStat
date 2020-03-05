@@ -9,7 +9,7 @@ GO
 -- Create date: 06/02/2020
 -- Description:	For a matrix code, get the roles of its various dimensions. Live matrices only.
 -- You must supply either a valid currently live matrix code or a Release Code plus LngIsoCode
--- exec Data_Matrix_ReadDimensionRole 'STATISTIC','NEA06',724,'en'
+-- exec Data_Matrix_ReadDimensionRole 'STATISTIC','E3002',null,'en'
 -- =============================================
 CREATE
 	OR
@@ -17,21 +17,26 @@ CREATE
 ALTER PROCEDURE Data_Matrix_ReadDimensionRole @ContentVariable NVARCHAR(256)
 	,@MtrCode NVARCHAR(20) = NULL
 	,@RlsCode INT = NULL
-	,@LngIsoCode CHAR(2) = NULL
+	,@LngIsoCode CHAR(2)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @MtrId INT
+	DECLARE @LngId INT
+
+	SET @LngId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCode AND LNG_DELETE_FLAG=0)
 
 	IF @MtrCode IS NOT NULL -- We are just reading a live release for the matrix code
 	BEGIN
 		SET @MtrId = (
-				SELECT MTR_ID
+				SELECT  MTR_ID
 				FROM TD_MATRIX
 				INNER JOIN VW_RELEASE_LIVE_NOW
 					ON MTR_ID = VRN_MTR_ID
 				WHERE MTR_CODE = @MtrCode
+				and MTR_DELETE_FLAG=0
+				and MTR_LNG_ID=@LngId 
 				)
 	END
 	ELSE

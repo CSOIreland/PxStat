@@ -1,6 +1,6 @@
 ﻿{
   "static": {
-    "release": "Release",
+    "release": "Scaoileadh ",
     "all-groups": "All Groups"
   },
   "error": {
@@ -71,6 +71,32 @@
     },
 
     "workflow": "The Table &quot;{0}&quot; has a workflow in progress. Please wait for the workflow to complete before uploading a new revision."
+  },
+  "xlsx": {
+    "table": "Tábla",
+    "code": "Cód",
+    "name": "Ainm",
+    "last-updated": "Nuashonraithe Dheireanaigh",
+    "note": "Nóta",
+    "url": "Url",
+    "product": "Táirge",
+    "contacts": "Teagmháil",
+    "email": "Ríomhphost",
+    "phone": "Guthán",
+    "copyright": "Cóipcheart",
+    "properties": "Airíonna",
+    "official-statistics": "Staitisticí Oifigiúla?",
+    "emergency": "Éigeandáil?",
+    "archived": "I gCartlann?",
+    "dependency": "Spleáchas?",
+    "analytical": "Anailíseacha?",
+    "language": "Teanga",
+    "iso-code": "Cód ISO",
+    "iso-name": "Ainm ISO",
+    "unit": "Aonad",
+    "value": "Luach",
+    "yes": "Tá",
+    "no": "Níl"
   },
   "default": {
     "classification": "State",

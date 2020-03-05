@@ -103,7 +103,7 @@ app.alert.callback.drawDatatable = function (data) {
             columns: [
                 {
                     render: function (_data, _type, row) {
-                        var attributes = { idn: row.LrtCode, LrtMessage: row.LrtMessage };
+                        var attributes = { idn: row.LrtCode };
                         return app.library.html.link.edit(attributes, app.library.html.parseBbCode(row.LrtMessage));
                     }
                 },

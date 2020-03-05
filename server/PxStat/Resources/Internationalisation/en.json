@@ -72,6 +72,32 @@
 
     "workflow": "The Table &quot;{0}&quot; has a workflow in progress. Please wait for the workflow to complete before uploading a new version."
   },
+  "xlsx": {
+    "table": "Table",
+    "code": "Code",
+    "name": "Name",
+    "last-updated": "Last Updated",
+    "note": "Note",
+    "url": "Url",
+    "product": "Product",
+    "contacts": "Contacts",
+    "email": "Email",
+    "phone": "Phone",
+    "copyright": "Copyright",
+    "properties": "Properties",
+    "official-statistics": "Official Statistics",
+    "emergency": "Emergency",
+    "archived": "Archived",
+    "analytical": "Analytical",
+    "dependency": "Dependency",
+    "language": "Language",
+    "iso-code": "ISO Code",
+    "iso-name": "ISO Name",
+    "unit": "UNIT",
+    "value": "VALUE",
+    "yes": "Yes",
+    "no": "No"
+  },
   "default": {
     "classification": "State",
     "csv": {

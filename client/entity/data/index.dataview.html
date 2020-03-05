@@ -7,7 +7,15 @@
                 <div class="card mb-4">
                     <!-- Data Table data set Header-->
                     <div class="card-header">
-                        <h5 label="results"></h5>
+                        <div class="row justify-content-between align-items-center px-2">
+                            <h5 label="results"></h5>
+                            <span>
+                                <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-download"></i> <span label="download-results"></span>
+                                </button>
+                                <div name="download-select-dataset" class="dropdown-menu" aria-labelledby="data-download-results"></div>
+                            </span>
+                        </div>
                     </div>
                     <!-- Data Table data table-->
                     <div class="card-body">

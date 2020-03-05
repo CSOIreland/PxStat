@@ -483,27 +483,42 @@ app.data.dataview.callback.drawDatatable = function (data) {
         }).get(0).outerHTML;
 
         var tableHeading = $("<th>", {
-            "html": data.Dimension(i).label + codeSpan
+            "html": data.Dimension(i).label + codeSpan,
+            "dimension-role": data.Dimension(i).role
         });
         //Data Table header
         dataContainer.find("[name=datatable]").find("[name=header-row]").append(tableHeading);
-
         tableColumns.push({
             data: data.id[i],
-            "createdCell": function (td, cellData, rowData, row, col) {
-                $(td).attr("data-order", cellData);
-            },
             render: function (data, type, row, meta) {
-                var dimensionLabel = jsonTableId.meta.id[meta.col];
-                var codeSpan = $('<span>', {
-                    "name": "code",
-                    "class": "badge badge-pill badge-neutral mx-2 d-none",
-                    "text": jsonTableId.data[meta.row][dimensionLabel]
-                }).get(0).outerHTML;
-                return data + codeSpan;
+                //alternative to using "createdCell" and data-order attribute which does not work with render
+                //depending on request type, return either the code to sort if the time column, or the label for any other column
+                //https://stackoverflow.com/questions/51719676/datatables-adding-data-order
+                switch (type) {
+                    case "sort":
+                        var role = $("#data-view-container").find("[name=datatable]").find("thead th")[meta.col].attributes["dimension-role"].value;
+                        if (role == "time") {
+                            return jsonTableId.data[meta.row][jsonTableId.meta.id[meta.col]];
+                        }
+                        else {
+                            return data
+                        }
+                        break;
+
+                    default:
+                        var codeSpan = $('<span>', {
+                            "name": "code",
+                            "class": "badge badge-pill badge-neutral mx-2 d-none",
+                            "text": jsonTableId.data[meta.row][jsonTableId.meta.id[meta.col]]
+                        }).get(0).outerHTML;
+                        return data + codeSpan;
+                        break;
+                }
             }
         });
+
     }
+
     var unitHeading = $("<th>",
         {
             "class": "unit"
@@ -511,10 +526,7 @@ app.data.dataview.callback.drawDatatable = function (data) {
     unitHeading.html("Unit");
     dataContainer.find("[name=datatable]").find("[name=header-row]").append(unitHeading);
     tableColumns.push({
-        "data": 'unit.label',
-        "createdCell": function (td, cellData, rowData, row, col) {
-            $(td).attr("data-order", cellData);
-        },
+        "data": 'unit.label'
     });
     tableColumns.push({
         "data": 'value',
@@ -527,9 +539,9 @@ app.data.dataview.callback.drawDatatable = function (data) {
     });
     var valueHeading = $("<th>",
         {
-            "class": "value text-right"
+            "class": "text-right"
         });
-    valueHeading.html("Value");
+    valueHeading.html(app.label.static["value"]);
     dataContainer.find("[name=datatable]").find("[name=header-row]").append(valueHeading);
     $("#data-view-container").html(dataContainer.get(0).outerHTML);
     //Draw DataTable with Data Set data

@@ -88,14 +88,6 @@ Application - Plugin - Extend JQuery Validator - https://jqueryvalidation.org/
 *******************************************************************************/
 
 /**
- * Validation noLeadingTrailingSpace TO BE DELETED 
- */
-jQuery.validator.addMethod("noLeadingTrailingSpace", function (value, element) {
-  return this.optional(element) || /^([^\s][A-Za-z0-9.,\s]*[^\s])$/i.test(value);
-  //return this.optional(element) || /^(?=[A-Za-z0-9])([A-Za-z0-9.,\h]*)(?<=[A-Za-z0-9])$/i.test(value);
-}, app.label.static["no-spaces"]);
-
-/**
  * Validation required fields
  */
 jQuery.validator.addMethod("required", function (value, element) {

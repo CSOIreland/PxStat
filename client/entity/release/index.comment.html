@@ -1,7 +1,7 @@
 <!-- Release Comment Read-->
 <div id="release-comment" class="card m-3 border-secondary" style="display:none">
     <div class="card-header bg-secondary text-light" label="public-comment"></div>
-    <div class="card-body" name="cmm-value" style="display:none"></div>
+    <div class="card-body p-3" name="cmm-value" style="display:none"></div>
     <div class="card-footer text-right">
         <button name="create" class="btn btn-secondary text-light" style="display:none">
             <i class="fas fa-plus-circle"></i> <span label="add"></span>
@@ -54,7 +54,6 @@
                 <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
             </div>
             <form>
-                <input type="hidden" name="cmm-value-update" value="">
                 <div class="modal-body">
                     <textarea rows="3" name="cmm-value" class="form-control" maxlength="1024"></textarea>
                     <span class="serverValidationError text-danger" name="cmm-value-error-holder"></span>

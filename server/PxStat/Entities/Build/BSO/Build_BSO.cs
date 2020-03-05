@@ -347,23 +347,14 @@ namespace PxStat.Build
 
                     }
                     dto.sortWord = dto.sortWord + v.dimensionValue.dimType + '/' + v.key + '/' + v.value + '~';
+
                 }
+
+
 
             }
         }
 
-
-        /*public static async Task LoopAsync(IEnumerable<string> thingsToLoop)
-{
-    List<Task> listOfTasks = new List<Task>();
-
-    foreach (var thing in thingsToLoop)
-    {
-        listOfTasks.Add(DoAsync(thing));
-    }
-
-    await Task.WhenAll(listOfTasks);
-}*/
 
         /// <summary>
         /// Create data tables based on the Matrix data and metadata. Load the data to the database TD_DATA and TM_DATA_CELL tables
@@ -1031,6 +1022,18 @@ namespace PxStat.Build
                 //Get the existing data items as a list of DataItem_DTO with a sort word - !! - use CartesianProduct function..            
                 existingData = pBso.GetExistingDataItems(theMatrixData, theSpec);// 
 
+
+            foreach (var d in requestItems)
+            {
+                d.CreateIdentifier();
+            }
+
+            foreach (var d in existingData)
+            {
+                d.CreateIdentifier();
+            }
+
+
             List<DataItem_DTO> allData;
             //..and merge the new data with the existing data
             if (requestItems != null)
@@ -1091,7 +1094,7 @@ namespace PxStat.Build
             {
                 foreach (var item in DTO.PxData.DataItems)
                 {
-
+                    var v = Utility.GetCustomConfig("APP_CSV_VALUE");
                     Dictionary<string, string> readData = JsonConvert.DeserializeObject<Dictionary<string, string>>(item.ToString());
                     DataItem_DTO readItem = new DataItem_DTO();
                     readItem.dataValue = readData[Utility.GetCustomConfig("APP_CSV_VALUE")];
@@ -1252,6 +1255,8 @@ namespace PxStat.Build
 
             List<DataItem_DTO> merged = new List<DataItem_DTO>();
 
+
+
             List<DataItem_DTO> intersection = newData.Intersect(existingData).ToList();
 
             //First we can now remove any dummy data. This is identifiable by having a period value of null.
@@ -1408,6 +1413,9 @@ internal class DataItem_DTO : IEquatable<DataItem_DTO>
     /// </summary>
     internal long id { get; set; }
 
+
+    internal string identifier { get; set; }
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -1438,6 +1446,15 @@ internal class DataItem_DTO : IEquatable<DataItem_DTO>
         return sort;
     }
 
+    internal void CreateIdentifier()
+    {
+        this.identifier = this.identifier + '~' + this.statistic.Code + '~' + this.period.Code + '~';
+        foreach (var cls in this.classifications)
+        {
+            this.identifier = this.identifier + cls.Code + '~' + cls.Variable[0].Code;
+        }
+    }
+
     /// <summary>
     /// Override of Equals
     /// </summary>
@@ -1445,6 +1462,13 @@ internal class DataItem_DTO : IEquatable<DataItem_DTO>
     /// <returns></returns>
     public Boolean Equals(DataItem_DTO other)
     {
+        //This is by far the faster algorithm, but will only work if the identifier fields have been populated. Otherwise it does a deep comparison of both objects.
+        //Try to ensure any object has the identifier field populated.
+        if (this.identifier != null && other.identifier != null)
+            return this.identifier.Equals(other.identifier);
+
+        //No identifiers, deep comparison needed:
+
         //The statistic of this data item must match the other
         if (!this.statistic.Equals(other.statistic)) return false;
         //The period of this data item must match the other
@@ -1473,6 +1497,8 @@ internal class DataItem_DTO : IEquatable<DataItem_DTO>
     /// <returns></returns>
     public override int GetHashCode()
     {
+        if (this.identifier != null)
+            return this.identifier.GetHashCode();
 
         int hashValuePeriod = this.period.GetHashCode();
         int hashValueStatistic = this.statistic.GetHashCode();

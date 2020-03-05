@@ -374,9 +374,8 @@ app.build.create.initiate.setUpDimensions = function () {
                     }
                 };
 
-
-                //Don't use tinymce set content as 'once' change event within app.library.utility.initTinyMce won't trigger
-                $("#build-create-dimension-accordion-collapse-properties-" + item.value).find("[name=note-value]").val(importedSource.note.join(" "));
+                //Don't use tinymce setContent becasue tinyMce must be initiated only after all language tabs are drawn
+                $("#build-create-dimension-accordion-collapse-properties-" + item.value).find("[name=note-value]").val(importedSource.note.join("\r\n"));
             }
         }
         app.build.create.dimension.drawStatistics(item.value);

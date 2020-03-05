@@ -65,6 +65,31 @@
     },
     "workflow": "Tabela &quot;{0}&quot; praca w toku. Zaczekaj na zakończenie przepływu pracy przed przesłaniem nowej wersji."
   },
+  "xlsx": {
+    "table": "Tabela",
+    "code": "Kod",
+    "name": "Nazwa",
+    "last-updated": "Ostatnio zaktualizowany",
+    "note": "Notka",
+    "url": "Url",
+    "product": "Produkt",
+    "contacts": "Kontakty",
+    "email": "Email",
+    "phone": "Telefon",
+    "copyright": "Prawa Autorskie",
+    "properties": "Właściwość",
+    "official-statistics": "Oficjalne Statystyki",
+    "emergency": "Nagły Przypadek",
+    "archived": "Zarchiwizowane",
+    "analytical": "Zależność",
+    "language": "Język",
+    "iso-code": "ISO Kod",
+    "iso-name": "ISO Nazwa",
+    "unit": "Jednostka",
+    "value": "Wartość",
+    "yes": "Tak",
+    "no": "Nie"
+  },
   "default": {
     "classification": "Stan",
     "csv": {

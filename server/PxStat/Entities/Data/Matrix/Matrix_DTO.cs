@@ -67,7 +67,7 @@ namespace PxStat.Data
         /// <summary>
         /// class property
         /// </summary>
-        private Release_DTO Release { get; set; }
+        internal Release_DTO Release { get; set; }
 
         /// <summary>
         /// class propery
@@ -1613,17 +1613,17 @@ namespace PxStat.Data
         internal string GetXlsxObject(string lngIsoCode = null)
         {
             Xlsx xl = new Xlsx();
-            return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode));
+            return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode), lngIsoCode);
 
         }
 
-        internal string GetCsvObject(string lngIsoCode = null)
+        internal string GetCsvObject(string lngIsoCode = null, bool indicateBlankSymbols = false)
         {
             Xlsx xl = new Xlsx();
-            return xl.GetCsv(GetMatrixSheet(lngIsoCode), "\"");
+            return xl.GetCsv(GetMatrixSheet(lngIsoCode, indicateBlankSymbols), "\"");
         }
 
-        internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null)
+        internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null, bool indicateBlankSymbols = false)
         {
 
             List<List<XlsxValue>> rowLists = new List<List<XlsxValue>>();
@@ -1652,8 +1652,8 @@ namespace PxStat.Data
                 rowList.Add(new XlsxValue() { Value = cls.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + cls.Value });
             }
 
-            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_UNIT") });
-            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_VALUE") });
+            rowList.Add(new XlsxValue() { Value = Label.Get("xlsx.unit", lngIsoCode) });
+            rowList.Add(new XlsxValue() { Value = Label.Get("xlsx.value", lngIsoCode) });
 
             rowLists.Add(rowList);
 
@@ -1694,12 +1694,14 @@ namespace PxStat.Data
                     }
                     rowlist.Add(new XlsxValue() { Value = dto.statistic.Unit });
                     dynamic cell = Cells[cellCounter];
-                    rowlist.Add(new XlsxValue() { Value = cell.TdtValue.ToString() == Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") ? "" : cell.TdtValue.ToString(), DataType = CellValues.Number });
+                    string emptyValue = indicateBlankSymbols ? Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") : "";
+                    rowlist.Add(new XlsxValue() { Value = cell.TdtValue.ToString() == Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") ? emptyValue : cell.TdtValue.ToString(), DataType = CellValues.Number });
 
                     cellCounter++;
                     rowLists.Add(rowlist);
                 }
             }
+
             return rowLists;
         }
 
