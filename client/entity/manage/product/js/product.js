@@ -7,8 +7,11 @@ $(document).ready(function () {
   app.navigation.layout.set(false);
   app.navigation.breadcrumb.set([app.label.static["manage"], app.label.static["products"]]);
 
-  //On page load hide Subject search and "Products of Subject" table. Display only "Releases of Product" Table 
+  // GoTo
   var sbjCode = api.content.getParam("SbjCode");
+
+  // Load Modal - must be after GoTo
+  api.content.load("#overlay", "entity/manage/product/index.modal.html");
 
   //Hide table when no subject selected
   $("#product-container").find("[name=select-main-subject-search]").on('select2:clear', function (e) {

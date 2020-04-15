@@ -28,7 +28,7 @@ app.release.workflow.modal.request.setFlag = function () {
         offstyle: "warning",
         width: C_APP_TOGGLE_LENGTH
     });
-    $("#request-workflow-modal-request-publish [name=wrq-emergency-flag]").bootstrapToggle("off");
+    $("#request-workflow-modal-request-publish [name=wrq-exceptional-flag]").bootstrapToggle("off");
     $("#request-workflow-modal-request-publish [name=wrq-reservation-flag]").bootstrapToggle(app.release.RlsReservationFlag ? "on" : "off");
     $("#request-workflow-modal-request-publish [name=wrq-archive-flag]").bootstrapToggle(app.release.RlsArchiveFlag ? "on" : "off");
 
@@ -179,7 +179,7 @@ app.release.workflow.modal.request.ajax.create = function (RqsCode) {
                 "CmmValue": CmmValue,
                 "WrqReservationFlag": $("#request-workflow-modal-request-publish [name=wrq-reservation-flag]").prop("checked"),
                 "WrqArchiveFlag": $("#request-workflow-modal-request-publish [name=wrq-archive-flag]").prop("checked"),
-                "WrqEmergencyFlag": $("#request-workflow-modal-request-publish [name=wrq-emergency-flag]").prop("checked"),
+                "WrqExceptionalFlag": $("#request-workflow-modal-request-publish [name=wrq-exceptional-flag]").prop("checked"),
                 "WrqDatetime": moment($("#request-workflow-modal-request-publish [name=wrq-datetime]").val(), app.config.mask.datetime.display).format(app.config.mask.datetime.ajax)
             };
             break;
@@ -264,8 +264,8 @@ app.release.workflow.modal.request.setDefaultPublishTime = function (date) {
  */
 app.release.workflow.modal.request.checkDatetime = function () {
     var date = new Date();
-    var isEmergency = $("#request-workflow-modal-request-publish [name=wrq-emergency-flag]").prop("checked");
-    if (!isEmergency) {
+    var isExceptional = $("#request-workflow-modal-request-publish [name=wrq-exceptional-flag]").prop("checked");
+    if (!isExceptional) {
         if (date > app.release.workflow.modal.request.setDefaultPublishTime(date)) {
             // Too late, changed date to tomorrow
             date.setDate(date.getDate() + 1);
@@ -284,12 +284,12 @@ app.release.workflow.modal.request.checkDatetime = function () {
         "minDate": moment(date).format(app.config.mask.datetime.dateRangePicker),
         "startDate": moment(date).format(app.config.mask.datetime.dateRangePicker),
         "singleDatePicker": true,
-        "timePicker": isEmergency ? true : false,
+        "timePicker": isExceptional ? true : false,
         "timePicker24Hour": true,
         "timePickerIncrement": 1,
         "locale": app.label.plugin.daterangepicker,
         "isInvalidDate": function (date) {
-            if (isEmergency) {
+            if (isExceptional) {
                 return false;
             } else {
                 // Filter by Embargo Days
@@ -297,12 +297,12 @@ app.release.workflow.modal.request.checkDatetime = function () {
             }
         }
     }).val(moment(date).format(app.config.mask.datetime.display)).once("change", function () {
-        var isEmergency = $("#request-workflow-modal-request-publish [name=wrq-emergency-flag]").prop("checked");
-        if (!isEmergency) {
+        var isExceptional = $("#request-workflow-modal-request-publish [name=wrq-exceptional-flag]").prop("checked");
+        if (!isExceptional) {
             //Overwrite the default time by DateRangePicker (00:00:00) with the Default Publish Time
-            emergencyDate = moment($(this).val(), app.config.mask.datetime.display).toDate();
-            emergencyDate = app.release.workflow.modal.request.setDefaultPublishTime(emergencyDate);
-            $(this).val(moment(emergencyDate).format(app.config.mask.datetime.display));
+            exceptionalDate = moment($(this).val(), app.config.mask.datetime.display).toDate();
+            exceptionalDate = app.release.workflow.modal.request.setDefaultPublishTime(exceptionalDate);
+            $(this).val(moment(exceptionalDate).format(app.config.mask.datetime.display));
         }
     });
 };

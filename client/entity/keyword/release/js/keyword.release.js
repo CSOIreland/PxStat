@@ -8,10 +8,15 @@ $(document).ready(function () {
     //app.navigation.access.check();
     app.navigation.layout.set(false);
     app.navigation.breadcrumb.set([app.label.static["keywords"], app.label.static["releases"]]);
+
+    // Load Modal
+    api.content.load("#overlay", "entity/keyword/release/index.modal.html");
+
     // Load HTML for Data Set Modal 
-    api.content.load("#keyword-release-data-modal", "entity/data/index.modal.html");
+    api.content.load("#overlay", "entity/data/index.modal.html", null, true);
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
     api.content.load("#data-dataview-row", "entity/data/index.dataview.html");
+
     // Load the side panel
     api.content.load("#panel", "entity/keyword/search/index.html");
 

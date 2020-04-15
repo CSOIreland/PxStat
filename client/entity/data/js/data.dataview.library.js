@@ -43,12 +43,11 @@ app.data.dataview.callback.mapMetadata = function (data) {
 
     //FIXME: Does not show MAP if User SELECTED language pl (matrix in en only)
     if (data && data.length) {
-        var geo = data.role.geo[0];
-
+        //var geo = data.role.geo[0];
         $("#data-dataview-selected-table").find("[name=map-dimensions]").empty();
         for (i = 0; i < data.length; i++) {
             var dimension = data.Dimension(i);
-            if (dimension.label != geo) {
+            if (dimension.role != "geo") {
                 var dimensionContainer = $("#data-dataset-templates").find("[name=dimension-container-map]").clone();
                 dimensionContainer.find("[name=dimension-label]").text(dimension.label);
                 dimensionContainer.find("[name=dimension-count]").text(dimension.id.length);
@@ -96,63 +95,39 @@ app.data.dataview.callback.mapMetadata = function (data) {
 * 
 */
 app.data.dataview.getMapSelection = function () {
-    if (app.data.MtrCode) {
-        app.data.dataview.apiParamsMap = {
-            "matrix": app.data.MtrCode
-        };
-    }
-    else if (app.data.RlsCode) {
-        app.data.dataview.apiParamsMap = {
-            "release": app.data.RlsCode
-        };
-    }
-
     var localParams = {
-        "language": app.data.LngIsoCode,
-        "format": {
-            "type": C_APP_FORMAT_TYPE_DEFAULT,
-            "version": C_APP_FORMAT_VERSION_DEFAULT
-        },
-        "role": {
-            "time": [
-                $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=time]").attr("idn")
-            ],
-            "metric": [
-                $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=metric]").attr("idn")
-            ]
-        },
-        "dimension": [
-            {
-                "id": $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=time]").attr("idn"),
-                "category": {
-                    "index": [
-                        $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=time]").val()
-                    ]
-                }
+        "class": "query",
+        "id": [],
+        "dimension": {},
+        "extension": {
+            "language": {
+                "code": app.data.LngIsoCode
             },
-            {
-                "id": $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=metric]").attr("idn"),
-                "category": {
-                    "index": [
-                        $("#data-dataview-selected-table").find("[name=map-container]").find("select[role=metric]").val()
-                    ]
-                }
+            "format": {
+                "type": C_APP_FORMAT_TYPE_DEFAULT,
+                "version": C_APP_FORMAT_VERSION_DEFAULT
             }
-        ],
+        },
+        "version": "2.0",
         "m2m": false
     };
 
-    $($("#data-dataview-selected-table").find("[name=map-container]").find("select[role=classification]")).each(function (index) {
+    if (app.data.MtrCode) {
+        localParams.extension.matrix = app.data.MtrCode;
+    }
+    else if (app.data.RlsCode) {
+        localParams.extension.release = app.data.RlsCode;
+    }
 
-        var dimension = {
-            "id": $(this).attr("idn"),
+    $($("#data-dataview-selected-table").find("[name=map-container]").find("select")).each(function (index) {
+        localParams.id.push($(this).attr("idn"));
+        localParams.dimension[$(this).attr("idn")] = {
             "category": {
                 "index": [
                     $(this).val()
                 ]
             }
         };
-        localParams.dimension.push(dimension);
     });
     //extend apiParams with local params
     $.extend(true, app.data.dataview.apiParamsMap, localParams);
@@ -444,8 +419,8 @@ app.data.dataview.drawCallbackDrawDataTable = function () {
  */
 app.data.dataview.callback.resultsDownload = function (format, version) {
     var apiParams = $.extend(true, {}, app.data.dataset.apiParamsData);
-    apiParams.format.type = format;
-    apiParams.format.version = version;
+    apiParams.extension.format.type = format;
+    apiParams.extension.format.version = version;
     app.data.dataset.ajax.downloadDataset(apiParams);
 }
 

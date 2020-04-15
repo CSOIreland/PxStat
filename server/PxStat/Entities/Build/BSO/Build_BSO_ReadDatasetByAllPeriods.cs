@@ -56,6 +56,17 @@ namespace PxStat.Build
             //Get this matrix from the px file 
             theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado, false);
 
+            //We need to check the matrix in case it incurred any validation problems at the time of creation
+            //If there are, then we need to return the details of these errors to the caller and terminate this process
+            if (theMatrixData.ValidationResult != null)
+            {
+                if (!theMatrixData.ValidationResult.IsValid)
+                {
+                    Response.error = Error.GetValidationFailure(theMatrixData.ValidationResult.Errors);
+                    return false;
+                }
+            }
+
             dynamic result = new ExpandoObject();
 
             result.csv = theMatrixData.GetCsvObject(DTO.LngIsoCode, true);

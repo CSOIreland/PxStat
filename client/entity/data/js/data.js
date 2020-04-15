@@ -11,7 +11,8 @@ $(document).ready(function () {
     app.data.goTo.CprCode = api.content.getParam("CprCode");
     app.data.goTo.MtrCode = api.content.getParam("MtrCode");
 
-    app.data.setDatePicker();
+    // Load Modal - must be after GoTo
+    api.content.load("#overlay", "entity/data/index.modal.html");
 
     //populate colection api  
     app.data.callback.drawCollectionApiDetails();
@@ -21,6 +22,9 @@ $(document).ready(function () {
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
     api.content.load("#data-dataview-row", "entity/data/index.dataview.html");
     api.content.load("#data-sharethis-row", "entity/data/index.sharethis.html");
+
+    // Init DatePicker
+    app.data.setDatePicker();
 
     //set up search inputs
     $("#data-search-row-responsive, #data-search-row-desktop [name=search-input-group-holder]").html(

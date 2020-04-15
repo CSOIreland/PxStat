@@ -45,7 +45,8 @@ app.build.create.import.validate.ajax.read = function () {
         {
             "FrqCodeTimeval": app.build.create.file.import.FrqCode,
             "FrqValueTimeval": app.build.create.file.import.FrqValue,
-            "MtrInput": app.build.create.file.import.content.Base64
+            "MtrInput": app.build.create.file.import.content.Base64,
+            "LngIsoCode": app.label.language.iso.code
         },
         "app.build.create.import.validate.callback.read",
         null,

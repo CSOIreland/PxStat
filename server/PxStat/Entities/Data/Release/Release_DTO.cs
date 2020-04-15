@@ -181,9 +181,9 @@ namespace PxStat.Data
         public bool RlsDependencyFlag { get; internal set; }
 
         /// <summary>
-        ///  Release Emergency Flag
+        ///  Release Exceptional Flag
         /// </summary>
-        public bool RlsEmergencyFlag { get; internal set; }
+        public bool RlsExceptionalFlag { get; internal set; }
 
         /// <summary>
         /// Start date and time of Release

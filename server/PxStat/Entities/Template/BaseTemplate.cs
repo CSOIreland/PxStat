@@ -84,6 +84,7 @@ namespace PxStat.Template
         protected void Dispose()
         {
             Ado.Dispose();
+            PxStat.RequestLanguage.LngIsoCode = null;
         }
 
         /// <summary>

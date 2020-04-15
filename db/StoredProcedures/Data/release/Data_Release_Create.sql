@@ -18,7 +18,7 @@ ALTER PROCEDURE Data_Release_Create @RlsVersion INT
 	,@RlsLiveDateTimeFrom DATETIME = NULL
 	,@RlsLiveDateTimeTo DATETIME = NULL
 	,@RlsDependencyFlag BIT = 0
-	,@RlsEmergencyFlag BIT = 0
+	,@RlsExceptionalFlag BIT = 0
 	,@RlsReservationFlag BIT = 0
 	,@RlsArchiveFlag BIT = 0
 	,@RlsAnalyticalFlag BIT = 0
@@ -110,7 +110,7 @@ BEGIN
 		,[RLS_LIVE_DATETIME_FROM]
 		,[RLS_LIVE_DATETIME_TO]
 		,[RLS_DEPENDENCY_FLAG]
-		,[RLS_EMERGENCY_FLAG]
+		,[RLS_EXCEPTIONAL_FLAG]
 		,[RLS_RESERVATION_FLAG]
 		,[RLS_ARCHIVE_FLAG]
 		,[RLS_ANALYTICAL_FLAG]
@@ -128,7 +128,7 @@ BEGIN
 		,@RlsLiveDateTimeFrom
 		,@RlsLiveDateTimeTo
 		,@RlsDependencyFlag
-		,@RlsEmergencyFlag
+		,@RlsExceptionalFlag
 		,@RlsReservationFlag
 		,@RlsArchiveFlag
 		,@RlsAnalyticalFlag

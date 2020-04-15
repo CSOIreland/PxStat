@@ -9,6 +9,10 @@ $(document).ready(function () {
   app.navigation.access.check([C_APP_PRIVILEGE_POWER_USER]);
   app.navigation.layout.set(false);
   app.navigation.breadcrumb.set([app.label.static.configuration, app.label.static.copyrights]);
+
+  // Load Modal 
+  api.content.load("#overlay", "entity/configuration/copyright/index.modal.html");
+
   // Bind add button for add modal
   $("#copyright-read-container").find("[name='button-create']").once("click", function () {
     app.copyright.modal.create();

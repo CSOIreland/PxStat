@@ -93,6 +93,7 @@
 			"numberLatestReleases": 25
 		},
 		"build": {
+			"threshold": 10000000,
 			"officialStatistics": true,
 			"geoJsonLookup": {
 				"enabled": true,

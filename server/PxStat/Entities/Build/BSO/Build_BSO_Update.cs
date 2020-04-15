@@ -4,10 +4,9 @@ using Newtonsoft.Json.Linq;
 using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Resources.PxParser;
-using PxStat.System.Settings;
 using PxStat.Template;
-using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using static PxStat.Data.Matrix;
 
@@ -72,22 +71,30 @@ namespace PxStat.Build
 
             Build_BSO bBso = new Build_BSO();
 
-
-
             //Get this matrix from the px file 
             theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado);
 
-
-
+            //We need to check the matrix in case it incurred any validation problems at the time of creation
+            //If there are, then we need to return the details of these errors to the caller and terminate this process
+            if (theMatrixData.ValidationResult != null)
+            {
+                if (!theMatrixData.ValidationResult.IsValid)
+                {
+                    Log.Instance.Debug(Error.GetValidationFailure(theMatrixData.ValidationResult.Errors));
+                    Response.error = Label.Get("error.validation");
+                    return false;
+                }
+            }
 
 
             if (DTO.Format.FrmType == DatasetFormat.Px)
             {
-                List<dynamic> resultPx = new List<dynamic>();
-                resultPx.Add(theMatrixData.GetPxObject(true).ToString());
-                Response.data = resultPx;
-
-
+                dynamic result = new ExpandoObject();
+                List<dynamic> file = new List<dynamic>();
+                file.Add(theMatrixData.GetPxObject(true).ToString());
+                result.file = file;
+                result.report = DTO.PxData.DataItems;
+                Response.data = result;
 
                 return true;
             }
@@ -109,38 +116,21 @@ namespace PxStat.Build
 
                 foreach (var lang in languages)
                 {
-                    //JsonStat json = theMatrixData.GetJsonStatObject(lang, false);
+
                     JsonStat json = theMatrixData.GetJsonStatObject(false, true, lang);
                     jsons.Add(new JRaw(Serialize.ToJson(json)));
                 }
-
-                Response.data = jsons;
+                dynamic result = new ExpandoObject();
+                result.file = jsons;
+                result.report = DTO.PxData.DataItems;
+                Response.data = result;
                 return true;
             }
 
             return false;
         }
 
-        private Matrix mergeMetadata(Matrix existingMatrix, Matrix amendedMatrix)
-        {
-            existingMatrix.MainSpec = mergeSpecsMetadata(existingMatrix.MainSpec, amendedMatrix.GetSpecFromLanguage(existingMatrix.MainSpec.Language));
 
-
-
-            if (existingMatrix.OtherLanguageSpec == null) return existingMatrix;
-
-            List<Specification> otherSpecs = new List<Specification>();
-            foreach (Specification spec in existingMatrix.OtherLanguageSpec)
-            {
-                spec.Source = existingMatrix.MainSpec.Source;
-
-                otherSpecs.Add(mergeSpecsMetadata(spec, amendedMatrix.GetSpecFromLanguage(spec.Language)));
-            }
-
-            existingMatrix.OtherLanguageSpec = otherSpecs;
-
-            return existingMatrix;
-        }
 
         private Specification mergeSpecsMetadata(Specification existingSpec, Specification amendedSpec)
         {
@@ -163,123 +153,7 @@ namespace PxStat.Build
             return existingSpec;
         }
 
-        private void updateMetadata(ref Matrix theMatrix, BuildUpdate_DTO dto)
-        {
-            string cprValue = "";
-            Copyright_ADO cAdo = new Copyright_ADO();
-            try
-            {
-                ADO Ado = new ADO("defaultConnection");
-                Copyright_DTO_Read dtoCopyright = new Copyright_DTO_Read();
-                dtoCopyright.CprCode = dto.CprCode;
-                var result = cAdo.Read(Ado, dtoCopyright);
-                if (result.hasData)
-                    cprValue = result.data[0].CprValue;
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                Ado.Dispose();
-            }
-            if (DTO.MtrCode != null)
-                theMatrix.Code = DTO.MtrCode;
-            if (DTO.FrqCodeTimeval == null)
-            {
-                DTO.FrqCodeTimeval = theMatrix.MainSpec.Frequency.Code;
-            }
-            theMatrix.MainSpec.Frequency.Code = DTO.FrqCodeTimeval;
-            theMatrix.MainSpec.Source = cprValue;
-
-            Dimension_DTO dimDtoMain = DTO.getDimensionForLanguage(theMatrix.MainSpec.Language);
-
-            theMatrix.MainSpec.Title = dimDtoMain.MtrTitle != null ? dimDtoMain.MtrTitle : theMatrix.MainSpec.Title;
-
-            theMatrix.MainSpec.NotesAsString = dimDtoMain.MtrNote != null ? dimDtoMain.MtrNote : theMatrix.MainSpec.NotesAsString;
-
-            theMatrix.MainSpec.ContentVariable = dimDtoMain.StatisticLabel != null ? dimDtoMain.StatisticLabel : theMatrix.MainSpec.ContentVariable;
-
-            if (dimDtoMain.FrqValue == null)
-                dimDtoMain.FrqValue = theMatrix.MainSpec.Frequency.Value;
-
-            theMatrix.MainSpec = UpdateValuePairs(theMatrix.MainSpec, theMatrix.MainSpec.Frequency.Value, dimDtoMain.FrqValue);
-
-            if (dimDtoMain.FrqValue != null)
-                theMatrix.MainSpec.Frequency.Value = dimDtoMain.FrqValue;
-
-            if (theMatrix.OtherLanguageSpec != null)
-            {
-                foreach (var spec in theMatrix.OtherLanguageSpec)
-                {
-                    spec.Frequency.Code = DTO.FrqCodeTimeval;
-                    spec.Source = cprValue;
-                    Dimension_DTO dimDto = DTO.getDimensionForLanguage(spec.Language);
-                    spec.Title = dimDto.MtrTitle;
-                    //Can't change spec here, but we need to do the equivalent of MainSpec change value pairs, i.e.
-                    //theMatrix.MainSpec = UpdateValuePairs(theMatrix.MainSpec, theMatrix.MainSpec.Frequency.Value, dimDtoMain.FrqValue);
-                    if (dimDto.FrqValue != null)
-                        spec.Frequency.Value = dimDto.FrqValue;
-                    spec.NotesAsString = dimDto.MtrNote;
-                    spec.ContentVariable = dimDto.StatisticLabel;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Changes a key in MainValues of a specification where necessary
-        /// </summary>
-        /// <param name="spec"></param>
-        /// <param name="key"></param>
-        /// <param name="newKey"></param>
-        /// <returns></returns>
-        private Specification UpdateValuePairs(Specification spec, string key, string newKey)
-        {
-            List<KeyValuePair<string, IList<IPxSingleElement>>> outList = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
-            foreach (var pair in spec.MainValues)
-            {
-                if (pair.Key == key)
-                {
-                    KeyValuePair<string, IList<IPxSingleElement>> newPair = new KeyValuePair<string, IList<IPxSingleElement>>(newKey, pair.Value.ToList());
-                    outList.Add(newPair);
-
-                }
-                else
-                    outList.Add(pair);
-            }
-            spec.MainValues = outList;
-            return spec;
-        }
-
-        /// <summary>
-        /// Add the correct list of periods to the Matrix with the correct version for each language
-        /// </summary>
-        /// <param name="theMatrix"></param>
-        /// <param name="theSpec"></param>
-        /// <param name="dimensions"></param>
-        /// <returns></returns>
-        private Matrix updatePeriods(Matrix theMatrix, Specification theSpec, List<Dimension_DTO> dimensions)
-        {
-            List<Specification> specs = new List<Specification>();
-            Specification matrixSpec = theMatrix.MainSpec;
-
-            theMatrix.MainSpec.Frequency.Period = getPeriodsForSpec(theMatrix.MainSpec, dimensions);
-
-            if (theMatrix.OtherLanguageSpec != null)
-            {
-                foreach (Specification spec in theMatrix.OtherLanguageSpec)
-                {
-
-                    spec.Frequency.Period = getPeriodsForSpec(spec, dimensions);
-
-                    specs.Add(spec);
-                }
-                theMatrix.OtherLanguageSpec = specs;
-            }
-            return theMatrix;
-        }
 
         /// <summary>
         /// Get a list of periods for a specification that include the new periods in the request
@@ -315,184 +189,6 @@ namespace PxStat.Build
 
 
 
-
-        /// <summary>
-        /// Attaches a sort word to each data item. This is based on the existing sort order of the px file.
-        /// The sort word is the same format as that of the main data. This enables us to sort old and new data using the same standards
-        /// </summary>
-        /// <param name="theMatrixData"></param>
-        private List<DataItem_DTO> tagNewData(Specification theSpec, List<PeriodRecordDTO_Create> allPeriods, List<DataItem_DTO> rows)
-        {
-            List<DataItem_DTO> sortedWithData = new List<DataItem_DTO>();
-            foreach (var row in rows)
-            {
-                row.sortWord = getSortWord(theSpec, allPeriods, row).ToSortString();
-            }
-
-            return rows;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="theMatrixData"></param>
-        /// <param name="periods"></param>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        private DataItem_DTO getSortWord(Specification theSpec, List<PeriodRecordDTO_Create> periods, DataItem_DTO item)
-        {
-            //First we must complete the DataItem_DTO to get the data other than just the codes
-            //We do this by looking up the values based on the codes that were supplied
-            //For an individual item, there will be:
-            //One statistic
-            //One period
-            //Many classifications - each classification having one variable
-            if (theSpec.Statistic.Count == 1)
-            {
-                item.statistic = theSpec.Statistic[0];
-            }
-            else
-            {
-                item.statistic = theSpec.Statistic.Where(x => x.Code == item.statistic.Code).FirstOrDefault();
-                item.period = periods.Where(x => x.Code == item.period.Code).FirstOrDefault();
-            }
-
-            foreach (var cls in item.classifications)
-            {
-                ClassificationRecordDTO_Create newCls = new ClassificationRecordDTO_Create();
-                newCls = theSpec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
-                cls.Value = newCls.Value;
-                foreach (var vrb in cls.Variable)
-                {
-                    vrb.Value = newCls.Variable.Where(x => x.Code == vrb.Code).FirstOrDefault().Value;
-                }
-            }
-            return item;
-        }
-
-        /// <summary>
-        /// Merge and sort the old data and new data
-        /// New data is inserted in the correct position
-        /// Updated data is replaced in the existing data by its equivalent in the new data
-        /// New periods are added to the periods in the existing data periods
-        /// </summary>
-        /// <param name="theMatrixData"></param>
-        /// <param name="rows"></param>
-        /// <returns></returns>
-        private List<DataItem_DTO> MergeData(List<DataItem_DTO> newData, List<DataItem_DTO> existingData)
-        {
-            //Rules:
-            //If an existing item has a null period code then it's dummy data and should be removed.
-            //If something is in the new but not in the existing, add the new
-            //If something is in both the new and the existing, replace the old with the new
-            //If something is in the existing but not in the new then leave it alone
-
-            List<DataItem_DTO> merged = new List<DataItem_DTO>();
-
-            List<DataItem_DTO> intersection = newData.Intersect(existingData).ToList();
-
-            //First we can now remove any dummy data. This is identifiable by having a period value of null.
-            existingData.RemoveAll(x => x.period.Code == null);
-
-            merged = existingData;
-
-            //In the new data but not in the old (additions) or in the old but not the new (leave alone)
-            var newExceptExisiting = newData.Except(existingData);
-            if (newExceptExisiting != null)
-            {
-                if (newExceptExisiting.Count() > 0)
-                    merged.AddRange(newExceptExisiting);
-            }
-
-            //updates
-            merged = merged.Except(intersection).ToList();
-            merged.AddRange(intersection);
-
-            return merged;
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dim"></param>
-        /// <returns></returns>
-        private string WriteDimensionViaParents(Dimension dim)
-        {
-            string readString = "";
-
-            while (dim.ParentDimension != null)
-            {
-                readString = dim.Code + ',' + dim.Value + ',' + readString;
-                dim = dim.ParentDimension;
-            }
-
-            return readString;
-        }
-
-        /// <summary>
-        /// Get all of the Classification dimensions expressed as a single dimension structure
-        /// </summary>
-        /// <param name="theMatrixData"></param>
-        /// <returns></returns>
-        private Dimension GetClassificationDimensions(Matrix theMatrixData)
-        {
-            IEnumerable<ClassificationRecordDTO_Create> reverseCls = theMatrixData.MainSpec.Classification.Reverse();
-            Dimension clsD = new Dimension();
-            List<Dimension> previousDims = new List<Dimension>();
-            Dimension previousDimension = new Dimension();
-            List<Dimension> clsDims = new List<Dimension>();
-            foreach (var cls in reverseCls)
-            {
-
-                clsDims = new List<Dimension>();
-                foreach (var vrb in cls.Variable)
-                {
-                    Dimension vrbDim = new Dimension(cls.Code, vrb.Code);
-
-                    if (previousDims.Count > 0) vrbDim.Dimensions = previousDims;
-
-                    clsDims.Add(vrbDim);
-                }
-
-                previousDims = clsDims;
-
-            }
-            clsD.Dimensions = clsDims;
-
-            return clsD;
-        }
-
-
-        private List<PeriodRecordDTO_Create> GetCurrentAndNewPeriods(Specification spec, List<DataItem_DTO> requestItems)
-        {
-            List<PeriodRecordDTO_Create> periods = new List<PeriodRecordDTO_Create>();
-
-            //First, the existing periods
-            foreach (var period in spec.Frequency.Period)
-            {
-                if (period.Code != Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"))
-                {
-                    periods.Add(period);
-                }
-            }
-
-            if (requestItems == null) return periods;
-
-            //Now we add on any new periods that have been passed in as part of the request
-            foreach (DataItem_DTO item in requestItems)
-            {
-
-                if (periods.Where(x => x.Code == item.period.Code).Count() == 0)
-                {
-                    PeriodRecordDTO_Create period = new PeriodRecordDTO_Create();
-                    period.Code = item.period.Code;
-                    period.Value = item.period.Value;
-                    periods.Add(period);
-                }
-            }
-            return periods;
-        }
 
     }
 

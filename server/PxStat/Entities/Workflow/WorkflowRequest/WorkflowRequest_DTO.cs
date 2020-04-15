@@ -29,9 +29,9 @@ namespace PxStat.Workflow
         public DateTime WrqDatetime { get; set; }
 
         /// <summary>
-        /// Emergency flag
+        /// Exceptional flag
         /// </summary>
-        public bool? WrqEmergencyFlag { get; set; }
+        public bool? WrqExceptionalFlag { get; set; }
 
         /// <summary>
         /// Reservation flag
@@ -78,8 +78,8 @@ namespace PxStat.Workflow
             if (parameters.RqsCode != null)
                 this.RqsCode = parameters.RqsCode;
 
-            if (parameters.WrqEmergencyFlag != null)
-                this.WrqEmergencyFlag = parameters.WrqEmergencyFlag;
+            if (parameters.WrqExceptionalFlag != null)
+                this.WrqExceptionalFlag = parameters.WrqExceptionalFlag;
 
             if (parameters.WrqReservationFlag != null)
                 this.WrqReservationFlag = parameters.WrqReservationFlag;

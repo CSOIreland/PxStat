@@ -458,8 +458,8 @@ app.data.metadata.callback.drawResults = function (paginatedResults) {
         //release date & time   
         resultItem.find("[name=from-date]").text(entry.RlsLiveDatetimeFrom ? moment(entry.RlsLiveDatetimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.date.display) : "");
         resultItem.find("[name=from-time]").text(entry.RlsLiveDatetimeFrom ? moment(entry.RlsLiveDatetimeFrom, app.config.mask.datetime.ajax).format(app.config.mask.time.display) : "");
-        if (entry.RlsEmergencyFlag) {
-            resultItem.find("[name=emergency-flag]").removeClass("d-none");
+        if (entry.RlsExceptionalFlag) {
+            resultItem.find("[name=exceptional-flag]").removeClass("d-none");
         }
 
         //Matrix details

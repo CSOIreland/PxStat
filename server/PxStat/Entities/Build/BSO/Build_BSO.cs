@@ -945,9 +945,12 @@ namespace PxStat.Build
 
 
             //Get the new data and metadata from the csv input in the DTO
+            //We will ignore any rows that have no corresponding dimension information in the main input file or in the added periods
             if (DTO.PxData != null)
                 requestItems = GetInputObjectsJson(stats, periods, classifications, variables, theSpec, DTO);
 
+            //Check that all added periods have a DataItem_DTO. If it doesn't then they should be added with the default value
+            // Generate a notional list of DataItem_DTO based on the new periods. Add them to the requestItems if they aren't represented there already.
 
 
             //validate the individual dimensions
@@ -957,8 +960,23 @@ namespace PxStat.Build
                 ValidationResult res = validator.Validate(DTO);
                 if (!res.IsValid)
                 {
-                    return null;
+                    //If we find a validation error at this point, we return the matrix and we will
+                    //require the calling function to pass the validation result back to the client
+                    theMatrixData.ValidationResult = res;
+                    return theMatrixData;
                 }
+
+                //Integrity might have changed, so we need to validate it:
+                PxIntegrityValidator piv = new PxIntegrityValidator(theMatrixData.MainSpec);
+                res = piv.Validate(theMatrixData);
+                if (!res.IsValid)
+                {
+                    //If we find a validation error at this point, we return the matrix and we will
+                    //require the calling function to pass the validation result back to the client
+                    theMatrixData.ValidationResult = res;
+                    return theMatrixData;
+                }
+
             }
 
             //Get the current and new periods for each specification
@@ -967,13 +985,8 @@ namespace PxStat.Build
 
             //Sort the existing data in SPC order
             Build_BSO pBso = new Build_BSO();
-            theMatrixData = pBso.ConvertCellsOrderToSPC(theMatrixData);
+            //theMatrixData = pBso.ConvertCellsOrderToSPC(theMatrixData);
 
-
-
-
-            //Create a list of Data_Item_DTO where periods object does not intersect with allPeriods (This is the new period that is only in the dimension part of the DTO)
-            //Then tag the new data and get it ready for sorting
 
             if (!addedData)
             {
@@ -1037,13 +1050,13 @@ namespace PxStat.Build
             List<DataItem_DTO> allData;
             //..and merge the new data with the existing data
             if (requestItems != null)
-                allData = MergeData(requestItems, existingData);
+                allData = MergeData(requestItems, existingData, DTO.Dimension[0].Frequency.Period, theSpec);
             else
                 allData = existingData;
 
 
-
             theMatrixData = updatePeriods(theMatrixData, theSpec, DTO.Dimension.ToList());
+
 
             //Merge the Metadata here...
             theMatrixData = mergeMetadata(theMatrixData, matrixNewMetadata);
@@ -1096,13 +1109,32 @@ namespace PxStat.Build
                 {
                     var v = Utility.GetCustomConfig("APP_CSV_VALUE");
                     Dictionary<string, string> readData = JsonConvert.DeserializeObject<Dictionary<string, string>>(item.ToString());
-                    DataItem_DTO readItem = new DataItem_DTO();
-                    readItem.dataValue = readData[Utility.GetCustomConfig("APP_CSV_VALUE")];
+                    DataItem_DTO readItem = new DataItem_DTO
+                    {
+                        dataValue = readData[Utility.GetCustomConfig("APP_CSV_VALUE")]
+                    };
+                    //Forget about this iteration if we can't line up with the Frequency code
+                    if (!readData.ContainsKey(theSpec.Frequency.Code))
+                    {
+                        item.updated = false;
+                        continue;
+                    }
+
                     readItem.period.Code = readData[theSpec.Frequency.Code];
-                    readItem.period.Value = periods[readItem.period.Code];
+
+                    readItem.period.Value = periods.ContainsKey(readItem.period.Code) ? periods[readItem.period.Code] : "";
+
+                    //Skip this iteration if the data doesn't contain the statistic indicator
+                    if (!readData.ContainsKey(Utility.GetCustomConfig("APP_CSV_STATISTIC")))
+                    {
+                        item.updated = false;
+                        continue;
+                    }
+
                     readItem.statistic.Code = readData[Utility.GetCustomConfig("APP_CSV_STATISTIC")];
-                    //readItem.statistic.Code = readData[theSpec.ContentVariable];
-                    readItem.statistic.Value = theSpec.Statistic.Where(x => x.Code == readItem.statistic.Code).FirstOrDefault().Value;
+
+                    var sttRead = theSpec.Statistic.Where(x => x.Code == readItem.statistic.Code).FirstOrDefault();
+                    readItem.statistic.Value = sttRead != null ? sttRead.Value : "";
 
                     foreach (var clsDict in classifications)
                     {
@@ -1110,15 +1142,24 @@ namespace PxStat.Build
                         cls.Code = clsDict.Key;
                         cls.Value = clsDict.Value;
                         List<VariableRecordDTO_Create> vrbList = new List<VariableRecordDTO_Create>();
-                        VariableRecordDTO_Create vrb = new VariableRecordDTO_Create();
-                        vrb.Value = readData[cls.Code];
+                        VariableRecordDTO_Create vrb = new VariableRecordDTO_Create
+                        {
+                            Value = readData.ContainsKey(cls.Code) ? readData[cls.Code] : ""
+                        };
                         vrb.Code = vrb.Value;
                         vrbList.Add(vrb);
                         cls.Variable = vrbList;
                         readItem.classifications.Add(cls);
                     }
 
-                    buildList.Add(readItem);
+                    //Test the readItem to check if it validates against the px input and/or the new periods
+                    // If it's ok then add it to our list
+                    if (CheckReadItem(readItem, periods, stats, theSpec))
+                    {
+                        buildList.Add(readItem);
+                        item.updated = true;
+                    }
+                    else item.updated = false;
                 }
             }
             catch (Exception ex)
@@ -1127,6 +1168,28 @@ namespace PxStat.Build
             }
 
             return buildList;
+        }
+
+        /// <summary>
+        /// Tests if a data item is valid in the context of the metadata we already know about
+        /// </summary>
+        /// <param name="dataItem"></param>
+        /// <param name="theSpec"></param>
+        /// <returns></returns>
+        private bool CheckReadItem(DataItem_DTO dataItem, Dictionary<string, string> periods, Dictionary<string, string> stats, Specification theSpec)
+        {
+            if (!stats.ContainsKey(dataItem.statistic.Code)) return false;
+            if (!periods.ContainsKey(dataItem.period.Code)) return false;
+            foreach (ClassificationRecordDTO_Create cls in dataItem.classifications)
+            {
+                var specClassification = theSpec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
+                if (specClassification == null) return false;
+                if (specClassification.Variable.Count == 0) return false;
+                if (specClassification.Variable.Where(x => x.Code == cls.Variable[0].Code).Count() == 0) return false;
+            }
+
+
+            return true;
         }
 
         private Matrix mergeMetadata(Matrix existingMatrix, Matrix amendedMatrix)
@@ -1245,7 +1308,7 @@ namespace PxStat.Build
         /// <param name="theMatrixData"></param>
         /// <param name="rows"></param>
         /// <returns></returns>
-        private List<DataItem_DTO> MergeData(List<DataItem_DTO> newData, List<DataItem_DTO> existingData)
+        private List<DataItem_DTO> MergeData(List<DataItem_DTO> newData, List<DataItem_DTO> existingData, List<PeriodRecordDTO_Create> newPeriods, Specification spec)
         {
             //Rules:
             //If an existing item has a null period code then it's dummy data and should be removed.
@@ -1253,7 +1316,19 @@ namespace PxStat.Build
             //If something is in both the new and the existing, replace the old with the new
             //If something is in the existing but not in the new then leave it alone
 
+            //If a period is in the new metadata but not in the existing metadata then create a default vnewPeriodDataItemsalue entry for it
+
             List<DataItem_DTO> merged = new List<DataItem_DTO>();
+
+            List<DataItem_DTO> newPeriodDataItems = new List<DataItem_DTO>();
+
+
+            //bug caused by reference call
+            foreach (var period in newPeriods)
+            {
+                // List<DataItem_DTO> exData = Utility.JsonDeserialize_IgnoreLoopingReference<List<DataItem_DTO>>(Utility.JsonSerialize_IgnoreLoopingReference(existingData));
+                newPeriodDataItems.AddRange(GenerateDataItem_DtoListForPeriod(period, existingData, spec));
+            }
 
 
 
@@ -1272,11 +1347,50 @@ namespace PxStat.Build
                     merged.AddRange(newExceptExisiting);
             }
 
+
+
             //updates
             merged = merged.Except(intersection).ToList();
             merged.AddRange(intersection);
 
+
+            //If there are any new periods in the DTO that don't have corresponding csv-json entries, give them default entries
+            var inPeriodDataItemsExceptMerged = newPeriodDataItems.Except(merged);
+
+            merged.AddRange(inPeriodDataItemsExceptMerged);
+
             return merged;
+        }
+
+
+
+        /// <summary>
+        /// For the new period get a clone based on an existing period
+        /// </summary>
+        /// <param name="period"></param>
+        /// <param name="existingData"></param>
+        /// <param name="spec"></param>
+        /// <returns></returns>
+        internal List<DataItem_DTO> GenerateDataItem_DtoListForPeriod(PeriodRecordDTO_Create period, List<DataItem_DTO> existingData, Specification spec)
+        {
+            List<DataItem_DTO> outList = new List<DataItem_DTO>();
+            List<DataItem_DTO> itemList = existingData.Where(x => x.period.Code == spec.Frequency.Period[0].Code).ToList();
+
+            foreach (var item in itemList)
+            {
+                DataItem_DTO outItem = new DataItem_DTO
+                {
+                    period = period,
+                    statistic = item.statistic,
+                    classifications = item.classifications,
+                    dataValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE")
+                };
+                outItem.sortWord = outItem.ToSortString();
+                outItem.CreateIdentifier();
+                outList.Add(outItem);
+            }
+
+            return outList;
         }
 
         /// <summary>

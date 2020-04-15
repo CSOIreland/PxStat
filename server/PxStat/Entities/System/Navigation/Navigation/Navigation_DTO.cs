@@ -63,9 +63,9 @@ namespace PxStat.System.Navigation
         public string CprCode { get; set; }//*** Not used by the Front End yet **
 
         /// <summary>
-        /// Emergency Flag
+        /// Exceptional Flag
         /// </summary>
-        public bool? RlsEmergencyFlag { get; set; }//*** Not used by the Front End yet **
+        public bool? RlsExceptionalFlag { get; set; }//*** Not used by the Front End yet **
 
         /// <summary>
         /// Reservation flag
@@ -113,8 +113,8 @@ namespace PxStat.System.Navigation
             if (parameters.CprCode != null)
                 CprCode = parameters.CprCode;
 
-            if (parameters.RlsEmergencyFlag != null)
-                RlsEmergencyFlag = parameters.RlsEmergencyFlag;
+            if (parameters.RlsExceptionalFlag != null)
+                RlsExceptionalFlag = parameters.RlsExceptionalFlag;
 
             if (parameters.RlsReservationFlag != null)
                 RlsReservationFlag = parameters.RlsReservationFlag;

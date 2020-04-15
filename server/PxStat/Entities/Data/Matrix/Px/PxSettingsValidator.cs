@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using API;
+﻿using API;
 using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Validators;
 using PxParser.Resources.Parser;
+using System;
+using System.Collections.Generic;
 
 namespace PxStat.Data.Px
 {
@@ -193,18 +193,19 @@ namespace PxStat.Data.Px
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        internal PxSettingsValidator(ADO ado, bool includeSource = true)
+        internal PxSettingsValidator(ADO ado, bool includeSource = true, string lngIsoCode = null)
         {
 
             this.ado = ado;
-            RuleFor(x => x.FormatVersion).Must(v => (Matrix.AxisVersionIsSupported(ado, Resources.Constants.C_SYSTEM_PX_NAME, v) || Matrix.JsonStatVersionIsSupported(ado, Resources.Constants.C_SYSTEM_JSON_STAT_NAME, v))).WithMessage((string)Label.Get("px.setting.axisversion-invalid"));
+            RuleFor(x => x.FormatVersion).Must(v => (Matrix.AxisVersionIsSupported(ado, Resources.Constants.C_SYSTEM_PX_NAME, v) || Matrix.JsonStatVersionIsSupported(ado, Resources.Constants.C_SYSTEM_JSON_STAT_NAME, v))).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.axisversion-invalid") : Label.Get("px.setting.axisversion-invalid", lngIsoCode)));
             if (includeSource)
             {
-                RuleFor(x => x.MainSpec.Source).Must(s => Matrix.SourceIsSupported(ado, s)).WithMessage((string)Label.Get("px.setting.source-invalid"));
+                RuleFor(x => x.MainSpec.Source).Must(s => Matrix.SourceIsSupported(ado, s)).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.source-invalid") : Label.Get("px.setting.source-invalid", lngIsoCode)));
             }
-            RuleFor(x => x.OtherLanguageSpec).HaveSupportedSources(ado).When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage((string)Label.Get("px.setting.sources-invalid"));
-            RuleFor(x => x.TheLanguage).Must(lang => Matrix.LanguageIsSupported(ado, lang)).When(x => x.Languages == null || x.Languages.Count == 0).WithMessage((string)Label.Get("px.setting.language-invalid"));
-            RuleFor(x => x.Languages).HaveSupportedLanguages(ado).When(x => x.Languages != null && x.Languages.Count > 0).WithMessage((string)Label.Get("px.setting.languages-invalid"));
+
+            RuleFor(x => x.OtherLanguageSpec).HaveSupportedSources(ado).When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.sources-invalid") : Label.Get("px.setting.sources-invalid", lngIsoCode)));
+            RuleFor(x => x.TheLanguage).Must(lang => Matrix.LanguageIsSupported(ado, lang)).When(x => x.Languages == null || x.Languages.Count == 0).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.language-invalid") : Label.Get("px.setting.language-invalid", lngIsoCode)));
+            RuleFor(x => x.Languages).HaveSupportedLanguages(ado).When(x => x.Languages != null && x.Languages.Count > 0).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.languages-invalid") : Label.Get("px.setting.languages-invalid", lngIsoCode)));
         }
     }
     /// <summary>

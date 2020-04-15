@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Validators;
 using PxParser.Resources.Parser;
+using PxStat.Build;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace PxStat.Data
         /// <summary>
         /// DataIsGoodValidator
         /// </summary>
-        public DataIsGoodValidator() : base(Label.Get("px.integrity.data"))
+        public DataIsGoodValidator() : base(Label.Get("integrity.data"))
         {
 
         }
@@ -104,7 +105,7 @@ namespace PxStat.Data
     public class FactsAndDimensionsMatchValidator : PropertyValidator
     {
 
-        public FactsAndDimensionsMatchValidator() : base(Label.Get("px.integrity.size"))
+        public FactsAndDimensionsMatchValidator() : base(Label.Get("integrity.size"))
         {
 
         }
@@ -191,28 +192,26 @@ namespace PxStat.Data
     /// </summary>
     class PxIntegrityValidator : AbstractValidator<Matrix>
     {
-        public PxIntegrityValidator()
+        public PxIntegrityValidator(Matrix.Specification spec, string lngIsoCode = null)
         {
 
-            RuleFor(x => x.MainSpec).HaveFactsAndDimensionsMatching().WithMessage(Label.Get("px.integrity.size"));
-            RuleFor(x => x.OtherLanguageSpec).HaveFactsAndDimensionsMatching().When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage(Label.Get("px.integrity.size"));
+            RuleFor(x => x).Must(CustomValidations.BelowLimitDatapoints).WithMessage(lngIsoCode == null ? String.Format(Label.Get("integrity.cell-count"), spec.GetRequiredDatapointCount(), Utility.GetCustomConfig("APP_DATA_THRESHOLD")) : String.Format(Label.Get("integrity.cell-count", lngIsoCode), spec.GetRequiredDatapointCount(), Utility.GetCustomConfig("APP_DATA_THRESHOLD")));
+            RuleFor(x => x.MainSpec).HaveFactsAndDimensionsMatching().WithMessage(Label.Get("integrity.size"));
+            RuleFor(x => x.OtherLanguageSpec).HaveFactsAndDimensionsMatching().When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage(Label.Get("integrity.size"));
             RuleFor(x => x.Cells).DataIsGood().When(x => x.Cells != null && x.Cells.Count > 0).WithMessage(FormatDataIsGood);
-            RuleFor(x => x).Must(NoDuplicateDomains).WithMessage(Label.Get("px.integrity.codes"));
-            //RuleFor(x => x.MainSpec).SetValidator(new FactsAndDimensionsMatchValidator());
+            RuleFor(x => x).Must(NoDuplicateDomains).WithMessage(Label.Get("integrity.codes"));
         }
 
 
 
         private static bool NoDuplicateDomains(Matrix matrix)
         {
-
-
             return !matrix.MainSpec.Classification.GroupBy(x => x.Code).Any(g => g.Count() > 1);
         }
 
         private static string FormatDataIsGood(Matrix matrix)
         {
-            return String.Format(Label.Get("px.integrity.data"), matrix.Code);
+            return String.Format(Label.Get("integrity.data"), matrix.Code);
         }
 
     }

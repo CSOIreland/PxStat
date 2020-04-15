@@ -61,7 +61,7 @@ BEGIN
 		,CPR_CODE AS CprCode
 		,RLS_LIVE_DATETIME_FROM AS RlsLiveDatatimeFrom
 		,RLS_LIVE_DATETIME_TO AS RlsLiveDatatimeTo
-		,RLS_EMERGENCY_FLAG AS EmergencyFlag
+		,RLS_EXCEPTIONAL_FLAG AS ExceptionalFlag
 		,FRQ_CODE As FrqCode
 		,FRQ_VALUE As FrqValue
 	FROM TD_RELEASE rls

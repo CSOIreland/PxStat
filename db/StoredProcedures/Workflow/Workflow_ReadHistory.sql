@@ -33,7 +33,7 @@ BEGIN
 		,rqs.RQS_VALUE AS RqsValue
 		,wrqCmm.CMM_VALUE AS WrqCmmValue
 		,wrq.WRQ_DATETIME AS WrqDatetime
-		,wrq.WRQ_EMERGENCY_FLAG AS WrqEmergencyFlag
+		,wrq.WRQ_EXCEPTIONAL_FLAG AS WrqExceptionalFlag
 		,wrq.WRQ_RESERVATION_FLAG AS WrqReservationFlag
 		,wrq.WRQ_ALERT_FLAG AS WrqAlertFlag
 		,wrq.WRQ_ARCHIVE_FLAG AS WrqArchiveFlag

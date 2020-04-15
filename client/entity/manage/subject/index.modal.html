@@ -1,0 +1,80 @@
+<!-- Modal - Edit Subject-->
+<div id="subject-modal-update" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="update-subject"> </h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form>
+                <input type="hidden" name="idn">
+
+                <div class="modal-body">
+                    <div class="border row mx-0">
+                        <div class="bg-light border-right col p-2 text-right font-weight-bold">
+                            <label class="mandatory" for="sbj-value" label="subject"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input type="text" maxlength="256" name="sbj-value" class="form-control">
+                            <span class="serverValidationError text-danger" name="sbj-value-error-holder"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container-fluid">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i>
+                                <span label="cancel"></span>
+                            </button>
+                            <button class="btn btn-primary text-light" type="submit">
+                                <i class="far fa-save"></i>
+                                <span label="update"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal - Create Subject-->
+<div id="subject-modal-create" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-light" label="add-subject"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <div class="border row mx-0">
+                        <div class="bg-light border-right col p-2 text-right font-weight-bold">
+                            <label class="mandatory" for="sbj-value" label="subject"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="sbj-value" type="text" maxlength="256" class="form-control">
+                            <span class="serverValidationError text-danger" name="sbj-value-error-holder"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="container-fluid">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i>
+                                <span label="cancel"></span>
+                            </button>
+                            <button class="btn btn-primary text-light" type="submit">
+                                <i class="fas fa-plus-circle"></i>
+                                <span label="add"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

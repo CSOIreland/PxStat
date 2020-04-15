@@ -138,9 +138,9 @@ app.data.dataset.callback.drawTableSelection = function (data) {
         matrixSelection.find("[name=updated-date]").text(data.updated ? moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.date.display) : "");
         matrixSelection.find("[name=updated-time]").text(data.updated ? moment(data.updated, app.config.mask.datetime.ajax).format(app.config.mask.time.display) : "");
     }
-    // emergency flag
-    if (data.extension.emergency) {
-        matrixSelection.find("[name=emergency-flag]").removeClass("d-none");
+    // exceptional flag
+    if (data.extension.exceptional) {
+        matrixSelection.find("[name=exceptional-flag]").removeClass("d-none");
     }
     //geo flag
     if (data.role.geo && app.config.plugin.highcharts.enabled) {
@@ -560,12 +560,20 @@ app.data.dataset.callback.format = function (data) {
 
 app.data.dataset.callback.fullDownload = function (format, version) {
     var apiParams = {
-        "matrix": app.data.MtrCode,
-        "language": app.data.LngIsoCode,
-        "format": {
-            "type": format,
-            "version": version
+        "class": "query",
+        "id": [],
+        "dimension": {},
+        "extension": {
+            "matrix": app.data.MtrCode,
+            "language": {
+                "code": app.data.LngIsoCode
+            },
+            "format": {
+                "type": format,
+                "version": version
+            }
         },
+        "version": "2.0",
         "m2m": false
     };
 
@@ -605,38 +613,34 @@ app.data.dataset.callback.countSelection = function () {
 */
 app.data.dataset.callback.buildApiParams = function () {
     $("#data-view-container").fadeOut();
-    if (app.data.MtrCode) {
-        app.data.dataset.apiParamsData = {
-            "matrix": app.data.MtrCode
-        };
-    }
-    else if (app.data.RlsCode) {
-        app.data.dataset.apiParamsData = {
-            "release": app.data.RlsCode
-        };
-    }
+
     var localParams = {
-        "language": app.data.LngIsoCode,
-        "format": {
-            "type": C_APP_FORMAT_TYPE_DEFAULT,
-            "version": C_APP_FORMAT_VERSION_DEFAULT
+        "class": "query",
+        "id": [],
+        "dimension": {},
+        "extension": {
+            "language": {
+                "code": app.data.LngIsoCode
+            },
+            "format": {
+                "type": C_APP_FORMAT_TYPE_DEFAULT,
+                "version": C_APP_FORMAT_VERSION_DEFAULT
+            }
         },
-        "role": {
-            "time": [
-                $("#data-dataview-selected-table").find("[name=dimension-containers]").find("select[role=time]").attr("idn")
-            ],
-            "metric": [
-                $("#data-dataview-selected-table").find("[name=dimension-containers]").find("select[role=metric]").attr("idn")
-            ]
-        },
-        "dimension": [],
+        "version": "2.0",
         "m2m": false
     };
+
+    if (app.data.MtrCode) {
+        localParams.extension.matrix = app.data.MtrCode;
+    }
+    else if (app.data.RlsCode) {
+        localParams.extension.release = app.data.RlsCode;
+    }
 
     $("#data-dataview-selected-table").find("[name=dimension-containers]").find("select").each(function (index) {
         var numVariables = $(this).find('option:enabled').length;
         var dimension = {
-            "id": $(this).attr("idn"),
             "category": {
                 "index": []
             }
@@ -645,10 +649,13 @@ app.data.dataset.callback.buildApiParams = function () {
             dimension.category.index.push(this.value);
         });
         if (dimension.category.index.length != numVariables && dimension.category.index.length > 0) { //only include dimension if not all variables selected
-            localParams.dimension.push(dimension);
+            localParams.id.push($(this).attr("idn"));
+            localParams.dimension[$(this).attr("idn")] = dimension;
         }
     });
 
+    //new query, empty old api params
+    app.data.dataset.apiParamsData = {};
     //extend apiParams with local params
     $.extend(true, app.data.dataset.apiParamsData, localParams);
     $("#data-accordion-api").find("[name=github-link]").attr("href", C_APP_URL_GITHUB_API_CUBE);
@@ -727,7 +734,7 @@ app.data.dataset.ajax.downloadDataset = function (apiParams) {
 app.data.dataset.callback.downloadDataset = function (data, apiParams) {
     var fileName = app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file);
 
-    switch (apiParams.format.type) {
+    switch (apiParams.extension.format.type) {
         case C_APP_TS_FORMAT_TYPE_PX:
             // Download the file
             app.library.utility.download(fileName, data, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);

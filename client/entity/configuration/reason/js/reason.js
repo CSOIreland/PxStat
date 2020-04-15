@@ -7,6 +7,9 @@ $(document).ready(function () {
   app.navigation.layout.set(false);
   app.navigation.breadcrumb.set([app.label.static.configuration, app.label.static.reasons]);
 
+  // Load Modal 
+  api.content.load("#overlay", "entity/configuration/reason/index.modal.html");
+
   //Get data from API and Draw the Data Table for Reason
   app.reason.ajax.read();
 

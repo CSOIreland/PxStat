@@ -21,8 +21,7 @@ label.mandatory:before, span.mandatory:before {
 }
 
 /* 
-* Modal Full size
-* used at keyword\release, index.comparison.html, index.source.html
+* Bootstrap Modal Full size
 */
 
 .modal-full {
@@ -33,6 +32,10 @@ label.mandatory:before, span.mandatory:before {
 .modal-full>.modal-content {
     min-height: 100vh;
 }
+
+/* 
+* Mouse over disabled button
+*/
 
 button:hover:disabled, a:hover:disabled {
     cursor: not-allowed;

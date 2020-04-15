@@ -1,0 +1,106 @@
+<div id="build-import-container">
+    <form>
+        <div class="card m-3 border-primary">
+            <div class="card-header bg-primary text-light" label="import-data"></div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="d-flex">
+                            <th class="bg-light text-right col-2" label="group"></th>
+                            <td class="col-10">
+                                <form>
+                                    <select class="form-control" name="select-group" disabled></select>
+                                    <span class="serverValidationError text-danger " name="select-group-error-holder"></span>
+                                </form>
+                            </td>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="box">
+                    <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
+                    <input hidden="true" type="file" name="build-import-file" id="build-import-file" class="box__file" />
+                    <div class="box__input2">
+                        <label class="box__input3" for="build-import-file">
+                            <i class="fas fa-upload fa-2x"></i>
+                            <span name="upload-file-name"></span>
+                            <span name="upload-file-tip">
+                                <strong><span label="choose"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
+                                <span class="box__dragndrop"> <span label="drag-here"></span></span>
+                            </span>
+                            <br />
+                            <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                        <button name="preview" type="button" class="btn btn-info" disabled>
+                            <i class="far fa-file"></i> <span label="preview"></span>
+                        </button>
+                    </div>
+                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                        <button name="cancel" type="button" class="btn btn-warning text-dark">
+                            <i class="fas fa-undo"></i> <span label="reset"></span>
+                        </button>
+                        <button name="validate" type="submit" class="btn btn-primary text-light" disabled>
+                            <i class="fas fa-check-circle"></i> <span label="validate"></span>
+                        </button>
+                        <button name="import" type="submit" class="btn btn-primary text-light" disabled>
+                            <i class="fas fa-upload"></i> <span label="import"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+    <div name="preview-container" class="card m-3 border-primary" style="display: none;">
+        <div class="card-header bg-primary text-light" label="file-preview"></div>
+        <div class="card-body">
+            <div name="import-file-preview">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="build-import-history" class="card m-3 border-primary">
+    <div class="card-header bg-primary text-light">
+        <div class="row justify-content-between align-items-center px-2">
+            <span label="import-history"></span>
+            <span><span label="from"></span>
+                : <span id="build-import-import-history-date-picker" class="text-dark p-2" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                    <i class="fa fa-calendar"></i>&nbsp;
+                    <span></span> <i class="fa fa-caret-down p-2"></i>
+                </span>
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th label="table"></th>
+                    <th label="release"></th>
+                    <th label="status"></th>
+                    <th label="request"></th>
+                    <th label="group"></th>
+                    <th label="imported-by"></th>
+                    <th label="imported-date"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/build/import/css/import.css">
+
+<!-- Page specific JS -->
+<script src="entity/release/js/release.information.library.js"></script>
+<script src="entity/release/js/release.library.js"></script>
+<script src="entity/build/import/js/import.library.js"></script>
+<script src="entity/build/import/js/import.js"></script>

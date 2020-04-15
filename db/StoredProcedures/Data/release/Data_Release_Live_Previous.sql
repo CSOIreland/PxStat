@@ -43,7 +43,7 @@ BEGIN
 		,rlsPrevious.RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
 		,rlsPrevious.RLS_LIVE_DATETIME_TO AS RlsLiveDatetimeTo
 		,rlsPrevious.RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
-		,rlsPrevious.RLS_EMERGENCY_FLAG AS RlsEmergencyFlag
+		,rlsPrevious.RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 		,rlsPrevious.RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,rlsPrevious.RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 		,rlsPrevious.RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag

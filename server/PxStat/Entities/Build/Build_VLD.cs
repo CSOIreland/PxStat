@@ -13,6 +13,9 @@ using static PxStat.Data.Matrix;
 
 namespace PxStat.Build
 {
+
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -23,10 +26,7 @@ namespace PxStat.Build
         /// </summary>
         static Specification spec;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        static List<DataItem_DTO> csvItems;
+
 
         /// <summary>
         /// 
@@ -36,171 +36,122 @@ namespace PxStat.Build
         internal Build_Update_VLD(Specification theSpec, List<DataItem_DTO> csv)
         {
             spec = theSpec;
-            csvItems = csv;
-            //Statistic code not found in the statistic column
-            RuleFor(x => x).Must(StatisticsInStatisticsColumn);
-            RuleFor(x => x).Must(ClassificationInClassificationColumn);
-            RuleFor(x => x).Must(AllClassficationsPresentInTemplate);
-            RuleFor(x => x).Must(VariablesExistInClassification);
-            RuleFor(x => x).Must(PeriodsExistInDtoOrMatrix);
-            RuleFor(x => x).Must(ValuesExistInDto);
-            //All classifications present in the csv file
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal static bool ValuesExistInDto(BuildUpdate_DTO dto)
+
+
+            // csvItems = csv;
+            //ValuesExistInDto
+            RuleFor(x => x).Custom((csvItems, context) =>
         {
-            foreach (var item in csvItems)
+            foreach (var item in csv)
             {
                 if (item.dataValue == null)
                 {
-                    Log.Instance.Debug("No data value found for data item: " + item.ToString());
-                    return false;
-
+                    context.AddFailure("No data value found for data item: " + item.ToString());
                 }
 
             }
-            return true;
-        }
+        });
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal static bool PeriodsExistInDtoOrMatrix(BuildUpdate_DTO dto)
-        {
-            List<string> periods = new List<string>();
-            foreach (PeriodRecordDTO_Create per in spec.Frequency.Period) periods.Add(per.Code);
 
-            foreach (var per in dto.Periods) periods.Add(per.Code);
-            foreach (var item in csvItems)
+            //VariablesExistInClassification
+            RuleFor(x => x).Custom((csvItems, context) =>
             {
-                if (periods.Where(x => x == item.period.Code).Count() == 0)
+                foreach (var item in csv)
                 {
-                    Log.Instance.Debug("Period code not represented  in the csv template data: " + item.period.Code);
-                    return false;
-                }
-            }
-            return true;
-        }
+                    foreach (var cls in item.classifications)
+                    {
+                        //If there are no variables in the classification...
+                        if (cls.Variable.Count == 0)
+                        {
+                            context.AddFailure("Classfication code not represented in the csv template data: " + cls.Code);
+                        }
+                        var specCls = spec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
+                        if (specCls == null)
+                        {
+                            context.AddFailure("Classfication code not represented  in the csv template data: " + cls.Code);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal static bool VariablesExistInClassification(BuildUpdate_DTO dto)
-        {
-            foreach (var item in csvItems)
+                        }
+
+                        //if the classification in the csv contains a variable not found in the corresponding classification of the matrix...
+                        if (specCls.Variable.Where(x => x.Code == cls.Variable[0].Code).Count() == 0)
+                        {
+                            context.AddFailure("No variables found for item Classifications:" + cls.Code + " " + cls.Variable[0].Code);
+
+                        }
+                    }
+                }
+            });
+
+            //StatisticsInStatisticsColumn
+            RuleFor(x => x).Custom((csvItems, context) =>
             {
-                foreach (var cls in item.classifications)
+                foreach (var item in csv)
                 {
-                    //If there are no variables in the classification...
-                    if (cls.Variable.Count == 0)
+                    if (item.statistic.Value == null)
                     {
-                        Log.Instance.Debug("Classfication code not represented  in the csv template data: " + cls.Code);
-                        return false;
-                    }
-                    var specCls = spec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
-                    if (specCls == null)
-                    {
-                        Log.Instance.Debug("Classfication code not found in the Matrix Classifications: " + cls.Code);
-                        return false;
-                    }
-                    if (cls.Variable.Count == 0)
-                    {
-                        Log.Instance.Debug("No variables found for item Classifications: " + cls.Code);
-                        return false;
-                    }
-                    //if the classification in the csv contains a variable not found in the corresponding classification of the matrix...
-                    if (specCls.Variable.Where(x => x.Code == cls.Variable[0].Code).Count() == 0)
-                    {
-                        Log.Instance.Debug("Variable code not represented  in the csv template data: " + cls.Code + " " + cls.Variable[0].Code);
-                        return false;
+                        context.AddFailure("Invalid Statistic Code " + item.statistic.Code);
                     }
                 }
-            }
-            return true;
-        }
+            });
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal static bool AllClassficationsPresentInTemplate(BuildUpdate_DTO dto)
-        {
-            foreach (var item in csvItems)
+            //ClassificationInClassificationColumn
+            RuleFor(x => x).Custom((csvItems, context) =>
             {
-                foreach (var cls in spec.Classification)
+                foreach (var item in csv)
                 {
-                    if (item.classifications.Where(x => x.Code == cls.Code).Count() == 0)
+                    foreach (var cls in item.classifications)
                     {
-                        Log.Instance.Debug("Classfication code not represented  in the csv template data: " + cls.Code);
-                        return false;
+                        if (cls.Value == null)
+                        {
+                            context.AddFailure("Invalid Classification Code " + cls.Code);
+                        }
+                        if (cls.Variable.Count == 0)
+                        {
+                            context.AddFailure("No variable found for Classification Code " + cls.Code);
+                        }
+                        if (cls.Variable[0].Value == null)
+                        {
+                            context.AddFailure("Invalid variable found for Classification Code " + cls.Code + " variable code " + cls.Variable[0].Code);
+                        }
                     }
-
                 }
+            });
 
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal static bool StatisticsInStatisticsColumn(BuildUpdate_DTO dto)
-        {
-
-            foreach (var item in csvItems)
+            //AllClassficationsPresentInTemplate
+            RuleFor(x => x).Custom((csvItems, context) =>
             {
-                if (item.statistic.Value == null)
+                foreach (var item in csv)
                 {
-                    Log.Instance.Debug("Invalid Statistic Code " + item.statistic.Code);
-                    return false;
-                }
-            }
-            return true;
-        }
+                    foreach (var cls in spec.Classification)
+                    {
+                        if (item.classifications.Where(x => x.Code == cls.Code).Count() == 0)
+                        {
+                            context.AddFailure("Classfication code not represented  in the csv template data: " + cls.Code);
+                        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal static bool ClassificationInClassificationColumn(BuildUpdate_DTO dto)
-        {
-            foreach (var item in csvItems)
+                    }
+                }
+            });
+
+            //PeriodsExistInDtoOrMatrix
+            RuleFor(x => x).Custom((csvItems, context) =>
             {
-                foreach (var cls in item.classifications)
+                List<string> periods = new List<string>();
+                foreach (PeriodRecordDTO_Create per in spec.Frequency.Period) periods.Add(per.Code);
+
+                foreach (var per in csvItems.Periods) periods.Add(per.Code);
+                foreach (var item in csv)
                 {
-                    if (cls.Value == null)
+                    if (periods.Where(x => x == item.period.Code).Count() == 0)
                     {
-                        Log.Instance.Debug("Invalid Classification Code " + cls.Code);
-                        return false;
-                    }
-                    if (cls.Variable.Count == 0)
-                    {
-                        Log.Instance.Debug("No variable found for Classification Code " + cls.Code);
-                        return false;
-                    }
-                    if (cls.Variable[0].Value == null)
-                    {
-                        Log.Instance.Debug("Invalid variable found for Classification Code " + cls.Code + " variable code " + cls.Variable[0].Code);
-                        return false;
+                        context.AddFailure("Period code not represented  in the csv template data: " + item.period.Code);
                     }
                 }
-            }
-
-            return true;
+            });
         }
+
+
 
 
     }
@@ -261,6 +212,7 @@ namespace PxStat.Build
             RuleFor(f => f.CprCode).NotEmpty().Length(1, 32);
             RuleFor(f => f.FrqCode).NotEmpty().Length(1, 256);
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
+
             RuleFor(f => f.DimensionList).Must(CustomValidations.DimensionsValid).WithMessage("Invalid Dimensions");
             RuleFor(f => f.DimensionList).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.MainLanguageRepresented).WithMessage("Main language not contained in any dimension");
@@ -269,8 +221,7 @@ namespace PxStat.Build
             RuleFor(f => f.Format.FrmVersion).NotEmpty().Length(1, 32);
             RuleFor(f => f.Format).Must(CustomValidations.FormatExists).WithMessage("Requested format/version/direction not found in the system");
             RuleFor(f => f.Format).NotEmpty();
-            RuleFor(f => f.Format.FrmType).NotEmpty();
-            RuleFor(f => f.Format.FrmVersion).NotEmpty();
+
 
 
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatForBuildCreate);
@@ -357,12 +308,15 @@ namespace PxStat.Build
             RuleFor(f => f.Contents).NotEmpty().Length(1, 256);
             RuleFor(f => f.StatisticLabel).NotEmpty().Length(1, 256);
             RuleFor(f => f.StatisticLabel).NotEqual(f => f.FrqValue).WithMessage("Statistic Label must not be the same as the Frequency Value");
-            RuleFor(f => f.Statistics).Must(CustomValidations.StatisticCodeNotRepeated).WithMessage("Non unique SttCode");
+            RuleFor(f => f.Statistics).Must(CustomValidations.StatisticCodeNotRepeated).WithMessage("Non unique Statistic Code");
+            RuleFor(f => f.Statistics).Must(CustomValidations.StatisticValueNotRepeated).WithMessage("Non unique Statistic Value");
             RuleFor(f => f.Statistics.Count).GreaterThan(0).WithMessage("You must have at least one Statistic");
-            RuleFor(f => f.Classifications).Must(CustomValidations.ClassificationCodeNotRepeated).WithMessage("Non unique ClsCode");
+            RuleFor(f => f.Classifications).Must(CustomValidations.ClassificationCodeNotRepeated).WithMessage("Non unique Classification Code");
+            RuleFor(f => f.Classifications).Must(CustomValidations.ClassificationValueNotRepeated).WithMessage("Non unique Classification Value");
             RuleFor(f => f).Must(CustomValidations.ClassificationValueNotTheSameAsFrequencyValue).WithMessage("Classification value the same as Frequency value");
-            RuleFor(f => f).Must(CustomValidations.StatisticsValueNotTheSameAsStatisticsLabel).WithMessage("Statistic value the same as Statistics Label");
+            RuleFor(f => f).Must(CustomValidations.StatisticsValueNotTheSameAsStatisticsLabel).WithMessage("Statistic value must not be the same as Statistics Label");
             RuleFor(f => f.Classifications.Count).GreaterThan(0).WithMessage("You must have at least one classification");
+            RuleFor(f => f.Frequency.Period.Count).GreaterThan(0).WithMessage("You must have at least one period");
             RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD());
             RuleForEach(f => f.Statistics).SetValidator(new Statistic_VLD());
             RuleFor(f => f.Frequency).SetValidator(new Frequency_VLD());
@@ -386,7 +340,8 @@ namespace PxStat.Build
         {
             RuleFor(x => x.Value).NotEmpty().Length(1, 256);
             RuleForEach(x => x.Period).SetValidator(new Period_VLD());
-
+            RuleFor(x => x.Period).Must(CustomValidations.PeriodCodeNotRepeatedInList).WithMessage("Duplicate period codes ");
+            RuleFor(x => x.Period).Must(CustomValidations.PeriodValueNotRepeatedInList).WithMessage("Duplicate period codes ");
             //Does not contain inverted commas
             RuleFor(f => f.Value).Matches(fchars);
         }
@@ -420,10 +375,13 @@ namespace PxStat.Build
         /// </summary>
         internal Classification_VLD()
         {
+            string geoCodeRegex = Utility.GetCustomConfig("APP_REGEX_URL");
             RuleFor(f => f.Code).NotEmpty().Length(1, 256);
             RuleFor(f => f.Value).NotEmpty().Length(1, 256);
             RuleFor(f => f.GeoUrl).NotEmpty().Length(1, 2048).When(f => !string.IsNullOrEmpty(f.GeoUrl));
-            RuleFor(f => f.Variable).Must(CustomValidations.VariableCodeNotRepeated).WithMessage("Non unique VrbCode");
+            RuleFor(f => f.GeoUrl).Matches(geoCodeRegex).When(f => !string.IsNullOrEmpty(f.GeoUrl));
+            RuleFor(f => f.Variable).Must(CustomValidations.VariableCodeNotRepeated).WithMessage("Non unique Variable Code");
+            RuleFor(f => f.Variable).Must(CustomValidations.VariableValueNotRepeated).WithMessage("Non unique Variable Value");//
             RuleForEach(f => f.Variable).SetValidator(new Variable_VLD());
             RuleFor(f => f.Code).Must(CustomValidations.NotReservedWord);
 
@@ -496,6 +454,7 @@ namespace PxStat.Build
             RuleFor(f => f.Value).Matches(fchars);
             RuleFor(f => f.Unit).Matches(fchars);
         }
+
     }
 
     /// <summary>
@@ -598,7 +557,6 @@ namespace PxStat.Build
             RuleFor(f => f.Format.FrmType).NotEmpty();
             RuleFor(f => f.Format.FrmVersion).NotEmpty();
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
-            RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
 
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatForBuildUpdate);
 
@@ -619,6 +577,7 @@ namespace PxStat.Build
         {
 
             RuleFor(f => f.MtrTitle).Must(CustomValidations.ValidateIgnoreEscapeChars);
+            RuleFor(f => f.MtrTitle).NotEmpty().Length(1, 256);
             RuleFor(f => f.MtrNote).Must(CustomValidations.ValidateIgnoreEscapeChars);
             RuleFor(f => f.StatisticLabel).Must(CustomValidations.ValidateIgnoreEscapeChars).When(f => !string.IsNullOrEmpty(f.StatisticLabel));
 
@@ -699,6 +658,17 @@ namespace PxStat.Build
 
         }
 
+        internal static bool BelowLimitDatapoints(Matrix matrix)
+        {
+            long points = matrix.MainSpec.Statistic.Count * matrix.MainSpec.Frequency.Period.Count;
+            foreach (var cls in matrix.MainSpec.Classification)
+            {
+                points *= cls.Variable.Count;
+            }
+
+            return points <= Convert.ToInt64(Utility.GetCustomConfig("APP_DATA_THRESHOLD"));
+        }
+
         internal static bool ValidateIgnoreEscapeChars(string readString)
         {
 
@@ -725,7 +695,7 @@ namespace PxStat.Build
         internal static bool FormatForReadPreDataset(Format_DTO_Read dto)
         {
             if (dto.FrmDirection != Format_DTO_Read.FormatDirection.DOWNLOAD.ToString()) return false;
-            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.CSV)) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.CSV) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.XLSX)) return false;
             return true;
 
         }
@@ -806,7 +776,7 @@ namespace PxStat.Build
         {
             foreach (var per in dto.Periods)
             {
-                if (!CustomValidations.PeriodCodeNotRepeatedInList(dto.Periods)) return false;
+                if (!CustomValidations.PeriodCodeNotRepeatedInList(dto.Periods) || !CustomValidations.PeriodValueNotRepeatedInList(dto.Periods)) return false;
             }
             return true;
         }
@@ -829,6 +799,19 @@ namespace PxStat.Build
             return result.Count() == 0;
         }
 
+
+        internal static bool PeriodValueNotRepeatedInList(List<PeriodRecordDTO_Create> periods)
+        {
+            var query = from prds in periods
+                        group prds by prds.Value into g
+                        select new
+                        {
+                            code = g.First().Value,
+                            codeCount = g.Count()
+                        };
+            var result = from pers in query where pers.codeCount > 1 select pers;
+            return result.Count() == 0;
+        }
         /// <summary>
         /// Validates that a variable code is not repeated within a given classification
         /// </summary>
@@ -841,6 +824,24 @@ namespace PxStat.Build
                         select new
                         {
                             Vrb = g.First().Code,
+                            VrbCount = g.Count()
+                        };
+            var result = from vars in query where vars.VrbCount > 1 select vars;
+            return result.Count() == 0;
+        }
+
+        /// <summary>
+        /// Validates that a variable value is not repeated within a given classification
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal static bool VariableValueNotRepeated(IList<VariableRecordDTO_Create> dto)
+        {
+            var query = from vars in dto
+                        group vars by vars.Value into g
+                        select new
+                        {
+                            Vrb = g.First().Value,
                             VrbCount = g.Count()
                         };
             var result = from vars in query where vars.VrbCount > 1 select vars;
@@ -867,6 +868,25 @@ namespace PxStat.Build
             return result.Count() == 0;
         }
         /// <summary>
+        /// Validates that a statistic value is not repeated within a given dimension
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal static bool StatisticValueNotRepeated(IList<StatisticalRecordDTO_Create> dto)
+        {
+            if (dto == null) return true;
+
+            var query = from vars in dto
+                        group vars by vars.Value into g
+                        select new
+                        {
+                            Stat = g.First().Value,
+                            StatCount = g.Count()
+                        };
+            var result = from vars in query where vars.StatCount > 1 select vars;
+            return result.Count() == 0;
+        }
+        /// <summary>
         /// Validates that a Classification code is not repeated within a given dimension
         /// </summary>
         /// <param name="dto"></param>
@@ -883,6 +903,26 @@ namespace PxStat.Build
             var result = from vars in query where vars.ClasCount > 1 select vars;
             return result.Count() == 0;
         }
+
+        /// <summary>
+        /// Validates that a Classification code is not repeated within a given dimension
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal static bool ClassificationValueNotRepeated(IList<ClassificationRecordDTO_Create> dto)
+        {
+            var query = from vars in dto
+                        group vars by vars.Value into g
+                        select new
+                        {
+                            Clas = g.First().Value,
+                            ClasCount = g.Count()
+                        };
+            var result = from vars in query where vars.ClasCount > 1 select vars;
+            return result.Count() == 0;
+        }
+
+
 
         /// <summary>
         /// 
@@ -934,9 +974,10 @@ namespace PxStat.Build
 
             foreach (var d in dto)
             {
+
                 foreach (var c in cloneList)
                 {
-                    if (!d.IsEquivalentUnordered(c)) return false;
+                    if (!d.IsEquivalent(c)) return false;
                 }
             }
 
@@ -1042,32 +1083,7 @@ namespace PxStat.Build
             return (dtoFreq.FrqCode != null);
 
         }
-        /*
-        internal static bool FrequencyCodeExists(BuildUpdate_DTO dto)
-        {
-            Frequency_BSO bso = new Frequency_BSO();
-            Frequency_DTO dtoFreq = bso.Read(dto.FrqCodeTimeval);
-            return (dtoFreq.FrqCode != null);
 
-        }
-
-        internal static bool FrequencyCodeExists(Build_DTO dto)
-        {
-            Frequency_BSO bso = new Frequency_BSO();
-            Frequency_DTO dtoFreq = bso.Read(dto.FrqCode);
-            return (dtoFreq.FrqCode != null);
-
-        }
-
-        internal static bool FrequencyCodeExists(Build_DTO_Read dto)
-        {
-            Frequency_BSO bso = new Frequency_BSO();
-            Frequency_DTO dtoFreq = bso.Read(dto.FrqCodeTimeval);
-            return (dtoFreq.FrqCode != null);
-
-        }
-
-    */
 
     }
 }

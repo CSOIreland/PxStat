@@ -59,7 +59,7 @@ BEGIN
 		,CPR_CODE AS CprCode
 		,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
 		,RLS_LIVE_DATETIME_TO AS RlsLiveDatetimeTo
-		,RLS_EMERGENCY_FLAG AS EmergencyFlag
+		,RLS_EXCEPTIONAL_FLAG AS ExceptionalFlag
 		,FRQ_CODE AS FrqCode
 		,FRQ_VALUE AS FrqValue
 		,PRD_CODE As PrdCode

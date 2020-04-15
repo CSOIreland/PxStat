@@ -15,6 +15,8 @@
     "schema": "API Schema violated. Please review the syntax of your API request.",
     "update": "No record has been updated. Please review your input.",
     "validation": "Validation failed. Please review your input.",
+    "workflow": "The Table &quot;{0}&quot; has a workflow in progress. Please wait for the workflow to complete before uploading a new version.",
+    "image": "An image could not be created from the resource at {0}",
     "parsing": {
       "parse-error": "Parse Error",
       "unexpected": "Unexpected character {0} found at row {1}, column {2}",
@@ -24,6 +26,19 @@
 
     }
   },
+  "authentication": {
+    "authenticated": "AUTHENTICATED",
+    "registered": "REGISTERED",
+    "anonymous": "ANONYMOUS",
+    "any": "ANY"
+  },
+
+  "integrity": {
+    "data": "PX Integrity: the data &quot;{Data}&quot; is invalid.",
+    "size": "PX Integrity: &quot;{Expected}&quot; cells of data expected but &quot;{Found}&quot; found for the Language &quot;{Language}&quot;.",
+    "cell-count": "This dataset contains {0} cellls. The maximum allowed is {1}.",
+    "codes": "Duplicate codes found"
+  },
   "px": {
 
     "build": {
@@ -31,31 +46,13 @@
     },
     "duplicate": "You are about to upload a new revision of the existing Table &quot;{0}&quot;. Are you sure?",
     "duplicate-different-group": "You are about to upload a new revision of the existing Table &quot;{0}&quot; and to change the group from &quot;{1}&quot; to &quot;{2}&quot;. Are you sure?",
-
-    "integrity": {
-      "data": "PX Integrity: the data &quot;{Data}&quot; is invalid.",
-      "size": "PX Integrity: &quot;{Expected}&quot; cells of data expected but &quot;{Found}&quot; found for the Language &quot;{Language}&quot;.",
-      "language": "language",
-      "expected": "Expected",
-      "found": "Found",
-      "source": "Source",
-      "codes": "Duplicate codes found"
-    },
-
-    "authentication": {
-      "authenticated": "AUTHENTICATED",
-      "registered": "REGISTERED",
-      "anonymous": "ANONYMOUS",
-      "any": "ANY"
-    },
-
     "parse": "PX Parse: the input contains invalid syntax.",
     "pendinglive": "The Table &quot;{0}&quot; has a live release pending. Please wait for the release to go live before uploading a new version.",
 
     "schema": {
       "key-alphanumeric": "PX Schema: the keyword {0} must be alpha-numeric.",
-      "key-any-of": "PX Schema: the input must contains either the key &quot;{0}&quot; or &quot;{1}&quot;.",
-      "key-boolean": "PX Schema: the keyword {0} must either yes or no.",
+      "key-any-of": "PX Schema: the input must contain either the key &quot;{0}&quot; or &quot;{1}&quot;.",
+      "key-boolean": "PX Schema: the keyword {0} must be either yes or no.",
       "key-length-min": "PX Schema: the keyword {0} must have a minimum length of {1} char(s).",
       "key-length-min-max": "PX Schema: the keyword {0} must have a length between {1} and {2} chars.",
       "key-mandatory": "PX Schema: the input must contain the key &quot;{0}&quot;.",
@@ -68,9 +65,9 @@
       "languages-invalid": "PX Setting [LANGUAGE]: &quot;{Language}&quot; is invalid.",
       "source-invalid": "PX Setting [SOURCE]: &quot;{PropertyValue}&quot; is invalid.",
       "sources-invalid": "PX Setting [SOURCE]: &quot;{Source}&quot; is invalid."
-    },
+    }
 
-    "workflow": "The Table &quot;{0}&quot; has a workflow in progress. Please wait for the workflow to complete before uploading a new version."
+
   },
   "xlsx": {
     "table": "Table",
@@ -86,7 +83,7 @@
     "copyright": "Copyright",
     "properties": "Properties",
     "official-statistics": "Official Statistics",
-    "emergency": "Emergency",
+    "exceptional": "Exceptional",
     "archived": "Archived",
     "analytical": "Analytical",
     "dependency": "Dependency",

@@ -274,6 +274,7 @@
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadCollection.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreMetadata.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreDataset.cs" />
+    <Compile Include="Entities\Data\Cube\CubeQuery_DTO.cs" />
     <Compile Include="Entities\Data\Cube\Cube_ADO.cs" />
     <Compile Include="Entities\Data\Cube\Cube_API.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadMetadata.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="Entities\Data\Cube\JsonStat.cs" />
     <Compile Include="Entities\Data\Cube\Cube_DTO.cs" />
     <Compile Include="Entities\Data\Cube\JsonStatCollection.cs" />
+    <Compile Include="Entities\Data\Cube\JsonStat_VLD.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\MatrixValidator.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Create.cs" />
@@ -566,6 +568,7 @@
     <Compile Include="Resources\Constants.cs" />
     <Compile Include="Resources\CustomAttributes.cs" />
     <Compile Include="Resources\Exceptions.cs" />
+    <Compile Include="Resources\JsonStatQuery.cs" />
     <Compile Include="Resources\Keyword.cs" />
     <Compile Include="Resources\Label.cs" />
     <Compile Include="Resources\MethodReader.cs" />

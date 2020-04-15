@@ -8,7 +8,7 @@ GO
 -- Author:	Paulo Patricio
 -- Read date: 12 Nov 2018
 -- Description:	Reads record(s) from 
--- exec Workflow_ReadWorkInProgress 'okeeffene','en','en',99
+-- exec Workflow_ReadWorkInProgress 'okeeffene','ga','en',99
 -- =============================================
 CREATE
 	OR
@@ -42,13 +42,13 @@ BEGIN
 				AND LNG_DELETE_FLAG = 0
 			)
 
-	SELECT distinct q.RlsCode
+	SELECT  q.RlsCode
 		,q.MtrCode
 		,q.GrpCode
 		,q.GrpName
 		,q.RqsValue
 		,q.CcnUsername 
-		,q.DhtDatetime
+		,max(q.DhtDatetime) as DhtDatetime
 		,q.MtrTitle
 	FROM (
 		SELECT RLS_CODE RlsCode
@@ -57,7 +57,7 @@ BEGIN
 			,GRP_NAME GrpName
 			,CCN_USERNAME CcnUsername
 			,RQS_VALUE AS RqsValue
-			,max(convert(nvarchar,DHT_DATETIME,120)) DhtDatetime
+			,max(DHT_DATETIME) DhtDatetime
 			,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle
 			,MTR_LNG_ID
 			,WRQ_ID 
@@ -95,8 +95,10 @@ BEGIN
 				AND CCN_DELETE_FLAG = 0
 		LEFT JOIN TD_WORKFLOW_REQUEST
 			ON RLS_ID = WRQ_RLS_ID
+			and WRQ_DELETE_FLAG=0
+			and WRQ_CURRENT_FLAG=1
 		LEFT JOIN TS_REQUEST
-			ON WRQ_RQS_ID = RQS_ID
+			ON WRQ_RQS_ID = RQS_ID			
 		LEFT JOIN TD_WORKFLOW_RESPONSE  
 		ON WRS_WRQ_ID =WRQ_ID
 		LEFT JOIN TD_WORKFLOW_SIGNOFF 
@@ -119,14 +121,20 @@ BEGIN
 			,WRS_ID 
 			,WSG_ID 
 		) q
+
 	WHERE q.MTR_LNG_ID IN (
 			@LngId
 			,@LngDefaultId
 			)
-			AND WRQ_ID IS NULL
-			AND WRS_ID IS NULL
-			AND WSG_ID IS NULL
-	
+			AND WRQ_ID IS NULL 
+		group by
+		RlsCode,
+	MtrCode
+		,GrpCode
+		,GrpName
+		,RqsValue
+		,CcnUsername 
+		,MtrTitle
 	ORDER BY q.MtrCode
 END
 GO

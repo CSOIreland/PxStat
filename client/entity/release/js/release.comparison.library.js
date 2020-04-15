@@ -98,7 +98,7 @@ app.release.comparison.callback.readPreviousRelease = function (data) {
     $("#release-comparison-report [name=status-previous]").empty().html(app.release.renderStatus(app.release.comparison.previousReleaseData));
     $("#release-comparison-report [name=rls-live-datetime-from-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
     $("#release-comparison-report [name=rls-live-datetime-to-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
-    $("#release-comparison-report [name=rls-emergency-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsEmergencyFlag, true, true));
+    $("#release-comparison-report [name=rls-exceptional-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsExceptionalFlag, true, true));
     $("#release-comparison-report [name=grp-name-previous]").empty().html(app.library.html.link.group(app.release.comparison.previousReleaseData.GrpCode));
     $("#release-comparison-report [name=sbj-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.SbjCode + ") " + app.release.comparison.previousReleaseData.SbjValue);
     $("#release-comparison-report [name=prc-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.PrcCode + ") " + app.release.comparison.previousReleaseData.PrcValue);
@@ -176,7 +176,7 @@ app.release.comparison.callback.readCurrentRelease = function (data) {
     $("#release-comparison-report [name=request-current]").empty().html(app.release.renderRequest(app.release.comparison.currentReleaseData.RqsCode));
     $("#release-comparison-report [name=rls-live-datetime-from-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
     $("#release-comparison-report [name=rls-live-datetime-to-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
-    $("#release-comparison-report [name=rls-emergency-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsEmergencyFlag, true, true));
+    $("#release-comparison-report [name=rls-exceptional-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsExceptionalFlag, true, true));
     $("#release-comparison-report [name=grp-name-current]").empty().html(app.library.html.link.group(app.release.comparison.currentReleaseData.GrpCode));
     $("#release-comparison-report [name=sbj-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.SbjCode + ") " + app.release.comparison.currentReleaseData.SbjValue);
     $("#release-comparison-report [name=prc-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.PrcCode + ") " + app.release.comparison.currentReleaseData.PrcValue);
@@ -231,12 +231,12 @@ app.release.comparison.callback.styleDifferences = function () {
         app.release.comparison.previousMatrixData &&
         app.release.comparison.currentReleaseData &&
         app.release.comparison.currentMatrixData) {
-        //emergency
-        if (app.release.comparison.previousReleaseData.RlsEmergencyFlag != app.release.comparison.currentReleaseData.RlsEmergencyFlag) {
-            $("#release-comparison-report").find("[name=emergency-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
+        //exceptional
+        if (app.release.comparison.previousReleaseData.RlsExceptionalFlag != app.release.comparison.currentReleaseData.RlsExceptionalFlag) {
+            $("#release-comparison-report").find("[name=exceptional-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
         }
         else {
-            $("#release-comparison-report").find("[name=emergency-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=exceptional-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //group

@@ -295,7 +295,7 @@ app.dashboard.awaitingResponse.drawDataTable = function (data) {
                     data: null,
                     type: "html",
                     render: function (data, type, row) {
-                        return app.library.html.boolean(row.RlsEmergencyFlag, true, true);
+                        return app.library.html.boolean(row.RlsExceptionalFlag, true, true);
                     }
                 },
                 {
@@ -444,7 +444,7 @@ app.dashboard.awaitingSignoff.drawDataTable = function (data) {
                     data: null,
                     type: "html",
                     render: function (data, type, row) {
-                        return app.library.html.boolean(row.RlsEmergencyFlag, true, true);
+                        return app.library.html.boolean(row.RlsExceptionalFlag, true, true);
                     }
                 },
                 {
@@ -593,7 +593,7 @@ app.dashboard.pendinglive.drawDataTable = function (data) {
                     data: null,
                     type: "html",
                     render: function (data, type, row) {
-                        return app.library.html.boolean(row.RlsEmergencyFlag, true, true);
+                        return app.library.html.boolean(row.RlsExceptionalFlag, true, true);
                     }
                 },
                 {

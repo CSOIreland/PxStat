@@ -154,7 +154,7 @@ namespace PxStat.Data
                 var Frequency = new { name = element.FrqValue, code = element.FrqCode };
 
                 aItem.Extension.Add("copyright", new { name = element.CprValue, code = element.CprCode, href = element.CprUrl });
-                aItem.Extension.Add("emergency", element.EmergencyFlag);
+                aItem.Extension.Add("exceptional", element.ExceptionalFlag);
                 aItem.Extension.Add("language", new { code = element.LngIsoCode, name = element.LngIsoName });
                 aItem.Extension.Add("matrix", element.MtrCode);
                 aItem.Extension.Add("frequency", Frequency);

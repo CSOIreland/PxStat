@@ -8,16 +8,19 @@ $(document).ready(function () {
   app.navigation.layout.set(false);
   app.navigation.breadcrumb.set([app.label.static.keywords, app.label.static.subjects]);
 
+  // Load Modal
+  api.content.load("#overlay", "entity/keyword/subject/index.modal.html");
+
+  // Load the side panel
+  api.content.load("#panel", "entity/keyword/search/index.html");
+
   //Hide table when no subject selected
   $("#keyword-subject-container").find("select[name=select-main-subject-search]").on('select2:clear', function (e) {
-
     $("#keyword-subject-read").hide();
   });
 
   $("#keyword-subject-read").hide();
 
-  // Load the side panel
-  api.content.load("#panel", "entity/keyword/search/index.html");
 
   //Ajax call for data
   app.keyword.subject.ajax.readSubject();

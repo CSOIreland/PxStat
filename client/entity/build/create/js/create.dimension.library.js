@@ -644,7 +644,7 @@ app.build.create.dimension.callback.hasDuplicateStatistic = function (codes, val
         selector.find("[name=errors-card]").show();
         selector.find("[name=errors]").append($("<li>", {
             "class": "list-group-item",
-            "html": app.label.static["create-duplicate-classification"]
+            "html": app.label.static["create-duplicate-statistic"]
         }));
 
         return true
@@ -730,6 +730,7 @@ app.build.create.dimension.uploadStatistIsInvalid = function () {
 //Validate the statistic entered.
 app.build.create.dimension.manualStatistisInvalid = function () {
     var errors = [];
+
     //check for empty cells
     $('#build-create-manual-si table').find("tbody tr").each(function (index) {
         var row = $(this);
@@ -763,8 +764,9 @@ app.build.create.dimension.manualStatistisInvalid = function () {
                 }
             }
         });
-
     });
+
+
 
     if (errors.length) {
         $('#build-create-manual-si').find("[name=errors-card]").show()
@@ -1832,6 +1834,7 @@ app.build.create.dimension.drawPeriods = function (lngIsoCode) {
             app.build.create.dimension.drawCallbackDrawPeriods(table, lngIsoCode);
         });
     }
+
 };
 
 /**
@@ -1898,7 +1901,7 @@ app.build.create.dimension.buildDataObject = function () {
         //Frequency Label
         dimension.Frequency.FrqValue = $("#build-create-dimension-accordion-" + lngIsoCode).find("[name=frequency-value]").val().trim();
 
-        //check for at least one statistic and one classification
+        //check for at least one statistic one classification and one period
         if (!dimension.Statistic.length) {
             errors.push(app.library.html.parseDynamicLabel("create-statistic", [lngIsoName]));
             return;
@@ -1920,21 +1923,22 @@ app.build.create.dimension.buildDataObject = function () {
             dimensionValues.push(value.ClsValue);
         });
         dimensionValues.push(dimension.StatisticLabel);
+        dimensionValues.push(dimension.Frequency.FrqValue);
         if (app.library.utility.arrayHasDuplicate(dimensionCodes)) {
-            errors.push(app.library.html.parseDynamicLabel("create_dimension_code", [lngIsoName]));
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-code", [lngIsoName]));
         }
         if (app.library.utility.arrayHasDuplicate(dimensionValues)) {
-            errors.push(app.library.html.parseDynamicLabel("build-dimension", [lngIsoName]));
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-value", [lngIsoName]));
         }
     });
     if (!errors.length) {
         //check if number of statistics are equal for all languages
         if (!numStatistics.every((val, i, arr) => val === arr[0])) {
-            errors.push(app.label.static["create-statistic"]);
+            errors.push(app.label.static["create-statistic-equal"]);
         }
         //check if number of classifications are equal for all languages
         if (!numClassifications.every((val, i, arr) => val === arr[0])) {
-            errors.push(app.label.static["create-classification"]);
+            errors.push(app.label.static["create-classification-equal"]);
         }
     }
     if (!errors.length) {
@@ -1971,19 +1975,19 @@ app.build.create.dimension.buildDataObject = function () {
                     statisticDecimals.push(statistic.SttDecimal);
                 });
                 // If not the same, throw error
-                if (!app.library.utility.arraysEqual(defaultLngStatisticCodes, statisticCodes)) {
-                    errors.push(app.library.html.parseDynamicLabel("create-statistic-code", [lngIsoName, app.config.language.iso.name]));
+                if (!app.library.utility.arraysEqual(defaultLngStatisticCodes, statisticCodes, true)) {
+                    errors.push(app.label.static["create-statistic-code"]);
                 }
-                if (!app.library.utility.arraysEqual(defaultLngStatisticDecimals, statisticDecimals)) {
-                    errors.push(app.library.html.parseDynamicLabel("create-statistic-decimal", [lngIsoName, app.config.language.iso.name]));
+                if (!app.library.utility.arraysEqual(defaultLngStatisticDecimals, statisticDecimals, true)) {
+                    errors.push(app.label.static["create-statistic-decimal"]);
                 }
 
                 $.each(dimension.Classification, function (index, classification) {
                     classificationCodes.push(classification.ClsCode);
                 });
                 // If not the same, throw error
-                if (!app.library.utility.arraysEqual(defaultLngClassificationCodes, classificationCodes)) {
-                    errors.push(app.library.html.parseDynamicLabel("create-classification-code", [lngIsoName, app.config.language.iso.name]));
+                if (!app.library.utility.arraysEqual(defaultLngClassificationCodes, classificationCodes, true)) {
+                    errors.push(app.label.static["create-classification-code"]);
                 }
             }
         });
@@ -2038,8 +2042,8 @@ app.build.create.dimension.buildDataObject = function () {
                             }
                         });
                         //compare variable array of default language against this language
-                        if (!app.library.utility.arraysEqual(defaultVariableCodes, compareVariableCodes)) {
-                            errors.push(app.library.html.parseDynamicLabel("create-classification-variable-code", [compareLngIsoName, app.config.language.iso.name, defaultLngClassificationCode]));
+                        if (!app.library.utility.arraysEqual(defaultVariableCodes, compareVariableCodes, true)) {
+                            errors.push(app.library.html.parseDynamicLabel("create-classification-variable-code", [defaultLngClassificationCode]));
                         }
 
                     }
@@ -2089,12 +2093,31 @@ app.build.create.dimension.buildDataObject = function () {
                         periodCodes.push(period.PrdCode);
                     });
                     // If not the same, throw error
-                    if (!app.library.utility.arraysEqual(defaultLngPeriodCodes, periodCodes)) {
-                        errors.push(app.library.html.parseDynamicLabel("build-period-codes", [lngIsoName, app.config.language.iso.name]));
+                    if (!app.library.utility.arraysEqual(defaultLngPeriodCodes, periodCodes, true)) {
+                        errors.push(app.label.static["build-period-codes"]);
                     }
                 }
             });
         }
+    }
+    if (!errors.length) {
+        var dimension = null;
+        $.each(app.build.create.initiate.data.Dimension, function (index, value) {
+            if (value.LngIsoCode == app.config.language.iso.code) {
+                dimension = value;
+            }
+        });
+        var numClassificationVariables = 1;
+        $.each(dimension.Classification, function (index, value) {
+            numClassificationVariables = numClassificationVariables * this.Variable.length
+        });
+
+        var numCells = numClassificationVariables * dimension.Statistic.length * dimension.Frequency.Period.length;
+
+        if (numCells > app.config.entity.build.threshold) {
+            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold)]));
+        }
+
     }
     if (!errors.length) {
         app.build.create.dimension.ajax.create(app.build.create.initiate.data);
@@ -2222,6 +2245,7 @@ app.build.create.dimension.validation.manualClassification = function () {
         rules: {
             "cls-code": {
                 required: true,
+                validDimensionCode: true,
                 normalizer: function (value) {
                     value = value.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true);
                     $(this).val(value);
@@ -2263,6 +2287,7 @@ app.build.create.dimension.validation.uploadClassification = function () {
         rules: {
             "cls-code": {
                 required: true,
+                validDimensionCode: true,
                 normalizer: function (value) {
                     value = value.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true);
                     $(this).val(value);

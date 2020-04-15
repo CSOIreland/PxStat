@@ -114,7 +114,7 @@ namespace PxStat.Security
         /// <summary>
         /// DataIsGoodValidator
         /// </summary>
-        internal GroupValidator(dynamic Dto) : base(Label.Get("px.integrity.data"))
+        internal GroupValidator(dynamic Dto) : base(Label.Get("integrity.data"))
         {
             dto = Dto;
         }

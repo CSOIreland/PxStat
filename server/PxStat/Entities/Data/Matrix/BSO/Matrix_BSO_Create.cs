@@ -92,7 +92,7 @@ namespace PxStat.Data
             // Check if this Release already has a pending WorkflowRequest 
             if (latestRelease != null && new WorkflowRequest_ADO().IsCurrent(Ado, latestRelease.RlsCode))
             {
-                Response.error = String.Format(Label.Get("px.workflow"), theMatrixData.Code);
+                Response.error = String.Format(Label.Get("error.workflow"), theMatrixData.Code);
                 return false;
             }
 

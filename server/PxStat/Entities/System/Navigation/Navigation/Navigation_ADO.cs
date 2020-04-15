@@ -147,8 +147,8 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
             if (dto.CprCode != null)
                 paramList.Add(new ADO_inputParams() { name = "@CprCode", value = dto.CprCode });
-            if (dto.RlsEmergencyFlag != null)
-                paramList.Add(new ADO_inputParams() { name = "@RlsEmergencyFlag", value = dto.RlsEmergencyFlag });
+            if (dto.RlsExceptionalFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@RlsExceptionalFlag", value = dto.RlsExceptionalFlag });
             if (dto.RlsReservationFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsReservationFlag", value = dto.RlsReservationFlag });
             if (dto.RlsArchiveFlag != null)

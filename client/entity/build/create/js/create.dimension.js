@@ -9,7 +9,6 @@ $(document).ready(function () {
     $("#build-create-statistic").find("[name=manual-submit-statistics]").once("click", app.build.create.dimension.submitManualStatistic);
     //On click upload statistics
     $("#build-create-statistic").find("[name=upload-submit-statistics]").click(function (e) {
-        e.preventDefault();
         app.build.create.dimension.submitUploadStatistic();
     });
     //Add periods manually

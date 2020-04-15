@@ -17,12 +17,12 @@ namespace PxStat.Workflow
     /// Request type PUBLISH
     /// - Release must be Work In Progress (WIP)
     /// - Set the DatetimeFrom of the release to the WorkflowRequest Date time
-    /// - Update the Emergency flag, Reservation flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request 
+    /// - Update the Exceptional flag, Reservation flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request 
     /// - If there is a previous release for that Matrix Code, set the DatetimeTo to the WorkflowRequest Date time
     /// 
     /// Request type FLAG
     /// - Release must either be LiveNow or LiveNext
-    /// - Update the Emergency flag, Reservation flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request
+    /// - Update the Exceptional flag, Reservation flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request
     /// 
     /// Request type DELETE (not to be confused with Rollback - see below)
     /// - Release must either be LiveNow or LiveNext or WIP
@@ -212,7 +212,7 @@ namespace PxStat.Workflow
                     dtoRelease.RlsVersion++;
                     dtoRelease.RlsRevision = 0;
                     dtoRelease.RlsLiveFlag = true;
-                    dtoRelease.RlsEmergencyFlag = dtoWrq.WrqEmergencyFlag != null ? dtoWrq.WrqEmergencyFlag.Value : false;
+                    dtoRelease.RlsExceptionalFlag = dtoWrq.WrqExceptionalFlag != null ? dtoWrq.WrqExceptionalFlag.Value : false;
                     dtoRelease.RlsReservationFlag = dtoWrq.WrqReservationFlag != null ? dtoWrq.WrqReservationFlag.Value : false;
                     dtoRelease.RlsArchiveFlag = dtoWrq.WrqArchiveFlag != null ? dtoWrq.WrqArchiveFlag.Value : false;
                     dtoRelease.RlsLiveDatetimeFrom = switchDate;
@@ -409,6 +409,10 @@ namespace PxStat.Workflow
                     }
                     else if (adoRelease.IsLiveNext(dtoRelease.RlsCode) || adoRelease.IsWip(dtoRelease.RlsCode))
                     {
+                        //Find the previous list if it exists
+                        Compare_ADO cAdo = new Compare_ADO(Ado);
+                        Release_DTO dtoPreviousRelease = Release_ADO.GetReleaseDTO(adoRelease.Read(cAdo.ReadPreviousRelease(DTO.RlsCode), SamAccountName));
+
                         //Delete the search keywords for this release
                         krbAdo.Delete(Ado, DTO.RlsCode, null, true);
 
@@ -419,6 +423,22 @@ namespace PxStat.Workflow
                             Response.error = Label.Get("error.delete");
                             return false;
                         }
+
+                        if (dtoPreviousRelease != null)
+                        {
+                            //Delete the search keywords for the previous release
+                            krbAdo.Delete(Ado, dtoPreviousRelease.RlsCode, null, true);
+
+                            dtoPreviousRelease.RlsLiveDatetimeTo = DateTime.Now;
+                            int updateCount = adoRelease.Update(dtoPreviousRelease, SamAccountName);
+                            if (updateCount == 0)
+                            {
+                                Log.Instance.Debug("Can't update the Release, RlsCode:" + dtoPreviousRelease.RlsCode);
+                                Response.error = Label.Get("error.update");
+                                return false;
+                            }
+                        }
+
                     }
                     else
                     {

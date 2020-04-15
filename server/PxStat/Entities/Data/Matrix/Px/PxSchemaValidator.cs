@@ -102,11 +102,12 @@ namespace PxStat.Data.Px
         /// </summary>
         public KeywordValidator()
         {
-            string errorMessageLenMinMax = Label.Get("px.schema.key-length-min-max");
-            string errorMessageLenMin = Label.Get("px.schema.key-length-min");
-            string errorMessageBoolean = Label.Get("px.schema.key-boolean");
-            string errorMessageNumericMinMax = Label.Get("px.schema.key-numeric-min-max");
-            string errorMessageAlphaNumeric = Label.Get("px.schema.key-alphanumeric");
+            string configLanguage = RequestLanguage.LngIsoCode == null ? Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") : RequestLanguage.LngIsoCode;
+            string errorMessageLenMinMax = Label.Get("px.schema.key-length-min-max", configLanguage);
+            string errorMessageLenMin = Label.Get("px.schema.key-length-min", configLanguage);
+            string errorMessageBoolean = Label.Get("px.schema.key-boolean", configLanguage);
+            string errorMessageNumericMinMax = Label.Get("px.schema.key-numeric-min-max", configLanguage);
+            string errorMessageAlphaNumeric = Label.Get("px.schema.key-alphanumeric", configLanguage);
             string regularExpressionAphaNumeric = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC"); //Do not use translate
 
             SetRuleLenghtMinMax("AXIS-VERSION", 1, 20, errorMessageLenMinMax);
@@ -185,10 +186,11 @@ namespace PxStat.Data.Px
         /// <returns></returns>
         private IRuleBuilderOptions<PxDocument, IList<IPxKeywordElement>> OneOfPxElementMustExist(string v1, string v2)
         {
+            string configLanguage = RequestLanguage.LngIsoCode == null ? Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") : RequestLanguage.LngIsoCode;
             return
                         RuleFor(doc => doc.Keywords)
                             .Must(keys => keys.Any(item => item.Key.Identifier == v1 || item.Key.Identifier == v2))
-                            .WithMessage((string)string.Format(Label.Get("px.schema.key-any-of"), v1, v2));
+                            .WithMessage((string)string.Format(Label.Get("px.schema.key-any-of", configLanguage), v1, v2));
         }
 
         /// <summary>
@@ -198,10 +200,11 @@ namespace PxStat.Data.Px
         /// <returns></returns>
         private IRuleBuilderOptions<PxDocument, IList<IPxKeywordElement>> PxElementMustExist(string identifier)
         {
+            string configLanguage = RequestLanguage.LngIsoCode == null ? Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") : RequestLanguage.LngIsoCode;
             return
                         RuleFor(doc => doc.Keywords)
                             .Must(keys => keys.Any(item => item.Key.Identifier == identifier))
-                            .WithMessage((string)string.Format(Label.Get("px.schema.key-mandatory"), identifier));
+                            .WithMessage((string)string.Format(Label.Get("px.schema.key-mandatory", configLanguage), identifier));
         }
     }
 }

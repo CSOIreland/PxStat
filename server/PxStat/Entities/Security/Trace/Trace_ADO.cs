@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
+using System.Collections.Generic;
 
 namespace PxStat.Security
 {
@@ -28,10 +28,10 @@ namespace PxStat.Security
             if (!string.IsNullOrEmpty(trace.TrcUsername))
                 paramList.Add(new ADO_inputParams() { name = "@TrcUsername", value = trace.TrcUsername });
 
-            paramList.Add(new ADO_inputParams() { name = "@Const_AUTHENTICATED", value = Label.Get("px.authentication.authenticated") });
-            paramList.Add(new ADO_inputParams() { name = "@Const_REGISTERED", value = Label.Get("px.authentication.registered") });
-            paramList.Add(new ADO_inputParams() { name = "@Const_ANONYMOUS", value = Label.Get("px.authentication.anonymous") });
-            paramList.Add(new ADO_inputParams() { name = "@Const_ANY", value = Label.Get("px.authentication.any") });
+            paramList.Add(new ADO_inputParams() { name = "@Const_AUTHENTICATED", value = Label.Get("authentication.authenticated") });
+            paramList.Add(new ADO_inputParams() { name = "@Const_REGISTERED", value = Label.Get("authentication.registered") });
+            paramList.Add(new ADO_inputParams() { name = "@Const_ANONYMOUS", value = Label.Get("authentication.anonymous") });
+            paramList.Add(new ADO_inputParams() { name = "@Const_ANY", value = Label.Get("authentication.any") });
 
             //Call the stored procedure
             output = ado.ExecuteReaderProcedure("Security_Trace_Read", paramList);

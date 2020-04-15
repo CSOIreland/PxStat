@@ -7,24 +7,28 @@ $(document).ready(function () {
   app.navigation.layout.set(false);
   app.navigation.breadcrumb.set(["Keywords", "Products"]);
   app.navigation.breadcrumb.set([app.label.static.keywords, app.label.static.products]);
+
+  // Load Modal
+  api.content.load("#overlay", "entity/keyword/product/index.modal.html");
+
+  // Load the side panel
+  api.content.load("#panel", "entity/keyword/search/index.html");
+
   //Clear the product and table when no subject is selected
   $("#keyword-product-container").find("[name=select-main-subject-search]").on("select2:clear", function (e) {
-
     $("#keyword-product-container").find("[name=select-main-product-search]").empty().select2();
-
     $("#keyword-product-container").find("[name=select-main-product-search]").prop('disabled', true);
-
     $("#keyword-product-read").hide();
   });
+
   //Clear the table when no product is selected
   $("#keyword-product-container").find("[name=select-main-product-search]").on('select2:clear', function (e) {
     $("#keyword-product-read").hide();
   });
-  // Load the side panel
-  api.content.load("#panel", "entity/keyword/search/index.html");
 
   //hide product-keyword Data Table
   $("#keyword-product-read").hide();
+
   //Update DropDown Subject
   app.keyword.product.readSubjects();
 

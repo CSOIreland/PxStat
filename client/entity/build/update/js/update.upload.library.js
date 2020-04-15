@@ -432,7 +432,8 @@ app.build.update.upload.validate.ajax.read = function (callback, unitsPerSecond)
         {
             "FrqCodeTimeval": app.build.update.upload.FrqCode,
             "FrqValueTimeval": app.build.update.upload.FrqValue,
-            "MtrInput": app.build.update.upload.file.content.source.Base64
+            "MtrInput": app.build.update.upload.file.content.source.Base64,
+            "LngIsoCode": app.label.language.iso.code
         },
         callback,
         null,
@@ -595,7 +596,7 @@ app.build.update.upload.validate.callback.downloadExistingData = function (data)
  * 
  */
 app.build.update.upload.validate.callback.updateOutput = function (data) {
-    // N.B. This is a silent validation to cathc hacks only
+    // N.B. This is a silent validation to catch hacks only
     if (data && data.Signature) {
         // Store for later use
         app.build.update.upload.Signature = data.Signature;

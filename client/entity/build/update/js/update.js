@@ -7,7 +7,9 @@ $(document).ready(function () {
     app.navigation.layout.set(false);
     app.navigation.breadcrumb.set([app.label.static["build"], app.label.static["update"]]);
 
-    api.content.load("#build-update-map", "entity/build/map/index.html");
+    $("#overlay").empty();
+    api.content.load("#overlay", "entity/build/update/index.modal.html", null, true);
+    api.content.load("#overlay", "entity/build/map/index.html", null, true);
 
     // Set the max file-size in the Upload box
     $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB").show();

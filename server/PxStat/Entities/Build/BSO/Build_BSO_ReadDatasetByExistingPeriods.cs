@@ -53,6 +53,16 @@ namespace PxStat.Build
 
             Matrix matrixPxFile = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
+            //Sorting, in case the px file is not in SPC order
+            Build_BSO pBso = new Build_BSO();
+            List<DataItem_DTO> existingItems = pBso.GetExistingDataItems(matrixPxFile, matrixPxFile.MainSpec, true, false);
+
+            //Sort the merged data in SPC order
+            List<DataItem_DTO> allData = pBso.sortSPC(matrixPxFile.MainSpec, existingItems, true);
+
+            //Set the Cells to the merged and sorted data
+            matrixPxFile.Cells = pBso.GetNewCells(allData);
+
 
             List<dynamic> cells = new List<dynamic>();
 

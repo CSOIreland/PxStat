@@ -215,7 +215,7 @@ namespace PxStat.Security
 
             ado.ExecuteNonQueryProcedure("Security_Group_Usage", paramList, ref retParam);
 
-            return retParam.value == 0;
+            return retParam.value == 1;
 
         }
     }

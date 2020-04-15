@@ -41,7 +41,7 @@ namespace PxStat.Data
 
                     new ADO_inputParams() {name ="@RlsLiveFlag",value= dto.RlsLiveFlag},
                     new ADO_inputParams() {name ="@RlsDependencyFlag",value= dto.RlsDependencyFlag},
-                    new ADO_inputParams() {name ="@RlsEmergencyFlag",value= dto.RlsEmergencyFlag},
+                    new ADO_inputParams() {name ="@RlsExceptionalFlag",value= dto.RlsExceptionalFlag},
                     new ADO_inputParams() {name ="@RlsReservationFlag",value= dto.RlsReservationFlag},
                     new ADO_inputParams() {name ="@RlsArchiveFlag",value= dto.RlsArchiveFlag},
                     new ADO_inputParams() {name ="@RlsAnalyticalFlag",value= dto.RlsAnalyticalFlag},
@@ -267,7 +267,7 @@ namespace PxStat.Data
             release.RlsLiveDatetimeFrom = ReadDateTime(element.RlsLiveDatetimeFrom);
             release.RlsLiveDatetimeTo = ReadDateTime(element.RlsLiveDatetimeTo);
             release.RlsDependencyFlag = ReadBool(element.RlsDependencyFlag);
-            release.RlsEmergencyFlag = ReadBool(element.RlsEmergencyFlag);
+            release.RlsExceptionalFlag = ReadBool(element.RlsExceptionalFlag);
             release.RlsReservationFlag = ReadBool(element.RlsReservationFlag);
             release.RlsArchiveFlag = ReadBool(element.RlsArchiveFlag);
             release.RlsAnalyticalFlag = ReadBool(element.RlsAnalyticalFlag);

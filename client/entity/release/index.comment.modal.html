@@ -1,0 +1,59 @@
+<!-- Release Comment Modal Create-->
+<div id="release-comment-modal-create" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title text-light" label="add-public-comment"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <textarea rows="3" name="cmm-value" class="form-control" maxlength="1024"></textarea>
+                    <span class="serverValidationError text-danger" name="cmm-value-error-holder"></span>
+                </div>
+                <div class="modal-footer">
+                    <div class="container-fluid">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                            </button>
+                            <button type="submit" class="btn btn-secondary text-light">
+                                <i class="far fa-save"></i> <span label="add"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Release Comment Modal Update-->
+<div id="release-comment-modal-update" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title text-light" label="update-public-comment"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <textarea rows="3" name="cmm-value" class="form-control" maxlength="1024"></textarea>
+                    <span class="serverValidationError text-danger" name="cmm-value-error-holder"></span>
+                </div>
+                <div class="modal-footer">
+                    <div class="container-fluid">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                            </button>
+                            <button type="submit" class="btn btn-secondary text-light">
+                                <i class="far fa-save"></i> <span label="update"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

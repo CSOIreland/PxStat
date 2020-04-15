@@ -1,76 +1,72 @@
 ﻿{
   "static": {
     "release": "Scaoileadh ",
-    "all-groups": "All Groups"
+    "all-groups": "Gach grúpa"
   },
   "error": {
-    "authentication": "Invalid authentication. Access denied.",
-    "create": "No record has been created. Please review your input.",
-    "delete": "No record has been deleted. Please review your selection.",
-    "duplicate": "No record has been created. A duplicate record already exists. Please review your input.",
-    "exception": "An unexpected error has occurred. Please seek technical support.",
-    "invalid": "Invalid input",
-    "privilege": "Unauthorized request. Access denied.",
-    "publish": "Incomplete data in the Release. Please review your data.",
-    "schema": "API Schema violated. Please review the syntax of your API request.",
-    "update": "No record has been updated. Please review your input.",
-    "validation": "Validation failed. Please review your input.",
+    "authentication": "Fíordheimhniú neamhbhailí. Ní cheadaítear rochtain",
+    "create": "Níor cruthaíodh aon taifead. Déan athbhreithniú ar d’ionchur le do thoil.",
+    "delete": "Níor scriosadh aon taifead. Déan athbhreithniú ar do rogha le do thoil.",
+    "duplicate": "Níor cruthaíodh aon taifead. Tá taifead dúblach ann cheana féin. Déan athbhreithniú ar d’ionchur le do thoil.",
+    "exception": "Tharla earráid gan choinne. Faigh tacaíocht theicniúil le do thoil.",
+    "invalid": "Ionchur neamhbhailí",
+    "privilege": "Iarraidh neamhúdaraithe. ní cheadaítear rochtain.",
+    "publish": "Sonraí neamhiomlána sa Scaoileadh. Déan athbhreithniú ar do chuid sonraí le do thoil.",
+    "schema": "Sáraíodh Scéimre API. Déan athbhreithniú ar chomhréir d’iarratas API le do thoil.",
+    "update": "Níor nuashonraíodh aon taifead. Déan athbhreithniú ar d’ionchur le do thoil.",
+    "validation": "Theip ar bhailíochtú. Déan athbhreithniú ar d’ionchur le do thoil.",
+    "workflow": "Tá sreabhadh oibre idir lámha ag an Tábla &quot;{0}&quot;. Fan go gcríochnóidh an sreabhadh oibre sula ndéanfar athbhreithniú nua a uaslódáil.",
+    "image": "Ní fhéadfaí íomhá a chruthú ón acmhainn ag {0}",
     "parsing": {
-      "parse-error": "Parse Error",
-      "unexpected": "Unexpected character {0} found at row {1}, column {2}",
-      "expected": "Expected value: {0}",
+      "parse-error": "Earráid pharsála",
+      "unexpected": "Carachtar gan choinne {0} i rang {1}, colún {2}",
+      "expected": "Luach ionchais: {0}",
       "eof": "EOF",
-      "unmatched-parameters": "Failed to reconcile request parameters with available data"
+      "unmatched-parameters": "Theip ar pharaiméadair iarratais a réiteach leis na sonraí atá ar fáil."
 
     }
+  },
+
+  "authentication": {
+    "authenticated": "ÚDARAITHE",
+    "registered": "CLÁRAITHE",
+    "anonymous": "GAN AINM",
+    "any": "AON"
+  },
+  "integrity": {
+    "data": "Ionracas PX: Tá an sonraí  &quot;{Data}&quot; neamhbhailí.",
+    "size": "Ionracas PX: Bhíothas ag súil le  &quot;{Expected}&quot; chealla sonraí ach fuarthas &quot;{Found}&quot; cinn don teanga &quot;{Language}&quot;.",
+    "cell-count": "Tá {0} cealla sa tacar sonraí seo. Is é {1} an t-uasmhéid a cheadaítear.",
+    "codes": "Fuarthas cóid dúblacha"
   },
   "px": {
 
     "build": {
-      "language": "The specified language was not found in the supplied px file."
+      "language": "Ní bhfuarthas an teanga shonraithe sa chomhad px a soláthraíodh."
     },
-    "duplicate": "You are about to upload a new revision of the existing Table &quot;{0}&quot;. Are you sure?",
-    "duplicate-different-group": "You are about to upload a new revision of the existing Table &quot;{0}&quot; and to change the group from &quot;{1}&quot; to &quot;{2}&quot;. Are you sure?",
+    "duplicate": "Tá tú ar tí athbhreithniú nua ar an Tábla atá ann a uaslódáil &quot;{0}&quot;. An bhfuil tú cinnte?",
+    "duplicate-different-group": "Tá tú ar tí athbhreithniú nua ar an Tábla atá ann a uaslódáil &quot;{0}&quot; agus an grúpa a athrú ó &quot;{1}&quot; go &quot;{2}&quot;. An bhfu tú cinnte?",
 
-    "integrity": {
-      "data": "PX Integrity: the data &quot;{Data}&quot; is invalid.",
-      "size": "PX Integrity: &quot;{Expected}&quot; cells of data expected but &quot;{Found}&quot; found for the Language &quot;{Language}&quot;.",
-      "language": "language",
-      "expected": "Expected",
-      "found": "Found",
-      "source": "Source",
-      "codes": "Duplicate codes found"
-    },
-
-    "authentication": {
-      "authenticated": "AUTHENTICATED",
-      "registered": "REGISTERED",
-      "anonymous": "ANONYMOUS",
-      "any": "ANY"
-    },
-
-    "parse": "PX Parse: the input contains invalid syntax.",
-    "pendinglive": "The Table &quot;{0}&quot; has a live release pending. Please wait for the release to go live before uploading a new revision.",
+    "parse": "Parsáil PX: tá comhréir neamhbhailí san ionchur.",
+    "pendinglive": "Tá scaoileadh beo ar an tábla &quot;{0}&quot; ar feitheamh. Fan go mbeidh an scaoileadh beo sula ndéanfar athbhreithniú nua a uaslódáil.",
 
     "schema": {
-      "key-alphanumeric": "PX Schema: the keyword {0} must be alpha-numeric.",
-      "key-any-of": "PX Schema: the input must contains either the key &quot;{0}&quot; or &quot;{1}&quot;.",
-      "key-boolean": "PX Schema: the keyword {0} must either yes or no.",
-      "key-length-min": "PX Schema: the keyword {0} must have a minimum length of {1} char(s).",
-      "key-length-min-max": "PX Schema: the keyword {0} must have a length between {1} and {2} chars.",
-      "key-mandatory": "PX Schema: the input must contain the key &quot;{0}&quot;.",
-      "key-not-found": "PX Schema: the keyword &quot;{0}&quot; has not been found for the language &quot;{1}&quot;.",
-      "key-numeric-min-max": "PX Schema: the keyword {0} must have a value between {1} and {2}."
+      "key-alphanumeric": "Scéimre PX: Caithfidh an eochairfhocal {0} a bheith alfa-uimhriúil.",
+      "key-any-of": "Scéimre PX: caithfidh an eochair &quot;{0}&quot; nó &quot;{1}&quot; a bheith san ionchur.",
+      "key-boolean": "Scéimre PX: caithfidh an eochairfhocal {0} a bheith tá nó níl.",
+      "key-length-min": "Scéimre PX: caithfidh íosfhad {1} charachtar a bheith ag an eochairfhocal {0}.",
+      "key-length-min-max": "Scéimre PX: caithfidh fad a bheith ag an eochairfhocal {0} idir {1} agus {2} carachtar.",
+      "key-mandatory": "Scéimre PX: caithfidh an eochair &quot;{0}&quot; a bheith san ionchur.",
+      "key-not-found": "Scéimre PX: níor aimsíodh an eochairfhocal &quot;{0}&quot; don teanga &quot;{1}&quot .",
+      "key-numeric-min-max": "Scéimre PX: caithfidh luach a bheith ag an eochairfhocal {0} idir {1} agus {2}."
     },
     "setting": {
-      "axisversion-invalid": "PX Setting [AXIS-VERSION]: &quot;{PropertyValue}&quot; is invalid.",
-      "language-invalid": "PX Setting [LANGUAGE]: &quot;{PropertyValue}&quot; is invalid.",
-      "languages-invalid": "PX Setting [LANGUAGE]: &quot;{Language}&quot; is invalid.",
-      "source-invalid": "PX Setting [SOURCE]: &quot;{PropertyValue}&quot; is invalid.",
-      "sources-invalid": "PX Setting [SOURCE]: &quot;{Source}&quot; is invalid."
-    },
-
-    "workflow": "The Table &quot;{0}&quot; has a workflow in progress. Please wait for the workflow to complete before uploading a new revision."
+      "axisversion-invalid": "Tá an curadóireacht PX [AXIS-VERSION]: &quot;{PropertyValue}&quot; neamhbhailí",
+      "language-invalid": "Tá an curadóireacht PX [LANGUAGE]: &quot;{PropertyValue}&quot; neamhbhailí.",
+      "languages-invalid": "Tá an curadóireacht PX [LANGUAGE]: &quot;{Language}&quot; neamhbhailí.",
+      "source-invalid": "Tá an curadóireacht PX [SOURCE]: &quot;{PropertyValue}&quot; neamhbhailí.",
+      "sources-invalid": "Tá an curadóireacht PX [SOURCE]: &quot;{Source}&quot; neamhbhailí."
+    }
   },
   "xlsx": {
     "table": "Tábla",
@@ -86,7 +82,7 @@
     "copyright": "Cóipcheart",
     "properties": "Airíonna",
     "official-statistics": "Staitisticí Oifigiúla?",
-    "emergency": "Éigeandáil?",
+    "exceptional": "Eisceachtúil?",
     "archived": "I gCartlann?",
     "dependency": "Spleáchas?",
     "analytical": "Anailíseacha?",
@@ -99,33 +95,33 @@
     "no": "Níl"
   },
   "default": {
-    "classification": "State",
+    "classification": "An Stát",
     "csv": {
-      "code": " CODE",
-      "header": "Unit,Value",
-      "unit": "UNIT",
-      "value": "VALUE",
+      "code": " CÓD",
+      "header": "Aonad, Luach",
+      "unit": "AONAD",
+      "value": "LUACH",
       "separator": ","
     },
     "statistic": "Statistic",
     "subject-area": "n/a",
     "subject-code": "NA",
-    "variable": "State"
+    "variable": "Stát"
   },
   "email": {
     "body": {
-      "request-create": "A new request of type [b]{0}[/b]  has been submitted against the Table [b]{1}[/b] Version [b]{2}.{3} [/b]and is awaiting approval.\n View this workflow at {4}.",
-      "response-approve": "A new request of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b] and is awaiting sign-off.\n View this workflow at {4}.",
-      "response-reject": "The request for approval of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
-      "signoff-approve": "The request for sign-off of type [b]{0}[/b] has been approved against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
-      "signoff-reject": "The request for sign-off of type [b]{0}[/b] has been rejected against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}."
+      "request-create": "Tá iarratas nua de chineál [b] {0} [/ b] curtha isteach i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}.{3} [/ b] agus tá sé ag fanacht lena cheadú . \n Féach ar an sreabhadh oibre seo ag {4}.",
+      "response-approve": "Tá iarratas nua de chineál [b] {0} [/ b] ceadaithe i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] agus tá sé ag fanacht sínithe. \n Féach ar an sreabhadh oibre seo ag {4}. ",
+      "response-reject": "Diúltaíodh don iarraidh ar chineál [b] {0} [/ b] a cheadú i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b]. \n Féach ar an sreabhadh oibre seo ag {4}. ",
+      "signoff-approve": "Tá an iarraidh ar shíniú de chineál [b] {0} [/ b] ceadaithe i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Féach ar an sreabhadh oibre seo ag {4}. ",
+      "signoff-reject": "Diúltaíodh don iarraidh ar shíniú de chineál [b] {0} [/ b] i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Féach ar an sreabhadh oibre seo ag {4}. "
     },
     "subject": {
-      "request-create": "{0} {1}.{2}: Awaiting Approval",
-      "response-approve": "{0} {1}.{2}: Awaiting Sign-off",
-      "response-reject": "{0} {1}.{2}: Approval Rejected",
-      "signoff-approve": "{0} {1}.{2}: Sign-off Approved",
-      "signoff-reject": "{0} {1}.{2}: Sign-off Rejected"
+      "request-create": "{0} {1}.{2}: Ag feitheamh le Faomhadh",
+      "response-approve": "{0} {1}.{2}: Ag feitheamh le síniú amach",
+      "response-reject": "{0} {1}.{2}: Diúltaíodh don Cheadú",
+      "signoff-approve": "{0} {1}.{2}: Sínithe Ceadaithe",
+      "signoff-reject": "{0} {1}.{2}: Sínithe Diúltaithe"
     }
   }
 }

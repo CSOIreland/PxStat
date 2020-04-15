@@ -8,8 +8,12 @@ $(document).ready(function () {
     app.navigation.layout.set(false);
     app.navigation.breadcrumb.set([app.label.static["manage"], app.label.static["groups"]]);
 
-    //On page load hide "group-table" and "group-table-edit-form". Display only "members-group-table"
+    // GoTo
     var GroupCode = api.content.getParam("GrpCode");
+
+    // Load Modal - must be after GoTo
+    api.content.load("#overlay", "entity/manage/group/index.modal.html");
+
     // Get data from API for Group DataTable
     app.group.ajax.read();
     if (GroupCode) {

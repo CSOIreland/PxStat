@@ -29,7 +29,7 @@ BEGIN
 		,rls.RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
 		,rls.RLS_LIVE_DATETIME_TO AS RlsLiveDatetimeTo
 		,rls.RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
-		,rls.RLS_EMERGENCY_FLAG AS RlsEmergencyFlag
+		,rls.RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 		,rls.RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,rls.RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 		,rls.RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag

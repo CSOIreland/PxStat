@@ -7,6 +7,9 @@ $(document).ready(function () {
   app.navigation.layout.set(false);
   app.navigation.breadcrumb.set([app.label.static["manage"], app.label.static["subjects"]]);
 
+  // Load Modal
+  api.content.load("#overlay", "entity/manage/subject/index.modal.html");
+
   //display subject table
   app.subject.ajax.read();
 

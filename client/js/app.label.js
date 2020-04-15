@@ -27,14 +27,12 @@ if (!Cookies.getJSON(C_COOKIE_LANGUAGE)) {
 
 // Load the (master) English language
 api.ajax.config("internationalisation/label/en.json", function (label) {
-    // Parse JSON string into object
-    $.extend(true, app.label, JSON.parse(label));
+    $.extend(true, app.label, label);
 });
 
 // Merge the chosen language if different from the (master) English
 if (app.label.language.iso.code != "en") {
     api.ajax.config("internationalisation/label/" + app.label.language.iso.code + ".json", function (label) {
-        // Parse JSON string into object
-        $.extend(true, app.label, JSON.parse(label));
+        $.extend(true, app.label, label);
     });
 }

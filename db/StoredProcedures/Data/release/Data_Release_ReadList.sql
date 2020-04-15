@@ -52,7 +52,7 @@ BEGIN
 		,q.RlsVersion
 		,q.RlsRevision
 		,q.RlsDependencyFlag
-		,q.RlsEmergencyFlag
+		,q.RlsExceptionalFlag
 		,q.RlsLiveDatetimeFrom
 		,q.MtrTitle
 		,q.RqsValue
@@ -72,7 +72,7 @@ BEGIN
 			,RLS_REVISION RlsRevision
 			,RLS_VERSION RlsVersion
 			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
-			,RLS_EMERGENCY_FLAG RlsEmergencyFlag
+			,RLS_EXCEPTIONAL_FLAG RlsExceptionalFlag
 			,RLS_LIVE_DATETIME_FROM RlsLiveDatetimeFrom
 			,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle
 			,RQS_VALUE RqsValue

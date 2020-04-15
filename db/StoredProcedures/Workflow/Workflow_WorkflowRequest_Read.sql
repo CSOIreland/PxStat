@@ -21,7 +21,7 @@ BEGIN
 
 	SELECT cmm.CMM_VALUE AS CmmValue
 		,wrq.WRQ_DATETIME AS WrqDatetime
-		,wrq.WRQ_EMERGENCY_FLAG AS WrqEmergencyFlag
+		,wrq.WRQ_EXCEPTIONAL_FLAG AS WrqExceptionalFlag
 		,wrq.WRQ_RESERVATION_FLAG AS WrqReservationFlag
 		,wrq.WRQ_ARCHIVE_FLAG AS WrqArchiveFlag
 		,wrq.WRQ_ALERT_FLAG AS WrqAlertFlag

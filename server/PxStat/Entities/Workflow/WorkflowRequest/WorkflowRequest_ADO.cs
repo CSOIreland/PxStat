@@ -41,7 +41,7 @@ namespace PxStat.Workflow
                     new WorkflowRequest_DTO()
                     {
                         WrqDatetime = ReadDateTime(element.WrqDatetime),
-                        WrqEmergencyFlag = ReadBool(element.WrqEmergencyFlag),
+                        WrqExceptionalFlag = ReadBool(element.WrqExceptionalFlag),
                         WrqReservationFlag = ReadBool(element.WrqReservationFlag),
                         WrqArchiveFlag = ReadBool(element.WrqArchiveFlag),
                         WrqCurrentFlag = ReadBool(element.WrqCurrentFlag),
@@ -74,8 +74,8 @@ namespace PxStat.Workflow
 
             if (dto.WrqDatetime != default(DateTime))
                 inputParams.Add(new ADO_inputParams() { name = "@WrqDatetime", value = dto.WrqDatetime });
-            if (dto.WrqEmergencyFlag != null)
-                inputParams.Add(new ADO_inputParams() { name = "@WrqEmergencyFlag", value = dto.WrqEmergencyFlag });
+            if (dto.WrqExceptionalFlag != null)
+                inputParams.Add(new ADO_inputParams() { name = "@WrqExceptionalFlag", value = dto.WrqExceptionalFlag });
             if (dto.WrqReservationFlag != null)
                 inputParams.Add(new ADO_inputParams() { name = "@WrqReservationFlag", value = dto.WrqReservationFlag });
             if (dto.WrqArchiveFlag != null)

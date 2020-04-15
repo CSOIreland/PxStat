@@ -80,6 +80,7 @@ namespace PxStat.Build
             switch (DTO.Format.FrmType)
             {
                 case Resources.Constants.C_SYSTEM_PX_NAME:
+
                     List<dynamic> resultPx = new List<dynamic>();
                     resultPx.Add(matrix.GetPxObject(true).ToString());
                     Response.data = resultPx;

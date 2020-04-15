@@ -1,8 +1,8 @@
-﻿using System;
-using System.Web;
-using API;
+﻿using API;
 using FluentValidation;
 using PxStat.Resources;
+using System;
+using System.Web;
 
 namespace PxStat.Template
 {

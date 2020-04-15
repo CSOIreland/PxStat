@@ -1,7 +1,7 @@
-﻿using System;
-using API;
+﻿using API;
 using FluentValidation.Results;
 using PxStat.Data.Px;
+using System;
 
 namespace PxStat.Data
 {
@@ -41,6 +41,7 @@ namespace PxStat.Data
             try
             {
                 MatrixValidatorResult = new PxSettingsValidator(ado, includeSource).Validate(theMatrix);
+                if (!MatrixValidatorResult.IsValid) Log.Instance.Debug(MatrixValidatorResult);
                 return MatrixValidatorResult.IsValid;
             }
             catch (Exception ex)
@@ -60,7 +61,8 @@ namespace PxStat.Data
         /// <returns></returns>
         private bool PxIntegrityIsValid(Matrix theMatrix)
         {
-            MatrixValidatorResult = new PxIntegrityValidator().Validate(theMatrix);
+            MatrixValidatorResult = new PxIntegrityValidator(theMatrix.MainSpec).Validate(theMatrix);
+            if (!MatrixValidatorResult.IsValid) Log.Instance.Debug(MatrixValidatorResult);
             return MatrixValidatorResult.IsValid;
         }
     }

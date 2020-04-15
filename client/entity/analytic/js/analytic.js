@@ -4,9 +4,11 @@ Custom JS application specific
 $(document).ready(function () {
     // Entity with restricted access
     app.navigation.access.check([C_APP_PRIVILEGE_MODERATOR, C_APP_PRIVILEGE_POWER_USER]);
-
     app.navigation.layout.set(false);
     app.navigation.breadcrumb.set([app.label.static["analytics"]]);
+
+    // Load Modal 
+    api.content.load("#overlay", "entity/analytic/index.modal.html");
 
     app.analytic.setDatePicker();
     app.analytic.ajax.readSubject();
@@ -33,8 +35,6 @@ $(document).ready(function () {
     // Translate placheholder
     $("#select-card").find("[name='nlt-masked-ip']").attr('placeholder', app.label.static["sample-ip-address"]);
 
-    // Load Modal 
-    api.content.load("#analytic-modal", "entity/analytic/index.modal.html");
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)

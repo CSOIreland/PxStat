@@ -127,9 +127,12 @@ namespace PxStat.Resources
         {
             // We need the image stream more than once, thus we create a memory copy
             MemoryStream imageMemStream = new MemoryStream();
-            imageStream.Position = 0;
+            // imageStream.Position = 0;
+            imageStream.Seek(0, SeekOrigin.Begin);
             imageStream.CopyTo(imageMemStream);
-            imageStream.Position = 0;
+            // imageStream.Position = 0;
+            imageStream.Seek(0, SeekOrigin.Begin);
+            imageMemStream.Position = 0;
 
             var drawingsPart = worksheetPart.DrawingsPart;
             if (drawingsPart == null)

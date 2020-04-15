@@ -35,6 +35,8 @@ namespace PxStat.Data
         /// </summary>
         public ValidationResult SettingsValidatorResult { get; private set; }
 
+        public ValidationResult SettingsValidatorResultDefaultLanguage { get; private set; }
+
         /// <summary>
         /// class property
         /// </summary>
@@ -77,9 +79,10 @@ namespace PxStat.Data
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+
+
             if (!ParsePxFile(DTO))
             {
-                LogValidatorErrors(ParseValidatorResult);
                 Response.error = Error.GetValidationFailure(ParseValidatorResult.Errors);
                 return false;
             }
@@ -121,7 +124,12 @@ namespace PxStat.Data
 
             if (!PxSettingsAreValid(MatrixData))
             {
-                LogValidatorErrors(SettingsValidatorResult);
+                //We want the logged item to be in the default language irrespective of the requested language
+                if (SettingsValidatorResultDefaultLanguage == null)
+                    LogValidatorErrors(SettingsValidatorResult);
+                else
+                    LogValidatorErrors(SettingsValidatorResultDefaultLanguage);
+
                 Response.error = Error.GetValidationFailure(SettingsValidatorResult.Errors);
                 return false;
             }
@@ -142,7 +150,7 @@ namespace PxStat.Data
         /// <returns></returns>
         private bool PxIntegrityIsValid(Matrix theMatrix)
         {
-            IntegrityValidatorResult = new PxIntegrityValidator().Validate(theMatrix);
+            IntegrityValidatorResult = new PxIntegrityValidator(theMatrix.MainSpec, DTO.LngIsoCode).Validate(theMatrix);
             return IntegrityValidatorResult.IsValid;
         }
 
@@ -156,6 +164,7 @@ namespace PxStat.Data
             var signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()));
             dynamic validationResult = new ExpandoObject();
             List<string> FrqValues = new List<string>();
+            PxStat.RequestLanguage.LngIsoCode = DTO.LngIsoCode;
 
             if (Validate())
             {
@@ -166,7 +175,6 @@ namespace PxStat.Data
             }
             else if (MatrixData == null)
             {
-                // Response.error = Label.Get("error.validation");
                 return false;
             }
             else if (MatrixData.MainSpec.requiresResponse)
@@ -186,7 +194,6 @@ namespace PxStat.Data
                 return true;
             }
 
-
             //Response.error = Label.Get("error.validation");
             return false;
         }
@@ -198,7 +205,14 @@ namespace PxStat.Data
         /// <returns></returns>
         internal bool PxSettingsAreValid(Matrix theMatrix)
         {
-            SettingsValidatorResult = new PxSettingsValidator(Ado, true).Validate(theMatrix);
+            SettingsValidatorResult = new PxSettingsValidator(Ado, true, DTO.LngIsoCode).Validate(theMatrix);
+            if (RequestLanguage.LngIsoCode != null)
+            {
+                if (!DTO.LngIsoCode.Equals(Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")))
+                {
+                    SettingsValidatorResultDefaultLanguage = new PxSettingsValidator(Ado, true, Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")).Validate(theMatrix);
+                }
+            }
             return SettingsValidatorResult.IsValid;
         }
 
@@ -228,7 +242,7 @@ namespace PxStat.Data
             catch (Exception e)
             {
 
-                ParseValidatorResult.Errors.Add(new ValidationFailure("MtrInput", Label.Get("px.parse")));
+                ParseValidatorResult.Errors.Add(new ValidationFailure("MtrInput", RequestLanguage.LngIsoCode == null ? Label.Get("px.parse") : Label.GetFromRequestLanguage("px.parse")));
                 ParseValidatorResult.Errors.Add(new ValidationFailure("MtrInput", e.Message));
             }
 

@@ -131,6 +131,19 @@ jQuery.validator.addMethod("notEqual", function (value, element, param) {
   return this.optional(element) || value != $(param).val();
 }, app.label.static["statistic-error-message"]);
 
+/**
+ * Validation dimension code
+ */
+jQuery.validator.addMethod("validDimensionCode", function (value, element) {
+  var isValid = true;
+
+  if (jQuery.inArray(value.toUpperCase(), [C_APP_CSV_VALUE, C_APP_CSV_UNIT, C_APP_CSV_STATISTIC]) < 0) {
+    isValid = false;
+  }
+
+  return this.optional(element) || !isValid;
+}, "Invalid Dimension Code");
+
 
 /*******************************************************************************
 Application - Plugin - Extend JQuery Validator - https://jqueryvalidation.org/ - translate messages
@@ -209,12 +222,40 @@ if (app.config.plugin.highcharts.enabled
 /*******************************************************************************
 Application - Plugin - Google Charts
 *******************************************************************************/
-
 google.charts.load('current', { 'packages': ['corechart'], 'language': app.label.language.iso.code });
 
 /*******************************************************************************
-Application - Plugin - Bootstrap
+Application - Plugin - Bootstrap Modal
 *******************************************************************************/
+// For printing the overlay isolated from anything in the background.
+$(document).ready(function () {
+  $('body').on('show.bs.modal', function (e) {
+    var parents = $("#" + e.target.id).parents();
+    var parentIds = [];
+    $.each(parents, function (key, value) {
+      parentIds.push(value.id);
+    });
+
+    //only if the modal is in the overlay do we change the print screen
+    //api modals are ignored and page is printed as normal
+    if (jQuery.inArray("overlay", parentIds) != -1) {
+      $('#alert, #header, #navigation, #body, #sidebar, #panel, #footer, #modal, #spinner').addClass('d-print-none');
+    }
+  });
+
+  $('body').on('hide.bs.modal', function (e) {
+    var parents = $("#" + e.target.id).parents();
+    var parentIds = [];
+    $.each(parents, function (key, value) {
+      parentIds.push(value.id);
+    });
+    //only if the modal is in the overlay do we change the print screen
+    //api modals are ignored and page is printed as normal
+    if (jQuery.inArray("overlay", parentIds) != -1) {
+      $('#alert, #header, #navigation, #body, #sidebar, #panel, #footer, #modal, #spinner').removeClass('d-print-none');
+    }
+  });
+});
 
 // For modal over modal scenario such as confirm. 
 // When top modal closed, we need to be able to scroll on existing modal by adding modal-open class to body
@@ -226,25 +267,6 @@ $(document).ready(function () {
     }
   });
 });
-
-/*******************************************************************************
-Application - Plugin - Cookie consent
-*******************************************************************************/
-
-$(document).ready(function () {
-  // Set the options from the config and the label
-  window.cookieconsent.initialise($.extend(true, {}, app.config.plugin.cookieConsent, app.label.plugin.cookieConsent));
-
-  // Bind load
-  $(".cc-link").one('click', function (e) {
-    e.preventDefault();
-
-    // Load the Privacy (language specific) into the Modal
-    api.content.load("#modal-read-privacy .modal-body", "internationalisation/privacy/" + app.label.language.iso.code + ".html");
-    $("#modal-read-privacy").modal("show");
-  });
-});
-
 
 /*******************************************************************************
 Application - Plugin - Bootstrap breakpoint
@@ -304,7 +326,6 @@ $(document).ready(function () {
           $("#data-navigation").find(".navbar-collapse").collapse('show');
         }
 
-
         //always show panel
         $("#panel").show();
 
@@ -325,7 +346,6 @@ $(document).ready(function () {
 /*******************************************************************************
 Application - Plugin - Datatable data sorting
 *******************************************************************************/
-
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
   "data-asc": function (a, b) {
     a = a.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
@@ -352,4 +372,22 @@ window.addEventListener("beforeunload", function (event) {
 
   // reset anyway
   window._avoidbeforeunload = false
+});
+
+
+/*******************************************************************************
+Application - Plugin - Cookie consent
+*******************************************************************************/
+$(document).ready(function () {
+  // Set the options from the config and the label
+  window.cookieconsent.initialise($.extend(true, {}, app.config.plugin.cookieConsent, app.label.plugin.cookieConsent));
+
+  // Bind load
+  $(".cc-link").one('click', function (e) {
+    e.preventDefault();
+
+    // Load the Privacy (language specific) into the Modal
+    api.content.load("#modal-read-privacy .modal-body", "internationalisation/privacy/" + app.label.language.iso.code + ".html");
+    $("#modal-read-privacy").modal("show");
+  });
 });

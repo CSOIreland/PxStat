@@ -11,6 +11,9 @@ $(document).ready(function () {
   app.navigation.breadcrumb.set(["Configuration", "Languages"]);
   app.navigation.breadcrumb.set([app.label.static["configuration"], app.label.static["languages"]]);
 
+  // Load Modal 
+  api.content.load("#overlay", "entity/configuration/language/index.modal.html");
+
   // Draw the Datatable on load
   app.language.ajax.read();
 

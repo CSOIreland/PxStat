@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "2.1.0";
+const C_APP_VERSION = "2.2.0";
 
 // URLs
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
@@ -133,6 +133,7 @@ const C_APP_UPDATE_PERIOD_FILE_ALLOWED_EXTENSION = ['.csv'];
 const C_APP_UPDATE_PERIOD_FILE_ALLOWED_TYPE = ['', 'text/csv', 'text/plain', "application/vnd.ms-excel"]; // CSV a registered MIME Type
 
 //CSV structure
+const C_APP_CSV_STATISTIC = "STATISTIC";
 const C_APP_CSV_CODE = "CODE";
 const C_APP_CSV_VALUE = "VALUE";
 const C_APP_CSV_UNIT = "UNIT";

@@ -112,7 +112,8 @@ namespace PxStat.Data
                 .Must((dto, format)
                     => format?.CompareTo(DatasetFormat.JsonStat) == 0
                     || format?.CompareTo(DatasetFormat.Px) == 0
-                    || format?.CompareTo(DatasetFormat.Csv) == 0)
+                    || format?.CompareTo(DatasetFormat.Csv) == 0
+                    | format?.CompareTo(DatasetFormat.Xlsx) == 0)
                 .WithMessage("Invalid format")
                 .WithName("formatValidation");
             RuleFor(f => f.Format.FrmType).NotEmpty();

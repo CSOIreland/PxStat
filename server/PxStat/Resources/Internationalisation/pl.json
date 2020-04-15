@@ -15,6 +15,8 @@
     "schema": "Naruszono schemat interfejsu API. Przejrzyj składnię żądania interfejsu API.",
     "update": "Żaden rekord nie został zaktualizowany. Sprawdź swoje dane wejściowe.",
     "validation": "Walidacja nie powiodła się. Sprawdź swoje dane wejściowe.",
+    "workflow": "Tabela &quot;{0}&quot; praca w toku. Zaczekaj na zakończenie przepływu pracy przed przesłaniem nowej wersji.",
+    "image": "An image could not be created from the resource at {0}",
     "parsing": {
       "parse-error": "Błąd Przetwarzania:",
       "unexpected": "Nieoczekiwany znak {0} znaleziony w rzędzie {1}, kolumna {2}",
@@ -23,27 +25,24 @@
       "unmatched-parameters": "Nie udało się uzgodnić parametrów żądania z dostępnymi danymi"
     }
   },
+  "authentication": {
+    "authenticated": "ZALEGALIZOWANY",
+    "registered": "ZAREJESTROWANY",
+    "anonymous": "ANONIMOWY",
+    "any": "KAŻDY"
+  },
+  "integrity": {
+    "data": "PX Integralność: danych &quot;{Data}&quot; jest niepoprawna.",
+    "size": "PX Integralność: &quot;{Expected}&quot; oczekiwane komórki danych, ale &quot;{Found}&quot; znaleziono dla języka &quot;{Language}&quot;.",
+    "cell-count": "Twój plik zawiera {0} komórki danych, maksymalna dozwolona liczba to {1}. Przejrzyj dane wejściowe.",
+    "codes": " Znaleziono zduplikowane kody."
+  },
   "px": {
     "build": {
       "language": "Podanego języka nie znaleziono w dostarczonym pliku px."
     },
     "duplicate": "masz zamiar przesłać nową wersję istniejącej Tabeli &quot;{0}&quot;. Jesteś pewny?",
     "duplicate-different-group": "masz zamiar przesłać nową wersję istniejącej Tabeli &quot;{0}&quot; i zmienić grupę z &quot;{1}&quot; na &quot;{2}&quot;. Jesteś pewny?",
-    "integrity": {
-      "data": "PX Integralność: danych &quot;{Data}&quot; jest niepoprawna.",
-      "size": "PX Integralność: &quot;{Expected}&quot; oczekiwane komórki danych, ale &quot;{Found}&quot; znaleziono dla języka &quot;{Language}&quot;.",
-      "language": "Język",
-      "expected": "Spodziewany",
-      "found": "Znaleziono",
-      "source": "Źródło",
-      "codes": " Znaleziono zduplikowane kody."
-    },
-    "authentication": {
-      "authenticated": "ZALEGALIZOWANY",
-      "registered": "ZAREJESTROWANY",
-      "anonymous": "ANONIMOWY",
-      "any": "KAŻDY"
-    },
     "parse": "Analiza PX: dane wejściowe zawierają niepoprawną składnię.",
     "pendinglive": "Tabela &quot;{0}&quot; oczekuje na wydanie na żywo. Zaczekaj na wydanie przejdzie w stan wydania przed wgraniem nowej wersji wydania.",
     "schema": {
@@ -62,8 +61,7 @@
       "languages-invalid": "Ustawienie PX [LANGUAGE]: &quot;{Language}&quot; jest niepoprawna.",
       "source-invalid": "Ustawienie PX [SOURCE]: &quot;{PropertyValue}&quot; jest niepoprawna.",
       "sources-invalid": "Ustawienie PX [SOURCE]: &quot;{Source}&quot; jest niepoprawna."
-    },
-    "workflow": "Tabela &quot;{0}&quot; praca w toku. Zaczekaj na zakończenie przepływu pracy przed przesłaniem nowej wersji."
+    }
   },
   "xlsx": {
     "table": "Tabela",
@@ -79,7 +77,7 @@
     "copyright": "Prawa Autorskie",
     "properties": "Właściwość",
     "official-statistics": "Oficjalne Statystyki",
-    "emergency": "Nagły Przypadek",
+    "exceptional": "Wyjątkowy",
     "archived": "Zarchiwizowane",
     "analytical": "Zależność",
     "language": "Język",

@@ -592,10 +592,10 @@ app.library.utility.initTinyMce = function (stripDoubleQuotes) {
 };
 
 /**
- * Compare 2 arrays to see if they are the same. Position not important 
- */
-app.library.utility.arraysEqual = function (array1, array2) {
-
+ * Compare 2 arrays to see if they are the same. 
+ *  */
+app.library.utility.arraysEqual = function (array1, array2, order) {
+  order = order || false;
   var isEqual = true;
 
   //first check if lengths are the same
@@ -604,29 +604,40 @@ app.library.utility.arraysEqual = function (array1, array2) {
     return isEqual;
   }
 
-  //Array lengths are the same, now chenk that contents are the same
+  //Array lengths are the same, now check that contents are the same
 
   $.each(array1, function (index, value) {
     //For each item in array1, find out how many times it appears, must be the same in array2, else return false
-    //order doesn't matter
     var countArray1 = 0;
+    var positionArray1 = null;
     for (var i = 0; i < array1.length; i++) {
       if (array1[i] === value) {
         countArray1++;
+        positionArray1 = i;
       }
     };
 
     var countArray2 = 0;
+    var positionArray2 = null;
     for (var x = 0; x < array2.length; x++) {
       if (array2[x] === value) {
         countArray2++;
+        positionArray2 = x;
       }
     };
 
     //count must be the same for item in both arrays, else return false
     if (countArray1 != countArray2) {
-      isEqual = false
-      return isEqual;
+      isEqual = false;
+      //break out of each loop
+      return false;
+    }
+
+    //position must be the same for item in both arrays, else return false
+    if (order && positionArray1 != positionArray2) {
+      isEqual = false;
+      //break out of each loop
+      return false;
     }
 
   });

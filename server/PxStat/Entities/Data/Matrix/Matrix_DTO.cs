@@ -1,13 +1,16 @@
 ﻿using API;
 using DocumentFormat.OpenXml.Spreadsheet;
+using FluentValidation.Results;
 using Newtonsoft.Json;
 using PxParser.Resources.Parser;
 using PxStat.Build;
+using PxStat.JsonStatSchema;
 using PxStat.Resources;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -74,6 +77,7 @@ namespace PxStat.Data
         /// </summary>
         private List<string> Reasons { get; set; }
 
+
         private PxUpload_DTO pxUploadDto;
 
         /// <summary>
@@ -111,6 +115,8 @@ namespace PxStat.Data
             /// </summary>
             public List<ClassificationRecordDTO_Create> Classifications { get; set; }
         }
+
+
 
         /// <summary>
         /// For a valid Matrix, get the specification for a specific language
@@ -159,6 +165,19 @@ namespace PxStat.Data
             /// </summary>
             public Specification()
             {
+            }
+
+            public long GetRequiredDatapointCount()
+            {
+                if (this.Classification == null || this.Statistic == null || this.Frequency.Period == null || this.Classification == null) return -1;
+                if (this.Classification.Count == 0 || this.Frequency.Period.Count == 0 || this.Statistic.Count == 0 || this.Classification.Count == 0) return -1;
+                long points = this.Statistic.Count * this.Frequency.Period.Count;
+                foreach (var cls in this.Classification)
+                {
+                    points *= cls.Variable.Count;
+                }
+
+                return points;
             }
 
             /// <summary>
@@ -1610,17 +1629,17 @@ namespace PxStat.Data
             }
         }
 
-        internal string GetXlsxObject(string lngIsoCode = null)
+        internal string GetXlsxObject(string lngIsoCode = null, CultureInfo ci = null)
         {
             Xlsx xl = new Xlsx();
-            return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode), lngIsoCode);
+            return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode), lngIsoCode, ci);
 
         }
 
-        internal string GetCsvObject(string lngIsoCode = null, bool indicateBlankSymbols = false)
+        internal string GetCsvObject(string lngIsoCode = null, bool indicateBlankSymbols = false, CultureInfo ci = null)
         {
             Xlsx xl = new Xlsx();
-            return xl.GetCsv(GetMatrixSheet(lngIsoCode, indicateBlankSymbols), "\"");
+            return xl.GetCsv(GetMatrixSheet(lngIsoCode, indicateBlankSymbols), "\"", ci);
         }
 
         internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null, bool indicateBlankSymbols = false)
@@ -1705,6 +1724,48 @@ namespace PxStat.Data
             return rowLists;
         }
 
+        /// <summary>
+        /// Get a matrix from a Cube DTO
+        /// </summary>
+        /// <param name="cubeDto"></param>
+        /// <returns></returns>
+        internal Matrix ApplySearchCriteria(CubeQuery_DTO cubeDto)
+        {
+            List<ClassificationRecordDTO_Create> filteredClassifications = new List<ClassificationRecordDTO_Create>();
+            AppliedFilters = new Filters();
+
+
+            foreach (var dimension in cubeDto.jStatQuery.Dimensions)
+            {
+                if (DimensionExistinList(dimension.Value.Id, cubeDto.Role.Metric))
+                {
+                    ApplyStatFilter(dimension.Value);
+                }
+                else if (DimensionExistinList(dimension.Value.Id, cubeDto.Role.Time))
+                {
+                    ApplyTimeFilter(dimension.Value);
+                }
+                else if (FilterHasValues(dimension.Value))
+                {
+                    filteredClassifications.AddRange(GetClassFilter(dimension.Value));
+                }
+            }
+
+
+            if (filteredClassifications.Count > 1)
+            {
+                foreach (var filteredClassification in filteredClassifications)
+                {
+                    var selectedClassification = this.MainSpec.Classification.Where(c => c.Value == filteredClassification.Value && filteredClassification.Code == c.Code).First();
+                    if (selectedClassification != null)
+                    {
+                        selectedClassification = filteredClassification;
+                    }
+                }
+            }
+
+            return this;
+        }
 
 
         /// <summary>
@@ -1772,6 +1833,22 @@ namespace PxStat.Data
             return result;
         }
 
+        private IList<ClassificationRecordDTO_Create> GetClassFilter(JsonQuery.Dimension dimension)
+        {
+
+            IList<ClassificationRecordDTO_Create> result
+                = this.MainSpec.Classification
+                .Where(w => w.Code == dimension.Id).ToList();
+
+            foreach (var c in result)
+            {
+                c.ClassificationFilterWasApplied = true;
+                c.Variable = c.Variable
+                    .Where(w => dimension.Category.Index.Contains(w.Code)).ToList();
+            }
+            return result;
+        }
+
         /// <summary>
         /// ApplyTimeFilter
         /// </summary>
@@ -1783,6 +1860,18 @@ namespace PxStat.Data
                 this.MainSpec.Frequency.Period =
                 this.MainSpec.Frequency.Period
                     .Where(w => dimension.Category.Index.Value.StringArray.Contains(w.Code)).ToList();
+
+                TimeFilterWasApplied = true;
+            }
+        }
+
+        private void ApplyTimeFilter(JsonQuery.Dimension dimension)
+        {
+            if (FilterHasValues(dimension))
+            {
+                this.MainSpec.Frequency.Period =
+                this.MainSpec.Frequency.Period
+                    .Where(w => dimension.Category.Index.Contains(w.Code)).ToList();
 
                 TimeFilterWasApplied = true;
             }
@@ -1802,6 +1891,15 @@ namespace PxStat.Data
                             && dimension.Category.Index.Value.StringArray.Count > 0;
         }
 
+        private static bool FilterHasValues(JsonQuery.Dimension dimension)
+        {
+            return dimension != null
+                            && dimension.Category != null
+                            && dimension.Category.Index != null
+                            && dimension.Category.Index.Count > 0;
+
+        }
+
 
         /// <summary>
         /// ApplyStatFilter
@@ -1819,6 +1917,20 @@ namespace PxStat.Data
             }
         }
 
+        private void ApplyStatFilter(JsonQuery.Dimension dimension)
+        {
+            if (FilterHasValues(dimension))
+            {
+                this.MainSpec.Statistic =
+                    this.MainSpec.Statistic
+                        .Where(w => dimension.Category.Index.Contains(w.Code)).ToList();
+
+                StatFilterWasApplied = true;
+            }
+        }
+
+
+
 
         /// <summary>
         /// DimensionExistinList
@@ -1829,6 +1941,11 @@ namespace PxStat.Data
         private bool DimensionExistinList(Dimension dimension, List<string> list)
         {
             return list == null ? false : list.Contains(dimension.Id);
+        }
+
+        private bool DimensionExistinList(string dimId, List<string> list)
+        {
+            return list == null ? false : list.Contains(dimId);
         }
 
 
@@ -2033,7 +2150,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="doStatus"></param>
         /// <returns></returns>
-        public JsonStat GetJsonStatObject(bool doStatus = false, bool showData = true, string lngIsoCode = null)
+        public JsonStat GetJsonStatObject(bool doStatus = false, bool showData = true, string lngIsoCode = null, CultureInfo ci = null)
         {
 
             Specification spec = new Specification();
@@ -2160,7 +2277,7 @@ namespace PxStat.Data
             if (this.Release != null)
             {
 
-                jsStat.Extension.Add("emergency", Release.RlsEmergencyFlag);
+                jsStat.Extension.Add("exceptional", Release.RlsExceptionalFlag);
 
                 jsStat.Extension.Add("reservation", Release.RlsReservationFlag);
                 jsStat.Extension.Add("archive", Release.RlsArchiveFlag);
@@ -2181,13 +2298,13 @@ namespace PxStat.Data
                 Cells = new List<dynamic>();
             }
 
+
             jsStat.Id.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"));
 
             jsStat.Dimension = new Dictionary<string, Dimension>();
             var statDimension = new Dimension()
             {
                 Label = spec.ContentVariable != null ? spec.ContentVariable : Label.Get("default.statistic"),
-                //Label = Utility.GetCustomConfig("APP_CSV_STATISTIC"),
                 Category = new Category()
                 {
                     Index = spec.Statistic.Select(v => v.Code).ToList(),
@@ -2395,7 +2512,7 @@ namespace PxStat.Data
         }
 
 
-
+        public ValidationResult ValidationResult;
         /// <summary>
         /// class property
         /// </summary>

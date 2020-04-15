@@ -262,7 +262,7 @@ app.release.workflow.history.render.extraInfo = function (row) {
     grid.attr("id", "extraInfoPost");
     // Request
     grid.find("[name=rqs-value]").empty().html(app.label.datamodel.request[row.RqsValue]); //Translation
-    grid.find("[name=wrq-emergency-flag]").empty().html(app.library.html.boolean(row.WrqEmergencyFlag, true, true));
+    grid.find("[name=wrq-exceptional-flag]").empty().html(app.library.html.boolean(row.WrqExceptionalFlag, true, true));
     grid.find("[name=wrq-datetime]").empty().html(row.WrqDatetime ? moment(row.WrqDatetime).format(app.config.mask.datetime.display) : "");
     grid.find("[name=wrq-reservation-flag]").empty().html(app.library.html.boolean(row.WrqReservationFlag, true, true));
     grid.find("[name=wrq-archive-flag]").empty().html(app.library.html.boolean(row.WrqArchiveFlag, true, true));
@@ -288,12 +288,12 @@ app.release.workflow.history.render.extraInfo = function (row) {
             // Do nothing
             break;
         case C_APP_TS_REQUEST_PROPERTY:
-            grid.find("[name=wrq-emergency-flag]").parent().remove();
+            grid.find("[name=wrq-exceptional-flag]").parent().remove();
             grid.find("[name=wrq-datetime]").parent().remove();
             break;
         case C_APP_TS_REQUEST_DELETE:
         case C_APP_TS_REQUEST_ROLLBACK:
-            grid.find("[name=wrq-emergency-flag]").parent().remove();
+            grid.find("[name=wrq-exceptional-flag]").parent().remove();
             grid.find("[name=wrq-datetime]").parent().remove();
             grid.find("[name=wrq-reservation-flag]").parent().remove();
             grid.find("[name=wrq-archive-flag]").parent().remove();

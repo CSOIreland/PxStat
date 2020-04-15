@@ -33,7 +33,7 @@ namespace PxStat.System.Navigation
             //Optional - PrcCode
             //Optional - CprCode
             RuleFor(f => f.CprCode).Length(1, 32).WithMessage("Invalid CprCode");
-            //Optional - RlsEmergencyFlag
+            //Optional - RlsExceptionalFlag
             //Optional - RlsReservationFlag
             //Optional - RlsArchiveFlag
             //Optional - RlsAnalyticalFlag

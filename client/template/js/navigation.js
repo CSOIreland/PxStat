@@ -45,11 +45,11 @@ $(document).ready(function () {
 
   //#endregion
 
-  //#region Upload
+  //#region import
   api.content.navigate(
-    "#nav-link-upload",
-    "entity/build/upload/",
-    "#nav-link-upload",
+    "#nav-link-import",
+    "entity/build/import/",
+    "#nav-link-import",
     "#nav-link-build"
   );
   //#endregion

@@ -294,23 +294,47 @@ namespace PxParser.Resources.Parser
         internal static void ThrowParserException(ParseError<char> error)
         {
             StringBuilder sb = new StringBuilder();
+            StringBuilder sbLogs = new StringBuilder();
             string unexpected = "";
+
+
             if (error.EOF) unexpected = Label.Get("error.parsing.eof");
 
 
-            sb.AppendLine(Label.Get("error.parsing.parse-error"));
+            sbLogs.AppendLine(Label.Get("error.parsing.parse-error"));
 
             if (error.Unexpected != null)
             {
-
-                sb.AppendLine(string.Format(Label.Get("error.parsing.unexpected"), unexpected, error.ErrorPos.Line, error.ErrorPos.Col));
+                sbLogs.AppendLine(string.Format(Label.Get("error.parsing.unexpected"), unexpected, error.ErrorPos.Line, error.ErrorPos.Col));
             }
             if (error.Expected != null)
             {
-                sb.AppendLine(string.Format(Label.Get("error.parsing.expected"), GetExpected(error)));
+                sbLogs.AppendLine(string.Format(Label.Get("error.parsing.expected"), GetExpected(error)));
             }
+            Log.Instance.Debug(new Exception(sbLogs.ToString()));
 
-            throw new Exception(sb.ToString());
+            //Are we required to build a set of errors in a requested language?
+            if (PxStat.RequestLanguage.LngIsoCode != null)
+            {
+
+                if (error.EOF) unexpected = Label.GetFromRequestLanguage("error.parsing.eof");
+
+
+                sb.AppendLine(Label.GetFromRequestLanguage("error.parsing.parse-error"));
+
+                if (error.Unexpected != null)
+                {
+                    sb.AppendLine(string.Format(Label.GetFromRequestLanguage("error.parsing.unexpected"), unexpected, error.ErrorPos.Line, error.ErrorPos.Col));
+                }
+                if (error.Expected != null)
+                {
+                    sb.AppendLine(string.Format(Label.GetFromRequestLanguage("error.parsing.expected"), GetExpected(error)));
+                }
+                throw new Exception(sb.ToString());
+            }
+            else
+                throw new Exception(sbLogs.ToString());
+
         }
 
         /// <summary>

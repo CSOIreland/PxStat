@@ -77,7 +77,7 @@ namespace PxStat.System.Navigation
                 rel.PrcCode = release.PrcCode;
                 rel.PrcValue = release.PrcValue;
                 rel.RlsLiveDatetimeFrom = release.RlsLiveDatetimeFrom;
-                rel.RlsEmergencyFlag = release.RlsEmergencyFlag;
+                rel.RlsExceptionalFlag = release.RlsExceptionalFlag;
                 rel.RlsReservationFlag = release.RlsReservationFlag;
                 rel.RlsArchiveFlag = release.RlsArchiveFlag;
                 rel.RlsAnalyticalFlag = release.RlsAnalyticalFlag;
@@ -218,7 +218,7 @@ namespace PxStat.System.Navigation
                                 t.PrcCode,
                                 t.PrcValue,
                                 t.RlsLiveDatetimeFrom,
-                                t.RlsEmergencyFlag,
+                                t.RlsExceptionalFlag,
                                 t.RlsReservationFlag,
                                 t.RlsArchiveFlag,
                                 t.RlsAnalyticalFlag,
@@ -244,7 +244,7 @@ namespace PxStat.System.Navigation
                                 grp.Key.PrcCode,
                                 grp.Key.PrcValue,
                                 grp.Key.RlsLiveDatetimeFrom,
-                                grp.Key.RlsEmergencyFlag,
+                                grp.Key.RlsExceptionalFlag,
                                 grp.Key.RlsReservationFlag,
                                 grp.Key.RlsArchiveFlag,
                                 grp.Key.RlsAnalyticalFlag,

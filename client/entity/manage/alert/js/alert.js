@@ -6,6 +6,10 @@ $(document).ready(function () {
     app.navigation.access.check([C_APP_PRIVILEGE_POWER_USER]);
     app.navigation.layout.set(false);
     app.navigation.breadcrumb.set([app.label.static.manage, app.label.static.alerts]);
+
+    // Load Modal
+    api.content.load("#overlay", "entity/manage/alert/index.modal.html");
+
     app.alert.ajax.read();
 
     // Parse warning

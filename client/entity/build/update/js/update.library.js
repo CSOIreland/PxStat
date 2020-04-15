@@ -136,7 +136,7 @@ app.build.update.ajax.readFormat = function () {
  */
 app.build.update.callback.readFormat = function (data) {
     $.each(data, function (index, format) {
-        var formatDropdown = $("#build-update-dimension-metadata-templates").find("[name=create-submit]").clone();
+        var formatDropdown = $("#build-update-dimension-metadata-templates").find("[name=update-submit]").clone();
         formatDropdown.attr(
             {
                 "frm-type": format.FrmType,
@@ -149,10 +149,11 @@ app.build.update.callback.readFormat = function (data) {
         $("#build-update-dimensions [name=format-list]").append(formatDropdown);
     });
 
-    $("#build-update-dimensions").find("[name=create-submit]").once("click", function (e) {
+    $("#build-update-dimensions").find("[name=update-submit]").once("click", function (e) {
+        e.preventDefault();
         app.build.update.data.FrmType = $(this).attr("frm-type");
         app.build.update.data.FrmVersion = $(this).attr("frm-version");
-        app.build.update.updateOutput();
+        app.build.update.checkForData();
     });
 };
 
@@ -550,6 +551,26 @@ app.build.update.validateUploadPeriod = function () {
 
     return true;
 };
+
+app.build.update.checkForData = function () {
+    //check if new periods added without data
+    $.each(app.build.update.data.Dimension, function (index, dimension) {
+        var lngIsoCode = dimension.LngIsoCode;
+        if (lngIsoCode == app.config.language.iso.code) {
+            //get length of default language new period size
+            if (dimension.Frequency.Period.length > 0 && !app.build.update.upload.file.content.data.JSON) {
+                api.modal.confirm(
+                    app.label.static["update-periods-without-data"],
+                    app.build.update.updateOutput
+                );
+            }
+            else {
+                app.build.update.updateOutput();
+            }
+        }
+    });
+}
+
 /**
  * 
  */
@@ -568,7 +589,7 @@ app.build.update.updateOutput = function () {
         $("#build-update-dimension-nav-" + lngIsoCode).find("[type=submit]").trigger("click");
         if (!app.build.update.validate.isDimensionPropertyValid) {
             validationErrors.push(app.library.html.parseDynamicLabel("update-dimension-properties", [lngIsoName]));
-        }
+        };
     });
     if (!validationErrors.length) {
         //validate for no duplicate dimension labels 
@@ -587,23 +608,13 @@ app.build.update.updateOutput = function () {
         });
     }
 
-    //check that everything is OK with new periods
-    if (!app.build.update.isPeriodsDimensionsValid()) {
-        validationErrors.push(app.label.static["build-update-period-error"]);
+    if (!validationErrors.length) {
+        //check that everything is OK with new periods
+        if (!app.build.update.isPeriodsDimensionsValid()) {
+            validationErrors.push(app.label.static["build-update-period-error"]);
+        }
     }
 
-    if (!validationErrors.length) {
-        //check if new periods added without data
-        $.each(app.build.update.data.Dimension, function (index, dimension) {
-            var lngIsoCode = dimension.LngIsoCode;
-            if (lngIsoCode == app.config.language.iso.code) {
-                //get length of default language new period size
-                if (dimension.Frequency.Period.length > 0 && !app.build.update.upload.file.content.data.JSON) {
-                    validationErrors.push(app.label.static["update-periods-without-data"]);
-                }
-            }
-        });
-    }
     if (!validationErrors.length) {
         //check data template is valid if we have data
 
@@ -613,6 +624,37 @@ app.build.update.updateOutput = function () {
             };
         }
 
+    }
+    if (!validationErrors.length) {
+        var numCells = 1;
+        var dimension = null;
+        $.each(app.build.update.data.Dimension, function (index, value) {
+            if (value.LngIsoCode == app.config.language.iso.code) {
+                dimension = value;
+            }
+        });
+        var numClassificationVariables = 1;
+        $.each(dimension.Classification, function (index, value) {
+            numClassificationVariables = numClassificationVariables * this.Variable.length
+        });
+
+        //get number of statistics and existing periods
+        var numStatistics = null;
+        var numPeriods = null;
+        $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
+            if (jsonStat.extension.language.code == app.config.language.iso.code) {
+                numStatistics = jsonStat.Dimension({ role: "metric" })[0].length;
+                numPeriods = jsonStat.Dimension({ role: "time" })[0].length;
+            }
+        });
+
+        //add new periods
+        numPeriods = numPeriods + dimension.Frequency.Period.length;
+
+        var numCells = numClassificationVariables * numStatistics * numPeriods;
+        if (numCells > app.config.entity.build.threshold) {
+            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold)]));
+        }
     }
     if (!validationErrors.length) {
         if (app.build.update.upload.file.content.data.JSON != null) {
@@ -629,7 +671,7 @@ app.build.update.updateOutput = function () {
             "FrqValueTimeval": $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val(),
             "MtrOfficialFlag": $("#build-update-properties").find("[name=official-flag]").prop('checked'),
             "CprCode": $("#build-update-properties").find("[name=copyright-code]").val(),
-            "Data": jsonStat
+            "Data": jsonStat || []
         });
 
         //build properties to dimensions 
@@ -655,6 +697,7 @@ app.build.update.updateOutput = function () {
         app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.updateOutput", app.config.upload.unitsPerSecond.update);
 
     }
+
     else {
         //show errors to user
         var errorOutput = $("<ul>", {
@@ -724,7 +767,6 @@ app.build.update.isPeriodsDimensionsValid = function () {
 app.build.update.ajax.updateOutput = function () {
     //clone data object to tidy up before sending to server
     var params = $.extend(true, {}, app.build.update.data);
-
     //remove ClsValue and classification variables before sending to API 
     $(params.Dimension).each(function (index, dimension) {
         $(dimension.Classification).each(function (index, classification) {
@@ -770,7 +812,10 @@ app.build.update.ajax.updateOutput = function () {
         params.FrmType,
         null,
         null,
-        { async: false });
+        {
+            async: false,
+            timeout: app.config.upload.timeout
+        });
 
 };
 
@@ -779,33 +824,44 @@ app.build.update.ajax.updateOutput = function () {
  *
  * @param {*} data
  */
-app.build.update.callback.updateOutput = function (data, format) {
-    if (data && Array.isArray(data) && data.length) {
-        var fileName = $("#build-update-properties [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
-
-        switch (format) {
-            case C_APP_TS_FORMAT_TYPE_PX:
-                $.each(data, function (index, file) {
-                    // Download the file
-                    app.library.utility.download(fileName, file, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
-                });
-                break;
-            case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-                $.each(data, function (index, file) {
-                    // Download the file
-                    app.library.utility.download(fileName, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
-                });
-                break;
-            default:
-                api.modal.exception(app.label.static["api-ajax-exception"]);
-                break;
-        };
-
-    } else {
+app.build.update.callback.updateOutput = function (data, frmType) {
+    if (data.file && data.file.length) {
+        if (data.report && data.report.length) {
+            app.build.update.data.report.drawReport(data, frmType);
+        }
+        else {
+            app.build.update.callback.downloadFile(data.file, frmType);
+        }
+    }
+    else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+
 };
 
+app.build.update.callback.downloadFile = function (data, format) {
+    var fileName = $("#build-update-properties [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
+
+    switch (format) {
+        case C_APP_TS_FORMAT_TYPE_PX:
+            $.each(data, function (index, file) {
+                // Download the file
+                app.library.utility.download(fileName, file, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
+            });
+            break;
+        case C_APP_TS_FORMAT_TYPE_JSONSTAT:
+            $.each(data, function (index, file) {
+                // Download the file
+                app.library.utility.download(fileName, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
+            });
+            break;
+        default:
+            api.modal.exception(app.label.static["api-ajax-exception"]);
+            break;
+    };
+
+    $('#build-update-modal-view-report').modal('hide')
+}
 /**
  *Validation for matrix properties
  *

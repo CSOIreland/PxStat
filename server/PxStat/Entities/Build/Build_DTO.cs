@@ -933,7 +933,7 @@ namespace PxStat.Build
             //check that the Classification codes are the same and in the same order
             var thisCodeList = String.Join(",", ((this.Classifications.Select(c => c.Code.ToString())).ToList<string>()).ToArray());
             var otherCodeList = String.Join(",", ((comp.Classifications.Select(c => c.Code.ToString())).ToList<string>()).ToArray());
-
+            var thisPrdList = String.Join(",", ((this.Frequency.Period.Select(c => c.Code.ToString())).ToList<string>()).ToArray());
 
             if (!thisCodeList.Equals(otherCodeList)) return false;
 
@@ -967,6 +967,13 @@ namespace PxStat.Build
                 otherStatList = String.Join(",", ((comp.Statistics.Select(c => c.Code.ToString())).ToList<string>()).ToArray());
 
             if (!thisStatList.Equals(otherStatList)) return false;
+
+            var otherPrdList = "";
+            if (comp.Frequency.Period != null)
+                otherPrdList = String.Join(",", ((comp.Frequency.Period.Select(c => c.Code.ToString())).ToList<string>()).ToArray());
+
+            if (!thisPrdList.Equals(otherPrdList)) return false;
+
             return true;
         }
     }

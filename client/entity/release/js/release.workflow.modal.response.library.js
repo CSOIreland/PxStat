@@ -48,7 +48,7 @@ app.release.workflow.modal.response.callback.read = function (data) {
             case C_APP_TS_REQUEST_PUBLISH:
                 $("#request-workflow-modal-response-publish [name=rqs-value]").html(app.label.datamodel.request[data.RqsValue]);
 
-                $("#request-workflow-modal-response-publish [name=wrq-emergency-flag]").html(app.library.html.boolean(data.WrqEmergencyFlag, true, true));
+                $("#request-workflow-modal-response-publish [name=wrq-exceptional-flag]").html(app.library.html.boolean(data.WrqExceptionalFlag, true, true));
                 $("#request-workflow-modal-response-publish [name=wrq-datetime]").html(data.WrqDatetime ? moment(data.WrqDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-response-publish [name=wrq-reservation-flag]").html(app.library.html.boolean(data.WrqReservationFlag, true, true));
                 $("#request-workflow-modal-response-publish [name=wrq-archive-flag]").html(app.library.html.boolean(data.WrqArchiveFlag, true, true));

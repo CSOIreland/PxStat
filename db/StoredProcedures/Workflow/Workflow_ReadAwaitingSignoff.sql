@@ -59,7 +59,7 @@ BEGIN
 		,rqs.Rqs_Value AS RqsValue
 		,cmmRequest.CMM_VALUE AS CmmRequestValue
 		,cmmResponse.CMM_VALUE AS CmmResponseValue
-		,RLS_EMERGENCY_FLAG AS RlsEmergencyFlag
+		,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 		,WRQ_DATETIME AS WrqDatetime
 		,DHT_DATETIME AS DhtDatetime
 		,CCN_USERNAME AS CcnUsername

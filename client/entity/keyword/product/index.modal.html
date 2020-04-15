@@ -1,0 +1,174 @@
+<!-- Modal - Create -->
+<div id="keyword-product-modal-create" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title text-light" label="add-product-keyword"></h5>
+        <button type="button" class="close text-light" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <form>
+        <input type="hidden" name="prc-code" value="">
+        <input type="hidden" name="sbj-code" value="">
+        <div class="modal-body">
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold" label="product"></div>
+            <span class="col-8 p-2">
+              <span name="prc-value"></span>
+            </span>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label class="mandatory" for="kpr-value" label="keyword"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input type="text" class="form-control" name="kpr-value" maxlength="256">
+              <span class="serverValidationError text-danger" name="kpr-value-error-holder"></span>
+            </div>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="acronym"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input name="acronym-toggle" type="checkbox"></input>
+            </div>
+          </div>
+          <div class="border row mx-0" name="language-row">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="language"></label>
+            </div>
+            <div class="col-8 p-2">
+              <select class="form-control" name="language">
+              </select>
+              <span class="serverValidationError text-danger" name="language-error-holder"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-warning justify-content-start rounded-0">
+          <label>
+            <span label="singularise-warning"></span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <div class="container-fluid">
+            <div class="text-right">
+              <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+              </button>
+              <button class="btn btn-primary text-light" type="submit">
+                <i class="fas fa-plus-circle"></i> <span label="add"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal - Update -->
+<div id="keyword-product-modal-update" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title text-light" label="update-product-keyword"></h5>
+        <button type="button" class="close text-light" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <form>
+        <input type="hidden" name="kpr-code" value="">
+        <input type="hidden" name="prc-code" value="">
+        <input type="hidden" name="sbj-code" value="">
+        <div class="modal-body">
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold" label="product"></div>
+            <span class="col-8 p-2">
+              <span name="prc-value"></span>
+            </span>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label class="mandatory" for="kpr-value" label="keyword"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input type="text" class="form-control" name="kpr-value" maxlength="256">
+              <span class="serverValidationError text-danger" name="kpr-value-error-holder"></span>
+            </div>
+          </div>
+          <div class="border row mx-0">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="acronym"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input name="acronym-toggle" type="checkbox"></input>
+            </div>
+          </div>
+          <div class="border row mx-0" name="language-row">
+            <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+              <label label="language"></label>
+            </div>
+            <div class="col-8 p-2">
+              <select class="form-control" name="language">
+              </select>
+              <span class="serverValidationError text-danger" name="language-error-holder"></span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-warning justify-content-start rounded-0 rounded-0">
+          <label>
+            <span label="singularise-warning"></span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <div class="container-fluid">
+            <div class="text-right">
+              <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+              </button>
+              <button class="btn btn-primary text-light" type="submit">
+                <i class="far fa-save"></i> <span label="update"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal - Extra Info -->
+<div id="keyword-product-extra-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header bg-primary">
+          <h5 class="modal-title text-light" label="synonym-list"></h5>
+          <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="border-top border-right border-left border-bottom row mx-0 mb-3">
+              <div class="bg-light border-right col-4 p-2 text-right font-weight-bold" label="keyword :"></div>
+              <span class="col-8 p-2">
+                <span name="keyword"></span>
+              </span>
+            </div>
+            <span name="synonym-card"></span>
+          </div>
+          <div class="modal-footer">
+            <div class="container-fluid">
+              <div class="text-right">
+                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                  <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -16,7 +16,7 @@ ALTER PROCEDURE Workflow_WorkflowRequest_Create @CcnUsername NVARCHAR(256)
 	,@RqsCode NVARCHAR(32)
 	,@CmmCode INT
 	,@WrqDatetime DATETIME = NULL
-	,@WrqEmergencyFlag BIT = NULL
+	,@WrqExceptionalFlag BIT = NULL
 	,@WrqReservationFlag BIT = NULL
 	,@WrqArchiveFlag BIT = NULL
 	,@WrqAlertFlag BIT = NULL
@@ -113,7 +113,7 @@ BEGIN
 		WRQ_RLS_ID
 		,WRQ_CMM_ID
 		,WRQ_DATETIME
-		,WRQ_EMERGENCY_FLAG
+		,WRQ_EXCEPTIONAL_FLAG
 		,WRQ_RESERVATION_FLAG
 		,WRQ_ARCHIVE_FLAG
 		,WRQ_ALERT_FLAG
@@ -126,7 +126,7 @@ BEGIN
 		@RlsId
 		,@CmmID
 		,@WrqDatetime
-		,@WrqEmergencyFlag
+		,@WrqExceptionalFlag
 		,@WrqReservationFlag
 		,@WrqArchiveFlag
 		,@WrqAlertFlag

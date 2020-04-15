@@ -1,29 +1,29 @@
 /*******************************************************************************
 Custom JS application specific
 *******************************************************************************/
-app.build.upload_panel = {};
-app.build.upload_panel.language = {};
-app.build.upload_panel.language.ajax = {};
-app.build.upload_panel.language.callback = {};
-app.build.upload_panel.copyright = {};
-app.build.upload_panel.copyright.ajax = {};
-app.build.upload_panel.copyright.callback = {};
-app.build.upload_panel.format = {};
-app.build.upload_panel.format.ajax = {};
-app.build.upload_panel.format.callback = {};
+app.build.import_panel = {};
+app.build.import_panel.language = {};
+app.build.import_panel.language.ajax = {};
+app.build.import_panel.language.callback = {};
+app.build.import_panel.copyright = {};
+app.build.import_panel.copyright.ajax = {};
+app.build.import_panel.copyright.callback = {};
+app.build.import_panel.format = {};
+app.build.import_panel.format.ajax = {};
+app.build.import_panel.format.callback = {};
 //#region Copy types
 
 /**
  *Call Ajax for read
  */
-app.build.upload_panel.format.ajax.read = function () {
+app.build.import_panel.format.ajax.read = function () {
   api.ajax.jsonrpc.request(
     app.config.url.api.public,
     "PxStat.System.Settings.Format_API.Read",
     {
       "FrmDirection": C_APP_TS_FORMAT_DIRECTION_UPLOAD
     },
-    "app.build.upload_panel.format.callback.read"
+    "app.build.import_panel.format.callback.read"
   );
 };
 
@@ -31,15 +31,15 @@ app.build.upload_panel.format.ajax.read = function () {
  * Callback for read
  * @param {*} data
  */
-app.build.upload_panel.format.callback.read = function (data) {
-  app.build.upload_panel.format.callback.drawDataTable(data);
+app.build.import_panel.format.callback.read = function (data) {
+  app.build.import_panel.format.callback.drawDataTable(data);
 };
 
 /**
  * Draw datatable after read from database
  * @param {*} data
  */
-app.build.upload_panel.format.callback.drawDataTable = function (data) {
+app.build.import_panel.format.callback.drawDataTable = function (data) {
 
   var localOptions = {
     data: data,
@@ -49,7 +49,7 @@ app.build.upload_panel.format.callback.drawDataTable = function (data) {
     language: app.label.plugin.datatable
   };
 
-  $("#build-upload-panel-container").find("table[name=format-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
+  $("#build-import-panel-container").find("table[name=format-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
 };
 //#endregion
 
@@ -59,9 +59,9 @@ app.build.upload_panel.format.callback.drawDataTable = function (data) {
  * copyright Draw Data table 
  * @param {*} data
  */
-app.build.upload_panel.copyright.drawDatatable = function (data) {
-  if ($.fn.dataTable.isDataTable("#build-upload-panel-container table[name=copyright-table]")) {
-    app.library.datatable.reDraw("#build-upload-panel-container table[name=copyright-table]", data);
+app.build.import_panel.copyright.drawDatatable = function (data) {
+  if ($.fn.dataTable.isDataTable("#build-import-panel-container table[name=copyright-table]")) {
+    app.library.datatable.reDraw("#build-import-panel-container table[name=copyright-table]", data);
   } else {
 
     var localOptions = {
@@ -78,19 +78,19 @@ app.build.upload_panel.copyright.drawDatatable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#build-upload-panel-container").find("table[name=copyright-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
+    $("#build-import-panel-container").find("table[name=copyright-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
   }
 };
 
 /**
  * Read data table form server
  */
-app.build.upload_panel.copyright.ajax.read = function () {
+app.build.import_panel.copyright.ajax.read = function () {
   api.ajax.jsonrpc.request(
     app.config.url.api.private,
     "PxStat.System.Settings.Copyright_API.Read",
     { CprCode: null },
-    "app.build.upload_panel.copyright.callback.read"
+    "app.build.import_panel.copyright.callback.read"
   );
 };
 
@@ -98,8 +98,8 @@ app.build.upload_panel.copyright.ajax.read = function () {
  * Callback from server after reading data
  * @param {*} data
  */
-app.build.upload_panel.copyright.callback.read = function (data) {
-  app.build.upload_panel.copyright.drawDatatable(data);
+app.build.import_panel.copyright.callback.read = function (data) {
+  app.build.import_panel.copyright.drawDatatable(data);
 };
 //#endregion
 
@@ -107,7 +107,7 @@ app.build.upload_panel.copyright.callback.read = function (data) {
  * Draw Data Table Formats
  * @param {*} data
  */
-app.build.upload_panel.drawDataTableFormats = function (data) {
+app.build.import_panel.drawDataTableFormats = function (data) {
 
   var localOptions = {
     createdRow: function (row, dataRow, dataIndex) {
@@ -119,7 +119,7 @@ app.build.upload_panel.drawDataTableFormats = function (data) {
     language: app.label.plugin.datatable
   };
 
-  $("#build-upload-panel-container").find("table[name=format-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
+  $("#build-import-panel-container").find("table[name=format-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
 
 };
 
@@ -128,12 +128,12 @@ app.build.upload_panel.drawDataTableFormats = function (data) {
 /**
  *Call Ajax for read
  */
-app.build.upload_panel.language.ajax.read = function () {
+app.build.import_panel.language.ajax.read = function () {
   api.ajax.jsonrpc.request(
     app.config.url.api.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
-    "app.build.upload_panel.language.callback.read"
+    "app.build.import_panel.language.callback.read"
   );
 };
 
@@ -141,9 +141,9 @@ app.build.upload_panel.language.ajax.read = function () {
  * Populate table
  * @param {*} data
  */
-app.build.upload_panel.language.callback.drawDataTable = function (data) {
-  if ($.fn.dataTable.isDataTable("#build-upload-panel-container table[name=language-table]")) {
-    app.library.datatable.reDraw("#build-upload-panel-container table[name=language-table]", data);
+app.build.import_panel.language.callback.drawDataTable = function (data) {
+  if ($.fn.dataTable.isDataTable("#build-import-panel-container table[name=language-table]")) {
+    app.library.datatable.reDraw("#build-import-panel-container table[name=language-table]", data);
   } else {
 
     var localOptions = {
@@ -156,7 +156,7 @@ app.build.upload_panel.language.callback.drawDataTable = function (data) {
       language: app.label.plugin.datatable
     };
 
-    $("#build-upload-panel-container").find("table[name=language-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
+    $("#build-import-panel-container").find("table[name=language-table]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
 
   }
 };
@@ -165,8 +165,8 @@ app.build.upload_panel.language.callback.drawDataTable = function (data) {
  * Callback for read
  * @param {*} data
  */
-app.build.upload_panel.language.callback.read = function (data) {
-  app.build.upload_panel.language.callback.drawDataTable(data);
+app.build.import_panel.language.callback.read = function (data) {
+  app.build.import_panel.language.callback.drawDataTable(data);
 };
 
 //#endregion

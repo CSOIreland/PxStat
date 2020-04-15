@@ -136,7 +136,7 @@ namespace PxStat.Data
         /// <returns></returns>
         private bool PxIntegrityIsValid(Matrix theMatrix)
         {
-            IntegrityValidatorResult = new PxIntegrityValidator().Validate(theMatrix);
+            IntegrityValidatorResult = new PxIntegrityValidator(theMatrix.MainSpec).Validate(theMatrix);
             return IntegrityValidatorResult.IsValid;
         }
 

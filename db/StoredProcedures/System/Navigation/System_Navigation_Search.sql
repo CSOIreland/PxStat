@@ -22,7 +22,7 @@ ALTER PROCEDURE System_Navigation_Search @LngIsoCode CHAR(2)
 	,@SbjCode INT = NULL
 	,@PrcCode NVARCHAR(32) = NULL
 	,@CprCode NVARCHAR(32) = NULL
-	,@RlsEmergencyFlag BIT = NULL
+	,@RlsExceptionalFlag BIT = NULL
 	,@RlsReservationFlag BIT = NULL
 	,@RlsArchiveFlag BIT = NULL
 	,@RlsAnalyticalFlag BIT = NULL
@@ -47,7 +47,7 @@ BEGIN
 		AND @SbjCode IS NULL
 		AND @PrcCode IS NULL
 		AND @CprCode IS NULL
-		AND @RlsEmergencyFlag IS NULL
+		AND @RlsExceptionalFlag IS NULL
 		AND @RlsReservationFlag IS NULL
 		AND @RlsArchiveFlag IS NULL
 		AND @RlsAnalyticalFlag IS NULL
@@ -123,7 +123,7 @@ BEGIN
 		,PrcCode
 		,PrcValue
 		,RlsLiveDatetimeFrom
-		,RlsEmergencyFlag
+		,RlsExceptionalFlag
 		,RlsReservationFlag
 		,RlsArchiveFlag
 		,RlsAnalyticalFlag
@@ -153,7 +153,7 @@ BEGIN
 			,PRC_CODE AS PrcCode
 			,PRC_VALUE AS PrcValue
 			,RlsLiveDatetimeFrom
-			,RlsEmergencyFlag
+			,RlsExceptionalFlag
 			,RlsReservationFlag
 			,RlsArchiveFlag
 			,RlsAnalyticalFlag
@@ -174,7 +174,7 @@ BEGIN
 				,rls.RLS_ID AS RlsID
 				,rls.RLS_PRC_ID AS PrcID
 				,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
-				,RLS_EMERGENCY_FLAG AS RlsEmergencyFlag
+				,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 				,RLS_RESERVATION_FLAG AS RlsReservationFlag
 				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
@@ -199,7 +199,7 @@ BEGIN
 				,rls.RLS_ID
 				,rls.RLS_PRC_ID
 				,rls.RLS_LIVE_DATETIME_FROM
-				,rls.RLS_EMERGENCY_FLAG
+				,rls.RLS_EXCEPTIONAL_FLAG
 				,rls.RLS_RESERVATION_FLAG
 				,rls.RLS_ARCHIVE_FLAG
 				,rls.RLS_ANALYTICAL_FLAG
@@ -240,7 +240,7 @@ BEGIN
 			,PRC_CODE AS PrcCode
 			,PRC_VALUE AS PrcValue
 			,RlsLiveDatetimeFrom
-			,RlsEmergencyFlag
+			,RlsExceptionalFlag
 			,RlsReservationFlag
 			,RlsArchiveFlag
 			,RlsAnalyticalFlag
@@ -261,7 +261,7 @@ BEGIN
 				,rls.RLS_ID AS RlsID
 				,rls.RLS_PRC_ID AS PrcID
 				,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
-				,RLS_EMERGENCY_FLAG AS RlsEmergencyFlag
+				,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 				,RLS_RESERVATION_FLAG AS RlsReservationFlag
 				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
@@ -291,7 +291,7 @@ BEGIN
 				,rls.RLS_ID
 				,rls.RLS_PRC_ID
 				,rls.RLS_LIVE_DATETIME_FROM
-				,rls.RLS_EMERGENCY_FLAG
+				,rls.RLS_EXCEPTIONAL_FLAG
 				,rls.RLS_RESERVATION_FLAG
 				,rls.RLS_ARCHIVE_FLAG
 				,rls.RLS_ANALYTICAL_FLAG
@@ -332,7 +332,7 @@ BEGIN
 			,PRC_CODE AS PrcCode
 			,PRC_VALUE AS PrcValue
 			,RlsLiveDatetimeFrom
-			,RlsEmergencyFlag
+			,RlsExceptionalFlag
 			,RlsReservationFlag
 			,RlsArchiveFlag
 			,RlsAnalyticalFlag
@@ -353,7 +353,7 @@ BEGIN
 				,rls.RLS_ID AS RlsID
 				,rls.RLS_PRC_ID AS PrcID
 				,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
-				,RLS_EMERGENCY_FLAG AS RlsEmergencyFlag
+				,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 				,RLS_RESERVATION_FLAG AS RlsReservationFlag
 				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
@@ -385,7 +385,7 @@ BEGIN
 				,rls.RLS_ID
 				,rls.RLS_PRC_ID
 				,rls.RLS_LIVE_DATETIME_FROM
-				,rls.RLS_EMERGENCY_FLAG
+				,rls.RLS_EXCEPTIONAL_FLAG
 				,rls.RLS_RESERVATION_FLAG
 				,rls.RLS_ARCHIVE_FLAG
 				,rls.RLS_ANALYTICAL_FLAG
@@ -423,7 +423,7 @@ BEGIN
 		,PrcCode
 		,PrcValue
 		,RlsLiveDatetimeFrom
-		,RlsEmergencyFlag
+		,RlsExceptionalFlag
 		,RlsReservationFlag
 		,RlsArchiveFlag
 		,RlsAnalyticalFlag
@@ -451,7 +451,7 @@ BEGIN
 		,PRC_CODE AS PrcCode
 		,PRC_VALUE AS PrcValue
 		,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
-		,RLS_EMERGENCY_FLAG AS RlsEmergencyFlag
+		,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 		,RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 		,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
@@ -514,8 +514,8 @@ BEGIN
 			OR @CprCode = CPR_CODE
 			)
 		AND (
-			@RlsEmergencyFlag IS NULL
-			OR @RlsEmergencyFlag = RLS_EMERGENCY_FLAG
+			@RlsExceptionalFlag IS NULL
+			OR @RlsExceptionalFlag = RLS_EXCEPTIONAL_FLAG
 			)
 		AND (
 			@RlsReservationFlag IS NULL
@@ -579,7 +579,7 @@ BEGIN
 				,PrcCode
 				,PrcValue
 				,RlsLiveDatetimeFrom
-				,RlsEmergencyFlag
+				,RlsExceptionalFlag
 				,RlsReservationFlag
 				,RlsArchiveFlag
 				,RlsAnalyticalFlag
@@ -608,7 +608,7 @@ BEGIN
 				,PrcCode
 				,PrcValue
 				,RlsLiveDatetimeFrom
-				,RlsEmergencyFlag
+				,RlsExceptionalFlag
 				,RlsReservationFlag
 				,RlsArchiveFlag
 				,RlsAnalyticalFlag

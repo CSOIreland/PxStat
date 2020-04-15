@@ -158,6 +158,7 @@ app.navigation.layout.set = function (isDataEntity) {
   $("#data-navigation").empty();
   $("#data-filter").empty();
   $("#panel").empty();
+  $("#overlay").empty();
   $("#sidebar").removeClass("bg-sidebar").removeClass("col-sm-3").addClass("col-sm-4");
   $("#body").removeClass("col-sm-9").addClass("col-sm-8");
 

@@ -1,5 +1,6 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
+using PxStat.JsonStatSchema;
 using PxStat.Resources;
 using System;
 using System.Collections.Generic;
@@ -11,23 +12,28 @@ namespace PxStat.Data
     internal class Cube_BSO
     {
 
-        internal Role UpdateRoleFromMetadata(ADO theAdo, Cube_DTO_Read dto)
+        internal Role UpdateRoleFromMetadata(ADO theAdo, CubeQuery_DTO dto)
         {
             Cube_ADO cAdo = new Cube_ADO(theAdo);
-            dto.role = new Role();
-            var roleDictionary = cAdo.ReadDimensionRoles(Utility.GetCustomConfig("APP_CSV_STATISTIC"), dto.matrix);
+            dto.Role = new Role();
+            Dictionary<string, string> roleDictionary;
+            if (dto.jStatQueryExtension.extension.RlsCode == 0)
+                roleDictionary = cAdo.ReadDimensionRoles(Utility.GetCustomConfig("APP_CSV_STATISTIC"), dto.jStatQueryExtension.extension.Matrix);
+            else
+                roleDictionary = cAdo.ReadDimensionRoles(Utility.GetCustomConfig("APP_CSV_STATISTIC"), null, dto.jStatQueryExtension.extension.RlsCode);
+
             if (roleDictionary.ContainsKey("time"))
             {
-                dto.role.Time = new List<string>();
-                dto.role.Time.Add(roleDictionary["time"]);
+                dto.Role.Time = new List<string>();
+                dto.Role.Time.Add(roleDictionary["time"]);
             }
             if (roleDictionary.ContainsKey("metric"))
             {
-                dto.role.Metric = new List<string>();
-                dto.role.Metric.Add(roleDictionary["metric"]);
+                dto.Role.Metric = new List<string>();
+                dto.Role.Metric.Add(roleDictionary["metric"]);
             }
 
-            return dto.role;
+            return dto.Role;
         }
         /// <summary>
         /// Get the collection with metadata
@@ -161,7 +167,7 @@ namespace PxStat.Data
                                 d.CprCode,
                                 d.RlsLiveDatetimeFrom,
                                 d.RlsLiveDatetimeTo,
-                                d.EmergencyFlag,
+                                d.ExceptionalFlag,
                                 d.FrqCode,
                                 d.FrqValue
                             }
@@ -178,7 +184,7 @@ namespace PxStat.Data
                                 rls.Key.CprCode,
                                 rls.Key.RlsLiveDatetimeFrom,
                                 rls.Key.RlsLiveDatetimeTo,
-                                rls.Key.EmergencyFlag,
+                                rls.Key.ExceptionalFlag,
                                 rls.Key.FrqCode,
                                 rls.Key.FrqValue
                             }
@@ -209,7 +215,7 @@ namespace PxStat.Data
             var Frequency = new { name = thisItem.FrqValue, code = thisItem.FrqCode };
 
             jsStat.Extension.Add("copyright", new { name = thisItem.CprValue, code = thisItem.CprCode, href = thisItem.CprUrl });
-            jsStat.Extension.Add("emergency", thisItem.EmergencyFlag);
+            jsStat.Extension.Add("exceptional", thisItem.ExceptionalFlag);
             jsStat.Extension.Add("language", new { code = thisItem.LngIsoCode, name = thisItem.LngIsoName });
             jsStat.Extension.Add("matrix", thisItem.MtrCode);
 

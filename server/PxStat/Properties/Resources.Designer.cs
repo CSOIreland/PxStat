@@ -101,16 +101,15 @@ namespace PxStat.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;static&quot;: {
-        ///    &quot;release&quot;: &quot;Release&quot;,
-        ///    &quot;all-groups&quot;: &quot;All Groups&quot;
+        ///    &quot;release&quot;: &quot;Scaoileadh &quot;,
+        ///    &quot;all-groups&quot;: &quot;Gach grúpa&quot;
         ///  },
         ///  &quot;error&quot;: {
-        ///    &quot;authentication&quot;: &quot;Invalid authentication. Access denied.&quot;,
-        ///    &quot;create&quot;: &quot;No record has been created. Please review your input.&quot;,
-        ///    &quot;delete&quot;: &quot;No record has been deleted. Please review your selection.&quot;,
-        ///    &quot;duplicate&quot;: &quot;No record has been created. A duplicate record already exists. Please review your input.&quot;,
-        ///    &quot;exception&quot;: &quot;An unexpected error has occurred. Please seek technical support.&quot;,
-        ///    &quot;i [rest of string was truncated]&quot;;.
+        ///    &quot;authentication&quot;: &quot;Fíordheimhniú neamhbhailí. Ní cheadaítear rochtain&quot;,
+        ///    &quot;create&quot;: &quot;Níor cruthaíodh aon taifead. Déan athbhreithniú ar d’ionchur le do thoil.&quot;,
+        ///    &quot;delete&quot;: &quot;Níor scriosadh aon taifead. Déan athbhreithniú ar do rogha le do thoil.&quot;,
+        ///    &quot;duplicate&quot;: &quot;Níor cruthaíodh aon taifead. Tá taifead dúblach ann cheana féin. Déan athbhreithniú ar d’ionchur le do thoil.&quot;,
+        ///    &quot;exception&quot;: &quot;Tha [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ga {
             get {

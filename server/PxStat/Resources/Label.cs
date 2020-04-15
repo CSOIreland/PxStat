@@ -5,6 +5,10 @@ using Newtonsoft.Json.Linq;
 // Keep it under the PxStat namespace because it's globally used
 namespace PxStat
 {
+    static public class RequestLanguage
+    {
+        public static string LngIsoCode { get; set; }
+    }
     // Static variable that must be initialized at run time.
     static public class Label
     {
@@ -54,6 +58,11 @@ namespace PxStat
             });
 
 
+        }
+
+        static public string GetFromRequestLanguage(string label)
+        {
+            return Get(label, RequestLanguage.LngIsoCode == null ? Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") : RequestLanguage.LngIsoCode);
         }
 
         static public string Get(string label, string lngIsoCode)

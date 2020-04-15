@@ -76,7 +76,7 @@ app.release.information.render = function (data) {
     $("#release-information [name=request]").empty().html(app.release.renderRequest(data.RqsCode));
     $("#release-information [name=rls-live-datetime-from]").empty().html(data.RlsLiveDatetimeFrom ? moment(data.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
     $("#release-information [name=rls-live-datetime-to]").empty().html(data.RlsLiveDatetimeTo ? moment(data.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
-    $("#release-information [name=rls-emergency-flag]").empty().html(app.library.html.boolean(data.RlsEmergencyFlag, true, true));
+    $("#release-information [name=rls-exceptional-flag]").empty().html(app.library.html.boolean(data.RlsExceptionalFlag, true, true));
 
     if (!data.SbjCode || !data.PrcCode) {
         var warningMessage = $("<span>", {
@@ -166,7 +166,7 @@ app.release.information.ajax.updateAnalyticalFlag = function () {
         null,
         null,
         { async: false });
-};	   
+};
 /**
 * @param {*} data
 */

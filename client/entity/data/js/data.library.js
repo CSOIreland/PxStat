@@ -207,12 +207,12 @@ app.data.callback.drawLatestReleases = function (data) {
                     sorting: false,
                     searchable: false,
                     render: function (data, type, row) {
-                        if (row.extension.emergency) {
+                        if (row.extension.exceptional) {
                             return $("<i>", {
                                 "class": "fas fa-exclamation-triangle text-warning",
                                 "data-toggle": "tooltip",
                                 "data-placement": "top",
-                                "title": app.label.static["emergency-release"],
+                                "title": app.label.static["exceptional-release"],
                             }).get(0).outerHTML;
                         }
                         else {
