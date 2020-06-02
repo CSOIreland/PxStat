@@ -2,6 +2,7 @@
 using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Resources.PxParser;
+using PxStat.Security;
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -107,7 +108,7 @@ namespace PxStat.Build
             if (RequiresResponse)
             {
                 //cancel any validation errors and return an object to enable the user to choose which should be the time dimension
-                Matrix.Specification langSpec = MatrixData.GetSpecFromLanguage(Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"));
+                Matrix.Specification langSpec = MatrixData.GetSpecFromLanguage(Configuration_BSO.GetCustomConfig("language.iso.code"));
                 if (langSpec == null) langSpec = MatrixData.MainSpec;
 
                 foreach (var v in langSpec.MainValues)

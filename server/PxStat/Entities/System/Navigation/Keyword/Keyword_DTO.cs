@@ -1,4 +1,4 @@
-﻿using API;
+﻿using PxStat.Security;
 
 namespace PxStat.System.Navigation
 {
@@ -28,7 +28,7 @@ namespace PxStat.System.Navigation
                 SearchTerm = parameters.SearchTerm;
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
-            else LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            else LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
         }
     }
 

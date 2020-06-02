@@ -1,4 +1,4 @@
-﻿using API;
+﻿using PxStat.Security;
 using System;
 
 
@@ -44,7 +44,7 @@ namespace PxStat.System.Navigation
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
 
         }

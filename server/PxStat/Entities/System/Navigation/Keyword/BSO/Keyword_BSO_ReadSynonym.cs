@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.System.Settings;
 using PxStat.Template;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace PxStat.System.Navigation
 
             Dictionary<string, List<Synonym>> synonymSets = Keyword_BSO_ResourceFactory.GetAllSynonymSets();
             dynamic results = new List<ExpandoObject>();
-            results.Add(GetListForLanguage(Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"), synonymSets));
+            results.Add(GetListForLanguage(Configuration_BSO.GetCustomConfig("language.iso.code"), synonymSets));
 
             Language_ADO lAdo = new Language_ADO(Ado);
             var languages = lAdo.Read(new Language_DTO_Read());
@@ -38,7 +39,7 @@ namespace PxStat.System.Navigation
             {
                 //  if (synonymSets.ContainsKey(l.LngIsoCode))
                 // {
-                if (l.LngIsoCode != Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"))
+                if (l.LngIsoCode != Configuration_BSO.GetCustomConfig("language.iso.code"))
                     results.Add(GetListForLanguage(l.LngIsoCode, synonymSets));
                 //}
                 //else

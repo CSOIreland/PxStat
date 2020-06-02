@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Data;
+using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
@@ -82,12 +83,12 @@ namespace PxStat.Build
             if (parameters.MtrInput != null)
                 this.MtrInput = Utility.DecodeBase64ToUTF8((string)parameters["MtrInput"]);
 
-            this.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
 
             if (parameters.MtrOfficialFlag != null)
                 this.MtrOfficialFlag = parameters.MtrOfficialFlag;
-            else this.MtrOfficialFlag = Utility.GetCustomConfig("APP_PX_DEFAULT_OFFICIAL_STATISTIC").ToUpper() == Utility.GetCustomConfig("APP_PX_TRUE").ToUpper();
+            else this.MtrOfficialFlag = Configuration_BSO.GetCustomConfig("dataset.officialStatistics");
 
             if (parameters.MtrCode != null)
                 this.MtrCode = parameters.MtrCode;
@@ -116,7 +117,7 @@ namespace PxStat.Build
                 if (parameters.LngIsoCode != null)
                     matrixDto.LngIsoCode = parameters.LngIsoCode;
                 else
-                    matrixDto.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                    matrixDto.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
                 if (parameters.MtrCode != null)
                     matrixDto.MtrCode = parameters.MtrCode;
@@ -305,7 +306,7 @@ namespace PxStat.Build
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
             Periods = new List<PeriodRecordDTO_Create>();
 
             if (parameters.MtrCode != null)
@@ -508,7 +509,7 @@ namespace PxStat.Build
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
             Periods = new List<PeriodRecordDTO_Create>();
 
             if (parameters.MtrCode != null)

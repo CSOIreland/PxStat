@@ -1,0 +1,14 @@
+﻿{
+  "bulkcopy-tranche-multiplier": 10,
+  "px": {
+    "confidential-value": "..",
+    "default-units": "-"
+  },
+  "analytic": {
+    "read-os-item-limit": 3,
+    "read-browser-item-limit": 4,
+    "read-referrer-item-limit": 5,
+    "referrer-not-applicable": "n/a"
+  }
+
+}

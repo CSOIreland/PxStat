@@ -1,5 +1,6 @@
 ﻿using API;
 using FluentValidation;
+using PxStat.Security;
 using PxStat.System.Settings;
 
 namespace PxStat.JsonStatSchema
@@ -8,9 +9,11 @@ namespace PxStat.JsonStatSchema
     {
         internal JsonStatQueryLive_VLD()
         {
+            string query = Utility.GetCustomConfig("APP_JSON_STAT_QUERY");
+            string version = Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION");
             string cultureRegex = Utility.GetCustomConfig("APP_LANGUAGE_CULTURE");
-            RuleFor(x => x.jStatQuery.Class.Equals(Utility.GetCustomConfig("APP_JSON_STAT_QUERY")));
-            RuleFor(x => x.jStatQuery.Version.Equals(Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION")));
+            RuleFor(x => x.jStatQuery.Class.Equals(query));
+            RuleFor(x => x.jStatQuery.Version.Equals(version));
 
             RuleFor(x => x.jStatQueryExtension.extension.Matrix).NotNull().Length(0, 20);
             RuleFor(x => x.jStatQueryExtension.extension.Language.Code.Length.Equals(2));
@@ -33,8 +36,10 @@ namespace PxStat.JsonStatSchema
         internal JsonStatQueryWip_VLD()
         {
             string cultureRegex = Utility.GetCustomConfig("APP_LANGUAGE_CULTURE");
-            RuleFor(x => x.jStatQuery.Class.Equals(Utility.GetCustomConfig("APP_JSON_STAT_QUERY")));
-            RuleFor(x => x.jStatQuery.Version.Equals(Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION")));
+            string query = Utility.GetCustomConfig("APP_JSON_STAT_QUERY");
+            string version = Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION");
+            RuleFor(x => x.jStatQuery.Class.Equals(query));
+            RuleFor(x => x.jStatQuery.Version.Equals(version));
 
             RuleFor(x => x.jStatQueryExtension.extension.RlsCode).GreaterThan(0);
             RuleFor(x => x.jStatQueryExtension.extension.Language.Code.Length.Equals(2));

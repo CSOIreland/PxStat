@@ -3,7 +3,7 @@ using FluentValidation;
 using FluentValidation.Internal;
 using FluentValidation.Validators;
 using PxParser.Resources.Parser;
-using PxStat.Build;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +78,7 @@ namespace PxStat.Data
                 string theStringValue = pxElement.Value.ToString();
                 double doubleValue = 0;
 
-                if (String.IsNullOrEmpty(theStringValue) || theStringValue == Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"))
+                if (String.IsNullOrEmpty(theStringValue) || theStringValue == Configuration_BSO.GetCustomConfig("px.confidential-value"))
                 {
                     return true;
                 }
@@ -194,15 +194,35 @@ namespace PxStat.Data
     {
         public PxIntegrityValidator(Matrix.Specification spec, string lngIsoCode = null)
         {
-
-            RuleFor(x => x).Must(CustomValidations.BelowLimitDatapoints).WithMessage(lngIsoCode == null ? String.Format(Label.Get("integrity.cell-count"), spec.GetRequiredDatapointCount(), Utility.GetCustomConfig("APP_DATA_THRESHOLD")) : String.Format(Label.Get("integrity.cell-count", lngIsoCode), spec.GetRequiredDatapointCount(), Utility.GetCustomConfig("APP_DATA_THRESHOLD")));
+            long threshold = Configuration_BSO.GetCustomConfig("dataset.threshold"); ;
+            RuleFor(x => x).Must(PxStat.Build.CustomValidations.BelowLimitDatapoints).WithMessage(lngIsoCode == null ? String.Format(Label.Get("integrity.cell-count"), spec.GetRequiredDatapointCount(), threshold.ToString()) : String.Format(Label.Get("integrity.cell-count", lngIsoCode), spec.GetRequiredDatapointCount(), threshold.ToString()));
             RuleFor(x => x.MainSpec).HaveFactsAndDimensionsMatching().WithMessage(Label.Get("integrity.size"));
             RuleFor(x => x.OtherLanguageSpec).HaveFactsAndDimensionsMatching().When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage(Label.Get("integrity.size"));
             RuleFor(x => x.Cells).DataIsGood().When(x => x.Cells != null && x.Cells.Count > 0).WithMessage(FormatDataIsGood);
             RuleFor(x => x).Must(NoDuplicateDomains).WithMessage(Label.Get("integrity.codes"));
+            RuleFor(x => x).Must(NoDuplicateNames).When(x => x.MainSpec.Values != null && x.MainSpec.MainValues != null).WithMessage(Label.Get("integrity.values"));
         }
 
+        /// <summary>
+        /// Test for duplicates in dimension items
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        private static bool NoDuplicateNames(Matrix matrix)
+        {
 
+            foreach (var k in matrix.MainSpec.Values)
+            {
+                var mv = matrix.MainSpec.MainValues.Where(x => x.Key == k.Key).FirstOrDefault().Value;
+
+                if (mv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
+                var vv = matrix.MainSpec.Values.Where(x => x.Key == k.Key).FirstOrDefault().Value;
+                if (vv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
+
+            }
+
+            return true;
+        }
 
         private static bool NoDuplicateDomains(Matrix matrix)
         {

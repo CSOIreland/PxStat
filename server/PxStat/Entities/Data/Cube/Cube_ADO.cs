@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 
@@ -46,7 +47,7 @@ namespace PxStat.Data
                 inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode });
             }
             else
-                inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") });
+                inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig("language.iso.code") });
 
             var output = ado.ExecuteReaderProcedure("Data_Matrix_ReadDimensionRole", inputParams);
 
@@ -120,7 +121,7 @@ namespace PxStat.Data
         {
             var inputParams = new List<ADO_inputParams>();
 
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig("language.iso.code") });
 
             if (!string.IsNullOrEmpty(languageCode))
             {
@@ -147,7 +148,7 @@ namespace PxStat.Data
         {
             var inputParams = new List<ADO_inputParams>();
 
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig("language.iso.code") });
 
             if (!string.IsNullOrEmpty(languageCode))
             {

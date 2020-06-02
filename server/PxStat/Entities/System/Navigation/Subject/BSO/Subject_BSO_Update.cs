@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.System.Navigation
@@ -42,7 +43,7 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
-            if (DTO.LngIsoCode != Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"))
+            if (DTO.LngIsoCode != Configuration_BSO.GetCustomConfig("language.iso.code"))
             {
                 SubjectLanguage_BSO subjectLanguageBso = new SubjectLanguage_BSO();
                 nUpdatedSubjectId = subjectLanguageBso.CreateOrUpdate(DTO, Ado);
@@ -80,4 +81,3 @@ namespace PxStat.System.Navigation
         }
     }
 }
-

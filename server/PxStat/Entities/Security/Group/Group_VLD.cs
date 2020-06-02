@@ -39,7 +39,7 @@ namespace PxStat.Security
     {
         internal Group_VLD_Create()
         {
-            string phoneRegex = Utility.GetCustomConfig("APP_REGEX_PHONE");
+            string phoneRegex = Configuration_BSO.GetCustomConfig("regex.phone.pattern");
             string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
             string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
             //Mandatory - GrpCode
@@ -63,7 +63,7 @@ namespace PxStat.Security
     {
         internal Group_VLD_Update()
         {
-            string phoneRegex = Utility.GetCustomConfig("APP_REGEX_PHONE");
+            string phoneRegex = Configuration_BSO.GetCustomConfig("regex.phone.pattern");
             string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
             string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
 

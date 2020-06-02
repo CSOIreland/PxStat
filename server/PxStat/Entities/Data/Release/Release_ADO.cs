@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Resources;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -379,7 +380,7 @@ namespace PxStat.Data
                 new ADO_inputParams { name = "@CcnUsername", value = userName },
                 new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode },
                 new ADO_inputParams { name = "@LngIsoCode", value = dto.LngIsoCode },
-                new ADO_inputParams{name="@LngIsoCodeDefault",value=Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+                new ADO_inputParams{name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig("language.iso.code")}
 
             };
 

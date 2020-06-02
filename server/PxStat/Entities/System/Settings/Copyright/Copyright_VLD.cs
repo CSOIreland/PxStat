@@ -43,6 +43,7 @@ namespace PxStat.System.Settings
     {
         internal Copyright_VLD_Update()
         {
+
             string urlRegex = Utility.GetCustomConfig("APP_REGEX_URL");
             string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
             //Mandatory - CprCodeOld

@@ -39,7 +39,7 @@ namespace PxStat.Security
             if (MethodReader.DynamicHasProperty(requestDTO, "matrix")) aDto.matrix = requestDTO.matrix;
 
             // Get the Referer
-            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Utility.GetCustomConfig("APP_SECURITY_ANALYTIC_REFERER_NA") : hRequest.UrlReferrer.Host;
+            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig("analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
 
             //The m2m parameter will not be translated into a DTO property so we just read it from the request parameters if it exists
             if (request.parameters.m2m != null) aDto.NltM2m = request.parameters.m2m;

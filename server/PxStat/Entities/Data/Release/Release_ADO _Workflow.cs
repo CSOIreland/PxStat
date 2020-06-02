@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using API;
+﻿using API;
 using PxStat.Resources;
-using System.Dynamic;
+using PxStat.Security;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PxStat.Data
@@ -76,7 +76,7 @@ namespace PxStat.Data
 
                     var vDefault =
                     from x in output.data
-                    where x.LngIsoCode == Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")
+                    where x.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code")
                     select x;
 
                     if (vDefault.ToList().Count > 0)

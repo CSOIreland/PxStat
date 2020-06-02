@@ -1,7 +1,5 @@
 ﻿using API;
 using PxStat.Template;
-using System;
-using PxStat.Resources;
 
 namespace PxStat.Security
 {
@@ -51,14 +49,12 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
+            DTO.CcnUsername = SamAccountName;
             if (!IsUserAuthenticated())
             {
                 return true;
             }
-
-            //Accounts are returned as an ADO result
-            DTO.CcnUsername = SamAccountName;
-
+            JSONRPC_Output response = new JSONRPC_Output();
             //The cache key is created to be unique to a given CcnUsername.
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", DTO.CcnUsername);
             if (cache.hasData)
@@ -67,22 +63,17 @@ namespace PxStat.Security
                 return true;
             }
 
-            //Validation of parameters and user have been successful. We may now proceed to read from the database
-            var adoAccount = new Account_ADO();
 
-            ADO_readerOutput result = adoAccount.Read(Ado, DTO);
-            if (result.hasData)
+            Account_BSO bso = new Account_BSO();
+            ADO_readerOutput output = bso.ReadCurrentAccess(Ado, DTO.CcnUsername);
+            if (!output.hasData)
             {
-
-                // Set the cache based on the data returned
-                MemCacheD.Store_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", DTO.CcnUsername, result.data, new DateTime());
-
-                Response.data = result.data;
-                return true;
+                Log.Instance.Debug("No Account data found");
+                return false;
             }
-
-            Log.Instance.Debug("No Account data found");
-            return false;
+            Response.data = output.data;
+            return true;
         }
+
     }
 }

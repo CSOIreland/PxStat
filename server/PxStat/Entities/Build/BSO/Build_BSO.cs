@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
@@ -278,7 +279,7 @@ namespace PxStat.Build
                 DataItem_DTO dto = new DataItem_DTO();
                 populateDataItem(ref dto, item, getIds);
                 dto.sortWord = dto.sortWord + counter;
-                dto.dataValue = newData ? Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") : theMatrix.Cells[counter].Value.ToString();
+                dto.dataValue = newData ? Configuration_BSO.GetCustomConfig("px.confidential-value") : theMatrix.Cells[counter].Value.ToString();
                 itemList.Add(dto);
                 counter++;
             }
@@ -374,6 +375,8 @@ namespace PxStat.Build
             //Get a list of dimensions from the VALUES of the px file (via MainSpec.MainValues)
             // A dimension is any Statistic, classification or period
             List<DimensionValue_DTO> dtoList = new List<DimensionValue_DTO>();
+
+           
             foreach (var pair in theMatrixData.MainSpec.MainValues)
             {
                 dtoList = getDimensionCodes(theMatrixData, dtoList, pair);
@@ -416,13 +419,14 @@ namespace PxStat.Build
 
             //To keep memory usage low, we can create and load the data in tranches
             //Set this high if you have lots of server memory and want relatively faster performance
-            //Set this low if you want to conserve memory and you don't mind taking a hit on the time to upload 
-            int trancheSize = Convert.ToInt32(Utility.GetCustomConfig("APP_BULKCOPY_TRANCHE_MULTIPLIER")) * Convert.ToInt32(ConfigurationManager.AppSettings["API_ADO_BULKCOPY_BATCHSIZE"]);
+            //Set this low if you want to conserve memory and you don't mind taking a hit on the time to upload          
+            long trancheSize = Configuration_BSO.GetCustomConfig("bulkcopy-tranche-multiplier") * Convert.ToInt32(ConfigurationManager.AppSettings["API_ADO_BULKCOPY_BATCHSIZE"]);
             Log.Instance.Debug(graph.Count().ToString() + " rows of data to be uploaded.");
             int counter = 0;
 
             //We only load data for the specification corresponding to the default language.
             Specification dataSpec = theMatrixData.MainSpec;
+            var cgraph = graph.Count();
             foreach (var item in graph)
             {
                 //Simply a list of classification id /variable id pairs
@@ -438,7 +442,30 @@ namespace PxStat.Build
                 tdRow["TDT_MTR_ID"] = dataSpec.MatrixId;
                 tdRow["TDT_IX"] = counter;
                 double outDouble;
-                var v = theMatrixData.Cells[counter].Value.ToString();
+                dynamic v;
+                try
+                {
+
+                    v = theMatrixData.Cells[counter].Value.ToString();
+                }
+                catch (Exception ex)
+                {
+                    Log.Instance.Debug("Load Error. counter=" + counter);
+                    Log.Instance.Debug("Load Error. Cell count=" + theMatrixData.Cells.Count);
+                    Log.Instance.Debug("Load Error. Graph count=" + graph.Count());
+                    Log.Instance.Debug("Load Error. Stat count=" + theMatrixData.MainSpec.Statistic.Count);
+                    Log.Instance.Debug("Load Error. Period count=" + theMatrixData.MainSpec.Frequency.Period.Count);
+                    Log.Instance.Debug("Load Error. dtoList count=" + dtoList.Count);
+                    foreach (var dto in dtoList)
+                    {
+                        Log.Instance.Debug("Load Error - dtovalues: . " + dto.value + " count=" + dto.details.Count);
+                    }
+                    foreach (var cls in theMatrixData.MainSpec.Classification)
+                    {
+                        Log.Instance.Debug("Load Error. " + cls.Value + " count=" + cls.Variable.Count);
+                    }
+                    throw ex;
+                }
                 if (Double.TryParse(v, out outDouble))
                 {
                     var s = (int)tdRow["decimals"];
@@ -483,8 +510,6 @@ namespace PxStat.Build
 
                 Log.Instance.Debug("Data tranche uploaded :" + tdData.Rows.Count + " rows");
             }
-
-
 
 
             await Task.WhenAll(listOfTasks);
@@ -631,6 +656,9 @@ namespace PxStat.Build
                 dto.code = cls.Code;
                 dto.value = cls.Value;
                 dto.dimType = DimensionType.CLASSIFICATION;
+
+                string values = "";
+              
                 foreach (var vrb in cls.Variable)
                 {
                     foreach (var item in pair.Value)
@@ -643,6 +671,7 @@ namespace PxStat.Build
                             dtoDetail.value = vrb.Value;
                             dtoDetail.dimensionValue = dto;
                             dto.details.Add(dtoDetail);
+                            values = values + vrb.Value + '~';
                         }
                     }
                 }
@@ -803,7 +832,7 @@ namespace PxStat.Build
             ClassificationRecordDTO_Create cDto = theMatrixData.MainSpec.Classification.FirstOrDefault();
 
 
-            if (lngIsoCode == null) lngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            if (lngIsoCode == null) lngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             Matrix.Specification theSpec = theMatrixData.GetSpecFromLanguage(lngIsoCode);
 
@@ -1080,7 +1109,7 @@ namespace PxStat.Build
             foreach (var c in theMatrixData.Cells)
             {
                 dynamic cl = new ExpandoObject();
-                cl.TdtValue = c.Value.ToString() == null ? Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") : c.Value.ToString();
+                cl.TdtValue = c.Value.ToString() == null ? Configuration_BSO.GetCustomConfig("px.confidential-value") : c.Value.ToString();
                 cells.Add(cl);
 
             }
@@ -1383,7 +1412,7 @@ namespace PxStat.Build
                     period = period,
                     statistic = item.statistic,
                     classifications = item.classifications,
-                    dataValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE")
+                    dataValue = Configuration_BSO.GetCustomConfig("px.confidential-value")
                 };
                 outItem.sortWord = outItem.ToSortString();
                 outItem.CreateIdentifier();
@@ -1454,7 +1483,7 @@ namespace PxStat.Build
             //First, the existing periods
             foreach (var period in spec.Frequency.Period)
             {
-                if (period.Code != Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"))
+                if (period.Code != Configuration_BSO.GetCustomConfig("px.confidential-value"))
                 {
                     periods.Add(period);
                 }
@@ -1477,7 +1506,26 @@ namespace PxStat.Build
             return periods;
         }
 
+        /// <summary>
+        /// Tests if the user has sufficient build permissions
+        /// </summary>
+        /// <param name="PrvCode"></param>
+        /// <param name="BuildAction"></param>
+        /// <returns></returns>
+        internal bool HasBuildPermission(ADO ado, string CcnUsername, string BuildAction)
+        {
+            Account_ADO adoAccount = new Account_ADO();
+            ADO_readerOutput result = adoAccount.Read(ado, CcnUsername);
+            if (!result.hasData) return false;
+            if (result.data == null) return false;
+            if (result.data.Count == 0) return false;
 
+            if (result.data[0].PrvCode.Equals(Constants.C_SECURITY_PRIVILEGE_MODERATOR))
+            {
+                return Configuration_BSO.GetCustomConfig("build." + BuildAction + ".moderator");
+            }
+            return true;
+        }
 
     }
 

@@ -2,6 +2,7 @@
 using FluentValidation.Results;
 using PxParser.Resources.Parser;
 using PxStat.Data.Px;
+using PxStat.Security;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
@@ -208,9 +209,9 @@ namespace PxStat.Data
             SettingsValidatorResult = new PxSettingsValidator(Ado, true, DTO.LngIsoCode).Validate(theMatrix);
             if (RequestLanguage.LngIsoCode != null)
             {
-                if (!DTO.LngIsoCode.Equals(Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")))
+                if (!DTO.LngIsoCode.Equals(Configuration_BSO.GetCustomConfig("language.iso.code")))
                 {
-                    SettingsValidatorResultDefaultLanguage = new PxSettingsValidator(Ado, true, Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")).Validate(theMatrix);
+                    SettingsValidatorResultDefaultLanguage = new PxSettingsValidator(Ado, true, Configuration_BSO.GetCustomConfig("language.iso.code")).Validate(theMatrix);
                 }
             }
             return SettingsValidatorResult.IsValid;

@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using API;
+﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.System.Navigation
@@ -62,7 +62,7 @@ namespace PxStat.System.Navigation
             }
 
             //Update and retrieve the number of updated rows
-            if (DTO.LngIsoCode != Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"))
+            if (DTO.LngIsoCode != Configuration_BSO.GetCustomConfig("language.iso.code"))
             {
                 ProductLangauge_BSO productLanguageBso = new ProductLangauge_BSO();
                 nUpdatedProductID = productLanguageBso.CreateOrUpdate(DTO, Ado);
@@ -79,7 +79,7 @@ namespace PxStat.System.Navigation
 
             if (DTO.PrcCodeNew == null) DTO.PrcCodeNew = DTO.PrcCode;
 
-            bool IsDefault = DTO.LngIsoCode == Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            bool IsDefault = DTO.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code");
             nUpdatedProductID = adoProduct.Update(DTO, IsDefault, SamAccountName);
 
             if (nUpdatedProductID == 0)
@@ -100,4 +100,3 @@ namespace PxStat.System.Navigation
         }
     }
 }
-

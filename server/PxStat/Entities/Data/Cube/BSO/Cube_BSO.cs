@@ -42,12 +42,11 @@ namespace PxStat.Data
         /// <param name="theCubeDTO"></param>
         /// <param name="theResponse"></param>
         /// <returns></returns>
-        internal dynamic ExecuteReadCollectionMetadata(ADO theAdo, string language, DateTime datefrom)
+        internal dynamic ExecuteReadCollection(ADO theAdo, Cube_DTO_ReadCollection DTO)
         {
             var ado = new Cube_ADO(theAdo);
 
-            var dbData = ado.ReadCollectionMetadata(language, datefrom);
-
+            var dbData = ado.ReadCollectionMetadata(DTO.language, DTO.datefrom);
 
 
             List<dynamic> jsonStatCollection = new List<dynamic>();
@@ -74,9 +73,32 @@ namespace PxStat.Data
                 //jsonData.Add(new JRaw(Serialize.ToJson(matrix.GetJsonStatObject())));
             }
 
+            //Get the minimum next release date. The cache can only live until then.
+            //If there's no next release date then the cache will live for the maximum configured amount.
+
+            DateTime minDateItem = default(DateTime);
+
+
+            dynamic minimum = null;
+
+            if (dbData != null)
+            {
+                minimum = dbData.Where(x => x.RlsLiveDatetimeFrom > DateTime.Now).Min(x => x.RlsLiveDatetimeFrom);
+                minDateItem = minimum ?? default(DateTime);
+            }
+
+            if (minDateItem < DateTime.Now)
+            {
+                minDateItem = default(DateTime);
+            }
+
+            var result = new JRaw(Serialize.ToJson(theJsonStatCollection));
+
+            MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO, result, minDateItem, Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
+
 
             // return the formatted data. This is an array of JSON-stat objects.
-            return new JRaw(Serialize.ToJson(theJsonStatCollection));
+            return result;
 
 
         }

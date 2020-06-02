@@ -1,6 +1,5 @@
 ﻿using API;
 using PxStat.Template;
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -53,7 +52,7 @@ namespace PxStat.Security
         {
             dynamic output = new ExpandoObject();
             var itemDict = output as IDictionary<string, object>;
-            int limit = Convert.ToInt32(Utility.GetCustomConfig("APP_SECURITY_ANALYTIC_READ_OS_ITEM_LIMIT"));
+            int limit = Configuration_BSO.GetCustomConfig("analytic.read-os-item-limit");
             int counter = 1;
             int otherSum = 0;
 

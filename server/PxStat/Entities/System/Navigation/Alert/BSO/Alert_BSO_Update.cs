@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Entities.System.Navigation.AlertLanguage;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.System.Navigation
@@ -36,7 +37,7 @@ namespace PxStat.System.Navigation
 
             int updated = 0;
 
-            if (DTO.LngIsoCode == Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"))
+            if (DTO.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code"))
             {
                 updated = adoAlert.Update(Ado, DTO, SamAccountName);
             }

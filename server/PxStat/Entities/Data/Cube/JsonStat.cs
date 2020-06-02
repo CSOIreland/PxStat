@@ -1,6 +1,6 @@
-﻿using API;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -214,7 +214,7 @@ namespace PxStat.Data
                 return new ValueElement { String = null };
             else if (double.TryParse(String, out result))
                 return new ValueElement { Double = result };
-            else if (String.Equals(Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"))) return new ValueElement { String = null };
+            else if (String.Equals(Configuration_BSO.GetCustomConfig("px.confidential-value"))) return new ValueElement { String = null };
             else if (String.Contains("\""))
             {
                 String = String.Replace("\"", String.Empty);

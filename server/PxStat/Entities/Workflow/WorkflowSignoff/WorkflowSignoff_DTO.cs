@@ -48,8 +48,13 @@
                 RlsCode = parameters.RlsCode;
         }
 
-        public WorkflowSignoff_DTO()
+        public WorkflowSignoff_DTO(int RlsCode, string sgnCode, string CmmValue)
         {
+            this.RlsCode = RlsCode;
+            this.CmmValue = CmmValue;
+            this.SgnCode = sgnCode;
         }
+
+        public WorkflowSignoff_DTO() { }
     }
 }

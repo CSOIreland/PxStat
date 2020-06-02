@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using API;
+﻿using API;
+using FluentValidation;
 
 namespace PxStat.System.Settings
 {

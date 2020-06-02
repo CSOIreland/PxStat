@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System.Collections.Generic;
 using System.Data;
 
@@ -22,7 +23,7 @@ namespace PxStat.System.Navigation
             string LngIsoCode;
 
             if (productDto.LngIsoCode == null)
-                LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
             else
                 LngIsoCode = productDto.LngIsoCode;
 

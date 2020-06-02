@@ -37,7 +37,8 @@
     "data": "Ionracas PX: Tá an sonraí  &quot;{Data}&quot; neamhbhailí.",
     "size": "Ionracas PX: Bhíothas ag súil le  &quot;{Expected}&quot; chealla sonraí ach fuarthas &quot;{Found}&quot; cinn don teanga &quot;{Language}&quot;.",
     "cell-count": "Tá {0} cealla sa tacar sonraí seo. Is é {1} an t-uasmhéid a cheadaítear.",
-    "codes": "Fuarthas cóid dúblacha"
+    "codes": "Fuarthas cóid dúblacha",
+    "values": "Fuarthas luachanna dúblacha"
   },
   "px": {
 
@@ -122,6 +123,16 @@
       "response-reject": "{0} {1}.{2}: Diúltaíodh don Cheadú",
       "signoff-approve": "{0} {1}.{2}: Sínithe Ceadaithe",
       "signoff-reject": "{0} {1}.{2}: Sínithe Diúltaithe"
+    }
+  },
+  "workflow": {
+    "request": {
+      "publish": "Publish",
+      "rollback": "Rollback",
+      "delete": "Delete",
+      "update-properties": "Update Properties",
+      "auto-approve-comment": "Freagra Uathoibríoch",
+      "autoSignoff-comment": "Síniú Uathoibríoch"
     }
   }
 }

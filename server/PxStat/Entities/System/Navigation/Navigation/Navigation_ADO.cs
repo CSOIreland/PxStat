@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -35,7 +36,7 @@ namespace PxStat.System.Navigation
             var inputParams = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name="@LngIsoCode",value=dto.LngIsoCode  },
-                new ADO_inputParams() {name="@LngIsoCodeDefault",value=Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") }
+                new ADO_inputParams() {name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig("language.iso.code") }
             };
 
             return ado.ExecuteReaderProcedure("System_Navigation_Navigation_Read", inputParams);

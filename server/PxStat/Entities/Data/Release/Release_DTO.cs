@@ -1,4 +1,4 @@
-﻿using API;
+﻿using PxStat.Security;
 using System;
 
 namespace PxStat.Data
@@ -71,7 +71,7 @@ namespace PxStat.Data
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
             else
-                this.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
         }
     }
 

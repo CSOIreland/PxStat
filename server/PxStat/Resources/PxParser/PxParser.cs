@@ -1,6 +1,7 @@
 ﻿using API;
 using Pidgin;
 using PxStat;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -68,7 +69,7 @@ namespace PxParser.Resources.Parser
 
 
         static readonly Parser<char, string> Confidential =
-           String(Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"))
+           String(Configuration_BSO.GetCustomConfig("px.confidential-value"))
             .Between(Quote);
 
         static readonly Parser<char, IPxSingleElement> PxLiteralValue =

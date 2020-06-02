@@ -1,7 +1,6 @@
 ﻿using API;
 using System;
 
-
 namespace PxStat.Security
 {
     internal class Account_BSO
@@ -34,6 +33,11 @@ namespace PxStat.Security
             }
         }
 
+        /// <summary>
+        /// Get all users of a given privilege
+        /// </summary>
+        /// <param name="prvCode"></param>
+        /// <returns></returns>
         internal ADO_readerOutput getUsersOfPrivilege(string prvCode)
         {
             ADO ado = new ADO("defaultConnection");
@@ -53,5 +57,28 @@ namespace PxStat.Security
                 ado.Dispose();
             }
         }
+
+        internal ADO_readerOutput ReadCurrentAccess(ADO Ado, string ccnUsername)
+        {
+
+
+            //Validation of parameters and user have been successful. We may now proceed to read from the database
+            var adoAccount = new Account_ADO();
+
+            ADO_readerOutput result = adoAccount.Read(Ado, ccnUsername);
+            if (result.hasData)
+            {
+
+                // Set the cache based on the data returned
+                MemCacheD.Store_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", ccnUsername, result.data, new DateTime());
+
+                return result;
+            }
+
+            Log.Instance.Debug("No Account data found");
+            return result;
+        }
+
+
     }
 }

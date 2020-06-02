@@ -4,6 +4,7 @@ using FluentValidation;
 using PxStat.Data;
 using PxStat.Entities.BuildData;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
@@ -666,7 +667,7 @@ namespace PxStat.Build
                 points *= cls.Variable.Count;
             }
 
-            return points <= Convert.ToInt64(Utility.GetCustomConfig("APP_DATA_THRESHOLD"));
+            return points <= Configuration_BSO.GetCustomConfig("dataset.threshold");
         }
 
         internal static bool ValidateIgnoreEscapeChars(string readString)

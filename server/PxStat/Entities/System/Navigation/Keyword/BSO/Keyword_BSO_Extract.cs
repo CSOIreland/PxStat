@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Design.PluralizationServices;
@@ -40,7 +41,7 @@ namespace PxStat.System.Navigation
                 this.extractor = (IKeywordExtractor)Assembly.GetAssembly(extractorType).CreateInstance(extractorType.FullName);
             else
             {
-                extractorClassName = Utility.GetCustomConfig("APP_INTERNATIONALISATION_EXTRACTOR_CLASS_NAME") + Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                extractorClassName = Utility.GetCustomConfig("APP_INTERNATIONALISATION_EXTRACTOR_CLASS_NAME") + Configuration_BSO.GetCustomConfig("language.iso.code");
                 extractorType = Type.GetType(extractorClassName);
                 this.extractor = (IKeywordExtractor)Assembly.GetAssembly(extractorType).CreateInstance(extractorClassName);
             }

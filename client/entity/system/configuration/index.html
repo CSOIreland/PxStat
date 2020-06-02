@@ -1,0 +1,70 @@
+<div id="configuration-read-container" class="container-fluid">
+    <div class="card border-primary m-3">
+        <div class="card-header bg-primary text-light" label="configuration"></div>
+        <div class="card-body">
+            <div class="accordion" id="configuration-accordion">
+                <div class="card">
+                    <div class="card-header" id="configuration-client-config-header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#configuration-client-config" aria-expanded="true" aria-controls="configuration-client-config">
+                                <i name="configuration-accordion-icon" class="fas fa-plus-circle"></i>
+                                <span label="client"></span>
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="configuration-client-config" class="collapse" aria-labelledby="configuration-client-config-header" data-parent="#configuration-accordion">
+                        <div class="card-body p-0">
+                            <pre class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="configuration-global-config-header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#configuration-global-config" aria-expanded="false" aria-controls="configuration-global-config">
+                                <i name="configuration-accordion-icon" class="fas fa-plus-circle"></i>
+                                <span label="global"></span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="configuration-global-config" class="collapse" aria-labelledby="configuration-global-config-header" data-parent="#configuration-accordion">
+                        <div class="card-body p-0">
+                            <pre class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="configuration-server-config-header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#configuration-server-config" aria-expanded="false" aria-controls="configuration-server-config">
+                                <i name="configuration-accordion-icon" class="fas fa-plus-circle"></i>
+                                <span label="server"></span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="configuration-server-config" class="collapse" aria-labelledby="configuration-server-config" data-parent="#configuration-accordion">
+                        <div class="card-body p-0">
+                            <pre class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-right">
+            <button class="btn text-dark btn-warning" name="refresh-config">
+                <i class="fas fa-redo"></i> <span label="reload"></span>
+            </button>
+            <button class="btn text-light btn-primary" name="search-file">
+                <i class="fas fa-search"></i> <span label="search"></span>
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/system/configuration/css/configuration.css">
+<!-- Page specific JS -->
+<script src="entity/system/configuration/js/configuration.library.js"></script>
+<script src="entity/system/configuration/js/configuration.js"></script>

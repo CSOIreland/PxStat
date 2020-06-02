@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -123,8 +124,8 @@ namespace PxStat.Data
                 }
                 else
                 {
-                    if (cell.TdtValue.Equals(DBNull.Value)) cell.TdtValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
-                    if (leftMatrix.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value)) leftMatrix.Cells.ElementAt(counter).TdtValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+                    if (cell.TdtValue.Equals(DBNull.Value)) cell.TdtValue = Configuration_BSO.GetCustomConfig("px.confidential-value");
+                    if (leftMatrix.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value)) leftMatrix.Cells.ElementAt(counter).TdtValue = Configuration_BSO.GetCustomConfig("px.confidential-value");
 
                     if (cell.TdtValue != leftMatrix.Cells.ElementAt(counter).TdtValue)
                         cell.WasAmendment = true;
@@ -376,7 +377,7 @@ namespace PxStat.Data
             //Now mark any ADDED datapoint
             foreach (DataItem_DTO dataItem in dataItems)
             {
-                dataItem.dataValue = theMatrixData.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value) ? Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") : theMatrixData.Cells.ElementAt(counter).TdtValue;
+                dataItem.dataValue = theMatrixData.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value) ? Configuration_BSO.GetCustomConfig("px.confidential-value") : theMatrixData.Cells.ElementAt(counter).TdtValue;
 
 
                 counter++;

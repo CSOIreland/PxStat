@@ -1,6 +1,6 @@
-﻿using API;
-using FluentValidation;
+﻿using FluentValidation;
 using PxStat.Resources;
+using PxStat.Security;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -84,7 +84,7 @@ namespace PxStat.Workflow
 
             if (isExceptional) return true;
 
-            int[] days = Array.ConvertAll(Utility.GetCustomConfig("APP_PX_EMBARGO_DAYS").Split(','), x => int.Parse(x));
+            int[] days = Configuration_BSO.GetCustomConfig("workflow.embargo.day");
 
             if (days.Contains((int)dto.WrqDatetime.DayOfWeek)) return true;
             return false;
@@ -99,7 +99,7 @@ namespace PxStat.Workflow
         {
             bool isExceptional = dto.WrqExceptionalFlag.HasValue && dto.WrqExceptionalFlag.Value;
 
-            DateTime etime = DateTime.ParseExact(Utility.GetCustomConfig("APP_PX_EMBARGO_TIME"), "HH:mm",
+            DateTime etime = DateTime.ParseExact(Configuration_BSO.GetCustomConfig("workflow.embargo.time"), "HH:mm:ss",
                                         CultureInfo.InvariantCulture);
 
             return (etime.Hour == dto.WrqDatetime.Hour && etime.Minute == dto.WrqDatetime.Minute && etime.Second == dto.WrqDatetime.Second);

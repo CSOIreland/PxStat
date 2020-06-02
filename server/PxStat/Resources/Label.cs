@@ -1,5 +1,6 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
+using PxStat.Security;
 
 
 // Keep it under the PxStat namespace because it's globally used
@@ -19,8 +20,8 @@ namespace PxStat
 
         //The en (English) is the mandatory language, always existing
         internal static readonly dynamic mandatoryInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("en"));
-        //The APP_DEFAULT_LANGUAGE is configurable and may not exist
-        internal static readonly dynamic defaultInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString(Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")));
+
+        internal static readonly dynamic defaultInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString(Configuration_BSO.GetCustomConfig("language.iso.code")));
 
         internal static readonly dynamic gaInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("ga"));
         internal static readonly dynamic plInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("pl"));
@@ -62,12 +63,12 @@ namespace PxStat
 
         static public string GetFromRequestLanguage(string label)
         {
-            return Get(label, RequestLanguage.LngIsoCode == null ? Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") : RequestLanguage.LngIsoCode);
+            return Get(label, RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig("language.iso.code") : RequestLanguage.LngIsoCode);
         }
 
         static public string Get(string label, string lngIsoCode)
         {
-            if (lngIsoCode.Equals(Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")))
+            if (lngIsoCode.Equals(Configuration_BSO.GetCustomConfig("language.iso.code")))
                 return Get(label);
 
             switch (lngIsoCode)

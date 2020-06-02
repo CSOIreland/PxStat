@@ -3,6 +3,7 @@ using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Entities.BuildData;
 using PxStat.Resources.PxParser;
+using PxStat.Security;
 using PxStat.Template;
 using System.Dynamic;
 

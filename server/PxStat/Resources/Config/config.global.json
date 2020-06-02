@@ -1,0 +1,57 @@
+﻿{
+  "language": {
+    "iso": {
+      "code": "en",
+      "name": "English"
+    }
+  },
+  "url": {
+    "logo": "https://cdn.jsdelivr.net/gh/CSOIreland/PxStat/client/image/logo.png"
+  },
+  "dataset": {
+    "officialStatistics": true,
+    "threshold": 10000000
+  },
+
+  "regex": {
+    "phone": {
+      "pattern": "^(\\(\\+\\d{1,3}\\) \\d+ \\d+ \\d+)$",
+      "placeholder": "(+353) 21 452 2253"
+    }
+
+  },
+  "workflow": {
+    "embargo": {
+      "time": "11:00:00",
+      "day": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "fastrack": {
+      "response": {
+        "approver": true,
+        "poweruser": true,
+        "administrator": false
+      },
+      "signoff": {
+        "poweruser": true,
+        "administrator": false
+      }
+    }
+  },
+  "build": {
+    "create": {
+      "moderator": true
+    },
+    "update": {
+      "moderator": true
+    },
+    "import": {
+      "moderator": true
+    }
+  }
+}

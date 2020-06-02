@@ -1,4 +1,4 @@
-﻿using API;
+﻿using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace PxParser.Resources.Parser
         {
             get
             {
-                return Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+                return Configuration_BSO.GetCustomConfig("px.confidential-value");
             }
             set { throw new NotImplementedException(); }
 
@@ -49,7 +49,7 @@ namespace PxParser.Resources.Parser
         /// <returns></returns>
         public string ToPxString()
         {
-            return Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+            return Configuration_BSO.GetCustomConfig("px.confidential-value");
         }
 
         /// <summary>

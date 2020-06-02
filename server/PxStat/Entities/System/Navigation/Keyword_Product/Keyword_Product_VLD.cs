@@ -1,5 +1,4 @@
-﻿
-using API;
+﻿using API;
 using FluentValidation;
 
 namespace PxStat.System.Navigation

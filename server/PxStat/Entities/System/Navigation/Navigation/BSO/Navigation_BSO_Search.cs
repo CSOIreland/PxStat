@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -88,10 +89,11 @@ namespace PxStat.System.Navigation
                 rel.LngIsoName = release.LngIsoName;
                 rel.classification = new List<dynamic>();
                 List<dynamic> classList = new List<dynamic>();
-                foreach (var cls in classifications)
+                var rlsCls = classifications.Where(x => x.RlsCode == release.RlsCode);
+                foreach (var cls in rlsCls)
                 {
                     dynamic RlsCls = new ExpandoObject();
-                    string readLanguage = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                    string readLanguage = Configuration_BSO.GetCustomConfig("language.iso.code");
                     //If this classification exists in the requested language, return it, otherwise return it in the default language
                     if ((classifications.Where(x => (x.RlsCode == release.RlsCode && x.LngIsoCode == DTO.LngIsoCode)).Count() > 0))
                     {
@@ -115,12 +117,11 @@ namespace PxStat.System.Navigation
 
                 List<dynamic> prdList = new List<dynamic>();
 
-                foreach (var prd in periods)
+                var rlsPrd = periods.Where(x => x.RlsCode == release.RlsCode);
+                foreach (var prd in rlsPrd)
                 {
-                    if (prd.RlsCode == release.RlsCode)
-                    {
-                        prdList.Add(prd.PrdValue);
-                    }
+                    prdList.Add(prd.PrdValue);
+
                 }
                 rel.period = prdList.ToArray();
                 rel.Score = release.Score;
@@ -131,7 +132,7 @@ namespace PxStat.System.Navigation
                 // We need to conditionally display our results depending on the preferred language
                 //Either this matrix exists in our preferred language..
                 //..Or else it doesn't exist in our preferred language but a version exists in the default language
-                if (release.LngIsoCode == lngIsoCode || (release.LngIsoCode == Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") && !existsInPreferredLangauge))
+                if (release.LngIsoCode == lngIsoCode || (release.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code") && !existsInPreferredLangauge))
                 {
                     outList.Add(rel);
                 }

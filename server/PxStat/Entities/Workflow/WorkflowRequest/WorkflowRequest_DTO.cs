@@ -126,5 +126,10 @@ namespace PxStat.Workflow
             if (!string.IsNullOrEmpty(parameters.WrqCurrentFlag))
                 this.WrqCurrentFlag = parameters.WrqCurrentFlag;
         }
+
+        public WorkflowRequest_DTO_Update(int RlsCode)
+        {
+            this.RlsCode = RlsCode;
+        }
     }
 }

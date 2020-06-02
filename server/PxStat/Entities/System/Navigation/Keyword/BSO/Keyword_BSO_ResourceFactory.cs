@@ -1,5 +1,6 @@
 ﻿using API;
 using Newtonsoft.Json;
+using PxStat.Security;
 using PxStat.System.Settings;
 using System.Collections;
 using System.Collections.Generic;
@@ -104,7 +105,7 @@ namespace PxStat.System.Navigation
         {
             if (!Keywords.ContainsKey(lngIsoCode))
             {
-                lngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                lngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
                 dynamic keywordInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString(Utility.GetCustomConfig("APP_INTERNATIONALISATION_KEYWORD_FILE") + lngIsoCode));
                 if (!Keywords.ContainsKey(lngIsoCode))
                     Keywords.Add(lngIsoCode, keywordInstance);

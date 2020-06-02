@@ -61,7 +61,14 @@ namespace PxStat.Template
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams = Cleanser.Cleanse(Request.parameters);
 
-                DTO = GetDTO(cleansedParams);
+                try
+                {
+                    DTO = GetDTO(cleansedParams);
+                }
+                catch
+                {
+                    throw new InputFormatException();
+                }
 
                 DTO = Sanitizer.Sanitize(DTO);
 

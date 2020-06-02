@@ -43,6 +43,22 @@ namespace PxStat.Security
             return output;
         }
 
+        /// <summary>
+        /// Reads account based on account name
+        /// </summary>
+        /// <param name="ado"></param>
+        /// <param name="CcnUsername"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput Read(ADO ado, string CcnUsername)
+        {
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>();
+
+            paramList.Add(new ADO_inputParams() { name = "@CcnUsername", value = CcnUsername });
+
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("Security_Account_Read", paramList);
+
+            return output;
+        }
 
         /// <summary>
         /// Take the output from a Read and return it as a list of Account_DTO_Update objects

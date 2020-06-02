@@ -6,6 +6,7 @@ using PxParser.Resources.Parser;
 using PxStat.Build;
 using PxStat.JsonStatSchema;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using XLsxHelper;
 
 namespace PxStat.Data
 {
@@ -130,7 +132,7 @@ namespace PxStat.Data
             Matrix.Specification theSpec;
 
 
-            if (lngIsoCode == null) lngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            if (lngIsoCode == null) lngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             if (this.MainSpec != null)
             {
@@ -495,7 +497,8 @@ namespace PxStat.Data
 
                 MatrixCode = doc.GetStringElementValue("MATRIX");
 
-                MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
+                //MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
+                MainValues = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
                 Contents = doc.GetStringElementValue("CONTENTS", language);
                 TimeVals = doc.GetMultiValuesWithSubkeysIfExist("TIMEVAL", language);
@@ -589,6 +592,7 @@ namespace PxStat.Data
                 MatrixCode = doc.GetStringElementValue("MATRIX");
 
                 MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
+                //MainValues = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
                 Contents = doc.GetStringElementValue("CONTENTS", language);
                 TimeVals = doc.GetMultiValuesWithSubkeysIfExist("TIMEVAL", language);
@@ -667,7 +671,7 @@ namespace PxStat.Data
 
 
                 //Here we must get a translated version of FrqValueTimeval. FrqValueTimeval was supplied in one language, but we must get the corresponding version for this Specification's language
-                fr.Value = TranslateValue(doc, frqValueTimeval, Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"), Language);
+                fr.Value = TranslateValue(doc, frqValueTimeval, Configuration_BSO.GetCustomConfig("language.iso.code"), Language);
 
                 fr.Value = fr.Value == null ? frqValueTimeval : fr.Value;
 
@@ -1144,7 +1148,7 @@ namespace PxStat.Data
             //Get the data cells. Null values will be given a default string value, i.e. APP_PX_CONFIDENTIAL_VALUE
             if (Cells != null)
             {
-                string defaultVal = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+                string defaultVal = Configuration_BSO.GetCustomConfig("px.confidential-value");
                 List<string> dataCells = new List<string>();
                 foreach (var c in Cells)
                 {
@@ -1274,8 +1278,6 @@ namespace PxStat.Data
             }
 
 
-
-
             //Create the Timeval
             List<string> periods = new List<string>();
             if (theSpec.Frequency.Period != null)
@@ -1287,7 +1289,7 @@ namespace PxStat.Data
                 }
 
             }
-            else periods.Add(Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"));
+            else periods.Add(Configuration_BSO.GetCustomConfig("px.confidential-value"));
 
             if (periods.Count > 0)
             {
@@ -1577,11 +1579,6 @@ namespace PxStat.Data
         }
 
         /// <summary>
-        /// class variable
-        /// </summary>
-        List<string> headerString;
-
-        /// <summary>
         /// Add a classification
         /// </summary>
         /// <param name="cls"></param>
@@ -1631,6 +1628,7 @@ namespace PxStat.Data
 
         internal string GetXlsxObject(string lngIsoCode = null, CultureInfo ci = null)
         {
+
             Xlsx xl = new Xlsx();
             return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode), lngIsoCode, ci);
 
@@ -1642,12 +1640,13 @@ namespace PxStat.Data
             return xl.GetCsv(GetMatrixSheet(lngIsoCode, indicateBlankSymbols), "\"", ci);
         }
 
-        internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null, bool indicateBlankSymbols = false)
+
+        internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null, bool indicateBlankSymbols = false, int headerStyle = 0)
         {
 
             List<List<XlsxValue>> rowLists = new List<List<XlsxValue>>();
 
-            lngIsoCode = lngIsoCode == null ? Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") : lngIsoCode;
+            lngIsoCode = lngIsoCode == null ? Configuration_BSO.GetCustomConfig("language.iso.code") : lngIsoCode;
 
             Specification theSpec;
             if (lngIsoCode != null)
@@ -1660,19 +1659,19 @@ namespace PxStat.Data
                 theSpec = this.MainSpec;
 
             List<XlsxValue> rowList = new List<XlsxValue>();
-            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC") });
-            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC") + Utility.GetCustomConfig("APP_CSV_DIVIDER") + (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")) });
-            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code });
-            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + theSpec.Frequency.Value });
+            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC"), StyleId = headerStyle });
+            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC") + Utility.GetCustomConfig("APP_CSV_DIVIDER") + (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")), StyleId = headerStyle });
+            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code, StyleId = headerStyle });
+            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + theSpec.Frequency.Value, StyleId = headerStyle });
 
             foreach (var cls in theSpec.Classification)
             {
-                rowList.Add(new XlsxValue() { Value = cls.Code });
-                rowList.Add(new XlsxValue() { Value = cls.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + cls.Value });
+                rowList.Add(new XlsxValue() { Value = cls.Code, StyleId = headerStyle });
+                rowList.Add(new XlsxValue() { Value = cls.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + cls.Value, StyleId = headerStyle });
             }
 
-            rowList.Add(new XlsxValue() { Value = Label.Get("xlsx.unit", lngIsoCode) });
-            rowList.Add(new XlsxValue() { Value = Label.Get("xlsx.value", lngIsoCode) });
+            rowList.Add(new XlsxValue() { Value = Label.Get("xlsx.unit", lngIsoCode), StyleId = headerStyle });
+            rowList.Add(new XlsxValue() { Value = Label.Get("xlsx.value", lngIsoCode), StyleId = headerStyle });
 
             rowLists.Add(rowList);
 
@@ -1713,8 +1712,8 @@ namespace PxStat.Data
                     }
                     rowlist.Add(new XlsxValue() { Value = dto.statistic.Unit });
                     dynamic cell = Cells[cellCounter];
-                    string emptyValue = indicateBlankSymbols ? Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") : "";
-                    rowlist.Add(new XlsxValue() { Value = cell.TdtValue.ToString() == Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE") ? emptyValue : cell.TdtValue.ToString(), DataType = CellValues.Number });
+                    string emptyValue = indicateBlankSymbols ? Configuration_BSO.GetCustomConfig("px.confidential-value") : "";
+                    rowlist.Add(new XlsxValue() { Value = cell.TdtValue.ToString() == Configuration_BSO.GetCustomConfig("px.confidential-value") ? emptyValue : cell.TdtValue.ToString(), DataType = CellValues.Number });
 
                     cellCounter++;
                     rowLists.Add(rowlist);
@@ -1974,6 +1973,11 @@ namespace PxStat.Data
 
             this.pxUploadDto = dto;
             LoadMatrixPropertiesFromPx(doc);
+        }
+
+        public Matrix(JsonStat jsonStat)
+        {
+            LoadMatrixPropertiesFromJsonStat(jsonStat);
         }
 
         public Matrix(PxDocument doc, string frqCodeTimeval, string frqValueTimeval)
@@ -2383,6 +2387,11 @@ namespace PxStat.Data
             return jsStat;
         }
 
+        protected void LoadMatrixPropertiesFromJsonStat(JsonStat jsonStat)
+        {
+            // var c = jsonStat.Extension["copyright"].Name;
+        }
+
         protected void LoadMatrixPropertiesFromPx(PxDocument doc, string frqCodeTimeval, string frqValueTimeval)
         {
             this.Copyright = new Copyright_DTO_Create();
@@ -2404,10 +2413,10 @@ namespace PxStat.Data
             string officialStat = doc.GetStringValueIfExist("OFFICIAL-STATISTICS");
             if (string.IsNullOrEmpty(officialStat))
             {
-                officialStat = Utility.GetCustomConfig("APP_PX_DEFAULT_OFFICIAL_STATISTIC");
+                IsOfficialStatistic = Configuration_BSO.GetCustomConfig("dataset.officialStatistics");
             }
-
-            IsOfficialStatistic = officialStat.ToUpper() == Utility.GetCustomConfig("APP_PX_TRUE");
+            else
+                IsOfficialStatistic = officialStat.ToUpper() == Utility.GetCustomConfig("APP_PX_TRUE");
 
             // The data, common to all the different languages
             Cells = doc.GetData("DATA");
@@ -2421,7 +2430,7 @@ namespace PxStat.Data
 
             if (String.IsNullOrEmpty(TheLanguage))
             {
-                TheLanguage = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                TheLanguage = Configuration_BSO.GetCustomConfig("language.iso.code");
             }
 
 
@@ -2469,11 +2478,9 @@ namespace PxStat.Data
 
             string officialStat = doc.GetStringValueIfExist("OFFICIAL-STATISTICS");
             if (string.IsNullOrEmpty(officialStat))
-            {
-                officialStat = Utility.GetCustomConfig("APP_PX_DEFAULT_OFFICIAL_STATISTIC");
-            }
-
-            IsOfficialStatistic = officialStat.ToUpper() == Utility.GetCustomConfig("APP_PX_TRUE");
+                IsOfficialStatistic = Configuration_BSO.GetCustomConfig("dataset.officialStatistics");
+            else
+                IsOfficialStatistic = officialStat.ToUpper() == Utility.GetCustomConfig("APP_PX_TRUE");
 
             // The data, common to all the different languages
             Cells = doc.GetData("DATA");
@@ -2487,7 +2494,7 @@ namespace PxStat.Data
 
             if (String.IsNullOrEmpty(TheLanguage))
             {
-                TheLanguage = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                TheLanguage = Configuration_BSO.GetCustomConfig("language.iso.code");
             }
 
 
@@ -2676,6 +2683,8 @@ namespace PxStat.Data
         public string FrqCodeTimeval { get; set; }
         public string LngIsoCode { get; set; }
 
+        public JsonStat testItem { get; set; }
+
         internal Signature_DTO GetSignatureDTO()
         {
             return new Signature_DTO
@@ -2730,7 +2739,14 @@ namespace PxStat.Data
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
             else
-                this.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+
+            if (parameters.testItem != null)
+            {
+
+                this.testItem = JsonConvert.DeserializeObject<JsonStat>(parameters.testItem.ToString(), Converter.Settings);
+
+            }
         }
     }
 
@@ -2757,7 +2773,7 @@ namespace PxStat.Data
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
             else
-                this.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
         }
     }

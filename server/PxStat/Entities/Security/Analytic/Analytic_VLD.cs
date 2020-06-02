@@ -32,12 +32,13 @@ namespace PxStat.Security
     {
         internal Analytic_VLD_Read()
         {
+            string maskedIp = Utility.GetCustomConfig("APP_REGEX_MASKED_IP");
             //Mandatory - DateFrom
             RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
             //Mandatory - DateTo
             RuleFor(x => x.DateTo).NotEqual(default(DateTime));
             //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP")).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
+            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
             //Optional - ExcludeInternal
@@ -51,6 +52,7 @@ namespace PxStat.Security
     {
         internal Analytic_VLD_ReadOs()
         {
+            string maskedIp = Utility.GetCustomConfig("APP_REGEX_MASKED_IP");
             //Mandatory - DateFrom
             RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
             //Mandatory - DateTo
@@ -59,7 +61,7 @@ namespace PxStat.Security
             RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
             //Optional - NltInternalNetworkMask
             //RuleFor(x => x.NltInternalNetworkMask).Length(1, 15).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
-            RuleFor(x => x.NltInternalNetworkMask).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP")).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
+            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
         }
@@ -72,6 +74,7 @@ namespace PxStat.Security
     {
         internal Analytic_VLD_ReadBrowser()
         {
+            string maskedIp = Utility.GetCustomConfig("APP_REGEX_MASKED_IP");
             //Mandatory - DateFrom
             RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
             //Mandatory - DateTo
@@ -79,7 +82,7 @@ namespace PxStat.Security
             //Optional - MtrCode
             RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
             //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP")).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
+            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
         }
@@ -112,6 +115,7 @@ namespace PxStat.Security
     {
         internal Analytic_VLD_ReadTimeline()
         {
+            string maskedIp = Utility.GetCustomConfig("APP_REGEX_MASKED_IP");
             //Mandatory - DateFrom
             RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
             //Mandatory - DateTo
@@ -119,7 +123,7 @@ namespace PxStat.Security
             //Optional - MtrCode
             RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
             //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP")).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
+            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
 
             //Optional - SbjCode
             //Optional - PrcCode
@@ -133,6 +137,7 @@ namespace PxStat.Security
     {
         internal Analytic_VLD_ReadReferrer()
         {
+            string maskedIp = Utility.GetCustomConfig("APP_REGEX_MASKED_IP");
             //Mandatory - DateFrom
             RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
             //Mandatory - DateTo
@@ -140,7 +145,7 @@ namespace PxStat.Security
             //Optional - MtrCode
             RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
             //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP")).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
+            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
 
             //Optional - SbjCode
             //Optional - PrcCode
@@ -154,6 +159,7 @@ namespace PxStat.Security
     {
         internal Analytic_VLD_ReadLanguage()
         {
+            string maskedIp = Utility.GetCustomConfig("APP_REGEX_MASKED_IP");
             //Mandatory - DateFrom
             RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
             //Mandatory - DateTo
@@ -161,7 +167,7 @@ namespace PxStat.Security
             //Optional - MtrCode
             RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
             //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(Utility.GetCustomConfig("APP_REGEX_MASKED_IP")).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
+            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - LngIsoCode
             RuleFor(x => x.LngIsoCode).Length(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
             //Optional - SbjCode

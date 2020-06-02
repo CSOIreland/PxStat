@@ -49,6 +49,13 @@ namespace PxStat.Build
         /// <returns></returns>
         protected override bool Execute()
         {
+            Build_BSO bBso = new Build_BSO();
+
+            if (!bBso.HasBuildPermission(Ado, SamAccountName, "update"))
+            {
+                Response.error = Label.Get("error.privilege");
+                return false;
+            }
 
             //do the physical structure validation
 
@@ -69,7 +76,7 @@ namespace PxStat.Build
             //Get this matrix from the px file 
             Matrix theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
-            Build_BSO bBso = new Build_BSO();
+
 
             //Get this matrix from the px file 
             theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado);

@@ -36,7 +36,7 @@ namespace PxStat.Security
                 new ADO_inputParams() {name= "@NltBotFlag",value=dto.NltBotFlag},
                 new ADO_inputParams() {name= "@NltM2m",value=dto.NltM2m},
                 new ADO_inputParams() {name= "@NltDate",value=dto.NltDate},
-                new ADO_inputParams() {name= "@LngIsoCode",value=Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+                new ADO_inputParams() {name= "@LngIsoCode",value=Configuration_BSO.GetCustomConfig("language.iso.code")}
             };
             if (dto.NltOs != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@NltOs", value = dto.NltOs });

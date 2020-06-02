@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -84,8 +84,8 @@
       <HintPath>..\packages\DeviceDetector.NET.3.11.6\lib\net45\DeviceDetector.NET.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.10.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentFormat.OpenXml.2.10.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.10.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.10.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="Enyim.Caching, Version=2.16.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
       <HintPath>..\packages\EnyimMemcached.2.16.0\lib\net35\Enyim.Caching.dll</HintPath>
@@ -148,10 +148,13 @@
       <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.InteropServices" />
+    <Reference Include="System.Threading.Thread" />
     <Reference Include="System.ValueTuple">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
@@ -217,6 +220,8 @@
     <None Include="Properties\PublishProfiles\Live.pubxml" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
+    <Content Include="Resources\Config\config.global.json" />
+    <Content Include="Resources\Config\config.server.json" />
     <None Include="Resources\Internationalisation\keyword\dictionary_en.json" />
     <None Include="Resources\Internationalisation\keyword\dictionary_ga.json" />
     <None Include="Resources\Internationalisation\keyword\synonym_en.json" />
@@ -351,7 +356,13 @@
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ResourceFactory.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_API.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workdflow_BSO_ReadPendingLive.cs" />
+    <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadLive.cs" />
+    <Compile Include="Entities\Security\Configuration\BSO\Configuration_BSO.cs" />
+    <Compile Include="Entities\Security\Configuration\BSO\Configuration_BSO_Refresh.cs" />
+    <Compile Include="Entities\Security\Configuration\Configuration_API.cs" />
+    <Compile Include="Entities\Security\Configuration\Configuration_DTO.cs" />
+    <Compile Include="Entities\Security\Configuration\Configuration_VLD.cs" />
     <Compile Include="Resources\Internationalisation\keyword\keyword_en.cs" />
     <Compile Include="Resources\Internationalisation\keyword\keyword_ga.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\IKeywordExtractor.cs" />
@@ -584,7 +595,8 @@
     <Compile Include="Resources\Sanitizer.cs" />
     <Compile Include="Resources\Error.cs" />
     <Compile Include="Resources\Xlsx.cs" />
-    <Compile Include="Resources\XlsxUtilities.cs" />
+    <Compile Include="Resources\XlsxHelper\Spreadsheet.cs" />
+    <Compile Include="Resources\XlsxHelper\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -627,7 +639,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <Import Project="..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets" Condition="Exists('..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

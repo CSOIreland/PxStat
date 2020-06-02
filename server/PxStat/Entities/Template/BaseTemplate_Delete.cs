@@ -1,7 +1,7 @@
-﻿using System;
+﻿using API;
 using FluentValidation;
-using API;
 using PxStat.Resources;
+using System;
 using System.Data;
 
 namespace PxStat.Template
@@ -64,7 +64,14 @@ namespace PxStat.Template
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams = Cleanser.Cleanse(Request.parameters);
 
-                DTO = GetDTO(cleansedParams);
+                try
+                {
+                    DTO = GetDTO(cleansedParams);
+                }
+                catch
+                {
+                    throw new InputFormatException();
+                }
 
                 DTO = Sanitizer.Sanitize(DTO);
 
@@ -96,6 +103,14 @@ namespace PxStat.Template
                 //A FormatException error has been caught, rollback the transaction, log the error and return a message to the caller
                 Ado.RollbackTransaction();
                 Log.Instance.Error(formatException);
+                Response.error = Label.Get("error.schema");
+                return this;
+            }
+            catch (InputFormatException inputError)
+            {
+                //An error has been caught, rollback the transaction, log the error and return a message to the caller
+                Ado.RollbackTransaction();
+                Log.Instance.Error(inputError);
                 Response.error = Label.Get("error.schema");
                 return this;
             }

@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.System.Navigation
@@ -35,7 +36,7 @@ namespace PxStat.System.Navigation
             var adoSubject = new Subject_ADO(Ado);
 
             //You can only create a subject in the default Language
-            DTO.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            DTO.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             //We can't allow duplicate named Subjects, so we must check first
             if (adoSubject.Exists(DTO))
@@ -60,4 +61,3 @@ namespace PxStat.System.Navigation
         }
     }
 }
-

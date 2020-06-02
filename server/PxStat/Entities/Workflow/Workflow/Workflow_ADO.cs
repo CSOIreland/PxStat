@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System.Collections.Generic;
 
 namespace PxStat.Workflow
@@ -44,7 +45,7 @@ namespace PxStat.Workflow
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@CcnUsername", value = userName } ,
                 new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode  },
-                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE") }
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig("language.iso.code") }
             };
 
             var reader = ado.ExecuteReaderProcedure("Workflow_ReadWorkInProgress", inputParams);
@@ -106,7 +107,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")},
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig("language.iso.code")},
             };
 
             if (rlsCode != default(int))
@@ -131,7 +132,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= dto.LngIsoCode },
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig("language.iso.code")}
             };
 
             if (dto.RlsCode != default(int))
@@ -157,7 +158,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= dto.LngIsoCode },
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig("language.iso.code")}
             };
 
             if (dto.RlsCode != default(int))
@@ -190,7 +191,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE")}
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig("language.iso.code")}
 
             };
 

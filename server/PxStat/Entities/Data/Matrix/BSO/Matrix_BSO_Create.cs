@@ -56,6 +56,14 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+            Build_BSO buildBso = new Build_BSO();
+
+            if (!buildBso.HasBuildPermission(Ado, SamAccountName, "import"))
+            {
+                Response.error = Label.Get("error.privilege");
+                return false;
+            }
+
             Stopwatch swMatrix = new Stopwatch();
             swMatrix.Start();
 
@@ -66,10 +74,14 @@ namespace PxStat.Data
                 return false;
             }
 
+            //var js = DTO.testItem.Extension["copyright"].GetType();
+
+            //return true;
+
             PxDoc = PxStatEngine.ParsePxInput(DTO.MtrInput);
             Matrix theMatrixData = new Matrix(PxDoc, DTO);
             Matrix_BSO mBso = new Matrix_BSO(Ado);
-            Build_BSO buildBso = new Build_BSO();
+
 
             int releaseId;
 
@@ -144,7 +156,11 @@ namespace PxStat.Data
 
             //Do a Cartesian join to correctly label each data point with its dimensions
             //Create bulk tables from this and load them to the database
-            _ = buildBso.CreateAndLoadDataTables(Ado, theMatrixData, true);
+
+            var asyncTask = buildBso.CreateAndLoadDataTables(Ado, theMatrixData, true);
+
+            //We must specifically retrieve any exceptions from the Task and then throw them. Otherwise they will be silent.
+            if (asyncTask.Exception != null) throw asyncTask.Exception;
 
             matrixAdo.MarkMatrixAsContainingData(theMatrixData.MainSpec.MatrixId, true);
 

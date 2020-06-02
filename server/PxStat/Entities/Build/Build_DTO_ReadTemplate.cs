@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Data;
+using PxStat.Security;
 
 namespace PxStat.Entities.BuildData
 {
@@ -20,7 +21,7 @@ namespace PxStat.Entities.BuildData
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
             if (parameters.FrqCodeTimeval != null)
                 FrqCodeTimeval = parameters.FrqCodeTimeval;
             if (parameters.FrqValueTimeval != null)

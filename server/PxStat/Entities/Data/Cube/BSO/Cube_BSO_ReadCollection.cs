@@ -1,11 +1,9 @@
 ﻿using API;
-using Newtonsoft.Json.Linq;
 using PxStat.Resources;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 
 namespace PxStat.Data
 {
@@ -58,9 +56,8 @@ namespace PxStat.Data
 
             Cube_BSO cBso = new Cube_BSO();
 
-
-            Response.data = cBso.ExecuteReadCollectionMetadata(Ado, DTO.language, DTO.datefrom);
-
+            // cache store is done in the following function
+            Response.data = cBso.ExecuteReadCollection(Ado, DTO);
 
 
             return true;
@@ -69,53 +66,7 @@ namespace PxStat.Data
 
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="theAdo"></param>
-        /// <param name="theCubeDTO"></param>
-        /// <param name="theResponse"></param>
-        /// <returns></returns>
-        static internal bool ExecuteReadCollection(ADO theAdo, Cube_DTO_ReadCollection theCubeDTO, JSONRPC_Output theResponse)
-        {
 
-
-            var ado = new Cube_ADO(theAdo);
-
-            var dbData = ado.ReadCollection(theCubeDTO.language, theCubeDTO.datefrom);
-
-
-            var collection = GetJsonStatCollectionObject(dbData);
-
-            if (collection.Link.Item.Count == 0)
-            {
-                theResponse.data = new JRaw(Serialize.ToJson(collection));
-                return true;
-            }
-
-            //Get the minimum next release date. The cache can only live until then.
-            //If there's no next release date then the cache will live for the maximum configured amount.
-
-            DateTime minDateItem = default(DateTime);
-
-            var minimum = dbData.Where(x => x.RlsLiveDatetimeFrom > DateTime.Now).Min(x => x.RlsLiveDatetimeFrom);
-
-            if (minimum != null)
-            {
-                minDateItem = minimum;
-            }
-
-            if (minDateItem < DateTime.Now)
-            {
-                minDateItem = default(DateTime);
-            }
-
-            theResponse.data = new JRaw(Serialize.ToJson(collection));
-
-            MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", theCubeDTO, theResponse.data, minDateItem, Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
-
-            return true;
-        }
 
         /// <summary>
         /// Returns the dataset in JSON-stat format

@@ -37,7 +37,8 @@
     "data": "PX Integrity: the data &quot;{Data}&quot; is invalid.",
     "size": "PX Integrity: &quot;{Expected}&quot; cells of data expected but &quot;{Found}&quot; found for the Language &quot;{Language}&quot;.",
     "cell-count": "This dataset contains {0} cellls. The maximum allowed is {1}.",
-    "codes": "Duplicate codes found"
+    "codes": "Duplicate codes found",
+    "values": "Duplicate values found"
   },
   "px": {
 
@@ -130,7 +131,9 @@
       "publish": "Publish",
       "rollback": "Rollback",
       "delete": "Delete",
-      "update-properties": "Update Properties"
+      "update-properties": "Update Properties",
+      "auto-approve-comment": "Automatic Response",
+      "autoSignoff-comment": "Automatic Signoff"
     }
   }
 }

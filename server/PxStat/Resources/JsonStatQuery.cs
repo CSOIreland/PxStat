@@ -1,5 +1,4 @@
-﻿
-using API;
+﻿using API;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.Data
@@ -32,7 +33,7 @@ namespace PxStat.Data
         protected override bool Execute()
         {
             // uses authentication and filters privileges according to user access
-            var currentRelease = Release_ADO.GetReleaseDTO(new Matrix_ADO(Ado).Read(DTO.RlsCode, Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE"), SamAccountName));
+            var currentRelease = Release_ADO.GetReleaseDTO(new Matrix_ADO(Ado).Read(DTO.RlsCode, Configuration_BSO.GetCustomConfig("language.iso.code"), SamAccountName));
             if (currentRelease == null)
             {
                 Response.data = null;

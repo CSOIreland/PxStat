@@ -293,5 +293,15 @@ namespace PxStat.Template
             return true;
         }
         #endregion
+
+
+    }
+
+    public class InputFormatException : Exception
+    {
+        public InputFormatException() : base("Invalid format found in input parameters")
+        {
+
+        }
     }
 }

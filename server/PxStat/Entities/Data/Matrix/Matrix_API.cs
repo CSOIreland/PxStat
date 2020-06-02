@@ -33,7 +33,6 @@ namespace PxStat.Data
         /// </summary>
         private static void runDeletes()
         {
-            //Utility.GetCustomConfig("API_ADO_DEFAULT_CONNECTION")
             ADO defaultADO = new ADO("defaultConnection");
             ADO adoBatch = new ADO("msdbConnection");
 

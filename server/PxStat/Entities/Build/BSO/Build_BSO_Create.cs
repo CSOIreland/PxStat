@@ -36,6 +36,13 @@ namespace PxStat.Build
         protected override bool Execute()
         {
 
+            Build_BSO pBso = new Build_BSO();
+
+            if (!pBso.HasBuildPermission(Ado, SamAccountName, "create"))
+            {
+                Response.error = Label.Get("error.privilege");
+                return false;
+            }
 
             Matrix matrix = new Matrix(DTO)
             {
@@ -61,7 +68,7 @@ namespace PxStat.Build
             }
 
             //Create the blank csv with titles to enable the user to fill in their own data for the update
-            Build_BSO pBso = new Build_BSO();
+
 
 
             matrix.Cells = GetBlankCells(matrix);

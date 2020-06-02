@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.System.Navigation
@@ -35,7 +36,7 @@ namespace PxStat.System.Navigation
             var adoProduct = new Product_ADO(Ado);
 
             //You can only create a product in the default Language
-            DTO.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            DTO.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             //Duplicate product names aren't allowed, so we check first
             if (adoProduct.Exists(DTO.PrcValue, DTO.SbjCode) || adoProduct.ExistsCode(DTO.PrcCode))
@@ -61,4 +62,3 @@ namespace PxStat.System.Navigation
         }
     }
 }
-

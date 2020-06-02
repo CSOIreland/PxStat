@@ -1,6 +1,7 @@
 ﻿using API;
 using Newtonsoft.Json;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace PxStat.Data
             if (parameters.language != null)
                 this.language = parameters.language;
             else
-                this.language = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                this.language = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             if (parameters.datefrom != null)
             {
@@ -97,7 +98,7 @@ namespace PxStat.Data
 
             if (parameters.language != null)
                 this.language = parameters.language;
-            else this.language = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+            else this.language = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             Format = new Format_DTO_Read();
             if (parameters.format != null)
@@ -106,7 +107,7 @@ namespace PxStat.Data
                 if (parameters.format.type != null)
                     Format.FrmType = parameters.format.type;
 
-                Format.FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
+                Format.FrmDirection = API.Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
 
                 if (parameters.format.version != null)
                     Format.FrmVersion = parameters.format.version;
@@ -133,7 +134,7 @@ namespace PxStat.Data
             // Default language
             if (string.IsNullOrEmpty(this.language))
             {
-                this.language = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                this.language = Configuration_BSO.GetCustomConfig("language.iso.code");
             }
             // Default format
             if (string.IsNullOrEmpty(this.Format.FrmType))

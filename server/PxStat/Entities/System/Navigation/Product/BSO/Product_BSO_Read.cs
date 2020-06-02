@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.System.Navigation
@@ -32,7 +33,7 @@ namespace PxStat.System.Navigation
         protected override bool Execute()
         {
             if (DTO.LngIsoCode == null)
-                DTO.LngIsoCode = Utility.GetCustomConfig("APP_DEFAULT_LANGUAGE");
+                DTO.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             var adoProduct = new Product_ADO(Ado);
             var list = adoProduct.Read(DTO);

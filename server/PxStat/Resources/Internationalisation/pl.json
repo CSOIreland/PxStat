@@ -35,7 +35,8 @@
     "data": "PX Integralność: danych &quot;{Data}&quot; jest niepoprawna.",
     "size": "PX Integralność: &quot;{Expected}&quot; oczekiwane komórki danych, ale &quot;{Found}&quot; znaleziono dla języka &quot;{Language}&quot;.",
     "cell-count": "Twój plik zawiera {0} komórki danych, maksymalna dozwolona liczba to {1}. Przejrzyj dane wejściowe.",
-    "codes": " Znaleziono zduplikowane kody."
+    "codes": " Znaleziono zduplikowane kody.",
+    "values": "Duplicate values found"
   },
   "px": {
     "build": {
@@ -116,6 +117,16 @@
       "response-reject": "{0} {1}.{2}: Zatwierdzenie Odrzucone",
       "signoff-approve": "{0} {1}.{2}: Podpis Zatwierdzony",
       "signoff-reject": "{0} {1}.{2}: Podpis Odrzucony"
+    }
+  },
+  "workflow": {
+    "request": {
+      "publish": "Publish",
+      "rollback": "Rollback",
+      "delete": "Delete",
+      "update-properties": "Update Properties",
+      "auto-approve-comment": "Automatic Response",
+      "autoSignoff-comment": "Automatic Signoff"
     }
   }
 }
