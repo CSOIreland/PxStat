@@ -47,7 +47,7 @@ app.data.init = function (LngIsoCode, MtrCode, RlsCode, filenamePrefix) {
 * 
 */
 app.data.setDatePicker = function () {
-    var startDate = moment().subtract(29, 'days');
+    var startDate = moment().subtract(6, 'days');
     app.data.collection.params.datefrom = startDate.format(app.config.mask.date.ajax);
     app.data.ajax.readLatestReleases();
     $('#latest-releases-date-picker span').html(startDate.format(app.config.mask.date.display));
@@ -56,6 +56,7 @@ app.data.setDatePicker = function () {
         showCustomRangeLabel: false,
         singleDatePicker: true,
         maxDate: new Date(),
+        minDate: moment().subtract(29, 'days'),
         ranges: {
             [app.label.static["last-30-days"]]: [moment().subtract(29, 'days'), moment()],
             [app.label.static["last-7-days"]]: [moment().subtract(6, 'days'), moment()],
@@ -113,6 +114,10 @@ app.data.callback.drawCallbackDrawLatestReleases = function () {
     });
 
     $('[data-toggle="tooltip"]').tooltip();
+
+    //populate colection api  
+    app.data.callback.drawCollectionApiDetails();
+    $("#data-accordion-collection-api").show();
 }
 
 

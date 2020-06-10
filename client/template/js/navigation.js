@@ -53,6 +53,14 @@ $(document).ready(function () {
     "#nav-link-build"
   );
   //#endregion
+  //#region import
+  api.content.navigate(
+    "#nav-link-widget",
+    "entity/build/widget/",
+    "#nav-link-widget",
+    "#nav-link-build"
+  );
+  //#endregion
 
   //#region Release
   api.content.navigate(
@@ -83,6 +91,21 @@ $(document).ready(function () {
     "#nav-link-group",
     "#nav-link-manage"
   );
+
+  api.content.navigate(
+    "#nav-link-reason",
+    "entity/manage/reason/",
+    "#nav-link-reason",
+    "#nav-link-manage"
+  );
+
+  api.content.navigate(
+    "#nav-link-copyright",
+    "entity/manage/copyright/",
+    "#nav-link-copyright",
+    "#nav-link-manage"
+  );
+
   api.content.navigate(
     "#nav-link-keyword-subject",
     "entity/keyword/subject/",
@@ -107,45 +130,14 @@ $(document).ready(function () {
     "#nav-link-email",
     "#nav-link-manage"
   );
-  api.content.navigate(
-    "#nav-link-tracing",
-    "entity/manage/tracing/",
-    "#nav-link-tracing",
-    "#nav-link-manage"
-  );
-  api.content.navigate(
-    "#nav-link-logging",
-    "entity/manage/logging/",
-    "#nav-link-logging",
-    "#nav-link-manage"
-  );
+
   //#endregion
 
   //#region Configuration
-  api.content.navigate(
-    "#nav-link-language",
-    "entity/configuration/language/",
-    "#nav-link-language",
-    "#nav-link-configuration"
-  );
-  api.content.navigate(
-    "#nav-link-format",
-    "entity/configuration/format/",
-    "#nav-link-format",
-    "#nav-link-configuration"
-  );
-  api.content.navigate(
-    "#nav-link-copyright",
-    "entity/configuration/copyright/",
-    "#nav-link-copyright",
-    "#nav-link-configuration"
-  );
-  api.content.navigate(
-    "#nav-link-reason",
-    "entity/configuration/reason/",
-    "#nav-link-reason",
-    "#nav-link-configuration"
-  );
+
+
+
+
   //#endregion
 
   //#region Keyword
@@ -166,6 +158,43 @@ $(document).ready(function () {
     "entity/keyword/release/",
     "#nav-link-keyword-release",
     "#nav-link-keyword"
+  );
+  //#endregion
+
+  //#region system
+  api.content.navigate(
+    "#nav-link-configuration",
+    "entity/system/configuration/",
+    "#nav-link-configuration",
+    "#nav-link-system"
+  );
+
+  api.content.navigate(
+    "#nav-link-format",
+    "entity/system/format/",
+    "#nav-link-format",
+    "#nav-link-system"
+  );
+
+  api.content.navigate(
+    "#nav-link-tracing",
+    "entity/system/tracing/",
+    "#nav-link-tracing",
+    "#nav-link-system"
+  );
+
+  api.content.navigate(
+    "#nav-link-logging",
+    "entity/system/logging/",
+    "#nav-link-logging",
+    "#nav-link-system"
+  );
+
+  api.content.navigate(
+    "#nav-link-language",
+    "entity/system/language/",
+    "#nav-link-language",
+    "#nav-link-system"
   );
   //#endregion
 

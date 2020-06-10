@@ -21,19 +21,6 @@ label.mandatory:before, span.mandatory:before {
 }
 
 /* 
-* Bootstrap Modal Full size
-*/
-
-.modal-full {
-    min-width: 90%;
-    margin: 0 auto;
-}
-
-.modal-full>.modal-content {
-    min-height: 100vh;
-}
-
-/* 
 * Mouse over disabled button
 */
 

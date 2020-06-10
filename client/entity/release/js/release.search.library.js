@@ -195,7 +195,7 @@ app.release.search.loadRelease = function (e) {
         scrollTop: $("#release-search-result").prop("scrollHeight")
     }, 1000);
 
-    app.release.read();
+    app.release.ajax.read();
 };
 //#endregion
 

@@ -7,16 +7,36 @@ GO
 -- =============================================
 -- Author:		Paulo Patricio
 -- Creation date: 03 Jan 2019
--- exec Data_Matrix_ReadByRelease 1,"en"
+-- exec Data_Matrix_ReadByRelease 24,"ga","en"
 -- =============================================
 CREATE
 	OR
 
 ALTER PROCEDURE Data_Matrix_ReadByRelease @RlsCode INT
 	,@LngIsoCode CHAR(2)
+	,@LngIsoCodeDefault CHAR(2)
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+	DECLARE @LngCode CHAR(2)
+	DECLARE @LngId INT
+	DECLARE @LngDefaultId INT
+
+
+	-- Preferably get the data in the requested language, otherwise get the data in the default language
+	SET @LngId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCode 
+	AND LNG_DELETE_FLAG=0)
+	SET @LngDefaultId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCodeDefault AND LNG_DELETE_FLAG=0)
+
+	IF(SELECT COUNT(*) FROM TD_MATRIX INNER JOIN TD_RELEASE ON MTR_RLS_ID=RLS_ID AND RLS_DELETE_FLAG=0 AND RLS_CODE=@RlsCode  WHERE MTR_LNG_ID=@LngId AND MTR_DELETE_FLAG=0) >0
+	BEGIN
+		SET @LngCode=@LngIsoCode
+	END
+	ELSE
+	BEGIN
+		SET @LngCode=@LngIsoCodeDefault 
+	END
 
 	SELECT MTR_CODE MtrCode
 		,MTR_TITLE MtrTitle
@@ -65,7 +85,7 @@ BEGIN
 			AND RLS_DELETE_FLAG = 0
 	INNER JOIN TS_LANGUAGE
 		ON LNG_ID = MTR_LNG_ID
-			AND LNG_ISO_CODE = @LngIsoCode
+			AND LNG_ISO_CODE = @LngCode
 			AND LNG_DELETE_FLAG = 0
 	INNER JOIN TS_COPYRIGHT
 		ON CPR_ID = MTR_CPR_ID

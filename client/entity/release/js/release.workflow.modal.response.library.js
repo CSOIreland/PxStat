@@ -13,9 +13,52 @@ app.release.workflow.modal.response.ajax = {};
 app.release.workflow.modal.response.callback = {};
 app.release.workflow.modal.response.RqsCode = null;
 app.release.workflow.modal.response.RspCode = null;
+app.release.workflow.modal.response.fastrackSignoff = false;
 //#endregion
 
 //#region Request
+
+app.release.workflow.modal.response.ajax.ReadCurrentAccess = function () {
+    //Check the privilege of the user 
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.Account_API.ReadCurrentAccess",
+        { CcnUsername: null },
+        "app.release.workflow.modal.response.callback.ReadCurrentAccess",
+        null,
+        null,
+        null,
+        { async: false }
+    );
+};
+
+app.release.workflow.modal.response.callback.ReadCurrentAccess = function (data) {
+    //set to safest workflow
+    app.release.workflow.modal.response.fastrackSignoff = false;
+    switch (data[0].PrvCode) {
+        case C_APP_PRIVILEGE_MODERATOR:
+            //do nothing, moderator cannot fastrackSignoff
+            break;
+        case C_APP_PRIVILEGE_POWER_USER:
+
+            if (app.config.workflow.fastrack.signoff.poweruser) {
+                app.release.workflow.modal.response.fastrackSignoff = true;
+            }
+
+            break;
+        case C_APP_PRIVILEGE_ADMINISTRATOR:
+            if (app.config.workflow.fastrack.signoff.administrator) {
+                app.release.workflow.modal.response.fastrackSignoff = true;
+            }
+
+            break;
+        default:
+            app.release.workflow.modal.response.fastrackSignoff = false;
+            break;
+    }
+
+    app.release.workflow.modal.response.create();
+};
 
 /**
  * 
@@ -96,16 +139,46 @@ app.release.workflow.modal.response.callback.read = function (data) {
 app.release.workflow.modal.response.create = function () {
     switch (app.release.workflow.modal.response.RqsCode) {
         case C_APP_TS_REQUEST_PUBLISH:
-            $("#request-workflow-modal-response-publish").modal("show");
+            if (app.release.workflow.modal.response.fastrackSignoff) {
+                $("#request-workflow-modal-response-publish [name=auto-signoff-warning]").show();
+            }
+
+            //check navigation if auto signoff
+            if ((!app.release.SbjCode || !app.release.PrcCode) && app.release.workflow.modal.response.fastrackSignoff) {
+                $("#request-workflow-modal-response-publish [name=navigation-warning]").show();
+                $("#request-workflow-modal-response-publish [name=button-approve]").prop('disabled', true);
+            }
+
+            $("#request-workflow-modal-response-publish").modal("show").on('hide.bs.modal', function (e) { //clean up
+                $("#request-workflow-modal-response-publish [name=auto-signoff-warning]").hide();
+                $("#request-workflow-modal-response-publish [name=navigation-warning]").hide();
+                $("#request-workflow-modal-response-publish [name=button-approve]").prop('disabled', false);
+
+            });
             break;
         case C_APP_TS_REQUEST_PROPERTY:
-            $("#request-workflow-modal-response-flag").modal("show");
+            if (app.release.workflow.modal.response.fastrackSignoff) {
+                $("#request-workflow-modal-response-flag [name=auto-signoff-warning]").show();
+            }
+            $("#request-workflow-modal-response-flag").modal("show").on('hide.bs.modal', function (e) { //clean up
+                $("#request-workflow-modal-response-flag [name=auto-signoff-warning]").hide();
+            });
             break;
         case C_APP_TS_REQUEST_DELETE:
-            $("#request-workflow-modal-response-delete").modal("show");
+            if (app.release.workflow.modal.response.fastrackSignoff) {
+                $("#request-workflow-modal-response-delete [name=auto-signoff-warning]").show();
+            }
+            $("#request-workflow-modal-response-delete").modal("show").on('hide.bs.modal', function (e) { //clean up
+                $("#request-workflow-modal-response-delete [name=auto-signoff-warning]").hide();
+            });
             break;
         case C_APP_TS_REQUEST_ROLLBACK:
-            $("#request-workflow-modal-response-rollback").modal("show");
+            if (app.release.workflow.modal.response.fastrackSignoff) {
+                $("#request-workflow-modal-response-rollback [name=auto-signoff-warning]").show();
+            }
+            $("#request-workflow-modal-response-rollback").modal("show").on('hide.bs.modal', function (e) { //clean up
+                $("#request-workflow-modal-response-rollback [name=auto-signoff-warning]").hide();
+            });
             break;
     }
 

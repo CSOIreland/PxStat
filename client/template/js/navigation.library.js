@@ -80,10 +80,10 @@ app.navigation.access.render = function (PrvCode) {
       $("#nav-link-build").parent().show();
       // Manage
       $("#nav-link-manage").parent().show();
-      // Configuration
-      $("#nav-link-configuration").parent().show();
       // Keywords
       $("#nav-link-keyword").parent().show();
+      // System
+      $("#nav-link-system").parent().show();
       break;
     case C_APP_PRIVILEGE_POWER_USER:
       // Display current user's information
@@ -99,14 +99,10 @@ app.navigation.access.render = function (PrvCode) {
       $("#nav-link-build").parent().show();
       // Manage
       $("#nav-link-manage").parent().show();
-      $("#nav-link-tracing").remove();
-      $("#nav-link-logging").remove();
-      // Configuration
-      $("#nav-link-configuration").parent().show();
-      $("#nav-link-language").remove();
-      $("#nav-link-format").remove();
       // Keywords
       $("#nav-link-keyword").parent().show();
+      // System
+      $("#nav-link-system").parent().remove();
       break;
     case C_APP_PRIVILEGE_MODERATOR:
       // Display current user's information
@@ -119,13 +115,30 @@ app.navigation.access.render = function (PrvCode) {
       // Analytics
       $("#nav-link-analytic").parent().show();
       // Build
-      $("#nav-link-build").parent().show();
+      if (app.config.build.create.moderator
+        || app.config.build.update.moderator
+        || app.config.build.import.moderator) {
+        $("#nav-link-build").parent().show();
+      }
+      else {
+        $("#nav-link-build").parent().remove();
+      }
+
+      if (!app.config.build.create.moderator)
+        $("#nav-link-create").remove();
+
+      if (!app.config.build.update.moderator)
+        $("#nav-link-update").remove();
+
+      if (!app.config.build.import.moderator)
+        $("#nav-link-import").remove();
+
       // Manage
       $("#nav-link-manage").parent().remove();
-      // Configuration
-      $("#nav-link-configuration").parent().remove();
       // Keywords
       $("#nav-link-keyword").parent().remove();
+      // System
+      $("#nav-link-system").parent().remove();
       break;
     default:
       // Anonymous or Not Registered user
@@ -141,10 +154,13 @@ app.navigation.access.render = function (PrvCode) {
       $("#nav-link-build").parent().remove();
       // Manage
       $("#nav-link-manage").parent().remove();
-      // Configuration
-      $("#nav-link-configuration").parent().remove();
       // Keywords
       $("#nav-link-keyword").parent().remove();
+      // Keywords
+      $("#nav-link-condfiguration").parent().remove();
+      // System
+      $("#nav-link-system").parent().remove();
+
       break;
   }
 };

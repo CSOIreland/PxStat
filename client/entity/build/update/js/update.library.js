@@ -652,8 +652,8 @@ app.build.update.updateOutput = function () {
         numPeriods = numPeriods + dimension.Frequency.Period.length;
 
         var numCells = numClassificationVariables * numStatistics * numPeriods;
-        if (numCells > app.config.entity.build.threshold) {
-            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold)]));
+        if (numCells > app.config.dataset.threshold) {
+            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.dataset.threshold)]));
         }
     }
     if (!validationErrors.length) {

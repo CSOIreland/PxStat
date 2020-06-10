@@ -1,38 +1,21 @@
 {
 	"title": "data.domain.extension",
+	"organisation": "ORGANISATION NAME",
 	"url": {
+		"configuration": {
+			"global": "https://ws.domain.extension/public/Resources/Config/config.global.json",
+			"server": "https://ws.domain.extension/public/Resources/Config/config.server.json"
+		},
 		"application": "https://data.domain.extension/",
 		"api": {
 			"public": "https://ws.domain.extension/public/api.jsonrpc",
 			"private": "https://ws.domain.extension/private/api.jsonrpc"
-		},
-		"header": {
-			"logo": {
-				"alt": "ORGANISATION NAME",
-				"src": "image/logo.png"
-			}
 		},
 		"footer": [
 			{
 				"text": "WEBSITE NAME",
 				"href": "https://www.domain.extension/"
 			}
-		]
-	},
-	"language": {
-		"iso": {
-			"code": "en",
-			"name": "English"
-		}
-	},
-	"embargo": {
-		"time": "11:00:00",
-		"day": [
-			1,
-			2,
-			3,
-			4,
-			5
 		]
 	},
 	"mask": {
@@ -73,12 +56,6 @@
 		},
 		"timeout": 3600000
 	},
-	"regex": {
-		"phone": {
-			"pattern": "^(\\(\\+\\d{1,3}\\) \\d+ \\d+ \\d+)$",
-			"placeholder": "(+353) 21 452 2253"
-		}
-	},
 	"entity": {
 		"data": {
 			"datatable": {
@@ -90,11 +67,10 @@
 				"hard": 1000000
 			},
 			"pagination": 10,
-			"numberLatestReleases": 25
+			"numberLatestReleases": 10
 		},
 		"build": {
 			"threshold": 10000000,
-			"officialStatistics": true,
 			"geoJsonLookup": {
 				"enabled": true,
 				"href": "https://geojson.doamin.extension/"

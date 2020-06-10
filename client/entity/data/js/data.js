@@ -14,9 +14,6 @@ $(document).ready(function () {
     // Load Modal - must be after GoTo
     api.content.load("#overlay", "entity/data/index.modal.html");
 
-    //populate colection api  
-    app.data.callback.drawCollectionApiDetails();
-    $("#data-accordion-collection-api").show();
     api.content.load("#data-search-row-desktop", "entity/data/index.search.html");
     api.content.load("#data-metadata-row", "entity/data/index.metadata.html");
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");

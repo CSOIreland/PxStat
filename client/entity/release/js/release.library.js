@@ -68,23 +68,54 @@ app.release.goTo.load = function (mtrCode, rlsCode) {
 
   // Load a Release from goTo
   if (app.release.RlsCode) {
-    // Load Release
-    app.release.read();
+    //check there is actually something there for this release code, may be deleted or rolled back
+    app.release.ajax.read();
   }
 };
+
+app.release.ajax.read = function () {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.private,
+    "PxStat.Data.Release_API.Read",
+    { RlsCode: app.release.RlsCode },
+    "app.release.callback.read",
+    null,
+    null,
+    null,
+    { async: false });
+};
+
+/**
+* 
+* @param {*} data
+*/
+app.release.callback.read = function (data) {
+  if (data) {
+    //only proceed if we have an actual release
+    // Read the previous Release Code
+    app.release.comparison.ajax.readRlsCodePrevious();
+    // Load first the privileges then the release
+    app.release.ajax.isModerator();
+  }
+  else {
+    //otherwise attempt to reload the release entity with whatever matrix code we have 
+    var goToParams = {
+      "MtrCode": app.release.MtrCode
+    };
+    // Display Success Modal
+    api.modal.information(app.label.static["api-ajax-nodata"]);
+
+    $("#modal-information").one('hidden.bs.modal', function (e) {
+      // Force page reload
+      api.content.goTo("entity/release/", "#nav-link-release", "#nav-link-release", goToParams);
+    });
+  }
+}
+
+
 //#endregion
 
 //#region Release
-/**
- * 
- */
-app.release.read = function () {
-  // Read the previous Release Code
-  app.release.comparison.ajax.readRlsCodePrevious();
-
-  // Load first the privileges then the release
-  app.release.ajax.isModerator();
-};
 
 /**
  * 
@@ -209,50 +240,27 @@ app.release.checkStatusWorkInProgress = function (data) {
 };
 
 app.release.checkStatusAwaitingResponse = function (data) {
-  var now = Date.now();
-  var dateFrom = (data.RlsLiveDatetimeFrom == null) ? null : Date.parse(data.RlsLiveDatetimeFrom);
-  var dateTo = (data.RlsLiveDatetimeTo == null) ? null : Date.parse(data.RlsLiveDatetimeTo);
   if (
-    data.RlsRevision != 0 &&
-    !dateFrom && !dateTo &&
     data.RqsCode &&
     !data.RspCode) {
     return true;
   }
-  else if (
-    //pending live
-    data.RlsRevision == 0 &&
-    dateFrom &&
-    !dateTo &&
-    data.RqsCode &&
-    !data.RspCode
-  ) {
-    return true
+
+  else {
+    return false;
   }
-  return false;
+
 };
 
 app.release.checkStatusAwaitingSignOff = function (data) {
-  var now = Date.now();
-  var dateFrom = (data.RlsLiveDatetimeFrom == null) ? null : Date.parse(data.RlsLiveDatetimeFrom);
-  var dateTo = (data.RlsLiveDatetimeTo == null) ? null : Date.parse(data.RlsLiveDatetimeTo);
   if (
-    data.RlsRevision != 0 &&
-    (!dateFrom && !dateTo) && data.RqsCode && data.RspCode && !data.SgnCode) {
+    data.RqsCode && data.RspCode && !data.SgnCode) {
     return true;
   }
-  else if (
-    //pending live
-    data.RlsRevision == 0 &&
-    dateFrom &&
-    !dateTo &&
-    data.RqsCode &&
-    data.RspCode &&
-    !data.SgnCode
-  ) {
-    return true
+  else {
+    return false;
   }
-  return false;
+
 };
 
 /**

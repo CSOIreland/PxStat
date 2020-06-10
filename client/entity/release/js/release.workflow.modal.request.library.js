@@ -11,6 +11,9 @@ app.release.workflow.modal.request.modal = {};
 app.release.workflow.modal.request.validation = {};
 app.release.workflow.modal.request.ajax = {};
 app.release.workflow.modal.request.callback = {};
+
+app.release.workflow.modal.request.fastrackResponse = false;
+app.release.workflow.modal.request.fastrackSignoff = false;
 //#endregion
 
 //#region Request
@@ -54,30 +57,137 @@ app.release.workflow.modal.request.create = function () {
 
         case C_APP_TS_REQUEST_PUBLISH:
             app.release.workflow.modal.request.setFlag();
+            if (app.release.workflow.modal.request.fastrackResponse) {
+                $("#request-workflow-modal-request-publish [name=auto-response-warning]").show();
+            }
+
+            if (app.release.workflow.modal.request.fastrackResponse && app.release.workflow.modal.request.fastrackSignoff) {
+                $("#request-workflow-modal-request-publish [name=auto-signoff-warning]").show();
+            }
+
+            //check navigation if auto signoff
+            if ((!app.release.SbjCode || !app.release.PrcCode) && app.release.workflow.modal.request.fastrackResponse && app.release.workflow.modal.request.fastrackSignoff) {
+                $("#request-workflow-modal-request-publish [name=navigation-warning]").show();
+                $("#request-workflow-modal-request-publish [type=submit]").prop('disabled', true);
+            }
 
             $("#request-workflow-modal-request-publish [name=rqs-value]").html(RqsValue);
             $("#request-workflow-modal-request-publish").modal("show").on('shown.bs.modal', function (e) {
                 app.release.workflow.modal.request.checkDatetime();
+            }).on('hide.bs.modal', function (e) { //clean up
+                $("#request-workflow-modal-request-publish [name=auto-signoff-warning]").hide();
+                $("#request-workflow-modal-request-publish [name=auto-response-warning]").hide();
+                $("#request-workflow-modal-request-publish [name=navigation-warning]").hide();
+                $("#request-workflow-modal-request-publish [type=submit]").prop('disabled', false);
 
             });
             break;
         case C_APP_TS_REQUEST_PROPERTY:
             app.release.workflow.modal.request.setFlag();
 
+            if (app.release.workflow.modal.request.fastrackResponse) {
+                $("#request-workflow-modal-request-flag [name=auto-response-warning]").show();
+            }
+
+            if (app.release.workflow.modal.request.fastrackResponse && app.release.workflow.modal.request.fastrackSignoff) {
+                $("#request-workflow-modal-request-flag [name=auto-signoff-warning]").show();
+            }
+
             $("#request-workflow-modal-request-flag [name=rqs-value]").html(RqsValue);
-            $("#request-workflow-modal-request-flag").modal("show");
+            $("#request-workflow-modal-request-flag").modal("show").on('hide.bs.modal', function (e) { //hide warnings
+                $("#request-workflow-modal-request-flag [name=auto-signoff-warning]").hide();
+                $("#request-workflow-modal-request-flag [name=auto-response-warning]").hide();
+            });
             break;
         case C_APP_TS_REQUEST_DELETE:
             $("#request-workflow-modal-request-delete [name=rqs-value]").html(RqsValue);
-            $("#request-workflow-modal-request-delete").modal("show");
+
+            if (app.release.workflow.modal.request.fastrackResponse) {
+                $("#request-workflow-modal-request-delete [name=auto-response-warning]").show();
+            }
+
+            if (app.release.workflow.modal.request.fastrackResponse && app.release.workflow.modal.request.fastrackSignoff) {
+                $("#request-workflow-modal-request-delete [name=auto-signoff-warning]").show();
+            }
+
+            $("#request-workflow-modal-request-delete").modal("show").on('hide.bs.modal', function (e) { //hide warnings
+                $("#request-workflow-modal-request-delete [name=auto-signoff-warning]").hide();
+                $("#request-workflow-modal-request-delete [name=auto-response-warning]").hide();
+            });
             break;
         case C_APP_TS_REQUEST_ROLLBACK:
             $("#request-workflow-modal-request-rollback [name=rqs-value]").html(RqsValue);
-            $("#request-workflow-modal-request-rollback").modal("show");
+
+            if (app.release.workflow.modal.request.fastrackResponse) {
+                $("#request-workflow-modal-request-rollback [name=auto-response-warning]").show();
+            }
+
+            if (app.release.workflow.modal.request.fastrackResponse && app.release.workflow.modal.request.fastrackSignoff) {
+                $("#request-workflow-modal-request-rollback [name=auto-signoff-warning]").show();
+            }
+
+            $("#request-workflow-modal-request-rollback").modal("show").on('hide.bs.modal', function (e) { //hide warnings
+                $("#request-workflow-modal-request-rollback [name=auto-signoff-warning]").hide();
+                $("#request-workflow-modal-request-rollback [name=auto-response-warning]").hide();
+            });
             break;
     }
 
     app.release.workflow.modal.request.validation.create(RqsCode);
+};
+
+app.release.workflow.modal.request.ajax.ReadCurrentAccess = function () {
+    //Check the privilege of the user 
+    api.ajax.jsonrpc.request(
+        app.config.url.api.private,
+        "PxStat.Security.Account_API.ReadCurrentAccess",
+        { CcnUsername: null },
+        "app.release.workflow.modal.request.callback.ReadCurrentAccess",
+        null,
+        null,
+        null,
+        { async: false }
+    );
+};
+
+app.release.workflow.modal.request.callback.ReadCurrentAccess = function (data) {
+    //set to safest workflow
+    app.release.workflow.modal.request.fastrackResponse = false;
+    app.release.workflow.modal.request.fastrackSignoff = false;
+    switch (data[0].PrvCode) {
+        case C_APP_PRIVILEGE_MODERATOR:
+            //if moderator initiates request and has approval rights, then allow auto response
+            if (app.release.isApprover && app.config.workflow.fastrack.response.approver) {
+                app.release.workflow.modal.request.fastrackResponse = true;
+            }
+            break;
+        case C_APP_PRIVILEGE_POWER_USER:
+
+            if (app.config.workflow.fastrack.response.poweruser) {
+                app.release.workflow.modal.request.fastrackResponse = true;
+            }
+
+            if (app.config.workflow.fastrack.signoff.poweruser) {
+                app.release.workflow.modal.request.fastrackSignoff = true;
+            }
+
+            break;
+        case C_APP_PRIVILEGE_ADMINISTRATOR:
+
+            if (app.config.workflow.fastrack.response.administrator) {
+                app.release.workflow.modal.request.fastrackResponse = true;
+            }
+
+            if (app.config.workflow.fastrack.signoff.administrator) {
+                app.release.workflow.modal.request.fastrackSignoff = true;
+            }
+            break;
+        default:
+            app.release.workflow.modal.request.fastrackResponse = false;
+            app.release.workflow.modal.request.fastrackSignoff = false;
+            break;
+    }
+    app.release.workflow.modal.request.create();
 };
 
 /**
@@ -253,7 +363,7 @@ app.release.workflow.modal.request.callback.create = function (data) {
  * @param {*} date
  */
 app.release.workflow.modal.request.setDefaultPublishTime = function (date) {
-    var time = app.config.embargo.time.split(":");
+    var time = app.config.workflow.embargo.time.split(":");
     var defaultDate = new Date(date);
     defaultDate.setHours(parseInt(time[0]), parseInt(time[1]), parseInt(time[2]));
     return defaultDate;
@@ -271,7 +381,7 @@ app.release.workflow.modal.request.checkDatetime = function () {
             date.setDate(date.getDate() + 1);
 
             // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
-            while ($.inArray(date.getDay(), app.config.embargo.day) == -1) {
+            while ($.inArray(date.getDay(), app.config.workflow.embargo.day) == -1) {
                 // Move the date forward till finding a suitable day
                 date.setDate(date.getDate() + 1);
             }
@@ -293,7 +403,7 @@ app.release.workflow.modal.request.checkDatetime = function () {
                 return false;
             } else {
                 // Filter by Embargo Days
-                return $.inArray(date.toDate().getDay(), app.config.embargo.day) == -1;
+                return $.inArray(date.toDate().getDay(), app.config.workflow.embargo.day) == -1;
             }
         }
     }).val(moment(date).format(app.config.mask.datetime.display)).once("change", function () {

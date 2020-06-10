@@ -75,6 +75,12 @@ BEGIN
 
 	SET @updateCount = @@ROWCOUNT
 
+	-- If RLS_LIVE_DATETIME_FROM has been set to null, then this cannot be live
+	UPDATE TD_RELEASE
+	SET RLS_LIVE_FLAG = 0
+	WHERE RLS_CODE = @RlsCode
+		AND RLS_LIVE_DATETIME_FROM IS NULL
+
 	IF @updateCount > 0
 	BEGIN
 		-- Auditing:

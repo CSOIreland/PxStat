@@ -22,22 +22,35 @@ app.build.update.data.report.drawReport = function (data, frmType) {
         }
     });
 
+    var datatableHeadings = [];
+
+    if (updatedRecords.length) {
+        $.each(updatedRecords[0], function (key, value) {
+            datatableHeadings.push(key);
+        });
+    }
+    else {
+        $.each(ignoredRecords[0], function (key, value) {
+            datatableHeadings.push(key);
+        });
+    }
+
     //build dynamic table header and columns array for datatable
     $("#build-update-modal-view-report [name=ignored-records] [name=header-row]").empty();
     var columnsIgnoredRecords = [];
-    $.each(updatedRecords[0], function (key, value) {
-        if (key != "updated") {
+
+    $.each(datatableHeadings, function (key, value) {
+        if (value != "updated") {
             var tableHeading = $("<th>", {
-                "html": key
+                "html": value
             });
             $("#build-update-modal-view-report [name=ignored-records] [name=header-row]").append(tableHeading);
             columnsIgnoredRecords.push(
-                { data: key }
+                { data: value }
             );
         }
 
     });
-
     var localOptions = {
         data: ignoredRecords,
         columns: columnsIgnoredRecords,
@@ -67,14 +80,14 @@ app.build.update.data.report.drawReport = function (data, frmType) {
     //build dynamic table header and columns array for datatable
     $("#build-update-modal-view-report [name=updated-records] [name=header-row]").empty();
     var columnsUpdatedRecords = [];
-    $.each(updatedRecords[0], function (key, value) {
-        if (key != "updated") {
+    $.each(datatableHeadings, function (key, value) {
+        if (value != "updated") {
             var tableHeading = $("<th>", {
-                "html": key
+                "html": value
             });
             $("#build-update-modal-view-report [name=updated-records] [name=header-row]").append(tableHeading);
             columnsUpdatedRecords.push(
-                { data: key }
+                { data: value }
             );
         }
 

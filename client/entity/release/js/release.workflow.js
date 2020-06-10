@@ -4,7 +4,7 @@ Custom JS application specific
 $(document).ready(function () {
 
     // Bind Awaiting Request
-    $("#release-workflow-request").find("[name=button-add]").once("click", app.release.workflow.modal.request.create);
+    $("#release-workflow-request").find("[name=button-add]").once("click", app.release.workflow.modal.request.ajax.ReadCurrentAccess);
     $("#release-workflow-request").find("[name=rqs-code]").once("change", function () {
         if ($(this).val()) {
             $("#release-workflow-request [name=button-add]").prop("disabled", false);
@@ -14,7 +14,7 @@ $(document).ready(function () {
     }).trigger("change");
 
     // Bind Add Response
-    $("#release-workflow-response").find("[name=button-add]").once("click", app.release.workflow.modal.response.create);
+    $("#release-workflow-response").find("[name=button-add]").once("click", app.release.workflow.modal.response.ajax.ReadCurrentAccess);
 
     // Bind Add Signoff
     $("#release-workflow-signoff").find("[name=button-add]").once("click", app.release.workflow.modal.signoff.create);

@@ -8,7 +8,7 @@ $(document).ready(function () {
 
     $("#build-create-initiate-setup").find("[name=button-matrix-lookup]").on("click", app.build.create.initiate.ajax.matrixLookup);
 
-    if (app.config.entity.build.officialStatistics) {
+    if (app.config.dataset.officialStatistics) {
         $("#build-create-initiate-setup [name=official-flag]").prop('checked', true);
     }
     else {

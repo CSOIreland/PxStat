@@ -2114,8 +2114,8 @@ app.build.create.dimension.buildDataObject = function () {
 
         var numCells = numClassificationVariables * dimension.Statistic.length * dimension.Frequency.Period.length;
 
-        if (numCells > app.config.entity.build.threshold) {
-            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold)]));
+        if (numCells > app.config.dataset.threshold) {
+            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.dataset.threshold)]));
         }
 
     }
