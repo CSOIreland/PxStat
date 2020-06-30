@@ -1,6 +1,5 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Watches](https://img.shields.io/github/watchers/goncaloperes/Project-CodeIgniter-CMS.svg?style=social&label=Watch&maxAge=2592000)](https://github.com/goncaloperes/Project-CodeIgniter-CMS/watchers)
 
 # PxStat
 PxStat is a **Data Dissemination Management System** especially designed for National Statistical Institutes and Statistical Organisations, developed by the [CSO](https://www.cso.ie) (Central Statistics Office, Ireland) with the support of the **PC-Axis** Reference Group and the collaboration of the **Open Source** community.
