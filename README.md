@@ -13,13 +13,14 @@ PxStat also empowers the **Data-Owners** to manage the publication of their data
 
 ## [Wiki](https://github.com/CSOIreland/PxStat/wiki)
 The Wiki centrally hosts all the technicall and business information about the system:
-* [Requirements](https://github.com/CSOIreland/PxStat/wiki/Requirements)
-* [Installation](https://github.com/CSOIreland/PxStat/wiki/Installation)
-* [Update](https://github.com/CSOIreland/PxStat/wiki/Update)
-* [Configuration](https://github.com/CSOIreland/PxStat/wiki/Configuration)
-* [API](https://github.com/CSOIreland/PxStat/wiki/API)
-* [Developer](https://github.com/CSOIreland/PxStat/wiki/Developer)
-* [End User Guide](https://github.com/CSOIreland/PxStat/wiki/End-User-Guide)
+* [Requirements](Requirements)
+* [Installation](Installation)
+* [Update](Update)
+* [Configuration](Configuration)
+* [API](API)
+* [Developer](Developer)
+* [Data Formats](Data-Formats)
+* [End User Guide](End-User-Guide)
 
 ## [Questions](https://github.com/CSOIreland/PxStat/issues/new/choose)
 Please raise a new [Issue](https://github.com/CSOIreland/PxStat/issues/new/choose) in GitHub if you want to file a **Bug**, suggest an **Enhancement**, report a **Security Vulnerability** or submit a **General Query**.
