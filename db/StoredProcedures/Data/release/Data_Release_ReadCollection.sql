@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 02/01/2020
 -- Description:	Reads current releases, referencing metadata
--- exec Data_Release_ReadCollection 'en'
+-- exec Data_Release_ReadCollection 'en','en',null,'C2016P3'
 -- =============================================
 CREATE
 	OR
@@ -16,12 +16,14 @@ CREATE
 ALTER PROCEDURE Data_Release_ReadCollection @LngIsoCodeDefault CHAR(2)
 	,@LngIsoCodeRead CHAR(2) = NULL
 	,@DateFrom DATE = NULL
+	,@PrcCode NVARCHAR(32)=NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @LngIdDefault INT
 	DECLARE @LngIdRead INT
+	DECLARE @PrcID INT
 
 	SET @LngIdDefault = (
 			SELECT LNG_ID
@@ -47,6 +49,11 @@ BEGIN
 	IF @LngIsoCodeDefault = @LngIsoCodeRead
 	BEGIN
 		SET @LngIdRead = 0
+	END
+
+	IF @PrcCode IS NOT NULL
+	BEGIN
+		SET @PrcID=(SELECT PRC_ID FROM TD_PRODUCT WHERE PRC_CODE=@PrcCode AND PRC_DELETE_FLAG=0)
 	END
 
 	SELECT RLS_CODE AS RlsCode
@@ -113,6 +120,7 @@ BEGIN
 			AND MTR_DELETE_FLAG = 0
 		) lngMtr
 		ON lngMtr.MTR_CODE = mtr.MTR_CODE
+	WHERE (@PrcID IS  NULL OR @PrcID=RLS_PRC_ID)
 END
 GO
 

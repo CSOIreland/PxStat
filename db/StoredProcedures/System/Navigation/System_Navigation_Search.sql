@@ -15,7 +15,7 @@ CREATE
 	OR
 
 ALTER PROCEDURE System_Navigation_Search @LngIsoCode CHAR(2)
-	,@Search KeyValueVarchar Readonly
+	,@Search KeyValueVarcharAttribute Readonly
 	,@SearchTermCount INT
 	,@MtrCode NVARCHAR(20) = NULL
 	,@MtrOfficialFlag BIT = NULL
@@ -59,14 +59,14 @@ BEGIN
 		SET @EntitySearchNotNull = 1
 	END
 
-	--Check if we are to have an empty search, i.e. return everything
+	--Check if we are to have an empty search, i.e. return nothing
 	DECLARE @EmptySearch BIT
 
-	--If no valid search terms have been passed then we assume we want to return everything
+	--If no valid search terms have been passed then we will return nothing
 	IF @EntitySearchNotNull = 0
 		AND @SearchTermCount = 0
 	BEGIN
-		SET @EmptySearch = 1
+		RETURN
 	END
 
 	SET @LngID = (
@@ -112,6 +112,118 @@ BEGIN
 	SELECT DISTINCT [value]
 	FROM @Search
 
+	--Now we must get a list of matrixes that correspond to the 
+	-- keyword search terms as a temp table
+	-- This creates the temp table for Release Keywords
+	SELECT q2.RlsId AS RlsId
+		,sum(q2.rcount) * @MULTIPLIER_PRIORITY_1  AS score
+	INTO #kwRelease
+	FROM (
+		SELECT q.RlsId
+			,[value]
+			,KRL_SINGULARISED_FLAG
+			,sum(q.[Priority]) AS rcount
+		FROM (
+			SELECT [key]
+				,[value]
+				,krl.KRL_RLS_ID AS RlsId
+				,KRL_SINGULARISED_FLAG
+				,Attribute as [Priority]
+			FROM TD_KEYWORD_RELEASE krl
+			INNER JOIN @Search
+				ON [key] = krl.KRL_VALUE
+			INNER JOIN td_release
+				ON RLS_ID = KRL_RLS_ID
+			INNER JOIN VW_RELEASE_LIVE_NOW
+				ON KRL_RLS_ID = VRN_RLS_ID
+			) q
+		GROUP BY RlsId
+			,[value]
+			,KRL_SINGULARISED_FLAG
+		) q2
+	GROUP BY RlsId
+		,KRL_SINGULARISED_FLAG
+	HAVING count(*) = @SearchTermCount
+		OR KRL_SINGULARISED_FLAG = 0
+
+	-- This creates the temp table for Product Keywords
+	SELECT q2.RlsId AS RlsId
+		,KPR_SINGULARISED_FLAG
+		,sum(rcount) * @MULTIPLIER_PRIORITY_2 AS score
+	INTO #kwProduct
+	FROM (
+		SELECT q.RlsId
+			,[value]
+			,KPR_SINGULARISED_FLAG
+			,sum([Priority]) AS rcount
+		FROM (
+			SELECT [key]
+				,[value]
+				,RLS_ID AS RlsId
+				,KPR_SINGULARISED_FLAG
+				,Attribute as [Priority]
+			FROM TD_KEYWORD_PRODUCT kpr
+			INNER JOIN @Search
+				ON [key] = kpr.KPR_VALUE
+			INNER JOIN #Product
+				ON kpr.KPR_PRC_ID = PRC_ID
+			INNER JOIN td_release
+				ON RLS_PRC_ID = PRC_ID
+			INNER JOIN VW_RELEASE_LIVE_NOW
+				ON RLS_ID = VRN_RLS_ID
+			) q
+		GROUP BY RlsId
+			,[value]
+			,KPR_SINGULARISED_FLAG
+		) q2
+	GROUP BY RlsId
+		,KPR_SINGULARISED_FLAG
+	HAVING count(*) = @SearchTermCount
+		OR KPR_SINGULARISED_FLAG = 0
+
+	-- This creates the temp table for Subject Keywords
+	SELECT q2.RlsId AS RlsId
+		,sum(rcount) * @MULTIPLIER_PRIORITY_3 AS score
+		,KSB_SINGULARISED_FLAG
+	INTO #kwSubject
+	FROM (
+		SELECT q.RlsId
+			,[value]
+			,KSB_SINGULARISED_FLAG
+			,sum([Priority]) AS rcount
+		FROM (
+			SELECT [key]
+				,[value]
+				,RLS_ID AS RlsId
+				,KSB_SINGULARISED_FLAG
+				,Attribute as [Priority]
+			FROM TD_KEYWORD_SUBJECT ksb
+			INNER JOIN @Search
+				ON [key] = ksb.KSB_VALUE
+			INNER JOIN TD_SUBJECT
+				ON SBJ_ID = ksb.KSB_SBJ_ID
+			INNER JOIN TD_PRODUCT
+				ON PRC_SBJ_ID = SBJ_ID
+			INNER JOIN td_release
+				ON PRC_ID = RLS_PRC_ID
+			INNER JOIN VW_RELEASE_LIVE_NOW
+				ON RLS_ID = VRN_RLS_ID
+			) q
+		GROUP BY RlsId
+			,[value]
+			,KSB_SINGULARISED_FLAG
+		) q2
+	GROUP BY RlsId
+		,KSB_SINGULARISED_FLAG
+	HAVING count(*) = 1
+		OR KSB_SINGULARISED_FLAG = 0
+
+	--This is the Keyword search
+	-- The results are placed into the temporary table #KeywordsSearch
+	INSERT INTO @synSearch
+	SELECT DISTINCT [value]
+	FROM @Search
+
 	--This is the Keyword search
 	-- The results are placed into the temporary table #KeywordsSearch
 	SELECT RlsCode
@@ -131,19 +243,19 @@ BEGIN
 		,CprCode
 		,CprValue
 		,ClsCode
-		,ClsId 
+		,ClsId
 		,ClsValue
 		,ClsGeoFlag
 		,ClsGeoUrl
 		,FrqCode
 		,FrqValue
 		,PrdValue
-		,sum(searchQuery.score) AS Score
+		,sum(score) AS Score
 		,MtrLngID
 	INTO #KeywordsSearch
 	FROM (
 		-- First we search the Keyword Release table
-		SELECT RlsCode
+		SELECT DISTINCT RLS_CODE RlsCode
 			,score
 			,MTR_CODE AS MtrCode
 			,MTR_TITLE AS MtrTitle
@@ -152,12 +264,12 @@ BEGIN
 			,SBJ_VALUE AS SbjValue
 			,PRC_CODE AS PrcCode
 			,PRC_VALUE AS PrcValue
-			,RlsLiveDatetimeFrom
-			,RlsExceptionalFlag
-			,RlsReservationFlag
-			,RlsArchiveFlag
-			,RlsAnalyticalFlag
-			,RlsDependencyFlag
+			,RLS_LIVE_DATETIME_FROM RlsLiveDatetimeFrom
+			,RLS_EXCEPTIONAL_FLAG RlsExceptionalFlag
+			,RLS_RESERVATION_FLAG RlsReservationFlag
+			,RLS_ARCHIVE_FLAG RlsArchiveFlag
+			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -169,52 +281,14 @@ BEGIN
 			,FRQ_VALUE AS FrqValue
 			,PRD_VALUE AS PrdValue
 			,MTR_LNG_ID AS MtrLngID
-		FROM (
-			SELECT rls.RLS_CODE AS RlsCode
-				,rls.RLS_ID AS RlsID
-				,rls.RLS_PRC_ID AS PrcID
-				,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
-				,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
-				,RLS_RESERVATION_FLAG AS RlsReservationFlag
-				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
-				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
-				,RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
-				,count(*) * @MULTIPLIER_PRIORITY_1 AS score
-			FROM TD_KEYWORD_RELEASE krl
-			INNER JOIN @synSearch st
-				ON krl.KRL_VALUE = st.[value]
-					OR krl.KRL_VALUE IN (
-						SELECT [key]
-						FROM @Search
-						WHERE [Value] = st.[Value]
-						)
-			INNER JOIN TD_RELEASE rls
-				ON krl.KRL_RLS_ID = rls.RLS_ID
-					AND rls.RLS_DELETE_FLAG = 0
-			WHERE RLS_ID IN (
-					SELECT DISTINCT VRN_RLS_ID
-					FROM VW_RELEASE_LIVE_NOW
-					)
-			GROUP BY rls.RLS_CODE
-				,rls.RLS_ID
-				,rls.RLS_PRC_ID
-				,rls.RLS_LIVE_DATETIME_FROM
-				,rls.RLS_EXCEPTIONAL_FLAG
-				,rls.RLS_RESERVATION_FLAG
-				,rls.RLS_ARCHIVE_FLAG
-				,rls.RLS_ANALYTICAL_FLAG
-				,rls.RLS_DEPENDENCY_FLAG
-				,krl.KRL_SINGULARISED_FLAG
-			HAVING (
-					count(*) = @SearchTermCount
-					OR krl.KRL_SINGULARISED_FLAG = 0
-					)
-			) releaseQuery
+		FROM #kwRelease
+		INNER JOIN TD_Release
+			ON #kwRelease.RlsId = RLS_ID
 		INNER JOIN TD_MATRIX
 			ON MTR_RLS_ID = RlsID
 				AND MTR_DELETE_FLAG = 0
 		LEFT JOIN #Product
-			ON PrcID = PRC_ID
+			ON #Product.PRC_ID = RLS_PRC_ID
 		LEFT JOIN #Subject
 			ON #Product.PRC_SBJ_ID = SBJ_ID
 		INNER JOIN TS_COPYRIGHT
@@ -230,7 +304,7 @@ BEGIN
 		UNION
 		
 		--We union to the Keyword Product table
-		SELECT RlsCode
+		SELECT RLS_CODE RlsCode
 			,score
 			,MTR_CODE AS MtrCode
 			,MTR_TITLE AS MtrTitle
@@ -239,16 +313,16 @@ BEGIN
 			,SBJ_VALUE AS SbjValue
 			,PRC_CODE AS PrcCode
 			,PRC_VALUE AS PrcValue
-			,RlsLiveDatetimeFrom
-			,RlsExceptionalFlag
-			,RlsReservationFlag
-			,RlsArchiveFlag
-			,RlsAnalyticalFlag
-			,RlsDependencyFlag
+			,RLS_LIVE_DATETIME_FROM RlsLiveDatetimeFrom
+			,RLS_EXCEPTIONAL_FLAG RlsExceptionalFlag
+			,RLS_RESERVATION_FLAG RlsReservationFlag
+			,RLS_ARCHIVE_FLAG RlsArchiveFlag
+			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
-			,CLS_ID As ClsId
+			,CLS_ID AS ClsId
 			,CLS_VALUE AS ClsValue
 			,CLS_GEO_FLAG AS ClsGeoFlag
 			,CLS_GEO_URL AS ClsGeoUrl
@@ -256,57 +330,14 @@ BEGIN
 			,FRQ_VALUE AS FrqValue
 			,PRD_VALUE AS PrdValue
 			,MTR_LNG_ID AS MtrLngID
-		FROM (
-			SELECT rls.RLS_CODE AS RlsCode
-				,rls.RLS_ID AS RlsID
-				,rls.RLS_PRC_ID AS PrcID
-				,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
-				,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
-				,RLS_RESERVATION_FLAG AS RlsReservationFlag
-				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
-				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
-				,RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
-				,KPR_SINGULARISED_FLAG AS KprSingularisedFlag
-				,count(*) * @MULTIPLIER_PRIORITY_2 AS score
-			FROM TD_KEYWORD_PRODUCT kpr
-			INNER JOIN @synSearch st
-				ON kpr.KPR_VALUE = st.[value]
-					OR KPR_VALUE IN (
-						SELECT [key]
-						FROM @Search
-						WHERE [Value] = st.[Value]
-						)
-			INNER JOIN TD_PRODUCT prc
-				ON kpr.KPR_PRC_ID = prc.PRC_ID
-					AND prc.PRC_DELETE_FLAG = 0
-			INNER JOIN TD_RELEASE rls
-				ON prc.PRC_ID = rls.RLS_PRC_ID
-					AND prc.PRC_DELETE_FLAG = 0
-					AND rls.RLS_DELETE_FLAG = 0
-			WHERE RLS_ID IN (
-					SELECT DISTINCT VRN_RLS_ID
-					FROM VW_RELEASE_LIVE_NOW
-					)
-			GROUP BY rls.RLS_CODE
-				,rls.RLS_ID
-				,rls.RLS_PRC_ID
-				,rls.RLS_LIVE_DATETIME_FROM
-				,rls.RLS_EXCEPTIONAL_FLAG
-				,rls.RLS_RESERVATION_FLAG
-				,rls.RLS_ARCHIVE_FLAG
-				,rls.RLS_ANALYTICAL_FLAG
-				,rls.RLS_DEPENDENCY_FLAG
-				,KPR_SINGULARISED_FLAG
-			HAVING (
-					count(*) = @SearchTermCount
-					OR KPR_SINGULARISED_FLAG = 0
-					)
-			) productQuery
+		FROM #kwProduct
+		INNER JOIN TD_RELEASE
+			ON RlsId = RLS_ID
 		INNER JOIN TD_MATRIX
 			ON MTR_RLS_ID = RlsID
 				AND MTR_DELETE_FLAG = 0
 		LEFT JOIN #Product
-			ON PrcID = PRC_ID
+			ON #Product.PRC_ID = RLS_PRC_ID
 		LEFT JOIN #Subject
 			ON #Product.PRC_SBJ_ID = SBJ_ID
 		INNER JOIN TS_COPYRIGHT
@@ -322,7 +353,7 @@ BEGIN
 		UNION
 		
 		--Finally we union to the Keyword Subject table
-		SELECT RlsCode
+		SELECT RLS_CODE RlsCode
 			,score
 			,MTR_CODE AS MtrCode
 			,MTR_TITLE AS MtrTitle
@@ -331,12 +362,12 @@ BEGIN
 			,SBJ_VALUE AS SbjValue
 			,PRC_CODE AS PrcCode
 			,PRC_VALUE AS PrcValue
-			,RlsLiveDatetimeFrom
-			,RlsExceptionalFlag
-			,RlsReservationFlag
-			,RlsArchiveFlag
-			,RlsAnalyticalFlag
-			,RlsDependencyFlag
+			,RLS_LIVE_DATETIME_FROM RlsLiveDatetimeFrom
+			,RLS_EXCEPTIONAL_FLAG RlsExceptionalFlag
+			,RLS_RESERVATION_FLAG RlsReservationFlag
+			,RLS_ARCHIVE_FLAG RlsArchiveFlag
+			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -348,59 +379,14 @@ BEGIN
 			,FRQ_VALUE AS FrqValue
 			,PRD_VALUE AS PrdValue
 			,MTR_LNG_ID AS MtrLngID
-		FROM (
-			SELECT rls.RLS_CODE AS RlsCode
-				,rls.RLS_ID AS RlsID
-				,rls.RLS_PRC_ID AS PrcID
-				,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
-				,RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
-				,RLS_RESERVATION_FLAG AS RlsReservationFlag
-				,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
-				,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
-				,RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
-				,KSB_SINGULARISED_FLAG AS KsbSingularisedFlag
-				,count(*) * @MULTIPLIER_PRIORITY_3 AS score
-			FROM TD_KEYWORD_SUBJECT ksb
-			INNER JOIN @synSearch st
-				ON ksb.KSB_VALUE = st.[value]
-					OR KSB_VALUE IN (
-						SELECT [key]
-						FROM @Search
-						WHERE [Value] = st.[Value]
-						)
-			INNER JOIN TD_SUBJECT sbj
-				ON ksb.KSB_SBJ_ID = sbj.SBJ_ID
-					AND sbj.SBJ_DELETE_FLAG = 0
-			INNER JOIN TD_PRODUCT prc
-				ON sbj.SBJ_ID = prc.PRC_SBJ_ID
-					AND prc.PRC_DELETE_FLAG = 0
-			INNER JOIN TD_RELEASE rls
-				ON prc.PRC_ID = rls.RLS_PRC_ID
-					AND rls.RLS_DELETE_FLAG = 0
-			WHERE RLS_ID IN (
-					SELECT DISTINCT VRN_RLS_ID
-					FROM VW_RELEASE_LIVE_NOW
-					)
-			GROUP BY rls.RLS_CODE
-				,rls.RLS_ID
-				,rls.RLS_PRC_ID
-				,rls.RLS_LIVE_DATETIME_FROM
-				,rls.RLS_EXCEPTIONAL_FLAG
-				,rls.RLS_RESERVATION_FLAG
-				,rls.RLS_ARCHIVE_FLAG
-				,rls.RLS_ANALYTICAL_FLAG
-				,rls.RLS_DEPENDENCY_FLAG
-				,KSB_SINGULARISED_FLAG
-			HAVING (
-					count(*) = @SearchTermCount
-					OR KSB_SINGULARISED_FLAG = 0
-					)
-			) subjectQuery
+		FROM #kwSubject
+		INNER JOIN TD_RELEASE
+			ON RlsId = RLS_ID
 		INNER JOIN TD_MATRIX
 			ON MTR_RLS_ID = RlsID
 				AND MTR_DELETE_FLAG = 0
 		LEFT JOIN #Product
-			ON PrcID = PRC_ID
+			ON #Product.PRC_ID = RLS_PRC_ID
 		LEFT JOIN #Subject
 			ON #Product.PRC_SBJ_ID = SBJ_ID
 		INNER JOIN TS_COPYRIGHT
@@ -587,7 +573,7 @@ BEGIN
 				,CprCode
 				,CprValue
 				,ClsCode
-				,ClsId 
+				,ClsId
 				,ClsValue
 				,ClsGeoFlag
 				,ClsGeoUrl
@@ -614,7 +600,7 @@ BEGIN
 				,RlsAnalyticalFlag
 				,RlsDependencyFlag
 				,CprCode
-				,ClsId 
+				,ClsId
 				,CprValue
 				,ClsCode
 				,ClsValue

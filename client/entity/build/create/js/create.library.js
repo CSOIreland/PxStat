@@ -89,9 +89,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 return;
             };
 
-            if (file.size > app.config.upload.threshold.hard) {
+            if (file.size > app.config.transfer.threshold.hard) {
                 // Show Error
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.upload.threshold.hard]));
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.transfer.threshold.hard]));
                 // Disable Validate Button
                 $("#build-create-upload-si").find("[name=upload-submit-statistics]").prop("disabled", true);
                 return;
@@ -137,9 +137,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 return;
             };
 
-            if (file.size > app.config.upload.threshold.hard) {
+            if (file.size > app.config.transfer.threshold.hard) {
                 // Show Error
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.upload.threshold.hard]));
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.transfer.threshold.hard]));
                 // Disable Validate Button
                 $("#build-create-upload-classification").find("[name=upload-submit-classifications]").prop("disabled", true);
                 return;
@@ -186,9 +186,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 return;
             };
 
-            if (file.size > app.config.upload.threshold.hard) {
+            if (file.size > app.config.transfer.threshold.hard) {
                 // Show Error
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.upload.threshold.hard]));
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.transfer.threshold.hard]));
                 // Disable Validate Button
                 $("#build-create-upload-periods").find("[name=upload-submit-periods]").prop("disabled", true);
                 return;
@@ -236,9 +236,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                 return;
             };
 
-            if (file.size > app.config.upload.threshold.hard) {
+            if (file.size > app.config.transfer.threshold.hard) {
                 // Show Error
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.upload.threshold.hard]));
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.transfer.threshold.hard]));
                 // Disable Parse Button
                 $("#build-create-import").find("[name=parse-source-file]").prop("disabled", true);
                 return;

@@ -214,7 +214,14 @@ namespace PxStat.Data
         internal int CloneRelease(int releaseCode, string grpCode, string username)
         {
             Release_ADO releaseAdo = new Release_ADO(Ado);
+            //Clone the comment first
             return releaseAdo.Clone(releaseCode, grpCode, username);
+        }
+
+        internal int CloneComment(int releaseCode, int RlsIdNew, string username)
+        {
+            Release_ADO releaseAdo = new Release_ADO(Ado);
+            return releaseAdo.CloneComment(releaseCode, RlsIdNew, username);
         }
 
         /// <summary>

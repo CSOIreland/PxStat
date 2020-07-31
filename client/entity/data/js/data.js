@@ -15,11 +15,9 @@ $(document).ready(function () {
     api.content.load("#overlay", "entity/data/index.modal.html");
 
     api.content.load("#data-search-row-desktop", "entity/data/index.search.html");
-    api.content.load("#data-metadata-row", "entity/data/index.metadata.html");
+    //api.content.load("#data-search-result-row", "entity/data/index.search.result.html");
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
-    api.content.load("#data-dataview-row", "entity/data/index.dataview.html");
     api.content.load("#data-sharethis-row", "entity/data/index.sharethis.html");
-
     // Init DatePicker
     app.data.setDatePicker();
 
@@ -43,7 +41,7 @@ $(document).ready(function () {
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 
     //initiate all copy to clipboard 
-    new ClipboardJS("#data-accordion-api [name=copy-api-info], #data-accordion-api [name=copy-api-object], #data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object], #data-sharethis [name=copy-link-info]");
+    new ClipboardJS("#data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object], #data-sharethis [name=copy-link-info]");
     $("#data-accordion-collection-api").on('show.bs.collapse', function () {
         $("#data-accordion-collection-api").find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
     });
@@ -58,33 +56,17 @@ $(document).ready(function () {
         }, 1000);
     });
 
-    $("#data-accordion-api").on('show.bs.collapse', function () {
-        $("#data-accordion-api").find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
-    });
-
-    $("#data-accordion-api").on('hide.bs.collapse', function () {
-        $("#data-accordion-api").find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
-    });
-
-    $('#data-accordion-api').on('shown.bs.collapse', function () {
-        $('html, body').animate({
-            scrollTop: $("#data-accordion-api").offset().top
-        }, 1000);
-    });
-
-
-
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
     // Implement GoTo
     if (app.data.goTo.Search) {
-        app.data.metadata.ajax.readSearch(app.data.goTo.Search);
+        app.data.searchResult.ajax.readSearch(app.data.goTo.Search);
     } else if (app.data.goTo.PrcCode) {
         api.ajax.jsonrpc.request(
             app.config.url.api.public,
             "PxStat.System.Navigation.Navigation_API.Search",
             { PrcCode: app.data.goTo.PrcCode, "LngIsoCode": app.label.language.iso.code },
-            "app.data.metadata.callback.readResults",
+            "app.data.searchResult.callback.readResults",
             { PrcCode: app.data.goTo.PrcCode },
             null,
             null,
@@ -95,7 +77,7 @@ $(document).ready(function () {
             app.config.url.api.public,
             "PxStat.System.Navigation.Navigation_API.Search",
             { CprCode: app.data.goTo.CprCode, "LngIsoCode": app.label.language.iso.code },
-            "app.data.metadata.callback.readResults",
+            "app.data.searchResult.callback.readResults",
             { CprCode: app.data.goTo.CprCode },
             null,
             null,
@@ -106,7 +88,7 @@ $(document).ready(function () {
             app.config.url.api.public,
             "PxStat.System.Navigation.Navigation_API.Search",
             { MtrCode: app.data.goTo.MtrCode, "LngIsoCode": app.label.language.iso.code },
-            "app.data.metadata.callback.readResults",
+            "app.data.searchResult.callback.readResults",
             { MtrCode: app.data.goTo.MtrCode },
             null,
             null,

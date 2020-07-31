@@ -3,7 +3,6 @@ using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Entities.BuildData;
 using PxStat.Resources.PxParser;
-using PxStat.Security;
 using PxStat.Template;
 using System.Dynamic;
 
@@ -74,7 +73,6 @@ namespace PxStat.Build
             Build_BSO pBso = new Build_BSO();
 
             result.FrqValue = "";
-            //result.template = theMatrixData.GetCSVObject(false).ToString();
             result.template = pBso.GetCsvTemplate(theMatrixData, DTO.LngIsoCode, DTO.FrqCodeTimeval);
             result.MtrCode = theMatrixData.Code;
             Response.data = result;

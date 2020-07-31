@@ -2,6 +2,7 @@
 using DeviceDetectorNET;
 using DeviceDetectorNET.Cache;
 using PxStat.Resources;
+using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace PxStat.Security
     /// </summary>
     internal static class Analytic_BSO_Create
     {
+
+
         /// <summary>
         /// Creates the analytic entry if one is deemed to be necessary
         /// This method relies on DeviceDetector.NET. Details at https://github.com/totpero/DeviceDetector.NET
@@ -36,33 +39,31 @@ namespace PxStat.Security
             aDto.NltMaskedIp = getMaskedIp(request.ipAddress);
 
             //Get the matrix field from the calling DTO
-            if (MethodReader.DynamicHasProperty(requestDTO, "matrix")) aDto.matrix = requestDTO.matrix;
+            if (MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension")) aDto.matrix = requestDTO.jStatQueryExtension.extension.Matrix;
 
             // Get the Referer
             aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig("analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
 
             //The m2m parameter will not be translated into a DTO property so we just read it from the request parameters if it exists
-            if (request.parameters.m2m != null) aDto.NltM2m = request.parameters.m2m;
+            if (MethodReader.DynamicHasProperty(requestDTO, "m2m"))
+            {
+                aDto.NltM2m = requestDTO.m2m;
+            }
             else aDto.NltM2m = true;
 
             // Get the DateTime
             aDto.NltDate = DateTime.Now;
 
             //Get Format information
-            if (MethodReader.DynamicHasProperty(requestDTO, "Format"))
+            if (MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension"))
             {
-                if (MethodReader.DynamicHasProperty(requestDTO.Format, "FrmType") && MethodReader.DynamicHasProperty(requestDTO.Format, "FrmVersion"))
+                if (MethodReader.DynamicHasProperty(requestDTO.jStatQueryExtension.extension.Format, "Type") && MethodReader.DynamicHasProperty(requestDTO.jStatQueryExtension.extension.Format, "Version"))
                 {
-                    aDto.FrmType = requestDTO.Format.FrmType;
-                    aDto.FrmVersion = requestDTO.Format.FrmVersion;
+                    aDto.FrmType = requestDTO.jStatQueryExtension.extension.Format.Type;
+                    aDto.FrmVersion = requestDTO.jStatQueryExtension.extension.Format.Version;
                 }
             }
 
-            if (MethodReader.DynamicHasProperty(requestDTO, "FrmType") && MethodReader.DynamicHasProperty(requestDTO, "FrmType"))
-            {
-                aDto.FrmType = requestDTO.Format.FrmType;
-                aDto.FrmVersion = requestDTO.Format.FrmVersion;
-            }
 
             //Get the device detector and populate the dto attributes
             DeviceDetector deviceDetector = GetDeviceDetector(request.userAgent);
@@ -78,12 +79,15 @@ namespace PxStat.Security
                 aDto.NltOs = deviceDetector.GetOs().Match.Name;
 
 
-
+            var valids = new Analytic_VLD().Validate(aDto);
 
             //validate whatever has been returned
-            if (!(new Analytic_VLD()).Validate(aDto).IsValid)
+            if (!valids.IsValid)
             {
-                Log.Instance.Debug("Analytic method failed validation:" + request.method);
+                foreach (var fail in valids.Errors)
+                {
+                    Log.Instance.Debug("Analytic method failed validation:" + request.method + " :" + fail.ErrorMessage);
+                }
                 return;
             }
 
@@ -97,6 +101,66 @@ namespace PxStat.Security
             }
 
             return;
+        }
+
+        internal static void Create(HttpRequest hRequest, string method, string userAgent, string ipaddress, string matrixCode, bool m2m, Format_DTO_Read format)
+        {
+            ADO Ado = new ADO("defaultConnection");
+            try
+            {
+
+                Analytic_DTO aDto = new Analytic_DTO() { NltMaskedIp = ipaddress, matrix = matrixCode, NltM2m = m2m, NltDate = DateTime.Now, FrmType = format.FrmType, FrmVersion = format.FrmVersion };
+
+
+                // Get the Referer
+                aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig("analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
+
+
+                //Get the device detector and populate the dto attributes
+                DeviceDetector deviceDetector = GetDeviceDetector(hRequest.UserAgent);
+
+                aDto.NltBotFlag = deviceDetector.IsBot();
+
+                if (deviceDetector.GetBrowserClient().Match != null)
+                {
+                    aDto.NltBrowser = deviceDetector.GetBrowserClient().Match.Name;
+                }
+
+                if (deviceDetector.GetOs().Match != null)
+                    aDto.NltOs = deviceDetector.GetOs().Match.Name;
+
+
+                var valids = new Analytic_VLD().Validate(aDto);
+
+                //validate whatever has been returned
+                if (!valids.IsValid)
+                {
+                    foreach (var fail in valids.Errors)
+                    {
+                        Log.Instance.Debug("Analytic method failed validation:" + method + " :" + fail.ErrorMessage);
+                    }
+                    return;
+                }
+
+                //Create the analytic entry
+                Analytic_ADO ado = new Analytic_ADO(Ado);
+
+                if (ado.Create(aDto) == 0)
+                {
+                    Log.Instance.Debug("Failed to create Analytic:" + method);
+                    return;
+                }
+
+                return;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                Ado.Dispose();
+            }
         }
 
         /// <summary>
@@ -125,6 +189,7 @@ namespace PxStat.Security
             readIp.RemoveAt(readIp.Count - 1);
             return string.Join(".", readIp.ToArray());
         }
+
 
     }
 }

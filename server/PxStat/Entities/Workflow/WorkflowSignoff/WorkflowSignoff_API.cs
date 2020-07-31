@@ -14,11 +14,7 @@ namespace PxStat.Workflow
         /// <param name="requestApi"></param>
         /// <returns></returns>
         /// 
-        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + "/MtrCode,"
-            + Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + "/MtrCode,"
-            + Resources.Constants.C_CAS_NAVIGATION_SEARCH + ","
-            + Resources.Constants.C_CAS_NAVIGATION_READ + ","
-            + Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION)]
+
         public static dynamic Create(JSONRPC_API requestApi)
         {
             return new WorflowSignoff_BSO_Create(requestApi).Create().Response;

@@ -10,7 +10,7 @@ GO
 -- Description:	Reads record(s) from the TD_Product table along with Subject data
 -- The LngIso code will ensure that it will return SbjValue and PrcValue in the requested language if it exists
 -- If there are no values in the requested language, the sp will return the values in the default language
--- exec System_Navigation_Navigation_Read_dev 'ga','en'
+-- exec System_Navigation_Navigation_Read 'ga','en'
 -- =============================================
 CREATE
 	OR

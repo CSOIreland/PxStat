@@ -13,14 +13,7 @@ BEGIN
 	BEGIN
 		DROP PROCEDURE Data_Matrix_ReadDataByRelease
 	END
-	IF EXISTS (
-			SELECT *
-			FROM sys.objects
-			WHERE object_id = OBJECT_ID(N'System_Navigation_Search')
-			)
-	BEGIN
-		DROP PROCEDURE System_Navigation_Search
-	END
+
 
 	DROP TYPE [KeyValueVarchar]
 END

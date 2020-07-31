@@ -15,13 +15,20 @@ $(document).ready(function () {
     $("#data-search-row-desktop [name=search-input], #data-search-row-responsive [name=search-input]").once("keyup", function (e) {
         e.preventDefault();
         if (e.keyCode == 13) {
-            app.data.metadata.ajax.readSearch();
+            if ($(this).val().trim().length) {
+                app.data.searchResult.ajax.readSearch($(this).val().trim());
+            }
+
         }
     });
     //Click at Search button and get value of search-input
     $("#data-search-row-desktop [name=data-search-input-button], #data-search-row-responsive [name=data-search-input-button]").once("click", function (e) {
         e.preventDefault();
-        app.data.metadata.ajax.readSearch();
+        //both search boxes are always synced so can get serach value from desktop input
+        var search = $("#data-search-row-desktop [name=search-input]").val().trim();
+        if (search.length) {
+            app.data.searchResult.ajax.readSearch(search);
+        }
     });
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

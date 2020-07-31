@@ -1,4 +1,5 @@
 ﻿
+using API;
 using PxStat.Resources;
 using System.ComponentModel;
 
@@ -21,6 +22,8 @@ namespace PxStat.System.Settings
 
         public string FrmDirection { get; set; }
 
+        public string FrmMimetype { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -40,6 +43,30 @@ namespace PxStat.System.Settings
         }
 
         /// <summary>
+        /// Used to create a valid Format based on the PxApiV1 model
+        /// </summary>
+        /// <param name="pxApiValue"></param>
+        public Format_DTO_Read(string pxApiValue)
+        {
+            try
+            {
+                this.FrmType = Utility.GetCustomConfig("APP_FORMAT_PXAPI_TYPE_" + pxApiValue);
+                this.FrmVersion = Utility.GetCustomConfig("APP_FORMAT_PXAPI_VERSION_" + pxApiValue);
+            }
+            catch { }
+
+            string mtype = "";
+            using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+            {
+                mtype = fbso.GetMimetypeForFormat(this);
+            };
+            this.FrmMimetype = mtype;
+            if (this.FrmVersion == null) this.FrmVersion = pxApiValue;
+            if (this.FrmType == null) this.FrmType = pxApiValue;
+
+        }
+
+        /// <summary>
         /// Enums for format type etc
         /// </summary>
 
@@ -53,7 +80,9 @@ namespace PxStat.System.Settings
             [Description(Constants.C_SYSTEM_CSV_NAME)]
             CSV,
             [Description(Constants.C_SYSTEM_XLSX_NAME)]
-            XLSX
+            XLSX,
+            [Description(Constants.C_SYSTEM_SDMX_NAME)]
+            SDMX
 
         };
 

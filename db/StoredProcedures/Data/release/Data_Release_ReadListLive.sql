@@ -10,7 +10,7 @@ GO
 -- Description:	Lists all the live releases. The @LngIsoCodeDefault parameter is the default language for the system
 -- The optional parameter @LngIsoCodeRead is the preferred language for reading. If this is supplied it will return the matrix in the requested
 -- language if it exists. If the matrix doesn't exist in that language, then it returns the default language version of that matrix.
---EXEC Data_Release_ReadListLive 'en','ga','2019-12-01'
+--EXEC Data_Release_ReadListLive 'en','ga','2019-12-01','C2016P3'
 -- =============================================
 CREATE
 	OR
@@ -18,12 +18,14 @@ CREATE
 ALTER PROCEDURE Data_Release_ReadListLive @LngIsoCodeDefault CHAR(2)
 	,@LngIsoCodeRead CHAR(2) = NULL
 	,@DateFrom DATE = NULL
+	,@PrcCode NVARCHAR(32) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @LngIdDefault INT
 	DECLARE @LngIdRead INT
+	DECLARE @PrcId INT
 
 	SET @LngIdDefault = (
 			SELECT LNG_ID
@@ -51,6 +53,23 @@ BEGIN
 		SET @LngIdRead = 0
 	END
 
+	IF @PrcCode IS NOT NULL
+	BEGIN
+		SET @PrcId = (
+				SELECT PRC_ID
+				FROM TD_PRODUCT
+				WHERE PRC_CODE = @PrcCode
+					AND PRC_DELETE_FLAG = 0
+				)
+	END
+
+	--If an unknown product code is sent in:
+	IF @PrcCode IS NOT NULL
+		AND @PrcId IS NULL
+	BEGIN
+		RETURN
+	END
+
 	SELECT RLS_CODE AS RlsCode
 		,mtr.MTR_CODE AS MtrCode
 		,coalesce(lngMTR.LNG_ISO_CODE, TS_LANGUAGE.LNG_ISO_CODE) AS LngIsoCode
@@ -62,8 +81,8 @@ BEGIN
 		,RLS_LIVE_DATETIME_FROM AS RlsLiveDatatimeFrom
 		,RLS_LIVE_DATETIME_TO AS RlsLiveDatatimeTo
 		,RLS_EXCEPTIONAL_FLAG AS ExceptionalFlag
-		,FRQ_CODE As FrqCode
-		,FRQ_VALUE As FrqValue
+		,FRQ_CODE AS FrqCode
+		,FRQ_VALUE AS FrqValue
 	FROM TD_RELEASE rls
 	INNER JOIN VW_RELEASE_LIVE_NOW
 		ON VRN_RLS_ID = RLS_ID
@@ -86,8 +105,8 @@ BEGIN
 	INNER JOIN TS_LANGUAGE
 		ON LNG_ID = MTR_LNG_ID
 			AND LNG_DELETE_FLAG = 0
-	INNER JOIN TD_FREQUENCY 
-	ON FRQ_MTR_ID=MTR_ID
+	INNER JOIN TD_FREQUENCY
+		ON FRQ_MTR_ID = MTR_ID
 	LEFT JOIN (
 		SELECT MTR_CODE
 			,MTR_ID
@@ -103,6 +122,8 @@ BEGIN
 			AND MTR_DELETE_FLAG = 0
 		) lngMtr
 		ON lngMtr.MTR_CODE = mtr.MTR_CODE
+	WHERE @PrcId IS NULL
+		OR RLS_PRC_ID = @PrcId
 END
 GO
 

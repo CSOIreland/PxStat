@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 05/10/2018
 -- Description:	Read a Copyright entry
--- exec System_Settings_Copyright_Read_dev
+-- exec System_Settings_Copyright_Read
 -- =============================================
 CREATE
 	OR

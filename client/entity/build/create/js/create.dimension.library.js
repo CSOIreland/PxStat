@@ -301,6 +301,8 @@ app.build.create.dimension.drawTabs = function () {
             );
         });
 
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=download-periods]").once("click", app.build.create.dimension.callback.downloadPeriods);
+
 
 
     });
@@ -808,6 +810,31 @@ app.build.create.dimension.resetClassificationUpload = function () {
     $("#build-create-upload-classification").find("[name=build-create-upload-classification-file]").val("");
     app.build.create.dimension.cancelClassificationUpload();
 
+};
+
+/**
+ * Download existing classification
+ *  @param {*} clsCode
+ *  @param {*} lngIsoCode
+ */
+app.build.create.dimension.downloadClassification = function (clsCode, lngIsoCode) {
+    var classification = null;
+    $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
+        if (dimension.LngIsoCode == lngIsoCode) { //find the data based on the LngIsoCode
+            $(dimension.Classification).each(function (key, value) {
+                if (value.ClsCode == clsCode) {
+                    classification = value;
+                }
+            });
+        }
+    });
+    var fileData = [];
+    $.each(classification.Variable, function (i, row) {
+        fileData.push({ [C_APP_CSV_CODE]: row.VrbCode, [C_APP_CSV_VALUE]: row.VrbValue });
+    });
+
+    // Download the file
+    app.library.utility.download(clsCode, Papa.unparse(fileData), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 }
 
 /**
@@ -944,7 +971,7 @@ app.build.create.dimension.modal.viewClassification = function (clsCode, lngIsoC
             data = dimension.Classification;
             $(data).each(function (key, value) {
                 if (value.ClsCode == clsCode) {
-                    app.build.create.dimension.callback.viewClassification(value);
+                    app.build.create.dimension.callback.viewClassification(value, lngIsoCode);
                 }
             });
         }
@@ -956,8 +983,9 @@ app.build.create.dimension.modal.viewClassification = function (clsCode, lngIsoC
  *
  * @param {*} data
  */
-app.build.create.dimension.callback.viewClassification = function (data) {
+app.build.create.dimension.callback.viewClassification = function (data, lngIsoCode) {
     $("#build-create-view-classification").find("[name=title]").text(data.ClsCode + ": " + data.ClsValue);
+    $("#build-create-view-classification").find("[name=download]").attr("idn", data.ClsCode).attr("lng-iso-code", lngIsoCode);
     if ($.fn.dataTable.isDataTable("#build-create-view-classification table")) {
         app.library.datatable.reDraw("#build-create-view-classification table", data.Variable);
     } else {
@@ -1453,7 +1481,7 @@ app.build.create.dimension.callback.drawClassification = function (classificatio
         app.build.create.dimension.callback.useClassification(classification);
     });
     $("#build-create-search-classiication").find("[name=download-classification]").once("click", function () {
-        app.build.create.dimension.callback.downloadClassification(classification);
+        app.build.create.dimension.callback.downloadSearchClassification(classification);
     });
 
 };
@@ -1521,7 +1549,7 @@ app.build.create.dimension.callback.useClassification = function (variables) {
  * @param {*} data
  * @param {*} callbackParams
  */
-app.build.create.dimension.callback.downloadClassification = function (variables) {
+app.build.create.dimension.callback.downloadSearchClassification = function (variables) {
     var fileData = [];
     $.each(variables, function (i, row) {
         fileData.push({ [C_APP_CSV_CODE]: row.VrbCode, [C_APP_CSV_VALUE]: row.VrbValue });
@@ -1871,6 +1899,23 @@ app.build.create.dimension.callback.deleteAllPeriods = function () {
     app.build.create.dimension.drawPeriods(lngIsoCode);
 };
 
+app.build.create.dimension.callback.downloadPeriods = function () {
+    var lngIsoCode = $("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-code");
+    var periods = null;
+    $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
+        if (dimension.LngIsoCode == lngIsoCode) {
+            periods = dimension.Frequency.Period;
+        }
+    });
+    var fileData = [];
+    $.each(periods, function (i, row) {
+        fileData.push({ [C_APP_CSV_CODE]: row.PrdCode, [C_APP_CSV_VALUE]: row.PrdValue });
+    });
+
+    // Download the file
+    app.library.utility.download(app.build.create.initiate.data.FrqCode, Papa.unparse(fileData), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
+};
+
 
 //#endregion
 //#region submit object
@@ -2166,8 +2211,14 @@ app.build.create.dimension.callback.create = function (data, format) {
         switch (format) {
             case C_APP_TS_FORMAT_TYPE_JSONSTAT:
                 $.each(data, function (index, file) {
-                    // Download the file
-                    app.library.utility.download(fileName + "." + JSONstat(file).extension.language.code, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
+                    var jsonStat = file ? JSONstat(file) : null;
+                    if (jsonStat && jsonStat.length) {
+                        // Download the file
+                        app.library.utility.download(fileName + "." + jsonStat.extension.language.code, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
+                    } else {
+                        api.modal.exception(app.label.static["api-ajax-exception"]);
+                        return false;
+                    }
                 });
                 break;
             case C_APP_TS_FORMAT_TYPE_PX:

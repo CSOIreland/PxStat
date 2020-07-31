@@ -20,5 +20,7 @@ api.ajax.config(app.config.url.configuration.global, function (globalConfig) {
     $.extend(true, app.config, globalConfig);
 });
 
-
-
+// Load the Widget Snippet into the application
+api.ajax.config(C_APP_URL_PXWIDGET_SNIPPET, function (snippet) {
+    app.config.entity.data.snippet = snippet;
+}, { dataType: "html" });

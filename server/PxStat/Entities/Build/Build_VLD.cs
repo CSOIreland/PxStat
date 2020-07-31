@@ -20,13 +20,18 @@ namespace PxStat.Build
     /// <summary>
     /// 
     /// </summary>
-    internal class Build_Update_VLD : AbstractValidator<BuildUpdate_DTO>
+    internal class Build_Update_VLD : AbstractValidator<List<DataItem_DTO>>
     {
         /// <summary>
         /// 
         /// </summary>
         static Specification spec;
 
+        private bool NoDuplicatesExist(List<DataItem_DTO> csv)
+        {
+            if (csv.GroupBy(x => x).Any(grp => grp.Count() > 1)) return false;
+            return true;
+        }
 
 
         /// <summary>
@@ -34,122 +39,11 @@ namespace PxStat.Build
         /// </summary>
         /// <param name="theMatrixData"></param>
         /// <param name="csv"></param>
-        internal Build_Update_VLD(Specification theSpec, List<DataItem_DTO> csv)
+        internal Build_Update_VLD()
         {
-            spec = theSpec;
+            RuleFor(x => x).Must(NoDuplicatesExist).WithMessage("Duplicate items exist in the csv data");
 
 
-
-            // csvItems = csv;
-            //ValuesExistInDto
-            RuleFor(x => x).Custom((csvItems, context) =>
-        {
-            foreach (var item in csv)
-            {
-                if (item.dataValue == null)
-                {
-                    context.AddFailure("No data value found for data item: " + item.ToString());
-                }
-
-            }
-        });
-
-
-            //VariablesExistInClassification
-            RuleFor(x => x).Custom((csvItems, context) =>
-            {
-                foreach (var item in csv)
-                {
-                    foreach (var cls in item.classifications)
-                    {
-                        //If there are no variables in the classification...
-                        if (cls.Variable.Count == 0)
-                        {
-                            context.AddFailure("Classfication code not represented in the csv template data: " + cls.Code);
-                        }
-                        var specCls = spec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
-                        if (specCls == null)
-                        {
-                            context.AddFailure("Classfication code not represented  in the csv template data: " + cls.Code);
-
-                        }
-
-                        //if the classification in the csv contains a variable not found in the corresponding classification of the matrix...
-                        if (specCls.Variable.Where(x => x.Code == cls.Variable[0].Code).Count() == 0)
-                        {
-                            context.AddFailure("No variables found for item Classifications:" + cls.Code + " " + cls.Variable[0].Code);
-
-                        }
-                    }
-                }
-            });
-
-            //StatisticsInStatisticsColumn
-            RuleFor(x => x).Custom((csvItems, context) =>
-            {
-                foreach (var item in csv)
-                {
-                    if (item.statistic.Value == null)
-                    {
-                        context.AddFailure("Invalid Statistic Code " + item.statistic.Code);
-                    }
-                }
-            });
-
-            //ClassificationInClassificationColumn
-            RuleFor(x => x).Custom((csvItems, context) =>
-            {
-                foreach (var item in csv)
-                {
-                    foreach (var cls in item.classifications)
-                    {
-                        if (cls.Value == null)
-                        {
-                            context.AddFailure("Invalid Classification Code " + cls.Code);
-                        }
-                        if (cls.Variable.Count == 0)
-                        {
-                            context.AddFailure("No variable found for Classification Code " + cls.Code);
-                        }
-                        if (cls.Variable[0].Value == null)
-                        {
-                            context.AddFailure("Invalid variable found for Classification Code " + cls.Code + " variable code " + cls.Variable[0].Code);
-                        }
-                    }
-                }
-            });
-
-            //AllClassficationsPresentInTemplate
-            RuleFor(x => x).Custom((csvItems, context) =>
-            {
-                foreach (var item in csv)
-                {
-                    foreach (var cls in spec.Classification)
-                    {
-                        if (item.classifications.Where(x => x.Code == cls.Code).Count() == 0)
-                        {
-                            context.AddFailure("Classfication code not represented  in the csv template data: " + cls.Code);
-                        }
-
-                    }
-                }
-            });
-
-            //PeriodsExistInDtoOrMatrix
-            RuleFor(x => x).Custom((csvItems, context) =>
-            {
-                List<string> periods = new List<string>();
-                foreach (PeriodRecordDTO_Create per in spec.Frequency.Period) periods.Add(per.Code);
-
-                foreach (var per in csvItems.Periods) periods.Add(per.Code);
-                foreach (var item in csv)
-                {
-                    if (periods.Where(x => x == item.period.Code).Count() == 0)
-                    {
-                        context.AddFailure("Period code not represented  in the csv template data: " + item.period.Code);
-                    }
-                }
-            });
         }
 
 
@@ -659,6 +553,39 @@ namespace PxStat.Build
 
         }
 
+        internal static bool ReadDatasetHasEnoughParameters(RESTful_API api)
+        {
+            return api.parameters.Count >= Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_DATASET_PARAMETER_COUNT"));
+        }
+
+        internal static bool ReadMetadataHasEnoughParameters(RESTful_API api)
+        {
+            return api.parameters.Count >= Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_METADATA_PARAMETER_COUNT"));
+        }
+
+        internal static bool ReadCollectionHasEnoughParameters(RESTful_API api)
+        {
+            return api.parameters.Count >= Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_COLLECTION_PARAMETER_COUNT"));
+        }
+
+        internal static bool FormatExistsReadDataset(RESTful_API api)
+        {
+            if (api.parameters.Count < Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_DATASET_PARAMETER_COUNT"))) return false;
+            Format_DTO_Read dto = new Format_DTO_Read() { FrmType = api.parameters[2], FrmVersion = api.parameters[3] == "" ? "none" : api.parameters[3] };
+            return CustomValidations.FormatExists(dto);
+        }
+
+
+
+        internal static bool LanguageCode(RESTful_API api)
+        {
+            if (api.parameters.Count >= 5)
+            {
+                if (api.parameters[4].Length != 2) return false;
+            }
+            return true;
+        }
+
         internal static bool BelowLimitDatapoints(Matrix matrix)
         {
             long points = matrix.MainSpec.Statistic.Count * matrix.MainSpec.Frequency.Period.Count;
@@ -705,7 +632,7 @@ namespace PxStat.Build
         internal static bool FormatForReadDataset(Format_DTO_Read dto)
         {
             if (dto.FrmDirection != Format_DTO_Read.FormatDirection.DOWNLOAD.ToString()) return false;
-            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.CSV) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.XLSX)) return false;
+            if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.CSV) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.XLSX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.SDMX)) return false;
             return true;
 
         }

@@ -204,7 +204,10 @@ app.build.update.ajax.downloadDataTemplate = function () {
         null,
         null,
         null,
-        { "async": false });
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
 
 };
 
@@ -229,7 +232,10 @@ app.build.update.ajax.downloadAllData = function (params) {
         null,
         null,
         null,
-        { "async": false });
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
 
 };
 
@@ -243,7 +249,10 @@ app.build.update.ajax.downloadNewData = function (params) {
         null,
         null,
         null,
-        { "async": false });
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
 
 };
 
@@ -257,7 +266,10 @@ app.build.update.ajax.downloadExistingData = function (params) {
         null,
         null,
         null,
-        { "async": false });
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
 
 };
 
@@ -694,7 +706,7 @@ app.build.update.updateOutput = function () {
         //Populate namespace variables
         app.build.update.upload.FrqCode = $("#build-update-properties").find("[name=frequency-code]").val();
         app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.updateOutput", app.config.upload.unitsPerSecond.update);
+        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.updateOutput", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Update"]);
 
     }
 
@@ -814,7 +826,7 @@ app.build.update.ajax.updateOutput = function () {
         null,
         {
             async: false,
-            timeout: app.config.upload.timeout
+            timeout: app.config.transfer.timeout
         });
 
 };
@@ -923,7 +935,7 @@ app.build.update.validate.frequencyModal = function () {
             app.build.update.upload.FrqValue = $("#build-update-modal-frequency").find("[name=frq-value]:checked").val();
             app.build.update.upload.FrqCode = $("#build-update-modal-frequency").find("[name=frq-code]").val();
 
-            app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.uploadSource", app.config.upload.unitsPerSecond.read);
+            app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.uploadSource", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"]);
         }
     }).resetForm();
 };

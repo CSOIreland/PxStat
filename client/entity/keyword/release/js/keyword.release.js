@@ -15,7 +15,6 @@ $(document).ready(function () {
     // Load HTML for Data Set Modal 
     api.content.load("#overlay", "entity/data/index.modal.html", null, true);
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
-    api.content.load("#data-dataview-row", "entity/data/index.dataview.html");
 
     // Load the side panel
     api.content.load("#panel", "entity/keyword/search/index.html");

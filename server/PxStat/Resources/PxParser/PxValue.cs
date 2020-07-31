@@ -772,12 +772,15 @@ namespace PxParser.Resources.Parser
         /// <returns></returns>
         public string ToPxDataString(int newlineItemLimit)
         {
+
             int counter = 0;
             string line = "";
             List<string> formatList = new List<string>();
             foreach (var v in Values)
             {
+
                 line = v.ToPxString();
+                if (!double.TryParse(line, out double result)) line = "\"" + line + "\"";
                 if (counter % newlineItemLimit == 0)
                 {
                     line = Environment.NewLine + line;

@@ -5,3 +5,6 @@
 /server/PxStat/Properties/PublishProfiles/Live.pubxml
 /server/PxStat/Properties/PublishProfiles/TEST.pubxml
 /server/PxStat/Properties/PublishProfiles/UAT.pubxml
+/server/PxStat/Resources/Config/config.global.test.json
+/server/PxStat/Resources/Config/config.global.uat.json
+/server/PxStat/Resources/Config/config.global.live.json

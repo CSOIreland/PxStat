@@ -1,8 +1,6 @@
 ﻿using API;
-using PxStat.System.Navigation;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace PxStat.Security
 {
@@ -131,6 +129,12 @@ namespace PxStat.Security
                     user.CcnEmail = adDirectory[user.CcnUsername].EmailAddress;
                     user.CcnName = adDirectory[user.CcnUsername].GivenName + " " + adDirectory[user.CcnUsername].Surname;
                 }
+                else
+                {
+                    user.CcnName = null;
+                    user.CcnEmail = null;
+                }
+
             }
 
         }

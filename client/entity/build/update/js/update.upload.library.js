@@ -238,6 +238,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             app.build.update.upload.Signature = null;
             app.build.update.upload.file.content.source.UTF8 = null;
             app.build.update.upload.file.content.source.Base64 = null;
+            app.build.update.upload.file.content.source.languages = [];
             app.build.update.callback.resetData();
 
             //Reset Frequency and Copyright dropdowns every time you drop a new file in
@@ -265,9 +266,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             }
 
             // Check for the hard limit of the file size
-            if (file.size > app.config.upload.threshold.hard) {
+            if (file.size > app.config.transfer.threshold.hard) {
                 // Show Error    
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB"]));
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
                 return;
             }
             // info on screen 
@@ -332,9 +333,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             }
 
             // Check for the hard limit of the file size
-            if (file.size > app.config.upload.threshold.hard) {
+            if (file.size > app.config.transfer.threshold.hard) {
                 // Show Error
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB"]));
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
                 return;
             }
             // info on screen 
@@ -378,9 +379,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             }
 
             // Check for the hard limit of the file size
-            if (file.size > app.config.upload.threshold.hard) {
+            if (file.size > app.config.transfer.threshold.hard) {
                 // Show Error               
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB"]));
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
                 return;
             }
             // info on screen 
@@ -393,10 +394,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             readerUTF8.onload = function (e) {
                 app.build.update.upload.file.content.data.JSON = Papa.parse(e.target.result, {
                     header: true,
-                    skipEmptyLines: true
+                    skipEmptyLines: true,
+                    quotes: true
                 });
             };
-
             readerUTF8.readAsText(file);
             readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
             readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });
@@ -441,7 +442,7 @@ app.build.update.upload.validate.ajax.read = function (callback, unitsPerSecond)
         null,
         {
             async: false,
-            timeout: app.config.upload.timeout
+            timeout: app.config.transfer.timeout
         }
     );
     // Add the progress bar
@@ -622,7 +623,10 @@ app.build.update.upload.ajax.read = function () {
         null,
         null,
         null,
-        { async: false });
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
 };
 
 /**  
@@ -630,20 +634,21 @@ app.build.update.upload.ajax.read = function () {
  */
 app.build.update.upload.callback.readInput = function (data) {
     if (data && Array.isArray(data) && data.length) {
-        //put JSON-stat into namespace variable for future use    
+        //put JSON-stat into namespace variable for future use       
         app.build.update.ajax.data = data;
-
+        //clear any previous uploaded file
+        app.build.update.ajax.jsonStat = [];
         var languages = [];
         $(app.build.update.ajax.data).each(function (key, value) {
-            var jsonStat = JSONstat(value);
-            if (jsonStat.length) {
+            var jsonStat = value ? JSONstat(value) : null;
+            if (jsonStat && jsonStat.length) {
                 app.build.update.ajax.jsonStat.push(jsonStat);
                 languages.push(jsonStat.extension.language.code);
             }
             else {
                 languages = [];
                 api.modal.exception(app.label.static["api-ajax-exception"]);
-                return;
+                return false;
             }
         });
 

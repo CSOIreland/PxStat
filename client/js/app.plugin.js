@@ -286,29 +286,31 @@ $(document).ready(function () {
           $("#panel").hide();
           $("#panel-toggle").show();
           $("#panel-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
+
+          $("#panel [name=matrix-notes] [name=notes]").find(".collapse").collapse('hide');
         }
         else {
           $("#panel-toggle").hide();
         }
 
         //move search input
-        if ($("#data-search-row-desktop").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
+        if ($("#data-search-row-desktop [name=search-input-group-holder]").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
           $("#data-search-row-responsive").show();
-          $("#data-search-row-desktop").hide();
+          $("#data-search-row-desktop [name=search-input-group-holder]").hide();
         }
 
         //Collapse data navigation always on small
         $("#data-navigation").find(".navbar-collapse").collapse('hide');
 
         //if search results on page
-        if ($("#data-metadata-row").find("[name=search-results]").is(":visible") && !$("#data-metadata-row").find("[name=search-results]").is(":empty")) {
+        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && !$("#data-search-row-desktop").find("[name=search-results]").is(":empty")) {
           $("#data-filter-toggle").show();
           $("#data-filter").hide();
           $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
         }
 
         //if in data views
-        if (!$("#data-dataview-selected-table").is(":empty")) {
+        if (!$("#data-dataset-selected-table").is(":empty")) {
           $("#data-filter-toggle").hide();
         }
 
@@ -317,14 +319,16 @@ $(document).ready(function () {
       case "xLarge":
       default:
         //default position for search input
-        if ($("#data-search-row-desktop").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
-          $("#data-search-row-desktop").show();
+        if ($("#data-search-row-desktop [name=search-input-group-holder]").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
+          $("#data-search-row-desktop [name=search-input-group-holder]").show();
           $("#data-search-row-responsive").hide();
         };
 
         if ($("#panel").is(":empty")) {
           $("#data-navigation").find(".navbar-collapse").collapse('show');
         }
+
+        $("#panel [name=matrix-notes] [name=notes]").find(".collapse").collapse('show');
 
         //always show panel
         $("#panel").show();
@@ -334,7 +338,7 @@ $(document).ready(function () {
         $("#data-filter-toggle").hide();
 
         //if search results on page
-        if ($("#data-metadata-row").find("[name=search-results]").is(":visible") && !$("#data-metadata-row").find("[name=search-results]").is(":empty")) {
+        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && !$("#data-search-row-desktop").find("[name=search-results]").is(":empty")) {
           $("#data-filter").show();
           $("#data-navigation").find(".navbar-collapse").collapse('hide');
         };
@@ -348,13 +352,13 @@ Application - Plugin - Datatable data sorting
 *******************************************************************************/
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
   "data-asc": function (a, b) {
-    a = a.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
-    b = b.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
+    a = a.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
+    b = b.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
     return jQuery.fn.dataTableExt.oSort["natural-nohtml-asc"](a, b);
   },
   "data-desc": function (a, b) {
-    a = a.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
-    b = b.toString().replace(new RegExp(app.config.separator.thousand.display, 'g'), "");
+    a = a.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
+    b = b.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
     return jQuery.fn.dataTableExt.oSort["natural-nohtml-desc"](a, b);
   }
 });

@@ -91,8 +91,7 @@ app.analytic.render.readReferrer = function (data, selector) {
  */
 app.analytic.render.readTimeline = function (data, selector) {
     google.charts.setOnLoadCallback(function () {
-        //var dataArray = [['Date', 'bots', 'users', 'm2m', 'total']];
-        var dataArray = [['Date', app.label.static["bots"], app.label.static["users"], app.label.static["m2m"], app.label.static["total"]]];
+        var dataArray = [[app.label.static["date"], app.label.static["bots"], app.label.static["users"], app.label.static["m2m"], app.label.static["total"]]];
         $.each(data, function (index, value) {
             dataArray.push([value.date ? moment(value.date).format(app.config.mask.date.display) : "", value.NltBot, value.NltUser, value.NltM2m, value.Total]);
         });

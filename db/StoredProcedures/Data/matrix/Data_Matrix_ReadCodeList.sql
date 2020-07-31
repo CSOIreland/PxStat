@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
 -- Description:	Reads record(s) from the TD_MATRIX and TD_Release table
--- exec Data_Matrix_ReadCodeList_dev 'okeeffene','en','en'
+-- exec Data_Matrix_ReadCodeList 'okeeffene','en','en'
 -- =============================================
 CREATE
 	OR

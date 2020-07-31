@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.0.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.1.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.0.1\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.1.1\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
@@ -218,6 +218,7 @@
     <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\Live.pubxml" />
+    <None Include="Properties\PublishProfiles\Store.pubxml" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
     <Content Include="Resources\Config\config.global.json" />
@@ -284,11 +285,16 @@
     <Compile Include="Entities\Data\Cube\Cube_API.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadMetadata.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadDataset.cs" />
+    <Compile Include="Entities\Data\Cube\Cube_MAP.cs" />
     <Compile Include="Entities\Data\Cube\Cube_VLD.cs" />
     <Compile Include="Entities\Data\Cube\JsonStat.cs" />
     <Compile Include="Entities\Data\Cube\Cube_DTO.cs" />
     <Compile Include="Entities\Data\Cube\JsonStatCollection.cs" />
     <Compile Include="Entities\Data\Cube\JsonStat_VLD.cs" />
+    <Compile Include="Entities\Data\Cube\PxApiMetadata.cs" />
+    <Compile Include="Entities\Data\Cube\PxApiMetadataJson.cs" />
+    <Compile Include="Entities\Data\Cube\PxApiV1Query.cs" />
+    <Compile Include="Entities\Data\Cube\Sdmx.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\MatrixValidator.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Create.cs" />
@@ -355,6 +361,7 @@
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ReadSynonym.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ResourceFactory.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_API.cs" />
+    <Compile Include="Entities\System\Settings\Format\BSO\Format_BSO.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workdflow_BSO_ReadPendingLive.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadLive.cs" />

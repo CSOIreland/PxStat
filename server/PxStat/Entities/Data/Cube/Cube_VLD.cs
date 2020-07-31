@@ -1,4 +1,5 @@
 ﻿
+using API;
 using FluentValidation;
 using PxStat.Build;
 
@@ -28,20 +29,7 @@ namespace PxStat.Data
                 .NotEmpty()
                 .WithMessage("Invalid matrix code")
                 .WithName("matrixValidation");
-            //Optional
-            //RuleFor(dto => dto.language.Length)
-            //    .Equal(2)
-            //    .When(dto => !string.IsNullOrEmpty(dto.language))
-            //    .WithMessage("Invalid language code")
-            //    .WithName("languageValidation");
-            ////Optional
-            //RuleFor(dto => dto.Format.FrmType)
-            //    .Must((dto, format)
-            //        => format?.CompareTo(DatasetFormat.JsonStat) == 0
-            //        || format?.CompareTo(DatasetFormat.Px) == 0
-            //        || format?.CompareTo(DatasetFormat.Csv) == 0)
-            //    .WithMessage("Invalid format")
-            //    .WithName("formatValidation");
+
             RuleFor(f => f.Format.FrmType).NotEmpty().WithMessage("FrmType is empty");
             RuleFor(f => f.Format.FrmVersion).NotEmpty().WithMessage("FrmVersion is empty");
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists).WithMessage("Format does not exist");
@@ -84,6 +72,11 @@ namespace PxStat.Data
                 .When(dto => !string.IsNullOrEmpty(dto.language))
                 .WithMessage("Invalid language code")
                 .WithName("languageValidation");
+            RuleFor(dto => dto.product.Length)
+                .GreaterThan(0)
+                .When(dto => !string.IsNullOrEmpty(dto.product))
+                .WithMessage("Invalid product code")
+                .WithName("productValidation");
         }
     }
 
@@ -145,4 +138,42 @@ namespace PxStat.Data
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatForReadPreDataset);
         }
     }
+
+    internal class Cube_VLD_REST_ReadDataset : AbstractValidator<RESTful_API>
+    {
+        internal Cube_VLD_REST_ReadDataset()
+        {
+            RuleFor(x => x).Must(CustomValidations.ReadDatasetHasEnoughParameters).WithMessage("Not enough parameters in the RESTful request");
+            RuleFor(x => x).Must(CustomValidations.FormatExistsReadDataset).WithMessage("Requested format not found");
+        }
+
+
+    }
+
+    internal class Cube_VLD_REST_ReadMetadata : AbstractValidator<RESTful_API>
+    {
+        internal Cube_VLD_REST_ReadMetadata()
+        {
+            RuleFor(x => x).Must(CustomValidations.ReadMetadataHasEnoughParameters).WithMessage("Not enough parameters in the RESTful request");
+            RuleFor(x => x).Must(CustomValidations.LanguageCode).WithMessage("Invalid language code");
+        }
+
+
+    }
+
+    internal class Cube_VLD_REST_ReadCollection : AbstractValidator<RESTful_API>
+    {
+        internal Cube_VLD_REST_ReadCollection()
+        {
+            RuleFor(x => x).Must(CustomValidations.ReadCollectionHasEnoughParameters).WithMessage("Not enough parameters in the RESTful request");
+            RuleFor(x => x).Must(CustomValidations.LanguageCode).WithMessage("Invalid language code");
+        }
+    }
+
+
+
+
+
+
+
 }

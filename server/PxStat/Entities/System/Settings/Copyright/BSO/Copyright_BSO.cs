@@ -8,6 +8,7 @@ namespace PxStat.System.Settings
     /// </summary>
     internal class Copyright_BSO
     {
+
         /// <summary>
         /// Reads a copyright
         /// </summary>

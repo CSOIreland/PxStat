@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace PxStat.Data
@@ -109,6 +108,8 @@ namespace PxStat.Data
 
     public partial class DimensionLink
     {
+        [JsonProperty("alternate", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<Alternate> Alternate { get; set; }
     }
 
 

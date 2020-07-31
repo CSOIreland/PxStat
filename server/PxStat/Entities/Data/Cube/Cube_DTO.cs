@@ -25,7 +25,7 @@ namespace PxStat.Data
         /// </summary>
         public DateTime datefrom { get; set; }
 
-
+        public string product { get; set; }
 
         /// <summary>
         /// Constructor
@@ -43,6 +43,9 @@ namespace PxStat.Data
                 this.datefrom = parameters.datefrom;
                 this.datefrom = this.datefrom.Date;
             }
+
+            if (parameters.product != null)
+                this.product = parameters.product;
 
         }
 
@@ -124,11 +127,6 @@ namespace PxStat.Data
                 this.dimension = this.GetJsonObject<IList<Dimension>>(parameters.dimension, Converter.Settings);
             }
 
-            //to iterate through a set of potentially anyonymous objects
-            //foreach (var v in (Newtonsoft.Json.Linq.JContainer)parameters.dimension)
-            //{
-            //    var vv = v.Path; returns the name of the object
-            //}
 
 
             // Default language
@@ -167,5 +165,6 @@ namespace PxStat.Data
         public const string Px = Constants.C_SYSTEM_PX_NAME;
         public const string Csv = Constants.C_SYSTEM_CSV_NAME;
         public const string Xlsx = Constants.C_SYSTEM_XLSX_NAME;
+        public const string Sdmx = Constants.C_SYSTEM_SDMX_NAME;
     }
 }

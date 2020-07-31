@@ -24,6 +24,6 @@ label.mandatory:before, span.mandatory:before {
 * Mouse over disabled button
 */
 
-button:hover:disabled, a:hover:disabled {
+button:hover:disabled, a:hover:disabled, .toggle[disabled=disabled] .toggle-group label.toggle-off:hover, .toggle[disabled=disabled] .toggle-group label.toggle-on:hover, a[name="un-pivot"].text-muted {
     cursor: not-allowed;
 }

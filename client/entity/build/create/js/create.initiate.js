@@ -26,7 +26,7 @@ $(document).ready(function () {
     //Confirm reset and reset details
     $("#build-create-initiate-setup").find("[name=button-clear]").once("click", function () {
         api.modal.confirm(
-            app.label.static["build-reset-page"],
+            app.label.static["reset-page"],
             app.build.create.initiate.clear
         );
     });

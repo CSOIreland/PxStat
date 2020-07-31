@@ -6,7 +6,6 @@
 			"global": "https://ws.domain.extension/public/Resources/Config/config.global.json",
 			"server": "https://ws.domain.extension/public/Resources/Config/config.server.json"
 		},
-		"application": "https://data.domain.extension/",
 		"api": {
 			"public": "https://ws.domain.extension/public/api.jsonrpc",
 			"private": "https://ws.domain.extension/private/api.jsonrpc"
@@ -33,28 +32,23 @@
 			"display": "HH:mm:ss"
 		}
 	},
-	"separator": {
-		"thousand": {
-			"ajax": "",
-			"display": ","
-		},
-		"decimal": {
-			"ajax": ".",
-			"display": "."
-		}
-	},
-	"upload": {
+	"transfer": {
+		"timeout": 3600000,
 		"threshold": {
 			"soft": 1048576,
 			"hard": 104857600
 		},
 		"unitsPerSecond": {
-			"read": 250000,
-			"validate": 500000,
-			"upload": 70000,
-			"update": 40000
-		},
-		"timeout": 3600000
+			"PxStat.Build.Build_API.Validate": 250000,
+			"PxStat.Build.Build_API.Read": 250000,
+			"PxStat.Build.Build_API.ReadTemplate": 250000,
+			"PxStat.Build.Build_API.ReadDatasetByAllPeriods": 250000,
+			"PxStat.Build.Build_API.ReadDatasetByNewPeriods": 250000,
+			"PxStat.Build.Build_API.ReadDatasetByExistingPeriods": 250000,
+			"PxStat.Build.Build_API.Update": 40000,
+			"PxStat.Data.Matrix_API.Validate": 500000,
+			"PxStat.Data.Matrix_API.Create": 70000
+		}
 	},
 	"entity": {
 		"data": {
@@ -67,7 +61,12 @@
 				"hard": 1000000
 			},
 			"pagination": 10,
-			"numberLatestReleases": 10
+			"numberLatestReleases": 10,
+			"chart": {
+				"enabled": true,
+				"legendPosition": "bottom"
+			},
+			"snippet": null
 		},
 		"build": {
 			"threshold": 10000000,
@@ -150,6 +149,53 @@
 			"position": "top",
 			"static": true,
 			"content": {}
+		},
+		"chartJs": {
+			"options": {
+				"responsive": true,
+				"title": {
+					"display": true,
+					"text": []
+				},
+				"tooltips": {
+					"mode": "index",
+					"callbacks": {
+						"label": null
+					}
+				},
+				"hover": {
+					"mode": "nearest",
+					"intersect": true
+				},
+				"scales": {
+					"xAxes": [
+						{}
+					],
+					"yAxes": [
+						{
+							"display": true,
+							"position": "left",
+							"id": null,
+							"ticks": {
+								"beginAtZero": false
+							},
+							"callback": null
+						}
+					]
+				},
+				"plugins": {
+					"stacked100": {
+						"enable": false
+					},
+					"colorschemes": {
+						"scheme": null
+					}
+				},
+				"legend": {
+					"display": true,
+					"position": "bottom"
+				}
+			}
 		}
 	}
 }

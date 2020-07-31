@@ -139,7 +139,7 @@ app.release.source.download = function () {
  * 
  */
 app.release.source.view = function () {
-    if (app.release.fileContent.length > app.config.upload.threshold.soft) {
+    if (app.release.fileContent.length > app.config.transfer.threshold.soft) {
         api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [app.library.utility.formatNumber(Math.ceil(app.release.fileContent.length / 1024)) + " KB"]),
             app.release.source.callback.view)
     }
@@ -163,14 +163,29 @@ app.release.source.callback.view = function () {
  * 
  */
 app.release.data.view = function () {
-    //clean modal of previous HTML
-    $("#data-view-modal").find("#data-dataview-selected-table").empty();
-    $("#data-view-modal").find("#data-view-container").empty();
     //DO NOT Pass User SELECTED language from app.label.language.iso.code
     //Drop down list available langues for the Release (Matrix langues)
-    app.data.init($("#release-source [name=lng-iso-code] option:selected").val(), null, app.release.RlsCode, app.release.MtrCode);
+    app.data.init(
+        $("#release-source [name=lng-iso-code] option:selected").val(),
+        app.release.MtrCode,
+        app.release.RlsCode,
+        app.release.MtrCode,
+        true,
+        app.release.isLive,
+    );
+
     app.data.dataset.ajax.readMetadata();
+
     $('#data-view-modal').modal('show');
+
+    //reset modal for clean opening if user changes release
+    $('#data-view-modal').on('hide.bs.modal', function (e) {
+        $("#data-dataset-table-nav-content").empty()
+        $("#data-dataset-chart-nav-content").empty()
+        $("#data-dataset-map-nav-content").empty()
+        $('#data-dataset-map-nav-tab').hide();
+        $('#data-dataset-table-nav-tab').tab('show')
+    })
 };
 
 //#endregion

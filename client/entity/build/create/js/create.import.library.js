@@ -54,11 +54,11 @@ app.build.create.import.validate.ajax.read = function () {
         null,
         {
             async: false,
-            timeout: app.config.upload.timeout
+            timeout: app.config.transfer.timeout
         }
     );
     // Add the progress bar
-    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.create.file.import.content.Base64.length, app.config.upload.unitsPerSecond.read));
+    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.create.file.import.content.Base64.length, app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"]));
 };
 
 app.build.create.import.validate.callback.read = function (data) {
@@ -107,18 +107,32 @@ app.build.create.import.ajax.read = function () {
         null,
         null,
         null,
-        { async: false });
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
 };
 
 app.build.create.import.callback.read = function (data) {
     if (data && Array.isArray(data) && data.length) {
         $("#build-create-import").modal("hide");
+
         app.build.create.file.import.content.JsonStat = [];
-        //parse each JSON-stat data and push to namespace varaiable
+        //parse each JSON-stat data and push to namespace variable
         $.each(data, function (index, data) {
-            app.build.create.file.import.content.JsonStat.push(JSONstat(data))
+            var jsonStat = data ? JSONstat(data) : null;
+            if (jsonStat && jsonStat.length) {
+                app.build.create.file.import.content.JsonStat.push(jsonStat);
+            } else {
+                haveAllParsed = false;
+                app.build.create.file.import.content.JsonStat = [];
+                api.modal.exception(app.label.static["api-ajax-exception"]);
+                return false;
+            }
         });
-        app.build.create.import.callback.read.drawProperties();
+
+        if (app.build.create.file.import.content.JsonStat.length)
+            app.build.create.import.callback.read.drawProperties();
 
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);

@@ -44,6 +44,7 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+
             if (DTO.Format.FrmDirection != FormatDirection.DOWNLOAD.ToString())
             {
                 return false;
@@ -59,8 +60,6 @@ namespace PxStat.Data
 
 
             var items = new Release_ADO(Ado).ReadLiveNow(DTO.matrix, DTO.language);
-
-
 
             var result = Release_ADO.GetReleaseDTO(items);
             if (result == null)
@@ -87,7 +86,8 @@ namespace PxStat.Data
 
             // The matrix constructor will load all the metadata from the db when instances specification
             var theMatrix = new Matrix(theAdo, theReleaseDto, theCubeDTO.language).ApplySearchCriteria(theCubeDTO);
-
+            theMatrix.FormatType = theCubeDTO.Format.FrmType;
+            theMatrix.FormatVersion = theCubeDTO.Format.FrmVersion;
             if (theMatrix == null)
             {
                 theResponse.data = null;

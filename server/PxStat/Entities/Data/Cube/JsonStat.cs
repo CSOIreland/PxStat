@@ -63,6 +63,37 @@ namespace PxStat.Data
         public Version Version { get; set; }
     }
 
+    public partial class JsonStatV1
+    {
+
+        [JsonProperty("dataset", Required = Required.Always)]
+        public dynamic Dataset { get; set; }
+
+    }
+
+    public partial class Dataset
+    {
+        [JsonProperty("dimension", Required = Required.Always)]
+        public dynamic Dimension { get; set; }
+
+
+        [JsonProperty("label", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Label { get; set; }
+
+
+        [JsonProperty("source", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Source { get; set; }
+
+        [JsonProperty("status", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Statusv1? Status { get; set; }
+
+        [JsonProperty("updated", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Updated { get; set; }
+
+        [JsonProperty("value", Required = Required.DisallowNull)]
+        public JsonStatValue Value { get; set; }
+    }
+
     /// <summary>
     /// Class
     /// </summary>
@@ -93,6 +124,20 @@ namespace PxStat.Data
         public string Id { get; set; }
     }
 
+    public partial class DimensionV1
+    {
+        [JsonProperty("category", Required = Required.Always)]
+        public CategoryV1 Category { get; set; }
+
+
+        [JsonProperty("label", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Label { get; set; }
+
+
+
+        [JsonProperty("id", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Id { get; set; }
+    }
     /// <summary>
     /// Class
     /// </summary>
@@ -117,6 +162,27 @@ namespace PxStat.Data
         public Dictionary<string, Unit> Unit { get; set; }
     }
 
+    public partial class CategoryV1
+    {
+        [JsonProperty("child", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, List<string>> Child { get; set; }
+
+        [JsonProperty("coordinates", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, List<double>> Coordinates { get; set; }
+
+        [JsonProperty("index", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, int> Index { get; set; }
+
+        [JsonProperty("label", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, string> Label { get; set; }
+
+        [JsonProperty("note", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, List<string>> Note { get; set; }
+
+        [JsonProperty("unit", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, UnitV1> Unit { get; set; }
+    }
+
     /// <summary>
     /// Class
     /// </summary>
@@ -132,6 +198,16 @@ namespace PxStat.Data
         public Position? Position { get; set; }
     }
 
+    public partial class UnitV1
+    {
+
+
+        [JsonProperty("base", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Label { get; set; }
+
+
+    }
+
     /// <summary>
     /// Class
     /// </summary>
@@ -143,6 +219,18 @@ namespace PxStat.Data
     /// Class
     /// </summary>
     public partial class Role
+    {
+        [JsonProperty("geo", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Geo { get; set; }
+
+        [JsonProperty("metric", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Metric { get; set; }
+
+        [JsonProperty("time", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Time { get; set; }
+    }
+
+    public partial class RoleV1
     {
         [JsonProperty("geo", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Geo { get; set; }
@@ -181,6 +269,17 @@ namespace PxStat.Data
         public static implicit operator Index(List<string> StringArray) => new Index { StringArray = StringArray };
     }
 
+    //public partial struct IndexV1
+    //{
+    //    //public Dictionary<string, double> DoubleMap;
+    //    //public List<string> StringArray;
+    //    public Dictionary<string, int> IntMap;
+
+    //    //public static implicit operator IndexV1(Dictionary<string, double> DoubleMap) => new IndexV1 { DoubleMap = DoubleMap };
+    //    //public static implicit operator IndexV1(List<string> StringArray) => new IndexV1 { StringArray = StringArray };
+    //    public static implicit operator IndexV1(Dictionary<string, int> IntMap) => new IndexV1 { IntMap = IntMap };
+    //}
+
     /// <summary>
     /// Struct
     /// </summary>
@@ -193,6 +292,17 @@ namespace PxStat.Data
         public static implicit operator Status(string String) => new Status { String = String };
         public static implicit operator Status(Dictionary<string, string> StringMap) => new Status { StringMap = StringMap };
         public static implicit operator Status(List<string> UnionArray) => new Status { UnionArray = UnionArray };
+    }
+
+    public partial struct Statusv1
+    {
+        public string String;
+        public Dictionary<string, string> StringMap;
+        public List<string> UnionArray;
+
+        public static implicit operator Statusv1(string String) => new Statusv1 { String = String };
+        public static implicit operator Statusv1(Dictionary<string, string> StringMap) => new Statusv1 { StringMap = StringMap };
+        public static implicit operator Statusv1(List<string> UnionArray) => new Statusv1 { UnionArray = UnionArray };
     }
 
     /// <summary>
@@ -253,6 +363,19 @@ namespace PxStat.Data
     public static partial class Serialize
     {
         public static string ToJson(this JsonStat self) => JsonConvert.SerializeObject(self, Converter.Settings);
+    }
+
+    public partial class JsonStatV1
+    {
+        public static JsonStatV1 FromJson(string json) => JsonConvert.DeserializeObject<JsonStatV1>(json, Converter.Settings);
+    }
+
+    /// <summary>
+    /// Class
+    /// </summary>
+    public static partial class SerializeJsonStatV1
+    {
+        public static string ToJson(this JsonStatV1 self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 
     /// <summary>

@@ -9,6 +9,11 @@
     "read-browser-item-limit": 4,
     "read-referrer-item-limit": 5,
     "referrer-not-applicable": "n/a"
+  },
+  "search": {
+    "synonym-multiplier": 1,
+    "search-word-multiplier": 5
   }
+
 
 }

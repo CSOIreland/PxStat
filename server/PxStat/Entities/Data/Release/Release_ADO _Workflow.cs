@@ -115,6 +115,10 @@ namespace PxStat.Data
         /// <returns></returns>
         internal int Update(Release_DTO dto, string userName)
         {
+            if (dto.RlsLiveDatetimeFrom == default) dto.RlsLiveFlag = false;
+
+
+
             var inputParams = new List<ADO_inputParams>()
                 {
                     new ADO_inputParams() {name ="@RlsCode",value= dto.RlsCode},

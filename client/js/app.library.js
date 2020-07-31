@@ -482,10 +482,10 @@ app.library.utility.formatDatetime = function (dateTimeValue) {
  * @param  {} decimalSeparator
  * @param  {} thousandSeparator
   */
-app.library.utility.formatNumber = function (number, decimalSeparator, thousandSeparator, precision) { //create global function  
-  decimalSeparator = decimalSeparator || app.config.separator.decimal.display;
-  thousandSeparator = thousandSeparator || app.config.separator.thousand.display;
+app.library.utility.formatNumber = function (number, precision) {
   precision = precision !== undefined ? precision : undefined;
+  var decimalSeparator = app.library.utility.decimalSeparator();
+  var thousandSeparator = app.library.utility.thousandSeparator();
 
   if ("number" !== typeof number && "string" !== typeof number)
     return number;
@@ -508,6 +508,15 @@ app.library.utility.formatNumber = function (number, decimalSeparator, thousandS
   return (thousandSeparator ? wholeNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator) : wholeNumber) + (decimalNumber !== undefined ? decimalSeparator + decimalNumber : "");
 };
 
+app.library.utility.decimalSeparator = function () {
+  var n = 1.1;
+  return n.toLocaleString().substring(1, 2);
+}
+
+app.library.utility.thousandSeparator = function () {
+  var n = 1000;
+  return n.toLocaleString().substring(1, 2);
+}
 /**
  * Initiate tinyMce
  */

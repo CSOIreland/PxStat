@@ -3,7 +3,6 @@ using PxStat.Security;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 
 namespace PxStat.System.Notification
@@ -77,7 +76,7 @@ namespace PxStat.System.Notification
             email.Subject = DTO.Subject;
             email.Body = DTO.Body;
 
-            sendMail(email, ConfigurationManager.AppSettings["APP_NAME"], DTO.Subject, DTO.Body);
+            sendMail(email, Configuration_BSO.GetCustomConfig("title"), DTO.Subject, DTO.Body);
 
             Response.data = JSONRPC.success;
             return true;
@@ -95,14 +94,14 @@ namespace PxStat.System.Notification
             var listToParse = new List<eMail_KeyValuePair>();
 
             List<string> grpCodes = new List<string>();
-            grpCodes=DTO.GroupCodes.Select(s => (string)s.GrpCode).ToList();
+            grpCodes = DTO.GroupCodes.Select(s => (string)s.GrpCode).ToList();
 
             listToParse.Add(new eMail_KeyValuePair() { key = "{title}", value = title });
             listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
             listToParse.Add(new eMail_KeyValuePair() { key = "{grouplist}", value = grpCodes.Any() ? String.Join(", ", grpCodes) : Label.Get("static.all-groups") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = ConfigurationManager.AppSettings["APP_NAME"] });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = ConfigurationManager.AppSettings["APP_URL"] });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig("title") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig("url.application") });
 
             email.Subject = subject;
             email.Body = email.ParseTemplate(Properties.Resources.template_GroupMessage, listToParse);

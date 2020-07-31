@@ -13,7 +13,7 @@ $(document).ready(function () {
     api.content.load("#overlay", "entity/build/map/index.html", null, true);
 
     // Set the max file-size in the Upload box
-    $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB").show();
+    $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB").show();
     //Initiate dragndrop file.
     api.plugin.dragndrop.initiate(document, window);
 
@@ -25,7 +25,7 @@ $(document).ready(function () {
 
     //Bind the preview button
     $("#build-update-upload-file").find("[name=file-data-view]").once("click", function () {
-        if (app.build.update.upload.file.content.source.size > app.config.upload.threshold.soft) {
+        if (app.build.update.upload.file.content.source.size > app.config.transfer.threshold.soft) {
             api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [app.library.utility.formatNumber(Math.ceil(app.build.update.upload.file.content.source.size / 1024)) + " KB"]),
                 app.build.update.upload.previewSource)
         }
@@ -40,7 +40,7 @@ $(document).ready(function () {
         app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
         app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
 
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadDataTemplate", app.config.upload.unitsPerSecond.read)
+        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadDataTemplate", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadTemplate"])
     });
 
     //bind the download data file button for all periods
@@ -54,7 +54,7 @@ $(document).ready(function () {
         app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
         app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
 
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadAllData", app.config.upload.unitsPerSecond.read)
+        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadAllData", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDatasetByAllPeriods"])
 
     });
 
@@ -69,7 +69,7 @@ $(document).ready(function () {
         app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
         app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
 
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadNewData", app.config.upload.unitsPerSecond.read)
+        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadNewData", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDatasetByNewPeriods"])
 
     });
 
@@ -84,14 +84,14 @@ $(document).ready(function () {
         app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
         app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
 
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadExistingData", app.config.upload.unitsPerSecond.read)
+        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadExistingData", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDatasetByExistingPeriods"])
 
     });
 
     //Bind the reset button
     $("#build-update-upload-file").find("[name=upload-source-file-reset]").once("click", function () {
         api.modal.confirm(
-            app.label.static["build-reset-page"],
+            app.label.static["reset-page"],
             app.build.update.upload.reset
         );
     });
@@ -101,7 +101,7 @@ $(document).ready(function () {
 
     //bind data preview button
     $("#build-update-matrix-data").find("[name=preview-data]").once("click", function () {
-        if (app.build.update.upload.file.content.data.size > app.config.upload.threshold.soft) {
+        if (app.build.update.upload.file.content.data.size > app.config.transfer.threshold.soft) {
             api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [app.library.utility.formatNumber(Math.ceil(app.build.update.upload.file.content.data.size / 1024)) + " KB"]),
                 app.build.update.callback.previewData)
         }
@@ -124,7 +124,7 @@ $(document).ready(function () {
 
     //Bind the upload button
     $("#build-update-upload-file").find("[name=upload-source-file]").once("click", function () {
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.uploadSource", app.config.upload.unitsPerSecond.read);
+        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.uploadSource", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"]);
     });
 
     //matrix lookup

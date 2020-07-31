@@ -11,11 +11,11 @@ $(document).ready(function () {
     });
 
     //cannot use default modal cancel button as this causes parent modal in releases view data to close behind also
-    $("#data-dataview-confirm-soft").find("[name=cancel]").once("click", function () {
-        $("#data-dataview-confirm-soft").modal("hide");
+    $("#data-dataset-table-confirm-soft").find("[name=cancel]").once("click", function () {
+        $("#data-dataset-table-confirm-soft").modal("hide");
     });
 
-    $("#data-dataview-confirm-hard").find("[name=cancel]").once("click", function () {
-        $("#data-dataview-confirm-hard").modal("hide");
+    $("#data-dataset-table-confirm-hard").find("[name=cancel]").once("click", function () {
+        $("#data-dataset-table-confirm-hard").modal("hide");
     });
 });

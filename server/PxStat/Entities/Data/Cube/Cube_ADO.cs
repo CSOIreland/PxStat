@@ -117,7 +117,7 @@ namespace PxStat.Data
         /// <param name="languageCode"></param>
         /// <param name="DateFrom"></param>
         /// <returns></returns>
-        internal List<dynamic> ReadCollection(string languageCode, DateTime DateFrom)
+        internal List<dynamic> ReadCollection(string languageCode, DateTime DateFrom, string PrcCode = null)
         {
             var inputParams = new List<ADO_inputParams>();
 
@@ -133,6 +133,11 @@ namespace PxStat.Data
                 inputParams.Add(new ADO_inputParams { name = "@DateFrom", value = DateFrom });
             }
 
+
+            if (PrcCode != null)
+            {
+                inputParams.Add(new ADO_inputParams { name = "@PrcCode", value = PrcCode });
+            }
 
             var output = ado.ExecuteReaderProcedure("Data_Release_ReadListLive", inputParams);
 
@@ -144,7 +149,7 @@ namespace PxStat.Data
             return null;
         }
 
-        internal List<dynamic> ReadCollectionMetadata(string languageCode, DateTime DateFrom)
+        internal List<dynamic> ReadCollectionMetadata(string languageCode, DateTime DateFrom, string PrcCode = null)
         {
             var inputParams = new List<ADO_inputParams>();
 
@@ -160,6 +165,10 @@ namespace PxStat.Data
                 inputParams.Add(new ADO_inputParams { name = "@DateFrom", value = DateFrom });
             }
 
+            if (PrcCode != null)
+            {
+                inputParams.Add(new ADO_inputParams { name = "@PrcCode", value = PrcCode });
+            }
 
             var output = ado.ExecuteReaderProcedure("Data_Release_ReadCollection", inputParams);
 

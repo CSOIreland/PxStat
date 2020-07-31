@@ -175,6 +175,14 @@ app.user.drawUserDataTable = function (data) {
         },
         {
           data: null,
+          type: "natural",
+          render: function (data, type, row) {
+            var valid = !row.CcnEmail || !row.CcnName ? false : true
+            return app.library.html.boolean(valid, true, true);
+          }
+        },
+        {
+          data: null,
           sorting: false,
           searchable: false,
           render: function (data, type, row) {

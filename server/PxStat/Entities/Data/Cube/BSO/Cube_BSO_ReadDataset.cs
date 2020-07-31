@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 using PxStat.JsonStatSchema;
 using PxStat.Template;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace PxStat.Data
@@ -46,7 +45,6 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
-
             //if the role details haven't been supplied then look it up from the metadata in the database
             if (DTO.Role == null)
                 DTO.Role = new Cube_BSO().UpdateRoleFromMetadata(Ado, DTO);
@@ -108,8 +106,19 @@ namespace PxStat.Data
             switch (theDto.jStatQueryExtension.extension.Format.Type)
             {
                 case DatasetFormat.JsonStat:
-                    var jsonStat = matrix.GetJsonStatObject(false, true, null, readCulture);
-                    theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
+                    matrix.FormatType = theDto.jStatQueryExtension.extension.Format.Type;
+                    matrix.FormatVersion = theDto.jStatQueryExtension.extension.Format.Version;
+
+                    if (theDto.jStatQueryExtension.extension.Format.Version == "1.0")
+                    {
+                        var jsonStat = matrix.GetJsonStatV1Object(true, null);
+                        theResponse.data = new JRaw(SerializeJsonStatV1.ToJson(jsonStat));
+                    }
+                    else
+                    {
+                        var jsonStat = matrix.GetJsonStatObject(false, true, null, readCulture);
+                        theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
+                    }
                     break;
                 case DatasetFormat.Csv:
                     theResponse.data = matrix.GetCsvObject(requestLanguage, false, readCulture);
@@ -118,11 +127,11 @@ namespace PxStat.Data
                     theResponse.data = matrix.GetPxObject().ToString();
                     break;
                 case DatasetFormat.Xlsx:
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
                     theResponse.data = matrix.GetXlsxObject(requestLanguage, CultureInfo.CurrentCulture);
-                    sw.Stop();
-                    long l = sw.ElapsedMilliseconds;
+                    break;
+
+                case DatasetFormat.Sdmx:
+                    theResponse.data = matrix.GetSdmx(theDto.jStatQueryExtension.extension.Language.Code);
                     break;
             }
 
@@ -134,62 +143,8 @@ namespace PxStat.Data
 
         }
 
-        /// <summary>
-        /// Run the detailed processes for this Execute
-        /// </summary>
-        /// <param name="theAdo"></param>
-        /// <param name="theDto"></param>
-        /// <param name="releaseDto"></param>
-        /// <param name="theResponse"></param>
-        /// <returns></returns>
-        internal static bool ExecuteReadDataset(ADO theAdo, Cube_DTO_Read theDto, Release_DTO releaseDto, JSONRPC_Output theResponse, string requestLanguage)
-        {
 
 
-            var theMatrix = new Matrix(theAdo, releaseDto, theDto.language).ApplySearchCriteria(theDto);
-            if (theMatrix == null)
-            {
-                theResponse.data = null;
-                return true;
-            }
-
-            var matrix = new Cube_ADO(theAdo).ReadCubeData(theMatrix);
-            if (matrix == null)
-            {
-                theResponse.data = null;
-                return true;
-            }
-
-
-
-            switch (theDto.Format.FrmType)
-            {
-                case DatasetFormat.JsonStat:
-                    var jsonStat = matrix.GetJsonStatObject();
-                    theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
-                    break;
-                case DatasetFormat.Csv:
-                    theResponse.data = matrix.GetCsvObject(requestLanguage);
-                    break;
-                case DatasetFormat.Px:
-                    theResponse.data = matrix.GetPxObject().ToString();
-                    break;
-                case DatasetFormat.Xlsx:
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
-                    theResponse.data = matrix.GetXlsxObject(requestLanguage);
-                    sw.Stop();
-                    long l = sw.ElapsedMilliseconds;
-                    break;
-            }
-
-            if (releaseDto.RlsLiveDatetimeTo != default(DateTime))
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", theDto, theResponse.data, releaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.Code);
-            else
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", theDto, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.Code);
-            return true;
-
-        }
 
     }
 }

@@ -2,11 +2,11 @@
 using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Resources.PxParser;
-using PxStat.Security;
 using PxStat.Template;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
-
+using static PxStat.Data.Matrix;
 
 namespace PxStat.Build
 {
@@ -36,7 +36,8 @@ namespace PxStat.Build
         {
             dynamic result = new ExpandoObject();
 
-
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
             //This is required for validation in the Matrix code, but is not used for px build
             Request.parameters.GrpCode = Utility.GetCustomConfig("APP_DEFAULT_GROUP");
@@ -50,37 +51,39 @@ namespace PxStat.Build
                 Response.error = Error.GetValidationFailure(pxValidator.ParseValidatorResult.Errors);
                 return false;
             }
-
+            Log.Instance.Debug("*Diagnostic* px valid: " + sw.ElapsedMilliseconds);
 
             Matrix matrixPxFile = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
+
+
+            Log.Instance.Debug("*Diagnostic* Matrix created: " + sw.ElapsedMilliseconds);
+
             //Sorting, in case the px file is not in SPC order
             Build_BSO pBso = new Build_BSO();
-            List<DataItem_DTO> existingItems = pBso.GetExistingDataItems(matrixPxFile, matrixPxFile.MainSpec, true, false);
+            //List<DataItem_DTO> existingItems = pBso.GetExistingDataItems(matrixPxFile, matrixPxFile.MainSpec, true, false);
 
-            //Sort the merged data in SPC order
-            List<DataItem_DTO> allData = pBso.sortSPC(matrixPxFile.MainSpec, existingItems, true);
+            Specification theSpec = matrixPxFile.GetSpecFromLanguage(DTO.LngIsoCode);
 
-            //Set the Cells to the merged and sorted data
-            matrixPxFile.Cells = pBso.GetNewCells(allData);
+            // pBso.SetMetadataSortIds(ref theSpec);
 
+            List<DataItem_DTO> existingItems = pBso.GetMatrixDataItems(matrixPxFile, DTO.LngIsoCode, theSpec);
 
-            List<dynamic> cells = new List<dynamic>();
+            // pBso.SetDataSortIds(ref existingItems, theSpec);
 
-            foreach (var c in matrixPxFile.Cells)
-            {
-                dynamic tdt = new ExpandoObject();
-                tdt.TdtValue = c.Value;
-                cells.Add(tdt);
-            }
-
-            matrixPxFile.Cells = cells;
+            //Log.Instance.Debug("*Diagnostic* GetExistingDataItems: " + sw.ElapsedMilliseconds);
 
 
-            result.csv = matrixPxFile.GetCsvObject(DTO.LngIsoCode, true);
+
+            Log.Instance.Debug("*Diagnostic* Read Cells - count = " + matrixPxFile.Cells.Count + "  elapsed: " + sw.ElapsedMilliseconds);
+
+            result.csv = matrixPxFile.GetCsvObject(existingItems, DTO.LngIsoCode, true);
+
+            Log.Instance.Debug("*Diagnostic* GetCsvObject-   elapsed: " + sw.ElapsedMilliseconds);
             result.MtrCode = matrixPxFile.Code;
             Response.data = result;
 
+            Log.Instance.Debug("GetCsvObject: " + sw.ElapsedMilliseconds);
 
             return true;
         }

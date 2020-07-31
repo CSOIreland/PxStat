@@ -22,7 +22,12 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            return true; 
+        }
+
+        protected override bool HasUserToBeAuthenticated()
+        {
+            return false;
         }
 
         /// <summary>
@@ -31,6 +36,7 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         protected override bool Execute()
         {
+
             var adoSubject = new Subject_ADO(Ado);
             var list = adoSubject.Read(DTO);
             Response.data = list;

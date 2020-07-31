@@ -38,7 +38,9 @@ namespace PxStat.System.Navigation
             //Optional - RlsArchiveFlag
             //Optional - RlsAnalyticalFlag
             //Optional - Search
-            RuleFor(f => f.Search).Length(0, 1024).When(f => !string.IsNullOrEmpty(f.Search)).WithMessage("Invalid Search term");
+            RuleFor(f => f.Search).Length(1, 1024).When(f => !string.IsNullOrEmpty(f.MtrCode)).WithMessage("Invalid Search term");
+
+            //RuleFor(f => f.Search).NotNull().WithMessage("Invalid Search term");
         }
     }
 }

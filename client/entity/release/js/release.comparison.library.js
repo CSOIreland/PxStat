@@ -500,7 +500,7 @@ app.release.comparison.drawCallbackReadComparsion = function () {
  * @param  {} selector
  */
 app.release.comparison.callback.readComparison = function (data, selector) {
-    data = data ? JSONstat(data) : data;
+    data = data ? JSONstat(data) : null;
     if (data && data.length) {
         // Start the spinner manually because the rendering of the Comparison may take a long time
         api.spinner.start();
@@ -604,7 +604,7 @@ app.release.comparison.callback.readComparison = function (data, selector) {
             "defaultContent": app.config.entity.data.datatable.null,
             "class": "text-right",
             "render": function (data, type, row, meta) {
-                return app.library.utility.formatNumber(data, app.config.separator.decimal.display, app.config.separator.thousand.display, row.unit.decimals);
+                return app.library.utility.formatNumber(data, row.unit.decimals);
             }
         });
         var valueHeading = $("<th>",

@@ -9,172 +9,97 @@
     </div>
 </div>
 
-<div id="data-dataview-selected-table" class="col px-2"></div>
-
-<!-- Template: Region 1-->
-<div id="data-dataset-templates" style="display: none">
+<div id="data-dataset-selected-table" class="col px-2">
     <div name="matrix-selection" class="row mx-0">
         <div class="col p-2">
             <div name="table-selection-card" class="card mb-4">
+                <div name="card-header"></div>
                 <div class="card-header">
-                    <!-- Top aligned -->
-                    <div class="row px-2 order-1 order-lg-1 order-md-1 order-sm-1">
-                        <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
-                            <h5 name="mtr-title" class="mb-1"></h5>
+                    <nav>
+                        <div class="nav nav-tabs card-header-tabs" role="tablist">
+                            <a class="nav-item nav-link active" id="data-dataset-table-nav-tab" data-toggle="tab" href="#data-dataset-table-nav-content" role="tab" aria-controls="nav-home" aria-selected="true" label="table"></a>
+                            <a class="nav-item nav-link" id="data-dataset-chart-nav-tab" data-toggle="tab" href="#data-dataset-chart-nav-content" role="tab" aria-controls="nav-profile" aria-selected="false" label="chart" style="display: none;"></a>
+                            <a class="nav-item nav-link" id="data-dataset-map-nav-tab" data-toggle="tab" href="#data-dataset-map-nav-content" role="tab" aria-controls="nav-contact" aria-selected="false" label="map" style="display: none;"></a>
                         </div>
-                        <div name="updated-date-and-time" class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1">
-                            <small>
-                                <i name="exceptional-flag" class="fas fa-exclamation-triangle text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="exceptional-release"></i>
-                                <span label="last-updated"></span>: <b name="updated-date"></b> <span name="updated-time"></span>
-                            </small>
-                        </div>
-                    </div>
-
-                    <!-- Mid aligned -->
-                    <div class="row px-2 order-2 order-lg-2 order-md-2 order-sm-2">
-                        <div class="col-4 px-0 order-1 my-auto">
-                            <h6 class="mb-1">
-                                <span name="mtr-code"></span>
-                                <i name="official-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
-                                <i name="geo-flag" class="fas fa-globe text-tertiary ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
-                            </h6>
-                        </div>
-                        <div class="col-8 px-0 order-2 text-right my-auto">
-                            <p name="search-result-icons" class="mb-1">
-                                <i name="archive-flag" class="fas fa-file-archive text-dark mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
-                                <i name="reservation-flag" class="fas fa-exclamation text-danger mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
-                                <i name="analytical-flag" class="fas fa-chart-line text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
-                                <i name="dependency-flag" class="fab fa-hubspot text-tertiary mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="dependency"></i>
-                                <span name="language" class="badge badge-primary"></span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Bottom aligned -->
-                    <div class="row px-2 order-3 order-lg-3 order-md-3 order-sm-3">
-                        <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-1 my-auto">
-                            <span name="dimensions"></span>
-                        </div>
-                        <div class="col-12 col-lg-4 col-md-12 col-sm-12 px-0 order-2 mt-2 text-lg-right text-md-left">
-                            <small>
-                                <a name="copyright" href="" target="_blank"></a>
-                            </small>
-                        </div>
-                    </div>
+                    </nav>
                 </div>
-
-                <div class="card-header bg-danger text-light d-none p-2" name="under-reservation-header">
-                    <i class="fas fa-exclamation text-light mx-1" data-toggle="tooltip" data-original-title="" label-tooltip="under-reservation"></i>
-                    <span label="under-reservation"></span>
-                </div>
-
-                <div class="card-header bg-neutral text-dark d-none p-2 " name="archive-header">
-                    <i class="fas fa-file-archive mx-1" data-toggle="tooltip" data-original-title="" label-tooltip="archived"></i>
-                    <span label="archived"></span>
-                </div>
-
-                <!-- Change Data Table data Select view/ data MAP-->
-                <div name="map-header" class="card-header text-right d-none">
-                    <!-- Data Table data Show Codes button-->
-                    <button name="show-data-map" status="data" class="btn btn-tertiary" type="submit">
-                        <i class="fas fa-globe"></i> <span name="text" label="map"></span>
-                    </button>
-                </div>
-
                 <div class="card-body p-2">
-                    <div name="dimension-containers" class="row">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="data-dataset-table-nav-content" role="tabpanel" aria-labelledby="data-dataset-table-nav-tab"></div>
+                        <div class="tab-pane fade" id="data-dataset-chart-nav-content" role="tabpanel" aria-labelledby="data-dataset-chart-nav-tab"></div>
+                        <div class="tab-pane fade" id="data-dataset-map-nav-content" role="tabpanel" aria-labelledby="data-dataset-map-nav-tab"></div>
+                    </div>
+                </div>
 
-                    </div>
-                    <div name="map-container" class="row d-none">
-                        <div name="map-dimensions" class="col-sm-6"></div>
-                        <div name="highmap-container" class="col-sm-6"></div>
-                    </div>
-                </div>
-                <div name="card-footer" class="card-footer">
-                    <div class="row">
-                        <div class="col text-right"> <span label="data-selected" class="font-weight-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
-                        </div>
-                    </div>
-                </div>
-                <div name="card-footer" class="card-footer">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-4 text-left my-2"> <span label="codes" class="text-right font-weight-bold"></span>
-                            <span><input checked type="checkbox" id="code-toggle-select"></span>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-8 text-right my-2">
-                            <button name="reset" type="button" class="btn btn-warning text-dark">
-                                <i class="fas fa-undo"></i> <span label="reset"></span>
-                            </button>
-                            <button name="show-data" class="btn btn-primary" type="submit">
-                                <i class="fas fa-search"></i> <span name="button-show-data-text" label="view-all"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <span name="dimension" class="badge badge-tertiary mr-1 mt-1"></span>
+</div>
 
-    <div name="dimension-container" class="col-xl-6 col-sm-12">
-        <div class="card mb-4">
-            <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center p-2"><span>
-                    <span class="font-weight-bold">
-                        <input name="select-all" data-toggle="tooltip" data-placement="top" title="" type="checkbox" value="" data-original-title="" label-tooltip="select-all">
-                        <span name="dimension-label"></span></span>
-                    <span name="dimension-count" class="badge badge-data badge-pill bg-info text-light"></span></span>
-                <span><a name="geojson-link" href="" target="_blank" class="d-none"><i class="fas fa-external-link-alt"></i> <span label="geojson"></span>
-                    </a> <i name="sort-options" data-toggle="tooltip" data-placement="top" title="" class="sort-icon fas fa-sort px-1 fa-lg" data-original-title="" label-tooltip="sort"></i></span>
+<div id="data-dataset-templates" style="display: none">
+
+
+    <div name="matrix-selection-header">
+        <div class="card-header">
+            <!-- Top aligned -->
+            <div class="row px-2 order-1 order-lg-1 order-md-1 order-sm-1">
+                <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
+                    <h5 name="mtr-title" class="mb-1"></h5>
+                </div>
+                <div name="updated-date-and-time" class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1">
+                    <small>
+                        <i name="exceptional-flag" class="fas fa-exclamation-triangle text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="exceptional-release"></i>
+                        <span label="last-updated"></span>: <b name="updated-date"></b> <span name="updated-time"></span>
+                    </small>
+                </div>
             </div>
-            <div class="card-body p-1">
-                <input name="dimension-filter" type="search" class="form-control mb-1" placeholder="Filter" aria-label="Filter" aria-describedby="basic-addon2" autocomplete="off">
-                <select name="dimension-select" class="custom-select" multiple="multiple" size="7" idn="" role="" sort="asc">
-                    <option value="No results" filtered="false" disabled="disabled" class="d-none" label="no-results"></option>
 
-                </select>
+            <!-- Mid aligned -->
+            <div class="row px-2 order-2 order-lg-2 order-md-2 order-sm-2">
+                <div class="col-4 px-0 order-1 my-auto">
+                    <h6 class="mb-1">
+                        <span name="mtr-code"></span>
+                        <i name="official-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
+                        <i name="geo-flag" class="fas fa-globe text-tertiary ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
+                    </h6>
+                </div>
+                <div class="col-8 px-0 order-2 text-right my-auto">
+                    <p name="search-result-icons" class="mb-1">
+                        <i name="archive-flag" class="fas fa-file-archive text-dark mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
+                        <i name="reservation-flag" class="fas fa-exclamation text-danger mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
+                        <i name="analytical-flag" class="fas fa-chart-line text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
+                        <i name="dependency-flag" class="fab fa-hubspot text-tertiary mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="dependency"></i>
+                        <span name="language" class="badge badge-primary"></span>
+                    </p>
+                </div>
             </div>
 
+            <!-- Bottom aligned -->
+            <div class="row px-2 order-3 order-lg-3 order-md-3 order-sm-3">
+                <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-1 my-auto">
+                    <span name="dimensions"></span>
+                </div>
+                <div class="col-12 col-lg-4 col-md-12 col-sm-12 px-0 order-2 mt-2 text-lg-right text-md-left">
+                    <small>
+                        <a name="copyright" href="" target="_blank"></a>
+                    </small>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div name="dimension-container-map">
-        <div class="card mb-4">
-            <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center p-2">
-                <span name="dimension-label" class="font-weight-bold"></span>
-                <span name="dimension-count" class="badge badge-data badge-pill bg-tertiary text-light"></span>
-            </div>
-            <div class="card-body p-1">
-                <select name="dimension-select" class="custom-select" idn="" role="">
-                </select>
-            </div>
+        <div class="card-header bg-danger text-light d-none p-2" name="under-reservation-header">
+            <i class="fas fa-exclamation text-light mx-1" data-toggle="tooltip" data-original-title="" label-tooltip="under-reservation"></i>
+            <span label="under-reservation"></span>
+        </div>
+
+        <div class="card-header bg-neutral text-dark d-none p-2 " name="archive-header">
+            <i class="fas fa-file-archive mx-1" data-toggle="tooltip" data-original-title="" label-tooltip="archived"></i>
+            <span label="archived"></span>
         </div>
     </div>
 
     <div name="matrix-notes">
-        <div name="notes" class="card m-3 border-info d-none">
-            <div class="card-header bg-info text-light" label="note"></div>
-            <div class="card-body">
-
-            </div>
-        </div>
-
-        <div name="reasons" class="card m-3 border-info d-none">
-            <div class="card-header bg-info text-light" label="reasons-to-publish"></div>
-            <div class="card-body">
-                <ul class="list-group">
-
-                </ul>
-            </div>
-        </div>
-
-        <div class="card m-3 border-info">
-            <div class="card-header bg-info text-light" label="download-full-dataset"></div>
-            <div class="card-body">
-                <div name="download-full-dataset" class="list-group"></div>
-            </div>
-        </div>
         <div class="card border-info m-3">
             <div class="card-header bg-info text-light" label="contact"></div>
             <div class="card-body">
@@ -194,17 +119,48 @@
             </div>
         </div>
 
-        <div name="sharethis"></div>
-    </div>
+        <div class="card m-3 border-info" name="notes" style="display: none;">
+            <div class="card-header bg-info text-light">
+                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="true" aria-controls="">
+                    <i class="fas fa-minus-circle"></i> <span label="note"></span>
+                </a>
+            </div>
+            <div id="" class="card-body collapse show"></div>
+        </div>
 
-    <a name="download-dataset-format" href="#" frm-type="" frm-version="" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <div class="card m-3 border-info" name="reasons" style="display: none;">
+            <div class="card-header bg-info text-light">
+                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
+                    <i class="fas fa-plus-circle"></i> <span label="reasons-to-publish"></span>
+                </a>
+            </div>
+            <div id="" class="collapse card-body">
+                <ul class="list-group">
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="card m-3 border-info" name="full-download-card">
+            <div class="card-header bg-info text-light">
+                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
+                    <i class="fas fa-plus-circle"></i> <span label="download-full-dataset"></span>
+                </a>
+            </div>
+            <div id="" class="collapse card-body">
+                <div name="download-full-dataset" class="list-group"></div>
+            </div>
+        </div>
+        <div name="sharethis"></div>
+
+    </div>
+    <a name="download-dataset-format" href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span>
             <span name="type"></span>
             <span><small name="version" class="text-muted"></small></span>
         </span>
         <span><i class="fas fa-file-download text-info"></i></span>
     </a>
-
     <li name="reason" class="list-group-item"></li>
 </div>
 

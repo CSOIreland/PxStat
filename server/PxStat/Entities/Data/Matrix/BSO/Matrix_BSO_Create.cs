@@ -74,9 +74,7 @@ namespace PxStat.Data
                 return false;
             }
 
-            //var js = DTO.testItem.Extension["copyright"].GetType();
 
-            //return true;
 
             PxDoc = PxStatEngine.ParsePxInput(DTO.MtrInput);
             Matrix theMatrixData = new Matrix(PxDoc, DTO);
@@ -122,6 +120,7 @@ namespace PxStat.Data
                 if (latestRelease.RlsLiveFlag)
                 {
                     releaseId = mBso.CloneRelease(latestRelease.RlsCode, DTO.GrpCode, SamAccountName);
+                    mBso.CloneComment(latestRelease.RlsCode, releaseId, SamAccountName);
                 }
                 else
                 {
@@ -132,6 +131,10 @@ namespace PxStat.Data
 
                     matrixAdo.Delete(latestRelease.RlsCode, SamAccountName);
                 }
+
+
+
+
                 // Clean up caching
                 MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + latestRelease.RlsCode);
                 MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + latestRelease.RlsCode);
@@ -146,7 +149,7 @@ namespace PxStat.Data
             }
 
             mBso.CreateMatrix(theMatrixData, releaseId, SamAccountName, DTO);
-            DTO = null;
+
 
             swMatrix.Stop();
             Log.Instance.Info(string.Format("Matrix object created in {0} ms", Math.Round((double)swMatrix.ElapsedMilliseconds)));
@@ -170,6 +173,8 @@ namespace PxStat.Data
 
             swLoad.Stop();
             Log.Instance.Info(string.Format("Matrix loaded in DB in {0} ms", Math.Round((double)swLoad.ElapsedMilliseconds)));
+
+
 
             Response.data = JSONRPC.success;
             return true;

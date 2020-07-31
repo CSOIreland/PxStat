@@ -47,12 +47,17 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="dateFrom"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadNextLiveDate(DateTime dateFrom)
+        internal ADO_readerOutput ReadNextLiveDate(DateTime dateFrom, string PrcCode = null)
         {
             var inputParams = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name="@ReleaseDate",value=dateFrom }
             };
+
+            if (PrcCode != null)
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@PrcCode", value = PrcCode });
+            }
 
             return ado.ExecuteReaderProcedure("Data_Release_ReadNext", inputParams);
         }
@@ -94,6 +99,7 @@ namespace PxStat.System.Navigation
             DataTable dt = new DataTable();
             dt.Columns.Add("Key");
             dt.Columns.Add("Value");
+            dt.Columns.Add("Attribute");
 
 
 
@@ -110,6 +116,7 @@ namespace PxStat.System.Navigation
                         var row = dt.NewRow();
                         row["Key"] = syn.lemma;
                         row["Value"] = syn.match;
+                        row["Attribute"] = Configuration_BSO.GetCustomConfig("search.synonym-multiplier");
                         dt.Rows.Add(row);
                     }
                 }
@@ -118,11 +125,26 @@ namespace PxStat.System.Navigation
                     var row = dt.NewRow();
                     row["Key"] = word;
                     row["Value"] = word;
+                    row["Attribute"] = Configuration_BSO.GetCustomConfig("search.synonym-multiplier");
                     dt.Rows.Add(row);
 
                 }
-
+                //The main search term must be included along with the synonyms, i.e. a word is a synonym of itself
+                //But with a higher search priority, which goes into the Attribute column
+                var keyrow = dt.NewRow();
+                if (dt.Select("Key = '" + word + "'").Count() == 0)
+                {
+                    keyrow["Key"] = word;
+                    keyrow["Value"] = word;
+                    keyrow["Attribute"] = Configuration_BSO.GetCustomConfig("search.search-word-multiplier");
+                    dt.Rows.Add(keyrow);
+                }
             }
+
+
+            //Sort the search terms to ensure invariant word order in the search       
+            dt.DefaultView.Sort = "Key,Value asc";
+            dt = dt.DefaultView.ToTable();
 
 
             //The ExecuteReaderProcedure method requires that the parameters be contained in a List<ADO_inputParams>
@@ -133,7 +155,7 @@ namespace PxStat.System.Navigation
             };
 
             ADO_inputParams param = new ADO_inputParams() { name = "@Search", value = dt };
-            param.typeName = "KeyValueVarchar";
+            param.typeName = "KeyValueVarcharAttribute";
             paramList.Add(param);
             //We need a count of search terms (ignoring duplicates caused by singularisation)
             paramList.Add(new ADO_inputParams() { name = "@SearchTermCount", value = searchTermCount });
@@ -159,6 +181,8 @@ namespace PxStat.System.Navigation
 
 
 
+
+
             //We store from the ADO because the search terms may have been changed by keyword rules
             MemCachedD_Value cache = MemCacheD.Get_ADO("PxStat.System.Navigation", "System_Navigation_Search", paramList); //
             if (cache.hasData)
@@ -166,6 +190,7 @@ namespace PxStat.System.Navigation
                 return cache.data.ToObject<List<dynamic>>();
 
             }
+
 
 
             //Call the stored procedure

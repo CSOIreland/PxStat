@@ -6,6 +6,7 @@ using PxStat.Data;
 using PxStat.Resources.PxParser;
 using PxStat.Template;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using static PxStat.Data.Matrix;
@@ -21,9 +22,6 @@ namespace PxStat.Build
         /// 
         /// </summary>
         List<int> divisors = new List<int>();
-
-
-
 
 
 
@@ -49,6 +47,9 @@ namespace PxStat.Build
         /// <returns></returns>
         protected override bool Execute()
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             Build_BSO bBso = new Build_BSO();
 
             if (!bBso.HasBuildPermission(Ado, SamAccountName, "update"))
@@ -78,8 +79,13 @@ namespace PxStat.Build
 
 
 
-            //Get this matrix from the px file 
-            theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado);
+            Log.Instance.Debug("Object updated - " + theMatrixData.Cells.Count + " rows in " + sw.ElapsedMilliseconds + " milliseconds");
+
+            theMatrixData = bBso.UpdateMatrixFromBuild(theMatrixData, DTO, Ado);
+
+
+
+            Log.Instance.Debug("Object updated - " + theMatrixData.Cells.Count + " rows in " + sw.ElapsedMilliseconds + " milliseconds");
 
             //We need to check the matrix in case it incurred any validation problems at the time of creation
             //If there are, then we need to return the details of these errors to the caller and terminate this process
@@ -93,6 +99,11 @@ namespace PxStat.Build
                 }
             }
 
+            //SortId is for internal use only, so we remove it from the output
+            foreach (var i in DTO.PxData.DataItems)
+            {
+                i.Remove("SortId");
+            }
 
             if (DTO.Format.FrmType == DatasetFormat.Px)
             {
@@ -100,9 +111,13 @@ namespace PxStat.Build
                 List<dynamic> file = new List<dynamic>();
                 file.Add(theMatrixData.GetPxObject(true).ToString());
                 result.file = file;
-                result.report = DTO.PxData.DataItems;
-                Response.data = result;
 
+
+                result.report = DTO.PxData.DataItems;
+
+
+                Response.data = result;
+                Log.Instance.Debug("Update complete in " + sw.ElapsedMilliseconds + " milliseconds");
                 return true;
             }
 
@@ -129,8 +144,10 @@ namespace PxStat.Build
                 }
                 dynamic result = new ExpandoObject();
                 result.file = jsons;
+
                 result.report = DTO.PxData.DataItems;
                 Response.data = result;
+                Log.Instance.Debug("Update complete in " + sw.ElapsedMilliseconds + " milliseconds");
                 return true;
             }
 

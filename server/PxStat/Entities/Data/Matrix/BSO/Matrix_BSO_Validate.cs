@@ -151,7 +151,11 @@ namespace PxStat.Data
         /// <returns></returns>
         private bool PxIntegrityIsValid(Matrix theMatrix)
         {
+
             IntegrityValidatorResult = new PxIntegrityValidator(theMatrix.MainSpec, DTO.LngIsoCode).Validate(theMatrix);
+
+
+
             return IntegrityValidatorResult.IsValid;
         }
 

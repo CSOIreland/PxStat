@@ -1,9 +1,10 @@
 ﻿using API;
 using PxStat.Resources;
+using PxStat.Security;
+using PxStat.System.Navigation;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 
 namespace PxStat.Data
 {
@@ -46,13 +47,24 @@ namespace PxStat.Data
         {
             //See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO);
-            if (cache.hasData)
+
+            Navigation_ADO adoNav = new Navigation_ADO(Ado);
+            //If we're cacheing, we only want the cache to live until the next scheduled release goes live
+            //Also, if there is a next release before the scheduled cache expiry time, then we won't trust the cache
+            var nextRelease = adoNav.ReadNextLiveDate(DateTime.Now);
+            DateTime nextReleaseDate = default;
+            if (nextRelease.hasData)
+            {
+                if (!nextRelease.data[0].NextRelease.Equals(DBNull.Value))
+                    nextReleaseDate = Convert.ToDateTime(nextRelease.data[0].NextRelease);
+            }
+
+            if (cache.hasData && nextReleaseDate >= cache.expiresAt)
             {
                 Response.data = cache.data;
                 return true;
             }
 
-            //return ExecuteReadCollection(Ado, DTO, Response);
 
             Cube_BSO cBso = new Cube_BSO();
 
@@ -94,7 +106,7 @@ namespace PxStat.Data
 
                 var aItem = new Item()
                 {
-                    Href = new Uri(string.Format("{0}/{1}/{2}", ConfigurationManager.AppSettings["APP_URL"], Utility.GetCustomConfig("APP_COOKIELINK_TABLE"), element.MtrCode)),
+                    Href = new Uri(string.Format("{0}/{1}/{2}", Configuration_BSO.GetCustomConfig("url.application"), Utility.GetCustomConfig("APP_COOKIELINK_TABLE"), element.MtrCode)),
                     Class = ItemClass.Dataset,
                     Label = element.MtrTitle,
                     Updated = DataAdaptor.ConvertToString(element.RlsLiveDatetimeFrom),

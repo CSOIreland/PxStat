@@ -18,6 +18,7 @@ namespace PxStat.JsonStatSchema
         public JsonStatQuery jStatQuery { get; set; }
         public JsonStatQueryExtension jStatQueryExtension { get; set; }
 
+        public bool m2m { get; set; }
 
 
         public CubeQuery_DTO(dynamic parameters)
@@ -32,6 +33,11 @@ namespace PxStat.JsonStatSchema
 
             }
 
+            var param = Utility.JsonDeserialize_IgnoreLoopingReference<dynamic>(parameters.ToString());
+            if (param.m2m != null)
+                m2m = param.m2m;
+            else
+                m2m = true;
         }
 
     }

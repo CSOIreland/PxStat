@@ -10,6 +10,8 @@ app.data.collection = {};
 
 app.data.MtrCode = null;
 app.data.RlsCode = null;
+app.data.isModal = null;
+app.data.isLive = null;
 app.data.fileNamePrefix = null;
 app.data.LngIsoCode = app.label.language.iso.code;
 app.data.collection.params = {
@@ -35,12 +37,13 @@ app.data.goTo.MtrCode = null;
 * @param {*} RlsCode
 * @param {*} filenamePrefix
 */
-app.data.init = function (LngIsoCode, MtrCode, RlsCode, filenamePrefix) {
+app.data.init = function (LngIsoCode, MtrCode, RlsCode, filenamePrefix, isModal, isLive) {
     app.data.LngIsoCode = LngIsoCode || app.label.language.iso.code;
     app.data.MtrCode = MtrCode || null;
     app.data.RlsCode = RlsCode || null;
     app.data.fileNamePrefix = filenamePrefix || app.label.static["table"].toLowerCase();
-    //add file name prefix
+    app.data.isModal = isModal;
+    app.data.isLive = isLive;
 };
 
 /**
@@ -109,7 +112,7 @@ app.data.callback.drawCallbackDrawLatestReleases = function () {
         $("#data-accordion-collection-api").hide();
         //collapse navigation so filter abd sort visible at top of screen
         $("#data-navigation").find(".navbar-collapse").collapse("hide");
-        app.data.init($(this).attr("lng-iso-code"), $(this).attr("mtr-code"), null, $(this).attr("mtr-code"));
+        app.data.init($(this).attr("lng-iso-code"), $(this).attr("mtr-code"), null, $(this).attr("mtr-code"), false, true);
         app.data.dataset.ajax.readMetadata();
     });
 
@@ -250,15 +253,34 @@ app.data.callback.drawLatestReleases = function (data) {
  * Draw collection API details
  */
 app.data.callback.drawCollectionApiDetails = function () {
-    $("#data-collection-api").find("[name=github-link]").attr("href", C_APP_URL_GITHUB_API_CUBE);
-    $("#data-collection-api").find("[name=api-url]").text(app.config.url.api.public);
-    $("#data-collection-api").find("[name=api-object]").text(function () {
-        return JSON.stringify({
-            "jsonrpc": C_APP_API_JSONRPC_VERSION,
-            "method": "PxStat.Data.Cube_API.ReadCollection",
-            "params": app.data.collection.params
-        }, null, "\t");
-    });
+
+    $("#data-dataset-collection-api-jspnrpc-content [name=information-documentation]").html(
+        app.library.html.parseDynamicLabel("information-api-documentation", ["JSON-RPC", $("<a>", {
+            "href": C_APP_URL_GITHUB_API_CUBE_JSONRPC,
+            "text": "GitHub Wiki",
+            "target": "_blank"
+        }).get(0).outerHTML]));
+
+    $("#data-dataset-collection-api-restful-content [name=information-documentation]").html(
+        app.library.html.parseDynamicLabel("information-api-documentation", ["RESTful", $("<a>", {
+            "href": C_APP_URL_GITHUB_API_CUBE_RESFFUL,
+            "text": "GitHub Wiki",
+            "target": "_blank"
+        }).get(0).outerHTML]));
+
+    var query = JSON.stringify({
+        "jsonrpc": C_APP_API_JSONRPC_VERSION,
+        "method": "PxStat.Data.Cube_API.ReadCollection",
+        "params": app.data.collection.params
+    }, null, "\t");
+
+    $("#data-dataset-collection-api-jsonrpc-post-url").text(app.config.url.api.public);
+    $("#data-dataset-collection-api-obj").hide().text(query).fadeIn();
+
+    $("#data-dataset-collection-api-jsonrpc-get-url").empty().text(encodeURI(app.config.url.api.public + C_APP_API_GET_PARAMATER_IDENTIFIER + query)).fadeIn();
+
+    $("#data-dataset-collection-api-restful-url").hide().text(C_APP_API_RESTFUL_READ_COLLECTION_URL.sprintf([app.config.url.restful, app.data.collection.params.datefrom, app.data.LngIsoCode])).fadeIn();
+
     // Refresh the Prism highlight
     Prism.highlightAll();
 }

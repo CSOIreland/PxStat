@@ -202,12 +202,12 @@ app.build.import.ajax.validate = function () {
         null,
         {
             async: false,
-            timeout: app.config.upload.timeout
+            timeout: app.config.transfer.timeout
         }
     );
 
     // Add the progress bar
-    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.import.file.content.Base64.length, app.config.upload.unitsPerSecond.validate));
+    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.import.file.content.Base64.length, app.config.transfer.unitsPerSecond["PxStat.Data.Matrix_API.Validate"]));
 };
 
 /**
@@ -321,11 +321,11 @@ app.build.import.ajax.create = function (overwrite) {
         null,
         {
             async: false,
-            timeout: app.config.upload.timeout
+            timeout: app.config.transfer.timeout
         }
     );
     // Add the progress bar
-    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.import.file.content.Base64.length, app.config.upload.unitsPerSecond.upload));
+    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.import.file.content.Base64.length, app.config.transfer.unitsPerSecond["PxStat.Data.Matrix_API.Create"]));
 };
 
 /**
@@ -412,9 +412,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
     }
 
     // Check for the hard limit of the file size
-    if (app.build.import.file.size > app.config.upload.threshold.hard) {
+    if (app.build.import.file.size > app.config.transfer.threshold.hard) {
         // Show Error
-        api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB"]));
+        api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
         // Disable Validate Button
         $("#build-import-container").find("[name=validate]").prop("disabled", true);
         // Disable Preview Button

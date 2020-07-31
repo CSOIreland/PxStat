@@ -1,5 +1,5 @@
-/* PrismJS 1.17.1
-https://prismjs.com/download.html#themes=prism&languages=http+json+pcaxis&plugins=line-numbers */
+/* PrismJS 1.20.0
+https://prismjs.com/download.html#themes=prism&languages=markup+http+json+pcaxis&plugins=line-numbers */
 
 /**
  * prism.js default theme for JavaScript, CSS and HTML
@@ -72,7 +72,7 @@ pre[class*="language-"] {
 	color: #999;
 }
 
-.namespace {
+.token.namespace {
 	opacity: .7;
 }
 
@@ -141,7 +141,6 @@ pre[class*="language-"].line-numbers>code {
 }
 
 .line-numbers-rows>span {
-	pointer-events: none;
 	display: block;
 	counter-increment: linenumber;
 }

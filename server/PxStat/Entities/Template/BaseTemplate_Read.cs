@@ -57,7 +57,6 @@ namespace PxStat.Template
                         return this;
                     }
                 }
-
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams = Cleanser.Cleanse(Request.parameters);
 

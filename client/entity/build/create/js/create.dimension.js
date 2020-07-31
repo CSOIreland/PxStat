@@ -93,6 +93,10 @@ $(document).ready(function () {
         );
     });
 
+    $("#build-create-view-classification").find("[name=download]").once("click", function () {
+        app.build.create.dimension.downloadClassification($(this).attr("idn"), $(this).attr("lng-iso-code"));
+    });
+
     //reset upload classification file input
     //Bind the classification upload reset button
     $("#build-create-upload-classification").find("[name=upload-reset]").once("click", app.build.create.dimension.resetClassificationUpload);

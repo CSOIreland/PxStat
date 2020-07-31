@@ -5,8 +5,8 @@ using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using XLsxHelper;
 using static PxStat.Data.Matrix;
@@ -38,6 +38,7 @@ namespace PxStat.Resources
                 lngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
 
             StringBuilder sb = new StringBuilder();
+
             foreach (var row in rowLists)
             {
                 int counter = 1;
@@ -63,8 +64,18 @@ namespace PxStat.Resources
                 sb.AppendLine(line);
             }
 
-            return sb.ToString();
+            return ConvertStringToUtf8Bom(sb.ToString());
         }
+
+        private string ConvertStringToUtf8Bom(string source)
+        {
+            var data = Encoding.UTF8.GetBytes(source);
+            var result = Encoding.UTF8.GetPreamble().Concat(data).ToArray();
+            var encoder = new UTF8Encoding(true);
+
+            return encoder.GetString(result);
+        }
+
         /// <summary>
         /// Create and get a spreadsheet as a serialized string based on the Matrix
         /// </summary>
@@ -135,12 +146,12 @@ namespace PxStat.Resources
 
             line = new List<XlsxValue>();
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.note", lngIsoCode), StyleId = 1 });
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = spec.Notes != null ? String.Join(" ", theMatrix.MainSpec.Notes) : "", StyleId = 0 });
+            line.Add(new XlsxValue() { DataType = CellValues.String, Value = spec.Notes != null ? String.Join(" ", spec.Notes) : spec.NotesAsString != null ? spec.NotesAsString : "", StyleId = 0 });
             matrix.Add(line);
 
             line = new List<XlsxValue>();
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.url", lngIsoCode), StyleId = 1 });
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = ConfigurationManager.AppSettings["APP_URL"] + "/" + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + theMatrix.Release.RlsCode.ToString(), StyleId = 0 });
+            line.Add(new XlsxValue() { DataType = CellValues.String, Value = Configuration_BSO.GetCustomConfig("url.application") + "/" + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + theMatrix.Release.RlsCode.ToString(), StyleId = 0 });
             matrix.Add(line);
 
             line = new List<XlsxValue>();
@@ -272,7 +283,7 @@ namespace PxStat.Resources
             xl.InsertDataWorksheet(matrix, Label.Get("About", lngIsoCode), OrientationValues.Landscape, true);
 
             //On the worksheet we've just created, add an image to the top left hand corner
-            xl.AddImage(Utility.GetCustomConfig("APP_XLSX_IMAGE_URL"), Label.Get("About", lngIsoCode), 1, 1);
+            xl.AddImage(Configuration_BSO.GetCustomConfig("url.logo"), Label.Get("About", lngIsoCode), 1, 1);
 
             //Create a second worksheet based on the Matrix contents
             xl.InsertDataWorksheet(theMatrix.GetMatrixSheet(null, false, 1), theMatrix.Code, OrientationValues.Landscape, true);

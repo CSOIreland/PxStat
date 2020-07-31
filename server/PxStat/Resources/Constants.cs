@@ -42,10 +42,16 @@ namespace PxStat.Resources
         internal const string C_SYSTEM_JSON_STAT_NAME = "JSON-stat";
         internal const string C_SYSTEM_CSV_NAME = "CSV";
         internal const string C_SYSTEM_XLSX_NAME = "XLSX";
+        internal const string C_SYSTEM_SDMX_NAME = "SDMX";
 
 
         private const string C_SYSTEM_CODE_RESERVED_WORD_VALUE = "Value";
         private const string C_SYSTEM_CODE_RESERVED_WORD_UNIT = "Unit";
+
+        internal const int C_DATA_PXAPIV1_SUBJECT_QUERY = 1;
+        internal const int C_DATA_PXAPIV1_PRODUCT_QUERY = 2;
+        internal const int C_DATA_PXAPIV1_COLLECTION_QUERY = 3;
+        internal const int C_DATA_PXAPIV1_METADATA_QUERY = 4;
 
 
         /// <summary>
@@ -154,6 +160,7 @@ namespace PxStat.Resources
         internal const string C_CAS_DATA_CUBE_READ_DATASET = "PxStat.Data.Cube_API.ReadDataset";
         internal const string C_CAS_DATA_CUBE_READ_METADATA = "PxStat.Data.Cube_API.ReadMetadata";
         internal const string C_CAS_DATA_CUBE_READ_COLLECTION = "PxStat.Data.Cube_API.ReadCollection";
+        internal const string C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI = "PxStat.Data.Cube_API.ReadCollectionPxApi";
         #endregion
     }
 }

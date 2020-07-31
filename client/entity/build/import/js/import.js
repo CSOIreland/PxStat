@@ -19,7 +19,7 @@ $(document).ready(function () {
   $("#build-import-container").find("[name=cancel]").once("click", app.build.import.reset);
   //Bind the preview button
   $("#build-import-container").find("[name=preview]").once("click", function () {
-    if (app.build.import.file.size > app.config.upload.threshold.soft) {
+    if (app.build.import.file.size > app.config.transfer.threshold.soft) {
       var fileSizeKB = app.library.utility.formatNumber(Math.ceil(app.build.import.file.size / 1024)) + " KB";
       api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [fileSizeKB]), app.build.import.preview);
     }
@@ -47,7 +47,7 @@ $(document).ready(function () {
   });
 
   // Set the max file-size in the Upload box
-  $("#build-import-container").find("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.upload.threshold.hard / 1024 / 1024)) + " MB").show();
+  $("#build-import-container").find("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB").show();
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 });

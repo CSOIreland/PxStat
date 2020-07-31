@@ -85,7 +85,7 @@ namespace PxStat.Data
             var inputParams = new List<ADO_inputParams>()
                 {
                     new ADO_inputParams() {name ="@CcnUsername",value= userName},
-                    new ADO_inputParams() {name ="@RlsCode",value= dto.RlsCode},
+                    new ADO_inputParams() {name ="@RlsCode",value=  dto.RlsCode },
                     new ADO_inputParams() {name ="@CmmValue",value= dto.CmmValue }
                 };
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
@@ -365,6 +365,26 @@ namespace PxStat.Data
             //Call the stored procedure
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
             ado.ExecuteNonQueryProcedure("Data_Release_Clone", inputParams, ref returnParam);
+            return ReadInt(returnParam.value);
+        }
+
+        /// <summary>
+        /// Clone a comment for a release and return the new comment id
+        /// </summary>
+        /// <param name="releaseCode"></param>
+        /// <param name="groupCode"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        internal int CloneComment(int releaseCode, int newReleaseId, string username)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = releaseCode });
+            inputParams.Add(new ADO_inputParams { name = "@CcnUsername", value = username });
+            inputParams.Add(new ADO_inputParams { name = "@RlsIdNew", value = newReleaseId });
+
+            //Call the stored procedure
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+            ado.ExecuteNonQueryProcedure("Data_Release_Clone_Comment", inputParams, ref returnParam);
             return ReadInt(returnParam.value);
         }
 

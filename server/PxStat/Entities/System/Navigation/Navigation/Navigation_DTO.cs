@@ -84,6 +84,7 @@ namespace PxStat.System.Navigation
         /// <summary>
         /// Search term
         /// </summary>
+        [LowerCase]
         public string Search { get; set; }
         #endregion
 

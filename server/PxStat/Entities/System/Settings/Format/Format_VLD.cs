@@ -17,4 +17,18 @@ namespace PxStat.System.Settings
             RuleFor(f => f.FrmDirection).NotEmpty().When(f => !string.IsNullOrEmpty(f.FrmDirection)).Length(1, 32).WithMessage("Invalid Format Direction").WithName("FrmDirectionValidation");
         }
     }
+
+    internal class Format_VLD_Read_Object : AbstractValidator<Format_DTO_Read>
+    {
+        internal Format_VLD_Read_Object()
+        {
+            //Mandatory - FrmType
+            RuleFor(f => f.FrmType).NotNull().NotEmpty().WithMessage("Invalid Format Type").WithName("FrmTypeValidation");
+            //Mandatory - FrmVersion
+            RuleFor(f => f.FrmVersion).NotNull().NotEmpty().WithMessage("Invalid Format Version").WithName("FrmVersionValidation");
+            //Mandatory - FrmMimetype
+            RuleFor(f => f.FrmMimetype).NotNull().NotEmpty().WithMessage("Invalid Mimetype").WithName("MimetypeValidation");
+        }
+
+    }
 }

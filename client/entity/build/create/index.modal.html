@@ -383,7 +383,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="build-create-view-classification" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true" data-dismiss="modal">
+<div class="modal fade" id="build-create-view-classification" tabindex="-1" role="dialog" aria-hidden="true" data-dismiss="modal">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
@@ -402,10 +402,20 @@
                     </tbody>
                 </table>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
-                    <span label="cancel"></span>
-                </button>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8 text-left my-2">
+                        <button name="download" class="btn btn-primary text-light">
+                            <i class="fas fa-file-download"></i>
+                            <span label="download-csv"></span>
+                        </button>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 text-right my-2">
+                        <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                            <span label="cancel"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -517,7 +527,7 @@
 </div>
 
 <!--  initiate-matrix-lookup Modal -->
-<div class="modal" id="build-create-initiate-matrix-lookup" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal" id="build-create-initiate-matrix-lookup" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary">
@@ -546,7 +556,7 @@
 </div>
 
 <!--  import modal -->
-<div class="modal" id="build-create-import" class="dataViewModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal" id="build-create-import" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary">

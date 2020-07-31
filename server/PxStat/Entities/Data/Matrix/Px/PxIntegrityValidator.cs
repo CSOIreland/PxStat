@@ -7,6 +7,7 @@ using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static PxStat.Data.Matrix;
 
 namespace PxStat.Data
 {
@@ -187,6 +188,33 @@ namespace PxStat.Data
         }
     }
 
+    class PxSpecIntegrityValidator : AbstractValidator<Specification>
+    {
+        public PxSpecIntegrityValidator()
+        {
+            RuleFor(x => x).Must(NoDuplicateNames).When(x => x.Values != null && x.MainValues != null).WithMessage(Label.Get("integrity.values"));
+            RuleFor(x => x).Must(NoDuplicateDomains).WithMessage(Label.Get("integrity.codes"));
+        }
+
+        private static bool NoDuplicateNames(Specification spec)
+        {
+            foreach (var k in spec.Values)
+            {
+                var mv = spec.MainValues.Where(x => x.Key == k.Key).FirstOrDefault().Value;
+
+                if (mv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
+                var vv = spec.Values.Where(x => x.Key == k.Key).FirstOrDefault().Value;
+                if (vv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
+            }
+            return true;
+        }
+
+        private static bool NoDuplicateDomains(Specification spec)
+        {
+            return !spec.Classification.GroupBy(x => x.Code).Any(g => g.Count() > 1);
+        }
+    }
+
     /// <summary>
     /// class
     /// </summary>
@@ -200,7 +228,39 @@ namespace PxStat.Data
             RuleFor(x => x.OtherLanguageSpec).HaveFactsAndDimensionsMatching().When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage(Label.Get("integrity.size"));
             RuleFor(x => x.Cells).DataIsGood().When(x => x.Cells != null && x.Cells.Count > 0).WithMessage(FormatDataIsGood);
             RuleFor(x => x).Must(NoDuplicateDomains).WithMessage(Label.Get("integrity.codes"));
-            RuleFor(x => x).Must(NoDuplicateNames).When(x => x.MainSpec.Values != null && x.MainSpec.MainValues != null).WithMessage(Label.Get("integrity.values"));
+            RuleFor(x => x).Must(NoDuplicateNames).When(x => spec.Values != null && spec.MainValues != null).WithMessage(Label.Get("integrity.values"));
+
+            RuleFor(x => x).Must(NoDuplicateDomainsLanguageSpec).WithMessage(Label.Get("integrity.codes"));
+            RuleFor(x => x).Must(NoDuplicateNamesLanguageSpec).When(x => spec.Values != null && spec.MainValues != null).WithMessage(Label.Get("integrity.values"));
+        }
+
+
+        private static bool NoDuplicateNamesLanguageSpec(Matrix matrix)
+        {
+            if (matrix.OtherLanguageSpec == null) return true;
+            foreach (var spec in matrix.OtherLanguageSpec)
+            {
+                foreach (var k in spec.Values)
+                {
+                    var mv = spec.MainValues.Where(x => x.Key == k.Key).FirstOrDefault().Value;
+
+                    if (mv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
+                    var vv = spec.Values.Where(x => x.Key == k.Key).FirstOrDefault().Value;
+                    if (vv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
+                }
+            }
+            return true;
+        }
+
+        private static bool NoDuplicateDomainsLanguageSpec(Matrix matrix)
+        {
+            if (matrix.OtherLanguageSpec == null) return true;
+            foreach (Specification spec in matrix.OtherLanguageSpec)
+            {
+                if (spec.Classification.GroupBy(x => x.Code).Any(g => g.Count() > 1)) return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -214,7 +274,8 @@ namespace PxStat.Data
             foreach (var k in matrix.MainSpec.Values)
             {
                 var mv = matrix.MainSpec.MainValues.Where(x => x.Key == k.Key).FirstOrDefault().Value;
-
+                //null is possible if we're dealing with other languages. These will be validated in NoDuplicateNamesLanguageSpec
+                if (mv == null) continue;
                 if (mv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
                 var vv = matrix.MainSpec.Values.Where(x => x.Key == k.Key).FirstOrDefault().Value;
                 if (vv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;

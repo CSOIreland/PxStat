@@ -2,7 +2,6 @@
 using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Resources.PxParser;
-using PxStat.Security;
 using PxStat.Template;
 using System.Dynamic;
 
@@ -54,23 +53,12 @@ namespace PxStat.Build
             Build_BSO bBso = new Build_BSO();
 
 
-            //Get this matrix from the px file 
-            theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado, false);
 
-            //We need to check the matrix in case it incurred any validation problems at the time of creation
-            //If there are, then we need to return the details of these errors to the caller and terminate this process
-            if (theMatrixData.ValidationResult != null)
-            {
-                if (!theMatrixData.ValidationResult.IsValid)
-                {
-                    Response.error = Error.GetValidationFailure(theMatrixData.ValidationResult.Errors);
-                    return false;
-                }
-            }
+            var dataList = bBso.GetDataForAllPeriods(theMatrixData, DTO, Ado);
 
             dynamic result = new ExpandoObject();
 
-            result.csv = theMatrixData.GetCsvObject(DTO.LngIsoCode, true);
+            result.csv = theMatrixData.GetCsvObject(dataList, DTO.LngIsoCode, true);
             result.MtrCode = theMatrixData.Code;
             Response.data = result;
 

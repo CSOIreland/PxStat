@@ -4,13 +4,18 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "2.3.0";
+const C_APP_VERSION = "2.4.0";
 
-// URLs
+// URLs GitHub
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
 const C_APP_URL_GITHUB_RELEASE_TAG = "https://github.com/CSOIreland/PxStat/releases/tag/{0}";
 const C_APP_URL_GITHUB_REPORT_ISSUE = "https://github.com/CSOIreland/PxStat/issues/new/choose";
-const C_APP_URL_GITHUB_API_CUBE = "https://github.com/CSOIreland/PxStat/wiki/API-Cube";
+const C_APP_URL_GITHUB_API_CUBE_JSONRPC = "https://github.com/CSOIreland/PxStat/wiki/API-Cube";
+const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-RESTful";
+
+// URLs Widget
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.2/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.2/snippet.html";
 
 //Charts + Maps
 /*******************************************************************************
@@ -23,8 +28,12 @@ const C_APP_HIGHCHARTS_NO_LICENSE_MESSAGE = $("<a>", {
     target: "_blank"
 }).get(0).outerHTML;
 
+// Public API
 const C_APP_API_SUCCESS = "success";
 const C_APP_API_JSONRPC_VERSION = "2.0";
+const C_APP_API_GET_PARAMATER_IDENTIFIER = "?data=";
+const C_APP_API_RESTFUL_READ_DATASET_URL = "{0}PxStat.Data.Cube_API.ReadDataset/{1}/{2}/{3}/{4}";
+const C_APP_API_RESTFUL_READ_COLLECTION_URL = "{0}PxStat.Data.Cube_API.ReadCollection/{1}/{2}";
 
 // Names
 const C_APP_NAME_LINK_EDIT = "link-edit";
@@ -151,3 +160,11 @@ const C_APP_GEOJSON_FEATURE_COLLECTION = "FeatureCollection";
 
 //Datetime 
 const C_APP_DATETIME_DEFAULT = "0001-01-01T0:00:00.000Z";
+
+// Widget
+const C_APP_PXWIDGET_TYPE_CHART = 'chart';
+const C_APP_PXWIDGET_TYPE_TABLE = 'table';
+const C_APP_PXWIDGET_CHART_TYPES = ["line", "bar", "horizontalBar", "pie", "doughnut", "mixed", "polarArea", "radar"];
+const C_APP_PXWIDGET_CHART_TYPES_MIXED = ["line", "bar"];
+const C_APP_PXWIDGET_CHART_TYPES_DUAL_POSITION = ["y-axis-1", "y-axis-2"];
+const C_APP_PXWIDGET_CHART_LEGEND_POSITION = ["top", "left", "bottom", "right"];

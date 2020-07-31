@@ -1,4 +1,17 @@
 ﻿using API;
+using FluentValidation;
+using FluentValidation.Results;
+using Newtonsoft.Json.Linq;
+using PxStat.JsonQuery;
+using PxStat.Resources;
+using PxStat.Security;
+using PxStat.System.Navigation;
+using PxStat.System.Settings;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web;
 
 namespace PxStat.Data
 {
@@ -7,6 +20,235 @@ namespace PxStat.Data
     /// </summary>
     public class Cube_API
     {
+        [Analytic]
+        public static dynamic PxAPIv1(RESTful_API restfulRequest)
+        {
+            try
+            {
+                var parameters = ((List<string>)restfulRequest.parameters).Where(x => !string.IsNullOrWhiteSpace(x));
+                int pcount = parameters.Count() - 1;
+                JSONRPC_API rpc = Map.RESTful2JSONRPC_API(restfulRequest);
+
+                Cube_MAP map = new Cube_MAP();
+                JObject rpcParams = new JObject();
+                PxApiMetadata meta = new PxApiMetadata();
+
+                var context = HttpContext.Current.Request;
+
+                switch (pcount)
+                {
+                    case Constants.C_DATA_PXAPIV1_SUBJECT_QUERY:
+                        //Get a list of all subjects
+
+                        rpcParams.Add("LngIsoCode", parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY));
+                        rpc.parameters = rpcParams;
+
+                        var rspSbj = new Subject_BSO_Read(rpc).Read().Response;
+
+                        if (rspSbj.data == null)
+                            return new RESTful_Output() { statusCode = HttpStatusCode.NotFound };
+
+                        rspSbj.data = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadSubjectsAsObjectList(rspSbj));
+
+
+
+                        var responseSbj = Map.JSONRPC2RESTful_Output(rspSbj, null, rspSbj.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+
+                        return responseSbj;
+
+                    case Constants.C_DATA_PXAPIV1_PRODUCT_QUERY:
+                        //Get a list of products for a subject
+                        rpcParams.Add("LngIsoCode", parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY));
+
+                        rpcParams.Add("SbjCode", parameters.ElementAt(Constants.C_DATA_PXAPIV1_PRODUCT_QUERY));
+                        rpc.parameters = rpcParams;
+
+                        var rspPrd = new Product_BSO_Read(rpc).Read().Response;
+
+                        if (rspPrd.data == null)
+                            return new RESTful_Output() { statusCode = HttpStatusCode.NotFound };
+
+                        meta = new PxApiMetadata();
+
+                        if (rspPrd.data.Count == 0)
+                        {
+                            rspPrd = new JSONRPC_Output();
+                            rspPrd.data = null;
+                        }
+                        else
+                        {
+                            rspPrd.data = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadProductsAsObjectList(rspPrd));
+
+                        }
+
+                        var responsePrd = Map.JSONRPC2RESTful_Output(rspPrd, null, rspPrd.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+
+                        return responsePrd;
+
+                    case Constants.C_DATA_PXAPIV1_COLLECTION_QUERY:
+                        //Get a list of live tables for a product
+                        rpcParams.Add("LngIsoCode", parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY));
+
+                        rpcParams.Add("product", parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+                        rpc.parameters = rpcParams;
+
+                        List<dynamic> collection = new List<dynamic>();
+
+                        RESTful_Output output = new RESTful_Output();
+                        DateTime nextReleaseDateForProduct = default;
+
+                        using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
+                        {
+                            nextReleaseDateForProduct = cBso.GetNextReleaseDate(parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+                        }
+
+                        //See if this request has cached data
+                        MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollectionPxApi", rpcParams);
+
+                        if (cache.hasData && (nextReleaseDateForProduct == default || nextReleaseDateForProduct > DateTime.Now))
+                        {
+                            output.response = cache.data;
+                            output.statusCode = HttpStatusCode.OK;
+                        }
+
+                        else
+                        {
+                            using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
+                            {
+                                collection = cBso.ReadCollection(parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+                            }
+
+                            meta = new PxApiMetadata();
+
+                            if (collection.Count > 0)
+                            {
+                                output.response = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadCollectionAsObjectList(new JSONRPC_Output() { data = collection }));
+                                output.statusCode = HttpStatusCode.OK;
+                            }
+                            else
+                                output.statusCode = HttpStatusCode.NotFound;
+                        }
+
+
+
+                        MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollectionPxApi", rpcParams, output.response, nextReleaseDateForProduct, Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI + parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+
+                        //MemCacheD.CasRepositoryFlush(Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI + parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+                        return output;
+
+                    case Constants.C_DATA_PXAPIV1_METADATA_QUERY:
+                        //Either get the metadata for the table or, if a query has been supplied, get the table data based on the query
+                        string request = string.IsNullOrWhiteSpace(Utility.HttpPOST()) ? Utility.HttpGET()["query"] : Utility.HttpPOST();
+
+                        if (request == null)
+                        {
+
+                            rpcParams.Add("LngIsoCode", parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY));
+
+                            rpcParams.Add("matrix", parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY));
+
+                            rpcParams.Add("format", JToken.FromObject(new { type = "JSON-stat", version = "2.0" }));
+
+                            Matrix theMatrix;
+                            using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
+                            {
+                                theMatrix = cBso.GetMetadataMatrix(parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY));
+
+                            }
+                            var rspMeta = new RESTful_Output();// JSONRPC_Output();
+
+                            if (theMatrix != null)
+                            {
+                                var json = theMatrix.GetApiMetadata(parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY));
+
+                                rpc.parameters = rpcParams;
+
+                                rspMeta.response = Utility.JsonSerialize_IgnoreLoopingReference(json);
+                                rspMeta.statusCode = HttpStatusCode.OK;
+                            }
+                            else rspMeta.statusCode = HttpStatusCode.NotFound;
+
+
+                            return rspMeta;
+
+                        }
+                        else
+                        {
+                            //This is a request for data - we need to use the query
+
+
+
+                            string queryString = string.IsNullOrWhiteSpace(Utility.HttpPOST()) ? Utility.HttpGET()["query"] : Utility.HttpPOST();
+
+                            PxApiV1Query pxapiQuery = Utility.JsonDeserialize_IgnoreLoopingReference<PxApiV1Query>(queryString);
+
+                            Format_DTO_Read format = new Format_DTO_Read(pxapiQuery.Response.Format);
+
+                            Analytic_BSO_Create.Create(HttpContext.Current.Request, "PxStat.Data.PxAPIv1", HttpContext.Current.Request.UserAgent,
+                              restfulRequest.ipAddress, parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY), false, format);
+
+                            JsonStatQuery jsQuery = new JsonStatQuery();
+                            jsQuery.Class = "query";
+                            jsQuery.Id = new List<string>();
+                            jsQuery.Dimensions = new Dictionary<string, JsonQuery.Dimension>();
+                            foreach (var q in pxapiQuery.Query)
+                            {
+                                jsQuery.Id.Add(q.Code);
+                                jsQuery.Dimensions.Add(q.Code, new JsonQuery.Dimension() { Category = new JsonQuery.Category() { Index = q.Selection.Values.ToList<string>() } });
+                            }
+                            jsQuery.Extension = new Dictionary<string, object>();
+                            jsQuery.Extension.Add("matrix", parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY));
+                            jsQuery.Extension.Add("language", new Language() { Code = parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY) });
+                            jsQuery.Extension.Add("format", new JsonQuery.Format() { Type = format.FrmType, Version = format.FrmVersion });
+                            jsQuery.Version = Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION");
+
+                            JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
+
+                            jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jsQuery);
+                            //Run the request as a Json Rpc call
+                            JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;
+                            // Convert the JsonRpc output to RESTful output
+                            var response = Map.JSONRPC2RESTful_Output(rsp, format.FrmMimetype, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+
+                            string suffix;
+                            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
+                            {
+                                suffix = bso.GetFileSuffixForFormat(format);
+                            };
+
+
+                            response.fileName = parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY) + suffix;
+                            return response;
+
+                        }
+
+
+                    default:
+                        throw new Exception(Label.Get("error.validation"));
+                }
+            }
+            catch (Exception ex)
+
+            {
+                RESTful_Output error = new RESTful_Output
+                {
+                    statusCode = HttpStatusCode.InternalServerError
+                };
+
+                Log.Instance.Error(ex.Message);
+                return error;
+            }
+
+
+        }
+
+        private static dynamic RunQuery()
+        {
+            JsonStatQuery jq = new JsonStatQuery();
+            jq.Class = "query";
+
+            return null;
+        }
 
         /// <summary>
         /// Reads a live dataset based on specific criteria. 
@@ -19,6 +261,62 @@ namespace PxStat.Data
         {
             return new Cube_BSO_ReadDataset(jsonrpcRequest).Read().Response;
         }
+        /// <summary>
+        /// Reads a live dataset based on specific criteria. RESTful version
+        /// </summary>
+        /// <param name="restfulRequest"></param>
+        /// <returns></returns>
+        /// 
+        [Analytic]
+        public static dynamic ReadDataset(RESTful_API restfulRequest)
+        {
+
+            //A pre-validation. If a validation problem is found then an output containing the error will be created and returned immediately
+            var vldOutput = ValidateRest<Cube_VLD_REST_ReadDataset>(restfulRequest, new Cube_VLD_REST_ReadDataset());
+            if (vldOutput != null) return vldOutput;
+
+            //Map the RESTful request to an equivalent Json Rpc request
+            JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
+
+            //Map the parameters - this is specific to the function
+            Cube_MAP map = new Cube_MAP();
+            jsonRpcRequest.parameters = map.ReadDataset_MapParameters(jsonRpcRequest.parameters);
+
+            //Run the request as a Json Rpc call
+            JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;
+
+            //Convert the JsonRpc output to RESTful output
+            var response = Map.JSONRPC2RESTful_Output(rsp, map.MimeType, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.NoContent);
+
+            response.fileName = map.FileName;
+            return response;
+
+        }
+
+        /// <summary>
+        /// Creates a pre-validation of the RESTful request
+        /// You must supply a generic validator and a RESTful_API
+        /// </summary>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="restfulRequest"></param>
+        /// <param name="Validation"></param>
+        /// <returns>Returns a RESTful_Output with error details if validation fails. This can be returned to the user. Othwerwise returns null</returns>
+        internal static RESTful_Output ValidateRest<V>(RESTful_API restfulRequest, V Validation) where V : AbstractValidator<RESTful_API>
+        {
+            ValidationResult result = Validation.Validate(restfulRequest);
+            if (!result.IsValid)
+            {
+                foreach (var e in result.Errors)
+                {
+                    Log.Instance.Debug(e.ErrorMessage);
+                }
+                RESTful_Output output = new RESTful_Output();
+                output.statusCode = HttpStatusCode.BadRequest;
+                output.response = Label.Get("error.invalid");
+                return output;
+            }
+            return null;
+        }
 
         /// <summary>
         /// Reads the metadata for a live dataset based on specific criteria.
@@ -29,6 +327,30 @@ namespace PxStat.Data
         public static dynamic ReadMetadata(JSONRPC_API jsonrpcRequest)
         {
             return new Cube_BSO_ReadMetadata(jsonrpcRequest).Read().Response;
+        }
+        /// <summary>
+        ///  Reads the metadata for a live dataset based on specific criteria. RESTful version
+        /// </summary>
+        /// <param name="restfulRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadMetadata(RESTful_API restfulRequest)
+        {
+            //A pre-validation. If a validation problem is found then an output containing the error will be created and returned immediately
+            var vldOutput = ValidateRest<Cube_VLD_REST_ReadMetadata>(restfulRequest, new Cube_VLD_REST_ReadMetadata());
+            if (vldOutput != null) return vldOutput;
+
+            //Map the RESTful request to an equivalent Json Rpc request
+            JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
+
+            //Map the parameters - this is specific to the function
+            Cube_MAP map = new Cube_MAP();
+            jsonRpcRequest.parameters = map.ReadMetadata_MapParameters(jsonRpcRequest.parameters);
+
+            //Run the request as a Json Rpc call
+            JSONRPC_Output rsp = new Cube_BSO_ReadMetadata(jsonRpcRequest).Read().Response;
+
+            //Convert the JsonRpc output to RESTful output
+            return Map.JSONRPC2RESTful_Output(rsp, map.MimeType, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.NoContent);
         }
 
         /// <summary>
@@ -62,6 +384,42 @@ namespace PxStat.Data
         public static dynamic ReadCollection(JSONRPC_API jsonrpcRequest)
         {
             return new Cube_BSO_ReadCollection(jsonrpcRequest).Read().Response;
+
+
+        }
+        /// <summary>
+        ///  Returns a Collection of JsonStat items. RESTful version
+        /// </summary>
+        /// <param name="restfulRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadCollection(RESTful_API restfulRequest)
+        {
+            //A pre-validation. If a validation problem is found then an output containing the error will be created and returned immediately
+            var vldOutput = ValidateRest<Cube_VLD_REST_ReadCollection>(restfulRequest, new Cube_VLD_REST_ReadCollection());
+            if (vldOutput != null) return vldOutput;
+
+            //Map the RESTful request to an equivalent Json Rpc request
+            JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
+
+            //Map the parameters - this is specific to the function
+            Cube_MAP map = new Cube_MAP();
+            jsonRpcRequest.parameters = map.ReadCollection_MapParameters(jsonRpcRequest.parameters);
+
+            //Run the request as a Json Rpc call
+            JSONRPC_Output rsp = new Cube_BSO_ReadCollection(jsonRpcRequest).Read().Response;
+
+            string mimeType;
+            using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+            {
+                mimeType = fbso.GetMimetypeForFormat(new Format_DTO_Read() { FrmType = Constants.C_SYSTEM_JSON_STAT_NAME });
+            };
+
+            //Convert the JsonRpc output to RESTful output
+            var response = Map.JSONRPC2RESTful_Output(rsp, mimeType);
+            if (rsp.data == null) response.statusCode = HttpStatusCode.NoContent;
+            response.fileName = map.FileName;
+            return response;
         }
     }
+
 }

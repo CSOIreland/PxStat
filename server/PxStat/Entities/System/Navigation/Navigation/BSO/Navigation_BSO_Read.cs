@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
 using PxStat.Template;
-using System.Dynamic;
 using System;
+using System.Collections.Generic;
+using System.Dynamic;
 
 namespace PxStat.System.Navigation
 {
@@ -42,25 +42,36 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         protected override bool Execute()
         {
-            //Read the cached value for this if it's available
-            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.System.Navigation", "Navigation_API", "Read", DTO);
-            if (cache.hasData)
+            Navigation_ADO adoNav = new Navigation_ADO(Ado);
+            //If we're cacheing, we only want the cache to live until the next scheduled release goes live
+            //Also, if there is a next release before the scheduled cache expiry time, then we won't trust the cache
+            var nextRelease = adoNav.ReadNextLiveDate(DateTime.Now);
+            DateTime nextReleaseDate = default;
+            if (nextRelease.hasData)
             {
+                if (!nextRelease.data[0].NextRelease.Equals(DBNull.Value))
+                    nextReleaseDate = Convert.ToDateTime(nextRelease.data[0].NextRelease);
+            }
+
+            //Read the cached value for this if it's available but only if there isn't a next release before the cache expiry time
+            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.System.Navigation", "Navigation_API", "Read", DTO);
+
+            if (cache.hasData && nextReleaseDate >= cache.expiresAt)
+            {
+
                 Response.data = cache.data;
                 return true;
             }
 
 
             //No cache available, so read from the database and cache that result
-            Navigation_ADO adoNav = new Navigation_ADO(Ado);
+
             ADO_readerOutput result = adoNav.Read(DTO);
-            DateTime nextReleaseDate = default(DateTime);
             if (result.hasData)
             {
                 List<dynamic> formattedOutput = formatOutput(result.data);
 
-                //If we're cacheing, we only want the cache to live until the next scheduled release goes live
-                var nextRelease = adoNav.ReadNextLiveDate(DateTime.Now);
+
                 if (nextRelease != null)
                 {
 

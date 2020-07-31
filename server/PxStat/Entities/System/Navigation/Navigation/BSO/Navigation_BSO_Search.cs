@@ -45,8 +45,6 @@ namespace PxStat.System.Navigation
         {
             Navigation_ADO adoNav = new Navigation_ADO(Ado);
 
-
-
             dynamic data = adoNav.Search(DTO);
 
             Response.data = FormatOutput(data, DTO.LngIsoCode);
@@ -137,8 +135,8 @@ namespace PxStat.System.Navigation
                     outList.Add(rel);
                 }
             }
-
-            return outList;
+            //merged.OrderBy(x => x.sortID).ToList();
+            return outList.OrderByDescending(x => x.Score).ToList();
         }
 
         /// <summary>

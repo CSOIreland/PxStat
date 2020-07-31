@@ -675,6 +675,7 @@ namespace PxStat.Build
                 DataItems = new List<dynamic>();
                 foreach (var v in parameters.Data)
                 {
+                    v.SortId = 0;
                     DataItems.Add(v);
 
                 }

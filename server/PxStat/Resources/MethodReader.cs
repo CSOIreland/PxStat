@@ -17,7 +17,7 @@ namespace PxStat.Resources
         /// <param name="method"></param>
         /// <param name="attributeName"></param>
         /// <returns></returns>
-        internal static bool MethodHasAttribute(string method, string attributeName)
+        internal static bool MethodHasAttribute(string method, string attributeName, Type[] parameters = null)
         {
             try
             {
@@ -40,7 +40,26 @@ namespace PxStat.Resources
 
                 //Use some Reflection methods to get info about the class and method
                 Type type = Type.GetType(className);
-                MethodInfo methodInfo = type.GetMethod(methodName);
+
+                int mcount = type.GetMethods().Where(x => x.Name == methodName).Count(); ;//.FirstOrDefault();
+
+
+                if (mcount == 0) return false;
+                MethodInfo methodInfo;
+                if (mcount > 1)
+                {
+                    //There is at least one overloaded method. If the calling method has supplied a list of parameters that specifies the overload, try to match it
+                    if (parameters != null)
+                    {
+                        methodInfo = type.GetMethod(methodName, parameters);
+                    }
+                    else // Otherwise apply the rule that if the attribute is applied to one overload, it applies to all
+                        methodInfo = type.GetMethods().Where(x => x.Name == methodName).FirstOrDefault();
+                }
+                else
+                {
+                    methodInfo = type.GetMethod(methodName);
+                }
 
                 //Get the required "attributeName" attribute if it exists
                 var attrNoTrace = methodInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == attributeName).FirstOrDefault();
@@ -48,8 +67,9 @@ namespace PxStat.Resources
                 //Return true or false depending on whether the attribute was found
                 return attrNoTrace != null;
             }
-            catch
+            catch (Exception ex)
             {
+
                 //soft fail - continue the process.
                 return false;
             }
