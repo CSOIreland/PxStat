@@ -128,5 +128,11 @@
       "auto-approve-comment": "Automatic Response",
       "autoSignoff-comment": "Automatic Signoff"
     }
+  },
+  "analytic": {
+    "others": "Inni",
+    "unknown": "Nieznany",
+    "date": "data",
+    "total": "całkowity"
   }
 }

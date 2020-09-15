@@ -692,6 +692,7 @@ app.dashboard.drawCallbackliveReleases = function () {
     $("#dashboard-panel-livereleases table").find("[name=" + C_APP_NAME_LINK_ANALYTIC + "]").once("click", function (e) {
         e.preventDefault();
         app.analytic.ajax.readBrowser($(this).attr("mtr-code"), "#analytic-chart-modal [name=browser-pie-chart]");
+        app.analytic.ajax.readUserLanguage($(this).attr("mtr-code"), "#analytic-chart-modal [name=user-language-column-chart]");
         app.analytic.ajax.readOs($(this).attr("mtr-code"), "#analytic-chart-modal [name=operating-system-pie-chart]");
         app.analytic.ajax.readReferrer($(this).attr("mtr-code"), "#analytic-chart-modal [name=referrer-column-chart]");
         app.analytic.ajax.readTimeline($(this).attr("mtr-code"), "#analytic-chart-modal [name=dates-line-chart]");

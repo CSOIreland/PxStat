@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using XLsxHelper;
+using static PxStat.Data.Matrix;
 
 namespace PxStat.Data
 {
@@ -119,6 +120,177 @@ namespace PxStat.Data
             public List<ClassificationRecordDTO_Create> Classifications { get; set; }
         }
 
+        /// <summary>
+        /// Get an object which contains the matrix plus a data structure to contain Interface properties 
+        /// as definite objects. This enhances serialization and deserialization.
+        /// </summary>
+        /// <returns></returns>
+        internal SerializableMatrix GetSerializableObject()
+        {
+            SerializableMatrix sMatrix = new SerializableMatrix() { TheMatrix = this, SerialSpecs = new List<SerialSpec>() };
+
+            sMatrix.Cells = this.Cells;
+            if (this.Languages != null)
+            {
+                sMatrix.Languages = new List<PxQuotedValue>();
+                foreach (var lang in this.Languages)
+                {
+                    sMatrix.Languages.Add(new PxQuotedValue(lang.SingleValue));
+                }
+            }
+
+            if (this.OtherLanguages != null)
+            {
+                sMatrix.OtherLanguages = new List<string>();
+                foreach (var lang in this.OtherLanguages)
+                    sMatrix.OtherLanguages.Add(lang);
+            }
+            sMatrix.Domain = this.Domain != null ? GetDimensionAsList(this.Domain) : null;
+
+            sMatrix.SerialSpecs.Add(new SerialSpec()
+            {
+                LngIsoCode = this.MainSpec.Language,
+                TheSpec = this.MainSpec,
+                TimeValueSet = this.MainSpec.TimeValsIsDefined ? GetDimensionAsList(this.MainSpec.TimeVals) : null,
+                ValueSet = GetDimensionAsList(this.MainSpec.Values),
+                MainValueSet = GetDimensionAsList(this.MainSpec.MainValues)
+            });
+
+            if (this.OtherLanguageSpec != null)
+            {
+                foreach (var spec in OtherLanguageSpec)
+                {
+                    sMatrix.SerialSpecs.Add(new SerialSpec()
+                    {
+                        LngIsoCode = spec.Language,
+                        TheSpec = spec,
+                        TimeValueSet = spec.TimeValsIsDefined ? GetDimensionAsList(spec.TimeVals) : null,
+                        ValueSet = GetDimensionAsList(spec.Values),
+                        MainValueSet = GetDimensionAsList(this.MainSpec.MainValues)
+                    });
+                }
+            }
+
+            return sMatrix;
+        }
+        /// <summary>
+        /// Extract the fully restored Matrix from the serializable object
+        /// </summary>
+        /// <param name="sm"></param>
+        /// <returns></returns>
+        internal Matrix ExtractFromSerializableMatrix(SerializableMatrix sm)
+        {
+
+            sm.TheMatrix.MainSpec = DeserializeSpec(sm, sm.TheMatrix.MainSpec.Language);
+
+            if (sm.TheMatrix.OtherLanguageSpec != null)
+            {
+                List<Specification> specs = new List<Specification>();
+                foreach (var sp in sm.TheMatrix.OtherLanguageSpec)
+                {
+                    specs.Add(DeserializeSpec(sm, sp.Language));
+                }
+                sm.TheMatrix.OtherLanguageSpec = specs;
+            }
+
+            sm.TheMatrix.Cells = sm.Cells;
+            if (sm.Languages != null)
+            {
+                sm.TheMatrix.Languages = new List<IPxSingleElement>();
+                foreach (var lang in sm.Languages)
+                {
+                    sm.TheMatrix.Languages.Add(lang);
+                }
+
+            }
+
+            if (sm.OtherLanguages != null) sm.TheMatrix.OtherLanguages = sm.OtherLanguages;
+            return sm.TheMatrix;
+        }
+        /// <summary>
+        /// Get a specification with fully serializable data structures
+        /// </summary>
+        /// <param name="sm"></param>
+        /// <param name="LngIsoCode"></param>
+        /// <returns></returns>
+        private Specification DeserializeSpec(SerializableMatrix sm, string LngIsoCode)
+        {
+
+            SerialSpec mspec = sm.SerialSpecs.Where(x => x.LngIsoCode == LngIsoCode).FirstOrDefault();
+
+            Specification spec = sm.TheMatrix.GetSpecFromLanguage(LngIsoCode);
+
+            spec.Values = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
+
+            foreach (var dim in mspec.ValueSet)
+            {
+                IList<IPxSingleElement> dlist = new List<IPxSingleElement>();
+                foreach (var item in dim.Value)
+                {
+                    dlist.Add(new PxStringValue(item));
+                }
+                KeyValuePair<string, IList<IPxSingleElement>> kvp = new KeyValuePair<string, IList<IPxSingleElement>>(dim.Key, dlist);
+                spec.Values.Add(kvp);
+            }
+            if (mspec.TimeValueSet != null)
+            {
+                spec.TimeVals = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
+
+                foreach (var dim in mspec.TimeValueSet)
+                {
+                    IList<IPxSingleElement> dlist = new List<IPxSingleElement>();
+                    foreach (var item in dim.Value)
+                    {
+                        dlist.Add(new PxStringValue(item));
+                    }
+                    KeyValuePair<string, IList<IPxSingleElement>> kvp = new KeyValuePair<string, IList<IPxSingleElement>>(dim.Key, dlist);
+                    spec.TimeVals.Add(kvp);
+                }
+            }
+
+            spec.MainValues = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
+
+            foreach (var dim in mspec.MainValueSet)
+            {
+                IList<IPxSingleElement> dlist = new List<IPxSingleElement>();
+                foreach (var item in dim.Value)
+                {
+                    dlist.Add(new PxStringValue(item));
+                }
+                KeyValuePair<string, IList<IPxSingleElement>> kvp = new KeyValuePair<string, IList<IPxSingleElement>>(dim.Key, dlist);
+                spec.MainValues.Add(kvp);
+            }
+
+            return spec;
+        }
+
+        /// <summary>
+        /// Get a IList<KeyValuePair<string, IList<IPxSingleElement>>> expresses as a non abstract object. For serialization, deserialization
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private List<KeyValuePair<string, List<PxStringValue>>> GetDimensionAsList(IList<KeyValuePair<string, IList<IPxSingleElement>>> list)
+        {
+
+            List<KeyValuePair<string, List<PxStringValue>>> DimensionList = new List<KeyValuePair<string, List<PxStringValue>>>();
+
+            foreach (var v in list)
+            {
+
+
+                List<PxStringValue> stringItems = new List<PxStringValue>();
+                foreach (var vl in v.Value)
+                {
+                    stringItems.Add(new PxStringValue(vl.SingleValue));
+                }
+                KeyValuePair<string, List<PxStringValue>> dimension = new KeyValuePair<string, List<PxStringValue>>(v.Key, stringItems);
+
+                DimensionList.Add(dimension);
+            }
+            return DimensionList;
+        }
+
+
 
 
         /// <summary>
@@ -173,6 +345,82 @@ namespace PxStat.Data
             /// </summary>
             public Specification()
             {
+            }
+
+            public Specification Clone()
+            {
+                return Clone(this);
+            }
+
+            public Specification Clone(Specification original)
+            {
+                Specification copy = new Specification();
+                copy.Language = original.Language;
+                copy.MatrixCode = original.MatrixCode;
+                copy.Notes = original.Notes;
+                copy.requiresResponse = original.requiresResponse;
+                copy.Title = original.Title;
+                copy.Contents = original.Contents;
+                copy.ContentVariable = original.ContentVariable;
+                copy.CopyrightUrl = original.CopyrightUrl;
+                copy.Decimals = original.Decimals;
+                copy.Statistic = new List<StatisticalRecordDTO_Create>();
+                foreach (var s in original.Statistic)
+                {
+                    copy.Statistic.Add(new StatisticalRecordDTO_Create()
+                    {
+                        Code = s.Code,
+                        Decimal = s.Decimal,
+                        SortId = s.SortId,
+                        StatisticalProductId = s.StatisticalProductId,
+                        Unit = s.Unit,
+                        Value = s.Value
+                    });
+                }
+                copy.Frequency = new FrequencyRecordDTO_Create();
+                copy.Frequency.Code = original.Frequency.Code;
+                copy.Frequency.FrequencyId = original.Frequency.FrequencyId;
+                copy.Frequency.IdMultiplier = original.Frequency.IdMultiplier;
+                copy.Frequency.Value = original.Frequency.Value;
+                copy.Frequency.Period = new List<PeriodRecordDTO_Create>();
+                copy.Classification = new List<ClassificationRecordDTO_Create>();
+                foreach (var p in original.Frequency.Period)
+                {
+                    copy.Frequency.Period.Add(new PeriodRecordDTO_Create() { Code = p.Code, FrequencyPeriodId = p.FrequencyPeriodId, SortId = p.SortId, Value = p.Value });
+                }
+
+                foreach (var cls in original.Classification)
+                {
+                    ClassificationRecordDTO_Create clsCopy = new ClassificationRecordDTO_Create()
+                    {
+                        ClassificationFilterWasApplied = cls.ClassificationFilterWasApplied,
+                        ClassificationId = cls.ClassificationId,
+                        Code = cls.Code,
+                        GeoFlag = cls.GeoFlag,
+                        GeoUrl = cls.GeoUrl,
+                        IdMultiplier = cls.IdMultiplier,
+                        Value = cls.Value,
+                        Variable = new List<VariableRecordDTO_Create>()
+                    };
+                    foreach (var vrb in cls.Variable)
+                    {
+                        clsCopy.Variable.Add(new VariableRecordDTO_Create()
+                        {
+                            ClassificationVariableId = vrb.ClassificationVariableId,
+                            Code = vrb.Code,
+                            Id = vrb.Id,
+                            SortId = vrb.SortId,
+                            Value = vrb.Value
+                        });
+                    }
+                    copy.Classification.Add(clsCopy);
+                    copy.Values = original.Values;
+
+                }
+                copy.StatisticMetadata = new StatisticMetadata();
+                copy.StatisticMetadata = original.StatisticMetadata;
+
+                return copy;
             }
 
             public long GetRequiredDatapointCount()
@@ -386,7 +634,7 @@ namespace PxStat.Data
             /// <summary>
             /// class variable
             /// </summary>
-            public FrequencyRecordDTO_Create Frequency { get; internal set; }
+            public FrequencyRecordDTO_Create Frequency { get; set; }
 
             /// <summary>
             /// class variable
@@ -411,42 +659,42 @@ namespace PxStat.Data
             /// <summary>
             /// class property
             /// </summary>
-            public IList<string> Notes { get; internal set; }
+            public IList<string> Notes { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public int MatrixId { get; internal set; }
+            public int MatrixId { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public string MatrixCode { get; internal set; }
+            public string MatrixCode { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public string Source { get; internal set; }
+            public string Source { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public string NotesAsString { get; internal set; }
+            public string NotesAsString { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public string Contents { get; internal set; }
+            public string Contents { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public string Language { get; internal set; }
+            public string Language { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public string Title { get; internal set; }
+            public string Title { get; set; }
 
             /// <summary>
             /// class property
@@ -478,12 +726,12 @@ namespace PxStat.Data
             /// <summary>
             /// 
             /// </summary>
-            public string ContentVariable { get; internal set; }
+            public string ContentVariable { get; set; }
 
             /// <summary>
             /// class property
             /// </summary>
-            public string CopyrightUrl { get; internal set; }
+            public string CopyrightUrl { get; set; }
 
 
             private void SetMultipleLanguagesProperties(PxDocument doc, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string language, string frqCodeTimeval, string frqValueTimeval)
@@ -503,11 +751,14 @@ namespace PxStat.Data
 
                 MatrixCode = doc.GetStringElementValue("MATRIX");
 
-                //MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
-                MainValues = doc.GetMultiValuesWithSubkeys("VALUES", language);
+                //we must use this option - where there are more than one language, we must get only one version of MainValues
+                //This should also work where there is only one language
+                MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
+                // MainValues = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
                 Contents = doc.GetStringElementValue("CONTENTS", language);
                 TimeVals = doc.GetMultiValuesWithSubkeysIfExist("TIMEVAL", language);
+
                 Source = doc.GetStringElementValue("SOURCE", language);
 
                 //DECIMALS is specific to Matrix and is language invariant but the value is needed in each language specification and the main spec
@@ -559,6 +810,7 @@ namespace PxStat.Data
                             Frequency_BSO fBso = new Frequency_BSO();
 
                             if (!fBso.ReadAll().Contains(frqCodeTimeval)) Frequency = null;
+
                             //No joy, so we must go back to the user.
                             if (Frequency == null) this.requiresResponse = true;
                         }
@@ -567,6 +819,7 @@ namespace PxStat.Data
                 }
 
                 if (Frequency == null) this.requiresResponse = true;
+
 
                 Classification = GetClassification(domain, codes, stubs, headings, Contents, maps);
 
@@ -586,6 +839,7 @@ namespace PxStat.Data
             /// <param name="language" - this is the language of the Specification></param>
             private void SetMultipleLanguagesProperties(PxDocument doc, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string language)
             {
+                string proposedLanguage = doc.GetStringValueIfExist("LANGUAGE");
                 if (!String.IsNullOrEmpty(language))
                 {
                     Language = language;
@@ -593,7 +847,8 @@ namespace PxStat.Data
 
                 // Title for main language and Title[by other language] and same with all the others.
                 Title = doc.GetStringElementValue("TITLE", language);
-                Values = doc.GetMultiValuesWithSubkeys("VALUES", language);
+                // Values = doc.GetMultiValuesWithSubkeys("VALUES", language);
+                Values = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
 
                 MatrixCode = doc.GetStringElementValue("MATRIX");
 
@@ -601,7 +856,12 @@ namespace PxStat.Data
                 //MainValues = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
                 Contents = doc.GetStringElementValue("CONTENTS", language);
+
+
                 TimeVals = doc.GetMultiValuesWithSubkeysIfExist("TIMEVAL", language);
+
+                //    TimeVals = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("TIMEVAL", language);
+
                 Source = doc.GetStringElementValue("SOURCE", language);
 
                 //DECIMALS is specific to Matrix and is language invariant but the value is needed in each language specification and the main spec
@@ -650,7 +910,9 @@ namespace PxStat.Data
                         if (PxUploadDto.FrqValueTimeval == null) this.requiresResponse = true;
                         else //We might be able to get the Frequency from the FrqValue
                         {
-                            Frequency = GetFrequency(doc, PxUploadDto.LngIsoCode, domain);
+                            proposedLanguage = Language ?? proposedLanguage;
+
+                            Frequency = GetFrequency(doc, PxUploadDto.LngIsoCode, domain, proposedLanguage);
                             Frequency_BSO fBso = new Frequency_BSO();
 
                             if (!fBso.ReadAll().Contains(PxUploadDto.FrqCodeTimeval)) Frequency = null;
@@ -711,15 +973,19 @@ namespace PxStat.Data
             }
 
 
-            private FrequencyRecordDTO_Create GetFrequency(PxDocument doc, string language, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain)
+            private FrequencyRecordDTO_Create GetFrequency(PxDocument doc, string language, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string proposedLanguage = null)
             {
 
                 FrequencyRecordDTO_Create fr = new FrequencyRecordDTO_Create();
                 fr.Period = new List<PeriodRecordDTO_Create>();
-
-
+                bool isMain = false;
+                if (Language == null && proposedLanguage != null)
+                {
+                    Language = proposedLanguage;
+                    isMain = true;
+                }
                 //Here we must get a translated version of FrqValueTimeval. FrqValueTimeval was supplied in one language, but we must get the corresponding version for this Specification's language
-                fr.Value = TranslateValue(doc, PxUploadDto.FrqValueTimeval, PxUploadDto.LngIsoCode, Language);
+                fr.Value = TranslateValue(doc, PxUploadDto.FrqValueTimeval, PxUploadDto.LngIsoCode, Language, isMain);
 
                 fr.Value = fr.Value == null ? PxUploadDto.FrqValueTimeval : fr.Value;
 
@@ -757,7 +1023,7 @@ namespace PxStat.Data
             /// <param name="lngIsoCodeFrom"></param>
             /// <param name="lngIsoCodeTo"></param>
             /// <returns></returns>
-            private string TranslateValue(PxDocument doc, string value, string lngIsoCodeFrom, string lngIsoCodeTo)
+            private string TranslateValue(PxDocument doc, string value, string lngIsoCodeFrom, string lngIsoCodeTo, bool isMain = false)
             {
                 //Translation request is trivial, we don't need to translate
                 if (lngIsoCodeTo == null) return null;
@@ -778,7 +1044,13 @@ namespace PxStat.Data
 
                 if (thisPos < 0) return value;
 
-                var otherValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", lngIsoCodeTo);
+                IList<KeyValuePair<string, IList<IPxSingleElement>>> otherValues;
+                if (isMain)
+                {
+                    otherValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageIsEmpty("VALUES");//, lngIsoCodeTo);
+                }
+                else
+                    otherValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", lngIsoCodeTo);
 
                 if (otherValues == null) return value;
 
@@ -869,13 +1141,14 @@ namespace PxStat.Data
             /// <param name="contents"></param>
             /// <param name="maps"></param>
             /// <returns></returns>
-            private IList<ClassificationRecordDTO_Create> GetClassification(IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes, IList<IPxSingleElement> stubs, IList<IPxSingleElement> headings, string contents, IList<KeyValuePair<string, IList<IPxSingleElement>>> maps)
+            internal IList<ClassificationRecordDTO_Create> GetClassification(IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes, IList<IPxSingleElement> stubs, IList<IPxSingleElement> headings, string contents, IList<KeyValuePair<string, IList<IPxSingleElement>>> maps)
             {
 
                 List<ClassificationRecordDTO_Create> retValue = new List<ClassificationRecordDTO_Create>();
 
                 // In case the time is in the stubs we exclude it in the where clause to avoid having time duplicated!
                 IEnumerable<string> dimensionInStubs = Enumerable.Empty<string>();
+                IEnumerable<string> dimensionsInHeadings = Enumerable.Empty<string>();
 
                 if (stubs != null && Frequency != null)
                 {
@@ -885,8 +1158,14 @@ namespace PxStat.Data
                     select (string)v.SingleValue;
                 }
 
+                //else if (stubs != null && Frequency == null)
+                //{
+                //    dimensionInStubs =
+                //    from v in stubs
+                //    select (string)v.SingleValue;
+                //}
 
-                IEnumerable<string> dimensionsInHeadings = Enumerable.Empty<string>();
+
                 if (headings != null && Frequency != null)
                 {
                     dimensionsInHeadings =
@@ -894,12 +1173,21 @@ namespace PxStat.Data
                                         where v.SingleValue != Frequency.Value
                                         select (string)v.SingleValue;
                 }
+                //else if (headings != null && Frequency == null)
+                //{
+                //    dimensionsInHeadings =
+                //                        from v in headings
+                //                        select (string)v.SingleValue;
+                //}
+
 
                 // remove Statistics 
                 List<string> dimensionValues = dimensionInStubs.Concat(dimensionsInHeadings).ToList<string>();
                 HashSet<string> statisticValues = new HashSet<string>(Statistic.Select(x => x.Value));
 
-                dimensionValues.RemoveAll(v => statisticValues.Contains(v));
+                //The next line had the effect of restricting dimensions where a statistic had a similar name
+                //This is being removed pending testing - Issue #180
+                //dimensionValues.RemoveAll(v => statisticValues.Contains(v));
 
                 dimensionValues.RemoveAll(v => v == ContentVariable || v == contents);
 
@@ -1117,7 +1405,15 @@ namespace PxStat.Data
 
             }
 
-            baseKeywordList.Add(CreatePxElement("CREATION-DATE", (DateTime.Now).ToString(Utility.GetCustomConfig("APP_PX_DATE_TIME_FORMAT"))));
+
+
+            if (this.Release != null)
+            {
+                if (this.Release.RlsLiveDatetimeFrom != default)
+                {
+                    baseKeywordList.Add(CreatePxElement("LAST-UPDATED", (Release.RlsLiveDatetimeFrom).ToString(Utility.GetCustomConfig("APP_PX_DATE_TIME_FORMAT"))));
+                }
+            }
 
             baseKeywordList.Add(CreatePxElement("OFFICIAL-STATISTICS", this.IsOfficialStatistic ? Utility.GetCustomConfig("APP_PX_TRUE") : Utility.GetCustomConfig("APP_PX_FALSE")));
 
@@ -2288,7 +2584,12 @@ namespace PxStat.Data
             jsStat.Version = Version.The20;
             jsStat.Class = Class.Dataset;
             string urlBase = Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
-            jsStat.Href = new Uri(urlBase);
+
+            if (this.Release != null)
+            {
+                if (this.Release.RlsLiveFlag && this.Release.RlsLiveDatetimeFrom < DateTime.Now)
+                    jsStat.Href = new Uri(urlBase);
+            }
 
 
             if (lngIsoCode != null)
@@ -2329,16 +2630,22 @@ namespace PxStat.Data
                     formats = fbso.Read(new Format_DTO_Read() { FrmDirection = Format_DTO_Read.FormatDirection.DOWNLOAD.ToString() }); //make this a list of DTO's
                 }
 
-                // formats = formats.Where(x => x.FrmType != this.FormatType && x.FrmVersion != this.FormatVersion).ToList();
 
                 var link = new Link();
-                link.Alternate = new List<Alternate>();
-                foreach (var f in formats)
+                if (this.Release != null)
                 {
-                    if (f.FrmType != this.FormatType || f.FrmVersion != this.FormatVersion)
-                        link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                    if (this.Release.RlsLiveFlag && this.Release.RlsLiveDatetimeFrom < DateTime.Now)
+                    {
+
+                        link.Alternate = new List<Alternate>();
+                        foreach (var f in formats)
+                        {
+                            if (f.FrmType != this.FormatType || f.FrmVersion != this.FormatVersion)
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                        }
+                        jsStat.Link = link;
+                    }
                 }
-                jsStat.Link = link;
 
 
             }
@@ -2406,7 +2713,8 @@ namespace PxStat.Data
                 jsStat.Extension.Add("analytical", Release.RlsAnalyticalFlag);
                 jsStat.Extension.Add("dependency", Release.RlsDependencyFlag);
 
-                jsStat.Updated = DataAdaptor.ConvertToString(Release.RlsLiveDatetimeFrom);
+                if (Release.RlsLiveDatetimeFrom != default)
+                    jsStat.Updated = DataAdaptor.ConvertToString(Release.RlsLiveDatetimeFrom);
             }
 
             // cells
@@ -2504,6 +2812,270 @@ namespace PxStat.Data
 
             return jsStat;
         }
+
+        public JsonStatV1_1 GetJsonStatV1_1Object(bool doStatus = false, bool showData = true, string lngIsoCode = null, CultureInfo ci = null)
+        {
+
+            Specification spec = new Specification();
+
+            if (lngIsoCode != null)
+            {
+                if (this.MainSpec.Language.Equals(lngIsoCode))
+                    spec = MainSpec;
+                else
+                {
+                    spec = (OtherLanguageSpec.Where(x => x.Language.Equals(lngIsoCode))).FirstOrDefault();
+                }
+                if (spec == null) return null;
+            }
+            else
+                spec = this.MainSpec;
+
+            var jsStat = new JsonStatV1_1();
+
+
+
+            jsStat.Class = Class.Dataset;
+            string urlBase = Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+            if (this.Release != null)
+            {
+                if (this.Release.RlsLiveFlag && this.Release.RlsLiveDatetimeFrom < DateTime.Now)
+                {
+                    jsStat.Href = new Uri(urlBase);
+                }
+            }
+
+            if (lngIsoCode != null)
+            {
+                // notes
+                jsStat.Note = new List<string>();
+                if (!string.IsNullOrEmpty(spec.NotesAsString))
+                {
+                    jsStat.Note.Add(spec.NotesAsString);
+                }
+            }
+
+
+            jsStat.Label = spec.Contents;
+
+
+
+            // notes
+            jsStat.Note = new List<string>();
+            if (!string.IsNullOrEmpty(spec.NotesAsString))
+            {
+                jsStat.Note.Add(spec.NotesAsString);
+            }
+
+            // the release note is now appended to the other notes from the px file
+            if (this.Release != null)
+            {
+                if (!string.IsNullOrEmpty(this.Release.CmmValue))
+                {
+                    jsStat.Note.Add(this.Release.CmmValue);
+                }
+
+                urlBase = Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+
+                List<Format_DTO_Read> formats;
+                using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+                {
+                    formats = fbso.Read(new Format_DTO_Read() { FrmDirection = Format_DTO_Read.FormatDirection.DOWNLOAD.ToString() }); //make this a list of DTO's
+                }
+
+                var link = new Link();
+                if (this.Release != null)
+                {
+                    if (this.Release.RlsLiveFlag && this.Release.RlsLiveDatetimeFrom < DateTime.Now)
+                    {
+                        link.Alternate = new List<Alternate>();
+                        foreach (var f in formats)
+                        {
+                            if (f.FrmType != this.FormatType || f.FrmVersion != this.FormatVersion)
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                        }
+                        jsStat.Link = link;
+                    }
+
+                }
+
+
+            }
+
+            jsStat.Extension = new Dictionary<string, object>();
+            jsStat.Extension.Add("matrix", this.Code);
+            jsStat.Extension.Add("reasons", Reasons);
+
+            Language_BSO languageBSO = new Language_BSO();
+            Language_DTO_Create language = languageBSO.Read(spec.Language);
+
+            jsStat.Extension.Add("language",
+                    new
+                    {
+                        code = language.LngIsoCode,
+                        name = language.LngIsoName
+                    }
+                    );
+
+            if (this.Release != null)
+            {
+                jsStat.Extension.Add("contact",
+                    new
+                    {
+                        name = Release.GrpContactName,
+                        email = Release.GrpContactEmail,
+                        phone = Release.GrpContactPhone
+                    }
+                );
+
+                jsStat.Extension.Add("subject",
+                    new
+                    {
+                        code = Release.SbjCode,
+                        value = Release.SbjValue
+                    });
+
+                jsStat.Extension.Add("product",
+                    new
+                    {
+                        code = Release.PrcCode,
+                        value = Release.PrcValue
+                    });
+            }
+
+            var anonymousCopyrightType = new
+            {
+                name = this.Copyright.CprValue,
+                code = this.Copyright.CprCode,
+                href = this.Copyright.CprUrl
+
+            };
+            jsStat.Extension.Add("official", this.IsOfficialStatistic);
+            jsStat.Extension.Add("copyright", anonymousCopyrightType);
+
+            if (this.Release != null)
+            {
+
+                jsStat.Extension.Add("exceptional", Release.RlsExceptionalFlag);
+
+                jsStat.Extension.Add("reservation", Release.RlsReservationFlag);
+                jsStat.Extension.Add("archive", Release.RlsArchiveFlag);
+                jsStat.Extension.Add("analytical", Release.RlsAnalyticalFlag);
+                jsStat.Extension.Add("dependency", Release.RlsDependencyFlag);
+
+                if (Release.RlsLiveDatetimeFrom != default)
+                    jsStat.Updated = DataAdaptor.ConvertToString(Release.RlsLiveDatetimeFrom);
+            }
+
+            // cells
+            if (Cells == null)
+            {
+                Cells = new List<dynamic>();
+            }
+
+            if (!showData)
+            {
+                Cells = new List<dynamic>();
+            }
+
+            jsStat.Dimension = new Dictionary<string, DimensionV1_1>();
+            var statDimension = new DimensionV1_1()
+            {
+                Label = spec.ContentVariable != null ? spec.ContentVariable : Label.Get("default.statistic"),
+                Category = new Category()
+                {
+                    Index = spec.Statistic.Select(v => v.Code).ToList(),
+                    Label = spec.Statistic.ToDictionary(v => v.Code, v => v.Value),
+                    Unit = spec.Statistic.ToDictionary(v => v.Code, v => new Unit() { Decimals = v.Decimal, Label = v.Unit, Position = Position.End })
+                }
+            };
+            statDimension.Id = new List<string>();
+            statDimension.Size = new List<long>();
+            statDimension.Role = new Role();
+            statDimension.Id.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"));
+            statDimension.Role.Metric = new List<string> { Utility.GetCustomConfig("APP_CSV_STATISTIC") };
+            statDimension.Size.Add(spec.Statistic.Count);
+
+
+            jsStat.Dimension.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"), statDimension);
+
+
+            // time role
+
+            var timeDimension = new DimensionV1_1()
+            {
+                Label = spec.Frequency.Value,
+                Category = new Category()
+                {
+                    Index = spec.Frequency.Period.Select(v => v.Code).ToList(),
+                    Label = spec.Frequency.Period.ToDictionary(v => v.Code, v => v.Value)
+                }
+            };
+            timeDimension.Id = new List<string>();
+            timeDimension.Size = new List<long>();
+            timeDimension.Id.Add(spec.Frequency.Code);
+            timeDimension.Role = new Role();
+            timeDimension.Role.Time = new List<string> { spec.Frequency.Code };
+            timeDimension.Size.Add(spec.Frequency.Period.Count);
+
+
+            jsStat.Dimension.Add(spec.Frequency.Code, timeDimension);
+
+
+            // other dimensions
+            foreach (var aDimension in spec.Classification)
+            {
+                var theDimension = new DimensionV1_1()
+                {
+                    Label = aDimension.Value,
+                    Category = new Category()
+                    {
+                        Index = aDimension.Variable.Select(v => v.Code).ToList(),
+                        Label = aDimension.Variable.ToDictionary(v => v.Code, v => v.Value)
+                    }
+                };
+
+                theDimension.Id = new List<string>();
+                theDimension.Size = new List<long>();
+                theDimension.Id.Add(aDimension.Code);
+                theDimension.Size.Add(aDimension.Variable.Count);
+                theDimension.Role = new Role();
+                if (aDimension.GeoFlag && !string.IsNullOrEmpty(aDimension.GeoUrl))
+                {
+
+                    if (theDimension.Role.Geo == null)
+                    {
+                        theDimension.Role.Geo = new List<string>();
+                    }
+                    theDimension.Role.Geo.Add(aDimension.Code);
+
+                    theDimension.Link = new Link()
+                    {
+                        Enclosure = new List<Enclosure>() { new Enclosure() { Href = aDimension.GeoUrl, Type = Utility.GetCustomConfig("APP_GEO_MIMETYPE") } }
+                    };
+                }
+
+                jsStat.Dimension.Add(aDimension.Code, theDimension);
+            }
+
+            if (doStatus)
+            {
+                jsStat.Status = new Status() { UnionArray = Cells.Select(c => c.WasAmendment ? "true" : "false").ToList() };
+
+                List<string> theList = new List<string>();
+                for (int i = 0; i < Cells.Count; ++i)
+                {
+                    theList.Add(i % 2 == 0 ? "true" : "false");
+                }
+
+            }
+
+
+            jsStat.Value = new JsonStatValue() { AnythingArray = Cells.Select(c => (ValueElement)c.TdtValue).ToList() };
+
+            return jsStat;
+        }
+
 
 
         /// <summary>
@@ -2768,6 +3340,63 @@ namespace PxStat.Data
                     OtherLanguageSpec.Add(new Specification(doc, domain, otherlanguage, pxUploadDto));
                 }
             }
+
+            /*If, at this time, we have a freuency defined for one language but not for the others,
+             it could be because the client responded to a time dimension request in only one language and that language was not the language of MainSpec. Therefore
+             we must now apply that decision to each of the other specs*/
+            //if (OtherLanguageSpec != null)
+            //{
+            //    List<Specification> specs = new List<Specification>
+            //    {
+            //        MainSpec
+            //    };
+            //    specs.AddRange(OtherLanguageSpec);
+            //    Specification goodSpec = specs.Where(x => x.Frequency != null).FirstOrDefault();
+            //    if (goodSpec != null && specs.Where(x => x.Frequency == null).Count() > 0)
+            //    {
+            //        //We have the Frequency information in one spec but not in all of them
+
+            //        //Get the index of where the frequency value is in VALUES. It will be the same in each spec
+            //        List<string> allKeys = (from kvp in goodSpec.Values select kvp.Key).Distinct().ToList();
+            //        int valueIndex = Array.IndexOf(allKeys.ToArray(), goodSpec.Frequency.Value);
+
+            //        if (MainSpec.Frequency == null)
+            //        {
+            //            MainSpec.Frequency = new FrequencyRecordDTO_Create();
+            //            MainSpec.Frequency.Code = goodSpec.Frequency.Code;
+            //            MainSpec.Frequency.Value = MainSpec.Values[valueIndex].Key;
+            //            MainSpec.Frequency.Period = new List<PeriodRecordDTO_Create>();
+            //            int periodCounter = 0;
+            //            foreach (var per in goodSpec.Frequency.Period)
+            //            {
+            //                MainSpec.Frequency.Period.Add(new PeriodRecordDTO_Create() { Code = per.Code, Value = MainSpec.Values[valueIndex].Value[periodCounter].ToPxValue() });
+            //                periodCounter++;
+            //            }
+
+            //            ClassificationRecordDTO_Create wrongClass = MainSpec.Classification.Where(x => x.Value == MainSpec.Frequency.Value).FirstOrDefault();
+            //            if (wrongClass != null) MainSpec.Classification.Remove(wrongClass);
+            //            MainSpec.requiresResponse = false;
+
+            //        }
+            //        foreach (var spec in OtherLanguageSpec.Where(x => x.Frequency == null))
+            //        {
+            //            spec.Frequency = new FrequencyRecordDTO_Create();
+            //            spec.Frequency.Code = goodSpec.Frequency.Code;
+            //            spec.Frequency.Value = spec.Values[valueIndex].Key;
+            //            spec.Frequency.Period = new List<PeriodRecordDTO_Create>();
+            //            int periodCounter = 0;
+            //            foreach (var per in goodSpec.Frequency.Period)
+            //            {
+            //                spec.Frequency.Period.Add(new PeriodRecordDTO_Create() { Code = per.Code, Value = spec.Values[valueIndex].Value[periodCounter].ToPxValue() });
+
+            //                periodCounter++;
+            //            }
+            //            ClassificationRecordDTO_Create wrongClass = spec.Classification.Where(x => x.Value == spec.Frequency.Value).FirstOrDefault();
+            //            if (wrongClass != null) spec.Classification.Remove(wrongClass);
+            //            spec.requiresResponse = false;
+            //        }
+            //    }
+            //}
         }
 
 
@@ -2775,24 +3404,24 @@ namespace PxStat.Data
         /// <summary>
         /// class property
         /// </summary>
-        public bool IsOfficialStatistic { get; internal set; }
+        public bool IsOfficialStatistic { get; set; }
 
         public Copyright_DTO_Create Copyright { get; set; }
 
         /// <summary>
         /// class property
         /// </summary>
-        public string Code { get; internal set; }
+        public string Code { get; set; }
 
         /// <summary>
         /// class property
         /// </summary>
-        public string FormatType { get; internal set; }
+        public string FormatType { get; set; }
 
         /// <summary>
         /// class property
         /// </summary>
-        public string FormatVersion { get; internal set; }
+        public string FormatVersion { get; set; }
 
         /// <summary>
         /// class property
@@ -2804,7 +3433,7 @@ namespace PxStat.Data
         /// <summary>
         /// class property
         /// </summary>
-        public string TheLanguage { get; internal set; }
+        public string TheLanguage { get; set; }
 
         /// <summary>
         /// class property
@@ -2819,24 +3448,24 @@ namespace PxStat.Data
         /// <summary>
         /// class property
         /// </summary>
-        public int ReleaseCode { get; internal set; }
+        public int ReleaseCode { get; set; }
 
         /// <summary>
         /// class property
         /// </summary>
-        public string CreationDate { get; private set; }
+        public string CreationDate { get; set; }
 
-        public DateTime CreationDateTime { get; private set; }
-
-        /// <summary>
-        /// class property
-        /// </summary>
-        public bool StatFilterWasApplied { get; internal set; }
+        public DateTime CreationDateTime { get; set; }
 
         /// <summary>
         /// class property
         /// </summary>
-        public bool TimeFilterWasApplied { get; internal set; }
+        public bool StatFilterWasApplied { get; set; }
+
+        /// <summary>
+        /// class property
+        /// </summary>
+        public bool TimeFilterWasApplied { get; set; }
 
         /// <summary>
         /// Tests if the language exists in the system
@@ -3426,5 +4055,25 @@ namespace PxStat.Data
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
         }
+    }
+
+    public class SerialSpec
+    {
+        public string LngIsoCode { get; set; }
+        public List<KeyValuePair<string, List<PxStringValue>>> ValueSet { get; set; }
+        public List<KeyValuePair<string, List<PxStringValue>>> TimeValueSet { get; set; }
+        public List<KeyValuePair<string, List<PxStringValue>>> MainValueSet { get; set; }
+        public Specification TheSpec { get; set; }
+
+    }
+
+    public class SerializableMatrix
+    {
+        public List<SerialSpec> SerialSpecs { get; set; }
+        public List<PxQuotedValue> Languages { get; set; }
+        public List<string> OtherLanguages { get; set; }
+        public List<KeyValuePair<string, List<PxStringValue>>> Domain { get; set; }
+        public Matrix TheMatrix { get; set; }
+        public IList<dynamic> Cells { get; set; }
     }
 }

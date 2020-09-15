@@ -250,6 +250,7 @@ BEGIN
 		,FrqCode
 		,FrqValue
 		,PrdValue
+		,PrdId
 		,sum(score) AS Score
 		,MtrLngID
 	INTO #KeywordsSearch
@@ -280,6 +281,7 @@ BEGIN
 			,FRQ_CODE AS FrqCode
 			,FRQ_VALUE AS FrqValue
 			,PRD_VALUE AS PrdValue
+			,PRD_ID AS PrdId
 			,MTR_LNG_ID AS MtrLngID
 		FROM #kwRelease
 		INNER JOIN TD_Release
@@ -329,6 +331,7 @@ BEGIN
 			,FRQ_CODE AS FrqCode
 			,FRQ_VALUE AS FrqValue
 			,PRD_VALUE AS PrdValue
+			,PRD_ID AS PrdId
 			,MTR_LNG_ID AS MtrLngID
 		FROM #kwProduct
 		INNER JOIN TD_RELEASE
@@ -378,6 +381,7 @@ BEGIN
 			,FRQ_CODE AS FrqCode
 			,FRQ_VALUE AS FrqValue
 			,PRD_VALUE AS PrdValue
+			,PRD_ID AS PrdId
 			,MTR_LNG_ID AS MtrLngID
 		FROM #kwSubject
 		INNER JOIN TD_RELEASE
@@ -424,6 +428,7 @@ BEGIN
 		,FrqCode
 		,FrqValue
 		,PrdValue
+		,PrdId
 		,MtrLngID
 
 	--This is the entity search
@@ -452,6 +457,7 @@ BEGIN
 		,FRQ_CODE AS FrqCode
 		,FRQ_VALUE AS FrqValue
 		,PRD_VALUE AS PrdValue
+		,PRD_ID AS PrdId
 		,0 AS Score
 		,-- This is zero because if we get anything in search it overrides any keywords and all results are equally important
 		MTR_LNG_ID AS MtrLngID
@@ -579,7 +585,8 @@ BEGIN
 				,ClsGeoUrl
 				,FrqCode
 				,FrqValue
-				,PrdValue
+				,PrdValue	
+				,PrdId 			
 				,MtrLngID
 			FROM #KeywordsSearch
 			
@@ -609,6 +616,7 @@ BEGIN
 				,FrqCode
 				,FrqValue
 				,PrdValue
+				,PrdId
 				,MtrLngID
 			FROM #EntitySearch
 			) final

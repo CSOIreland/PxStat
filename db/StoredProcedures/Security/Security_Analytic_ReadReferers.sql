@@ -26,7 +26,7 @@ BEGIN
 
 	SELECT CASE 
 			WHEN counts.NLT_REFERER IS NULL
-				THEN 'Unknown'
+				THEN '-'
 			ELSE counts.NLT_REFERER
 			END AS NltReferer
 		,nltCount AS NltCount

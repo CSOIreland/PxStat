@@ -86,8 +86,6 @@ namespace PxStat.System.Settings
 
         };
 
-
-
     }
 
 

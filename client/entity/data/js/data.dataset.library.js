@@ -191,7 +191,7 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     //dimension pill
     for (i = 0; i < data.length; i++) {
         if (data.Dimension(i).role == "classification" || data.Dimension(i).role == "geo") {
-            var dimension = $("#data-dataset-templates").find("[name=dimension]").clone();
+            var dimension = $("#data-search-result-templates").find("[name=dimension]").clone();
             dimension.text(data.Dimension(i).label);
             matrixSelectionHeading.find("[name=dimensions]").append(dimension);
         }
@@ -207,7 +207,12 @@ app.data.dataset.callback.drawDatasetHeading = function () {
             //frequency span
             var frequencySpan = $("#data-search-result-templates").find("[name=frequency-span]").clone();
             frequencySpan.text(function () {
-                return "[" + data.Dimension(i).Category(0).label + " - " + data.Dimension(i).Category(data.Dimension(i).length - 1).label + "]";
+                if (data.Dimension(i).id.length > 1) {
+                    return data.Dimension(i).Category(0).label + " - " + data.Dimension(i).Category(data.Dimension(i).length - 1).label;
+                }
+                else {
+                    return data.Dimension(i).Category(0).label
+                }
             });
             matrixSelectionHeading.find("[name=dimensions]").append(frequencySpan);
         }
@@ -298,7 +303,7 @@ app.data.dataset.callback.readMatrixNotes = function () {
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 
     // Run Sharethis.
-    app.data.sharethis(data.extension.matrix);
+    app.data.share(data.extension.matrix);
     app.data.dataset.ajax.format();
 
 

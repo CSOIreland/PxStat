@@ -202,11 +202,11 @@ namespace PxStat.Data.Px
             {
                 RuleFor(x => x.MainSpec.Source).Must(s => Matrix.SourceIsSupported(ado, s)).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.source-invalid") : Label.Get("px.setting.source-invalid", lngIsoCode)));
             }
-
             RuleFor(x => x.OtherLanguageSpec).HaveSupportedSources(ado).When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.sources-invalid") : Label.Get("px.setting.sources-invalid", lngIsoCode)));
             RuleFor(x => x.TheLanguage).Must(lang => Matrix.LanguageIsSupported(ado, lang)).When(x => x.Languages == null || x.Languages.Count == 0).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.language-invalid") : Label.Get("px.setting.language-invalid", lngIsoCode)));
             RuleFor(x => x.Languages).HaveSupportedLanguages(ado).When(x => x.Languages != null && x.Languages.Count > 0).WithMessage((string)(lngIsoCode == null ? Label.Get("px.setting.languages-invalid") : Label.Get("px.setting.languages-invalid", lngIsoCode)));
         }
+
     }
     /// <summary>
     /// Validator specifically for Build

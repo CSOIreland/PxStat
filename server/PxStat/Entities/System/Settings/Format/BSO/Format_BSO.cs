@@ -25,6 +25,17 @@ namespace PxStat.System.Settings
             }
             return list;
         }
+        /// <summary>
+        /// Tests if a format exists
+        /// </summary>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        internal bool Exists(Format_DTO_Read format)
+        {
+            var adoFormat = new Format_ADO();
+            var result = adoFormat.Read(ado, format ?? new Format_DTO_Read());
+            return result.hasData;
+        }
 
         internal string GetMimetypeForFormat(Format_DTO_Read format)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PxStat.System.Settings;
+using System;
 
 namespace PxStat.Security
 {
@@ -49,6 +50,7 @@ namespace PxStat.Security
         public DateTime NltDate { get; internal set; }
         public string FrmType { get; set; }
         public string FrmVersion { get; set; }
+        public string EnvironmentLngIsoCode { get; set; }
 
         #endregion
     }
@@ -129,7 +131,13 @@ namespace PxStat.Security
             if (parameters.NltInternalNetworkMask != null)
                 NltInternalNetworkMask = parameters.NltInternalNetworkMask;
             if (parameters.LngIsoCode != null)
-                LngIsoCode = parameters.LngIsoCode;
+            {
+                if (new Language_BSO().Read((string)parameters.LngIsoCode) != null)
+                    LngIsoCode = parameters.LngIsoCode;
+                else LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+            }
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
             if (parameters.FrmType != null)
                 FrmType = parameters.FrmType;
             if (parameters.FrmVersion != null)

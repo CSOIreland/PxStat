@@ -14,7 +14,7 @@ namespace PxStat.Security
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Analytic_BSO_ReadReferrer(JSONRPC_API request) : base(request, new Analytic_VLD_ReadBrowser())
+        internal Analytic_BSO_ReadReferrer(JSONRPC_API request) : base(request, new Analytic_VLD_ReadReferrer())
         { }
 
         /// <summary>
@@ -60,13 +60,14 @@ namespace PxStat.Security
 
                 if (counter < limit)
                 {
-                    itemDict.Add(item.NltReferer, item.NltCount);
+                    itemDict.Add(item.NltReferer == "-" ? Label.Get("analytic.unknown", DTO.LngIsoCode) : item.NltReferer, item.NltCount);
                 }
                 else otherSum = otherSum + item.NltCount;
                 counter++;
             }
 
-            if (otherSum > 0) itemDict.Add("Others", otherSum);
+            if (otherSum > 0) itemDict.Add(Label.Get("analytic.unknown", DTO.LngIsoCode), otherSum);
+
             return output;
         }
     }

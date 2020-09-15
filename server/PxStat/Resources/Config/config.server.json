@@ -5,10 +5,11 @@
     "default-units": "-"
   },
   "analytic": {
-    "read-os-item-limit": 3,
-    "read-browser-item-limit": 4,
-    "read-referrer-item-limit": 5,
-    "referrer-not-applicable": "n/a"
+    "read-os-item-limit": 10,
+    "read-browser-item-limit": 10,
+    "read-referrer-item-limit": 100,
+    "referrer-not-applicable": "n/a",
+    "read-environment-language-limit": 100
   },
   "search": {
     "synonym-multiplier": 1,

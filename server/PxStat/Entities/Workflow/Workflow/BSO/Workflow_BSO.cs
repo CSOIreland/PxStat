@@ -773,7 +773,7 @@ namespace PxStat.Workflow
 
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
 
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI + dtoRelease.PrcCode);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI);
 
             try
             {

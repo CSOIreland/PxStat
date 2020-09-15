@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.1.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.1.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.1.1\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.1.2\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
@@ -218,7 +218,6 @@
     <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\Live.pubxml" />
-    <None Include="Properties\PublishProfiles\Store.pubxml" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
     <Content Include="Resources\Config\config.global.json" />
@@ -250,6 +249,7 @@
     <Compile Include="Entities\Build\BSO\Build_BSO.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Create.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Read.cs" />
+    <Compile Include="Entities\Build\BSO\Build_BSO_ReadDataset.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_ReadDatasetByAllPeriods.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_ReadDatasetByExistingPeriods.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_ReadDatasetByNewPeriods.cs" />
@@ -334,11 +334,17 @@
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_Create.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_Read.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadBrowser.cs" />
+    <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadEnvironmentLanguage.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadFormat.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadLanguage.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadTimeline.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadOs.cs" />
     <Compile Include="Entities\Security\Analytic\BSO\Analytic_BSO_ReadReferrer.cs" />
+    <Compile Include="Entities\Security\Cache\BSO\Cache_BSO_FlushAll.cs" />
+    <Compile Include="Entities\Security\Cache\BSO\Cache_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Cache\Cache_API.cs" />
+    <Compile Include="Entities\Security\Cache\Cache_DTO.cs" />
+    <Compile Include="Entities\Security\Cache\Cache_VLD.cs" />
     <Compile Include="Entities\Security\Logging\BSO\Logging_BSO_Read.cs" />
     <Compile Include="Entities\Security\Logging\Logging_ADO.cs" />
     <Compile Include="Entities\Security\Logging\Logging_API.cs" />

@@ -39,7 +39,7 @@ app.release.comparison.render = function () {
  * Get previous rls code from api
  */
 app.release.comparison.ajax.readRlsCodePrevious = function () {
-    api.ajax.jsonrpc.request(
+    return api.ajax.jsonrpc.request(
         app.config.url.api.private,
         "PxStat.Data.Compare_API.ReadPreviousRelease",
         { "RlsCode": app.release.RlsCode },

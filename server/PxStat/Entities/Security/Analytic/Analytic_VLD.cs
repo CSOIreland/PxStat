@@ -64,8 +64,31 @@ namespace PxStat.Security
             RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
+            //Mandatory LngIsoCode
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
+
+    internal class Analytic_VLD_ReadEnvironmentLanguage : AbstractValidator<Analytic_DTO_Read>
+    {
+        internal Analytic_VLD_ReadEnvironmentLanguage()
+        {
+            string maskedIp = Utility.GetCustomConfig("APP_REGEX_MASKED_IP");
+            //Mandatory - DateFrom
+            RuleFor(x => x.DateFrom).NotEqual(default(DateTime));
+            //Mandatory - DateTo
+            RuleFor(x => x.DateTo).NotEqual(default(DateTime));
+            //Optional - MtrCode
+            RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
+            //Optional - NltInternalNetworkMask
+            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
+            //Optional - SbjCode
+            //Optional - PrcCode
+            //Mandatory LngIsoCode
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
 
     /// <summary>
     /// Validator for ReadBrowser
@@ -85,6 +108,8 @@ namespace PxStat.Security
             RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
+            //Mandatory LngIsoCode
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
 
@@ -149,6 +174,8 @@ namespace PxStat.Security
 
             //Optional - SbjCode
             //Optional - PrcCode
+            //Mandatory LngIsoCode
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
 

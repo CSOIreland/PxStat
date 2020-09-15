@@ -153,8 +153,6 @@ namespace PxStat.Data
 
             return builder.ToString();
 
-
-            // return  root.ToString();
         }
     }
 

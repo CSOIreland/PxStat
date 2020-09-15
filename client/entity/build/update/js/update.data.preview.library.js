@@ -2,13 +2,12 @@
 Custom JS application specific
 *******************************************************************************/
 //#region Add Namespace
-app.build.update.data = app.build.update.data || {};
-app.build.update.data.preview = app.build.update.data.preview || {};
+app.build.update.preview = app.build.update.preview || {};
 
 //#endregion
 
 
-app.build.update.data.preview.drawCsvData = function () {
+app.build.update.preview.drawCsvData = function () {
     var fileName = app.build.update.upload.file.content.data.name || "";
     var fileSize = app.build.update.upload.file.content.data.size;
     var fileSizeFormated = fileSize != null ? " (" + app.library.utility.formatNumber(Math.ceil(fileSize / 1024)) + "KB)" : "";

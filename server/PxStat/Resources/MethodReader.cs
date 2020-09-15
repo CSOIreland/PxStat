@@ -67,7 +67,7 @@ namespace PxStat.Resources
                 //Return true or false depending on whether the attribute was found
                 return attrNoTrace != null;
             }
-            catch (Exception ex)
+            catch
             {
 
                 //soft fail - continue the process.

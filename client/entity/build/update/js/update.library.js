@@ -162,6 +162,7 @@ app.build.update.callback.readFormat = function (data) {
  */
 app.build.update.callback.cancelData = function () {
     app.build.update.upload.file.content.data.JSON = null;
+    app.build.update.data.Data = [];
     $("#build-update-matrix-data").find("[name=build-update-upload-data]").val("");
     $("#build-update-matrix-data").find("[name=file-name]").empty().hide();
     $("#build-update-matrix-data").find("[name=file-tip]").show();
@@ -669,12 +670,6 @@ app.build.update.updateOutput = function () {
         }
     }
     if (!validationErrors.length) {
-        if (app.build.update.upload.file.content.data.JSON != null) {
-            jsonStat = app.build.update.upload.file.content.data.JSON.data;
-        } else {
-            jsonStat = null;
-        }
-
         //populate json data object
         app.build.update.data = $.extend(true, app.build.update.data, {
             "MtrInput": app.build.update.upload.file.content.source.Base64,
@@ -683,7 +678,7 @@ app.build.update.updateOutput = function () {
             "FrqValueTimeval": $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val(),
             "MtrOfficialFlag": $("#build-update-properties").find("[name=official-flag]").prop('checked'),
             "CprCode": $("#build-update-properties").find("[name=copyright-code]").val(),
-            "Data": jsonStat || []
+            "Data": app.build.update.upload.file.content.data.JSON == null ? [] : app.build.update.upload.file.content.data.JSON.data
         });
 
         //build properties to dimensions 
@@ -838,6 +833,13 @@ app.build.update.ajax.updateOutput = function () {
  */
 app.build.update.callback.updateOutput = function (data, frmType) {
     if (data.file && data.file.length) {
+
+        //If you try and update a px file with a data csv file that has no valid records, display an error modal instead of the report modal.
+        if (!data.report.length && app.build.update.upload.file.content.data.JSON) {
+            api.modal.error(app.label.static["invalid-csv-data-file"]);
+            return
+        }
+
         if (data.report && data.report.length) {
             app.build.update.data.report.drawReport(data, frmType);
         }

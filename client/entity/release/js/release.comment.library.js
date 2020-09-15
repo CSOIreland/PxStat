@@ -117,7 +117,7 @@ app.release.comment.callback.create = function (data) {
     if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [""]));
         $("#release-comment-modal-create").modal("hide");
-        app.release.ajax.read();
+        app.release.load();
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -183,7 +183,7 @@ app.release.comment.callback.update = function (data) {
     if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
         $("#release-comment-modal-update").modal("hide");
-        app.release.ajax.read();
+        app.release.load();
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -221,7 +221,7 @@ app.release.comment.ajax.delete = function () {
 app.release.comment.callback.delete = function (data) {
     if (data == C_APP_API_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [""]));
-        app.release.ajax.read();
+        app.release.load();
     }
     // Handle Exception
     else api.modal.exception(app.label.static["api-ajax-exception"]);

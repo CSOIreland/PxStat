@@ -164,7 +164,7 @@ app.data.dataset.map.callback.readDataset = function (data) {
                 series: [{
                     data: mapData,
                     nullInteraction: true,
-                    joinBy: ["AREA_ID", 'code'],
+                    joinBy: [app.config.plugin.highmaps.featureIdentifier, 'code'],
                     states: {
                         hover: {
                             borderColor: 'gray'

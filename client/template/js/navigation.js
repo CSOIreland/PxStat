@@ -170,6 +170,13 @@ $(document).ready(function () {
   );
 
   api.content.navigate(
+    "#nav-link-cache",
+    "entity/system/cache/",
+    "#nav-link-cache",
+    "#nav-link-system"
+  );
+
+  api.content.navigate(
     "#nav-link-format",
     "entity/system/format/",
     "#nav-link-format",

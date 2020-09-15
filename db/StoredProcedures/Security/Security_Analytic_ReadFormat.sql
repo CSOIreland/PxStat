@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 12/12/2019
 -- Description:	Reads counts of Formats from Analytics
--- EXEC Security_Analytic_ReadFormat '2019-12-11','2019-12-13',null,'2.0'
+-- EXEC Security_Analytic_ReadFormat '2020-07-27','2020-08-20',null,null
 -- =============================================
 CREATE
 	OR

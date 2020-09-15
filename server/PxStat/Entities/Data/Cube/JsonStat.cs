@@ -63,6 +63,83 @@ namespace PxStat.Data
         public Version Version { get; set; }
     }
 
+    public partial class JsonStatV1_1
+    {
+        [JsonProperty("class", Required = Required.Always)]
+        public Class Class { get; set; }
+
+        [JsonProperty("dimension", Required = Required.Always)]
+        public Dictionary<string, DimensionV1_1> Dimension { get; set; }
+
+        [JsonProperty("error", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<object> Error { get; set; }
+
+        [JsonProperty("extension", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> Extension { get; set; }
+
+        [JsonProperty("href", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Uri Href { get; set; }
+
+
+
+        [JsonProperty("label", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Label { get; set; }
+
+        [JsonProperty("link", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Link Link { get; set; }
+
+        [JsonProperty("note", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Note { get; set; }
+
+
+
+        [JsonProperty("source", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Source { get; set; }
+
+        [JsonProperty("status", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Status? Status { get; set; }
+
+        [JsonProperty("updated", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Updated { get; set; }
+
+        [JsonProperty("value", Required = Required.DisallowNull)]
+        public JsonStatValue Value { get; set; }
+
+    }
+
+    public partial class DimensionV1_1
+    {
+        [JsonProperty("role", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Role Role { get; set; }
+
+        [JsonProperty("size", Required = Required.Always)]
+        public List<long> Size { get; set; }
+
+        [JsonProperty("category", Required = Required.Always)]
+        public Category Category { get; set; }
+
+        [JsonProperty("extension", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> Extension { get; set; }
+
+        [JsonProperty("href", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Uri Href { get; set; }
+
+        [JsonProperty("label", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Label { get; set; }
+
+        [JsonProperty("link", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Link Link { get; set; }
+
+        [JsonProperty("alternate", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Alternate Alternate { get; set; }
+
+        [JsonProperty("note", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Note { get; set; }
+
+        [JsonProperty("id", Required = Required.Always)]
+        public List<string> Id { get; set; }
+    }
+
     public partial class JsonStatV1
     {
 
@@ -357,6 +434,11 @@ namespace PxStat.Data
         public static JsonStat FromJson(string json) => JsonConvert.DeserializeObject<JsonStat>(json, Converter.Settings);
     }
 
+    public partial class JsonStatV1_1
+    {
+        public static JsonStatV1_1 FromJson(string json) => JsonConvert.DeserializeObject<JsonStatV1_1>(json, Converter.Settings);
+    }
+
     /// <summary>
     /// Class
     /// </summary>
@@ -377,6 +459,13 @@ namespace PxStat.Data
     {
         public static string ToJson(this JsonStatV1 self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
+
+
+    public static partial class SerializeJsonStatV1_1
+    {
+        public static string ToJson(this JsonStatV1_1 self) => JsonConvert.SerializeObject(self, Converter.Settings);
+    }
+
 
     /// <summary>
     /// Class

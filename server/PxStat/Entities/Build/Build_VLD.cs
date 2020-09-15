@@ -633,7 +633,14 @@ namespace PxStat.Build
         {
             if (dto.FrmDirection != Format_DTO_Read.FormatDirection.DOWNLOAD.ToString()) return false;
             if (dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.JSONstat) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.PX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.CSV) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.XLSX) && dto.FrmType != EnumInfo.GetEnumDescription(Format_DTO_Read.FormatType.SDMX)) return false;
-            return true;
+
+            bool exists;
+            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
+            {
+                exists = bso.Exists(dto);
+            }
+            return exists;
+
 
         }
 

@@ -1,4 +1,11 @@
 /*******************************************************************************
+Application - Plugin 
+*******************************************************************************/
+var app = app || {};
+
+app.plugin = {};
+
+/*******************************************************************************
 Application - Plugin - sanitise
 *******************************************************************************/
 
@@ -168,14 +175,17 @@ function loadTinyMce() {
 /*******************************************************************************
 Application - Plugin - load ShareThis library with key https://sharethis.com/
 *******************************************************************************/
+app.plugin.sharethis = {};
 
-//Load dynamically the source of TinyMce by using the API Key
-loadShareThis();
-function loadShareThis() {
-  var shareThis = document.createElement('script');
-  shareThis.src = app.config.plugin.sharethis.apiURL.sprintf([app.config.plugin.sharethis.apiKey]);
-  document.head.appendChild(shareThis);
-}
+//Load dynamically the source of ShareThis by using the API Key
+app.plugin.sharethis.load = function () {
+  if (!window.__sharethis__ && app.config.plugin.sharethis.enabled) {
+    var shareThis = document.createElement('script');
+    shareThis.src = app.config.plugin.sharethis.apiURL.sprintf([app.config.plugin.sharethis.apiKey]);
+    document.head.appendChild(shareThis);
+  }
+};
+
 
 /*******************************************************************************
 Application - Plugin - JQuery extensions
@@ -366,7 +376,12 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
 /*******************************************************************************
 Application - Plugin - Back button detection
 *******************************************************************************/
+app.plugin.backbutton = {};
+app.plugin.backbutton.check = true;
 window.addEventListener("beforeunload", function (event) {
+  if (!app.plugin.backbutton.check)
+    return;
+
   if (!window._avoidbeforeunload) {
     // Cancel the event as stated by the standard.
     event.preventDefault();
@@ -382,9 +397,34 @@ window.addEventListener("beforeunload", function (event) {
 /*******************************************************************************
 Application - Plugin - Cookie consent
 *******************************************************************************/
+app.plugin.cookiconsent = {};
+app.plugin.cookiconsent.allow = "allow";
+app.plugin.cookiconsent.deny = "deny";
+
 $(document).ready(function () {
   // Set the options from the config and the label
-  window.cookieconsent.initialise($.extend(true, {}, app.config.plugin.cookieConsent, app.label.plugin.cookieConsent));
+  var options = $.extend(true, {}, app.config.plugin.cookieConsent, app.label.plugin.cookieConsent);
+
+  // append callback functions
+  options.onInitialise = function (e) {
+    if (e == app.plugin.cookiconsent.allow) {
+      // Load ShareThis following cookie consent
+      app.plugin.sharethis.load();
+    }
+  };
+  options.onStatusChange = function (e) {
+    if (e == app.plugin.cookiconsent.allow) {
+      // Load ShareThis following cookie consent
+      app.plugin.sharethis.load();
+    } else {
+      // Prevent backbutton check
+      app.plugin.backbutton.check = false;
+      // Force page reload in order not to load/set cookies from different domains (i.e. sharethis)
+      window.location.href = window.location.pathname;
+    }
+  }
+
+  window.cookieconsent.initialise(options);
 
   // Bind load
   $(".cc-link").one('click', function (e) {

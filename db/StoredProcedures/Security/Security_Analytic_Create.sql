@@ -23,6 +23,7 @@ ALTER PROCEDURE Security_Analytic_Create @matrix NVARCHAR(20)
 	,@LngIsoCode CHAR(2)
 	,@FrmType NVARCHAR(32) = NULL
 	,@FrmVersion NVARCHAR(32) = NULL
+	,@EnvironmentLngIsoCode CHAR(2)=NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -69,6 +70,7 @@ BEGIN
 		,NLT_DATE
 		,NLT_USER_FLAG
 		,NLT_FRM_ID
+		,NLT_LNG_ISO_CODE 
 		)
 	VALUES (
 		@MtrID
@@ -86,6 +88,7 @@ BEGIN
 			ELSE 0
 			END
 		,@FrmID
+		,@EnvironmentLngIsoCode
 		);
 
 	RETURN @@identity;

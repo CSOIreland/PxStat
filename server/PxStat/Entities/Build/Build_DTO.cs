@@ -578,7 +578,11 @@ namespace PxStat.Build
                         {
                             ClassificationRecordDTO_Create classification = new ClassificationRecordDTO_Create();
                             if (cls.ClsCode != null) classification.Code = cls.ClsCode;
-                            if (cls.ClsGeoUrl != null) classification.GeoUrl = cls.ClsGeoUrl;
+                            if (cls.ClsGeoUrl != null)
+                            {
+                                classification.GeoUrl = cls.ClsGeoUrl;
+                                classification.GeoFlag = true;
+                            }
                             dimension.Classifications.Add(classification);
                         }
                     }

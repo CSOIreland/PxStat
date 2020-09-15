@@ -61,13 +61,13 @@ namespace PxStat.Security
 
                 if (counter < limit)
                 {
-                    itemDict.Add(item.NltOs, item.NltCount);
+                    itemDict.Add(item.NltOs == "-" ? Label.Get("analytic.unknown", DTO.LngIsoCode) : item.NltOs, item.NltCount);
                 }
                 else otherSum = otherSum + item.NltCount;
                 counter++;
             }
 
-            if (otherSum > 0) itemDict.Add("Others", otherSum);
+            if (otherSum > 0) itemDict.Add(Label.Get("analytic.others", DTO.LngIsoCode), otherSum);
             return output;
         }
     }

@@ -60,6 +60,7 @@ namespace PxStat.System.Navigation
         private List<dynamic> FormatOutput(List<dynamic> rawList, string lngIsoCode)
         {
             List<dynamic> releases = GetReleases(rawList).ToList();
+            var v = rawList.Where(x => x.PrdId == 17677);
             List<dynamic> classifications = GetClassifications(rawList).ToList();
             List<dynamic> periods = GetPeriods(rawList).ToList();
             List<dynamic> outList = new List<dynamic>();
@@ -147,6 +148,7 @@ namespace PxStat.System.Navigation
         private IEnumerable<dynamic> GetPeriods(List<dynamic> rawList)
         {
             var periods = (from t in rawList
+                           orderby t.MtrCode, t.PrdId
                            group t by new
                            {
                                t.RlsCode,

@@ -168,11 +168,18 @@ app.configuration.ajax.reload = function () {
     );
 };
 app.configuration.callback.reload = function (data) {
-    api.modal.success(app.label.static["success-configuration-reload"]);
-    //Reload application on close Successful Config Reload modal
-    $("#modal-success").on('hide.bs.modal', function (e) {
-        window.location.href = window.location.pathname;
-    });
+    if (data == C_APP_API_SUCCESS) {
+        //Reload application on close Successful Config Reload modal
+        $("#modal-success").on('hide.bs.modal', function (e) {
+            app.plugin.backbutton = false;
+            window.location.href = window.location.pathname;
+        });
+
+        api.modal.success(app.label.static["success-configuration-reload"]);
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+
 };
 
 //#endregion

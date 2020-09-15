@@ -51,21 +51,12 @@ namespace PxStat.Security
         {
             dynamic output = new ExpandoObject();
             var itemDict = output as IDictionary<string, object>;
-            int limit = Configuration_BSO.GetCustomConfig("analytic.read-os-item-limit");
-            int counter = 1;
-            int otherSum = 0;
+
 
             foreach (dynamic item in readData)
             {
-                if (counter < limit)
-                {
-                    itemDict.Add(item.LngIsoName, item.lngCount);
-                }
-                else otherSum = otherSum + item.lngCount;
-                counter++;
+                itemDict.Add(item.LngIsoName, item.lngCount);
             }
-
-            if (otherSum > 0) itemDict.Add("Others", otherSum);
             return output;
         }
 

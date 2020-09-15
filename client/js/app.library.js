@@ -490,10 +490,12 @@ app.library.utility.formatNumber = function (number, precision) {
   if ("number" !== typeof number && "string" !== typeof number)
     return number;
 
-  floatNumber = parseFloat(number);
-  if (isNaN(floatNumber))
-    //output any non number as html
+  if (isNaN(number)) { //output any non number as html
     return "string" === typeof number ? number.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : number;
+  }
+  else {
+    floatNumber = parseFloat(number);
+  }
 
   if (precision !== undefined) {
     floatNumber = floatNumber.toFixed(precision);

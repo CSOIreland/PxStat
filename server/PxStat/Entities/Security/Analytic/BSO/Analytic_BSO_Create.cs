@@ -35,6 +35,13 @@ namespace PxStat.Security
 
             Analytic_DTO aDto = new Analytic_DTO();
 
+
+            if (hRequest.UserLanguages != null)
+            {
+                if (hRequest.UserLanguages.Count() > 0)
+                    aDto.EnvironmentLngIsoCode = hRequest.UserLanguages[0].Substring(0, 2);
+            }
+
             //Get a masked version of the ip address
             aDto.NltMaskedIp = getMaskedIp(request.ipAddress);
 
@@ -103,13 +110,13 @@ namespace PxStat.Security
             return;
         }
 
-        internal static void Create(HttpRequest hRequest, string method, string userAgent, string ipaddress, string matrixCode, bool m2m, Format_DTO_Read format)
+        internal static void Create(HttpRequest hRequest, string method, string userAgent, string ipaddress, string matrixCode, bool m2m, Format_DTO_Read format, string lngIsoCode = null)
         {
             ADO Ado = new ADO("defaultConnection");
             try
             {
 
-                Analytic_DTO aDto = new Analytic_DTO() { NltMaskedIp = ipaddress, matrix = matrixCode, NltM2m = m2m, NltDate = DateTime.Now, FrmType = format.FrmType, FrmVersion = format.FrmVersion };
+                Analytic_DTO aDto = new Analytic_DTO() { NltMaskedIp = ipaddress, matrix = matrixCode, NltM2m = m2m, NltDate = DateTime.Now, FrmType = format.FrmType, FrmVersion = format.FrmVersion, EnvironmentLngIsoCode = lngIsoCode };
 
 
                 // Get the Referer

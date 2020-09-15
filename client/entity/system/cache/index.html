@@ -1,0 +1,135 @@
+<div id="cache-read-container" class="container-fluid">
+    <div class="card border-primary m-3">
+        <div class="card-header bg-primary text-light" label="cache">
+        </div>
+        <div class="card-body">
+
+            <div class="card">
+
+                <div name="cache-summary">
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="uptime"></span>
+                        </div>
+                        <div class="col-8 p-2" name="uptime">
+
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="time"></span>
+                        </div>
+                        <div class="col-8 p-2" name="time">
+
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="version"></span>
+                        </div>
+                        <div class="col-8 p-0">
+                            <div class="col-8 p-2" name="version">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="active-items"></span>
+                        </div>
+                        <div class="col-8 p-2" name="active-items">
+
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="total-items"></span>
+                        </div>
+                        <div class="col-8 p-2" name="total-items">
+
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="active-connections"></span>
+                        </div>
+                        <div class="col-8 p-2" name="active-connections">
+
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="total-connections"></span>
+                        </div>
+                        <div class="col-8 p-2" name="total-connections">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div name="cache-chart">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card mt-2 mb-1">
+                            <div class="card-header">
+                                <h5><span label="i-o-count"></span></h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas name="count" width="800" height="450"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card mt-2 mb-1">
+                            <div class="card-header">
+                                <h5><span label="i-o-byte"></span></h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas name="chart-byte" width="800" height="450"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card mt-1">
+                            <div class="card-header">
+                                <h5><span label="efficiency"></span></h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas name="chart-efficiency" width="800" height="450"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card mt-1">
+                            <div class="card-header">
+                                <h5><span label="used-memory"></span></h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas name="chart-used-memory" width="800" height="450"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+
+            <button class="btn text-dark btn-warning float-left" name="refresh-config">
+                <i class="fas fa-redo"></i> <span label="reload"></span>
+            </button>
+
+            <button class="btn text-light btn-danger float-right" name="flush-cache">
+                <i class="fas fa-recycle"></i> <span label="flush-cache"></span>
+            </button>
+
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/system/cache/css/cache.css">
+<!-- Page specific JS -->
+<script src="entity/system/cache/js/cache.library.js"></script>
+<script src="entity/system/cache/js/cache.js"></script>

@@ -188,6 +188,7 @@ app.analytic.ajax.readAnalytics = function () {
     app.analytic.ajax.readBrowser(null, "#analytic-chart [name=browser-pie-chart]");
     app.analytic.ajax.readOs(null, "#analytic-chart [name=operating-system-pie-chart]");
     app.analytic.ajax.readReferrer(null, "#analytic-chart [name=referrer-column-chart]");
+    app.analytic.ajax.readUserLanguage(null, "#analytic-chart [name=user-language-column-chart]");
     app.analytic.ajax.readTimeline(null, "#analytic-chart [name=dates-line-chart]");
     app.analytic.ajax.readLanguage(null, "#analytic-chart [name=language-pie-chart]");
     app.analytic.ajax.readFormat(null, "#analytic-chart [name=format-pie-chart]");
@@ -204,10 +205,11 @@ app.analytic.drawCallback = function () {
         e.preventDefault();
         app.analytic.ajax.readTimeline($(this).attr("idn"), "#analytic-chart-modal [name=dates-line-chart]");
         app.analytic.ajax.readReferrer($(this).attr("idn"), "#analytic-chart-modal [name=referrer-column-chart]");
+        app.analytic.ajax.readUserLanguage($(this).attr("idn"), "#analytic-chart-modal [name=user-language-column-chart]");
         app.analytic.ajax.readBrowser($(this).attr("idn"), "#analytic-chart-modal [name=browser-pie-chart]");
         app.analytic.ajax.readOs($(this).attr("idn"), "#analytic-chart-modal [name=operating-system-pie-chart]");
         app.analytic.ajax.readLanguage($(this).attr("idn"), "#analytic-chart-modal [name=language-pie-chart]");
-        app.analytic.ajax.readFormat(null, "#analytic-chart-modal [name=format-pie-chart]");
+        app.analytic.ajax.readFormat($(this).attr("idn"), "#analytic-chart-modal [name=format-pie-chart]");
         $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("idn") + " : " + $(this).attr("data-original-title"));
         $("#matrix-chart-modal").find("[name=date-range]").html(app.analytic.dateFrom.format(app.config.mask.date.display)
             + "    " + " - " + app.analytic.dateTo.format(app.config.mask.date.display));
@@ -316,7 +318,8 @@ app.analytic.ajax.readBrowser = function (MtrCode, selector) {
             "SbjCode": SbjCode,
             "PrcCode": PrcCode,
             "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val()
+            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val(),
+            "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readBrowser",
         selector,
@@ -332,11 +335,57 @@ app.analytic.ajax.readBrowser = function (MtrCode, selector) {
  * @param  {} selector
  */
 app.analytic.callback.readBrowser = function (data, selector) {
-    app.analytic.render.readBrowser(data, selector);
+    $(selector).empty();
+    $(selector).append(
+        $("<canvas>", {
+            "name": "browser-pie-chart-canvas",
+            "style": "width: 100%; height: 400px"
+        })
+    );
+    var localConfig = {
+        "type": 'pie',
+        "data": {
+            "datasets": [{
+                "data": [],
+                "label": app.label.static["hits"],
+            }],
+            "labels": []
+        },
+        "options": {
+            "tooltips": {
+                "callbacks": {
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        label += ': ';
+                        var totalValues = 0;
+                        for (var i = 0; i < data.datasets[tooltipItem.datasetIndex].data.length; i++) {
+                            totalValues += data.datasets[tooltipItem.datasetIndex].data[i] << 0;
+                        }
+                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        var percentage = ((value / totalValues) * 100).toFixed(1);
+                        label += app.library.utility.formatNumber(value) + " (" + percentage + "%)";
+                        return label;
+                    }
+                }
+            },
+            "plugins": {
+                "colorschemes": {
+                    "scheme": "tableau.Traffic9"
+                }
+            }
+        }
+    };
+
+    $.each(data, function (key, el) {
+        localConfig.data.datasets[0].data.push(el);
+        localConfig.data.labels.push(key);
+    });
+    var config = {};
+    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    delete config.options.scales
+    new Chart($(selector).find("[name=browser-pie-chart-canvas]"), config);
 };
 
-//to be overridden 
-app.analytic.render.readBrowser = function (data, selector) { };
 
 //#endregion
 
@@ -368,7 +417,8 @@ app.analytic.ajax.readOs = function (MtrCode, selector) {
             "SbjCode": SbjCode,
             "PrcCode": PrcCode,
             "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val()
+            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val(),
+            "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readOs",
         selector,
@@ -384,11 +434,58 @@ app.analytic.ajax.readOs = function (MtrCode, selector) {
  * @param  {} selector
  */
 app.analytic.callback.readOs = function (data, selector) {
-    app.analytic.render.readOs(data, selector);
+    $(selector).empty();
+    $(selector).append(
+        $("<canvas>", {
+            "name": "operating-system-pie-chart-canvas",
+            "style": "width: 100%; height: 400px"
+        })
+    );
+    var localConfig = {
+        "type": 'pie',
+        "data": {
+            "datasets": [{
+                "data": [],
+                "label": app.label.static["hits"],
+            }],
+            "labels": []
+        },
+        "options": {
+            "tooltips": {
+                "callbacks": {
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        label += ': ';
+                        var totalValues = 0;
+                        for (var i = 0; i < data.datasets[tooltipItem.datasetIndex].data.length; i++) {
+                            totalValues += data.datasets[tooltipItem.datasetIndex].data[i] << 0;
+                        }
+                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        var percentage = ((value / totalValues) * 100).toFixed(1);
+                        label += app.library.utility.formatNumber(value) + " (" + percentage + "%)";
+                        return label;
+                    }
+                }
+            },
+            "plugins": {
+                "colorschemes": {
+                    "scheme": "office.Parallax6"
+                }
+            }
+        }
+    };
+
+    $.each(data, function (key, el) {
+        localConfig.data.datasets[0].data.push(el);
+        localConfig.data.labels.push(key);
+    });
+
+    var config = {};
+    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    delete config.options.scales
+    new Chart($(selector).find("[name=operating-system-pie-chart-canvas]"), config);
 };
 
-//to be overridden 
-app.analytic.render.readOs = function (data, selector) { };
 //#endregion
 
 //#region Referrer
@@ -419,7 +516,8 @@ app.analytic.ajax.readReferrer = function (MtrCode, selector) {
             "SbjCode": SbjCode,
             "PrcCode": PrcCode,
             "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val()
+            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val(),
+            "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readReferrer",
         selector,
@@ -435,16 +533,140 @@ app.analytic.ajax.readReferrer = function (MtrCode, selector) {
  * @param  {} selector
  */
 app.analytic.callback.readReferrer = function (data, selector) {
-    app.analytic.render.readReferrer(data, selector);
+    $(selector).empty();
+    $(selector).append(
+        $("<canvas>", {
+            "name": "referrer-column-chart-canvas",
+            "style": "width: 100%; height: 400px"
+        })
+    );
+    var localConfig = {
+        "type": 'bar',
+        "data": {
+            "datasets": [{
+                "data": [],
+                "label": app.label.static["hits"],
+            }],
+            "labels": []
+        },
+        "options": {
+            "tooltips": {
+                "intersect": false,
+                "callbacks": {
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        label += ': ';
+                        var value = app.library.utility.formatNumber(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+                        label += value;
+                        return label;
+                    }
+                }
+            }
+        }
+    };
+
+    $.each(data, function (key, el) {
+        localConfig.data.labels.push(key);
+        localConfig.data.datasets[0].data.push(el);
+    });
+
+    var config = {};
+    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    new Chart($(selector).find("[name=referrer-column-chart-canvas]"), config);
+
 };
 
-//to be overridden 
+//#endregion
+
+//#region user language
+
 /**
-* 
-* @param {*} data
-* @param {*} selector
-*/
-app.analytic.render.readReferrer = function (data, selector) { };
+ * Get referrer analytics
+ * @param  {} MtrCode
+ * @param  {} selector
+ */
+app.analytic.ajax.readUserLanguage = function (MtrCode, selector) {
+    MtrCode = MtrCode || null;
+
+    var SbjCode = $("#select-card").find("[name=select-subject]").val();
+    if (SbjCode != null && SbjCode.length == 0) {
+        SbjCode = null
+    }
+
+    var PrcCode = $("#select-card").find("[name=select-product]").val();
+    if (PrcCode != null && PrcCode.length == 0) {
+        PrcCode = null
+    }
+
+    api.ajax.jsonrpc.request(app.config.url.api.private,
+        "PxStat.Security.Analytic_API.ReadEnvironmentLanguage",
+        {
+            "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
+            "DateTo": app.analytic.dateTo.format(app.config.mask.date.ajax),
+            "SbjCode": SbjCode,
+            "PrcCode": PrcCode,
+            "MtrCode": MtrCode,
+            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val(),
+            "LngIsoCode": app.label.language.iso.code
+        },
+        "app.analytic.callback.readUserLanguage",
+        selector,
+        null,
+        null,
+        { async: false }
+    );
+
+    ;
+}
+
+/**
+ * Draw referrer chart
+ * @param  {} data
+ * @param  {} selector
+ */
+app.analytic.callback.readUserLanguage = function (data, selector) {
+    $(selector).empty();
+    $(selector).append(
+        $("<canvas>", {
+            "name": "user-language-column-chart-canvas",
+            "style": "width: 100%; height: 400px"
+        })
+    );
+    var localConfig = {
+        "type": 'bar',
+        "data": {
+            "datasets": [{
+                "data": [],
+                "label": app.label.static["iso-language"],
+            }],
+            "labels": []
+        },
+        "options": {
+            "tooltips": {
+                "intersect": false,
+                "callbacks": {
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        label += ': ';
+                        var value = app.library.utility.formatNumber(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+                        label += value;
+                        return label;
+                    }
+                }
+            }
+        }
+    };
+
+    $.each(data, function (key, el) {
+        localConfig.data.labels.push(key);
+        localConfig.data.datasets[0].data.push(el);
+    });
+
+    var config = {};
+    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    new Chart($(selector).find("[name=user-language-column-chart-canvas]"), config);
+};
+
 //#endregion
 
 //#region language
@@ -491,11 +713,58 @@ app.analytic.ajax.readLanguage = function (MtrCode, selector) {
  * @param  {} selector
  */
 app.analytic.callback.readLanguage = function (data, selector) {
-    app.analytic.render.readLanguage(data, selector);
+    $(selector).empty();
+    $(selector).append(
+        $("<canvas>", {
+            "name": "language-pie-chart-canvas",
+            "style": "width: 100%; height: 400px"
+        })
+    );
+    var localConfig = {
+        "type": 'pie',
+        "data": {
+            "datasets": [{
+                "data": [],
+                "label": app.label.static["hits"],
+            }],
+            "labels": []
+        },
+        "options": {
+            "tooltips": {
+                "callbacks": {
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        label += ': ';
+                        var totalValues = 0;
+                        for (var i = 0; i < data.datasets[tooltipItem.datasetIndex].data.length; i++) {
+                            totalValues += data.datasets[tooltipItem.datasetIndex].data[i] << 0;
+                        }
+                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        var percentage = ((value / totalValues) * 100).toFixed(1);
+                        label += app.library.utility.formatNumber(value) + " (" + percentage + "%)";
+                        return label;
+                    }
+                }
+            },
+            "plugins": {
+                "colorschemes": {
+                    "scheme": "office.Oriel6"
+                }
+            }
+        }
+    };
+
+    $.each(data, function (key, el) {
+        localConfig.data.datasets[0].data.push(el);
+        localConfig.data.labels.push(key);
+    });
+
+    var config = {};
+    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    delete config.options.scales
+    new Chart($(selector).find("[name=language-pie-chart-canvas]"), config);
 };
 
-//to be overridden 
-app.analytic.render.readLanguage = function (data, selector) { };
 //#endregion
 
 //#region timeline
@@ -526,7 +795,8 @@ app.analytic.ajax.readTimeline = function (MtrCode, selector) {
             "SbjCode": SbjCode,
             "PrcCode": PrcCode,
             "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val()
+            "NltInternalNetworkMask": $("#select-card").find("[name=nlt-masked-ip]").val(),
+            "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readTimeline",
         selector,
@@ -542,16 +812,70 @@ app.analytic.ajax.readTimeline = function (MtrCode, selector) {
  * @param  {} selector
  */
 app.analytic.callback.readTimeline = function (data, selector) {
-    app.analytic.render.readTimeline(data, selector);
+    $(selector).empty();
+    $(selector).append(
+        $("<canvas>", {
+            "name": "dates-line-chart-canvas",
+            "style": "width: 100%; height: 400px"
+        })
+    );
+    var localConfig = {
+        "type": 'line',
+        "data": {
+            "datasets": [],
+            "labels": []
+        },
+        "options": {
+            "tooltips": {
+                "mode": "index",
+                "callbacks": {
+                    label: function (tooltipItem, data) {
+                        var label = data.datasets[tooltipItem.datasetIndex].label + " - " + data.labels[tooltipItem.index];
+                        label += ': ';
+                        var value = app.library.utility.formatNumber(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+                        label += value;
+                        return label;
+                    }
+                }
+            }
+        }
+    };
+
+    var bots = {
+        label: app.label.static["bots"],
+        data: [],
+        fill: false
+    };
+    var M2M = {
+        label: app.label.static["m2m"],
+        data: [],
+        fill: false
+    };
+    var users = {
+        label: app.label.static["users"],
+        data: [],
+        fill: false
+    };
+    var total = {
+        label: app.label.static["total"],
+        data: [],
+        fill: false
+    };
+
+    $.each(data, function (key, el) {
+        bots.data.push(el.NltBot);
+        M2M.data.push(el.NltM2m);
+        users.data.push(el.NltUser);
+        total.data.push(el.Total);
+        localConfig.data.labels.push(el.date ? moment(el.date).format(app.config.mask.date.display) : "");
+    });
+    localConfig.data.datasets = [bots, M2M, users, total];
+
+    var config = {};
+    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    new Chart($(selector).find("[name=dates-line-chart-canvas]"), config);
 };
 
-//to be overridden 
-/**
-* 
-* @param {*} data
-* @param {*} selector
-*/
-app.analytic.render.readTimeline = function (data, selector) { };
 //#endregion
 
 //#region validation
@@ -587,7 +911,6 @@ app.analytic.validation.select = function () {
  * @param  {} selector
  */
 app.analytic.ajax.readFormat = function (MtrCode, selector) {
-
     MtrCode = MtrCode || null;
     var SbjCode = $("#select-card").find("[name=select-subject]").val();
     if (SbjCode != null && SbjCode.length == 0) {
@@ -623,10 +946,57 @@ app.analytic.ajax.readFormat = function (MtrCode, selector) {
  * @param  {} selector
  */
 app.analytic.callback.readFromat = function (data, selector) {
-    app.analytic.render.readFormat(data, selector);
+    $(selector).empty();
+    $(selector).append(
+        $("<canvas>", {
+            "name": "format-pie-chart-canvas",
+            "style": "width: 100%; height: 400px"
+        })
+    );
+    var localConfig = {
+        "type": 'pie',
+        "data": {
+            "datasets": [{
+                "data": [],
+                "label": app.label.static["hits"],
+            }],
+            "labels": []
+        },
+        "options": {
+            "tooltips": {
+                "callbacks": {
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        label += ': ';
+                        var totalValues = 0;
+                        for (var i = 0; i < data.datasets[tooltipItem.datasetIndex].data.length; i++) {
+                            totalValues += data.datasets[tooltipItem.datasetIndex].data[i] << 0;
+                        }
+                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        var percentage = ((value / totalValues) * 100).toFixed(1);
+                        label += app.library.utility.formatNumber(value) + " (" + percentage + "%)";
+                        return label;
+                    }
+                }
+            },
+            "plugins": {
+                "colorschemes": {
+                    "scheme": "office.Opulent6"
+                }
+            }
+        }
+    };
+
+    $.each(data, function (key, el) {
+        localConfig.data.datasets[0].data.push(el);
+        localConfig.data.labels.push(key);
+    });
+
+    var config = {};
+    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    delete config.options.scales
+    new Chart($(selector).find("[name=format-pie-chart-canvas]"), config);
 };
 
-//to be overridden 
-app.analytic.render.readFormat = function (data, selector) { };
 
 //#endregion

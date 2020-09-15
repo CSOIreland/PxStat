@@ -131,6 +131,9 @@ app.data.callback.drawCallbackDrawLatestReleases = function () {
 app.data.callback.drawLatestReleases = function (data) {
     if ($.fn.dataTable.isDataTable("#data-latest-releases table")) {
         app.library.datatable.reDraw("#data-latest-releases table", data);
+        // Trigger the responsivness when changing the lenght of the table cells because of the code
+        // https://datatables.net/forums/discussion/44766/responsive-doesnt-immediately-resize-the-table
+        $(window).trigger('resize');
     } else {
         var localOptions = {
             order: [[4, 'desc']],
@@ -190,9 +193,15 @@ app.data.callback.drawLatestReleases = function (data) {
 
                                 titleRow.find("[name=time-span]").text(
                                     function () {
-                                        var firstTimeVal = dimension.category.index[0];
-                                        var lastTimeVal = dimension.category.index[dimension.category.index.length - 1];
-                                        return "[" + dimension.category.label[firstTimeVal] + " - " + dimension.category.label[lastTimeVal] + "]";
+                                        if (dimension.category.index.length > 1) {
+                                            var firstTimeVal = dimension.category.index[0];
+                                            var lastTimeVal = dimension.category.index[dimension.category.index.length - 1];
+                                            return dimension.category.label[firstTimeVal] + " - " + dimension.category.label[lastTimeVal];
+                                        }
+                                        else {
+                                            return dimension.category.label[dimension.category.index[0]];
+                                        }
+
                                     }
                                 );
                             }

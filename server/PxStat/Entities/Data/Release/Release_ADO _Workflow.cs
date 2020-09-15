@@ -31,7 +31,6 @@ namespace PxStat.Data
         {
             return ReadLiveNow(0, matrixCode, languageIsoCode);
 
-
         }
 
         /// <summary>

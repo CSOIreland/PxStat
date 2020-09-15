@@ -22,18 +22,16 @@ app.build.update.data.report.drawReport = function (data, frmType) {
         }
     });
 
-    var datatableHeadings = [];
+    //If you try and update a px file with a data csv file that has no valid records, display an error modal instead of the report modal.
+    if (!updatedRecords.length) {
+        api.modal.error(app.label.static["invalid-csv-data-file"]);
+        return
+    }
 
-    if (updatedRecords.length) {
-        $.each(updatedRecords[0], function (key, value) {
-            datatableHeadings.push(key);
-        });
-    }
-    else {
-        $.each(ignoredRecords[0], function (key, value) {
-            datatableHeadings.push(key);
-        });
-    }
+    var datatableHeadings = [];
+    $.each(updatedRecords[0], function (key, value) {
+        datatableHeadings.push(key);
+    });
 
     //build dynamic table header and columns array for datatable
     $("#build-update-modal-view-report [name=ignored-records] [name=header-row]").empty();

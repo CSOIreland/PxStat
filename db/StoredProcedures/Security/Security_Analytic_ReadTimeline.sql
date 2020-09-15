@@ -28,7 +28,7 @@ BEGIN
 		,bots AS NltBot
 		,USERS AS NltUser
 		,m2m AS NltM2m
-		,nltCount AS Total
+		,nltCount AS total
 	FROM (
 		SELECT NLT_DATE
 			,sum(cast(NLT_BOT_FLAG AS INT)) AS Bots

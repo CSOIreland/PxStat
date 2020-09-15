@@ -1,5 +1,4 @@
 {
-	"title": "data.domain.extension",
 	"organisation": "ORGANISATION NAME",
 	"url": {
 		"configuration": {
@@ -146,13 +145,17 @@
 					"text": "#ffffff"
 				}
 			},
+			"secure": true,
 			"position": "top",
-			"static": true,
+			"type": "opt-in",
+			"static": 1,
+			"revokable": 1,
 			"content": {}
 		},
 		"chartJs": {
 			"options": {
 				"responsive": true,
+				"maintainAspectRatio": false,
 				"title": {
 					"display": true,
 					"text": []
@@ -169,7 +172,19 @@
 				},
 				"scales": {
 					"xAxes": [
-						{}
+						{
+							"ticks": {
+								"beginAtZero": false,
+								"maxTicksLimit": null
+							},
+							"gridLines": {
+								"display": false
+							},
+							"scaleLabel": {
+								"display": false,
+								"labelString": null
+							}
+						}
 					],
 					"yAxes": [
 						{
@@ -179,7 +194,11 @@
 							"ticks": {
 								"beginAtZero": false
 							},
-							"callback": null
+							"callback": null,
+							"scaleLabel": {
+								"display": false,
+								"labelString": null
+							}
 						}
 					]
 				},
@@ -188,7 +207,7 @@
 						"enable": false
 					},
 					"colorschemes": {
-						"scheme": null
+						"scheme": "tableau.Tableau10"
 					}
 				},
 				"legend": {

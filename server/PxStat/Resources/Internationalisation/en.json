@@ -63,7 +63,7 @@
     "setting": {
       "axisversion-invalid": "PX Setting [AXIS-VERSION]: &quot;{PropertyValue}&quot; is invalid.",
       "language-invalid": "PX Setting [LANGUAGE]: &quot;{PropertyValue}&quot; is invalid.",
-      "languages-invalid": "PX Setting [LANGUAGE]: &quot;{Language}&quot; is invalid.",
+      "languages-invalid": "PX Setting [LANGUAGE] in languages: &quot;{Language}&quot; is invalid.",
       "source-invalid": "PX Setting [SOURCE]: &quot;{PropertyValue}&quot; is invalid.",
       "sources-invalid": "PX Setting [SOURCE]: &quot;{Source}&quot; is invalid."
     }
@@ -135,5 +135,11 @@
       "auto-approve-comment": "Automatic Response",
       "autoSignoff-comment": "Automatic Signoff"
     }
+  },
+  "analytic": {
+    "others": "Others",
+    "unknown": "Unknown",
+    "date": "date",
+    "total": "Total"
   }
 }

@@ -34,7 +34,20 @@
 
         <div id="data-dataset-chart-accordion-xaxis-collapse" class="collapse show" aria-labelledby="data-dataset-chart-accordion-xaxis-heading" data-parent="#data-dataset-chart-accordion">
             <div class="card-body">
-                <div name="dimension-containers" class="row"></div>
+                <div name="x-axis-label-row">
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold" name="x-axis-label-holder">
+
+                        </div>
+                        <div class="col-8 p-2">
+                            <input type="text" class="form-control" name="x-axis-label" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="border-top row mx-0"></div>
+                </div>
+
+
+                <div name="dimension-containers" class="row mt-2"></div>
             </div>
         </div>
     </div>
@@ -56,6 +69,23 @@
                         </div>
                         <div class="col-8 p-2">
                             <input name="dual-axis" type="checkbox" class="bootstrap-toggle" data-toggle="toggle"></input>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold" name="y-axis-left-label-holder">
+
+                        </div>
+                        <div class="col-8 p-2">
+                            <input type="text" class="form-control" name="left-yaxis-label" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="border-top border-right border-left row mx-0" name="right-yaxis-label-row">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="y-axis-right"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input type="text" class="form-control" name="right-yaxis-label" autocomplete="off" disabled>
                         </div>
                     </div>
                     <div class="border-top row mx-0 mb-2"></div>
@@ -144,6 +174,16 @@
                     </div>
                 </div>
 
+                <div class="border-top border-right border-left row mx-0" name="xaxis-max-steps-row">
+                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <span label="x-axis-max-steps"></span>
+                    </div>
+                    <div class="col-8 p-2">
+                        <input type="text" class="form-control" name="xaxis-max-steps" autocomplete="off">
+                    </div>
+                </div>
+
+
                 <div class="border-top border-right border-left row mx-0">
                     <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
                         <span label="legend"></span>
@@ -169,7 +209,6 @@
                         </button>
                     </div>
                 </div>
-
 
                 <div class="border-top row mx-0"></div>
 
@@ -200,7 +239,7 @@
 <div id="data-dataset-chart-render" class="card mt-4" style="display: none;">
 
     <div class="card-header" label="chart"></div>
-    <div class="card-body">
+    <div class="card-body pb-0">
 
         <div id="pxwidget999999999" class="pxwidget mb-2">
         </div>
@@ -288,7 +327,7 @@
                 <select class="form-control" name="mixed" disabled></select>
             </div>
         </div>
-        <div class="border-top border-right border-left row mx-0" name="dual-axis-holder" style="display: none;">
+        <div class="border-top border-right border-left row mx-0" name="dual-axis-holder">
             <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
                 <span class="mandatory" label="y-axis"></span>
             </div>

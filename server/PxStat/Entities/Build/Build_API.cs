@@ -66,6 +66,16 @@ namespace PxStat.Build
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
+        public static dynamic ReadDataset(JSONRPC_API jsonrpcRequest)
+        {
+            return new Build_BSO_ReadDataset(jsonrpcRequest).Read().Response;
+        }
+
+        /// <summary>
+        /// Get a csv template including only current periods of the px file
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
         public static dynamic ReadDatasetByExistingPeriods(JSONRPC_API jsonrpcRequest)
         {
             return new Build_BSO_ReadDatasetByExistingPeriods(jsonrpcRequest).Read().Response;

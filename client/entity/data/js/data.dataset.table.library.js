@@ -36,7 +36,21 @@ app.data.dataset.table.snippet.template = {
         }
     },
     "options": {
-        "language": app.label.plugin.datatable
+        "language": app.label.plugin.datatable,
+        "dom": "Bfltip",
+        "buttons": [
+            {
+                "extend": 'csv',
+                "text": app.label.static["download"] + " CSV",
+                "className": "export-button",
+                "title": app.data.MtrCode + "." + moment(Date.now()).format(app.config.mask.datetime.file)
+            },
+            {
+                "extend": 'print',
+                "text": app.label.static["print"],
+                "className": "export-button"
+            }
+        ]
     }
 };
 

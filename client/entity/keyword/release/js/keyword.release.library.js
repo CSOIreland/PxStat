@@ -458,7 +458,7 @@ app.keyword.release.drawDataTable = function (data) {
             e.preventDefault();
             //Pass User SELECTED language. TODO: Change service required if release do not have this language return default system language "app.config.language.iso.code"
             //Server exception TODO: Retest after service update.
-            app.data.init(app.label.language.iso.code, null, $(this).attr('rls-code'), $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val());
+            app.data.init(app.label.language.iso.code, $(this).attr('mtr-code'), $(this).attr('rls-code'), $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val(), true);
             app.data.dataset.ajax.readMetadata();
             $('#data-view-modal').modal('show');
         });

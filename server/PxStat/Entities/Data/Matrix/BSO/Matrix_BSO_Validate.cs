@@ -2,6 +2,7 @@
 using FluentValidation.Results;
 using PxParser.Resources.Parser;
 using PxStat.Data.Px;
+using PxStat.Resources;
 using PxStat.Security;
 using PxStat.Template;
 using System;
@@ -99,11 +100,20 @@ namespace PxStat.Data
 
             if (MatrixData.MainSpec.Frequency == null)
             {
+                //if(MatrixData.OtherLanguageSpec!=null)
+                //{
+                //    var otherFreqSpec = MatrixData.OtherLanguageSpec.Where(x => x.Frequency != null).FirstOrDefault();
+
+                //    if(otherFreqSpec!=null)
+                //    {
+
+                //    }
+
+                //}
                 //This means that we failed to create a Frequency. This normally occurs where there is no Timeval but a FrqCode/FrqValue was not supplied
                 MatrixData.MainSpec.requiresResponse = true;
                 return false;
             }
-
 
 
             if (MatrixData.MainSpec.Classification == null)
@@ -134,6 +144,8 @@ namespace PxStat.Data
                 Response.error = Error.GetValidationFailure(SettingsValidatorResult.Errors);
                 return false;
             }
+
+
 
             sw.Stop();
             Log.Instance.Debug(string.Format("Matrix validated in {0} ms", Math.Round((double)sw.ElapsedMilliseconds)));
@@ -176,6 +188,11 @@ namespace PxStat.Data
                 validationResult.Signature = signature;
                 validationResult.FrqValueCandidate = FrqValues;
                 Response.data = validationResult;
+
+                //cache this so that we won't have to recreate the matrix in future steps
+                SerializableMatrix sm = MatrixData.GetSerializableObject();
+                MemCacheD.Store_BSO<string>("PxStat.Data", "Matrix_API", "Validate", Constants.C_CAS_MATRIX_VALIDATE + signature, sm, DateTime.Now.AddDays(Convert.ToInt32(Utility.GetCustomConfig("APP_BUILD_MATRIX_CACHE_LIFETIME_DAYS"))));
+
                 return true;
             }
             else if (MatrixData == null)

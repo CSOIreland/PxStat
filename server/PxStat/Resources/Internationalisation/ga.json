@@ -134,5 +134,12 @@
       "auto-approve-comment": "Freagra Uathoibríoch",
       "autoSignoff-comment": "Síniú Uathoibríoch"
     }
+  },
+  "analytic": {
+    "others": "Cinn eile",
+    "unknown": "Anaithnid",
+    "date": "dáta",
+    "total": "Iomlán"
   }
+
 }

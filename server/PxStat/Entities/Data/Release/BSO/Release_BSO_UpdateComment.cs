@@ -42,6 +42,7 @@ namespace PxStat.Data
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
 
+
             int updated;
             if (dtoRelease.CmmCode == 0)
             {

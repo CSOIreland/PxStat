@@ -1,9 +1,8 @@
-﻿using System;
+﻿using PxStat;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using API;
-using PxStat;
 
 namespace PxParser.Resources.Parser
 {
@@ -320,6 +319,33 @@ namespace PxParser.Resources.Parser
             }
 
             return r;
+        }
+
+        public IList<KeyValuePair<string, IList<IPxSingleElement>>> GetMultiValuesWithSubkeysOnlyIfLanguageIsEmpty(string identifier)
+        {
+            IList<KeyValuePair<string, IList<IPxSingleElement>>> r = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
+
+            foreach (var k in GetAllKeywordElementsThatMatchTheIdentifierLanguageEmpty(this, identifier))
+            {
+                //IList<IPxSingleElement> list = new List<IPxSingleElement>();
+                var list = CastToListOfPxSingleElements((IPxMultipleElements)k.Element);
+                var kv = new KeyValuePair<string, IList<IPxSingleElement>>(k.Key.SubKey.Name, list);
+                r.Add(kv);
+            }
+
+            return r;
+        }
+
+        protected IEnumerable<IPxKeywordElement> GetAllKeywordElementsThatMatchTheIdentifierLanguageEmpty(PxDocument pxDoc, string keywordIdentifier, string language = null)
+        {
+            var keys = pxDoc.Keywords.Where(k => k.Key.Identifier == keywordIdentifier && (String.IsNullOrEmpty(k.Key.Language)));
+
+
+            if (!keys.Any())
+            {
+                throw new Exception(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
+            }
+            return keys;
         }
 
         /// <summary>

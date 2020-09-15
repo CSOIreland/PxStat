@@ -60,6 +60,7 @@ namespace PxStat.Data
 
             var dbData = ado.ReadCollectionMetadata(DTO.language, DTO.datefrom, DTO.product);
 
+            var v = dbData.Where(x => x.MtrCode == "E1071");
 
             List<dynamic> jsonStatCollection = new List<dynamic>();
 
@@ -131,10 +132,13 @@ namespace PxStat.Data
             return result != null ? new Matrix(ado, result, LngIsoCode) : null;
         }
 
-        internal List<dynamic> ReadCollection(string LngIsoCode, string PrcCode)
+        internal List<dynamic> ReadCollection(string LngIsoCode, string SbjCode, string PrcCode)
         {
             Cube_ADO cAdo = new Cube_ADO(ado);
-            return cAdo.ReadCollection(LngIsoCode, default(DateTime), PrcCode);
+            if (Int32.TryParse(SbjCode, out int sbjInt))
+                return cAdo.ReadCollection(LngIsoCode, default, sbjInt, PrcCode);
+            else
+                return cAdo.ReadCollection(LngIsoCode, default, 0, PrcCode);
         }
 
         private List<dynamic> getPeriods(List<dynamic> releaseItems)

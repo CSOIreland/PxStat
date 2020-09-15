@@ -7,6 +7,11 @@ $(document).ready(function () {
         if (!$("#data-dataset-map-nav-content [name=dimension-containers]")[0].innerHTML) {
             app.data.dataset.map.drawDimensions();
         }
+        //hide any other tab that may be shown
+        $('#data-dataset-chart-nav-content').removeClass("active show");
+        $('#data-dataset-table-nav-content').removeClass("active show");
+
+
     })
     $('[data-toggle="tooltip"]').tooltip();
     new ClipboardJS("#data-dataset-map-accordion-api [name=copy-api-info], #data-dataset-map-accordion-api [name=copy-api-object]");

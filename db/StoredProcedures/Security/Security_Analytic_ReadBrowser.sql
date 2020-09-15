@@ -26,7 +26,7 @@ BEGIN
 
 	SELECT CASE 
 			WHEN counts.NLT_BROWSER IS NULL
-				THEN 'Unknown'
+				THEN '-'
 			ELSE counts.NLT_BROWSER
 			END AS NltBrowser
 		,nltCount AS NltCount

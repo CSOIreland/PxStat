@@ -192,7 +192,6 @@ app.navigation.layout.set = function (isDataEntity) {
       $("#sidebar").removeClass("col-sm-3").addClass("col-sm-4").removeClass("bg-sidebar");
       //hide responsive serach
       $("#data-search-row-responsive").hide();
-      $("#share-this").empty();
       break;
   }
 };
@@ -263,12 +262,17 @@ app.navigation.access.callback.check = function (data, PrvCodeList) {
 
     // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
     if ($.inArray(data.PrvCode, PrvCodeList) == -1) {
+      // Prevent backbutton check
+      app.plugin.backbutton.check = false;
       // Force page reload
       window.location.href = window.location.pathname;
     }
-  } else
+  } else {
+    // Prevent backbutton check
+    app.plugin.backbutton.check = false;
     // Force page reload
     window.location.href = window.location.pathname;
+  }
 };
 //#endregion
 
@@ -374,6 +378,8 @@ app.navigation.language.callback.read = function (data) {
 
     Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie);
 
+    // Prevent backbutton check
+    app.plugin.backbutton.check = false;
     // Force page reload
     window.location.href = window.location.pathname;
   });

@@ -242,9 +242,6 @@ namespace PxStat.Data
             {
                 foreach (var k in spec.Values)
                 {
-                    var mv = spec.MainValues.Where(x => x.Key == k.Key).FirstOrDefault().Value;
-
-                    if (mv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
                     var vv = spec.Values.Where(x => x.Key == k.Key).FirstOrDefault().Value;
                     if (vv.GroupBy(x => x.SingleValue).Any(g => g.Count() > 1)) return false;
                 }

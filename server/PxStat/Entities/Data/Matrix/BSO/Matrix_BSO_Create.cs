@@ -2,6 +2,7 @@
 using PxParser.Resources.Parser;
 using PxStat.Build;
 using PxStat.Data.Px;
+using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Navigation;
 using PxStat.Template;
@@ -74,10 +75,23 @@ namespace PxStat.Data
                 return false;
             }
 
+            Matrix theMatrixData;
 
+            //Get the matrix, but use the cached version that was created during validation if at all possible
+            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Data", "Matrix_API", "Validate", Constants.C_CAS_MATRIX_VALIDATE + DTO.Signature);
 
-            PxDoc = PxStatEngine.ParsePxInput(DTO.MtrInput);
-            Matrix theMatrixData = new Matrix(PxDoc, DTO);
+            if (mtrCache.hasData)
+            {
+                SerializableMatrix sm = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
+                theMatrixData = new Matrix().ExtractFromSerializableMatrix(sm);
+            }
+            else
+            {
+
+                PxDoc = PxStatEngine.ParsePxInput(DTO.MtrInput);
+                theMatrixData = new Matrix(PxDoc, DTO);
+            }
+
             Matrix_BSO mBso = new Matrix_BSO(Ado);
 
 

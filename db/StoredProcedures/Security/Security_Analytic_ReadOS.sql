@@ -26,7 +26,7 @@ BEGIN
 
 	SELECT CASE 
 			WHEN counts.NLT_OS IS NULL
-				THEN 'Unknown'
+				THEN '-'
 			ELSE counts.NLT_OS
 			END AS NltOs
 		,nltCount AS NltCount

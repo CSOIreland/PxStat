@@ -127,32 +127,43 @@ namespace PxStat.Resources
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = spec.Contents, StyleId = 0 });
             matrix.Add(line);
 
-            string lngCulture = Utility.GetUserAcceptLanguage();
 
-            DateTime dtLast;
-            string dateString = "";
-            if (theMatrix.CreationDate.Length > 15)
+            if (theMatrix.Release != null)
             {
-                dtLast = new DateTime(Convert.ToInt32(theMatrix.CreationDate.Substring(0, 4)), Convert.ToInt32(theMatrix.CreationDate.Substring(4, 2)), Convert.ToInt32(theMatrix.CreationDate.Substring(6, 2)), Convert.ToInt32(theMatrix.CreationDate.Substring(9, 2)), Convert.ToInt32(theMatrix.CreationDate.Substring(12, 2)), 0);
-                dateString = dtLast.ToString(ci != null ? ci : CultureInfo.InvariantCulture);
-            }
-            else
-                dateString = theMatrix.CreationDate;
+                if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
+                {
 
-            line = new List<XlsxValue>();
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.last-updated", lngIsoCode), StyleId = 1 });
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = dateString, StyleId = 0 });
-            matrix.Add(line);
+                    string dateString = "";
+                    if (theMatrix.Release.RlsLiveDatetimeFrom != default)
+                    {
+
+                        dateString = theMatrix.Release.RlsLiveDatetimeFrom.ToString(ci != null ? ci : CultureInfo.InvariantCulture);
+                        line = new List<XlsxValue>();
+                        line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.last-updated", lngIsoCode), StyleId = 1 });
+                        line.Add(new XlsxValue() { DataType = CellValues.String, Value = dateString, StyleId = 0 });
+                        matrix.Add(line);
+                    }
+
+                }
+            }
 
             line = new List<XlsxValue>();
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.note", lngIsoCode), StyleId = 1 });
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = spec.Notes != null ? String.Join(" ", spec.Notes) : spec.NotesAsString != null ? spec.NotesAsString : "", StyleId = 0 });
             matrix.Add(line);
 
-            line = new List<XlsxValue>();
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.url", lngIsoCode), StyleId = 1 });
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = Configuration_BSO.GetCustomConfig("url.application") + "/" + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + theMatrix.Release.RlsCode.ToString(), StyleId = 0 });
-            matrix.Add(line);
+            if (theMatrix.Release != null)
+            {
+                if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
+                {
+                    string Href = Configuration_BSO.GetCustomConfig("url.restful") +
+string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Utility.GetCustomConfig("APP_FORMAT_PXAPI_TYPE_XLSX"), Utility.GetCustomConfig("APP_FORMAT_PXAPI_VERSION_XLSX"), spec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
+                    line = new List<XlsxValue>();
+                    line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.url", lngIsoCode), StyleId = 1 });
+                    line.Add(new XlsxValue() { DataType = CellValues.String, Value = Href, StyleId = 0 });
+                    matrix.Add(line);
+                }
+            }
 
             line = new List<XlsxValue>();
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = "", StyleId = 0 });

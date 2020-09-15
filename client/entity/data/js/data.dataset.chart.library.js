@@ -20,7 +20,8 @@ app.data.dataset.chart.template.wrapper = {
     "metadata": {},
     "data": {
         "labels": [],
-        "datasets": []
+        "datasets": [],
+        "null": app.config.entity.data.datatable.null
     },
     "options": app.config.plugin.chartJs.options
 };
@@ -79,7 +80,7 @@ app.data.dataset.chart.template.dataset = {
         "response": {}
     },
     "data": [],
-    "fill": false,
+    "fill": false
 }
 
 app.data.dataset.chart.template.yAxisRight = {
@@ -94,6 +95,10 @@ app.data.dataset.chart.template.yAxisRight = {
     "ticks": {
         "beginAtZero": false,
         "callback": null
+    },
+    "scaleLabel": {
+        "display": false,
+        "labelString": null
     }
 }
 
@@ -123,29 +128,47 @@ app.data.dataset.chart.getChartTypes = function () {
             case "polarArea":
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").hide();
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").hide();
-                $("#data-dataset-chart-accordion-options-collapse").find("[name=auto-scale-row]").hide();
+                $("#data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps]").val("");
+                $("#data-dataset-chart-accordion-options-collapse [name=auto-scale-row], #data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps-row]").hide();
+                $("#data-dataset-chart-accordion-series-collapse [name=series-dual-axis], #data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").hide();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["categories"]);
                 break;
             case "mixed":
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").show();
+                $("#data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").show();
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").hide();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
+                $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
+
+                $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "line":
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").show();
+                $("#data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").show();
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").hide();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
+                $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
+
+                $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "bar":
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").show();
+                $("#data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").show();
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").show();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
+                $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
+
+                $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "horizontalBar":
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").show();
+                $("#data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").show();
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").show();
-                $("#data-dataset-chart-accordion-series-collapse").find("[name=series-dual-axis]").hide();
+                $("#data-dataset-chart-accordion-series-collapse").find("[name=series-dual-axis], [name=right-yaxis-label-row]").hide();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["y-axis"]);
+                $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["y-axis-left"]);
+
+                $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["x-axis-label"]);
                 break;
             default:
 
@@ -400,23 +423,23 @@ app.data.dataset.chart.addSeries = function () {
 
     var tabContent = $("#data-dataset-chart-templates").find("[name=tab-content]").clone();
 
-    if ($("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis]").is(":visible, :checked")) {
-        app.data.dataset.chart.drawDualAxis(tabContent.find("[name=dual-axis-position]"));
-    }
+    //if ($("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis]").is(":visible")) {
+    app.data.dataset.chart.drawDualAxis(tabContent.find("[name=dual-axis-position]"));
+    // }
 
     if ($("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis]").is(':checked')) {
 
-        tabContent.find("[name=dual-axis-holder]").show();
+        tabContent.find("[name=dual-axis-position]").prop("disabled", false).val("y-axis-1");
     }
     else {
-        tabContent.find("[name=dual-axis-holder]").hide();
+        tabContent.find("[name=dual-axis-position]").prop("disabled", true);
     }
 
     switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
         case "pie":
         case "doughnut":
         case "polarArea":
-
+            tabContent.find("[name=dual-axis-holder]").hide();
             break;
         case "mixed":
             tabContent.find("[name=mixed-select-holder]").show();
@@ -613,12 +636,15 @@ app.data.dataset.chart.dualAxis = function () {
         $("#data-dataset-chart-accordion-series-collapse [name=tab-content] [name=dual-axis-position]").each(function (index, value) {
             app.data.dataset.chart.drawDualAxis(value)
         });
-        $("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis-holder]").show();
+        $("#data-dataset-chart-accordion-series-collapse").find("[name=right-yaxis-label]").prop("disabled", false).val("");
+
+        $("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis-position]").prop("disabled", false);
 
     }
     else {
-        $("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis-holder]").hide();
-        $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").show();;
+        $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").show();
+        $("#data-dataset-chart-accordion-series-collapse").find("[name=right-yaxis-label]").prop("disabled", true).val("");
+        $("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis-position]").prop("disabled", true).val("y-axis-1");
     }
 
 }
@@ -631,7 +657,7 @@ app.data.dataset.chart.stacked = function () {
     }
     else {
         $("#data-dataset-chart-accordion-options-collapse").find("[name=stacked-percent]").bootstrapToggle('off').bootstrapToggle('disable');
-        $("#data-dataset-chart-accordion-series-collapse [name=dual-axis-holder], #data-dataset-chart-accordion-series-collapse [name=series-dual-axis]").show();
+        $("#data-dataset-chart-accordion-series-collapse [name=dual-axis-holder], #data-dataset-chart-accordion-series-collapse [name=series-dual-axis], #data-dataset-chart-accordion-series-collapse [name=right-yaxis-label-row]").show();
     }
 }
 
@@ -644,6 +670,7 @@ app.data.dataset.chart.drawDualAxis = function (element) {
 
         }).get(0).outerHTML)
     });
+    $(element).val("y-axis-1")
 }
 
 app.data.dataset.chart.deleteSeries = function (series) {
@@ -708,9 +735,38 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
     var isStackedPercentage = $("#data-dataset-chart-accordion-options-collapse").find("[name=stacked-percent]").is(':visible, :checked');
 
     app.data.dataset.chart.configuration.options.scales.xAxes[0].stacked = isStacked;
+    app.data.dataset.chart.configuration.options.scales.xAxes[0].ticks.maxTicksLimit = $("#data-dataset-chart-accordion-options-collapse").find("[name=xaxis-max-steps]").val().trim() || null;
     $.each(app.data.dataset.chart.configuration.options.scales.yAxes, function (index, value) {
         value.stacked = isStacked;
     });
+
+    //axes labeling
+
+    switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
+        case "horizontalBar":
+            $("#data-dataset-chart-accordion-series-collapse [name=add-series-footer], #data-dataset-chart-accordion-series-collapse [name=delete-series]").hide();
+            app.data.dataset.chart.configuration.options.scales.xAxes[0].scaleLabel.display = $("#data-dataset-chart-accordion-series-collapse").find("[name=left-yaxis-label]").val().trim() ? true : false;
+            app.data.dataset.chart.configuration.options.scales.xAxes[0].scaleLabel.labelString = $("#data-dataset-chart-accordion-series-collapse").find("[name=left-yaxis-label]").val().trim() || null;
+
+            app.data.dataset.chart.configuration.options.scales.yAxes[0].scaleLabel.display = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label]").val().trim() ? true : false;
+            app.data.dataset.chart.configuration.options.scales.yAxes[0].scaleLabel.labelString = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label]").val().trim() || null;
+
+            break;
+
+        default:
+            app.data.dataset.chart.configuration.options.scales.xAxes[0].scaleLabel.display = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label]").val().trim() ? true : false;
+            app.data.dataset.chart.configuration.options.scales.xAxes[0].scaleLabel.labelString = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label]").val().trim() || null;
+
+            app.data.dataset.chart.configuration.options.scales.yAxes[0].scaleLabel.display = $("#data-dataset-chart-accordion-series-collapse").find("[name=left-yaxis-label]").val().trim() ? true : false;
+            app.data.dataset.chart.configuration.options.scales.yAxes[0].scaleLabel.labelString = $("#data-dataset-chart-accordion-series-collapse").find("[name=left-yaxis-label]").val().trim() || null;
+
+            if ($("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis]").is(":visible, :checked")) {
+                app.data.dataset.chart.configuration.options.scales.yAxes[1].scaleLabel.display = $("#data-dataset-chart-accordion-series-collapse").find("[name=right-yaxis-label]").val().trim() ? true : false;
+                app.data.dataset.chart.configuration.options.scales.yAxes[1].scaleLabel.labelString = $("#data-dataset-chart-accordion-series-collapse").find("[name=right-yaxis-label]").val().trim() || null;
+            }
+            break;
+    }
+
 
     app.data.dataset.chart.configuration.options.plugins.stacked100.enable = isStackedPercentage;
     app.data.dataset.chart.configuration.options.legend.display = C_APP_PXWIDGET_CHART_LEGEND_POSITION.includes($("#data-dataset-chart-accordion-options-collapse [name=legend-position]").val());
@@ -721,23 +777,6 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
     else {
         delete app.data.dataset.chart.configuration.options.legend.position
     }
-    //format tooltip value
-    app.data.dataset.chart.configuration.options.tooltips.callbacks.label = function (tooltipItem, data) {
-        var label = "";
-        switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
-            case "pie":
-            case "doughnut":
-                label = " " + data.labels[tooltipItem.index]
-                break;
-            default:
-                label = " " + data.datasets[tooltipItem.datasetIndex].label || '';
-                break;
-        }
-        label += ': ';
-        var value = !isNaN(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]) ? app.library.utility.formatNumber(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]) : app.config.entity.data.datatable.null;
-        label += value;
-        return label;
-    };
 
     if (app.data.isLive) {
         app.data.dataset.chart.configuration.metadata.api.query.data.params.matrix = app.data.MtrCode;
@@ -764,6 +803,7 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
     var errors = [];
     app.data.dataset.chart.configuration.metadata.xAxis = {};
     app.data.dataset.chart.configuration.metadata.xAxis[xAxisDimensionCode] = [];
+    app.data.dataset.chart.configuration.metadata.xAxis.role = app.data.dataset.metadata.jsonStat.Dimension(xAxisDimensionCode).role;
     //check if not all selected in dimension
     var numVariables = app.data.dataset.metadata.jsonStat.Dimension(xAxisDimensionCode).length;
     var numVariablesSelected = $("#data-dataset-chart-accordion-xaxis-collapse").find("select[idn='" + xAxisDimensionCode + "'] option:selected").length;
@@ -792,7 +832,7 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
         thisDataset.api.query.data.params.extension.language.code = app.data.LngIsoCode;
 
 
-        if ($("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").is(":visible") && $("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis]").is(':checked')) {
+        if ($("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis]").is(':checked')) {
             thisDataset.yAxisID = $(this).find("[name=dual-axis-position]").val();
         };
 
@@ -835,6 +875,7 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
             }
 
         }
+
         if (!errors.length) {
             app.data.dataset.chart.configuration.data.datasets.push(thisDataset);
         }
@@ -846,27 +887,35 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
         app.data.dataset.chart.configuration.options.title.text.shift();
     }
 
+    if (!errors.length) {
+        if ($("#data-dataset-chart-accordion-options-collapse").find("[name=xaxis-max-steps]").val().trim()) {
+            switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
+                case "pie":
+                case "doughnut":
+                case "polarArea":
+                    break;
+                default:
+                    var number = parseFloat($("#data-dataset-chart-accordion-options-collapse").find("[name=xaxis-max-steps]").val().trim())
+                    if (!Number.isInteger(number)) {
+                        errors.push(app.label.static["chart-error-xaxis-max-steps"]);
+                    }
+                    if (!errors.length) {
+                        if (number < 0) {
+                            errors.push(app.label.static["chart-error-xaxis-max-steps"]);
+                        }
+                    }
+                    break;
+            }
+
+        }
+    }
+
     //remove auto-scale
     if (!$("#data-dataset-chart-accordion-options-collapse").find("[name=auto-scale]").is(':checked')) {
         $.each(app.data.dataset.chart.configuration.options.scales.yAxes, function (index, value) {
             value.ticks.beginAtZero = true;
         });
     }
-
-    //format yaxis labels
-    $.each(app.data.dataset.chart.configuration.options.scales.yAxes, function (index, value) {
-        value.ticks.callback = function (label, index, labels) {
-            //check if label comes from time dimension
-            var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("select:enabled").attr("idn");
-            //get role of this dimension
-            if (app.data.dataset.metadata.jsonStat.Dimension(xAxisDimensionCode).role == "time" && $("#data-dataset-chart-properties").find("[name=type]").val() == "horizontalBar") {
-                return label
-            }
-            else {
-                return !isNaN(label) ? app.library.utility.formatNumber(label, 0) : label
-            }
-        }
-    });
 
     if (!errors.length) {
         switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
@@ -915,7 +964,6 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
     if (!errors.length) {
         $("#data-dataset-chart-render, #data-dataset-chart-snippet-code").show();
-
         pxWidget.draw.init(C_APP_PXWIDGET_TYPE_CHART, "pxwidget999999999", app.data.dataset.chart.configuration, function () {
             // Render the Snippet
             app.data.dataset.chart.renderSnippet(pxWidget.draw.params["pxwidget999999999"]);
@@ -995,7 +1043,9 @@ app.data.dataset.chart.resetAll = function () {
     $('#data-dataset-chart-accordion-xaxis-collapse, #data-dataset-chart-accordion-series-collapse, #data-dataset-chart-accordion-options-collapse').collapse("hide");
     $('#data-dataset-chart-accordion-xaxis-collapse').collapse("show");
 
-    $("#data-dataset-chart-accordion-options-collapse").find("[name=auto-scale-row]").show();
+    $("#data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps], #data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label], #data-dataset-chart-accordion-series-collapse [name=right-yaxis-label], #data-dataset-chart-accordion-series-collapse [name=left-yaxis-label]").val("");
+
+    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale-row], #data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps-row]").show();
 
     //reset chart type select
     app.data.dataset.chart.getChartTypes();

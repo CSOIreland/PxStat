@@ -77,6 +77,7 @@
         "choose": "Wybierz",
         "chart": "Wykres",
         "chart-error-invalid-json": "<b> Niestandardowa Konfiguracja JSON </b> jest nieprawidłowa. Sprawdź wprowadzone dane.",
+        "chart-error-xaxis-max-steps": "<b>xAxis Maks. Liczba Kroków</b> musi być liczbą całkowitą. Sprawdź swoje dane wejściowe.",
         "class": "Klasa",
         "classification": "Klasyfikacji",
         "classifications": "Klasyfikacje",
@@ -100,6 +101,7 @@
         "contact-name": "Kontakt Imię",
         "contact-phone": "Kontakt Telefon",
         "consider-rollback": "Rozważ <b>Wycofanie</b>, aby ponownie opublikować poprzednią Wersję, w stosownych przypadkach.",
+        "copy": "Skopiuj",
         "copy-to-clipboard": "Skopiuj do Schowka",
         "copyright": "Prawo Autorskie",
         "copyrights": "Prawa Autorskie",
@@ -404,6 +406,7 @@
         "use": "Użyj",
         "user": "Użytkownik",
         "user-agent": "Agent Użytkownika",
+        "user-language": "Język Użytkownika",
         "user-name": "Nazwa Użytkownika",
         "users": "Użytkownicy",
         "utf-8-encoding": "UTF-8 kodowanie i maksymalny rozmiar pliku",
@@ -430,9 +433,13 @@
         "workflow-response": "Przepływ Pracy Odpowiedź",
         "workflow-sign-off": "Przepływ Pracy Podpis",
         "x-axis": "xOś",
+        "x-axis-label": "Etykieta Osi xAxis",
+        "x-axis-max-steps": "Oś xAxis Maks. Liczba Kroków",
         "y-axis": "yOś",
         "y-axis-1": "Lewo",
         "y-axis-2": "Prawo",
+        "y-axis-left": "Oś yAxis Etykieta Lewa",
+        "y-axis-right": "Oś yAxis Etykieta Prawa",
         "yesterday": "Wczoraj"
     },
     "dynamic": {
@@ -609,9 +616,11 @@
         },
         "cookieConsent": {
             "content": {
-                "message": "Ta strona używa plików cookie. Przeglądając tę stronę, wyrażasz zgodę na używanie przez nas plików cookie.",
-                "dismiss": "Zamknij",
-                "link": "Więcej informacji"
+                "message": "The website uses cookies to improve your experience and to monitor the site traffic.",
+                "link": "Privacy Policy",
+                "allow": "Accept",
+                "deny": "Reject",
+                "policy": "Cookies"
             }
         }
     },

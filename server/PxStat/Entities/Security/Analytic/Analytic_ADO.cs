@@ -49,6 +49,11 @@ namespace PxStat.Security
                 inputParamList.Add(new ADO_inputParams() { name = "@FrmType", value = dto.FrmType });
                 inputParamList.Add(new ADO_inputParams() { name = "@FrmVersion", value = dto.FrmVersion });
             }
+            if (dto.EnvironmentLngIsoCode != null)
+            {
+                inputParamList.Add(new ADO_inputParams() { name = "@EnvironmentLngIsoCode", value = dto.EnvironmentLngIsoCode });
+            }
+
 
             var retParam = new ADO_returnParam() { name = "return", value = 0 };
 
@@ -109,6 +114,8 @@ namespace PxStat.Security
                 if (dto.NltInternalNetworkMask.Length > 0)
                     inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
             }
+            if (dto.MtrCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
             if (dto.PrcCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
@@ -118,6 +125,33 @@ namespace PxStat.Security
 
             //Call the stored procedure
             return Ado.ExecuteReaderProcedure("Security_Analytic_ReadOs", inputParamList);
+
+        }
+
+        internal ADO_readerOutput ReadEnvironmentLanguage(Analytic_DTO_Read dto)
+        {
+            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+            };
+
+            if (dto.NltInternalNetworkMask != null)
+            {
+                if (dto.NltInternalNetworkMask.Length > 0)
+                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
+            }
+            if (dto.MtrCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
+
+            if (dto.PrcCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
+
+            if (dto.SbjCode > 0)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+
+            //Call the stored procedure
+            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadEnvironmentLanguage", inputParamList);
 
         }
 
@@ -141,6 +175,9 @@ namespace PxStat.Security
 
             if (dto.SbjCode > 0)
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+
+            if (dto.MtrCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
 
             //Call the stored procedure
@@ -173,6 +210,9 @@ namespace PxStat.Security
             if (dto.SbjCode > 0)
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
+            if (dto.MtrCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
+
 
             //Call the stored procedure
             return Ado.ExecuteReaderProcedure("Security_Analytic_ReadBrowser", inputParamList);
@@ -200,8 +240,6 @@ namespace PxStat.Security
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
-            if (dto.LngIsoCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode });
 
             if (dto.SbjCode != default(int))
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
@@ -240,6 +278,9 @@ namespace PxStat.Security
             if (dto.PrcCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
+            if (dto.MtrCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
+
             return Ado.ExecuteReaderProcedure("Security_Analytic_ReadReferers", inputParamList);
 
         }
@@ -263,8 +304,8 @@ namespace PxStat.Security
                     inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
             }
 
-            if (dto.LngIsoCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode });
+            if (dto.MtrCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
             if (dto.SbjCode != default(int))
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });

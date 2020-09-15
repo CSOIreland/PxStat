@@ -45,7 +45,7 @@ app.release.workflow.history.callback.read = function (data) {
 app.release.workflow.history.drawCallback = function () {
     $('[data-toggle="tooltip"]').tooltip();
     $("td.details-request-control i.fa.plus-control").css({ "color": "forestgreen" });
-    app.library.datatable.showExtraInfo('#release-workflow-history table', app.release.workflow.history.render.extraInfo, app.release.workflow.history.render.extraInfoPost);
+    app.library.datatable.showExtraInfo('#release-workflow-history table', app.release.workflow.history.render.extraInfo);
 
     //Delete Request button click event. Passing function reference.
     $("#release-workflow-history table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.release.workflow.history.delete);
@@ -258,8 +258,6 @@ app.release.workflow.history.render.reply = function (requestType, textTooltip) 
 app.release.workflow.history.render.extraInfo = function (row) {
     //clone template from html not reuse dynamically
     var grid = $("#release-workflow-history-extra-info").clone();
-    //set the temporary ID for the postCallbackFunction
-    grid.attr("id", "extraInfoPost");
     // Request
     grid.find("[name=rqs-value]").empty().html(app.label.datamodel.request[row.RqsValue]); //Translation
     grid.find("[name=wrq-exceptional-flag]").empty().html(app.library.html.boolean(row.WrqExceptionalFlag, true, true));
@@ -267,7 +265,7 @@ app.release.workflow.history.render.extraInfo = function (row) {
     grid.find("[name=wrq-reservation-flag]").empty().html(app.library.html.boolean(row.WrqReservationFlag, true, true));
     grid.find("[name=wrq-archive-flag]").empty().html(app.library.html.boolean(row.WrqArchiveFlag, true, true));
     grid.find("[name=wrq-cmm-value]").empty().html(app.library.html.parseBbCode(row.WrqCmmValue));
-    grid.find("[name=wrq-dtg-create-datetime]").empty().html(row.WrqDtgCreateDatetime ? moment(row.WrqDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+    grid.find("[name=wrq-create-datetime]").empty().html(row.WrqDtgCreateDatetime ? moment(row.WrqDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
     grid.find("[name=wrq-create-username]").empty().html(app.library.html.link.user(row.WrqDtgCreateCcnUsername));
 
     // Response
@@ -279,8 +277,8 @@ app.release.workflow.history.render.extraInfo = function (row) {
     // Signoff
     grid.find("[name=sgn-value]").empty().html(app.release.workflow.history.render.reply(row.SgnCode, row.SgnValue));
     grid.find("[name=sgn-cmm-value]").empty().html(app.library.html.parseBbCode(row.WsgCmmValue)); //No Translation - User comment
-    grid.find("[name=sgn-dtg-create-datetime]").empty().html(row.WsgDtgCreateDatetime ? moment(row.WsgDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
-    grid.find("[name=sgn-dtg-create-ccn-username]").empty().html(app.library.html.link.user(row.WsgDtgCreateCcnUsername));
+    grid.find("[name=sgn-create-datetime]").empty().html(row.WsgDtgCreateDatetime ? moment(row.WsgDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+    grid.find("[name=sgn-create-ccn-username]").empty().html(app.library.html.link.user(row.WsgDtgCreateCcnUsername));
 
     // Remove non-relevant data
     switch (row.RqsCode) {
@@ -310,34 +308,7 @@ app.release.workflow.history.render.extraInfo = function (row) {
         grid.find("[name=card-signoff]").remove();
     }
 
-    return grid.show().get(0).outerHTML;
-};
-
-/**
-* 
- * @param {*} row
- */
-app.release.workflow.history.render.extraInfoPost = function (row) {
-    // Request
-    $("#extraInfoPost [name=wrq-dtg-create-ccn-username]").once('click', function (e) {
-        e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: row.WrqDtgCreateCcnUsername });
-    });
-
-    // Response
-    $("#extraInfoPost [name=wrs-dtg-create-ccn-username]").once('click', function (e) {
-        e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: row.WrsDtgCreateCcnUsername });
-    });
-
-    // Signoff
-    $("#extraInfoPost [name=sgn-dtg-create-ccn-username]").once('click', function (e) {
-        e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: row.WsgDtgCreateCcnUsername });
-    });
-
-    //remove ID attribute used for the postCallbackFunction
-    $("#extraInfoPost").removeAttr('id');
+    return grid.show();
 };
 
 /**

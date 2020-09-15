@@ -223,7 +223,7 @@ namespace PxStat.System.Notification
         /// <returns></returns>
         private string getReleaseUrl(Release_DTO dto)
         {
-            return "[url=" + Configuration_BSO.GetCustomConfig("url.application") + "/" + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + " " + dto.RlsVersion.ToString() + "." + dto.RlsRevision.ToString() + "[/url]";
+            return "[url=" + Configuration_BSO.GetCustomConfig("url.application") + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + " " + dto.RlsVersion.ToString() + "." + dto.RlsRevision.ToString() + "[/url]";
         }
 
     }

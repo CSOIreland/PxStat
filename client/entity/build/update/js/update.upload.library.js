@@ -391,6 +391,8 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 
             // Read file into an UTF8 string
             var readerUTF8 = new FileReader();
+            //flush any previous data
+            app.build.update.data.Data = []
             readerUTF8.onload = function (e) {
                 app.build.update.upload.file.content.data.JSON = Papa.parse(e.target.result, {
                     header: true,
@@ -499,7 +501,7 @@ app.build.update.upload.validate.callback.downloadDataTemplate = function (data)
  * 
  */
 app.build.update.upload.validate.callback.downloadAllData = function (data) {
-    // N.B. This is a silent validation to cathc hacks only
+    // N.B. This is a silent validation to catch hacks only
     if (data && data.Signature) {
         // Store for later use
         app.build.update.upload.Signature = data.Signature;

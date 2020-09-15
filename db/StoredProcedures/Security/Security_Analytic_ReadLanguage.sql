@@ -8,14 +8,13 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 15/05/2019
 -- Description:	Returns a count of matrices queried per language
--- exec Security_Analytic_ReadLanguage '2019-12-01','2019-12-13','en',null,null,1,1
+-- exec Security_Analytic_ReadLanguage '2020-08-01','2020-08-21',null,null,1,1
 -- =============================================
 CREATE
 	OR
 
 ALTER PROCEDURE Security_Analytic_ReadLanguage @DateFrom DATE
 	,@DateTo DATE
-	,@LngIsoCode VARCHAR(2) = NULL
 	,@NltInternalNetworkMask VARCHAR(12) = NULL
 	,@MtrCode NVARCHAR(20) = NULL
 	,@SbjCode INT = NULL
@@ -36,6 +35,7 @@ BEGIN
 	INNER JOIN TS_LANGUAGE
 		ON MTR_LNG_ID = LNG_ID
 			AND LNG_DELETE_FLAG = 0
+
 	INNER JOIN TD_RELEASE
 		ON RLS_ID = MTR_RLS_ID
 			AND TD_RELEASE.RLS_DELETE_FLAG = 0
@@ -51,10 +51,7 @@ BEGIN
 			@MtrCode IS NULL
 			OR @MtrCode = MTR_CODE
 			)
-		AND (
-			@LngIsoCode IS NULL
-			OR @LngIsoCode = LNG_ISO_CODE
-			)
+		
 		AND (
 			@NltInternalNetworkMask IS NULL
 			OR NLT_MASKED_IP NOT LIKE @NltInternalNetworkMask

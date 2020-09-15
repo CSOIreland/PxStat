@@ -18,6 +18,7 @@ namespace PxStat.Data
     /// <summary>
     /// Cube APIs are used for reading data and metadata.
     /// </summary>
+
     public class Cube_API
     {
         [Analytic]
@@ -88,8 +89,14 @@ namespace PxStat.Data
                     case Constants.C_DATA_PXAPIV1_COLLECTION_QUERY:
                         //Get a list of live tables for a product
                         rpcParams.Add("LngIsoCode", parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY));
-
                         rpcParams.Add("product", parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+
+                        if (!Int32.TryParse(parameters.ElementAt(Constants.C_DATA_PXAPIV1_PRODUCT_QUERY), out int sbjInt))
+                            rpcParams.Add("SbjCode", "0");
+                        else
+                            rpcParams.Add("SbjCode", sbjInt.ToString());
+
+
                         rpc.parameters = rpcParams;
 
                         List<dynamic> collection = new List<dynamic>();
@@ -115,30 +122,55 @@ namespace PxStat.Data
                         {
                             using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
                             {
-                                collection = cBso.ReadCollection(parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+                                collection = cBso.ReadCollection(parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_PRODUCT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
                             }
 
                             meta = new PxApiMetadata();
 
-                            if (collection.Count > 0)
+                            if (collection != null)
                             {
-                                output.response = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadCollectionAsObjectList(new JSONRPC_Output() { data = collection }));
-                                output.statusCode = HttpStatusCode.OK;
+                                if (collection.Count > 0)
+                                {
+                                    output.response = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadCollectionAsObjectList(new JSONRPC_Output() { data = collection }));
+                                    output.statusCode = HttpStatusCode.OK;
+                                }
+                                else
+                                    output.statusCode = HttpStatusCode.NotFound;
                             }
                             else
                                 output.statusCode = HttpStatusCode.NotFound;
                         }
 
 
+                        MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollectionPxApi", rpcParams, output.response, nextReleaseDateForProduct, Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI);
 
-                        MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollectionPxApi", rpcParams, output.response, nextReleaseDateForProduct, Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI + parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
-
-                        //MemCacheD.CasRepositoryFlush(Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI + parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
                         return output;
 
                     case Constants.C_DATA_PXAPIV1_METADATA_QUERY:
                         //Either get the metadata for the table or, if a query has been supplied, get the table data based on the query
                         string request = string.IsNullOrWhiteSpace(Utility.HttpPOST()) ? Utility.HttpGET()["query"] : Utility.HttpPOST();
+
+                        //For conventional RESTful patterns, don't return metadata unless the requested MtrCode is contained in the collection
+                        //for the subject and product parameters
+                        List<dynamic> collectionPrdSbjmeta = new List<dynamic>();
+                        using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
+                        {
+                            collectionPrdSbjmeta = cBso.ReadCollection(parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_PRODUCT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+                        }
+
+                        if (collectionPrdSbjmeta == null)
+                        {
+                            var empty = new RESTful_Output();
+                            empty.statusCode = HttpStatusCode.NotFound;
+                            return empty;
+                        }
+
+                        if (collectionPrdSbjmeta.Where(x => x.MtrCode == parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY)).ToList().Count == 0)
+                        {
+                            var empty = new RESTful_Output();
+                            empty.statusCode = HttpStatusCode.NotFound;
+                            return empty;
+                        }
 
                         if (request == null)
                         {
@@ -176,11 +208,33 @@ namespace PxStat.Data
                         {
                             //This is a request for data - we need to use the query
 
+                            //For conventional RESTful patterns, don't return metadata unless the requested MtrCode is contained in the collection
+                            //for the subject and product parameters
+                            List<dynamic> collectionPrdSbjdata = new List<dynamic>();
+                            using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
+                            {
+                                collectionPrdSbjdata = cBso.ReadCollection(parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_PRODUCT_QUERY), parameters.ElementAt(Constants.C_DATA_PXAPIV1_COLLECTION_QUERY));
+                            }
+
+                            if (collectionPrdSbjmeta == null)
+                            {
+                                var empty = new RESTful_Output();
+                                empty.statusCode = HttpStatusCode.NotFound;
+                                return empty;
+                            }
+
+                            if (collectionPrdSbjdata.Where(x => x.MtrCode == parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY)).ToList().Count == 0)
+                            {
+                                var empty = new RESTful_Output();
+                                empty.statusCode = HttpStatusCode.NotFound;
+                                return empty;
+                            }
 
 
                             string queryString = string.IsNullOrWhiteSpace(Utility.HttpPOST()) ? Utility.HttpGET()["query"] : Utility.HttpPOST();
 
                             PxApiV1Query pxapiQuery = Utility.JsonDeserialize_IgnoreLoopingReference<PxApiV1Query>(queryString);
+
 
                             Format_DTO_Read format = new Format_DTO_Read(pxapiQuery.Response.Format);
 

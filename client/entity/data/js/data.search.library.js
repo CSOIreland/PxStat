@@ -590,10 +590,15 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
         frequencySpan.text(
             function () {
                 var periodsArray = entry.period;
-                periodsArray.sort();
-                var prdValueMin = periodsArray[0];
-                var prdValueMax = periodsArray[periodsArray.length - 1];
-                return "[" + prdValueMin + "-" + prdValueMax + "]";
+                if (periodsArray.length > 1) {
+                    var prdValueMin = periodsArray[0];
+                    var prdValueMax = periodsArray[periodsArray.length - 1];
+                    return prdValueMin + " - " + prdValueMax;
+                }
+                else {
+                    return periodsArray[0]
+                }
+
             });
         resultItem.find("[name=dimensions]").append(frequencySpan);
 

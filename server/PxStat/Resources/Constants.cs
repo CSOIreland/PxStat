@@ -161,6 +161,9 @@ namespace PxStat.Resources
         internal const string C_CAS_DATA_CUBE_READ_METADATA = "PxStat.Data.Cube_API.ReadMetadata";
         internal const string C_CAS_DATA_CUBE_READ_COLLECTION = "PxStat.Data.Cube_API.ReadCollection";
         internal const string C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI = "PxStat.Data.Cube_API.ReadCollectionPxApi";
+
+        internal const string C_CAS_BUILD_MATRIX = "PxStat.Build.Validate";
+        internal const string C_CAS_MATRIX_VALIDATE = "PxStat.Data.Matrix_API.Validate";
         #endregion
     }
 }

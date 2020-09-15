@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 02/01/2020
 -- Description:	Reads current releases, referencing metadata
--- exec Data_Release_ReadCollection 'en','en',null,'C2016P3'
+-- exec Data_Release_ReadCollection 'en','ga','2020-09-02','C2016P3'
 -- =============================================
 CREATE
 	OR
@@ -55,7 +55,8 @@ BEGIN
 	BEGIN
 		SET @PrcID=(SELECT PRC_ID FROM TD_PRODUCT WHERE PRC_CODE=@PrcCode AND PRC_DELETE_FLAG=0)
 	END
-
+		select distinct * from
+	(
 	SELECT RLS_CODE AS RlsCode
 		,mtr.MTR_CODE AS MtrCode
 		,coalesce(lngMTR.LNG_ISO_CODE, TS_LANGUAGE.LNG_ISO_CODE) AS LngIsoCode
@@ -121,6 +122,7 @@ BEGIN
 		) lngMtr
 		ON lngMtr.MTR_CODE = mtr.MTR_CODE
 	WHERE (@PrcID IS  NULL OR @PrcID=RLS_PRC_ID)
+	) q
 END
 GO
 

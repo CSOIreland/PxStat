@@ -68,13 +68,30 @@ app.release.goTo.load = function (mtrCode, rlsCode) {
 
   // Load a Release from goTo
   if (app.release.RlsCode) {
-    //check there is actually something there for this release code, may be deleted or rolled back
-    app.release.ajax.read();
+    app.release.load();
   }
 };
 
+app.release.load = function () {
+  jQuery.when(
+    // Check the existance of the release, may be deleted or rolled back or simply wrong
+    app.release.ajax.read(),
+    // Read the previous Release Code if any
+    app.release.comparison.ajax.readRlsCodePrevious(),
+    // Load Editor privileges if any
+    app.release.ajax.isModerator(),
+    app.release.ajax.isApprover()
+  ).done(function () {
+    if (app.release.RlsCode) {
+      app.release.information.read();
+      app.release.source.read();
+      app.release.workflow.history.read();
+    }
+  });
+};
+
 app.release.ajax.read = function () {
-  api.ajax.jsonrpc.request(
+  return api.ajax.jsonrpc.request(
     app.config.url.api.private,
     "PxStat.Data.Release_API.Read",
     { RlsCode: app.release.RlsCode },
@@ -90,19 +107,15 @@ app.release.ajax.read = function () {
 * @param {*} data
 */
 app.release.callback.read = function (data) {
-  if (data) {
-    //only proceed if we have an actual release
-    // Read the previous Release Code
-    app.release.comparison.ajax.readRlsCodePrevious();
-    // Load first the privileges then the release
-    app.release.ajax.isModerator();
-  }
-  else {
-    //otherwise attempt to reload the release entity with whatever matrix code we have 
+  if (!data) {
+    // Unset the Release Code
+    app.release.RlsCode = null;
+
+    // Attempt to reload the release entity with whatever matrix code we have 
     var goToParams = {
       "MtrCode": app.release.MtrCode
     };
-    // Display Success Modal
+    // Display Information Modal
     api.modal.information(app.label.static["api-ajax-nodata"]);
 
     $("#modal-information").one('hidden.bs.modal', function (e) {
@@ -121,7 +134,7 @@ app.release.callback.read = function (data) {
  * 
  */
 app.release.ajax.isModerator = function () {
-  api.ajax.jsonrpc.request(
+  return api.ajax.jsonrpc.request(
     app.config.url.api.private,
     "PxStat.Security.Account_API.ReadIsModerator",
     null,
@@ -139,14 +152,13 @@ app.release.ajax.isModerator = function () {
 app.release.callback.isModerator = function (data) {
   // Store for later use
   app.release.isModerator = data;
-  app.release.ajax.isApprover();
 };
 
 /**
  * 
  */
 app.release.ajax.isApprover = function () {
-  api.ajax.jsonrpc.request(
+  return api.ajax.jsonrpc.request(
     app.config.url.api.private,
     "PxStat.Security.Account_API.ReadIsApprover",
     { RlsCode: app.release.RlsCode },
@@ -163,10 +175,6 @@ app.release.ajax.isApprover = function () {
 app.release.callback.isApprover = function (data) {
   // Store for later use
   app.release.isApprover = data;
-
-  app.release.information.read();
-  app.release.source.read();
-  app.release.workflow.history.read();
 };
 
 //#endregion

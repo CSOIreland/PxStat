@@ -17,7 +17,7 @@ $(document).ready(function () {
     api.content.load("#data-search-row-desktop", "entity/data/index.search.html");
     //api.content.load("#data-search-result-row", "entity/data/index.search.result.html");
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
-    api.content.load("#data-sharethis-row", "entity/data/index.sharethis.html");
+    api.content.load("#data-share-row", "entity/data/index.share.html");
     // Init DatePicker
     app.data.setDatePicker();
 
@@ -41,7 +41,7 @@ $(document).ready(function () {
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 
     //initiate all copy to clipboard 
-    new ClipboardJS("#data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object], #data-sharethis [name=copy-link-info]");
+    new ClipboardJS("#data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object], #data-share [name=copy-link-info]");
     $("#data-accordion-collection-api").on('show.bs.collapse', function () {
         $("#data-accordion-collection-api").find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
     });
