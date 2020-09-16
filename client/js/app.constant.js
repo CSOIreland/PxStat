@@ -14,8 +14,8 @@ const C_APP_URL_GITHUB_API_CUBE_JSONRPC = "https://github.com/CSOIreland/PxStat/
 const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-RESTful";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.3/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.3/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.5/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.5/snippet.html";
 
 //Charts + Maps
 /*******************************************************************************
