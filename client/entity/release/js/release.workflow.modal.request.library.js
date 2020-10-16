@@ -139,7 +139,7 @@ app.release.workflow.modal.request.create = function () {
 app.release.workflow.modal.request.ajax.ReadCurrentAccess = function () {
     //Check the privilege of the user 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Account_API.ReadCurrentAccess",
         { CcnUsername: null },
         "app.release.workflow.modal.request.callback.ReadCurrentAccess",
@@ -328,7 +328,7 @@ app.release.workflow.modal.request.ajax.create = function (RqsCode) {
     }
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.WorkflowRequest_API.Create",
         obj2send,
         "app.release.workflow.modal.request.callback.create",

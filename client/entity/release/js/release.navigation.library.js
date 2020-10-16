@@ -34,7 +34,7 @@ app.release.navigation.ajax.readSubject = function (SbjCode) {
     $("#release-navigation-modal [name=prc-code]").prop('disabled', true);
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Subject_API.Read",
         null,
         "app.release.navigation.callback.readSubject",
@@ -99,7 +99,7 @@ app.release.navigation.ajax.readProduct = function (SbjCode, PrcCode) {
     PrcCode = PrcCode || null;
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Product_API.Read",
         { SbjCode: SbjCode },
         "app.release.navigation.callback.readProduct",
@@ -167,7 +167,7 @@ app.release.navigation.validation.update = function () {
  */
 app.release.navigation.ajax.update = function (PrcCode) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.UpdateProduct",
         { "RlsCode": app.release.RlsCode, "PrcCode": PrcCode },
         "app.release.navigation.callback.update",

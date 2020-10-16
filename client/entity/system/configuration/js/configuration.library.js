@@ -158,7 +158,7 @@ app.configuration.parseConfig = function (obj, keys = [], source) {
 //#region load config
 app.configuration.ajax.reload = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Configuration_API.Refresh",
         {},
         "app.configuration.callback.reload",

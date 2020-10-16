@@ -21,7 +21,7 @@ app.release.source.read = function () {
 };
 app.release.source.ajax.read = function (LngIsoCode) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.Read",
         { RlsCode: app.release.RlsCode, LngIsoCode: LngIsoCode },
         "app.release.source.callback.read",
@@ -72,7 +72,7 @@ app.release.source.render = function (data) {
  */
 app.release.source.ajax.readLanguage = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Language_API.ReadListByRelease",
         { "RlsCode": app.release.RlsCode },
         "app.release.source.callback.readLanguageOnSuccess",
@@ -174,9 +174,7 @@ app.release.data.view = function () {
         app.release.isLive,
     );
 
-    app.data.dataset.ajax.readMetadata();
-
-    $('#data-view-modal').modal('show');
+    app.data.dataset.draw();
 
     //reset modal for clean opening if user changes release
     $('#data-view-modal').on('hide.bs.modal', function (e) {

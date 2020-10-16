@@ -14,7 +14,11 @@ $(document).ready(function () {
     });
 
     //format advanced options
-    $("#data-dataset-chart-accordion [name=format-json]").once("click", app.data.dataset.chart.formatJson);
+    $("#data-dataset-chart-snippet-code [name=format-json]").once("click", app.data.dataset.chart.formatJson);
+
+    $("#data-dataset-chart-snippet-code [name=custom-config]").val(JSON.stringify({ "options": {} }));
+    app.data.dataset.chart.formatJson();
+    $("#data-dataset-chart-snippet-code [name=valid-json-object]").hide();
 
     //Changing plus to minus
     $("#data-dataset-chart-accordion").on('shown.bs.collapse', function (e) {
@@ -37,7 +41,7 @@ $(document).ready(function () {
         $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
     });
 
-    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-accordion-options-collapse [name=include-title], #data-dataset-chart-accordion-options-collapse [name=include-copyright], #data-dataset-chart-accordion-options-collapse [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale]").bootstrapToggle({
+    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale]").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -64,14 +68,14 @@ $(document).ready(function () {
         app.data.dataset.chart.buildChartConfig(true)
     });
 
-    $("#data-dataset-chart-snippet-code [name=auto-update]").once("change", function () {
-        app.data.dataset.chart.buildChartConfig(false)
+    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link]").once("change", function () {
+        app.data.dataset.chart.renderSnippet();
     });
-    $("#data-dataset-chart-accordion-options-collapse [name=include-title], #data-dataset-chart-accordion-options-collapse [name=include-copyright], #data-dataset-chart-accordion-options-collapse [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale]").once("change", app.data.dataset.chart.resetChart);
+    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale]").once("change", app.data.dataset.chart.resetChart);
 
     $("#data-dataset-chart-render").find("[name=download-chart]").once("click", function (e) {
         e.preventDefault();
-        var url_base64jp = $("#pxwidget999999999 canvas")[0].toDataURL();
+        var url_base64jp = $("#pxwidget-chart canvas")[0].toDataURL();
         var filename = (app.data.dataset.metadata.jsonStat.label.trim().replace(/ /g, "_") + "." + new Date().getTime()).toLocaleLowerCase();
         app.library.utility.download(filename, url_base64jp, "png", "image/png", true);
     });
@@ -86,18 +90,6 @@ $(document).ready(function () {
 
     new ClipboardJS("#data-dataset-chart-snippet-code [name=copy-snippet-code]");
     $('[data-toggle="tooltip"]').tooltip();
-
-
-    $('#data-dataset-chart-nav-tab').on('shown.bs.tab', function (e) {
-        /*******************************************************************************
-Application - Plugin - Widget (last to load)
-*******************************************************************************/
-        jQuery.ajax({
-            url: C_APP_URL_PXWIDGET_ISOGRAM,
-            dataType: "script"
-        });
-
-    })
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

@@ -15,7 +15,6 @@ $(document).ready(function () {
     api.content.load("#overlay", "entity/data/index.modal.html");
 
     api.content.load("#data-search-row-desktop", "entity/data/index.search.html");
-    //api.content.load("#data-search-result-row", "entity/data/index.search.result.html");
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
     api.content.load("#data-share-row", "entity/data/index.share.html");
     // Init DatePicker
@@ -62,8 +61,9 @@ $(document).ready(function () {
     if (app.data.goTo.Search) {
         app.data.searchResult.ajax.readSearch(app.data.goTo.Search);
     } else if (app.data.goTo.PrcCode) {
+        app.data.isSearch = false;
         api.ajax.jsonrpc.request(
-            app.config.url.api.public,
+            app.config.url.api.jsonrpc.public,
             "PxStat.System.Navigation.Navigation_API.Search",
             { PrcCode: app.data.goTo.PrcCode, "LngIsoCode": app.label.language.iso.code },
             "app.data.searchResult.callback.readResults",
@@ -73,8 +73,9 @@ $(document).ready(function () {
             { async: false }
         );
     } else if (app.data.goTo.CprCode) {
+        app.data.isSearch = false;
         api.ajax.jsonrpc.request(
-            app.config.url.api.public,
+            app.config.url.api.jsonrpc.public,
             "PxStat.System.Navigation.Navigation_API.Search",
             { CprCode: app.data.goTo.CprCode, "LngIsoCode": app.label.language.iso.code },
             "app.data.searchResult.callback.readResults",
@@ -84,8 +85,9 @@ $(document).ready(function () {
             { async: false }
         );
     } else if (app.data.goTo.MtrCode) {
+        app.data.isSearch = false;
         api.ajax.jsonrpc.request(
-            app.config.url.api.public,
+            app.config.url.api.jsonrpc.public,
             "PxStat.System.Navigation.Navigation_API.Search",
             { MtrCode: app.data.goTo.MtrCode, "LngIsoCode": app.label.language.iso.code },
             "app.data.searchResult.callback.readResults",

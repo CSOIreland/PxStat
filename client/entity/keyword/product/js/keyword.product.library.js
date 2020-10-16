@@ -49,7 +49,7 @@ app.keyword.product.mapDataProduct = function (dataAPI) {
 app.keyword.product.readSubjects = function () {
   //Get a full list of Subject. Call the API to get Subject names 
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     { SbjCode: null },
     "app.keyword.product.callback.readSubjects");
@@ -104,7 +104,7 @@ app.keyword.product.callback.readSubjects = function (data) {
 app.keyword.product.readProducts = function (subjectCode) {
   //Get a full list of Subject. Call the API to get Subject names 
   //API AJAX call
-  api.ajax.jsonrpc.request(app.config.url.api.private,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Read",
     { SbjCode: subjectCode },
     "app.keyword.product.callback.readProductsOnSuccess",
@@ -177,7 +177,7 @@ app.keyword.product.callback.readProductsOnError = function (error) {
 app.keyword.product.ajax.read = function (sbjCode, prcCode) {
   // Get data from API and Draw the Data Table for product 
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Product_API.Read",
     {
       "SbjCode": sbjCode,
@@ -339,7 +339,7 @@ app.keyword.product.modal.create = function () {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.product.ajax.getLanguagesCreate = function () {
-  api.ajax.jsonrpc.request(app.config.url.api.public,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.keyword.product.callback.getLanguagesCreate");
@@ -383,7 +383,7 @@ app.keyword.product.ajax.create = function () {
     PrcValue: prcValue
   };
   // CAll Ajax to Create/Add Product. Do Redraw Data Table for Create/Add Product.
-  api.ajax.jsonrpc.request(app.config.url.api.private,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Product_API.Create",
     apiParams,
     "app.keyword.product.callback.createOnSuccess",
@@ -443,7 +443,7 @@ app.keyword.product.callback.createOnError = function (error) {
 app.keyword.product.readUpdate = function (apiParams) {
   // Get data from API and Draw the Data Table for Reason. Populate date to the modal "reason-modal-update"
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Product_API.Read",
     apiParams,
     "app.keyword.product.callback.readUpdate");
@@ -499,7 +499,7 @@ app.keyword.product.modal.update = function (keywordRecord) {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.product.ajax.getLanguagesUpdate = function () {
-  api.ajax.jsonrpc.request(app.config.url.api.public,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.keyword.product.callback.getLanguagesUpdate");
@@ -546,7 +546,7 @@ app.keyword.product.ajax.update = function () {
     SbjCode: sbjCode
   };
 
-  api.ajax.jsonrpc.request(app.config.url.api.private,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Product_API.Update",
     apiParams,
     "app.keyword.product.callback.updateOnSuccess",
@@ -619,7 +619,7 @@ app.keyword.product.ajax.delete = function (deletetedKeyword) {
   var apiParams = { KprCode: deletetedKeyword.idn }; // idn KprCode value
 
   // Call the API by passing the idn to delete Product from DB
-  api.ajax.jsonrpc.request(app.config.url.api.private,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Product_API.Delete",
     apiParams,
     "app.keyword.product.callback.deleteOnSuccess",
@@ -746,7 +746,7 @@ app.keyword.product.ajax.readSynonym = function (row) {
 
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_API.ReadSynonym",
     { "KrlValue": KprValue },
     "app.keyword.product.callback.readSynonym",

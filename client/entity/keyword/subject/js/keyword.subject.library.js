@@ -35,7 +35,7 @@ app.keyword.subject.mapDataSubject = function (dataAPI) {
  */
 app.keyword.subject.ajax.readSubject = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     { SbjCode: null },
     "app.keyword.subject.callback.readSubject"
@@ -84,7 +84,7 @@ app.keyword.subject.callback.readSubject = function (data) {
  */
 app.keyword.subject.ajax.read = function (SbjCode) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Read",
     { SbjCode: SbjCode },
     "app.keyword.subject.callback.read"
@@ -236,7 +236,7 @@ app.keyword.subject.callback.drawDataTable = function (data) {
  */
 app.keyword.subject.ajax.readUpdate = function (idn) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Read",
     { KsbCode: idn },
     "app.keyword.subject.callback.readUpdate");
@@ -305,7 +305,7 @@ app.keyword.subject.ajax.update = function () {
     KsbValue: ksbValue
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Update",
     apiParams,
     "app.keyword.subject.callback.updateOnSuccess",
@@ -349,7 +349,7 @@ app.keyword.subject.callback.updateOnError = function (error) {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.subject.ajax.getLanguagesUpdate = function () {
-  api.ajax.jsonrpc.request(app.config.url.api.public,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.keyword.subject.callback.getLanguagesUpdate");
@@ -431,7 +431,7 @@ app.keyword.subject.modal.delete = function () {
 app.keyword.subject.ajax.delete = function (deletedKeyword) {
   var apiParams = { KsbCode: deletedKeyword.idn };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Delete",
     apiParams,
     "app.keyword.subject.callback.deleteOnSuccess",
@@ -495,7 +495,7 @@ app.keyword.subject.modal.create = function () {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.subject.ajax.getLanguagesCreate = function () {
-  api.ajax.jsonrpc.request(app.config.url.api.public,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.keyword.subject.callback.getLanguagesCreate");
@@ -573,7 +573,7 @@ app.keyword.subject.ajax.create = function () {
   };
 
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_Subject_API.Create",
     apiParams,
     "app.keyword.subject.callback.createOnSuccess",
@@ -622,7 +622,7 @@ app.keyword.subject.ajax.synonym = function (row) {
 
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_API.ReadSynonym",
     { "KrlValue": KsbValue },
     "app.keyword.subject.callback.readSynonym",
@@ -679,7 +679,7 @@ app.keyword.subject.ajax.searchSynonym = function () {
   var KsbValue = $("#keyword-subject-synonym-request").find("[name=sym-value").val();
 
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Keyword_API.ReadSynonym",
     { "KrlValue": KsbValue },
     "app.keyword.subject.callback.searchSynonym"

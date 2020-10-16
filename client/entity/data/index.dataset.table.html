@@ -109,6 +109,9 @@
                     <li class="nav-item">
                         <a class="nav-link" id="data-dataset-table-api-restful-tab" data-toggle="tab" href="#data-dataset-table-api-restful-content" role="tab" aria-controls="profile" aria-selected="false">RESTful</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="data-dataset-table-api-pxapiv1-tab" data-toggle="tab" href="#data-dataset-table-api-pxapiv1-content" role="tab" aria-controls="profile" aria-selected="false">PxAPI v1</a>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="data-dataset-table-api-jspnrpc-content" role="tabpanel" aria-labelledby="data-dataset-table-api-jspnrpc-tab">
@@ -134,10 +137,10 @@
 
                         <div class="card mb-2">
                             <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> <span label="body"></span> </span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-obj" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-jsonrpc-post-body" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
                             <div class="card-body p-0 border-top">
-                                <pre class="line-numbers language-json m-0"><code id="data-dataset-table-api-obj" name="api-object"></code></pre>
+                                <pre class="line-numbers language-json m-0"><code id="data-dataset-table-api-jsonrpc-post-body" name="api-object"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -149,6 +152,36 @@
                             </div>
                             <div class="card-body p-0 border-top">
                                 <pre class="line-numbers language-http m-0"><code id="data-dataset-table-api-restful-url"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="data-dataset-table-api-pxapiv1-content" role="tabpanel" aria-labelledby="data-dataset-table-api-pxapiv1-tab">
+                        <p class="mt-2"><span name="information-documentation"></span> </p>
+                        <div class="card mb-2 mt-2">
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-info mr-1 mt-1">GET</span> URL</span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-get-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            </div>
+                            <div class="card-body p-0 border-top">
+                                <pre class="line-numbers language-http m-0"><code id="data-dataset-table-api-pxapiv1-get-url"></code></pre>
+                            </div>
+                        </div>
+                        <div class="card mb-2 mt-2">
+
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> URL</span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-post-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            </div>
+
+                            <div class="card-body p-0 border-top">
+                                <pre class="line-numbers language-http m-0"><code id="data-dataset-table-api-pxapiv1-post-url"></code></pre>
+                            </div>
+                        </div>
+
+                        <div class="card mb-2">
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> <span label="body"></span> </span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-post-body" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            </div>
+                            <div class="card-body p-0 border-top">
+                                <pre class="line-numbers language-json m-0"><code id="data-dataset-table-api-pxapiv1-post-body" name="api-object"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -202,7 +235,7 @@
                 </div>
                 <div class="border-top border-right border-left row mx-0">
                     <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
-                        <span label="custom-JSON-configuration"></span>
+                        <span label="custom-JSON"></span>
                     </div>
                     <div class="col-8 p-2">
                         <textarea class="form-control" name="custom-config" rows="3" disabled></textarea>
@@ -248,33 +281,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <div id="data-dataset-table-templates" style="display: none">
     <div name="dimension-container" class="col-xl-6 col-sm-12">

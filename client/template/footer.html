@@ -1,9 +1,18 @@
-<div class="row m-4"></div>
-<div class="container-fluid fixed-bottom bg-light border-top p-2">
-    <div class="row d-flex justify-content-between">
-        <div name="links" class="col small text-muted text-left"></div>
-        <div name="bs-breakpoint" class="col small text-center text-danger" style="display: none;"></div>
-        <div name="version" class="col small text-muted text-right"></div>
+<div class="container-fluid fixed-bottom">
+    <div name="cookie-banner" style="display: none;">
+        <div class="row d-flex justify-content-between bg-tertiary p-4">
+            <div class="col-8 text-light text-left lead pt-2">
+                <span label="cookie-message"></span> <a href="#" name="cookie-manage" class="text-warning" label="manage-cookies"></a>
+            </div>
+            <div class="col-4 text-right">
+                <button type="button" name="cookie-allow" class="btn btn-info btn-lg">Allow</button>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-between bg-light border-top p-2">
+        <div name="links" class="col text-muted text-left"></div>
+        <div name="bs-breakpoint" class="col text-center text-danger" style="display: none;"></div>
+        <div name="version" class="col text-muted text-right"></div>
     </div>
 </div>
 

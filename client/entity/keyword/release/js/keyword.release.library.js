@@ -53,7 +53,7 @@ app.keyword.release.modal.create = function () {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.release.ajax.getLanguagesCreate = function () {
-    api.ajax.jsonrpc.request(app.config.url.api.public,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Settings.Language_API.Read",
         { LngIsoCode: null },
         "app.keyword.release.callback.getLanguagesCreate");
@@ -96,7 +96,7 @@ app.keyword.release.ajax.create = function () {
         idn: selectedReleaseCode
     };
     // CAll Ajax to Create keyword.release. Do Redraw Data Table for Create keyword.release.
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Keyword_Release_API.Create",
         apiParams,
         "app.keyword.release.callback.createOnSuccess",
@@ -145,7 +145,7 @@ app.keyword.release.callback.createOnError = function (error) {
 app.keyword.release.ajax.matrixReadList = function () {
     //Get a full list of Subject. Call the API to get Subject names 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
         null,
         "app.keyword.release.callback.matrixReadList"
@@ -198,7 +198,7 @@ app.keyword.release.callback.matrixReadList = function (data) {
  */
 app.keyword.release.ajax.readRelease = function (selectedMtrCode) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.ReadList",
         {
             "MtrCode": selectedMtrCode,
@@ -315,7 +315,7 @@ app.keyword.release.drawDataTableRelease = function (data) {
  */
 app.keyword.release.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Keyword_Release_API.Read",
         { RlsCode: app.keyword.release.RlsCode },
         "app.keyword.release.callback.read"
@@ -458,9 +458,13 @@ app.keyword.release.drawDataTable = function (data) {
             e.preventDefault();
             //Pass User SELECTED language. TODO: Change service required if release do not have this language return default system language "app.config.language.iso.code"
             //Server exception TODO: Retest after service update.
-            app.data.init(app.label.language.iso.code, $(this).attr('mtr-code'), $(this).attr('rls-code'), $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val(), true);
-            app.data.dataset.ajax.readMetadata();
-            $('#data-view-modal').modal('show');
+            app.data.init(
+                app.label.language.iso.code,
+                $(this).attr('mtr-code'),
+                $(this).attr('rls-code'),
+                $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val(),
+                true);
+            app.data.dataset.draw();
         });
     }
 };
@@ -473,7 +477,7 @@ app.keyword.release.drawDataTable = function (data) {
  * @param {*} apiParams
  */
 app.keyword.release.ajax.readUpdate = function (apiParams) {
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Keyword_Release_API.Read",
         apiParams,
         "app.keyword.release.callback.readKeyword");
@@ -530,7 +534,7 @@ app.keyword.release.modal.update = function (keywordRecord) {
 *  Get languages data from API to populate language drop down for create.
 */
 app.keyword.release.ajax.getLanguagesUpdate = function () {
-    api.ajax.jsonrpc.request(app.config.url.api.public,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Settings.Language_API.Read",
         { LngIsoCode: null },
         "app.keyword.release.callback.getLanguagesUpdate");
@@ -585,7 +589,7 @@ app.keyword.release.ajax.delete = function (deletetedKeyword) {
     };
     // Call the API by passing the idn to delete keyword.release from DB
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Keyword_Release_API.Delete",
         apiParams,
         "app.keyword.release.callback.deleteOnSuccess",
@@ -715,7 +719,7 @@ app.keyword.release.ajax.update = function () {
         RlsCode: rlsCode,
         idn: rlsCode
     };
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Keyword_Release_API.Update",
         apiParams,
         "app.keyword.release.callback.updateOnSuccess",
@@ -769,7 +773,7 @@ app.keyword.release.ajax.synonym = function (row) {
 
     };
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Keyword_API.ReadSynonym",
         { "KrlValue": KrlValue },
         "app.keyword.release.callback.readSynonym",

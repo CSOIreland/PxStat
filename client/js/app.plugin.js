@@ -178,14 +178,24 @@ Application - Plugin - load ShareThis library with key https://sharethis.com/
 app.plugin.sharethis = {};
 
 //Load dynamically the source of ShareThis by using the API Key
-app.plugin.sharethis.load = function () {
+app.plugin.sharethis.load = function (drawShareThis) {
+  drawShareThis = drawShareThis || false;
   if (!window.__sharethis__ && app.config.plugin.sharethis.enabled) {
-    var shareThis = document.createElement('script');
-    shareThis.src = app.config.plugin.sharethis.apiURL.sprintf([app.config.plugin.sharethis.apiKey]);
-    document.head.appendChild(shareThis);
+    //Load dynamically the ISOGRAM
+    jQuery.ajax({
+      "url": app.config.plugin.sharethis.apiURL.sprintf([app.config.plugin.sharethis.apiKey]),
+      "dataType": "script",
+      "success": function () {
+        if (app.data && app.data.MtrCode) {
+          app.data.share(app.data.MtrCode);
+        }
+      },
+      "error": function (jqXHR, textStatus, errorThrown) {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+      }
+    });
   }
 };
-
 
 /*******************************************************************************
 Application - Plugin - JQuery extensions
@@ -204,35 +214,6 @@ Application - Plugin - Datatable
 
 // Extend the datatable configuration with the language parameters
 $.extend(true, app.config.plugin.datatable, app.label.datatable);
-
-/*******************************************************************************
-Application - Plugin - Highcharts
-*******************************************************************************/
-
-if (app.config.plugin.highcharts.enabled
-  && !jQuery.isEmptyObject(app.label.plugin.highcharts.lang)) {
-  Highcharts.setOptions({
-    // Extend the Highcharts lang 
-    lang: app.label.plugin.highcharts.lang,
-    credits: app.config.plugin.highcharts.credits,
-    exporting: {
-      buttons: {
-        contextButton: {
-          text: app.label.static["download"],
-          onclick: function () {
-            window._avoidbeforeunload = true;
-            this.exportChart();
-          }
-        }
-      }
-    }
-  });
-}
-
-/*******************************************************************************
-Application - Plugin - Google Charts
-*******************************************************************************/
-google.charts.load('current', { 'packages': ['corechart'], 'language': app.label.language.iso.code });
 
 /*******************************************************************************
 Application - Plugin - Bootstrap Modal
@@ -320,13 +301,11 @@ $(document).ready(function () {
         }
 
         //if in data views
-        if (!$("#data-dataset-selected-table").is(":empty")) {
+        if (!$("#data-dataset-selected-table").is(":empty") && !$("#data-search-row-desktop").find("[name=search-results]").is(":visible")) {
           $("#data-filter-toggle").hide();
         }
 
         break;
-      case "large":
-      case "xLarge":
       default:
         //default position for search input
         if ($("#data-search-row-desktop [name=search-input-group-holder]").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
@@ -334,7 +313,7 @@ $(document).ready(function () {
           $("#data-search-row-responsive").hide();
         };
 
-        if ($("#panel").is(":empty")) {
+        if ($("#panel").is(":empty") && !$("#data-search-row-desktop").find("[name=search-results]").is(":visible")) {
           $("#data-navigation").find(".navbar-collapse").collapse('show');
         }
 
@@ -398,40 +377,48 @@ window.addEventListener("beforeunload", function (event) {
 Application - Plugin - Cookie consent
 *******************************************************************************/
 app.plugin.cookiconsent = {};
-app.plugin.cookiconsent.allow = "allow";
-app.plugin.cookiconsent.deny = "deny";
+app.plugin.cookiconsent.true = "true";
+app.plugin.cookiconsent.false = "false";
 
-$(document).ready(function () {
-  // Set the options from the config and the label
-  var options = $.extend(true, {}, app.config.plugin.cookieConsent, app.label.plugin.cookieConsent);
+app.plugin.cookiconsent.allow = function (drawShareThis) {
+  drawShareThis = drawShareThis || false;
+  // Set to TRUE the Cookie Consent
+  Cookies.set(C_COOKIE_CONSENT, app.plugin.cookiconsent.true, app.config.plugin.jscookie);
+  // Load ShareThis following Cookie Consent
+  app.plugin.sharethis.load(drawShareThis);
+  // Hide the banner
+  $("#footer").find("[name=cookie-banner]").fadeOut();
+};
 
-  // append callback functions
-  options.onInitialise = function (e) {
-    if (e == app.plugin.cookiconsent.allow) {
-      // Load ShareThis following cookie consent
-      app.plugin.sharethis.load();
-    }
-  };
-  options.onStatusChange = function (e) {
-    if (e == app.plugin.cookiconsent.allow) {
-      // Load ShareThis following cookie consent
-      app.plugin.sharethis.load();
-    } else {
-      // Prevent backbutton check
-      app.plugin.backbutton.check = false;
-      // Force page reload in order not to load/set cookies from different domains (i.e. sharethis)
-      window.location.href = window.location.pathname;
-    }
+app.plugin.cookiconsent.deny = function (reload) {
+  reload = reload || false;
+  // Set to FALSE the Cookie Consent
+  Cookies.set(C_COOKIE_CONSENT, app.plugin.cookiconsent.false, app.config.plugin.jscookie);
+
+  if (reload) {
+    // Prevent back-button check
+    app.plugin.backbutton.check = false;
+    // Force page reload in order to unload (not set at all) cookies from different domains (i.e. sharethis)
+    window.location.href = window.location.pathname;
+  } else {
+    $("#footer").find("[name=cookie-banner]").fadeOut();
   }
+};
 
-  window.cookieconsent.initialise(options);
+/*******************************************************************************
+Application - Plugin - PxWidget
+*******************************************************************************/
+app.plugin.pxWidget = {};
 
-  // Bind load
-  $(".cc-link").one('click', function (e) {
-    e.preventDefault();
-
-    // Load the Privacy (language specific) into the Modal
-    api.content.load("#modal-read-privacy .modal-body", "internationalisation/privacy/" + app.label.language.iso.code + ".html");
-    $("#modal-read-privacy").modal("show");
-  });
-});
+app.plugin.pxWidget.load = function () {
+  if (typeof pxWidget === "undefined") {
+    //Load dynamically the ISOGRAM
+    jQuery.ajax({
+      "url": C_APP_URL_PXWIDGET_ISOGRAM,
+      "dataType": "script",
+      "error": function (jqXHR, textStatus, errorThrown) {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+      }
+    });
+  }
+}

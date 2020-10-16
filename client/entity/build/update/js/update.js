@@ -40,53 +40,19 @@ $(document).ready(function () {
         app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
         app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
 
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadDataTemplate", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadTemplate"])
+        app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.downloadDataTemplate", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadTemplate"] })
     });
 
-    //bind the download data file button for all periods
-    $("#build-update-matrix-data").find("[name=download-data-file-all]").once("click", function (e) {
-        e.preventDefault();
+
+    //Download CSV Data button
+    $("#build-update-matrix-data").find("[name=download-csv-data]").once("click", function () {
         if (!app.build.update.isPeriodsDimensionsValid()) {
             api.modal.error(app.label.static["build-update-period-error"]);
             return;
         }
-
-        app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
-        app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
-
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadAllData", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDatasetByAllPeriods"])
-
+        app.build.update.downloadCsvModal();
     });
 
-    //bind the download data file button for new periods
-    $("#build-update-matrix-data").find("[name=download-data-file-new]").once("click", function (e) {
-        e.preventDefault();
-        if (!app.build.update.isPeriodsDimensionsValid()) {
-            api.modal.error(app.label.static["build-update-period-error"]);
-            return;
-        }
-
-        app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
-        app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
-
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadNewData", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDatasetByNewPeriods"])
-
-    });
-
-    //bind the download data file button for existing periods
-    $("#build-update-matrix-data").find("[name=download-data-file-existing]").once("click", function (e) {
-        e.preventDefault();
-        if (!app.build.update.isPeriodsDimensionsValid()) {
-            api.modal.error(app.label.static["build-update-period-error"]);
-            return;
-        }
-
-        app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
-        app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
-
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.downloadExistingData", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDatasetByExistingPeriods"])
-
-    });
 
     //Bind the reset button
     $("#build-update-upload-file").find("[name=upload-source-file-reset]").once("click", function () {
@@ -124,7 +90,7 @@ $(document).ready(function () {
 
     //Bind the upload button
     $("#build-update-upload-file").find("[name=upload-source-file]").once("click", function () {
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.uploadSource", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"]);
+        app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.uploadSource", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"] });
     });
 
     //matrix lookup
@@ -164,6 +130,14 @@ $(document).ready(function () {
 
     $('#build-update-modal-frequency').on('show.bs.modal', function () {
         app.build.update.validate.frequencyModal();
+    });
+
+    $("#build-update-download-csv-file [name=labels]").bootstrapToggle("destroy").bootstrapToggle({
+        on: app.label.static["true"],
+        off: app.label.static["false"],
+        onstyle: "success",
+        offstyle: "warning",
+        width: C_APP_TOGGLE_LENGTH
     });
 
     //run bootstrap toggle to show/hide toggle button

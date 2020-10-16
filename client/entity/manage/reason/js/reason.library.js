@@ -142,7 +142,7 @@ app.reason.drawReasonDataTable = function (data) {
 app.reason.ajax.read = function () {
     // Get data from API and Draw the Data Table for Reason 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Reason_API.Read",
         {
             RsnCode: null,
@@ -196,7 +196,7 @@ app.reason.ajax.delete = function (idn) {
     };
     // Call the API by passing the idn to delete reason from DB
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Reason_API.Delete",
         apiParams,
         "app.reason.callback.deleteOnSuccess",
@@ -266,7 +266,7 @@ app.reason.ajax.create = function () {
     };
     // CAll Ajax to Create Reason. Do Redraw Data Table for Create Reason.
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Reason_API.Create",
         apiParams,
         "app.reason.callback.createOnSuccess",
@@ -316,7 +316,7 @@ app.reason.callback.createOnError = function (error) {
  */
 app.reason.ajax.readReason = function (idn) {
     // Get data from API and Draw the Data Table for Reason. Populate date to the modal "reason-modal-update"
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Reason_API.Read",
         {
             RsnCode: idn,
@@ -382,7 +382,7 @@ app.reason.ajax.update = function () {
     };
     // CAll Ajax to Update the Reason. Get the fresh new data. Redraw table
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Reason_API.Update",
         apiParams,
         "app.reason.callback.updateOnSuccess",

@@ -17,7 +17,7 @@ app.copyright.validation = {};
  */
 app.copyright.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Read",
     { CprCode: null },
     "app.copyright.callback.read"
@@ -169,7 +169,7 @@ app.copyright.ajax.create = function () {
     CprUrl: cprUrl
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Create",
     apiParams,
     "app.copyright.callback.createOnSuccess",
@@ -221,7 +221,7 @@ app.copyright.modal.update = function (idn) {
  */
 app.copyright.ajax.readUpdate = function (idn) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Read",
     { CprCode: idn },
     "app.copyright.callback.readUpdate",
@@ -310,7 +310,7 @@ app.copyright.ajax.update = function () {
     CprCodeOld: cprCodeOld,
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Update",
     apiParams,
     "app.copyright.callback.updateOnSuccess",
@@ -372,7 +372,7 @@ app.copyright.ajax.delete = function (idn) {
     CprCode: idn
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Delete",
     apiParams,
     "app.copyright.callback.deleteOnSuccess",

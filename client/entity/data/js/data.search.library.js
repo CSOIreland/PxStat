@@ -27,7 +27,7 @@ app.data.searchResult.result = null;
 */
 app.data.search.ajax.readNav = function (lngIsoCode) {
     //Side Bar Navigation Menu (Subjects/Products)
-    api.ajax.jsonrpc.request(app.config.url.api.public,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Navigation.Navigation_API.Read",
         { "LngIsoCode": lngIsoCode },
         "app.data.search.callback.readNav",
@@ -93,7 +93,8 @@ app.data.search.callback.readNav = function (data) {
 * @param {*} apiParams
 */
 app.data.searchResult.ajax.readNavigationResults = function (apiParams) {
-    api.ajax.jsonrpc.request(app.config.url.api.public,
+    app.data.isSearch = false;
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Navigation.Navigation_API.Search",
         apiParams,
         "app.data.searchResult.callback.readResults",
@@ -107,8 +108,8 @@ app.data.searchResult.ajax.readNavigationResults = function (apiParams) {
 * @param {*} Search
 */
 app.data.searchResult.ajax.readSearch = function (search) {
-
-    api.ajax.jsonrpc.request(app.config.url.api.public,
+    app.data.isSearch = true;
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Navigation.Navigation_API.Search",
         {
             "Search": search,
@@ -141,34 +142,30 @@ app.data.searchResult.callback.readResults = function (data, params) {
         $("#data-search-result-pagination").show();
         if (params.PrcCode) {
             //update breadcrumb
-            if (app.data.isLive) {
-                app.navigation.breadcrumb.set([data[0].SbjValue, {
-                    "text": data[0].PrcValue,
-                    "goTo": {
-                        "pRelativeURL": "entity/data/",
-                        "pNav_link_SelectorToHighlight": "#nav-link-data",
-                        "pParams": {
-                            "PrcCode": data[0].PrcCode
-                        }
+            app.navigation.breadcrumb.set([data[0].SbjValue, {
+                "text": data[0].PrcValue,
+                "goTo": {
+                    "pRelativeURL": "entity/data/",
+                    "pNav_link_SelectorToHighlight": "#nav-link-data",
+                    "pParams": {
+                        "PrcCode": data[0].PrcCode
                     }
-                }]);
-            };
+                }
+            }]);
         };
 
         if (params.CprCode) {
             //update breadcrumb with copyright value
-            if (app.data.isLive) {
-                app.navigation.breadcrumb.set([{
-                    "text": data[0].CprValue,
-                    "goTo": {
-                        "pRelativeURL": "entity/data/",
-                        "pNav_link_SelectorToHighlight": "#nav-link-data",
-                        "pParams": {
-                            "CprCode": params.CprCode
-                        }
+            app.navigation.breadcrumb.set([{
+                "text": data[0].CprValue,
+                "goTo": {
+                    "pRelativeURL": "entity/data/",
+                    "pNav_link_SelectorToHighlight": "#nav-link-data",
+                    "pParams": {
+                        "CprCode": params.CprCode
                     }
-                }]);
-            };
+                }
+            }]);
         }
 
         // Implement GoTo
@@ -180,27 +177,41 @@ app.data.searchResult.callback.readResults = function (data, params) {
             $("#data-navigation").find(".navbar-collapse").collapse("hide");
 
             app.data.init(data[0].LngIsoCode, data[0].MtrCode, null, data[0].MtrCode, false, true);
-            app.data.dataset.ajax.readMetadata();
+            app.data.dataset.draw();
 
             $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination]").hide();
             $("#data-dataset-row").find("[name=back-to-select-results]").show();
-            $("#data-navigation").find(".navbar-collapse").collapse('hide');
             return;
         }
         $("#data-filter").empty();
         app.data.searchResult.result = data;
         var searchResultsSort = $("#data-search-result-templates").find("[name=search-results-sort]").clone();
-        searchResultsSort.find("[name=search-results-sort-select]").empty().append($('<option>', {
-            selected: "selected",
-            value: "relevance",
-            text: app.label.static["relevance"]
+        searchResultsSort.find("[name=search-results-sort-select]").empty();
+        if (app.data.isSearch) {
+            searchResultsSort.find("[name=search-results-sort-select]").append($('<option>', {
+                value: C_APP_SORT_RELEVANCE,
+                text: app.label.static["relevance"]
+            }))
+        }
+
+        searchResultsSort.find("[name=search-results-sort-select]").append($('<option>', {
+            value: C_APP_SORT_ALPHABETICAL,
+            text: app.label.static["alphabetical"]
         })).append($('<option>', {
-            value: "newest",
+            value: C_APP_SORT_NEWEST,
             text: app.label.static["newest-first"]
         })).append($('<option>', {
-            value: "oldest",
+            value: C_APP_SORT_OLDEST,
             text: app.label.static["oldest-first"]
         }));
+
+        if (!app.data.isSearch) {
+            searchResultsSort.find("option[value=" + C_APP_SORT_NEWEST + "]").prop("selected", true);
+        }
+        else {
+            searchResultsSort.find("option[value=" + C_APP_SORT_RELEVANCE + "]").prop("selected", true);
+        }
+
         $("#data-filter").append(searchResultsSort);
 
         var subjects = [];
@@ -355,7 +366,6 @@ app.data.searchResult.callback.readResults = function (data, params) {
         });
 
         //collapse navigation HTML
-        $("#data-navigation").find(".navbar-collapse").collapse('hide');
         $("#data-filter").append(languagesFilterList.get(0).outerHTML + subjectFilterList.get(0).outerHTML + productsFilterList.get(0).outerHTML + copyrightsFilterList.get(0).outerHTML);
         //Prevent clicking on filter headings
         $("#data-filter").find("[name=filter-list-heading]").once("click", function (e) { e.preventDefault(); });
@@ -463,7 +473,7 @@ app.data.searchResult.callback.filterResults = function () {
 */
 app.data.searchResult.callback.sortResults = function (filteredResults) {
     switch ($("#data-filter").find("[name=search-results-sort-select]").val()) {
-        case "relevance": //make constant
+        case C_APP_SORT_RELEVANCE:
             function sortByRelevance(array, key) {
                 return array.sort(function (a, b) {
                     var x = a[key]; var y = b[key];
@@ -472,7 +482,25 @@ app.data.searchResult.callback.sortResults = function (filteredResults) {
             }
             app.data.searchResult.callback.drawPagination(sortByRelevance(filteredResults, "Score"));
             break;
-        case "newest": //make constant
+        case C_APP_SORT_ALPHABETICAL:
+            function sortByAlphabetical(array, key) {
+                return array.sort(function (a, b) {
+                    var nameA = a[key].toUpperCase(); // ignore upper and lowercase
+                    var nameB = b[key].toUpperCase(); // ignore upper and lowercase
+                    if (nameA < nameB) {
+                        return -1;
+                    }
+                    if (nameA > nameB) {
+                        return 1;
+                    }
+
+                    // names must be equal
+                    return 0;
+                });
+            }
+            app.data.searchResult.callback.drawPagination(sortByAlphabetical(filteredResults, "MtrCode"));
+            break;
+        case C_APP_SORT_NEWEST: //make constant
 
             function orderByNewest(arr, dateProp) {
                 return arr.slice().sort(function (a, b) {
@@ -481,7 +509,7 @@ app.data.searchResult.callback.sortResults = function (filteredResults) {
             }
             app.data.searchResult.callback.drawPagination(orderByNewest(filteredResults, "RlsLiveDatetimeFrom"));
             break;
-        case "oldest": //make constant
+        case C_APP_SORT_OLDEST:
             function orderByOldest(arr, dateProp) {
                 return arr.slice().sort(function (a, b) {
                     return a[dateProp] < b[dateProp] ? -1 : 1;
@@ -564,11 +592,6 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
             resultItem.find("[name=analytical-flag]").removeClass("d-none");
         }
 
-        //dependency flag
-        if (entry.RlsDependencyFlag) {
-            resultItem.find("[name=dependency-flag]").removeClass("d-none");
-        }
-
         //language
         resultItem.find("[name=language]").text(entry.LngIsoName);
 
@@ -612,7 +635,7 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
         $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination]").hide();
         $("#data-dataset-row").find("[name=back-to-select-results]").show();
         $("#data-navigation").find(".navbar-collapse").collapse('hide');
-        app.data.dataset.ajax.readMetadata();
+        app.data.dataset.draw();
     });
     $('[data-toggle="tooltip"]').tooltip();
 

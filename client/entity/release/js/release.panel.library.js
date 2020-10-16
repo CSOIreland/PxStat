@@ -28,7 +28,7 @@ app.release.panel.pendingLive.callback = {};
 */
 app.release.panel.workInProgress.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadWorkInProgress",
         {
             LngIsoCode: app.label.language.iso.code
@@ -129,7 +129,7 @@ app.release.panel.workInProgress.callback.drawDataTable = function (data) {
 */
 app.release.panel.awaitingResponse.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingResponse",
         {
             LngIsoCode: app.label.language.iso.code
@@ -231,7 +231,7 @@ app.release.panel.awaitingResponse.callback.drawDataTable = function (data) {
 */
 app.release.panel.awaitingSignoff.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingSignoff",
         {
             LngIsoCode: app.label.language.iso.code
@@ -331,7 +331,7 @@ app.release.panel.awaitingSignoff.callback.drawDataTable = function (data) {
 */
 app.release.panel.pendingLive.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadPendingLive",
         {
             LngIsoCode: app.label.language.iso.code

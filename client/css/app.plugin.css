@@ -41,3 +41,9 @@ table.dataTable.dtr-column>tbody>tr.parent td.control:before, table.dataTable.dt
 .editable-table thead th {
     border-bottom: 0px !important;
 }
+
+/* Accessibility requirements select2 Placeholder */
+
+.select2-selection__placeholder {
+    color: #212529 !important; 
+}

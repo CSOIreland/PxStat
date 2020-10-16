@@ -18,7 +18,7 @@ app.build.import_panel.format.callback = {};
  */
 app.build.import_panel.format.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.public,
+    app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Format_API.Read",
     {
       "FrmDirection": C_APP_TS_FORMAT_DIRECTION_UPLOAD
@@ -87,7 +87,7 @@ app.build.import_panel.copyright.drawDatatable = function (data) {
  */
 app.build.import_panel.copyright.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Read",
     { CprCode: null },
     "app.build.import_panel.copyright.callback.read"
@@ -130,7 +130,7 @@ app.build.import_panel.drawDataTableFormats = function (data) {
  */
 app.build.import_panel.language.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.public,
+    app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.build.import_panel.language.callback.read"

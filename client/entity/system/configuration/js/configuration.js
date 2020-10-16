@@ -19,10 +19,6 @@ $(document).ready(function () {
     $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-plus-circle");
   });
 
-  $("#configuration-read-container").find("[name='refresh-config']").once("click", function () {
-    api.modal.confirm(app.label.static["confirm-reload-config"], app.configuration.ajax.reload);
-  });
-
   // Bind action to add button
   $("#configuration-read-container").find("[name='search-file']").once("click", app.configuration.modal.search);
 

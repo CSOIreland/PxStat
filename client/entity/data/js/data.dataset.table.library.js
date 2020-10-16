@@ -129,7 +129,7 @@ app.data.dataset.table.drawDimensions = function () {
 
             if ((value.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
                 //variable is valid, append to select if not already selected
-                if (!select.find("option[value=" + key + "]").is(':selected')) {
+                if (!select.find("option[value='" + key + "]").is(':selected')) {
                     var textWithCode = thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "") + " (" + key + ")";
                     var textWithoutCode = thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "");
                     select.append($('<option>', {
@@ -302,6 +302,13 @@ app.data.dataset.table.buildApiParams = function () {
             "target": "_blank"
         }).get(0).outerHTML]));
 
+    $("#data-dataset-table-api-pxapiv1-content [name=information-documentation]").html(
+        app.library.html.parseDynamicLabel("information-api-documentation", ["PxAPIv1", $("<a>", {
+            "href": C_APP_URL_GITHUB_API_CUBE_PXAPIV1,
+            "text": "GitHub Wiki",
+            "target": "_blank"
+        }).get(0).outerHTML]));
+
     var localParams = {
         "class": "query",
         "id": [],
@@ -347,8 +354,13 @@ app.data.dataset.table.buildApiParams = function () {
     //extend apiParams with local params
     $.extend(true, app.data.dataset.table.apiParamsData, localParams);
 
-    $("#data-dataset-table-api-jsonrpc-post-url").text(app.config.url.api.public);
-    $("#data-dataset-table-api-restful-url").hide().text(C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.restful, encodeURI(app.data.MtrCode), $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type"), $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version"), app.data.LngIsoCode])).fadeIn();
+    $("#data-dataset-table-api-jsonrpc-post-url").text(app.config.url.api.jsonrpc.public);
+    $("#data-dataset-table-api-restful-url").hide().text(
+        C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.restful,
+        encodeURI(app.data.MtrCode),
+        $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type"),
+        $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version"),
+        app.data.LngIsoCode])).fadeIn();
 
     var JsonQuery = {
         "jsonrpc": C_APP_API_JSONRPC_VERSION,
@@ -360,60 +372,76 @@ app.data.dataset.table.buildApiParams = function () {
     JsonQuery.params = apiParams;
     JsonQuery.params.extension.format.type = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type");
     JsonQuery.params.extension.format.version = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version");
-    $("#data-dataset-table-api-jsonrpc-get-url").empty().text(encodeURI(app.config.url.api.public + C_APP_API_GET_PARAMATER_IDENTIFIER + JSON.stringify(JsonQuery))).fadeIn();
+    $("#data-dataset-table-api-jsonrpc-get-url").empty().text(encodeURI(app.config.url.api.jsonrpc.public + C_APP_API_GET_PARAMATER_IDENTIFIER + JSON.stringify(JsonQuery))).fadeIn();
+    $("#data-dataset-table-api-jsonrpc-post-body").hide().text(JSON.stringify(JsonQuery, null, "\t")).fadeIn();
+    //pxapiv1
+    var pxapiv1Query = {
+        "query": [],
+        "response": {
+            "format": $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type") ? $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type").toLowerCase() : ""
+        }
+    };
 
-    $("#data-dataset-table-accordion").find("[name=api-object]").hide().text(function () {
+    $.each(apiParams.dimension, function (key, value) {
+        pxapiv1Query.query.push({
+            "code": key,
+            "selection": {
+                "filter": "item",
+                "values": value.category.index
+            }
+        });
+    });
 
-        return JSON.stringify(JsonQuery, null, "\t");
-    }).fadeIn();
+
+    $("#data-dataset-table-api-pxapiv1-get-url").empty().text(encodeURI(app.config.url.api.restful.public
+        + "/PxStat.Data.Cube_API.PxAPIv1"
+        + "/" + JsonQuery.params.extension.language.code
+        + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
+        + "/" + app.data.dataset.metadata.jsonStat.extension.product.code
+        + "/" + app.data.MtrCode
+        + "?query=" + JSON.stringify(pxapiv1Query))).fadeIn();
+
+    $("#data-dataset-table-api-pxapiv1-post-url").empty().text(app.config.url.api.restful.public
+        + "/PxStat.Data.Cube_API.PxAPIv1"
+        + "/" + JsonQuery.params.extension.language.code
+        + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
+        + "/" + app.data.dataset.metadata.jsonStat.extension.product.code
+        + "/" + app.data.MtrCode).fadeIn();
+
+    $("#data-dataset-table-api-pxapiv1-post-body").empty().text(JSON.stringify(pxapiv1Query, null, "\t")).fadeIn();
+
+
     // Refresh the Prism highlight
     Prism.highlightAll();
-    app.data.dataset.table.callback.drawSnippetCode(null, false);
 };
 
-app.data.dataset.table.ajax.format = function () {
-    api.ajax.jsonrpc.request(
-        app.config.url.api.public,
-        "PxStat.System.Settings.Format_API.Read",
-        {
-            "LngIsoCode": app.data.LngIsoCode,
-            "FrmDirection": C_APP_TS_FORMAT_DIRECTION_DOWNLOAD
-        },
-        "app.data.dataset.table.callback.format"
-    );
-}
-
-app.data.dataset.table.callback.format = function (result) {
-    if (result && Array.isArray(result) && result.length) {
-        $("#data-dataset-table-nav-content [name=download-select-dropdown], #data-dataset-table-confirm-soft [name=download-select-dataset], #data-dataset-table-confirm-hard [name=download-select-dataset], #data-dataset-table-accordion [name=format]").empty();
-        $.each(result, function (index, format) {
-            var formatDropdown = $("#data-dataset-table-templates").find("[name=download-dataset-format]").clone();
-            formatDropdown.attr(
-                {
-                    "frm-type": format.FrmType,
-                    "frm-version": format.FrmVersion
-                });
-            formatDropdown.find("[name=type]").text(format.FrmType);
-            formatDropdown.find("[name=version]").text(format.FrmVersion);
-            $("#data-dataset-table-nav-content [name=download-select-dropdown], #data-dataset-table-confirm-soft [name=download-select-dataset], #data-dataset-table-confirm-hard [name=download-select-dataset] ").append(formatDropdown.get(0).outerHTML);
-
-            //populate api accordion formats
-            var option = $("<option>", {
+app.data.dataset.table.drawFormat = function () {
+    $("#data-dataset-table-nav-content [name=download-select-dropdown], #data-dataset-table-confirm-soft [name=download-select-dataset], #data-dataset-table-confirm-hard [name=download-select-dataset], #data-dataset-table-accordion [name=format]").empty();
+    $.each(app.data.dataset.format.response, function (index, format) {
+        var formatDropdown = $("#data-dataset-table-templates").find("[name=download-dataset-format]").clone();
+        formatDropdown.attr(
+            {
                 "frm-type": format.FrmType,
-                "frm-version": format.FrmVersion,
-                "text": format.FrmType + " (" + format.FrmVersion + ")",
-                "value": format.FrmType
-            })
-            $("#data-dataset-table-accordion [name=format]").append(option);
-        });
-        $("#data-dataset-table-accordion [name=format]").val(C_APP_FORMAT_TYPE_DEFAULT);
+                "frm-version": format.FrmVersion
+            });
+        formatDropdown.find("[name=type]").text(format.FrmType);
+        formatDropdown.find("[name=version]").text(format.FrmVersion);
+        $("#data-dataset-table-nav-content [name=download-select-dropdown], #data-dataset-table-confirm-soft [name=download-select-dataset], #data-dataset-table-confirm-hard [name=download-select-dataset] ").append(formatDropdown.get(0).outerHTML);
 
-        $("#data-dataset-table-accordion [name=format]").once("change", app.data.dataset.table.buildApiParams);
-        app.data.dataset.table.buildApiParams();
+        //populate api accordion formats
+        var option = $("<option>", {
+            "frm-type": format.FrmType,
+            "frm-version": format.FrmVersion,
+            "text": format.FrmType + " (" + format.FrmVersion + ")",
+            "value": format.FrmType
+        })
+        $("#data-dataset-table-accordion [name=format]").append(option);
+    });
+    $("#data-dataset-table-accordion [name=format]").val(C_APP_FORMAT_TYPE_DEFAULT);
 
-    }
-    // Handle no data
-    else api.modal.information(app.label.static["api-ajax-nodata"]);
+    $("#data-dataset-table-accordion [name=format]").once("change", app.data.dataset.table.buildApiParams);
+    app.data.dataset.table.buildApiParams();
+
     $("#data-dataset-table-confirm-soft [name=download-dataset-format], #data-dataset-table-confirm-hard [name=download-dataset-format]").once("click", function (e) {
         e.preventDefault();
         app.data.dataset.table.resultsDownload($(this).attr("frm-type"), $(this).attr("frm-version"));
@@ -457,7 +485,7 @@ app.data.dataset.table.ajax.data = function () {
 
     if (app.data.isLive) {
         api.ajax.jsonrpc.request(
-            app.config.url.api.public,
+            app.config.url.api.jsonrpc.public,
             "PxStat.Data.Cube_API.ReadDataset",
             app.data.dataset.table.apiParamsData,
             "app.data.dataset.table.callback.data",
@@ -470,7 +498,7 @@ app.data.dataset.table.ajax.data = function () {
 
     else {
         api.ajax.jsonrpc.request(
-            app.config.url.api.private,
+            app.config.url.api.jsonrpc.private,
             "PxStat.Data.Cube_API.ReadPreDataset",
             app.data.dataset.table.apiParamsData,
             "app.data.dataset.table.callback.data",
@@ -573,8 +601,6 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         app.data.dataset.table.snippet.configuration.link = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
         app.data.dataset.table.snippet.configuration.pivot = app.data.dataset.table.pivot.dimensionCode;
 
-        //update to chebk if matrix is WIP or Live
-        app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.public;
 
         if ($("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {
             var JsonQuery = {
@@ -592,13 +618,13 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
 
             if (app.data.isLive) {
                 JsonQuery.params.extension.matrix = app.data.MtrCode;
-                app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.public;
+                app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.public;
                 JsonQuery.method = "PxStat.Data.Cube_API.ReadDataset";
                 delete JsonQuery.params.extension.release;
             }
             else {
                 JsonQuery.params.extension.release = app.data.RlsCode;
-                app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.private;
+                app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.private;
                 JsonQuery.method = "PxStat.Data.Cube_API.ReadPreDataset";
                 delete JsonQuery.params.extension.matrix;
             }

@@ -21,7 +21,7 @@ app.keyword.search.ajax.searchSynonym = function () {
     //Check for value
     if (KsbValue != "") {
         api.ajax.jsonrpc.request(
-            app.config.url.api.private,
+            app.config.url.api.jsonrpc.private,
             "PxStat.System.Navigation.Keyword_API.ReadSynonym",
             { "KrlValue": KsbValue },
             "app.keyword.search.callback.searchSynonym"

@@ -25,7 +25,7 @@ app.build.create.initiate.data = {
  */
 app.build.create.initiate.ajax.matrixLookup = function () {
     // Change app.config.language.iso.code to the selected one
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
         null,
         "app.build.create.initiate.callback.matrixLookup");
@@ -94,7 +94,7 @@ app.build.create.initiate.callback.drawMatrix = function (data) {
 *  Get Languages from api to populate Language
 */
 app.build.create.initiate.ajax.readLanguage = function () {
-    api.ajax.jsonrpc.request(app.config.url.api.public,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Settings.Language_API.Read",
         { LngIsoCode: null },
         "app.build.create.initiate.callback.readLanguage");
@@ -165,7 +165,7 @@ app.build.create.initiate.clear = function () {
 *  Get Frequency Select data from API to populate role type drop down.
 */
 app.build.create.initiate.ajax.readFrequency = function () {
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Frequency_API.Read",
         null,
         "app.build.create.initiate.frequencySelect");
@@ -211,7 +211,7 @@ app.build.create.initiate.frequencySelect = function (data) {
  */
 app.build.create.initiate.ajax.readCopyright = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Copyright_API.Read",
         { CprCode: null },
         "app.build.create.initiate.callback.readCopyright",

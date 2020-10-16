@@ -9,7 +9,7 @@ $(document).ready(function () {
   app.navigation.access.check();
   app.navigation.layout.set(false);
   app.navigation.breadcrumb.set(["Configuration", "Languages"]);
-  app.navigation.breadcrumb.set([app.label.static["configuration"], app.label.static["languages"]]);
+  app.navigation.breadcrumb.set([app.label.static["system"], app.label.static["languages"]]);
 
   // Load Modal 
   api.content.load("#overlay", "entity/system/language/index.modal.html");

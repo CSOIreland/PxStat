@@ -3,7 +3,7 @@ Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
     app.data.dataset.table.drawDimensions();
-    app.data.dataset.table.ajax.format();
+    app.data.dataset.table.drawFormat();
     //show codes
     $('#data-dataset-table-code-toggle-select, #data-dataset-table-code-toggle-result').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["false"],
@@ -20,6 +20,10 @@ $(document).ready(function () {
         offstyle: "warning",
         width: C_APP_TOGGLE_LENGTH
     });
+
+    $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").val(JSON.stringify({ "options": {} }));
+    app.data.dataset.table.callback.formatJson();
+    $("#data-dataset-table-accordion-collapse-widget [name=valid-json-object]").hide();
 
     if (app.data.RlsCode) {
         if (!app.data.isLive) {
@@ -82,8 +86,36 @@ $(document).ready(function () {
         }
     });
 
+    $('#data-dataset-table-accordion-collapse-api a[data-toggle="tab"]').once('click', function (e) {
+        //disable json-stat 1.1 format if in pxapi v1 tab as this format is not supported in this API
+        switch (e.target.id) {
+            case "data-dataset-table-api-pxapiv1-tab":
+                $("#data-dataset-table-accordion [name=format] option[frm-type='JSON-stat'][frm-version='1.1']").prop("disabled", true);
+                var formatSelected = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type");
+                var versionSelected = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version");
+                if (formatSelected == "JSON-stat" && versionSelected == "1.1") {
+                    $("#data-dataset-table-accordion [name=format] option[frm-type='JSON-stat'][frm-version='2.0']").prop("selected", true);
+                }
+                //rebuild copy code in case select has changed
+                app.data.dataset.table.buildApiParams();
+                break;
+            case "data-dataset-table-api-jspnrpc-tab":
+            case "data-dataset-table-api-restful-tab":
+                $("#data-dataset-table-accordion [name=format] option[frm-type='JSON-stat'][frm-version='1.1']").prop("disabled", false);
+                //rebuild copy code in case select has changed
+                app.data.dataset.table.buildApiParams();
+                break;
+            default:
+                break;
+        }
+    })
+
+
     $('[data-toggle="tooltip"]').tooltip();
     new ClipboardJS("#data-dataset-table-accordion [name=copy-api-info], #data-dataset-table-accordion [name=copy-api-object], #data-dataset-table-accordion [name=copy-snippet-code]");
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
+
+    // DO NOT load run async Ajax in this sub-entity to avoid race-condition with the pxWidget ISOGRAM
+    app.plugin.pxWidget.load();
 });

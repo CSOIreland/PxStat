@@ -17,7 +17,7 @@ app.alert.notice.callback = {};
 app.alert.notice.ajax.read = function () {
     //ReadLive is available to everybody but only reads alerts with a date in the past
     api.ajax.jsonrpc.request(
-        app.config.url.api.public,
+        app.config.url.api.jsonrpc.public,
         "PxStat.System.Navigation.Alert_API.ReadLive",
         { LngIsoCode: app.label.language.iso.code },
         "app.alert.notice.callback.read");

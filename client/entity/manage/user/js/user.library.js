@@ -103,7 +103,7 @@ app.user.callback.searchUser = function (data) {
 app.user.ajax.read = function () {
   // Get data from API and Draw the Data Table for User
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.Read",
     null,
     "app.user.callback.read");
@@ -220,7 +220,7 @@ app.user.drawUserDataTable = function (data) {
 */
 app.user.ajax.getActiveDirectoryUser = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.ActiveDirectory_API.Read",
     null,
     "app.user.callback.searchUser");
@@ -235,7 +235,7 @@ app.user.ajax.getActiveDirectoryUser = function () {
  */
 app.user.ajax.createRoleType = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Privilege_API.Read",
     null,
     "app.user.callback.createRoleType");
@@ -346,7 +346,7 @@ app.user.ajax.create = function () {
   };
   // CAll Ajax to Create User. Do Redraw Data Table for Create User.
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.Create",
     apiParams,
     "app.user.callback.createOnSuccess",
@@ -396,7 +396,7 @@ app.user.callback.createOnError = function (error) {
  */
 app.user.ajax.updateRoleType = function (selectedPrvCode) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Privilege_API.Read",
     null,
     "app.user.callback.updateRoleType",
@@ -528,7 +528,7 @@ app.user.modal.buildGroupList = function (data) {
  */
 app.user.ajax.updateReadUser = function (apiParams) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.Read",
     apiParams,
     "app.user.callback.updateReadUser");
@@ -602,7 +602,7 @@ app.user.ajax.update = function () {
     CcnUsername: ccnUsername,
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.Update",
     apiParams,
     "app.user.callback.updateOnSuccess",
@@ -668,7 +668,7 @@ app.user.ajax.delete = function (idn) {
   var apiParams = { CcnUsername: idn };
   // Call the API by passing the idn to delete User from DB
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.Delete",
     { CcnUsername: idn },
     "app.user.callback.deleteOnSuccess",

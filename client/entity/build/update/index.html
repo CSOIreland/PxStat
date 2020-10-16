@@ -12,11 +12,11 @@
                                 <i class="fas fa-upload fa-2x"></i>
                                 <span name="file-name"></span>
                                 <span name="file-tip">
-                                    <strong><span label="choose"></span> <span class="text-danger" label="px"></span> <span label="file"></span></strong>
+                                    <strong><span label="choose"></span> <span label="px"></span> <span label="file"></span></strong>
                                     <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                 </span>
                                 <br />
-                                <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                <small><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                             </label>
                         </div>
                     </div>
@@ -125,11 +125,11 @@
                                     <i class="fas fa-upload fa-2x"></i>
                                     <span name="file-name"></span>
                                     <span name="file-tip">
-                                        <strong><span label="choose"></span> <span class="text-danger" label="csv"></span> <span label="file"></span></strong>
+                                        <strong><span label="choose"></span> <span label="csv"></span> <span label="file"></span></strong>
                                         <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                     </span>
                                     <br />
-                                    <small class="text-muted"><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                    <small><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
                                 </label>
                             </div>
                         </div>
@@ -142,19 +142,9 @@
                             </div>
                             <div class="col-xs-12 col-sm-8 text-right my-2">
                                 <button name="reset-data" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset">Reset</span></button>
-                                <button class="btn btn-tertiary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-download"></i> <span label="download-csv-data"></span></button>
-                                <div class="dropdown-menu">
-                                    <a name="download-data-file-existing" class="dropdown-item" href="#">
-                                        <span label="exsting-periods"></span>
-                                    </a>
-                                    <a name="download-data-file-new" class="dropdown-item disabled" href="#">
-                                        <span label="new-periods"></span>
-                                    </a>
-                                    <a name="download-data-file-all" class="dropdown-item disabled" href="#">
-                                        <span label="all-periods"></span>
-                                    </a>
-                                </div>
-
+                                <button name="download-csv-data" class="btn btn-primary text-light" data-toggle="modal" data-target="#exampleModal">
+                                    <i class="fas fa-download"></i> <span label="download-csv-data"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -338,7 +328,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="card-footer text-right bg-white">
+                            <div class="card-footer text-right bg-default">
                                 <button name="add-periods" class="btn btn-primary text-light">
                                     <i class="fas fa-plus-circle"></i>
                                     <span label="add-periods"></span>

@@ -24,7 +24,7 @@ app.build.create.dimension.periodsManualValid = true;
  */
 app.build.create.dimension.ajax.readFormat = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.public,
+        app.config.url.api.jsonrpc.public,
         "PxStat.System.Settings.Format_API.Read",
         {
             "LngIsoCode": null,
@@ -908,7 +908,7 @@ app.build.create.dimension.drawClassifications = function (LngIsoCode) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        if (row.ClsGeoUrl && app.config.plugin.highcharts.enabled) {
+                        if (row.ClsGeoUrl) {
                             return app.library.html.link.geoJson({ "geojson-url": row.ClsGeoUrl, "cls-value": row.ClsValue, "cls-code": row.ClsCode }, row.ClsGeoUrl);
                         }
                         else if (row.ClsGeoUrl) {
@@ -1065,7 +1065,7 @@ app.build.create.dimension.searchClassifications = function () {
  */
 app.build.create.dimension.ajax.searchClassifications = function (lngIsoCode) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Classification_API.Search",
         {
             "Search": $("#build-create-search-classiication").find("[name=classifications-search-input]").val().trim(),
@@ -1133,7 +1133,7 @@ app.build.create.dimension.callback.drawSearchClassifications = function (search
                 {
                     data: null,
                     render: function (data, type, row) {
-                        if (row.ClsGeoUrl && app.config.plugin.highcharts.enabled) {
+                        if (row.ClsGeoUrl) {
                             return app.library.html.link.geoJson({ "geojson-url": row.ClsGeoUrl, "cls-value": row.ClsValue, "cls-code": row.ClsCode }, row.ClsGeoUrl);
                         }
                         else if (row.ClsGeoUrl) {
@@ -1169,7 +1169,7 @@ app.build.create.dimension.callback.drawSearchClassifications = function (search
  */
 app.build.create.dimension.ajax.readClassification = function (classificationId) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Classification_API.Read",
         {
             "ClsID": classificationId,
@@ -2159,8 +2159,8 @@ app.build.create.dimension.buildDataObject = function () {
 
         var numCells = numClassificationVariables * dimension.Statistic.length * dimension.Frequency.Period.length;
 
-        if (numCells > app.config.dataset.threshold) {
-            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.dataset.threshold)]));
+        if (numCells > app.config.entity.build.threshold.dataset) {
+            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.dataset)]));
         }
 
     }
@@ -2189,7 +2189,7 @@ app.build.create.dimension.buildDataObject = function () {
  */
 app.build.create.dimension.ajax.create = function (params) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.Create",
         params,
         "app.build.create.dimension.callback.create",

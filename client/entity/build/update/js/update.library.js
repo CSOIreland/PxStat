@@ -38,7 +38,7 @@ app.build.update.data = {
  */
 app.build.update.ajax.readFrequency = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Frequency_API.Read",
         null,
         "app.build.update.callback.readFrequency");
@@ -84,7 +84,7 @@ app.build.update.callback.readFrequency = function (data) {
  */
 app.build.update.ajax.readCopyright = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Copyright_API.Read",
         { CprCode: null },
         "app.build.update.callback.readCopyright",
@@ -120,7 +120,7 @@ app.build.update.callback.readCopyright = function (data) {
  */
 app.build.update.ajax.readFormat = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.public,
+        app.config.url.api.jsonrpc.public,
         "PxStat.System.Settings.Format_API.Read",
         {
             "LngIsoCode": null,
@@ -193,7 +193,7 @@ app.build.update.callback.previewData = function () {
  */
 app.build.update.ajax.downloadDataTemplate = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.ReadTemplate",
         {
             "MtrInput": app.build.update.upload.file.content.source.Base64,
@@ -221,47 +221,11 @@ app.build.update.callback.downloadDataTemplate = function (data) {
     app.library.utility.download(fileName, data.template, C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 };
 
-/**
- * 
- */
-app.build.update.ajax.downloadAllData = function (params) {
+
+app.build.update.ajax.downloadData = function (params) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
-        "PxStat.Build.Build_API.ReadDatasetByAllPeriods",
-        params,
-        "app.build.update.callback.downloadData",
-        null,
-        null,
-        null,
-        {
-            async: false,
-            timeout: app.config.transfer.timeout
-        });
-
-};
-
-
-app.build.update.ajax.downloadNewData = function (params) {
-    api.ajax.jsonrpc.request(
-        app.config.url.api.private,
-        "PxStat.Build.Build_API.ReadDatasetByNewPeriods",
-        params,
-        "app.build.update.callback.downloadData",
-        null,
-        null,
-        null,
-        {
-            async: false,
-            timeout: app.config.transfer.timeout
-        });
-
-};
-
-
-app.build.update.ajax.downloadExistingData = function (params) {
-    api.ajax.jsonrpc.request(
-        app.config.url.api.private,
-        "PxStat.Build.Build_API.ReadDatasetByExistingPeriods",
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Build.Build_API.ReadDataset",
         params,
         "app.build.update.callback.downloadData",
         null,
@@ -278,6 +242,7 @@ app.build.update.callback.downloadData = function (data) {
     var fileName = data.MtrCode + '.' + moment(Date.now()).format(app.config.mask.datetime.file) + "." + app.label.static["data"].toLowerCase();
     // Download the file
     app.library.utility.download(fileName, data.csv, C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
+    $('#build-update-download-csv-file').modal("hide");
 };
 
 
@@ -665,8 +630,8 @@ app.build.update.updateOutput = function () {
         numPeriods = numPeriods + dimension.Frequency.Period.length;
 
         var numCells = numClassificationVariables * numStatistics * numPeriods;
-        if (numCells > app.config.dataset.threshold) {
-            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.dataset.threshold)]));
+        if (numCells > app.config.entity.build.threshold.dataset) {
+            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.dataset)]));
         }
     }
     if (!validationErrors.length) {
@@ -701,7 +666,7 @@ app.build.update.updateOutput = function () {
         //Populate namespace variables
         app.build.update.upload.FrqCode = $("#build-update-properties").find("[name=frequency-code]").val();
         app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
-        app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.updateOutput", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Update"]);
+        app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.updateOutput", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Update"] });
 
     }
 
@@ -812,7 +777,7 @@ app.build.update.ajax.updateOutput = function () {
     // Merge Signature into Data
     params.Signature = app.build.update.upload.Signature;
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.Update",
         params,
         "app.build.update.callback.updateOutput",
@@ -852,6 +817,7 @@ app.build.update.callback.updateOutput = function (data, frmType) {
     }
 
 };
+
 
 app.build.update.callback.downloadFile = function (data, format) {
     var fileName = $("#build-update-properties [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
@@ -937,7 +903,7 @@ app.build.update.validate.frequencyModal = function () {
             app.build.update.upload.FrqValue = $("#build-update-modal-frequency").find("[name=frq-value]:checked").val();
             app.build.update.upload.FrqCode = $("#build-update-modal-frequency").find("[name=frq-code]").val();
 
-            app.build.update.upload.validate.ajax.read("app.build.update.upload.validate.callback.uploadSource", app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"]);
+            app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.uploadSource", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"] });
         }
     }).resetForm();
 };
@@ -1013,3 +979,191 @@ app.build.update.validate.classification = function () {
         }
     }).resetForm();
 };
+
+app.build.update.validate.dataPeriods = function () {
+    $("#build-update-download-csv-file").find("form").trigger("reset").validate({
+        rules: {
+            "period-select": { required: true }
+        },
+        errorPlacement: function (error, element) {
+            $("#build-update-download-csv-file [name=" + element[0].name + "-error-holder]").append(error[0]);
+        },
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
+            app.build.update.downloadCsv();
+        }
+    }).resetForm();
+}
+
+//#region Download CSV modal
+
+app.build.update.downloadCsvModal = function () {
+    var allPeriods = app.build.update.getAllPeriods();
+
+    var numAllPeriods = 0;
+
+    $.each(allPeriods, function (key, value) {
+        $('#build-update-download-csv-file').find("[name=period-select]").append(
+            $("<option>", {
+                "value": key,
+                "text": value
+            })
+        );
+        numAllPeriods++
+    });
+
+    //put num variables into pill
+    $("#build-update-download-csv-file").find("[name=dimension-count]").text(numAllPeriods);
+    app.build.update.sortPeriods();
+
+    //select all
+    $("#build-update-download-csv-file").find("[name=select-all]").once("change", function () {
+        if (this.checked) {
+            $("#build-update-download-csv-file select").find('option').each(function () {
+                $(this).prop("selected", true);
+            });
+        }
+        else {
+            $("#build-update-download-csv-file select").find('option').each(function () {
+                $(this).prop("selected", false);
+            });
+        }
+    });
+
+    //Period Search
+    $("#build-update-download-csv-file").find("[name=period-filter]").once("keyup search", function () {
+        var select = $("#build-update-download-csv-file select");
+        select.find('option').each(function () {
+            if (!$(this).is(':selected')) {
+                $(this).remove();
+            }
+        });
+
+        var periodsToSearch = app.build.update.getAllPeriods();
+        var filter = $(this).val().toLowerCase();
+        $.each(periodsToSearch, function (key, value) {
+            if ((value.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
+                //variable is valid, append to select if not already selected
+                if (!select.find("option[value=" + key + "]").is(':selected')) {
+                    select.append($('<option>', {
+                        "value": key,
+                        "title": value,
+                        "text": value
+                    }));
+                };
+            }
+        });
+
+        //if no match display no results - option disabled
+        if (select.find('option').length == 0) {
+            select.append($('<option>', {
+                "title": app.label.static["no-results"],
+                "text": app.label.static["no-results"],
+                "disabled": "disabled"
+            }));
+            //disable select all
+            $("#build-update-download-csv-file").find("[name=select-all]").prop("disabled", true);
+        }
+        //if option is checked, uncheck
+        if (select.find('option:selected').length != select.find('option').length) {
+            if ($("#build-update-download-csv-file").find("[name=select-all]").is(':checked')) {
+                $("#build-update-download-csv-file").find("[name=select-all]").prop("checked", false);
+            }
+
+        }
+        else {
+            //enable select all
+            $("#build-update-download-csv-file").find("[name=select-all]").prop("disabled", false);
+
+        }
+
+    });
+
+
+    //sort
+    $("#build-update-download-csv-file").find("[name=sort-options]").once("click", app.build.update.sortPeriods);
+    app.build.update.validate.dataPeriods();
+    $('#build-update-download-csv-file').modal("show");
+    $('#build-update-download-csv-file').on('hide.bs.modal', function (e) {
+        $("#build-update-download-csv-file select").attr("sort", "asc");
+        $("#build-update-download-csv-file").find("[name=select-all]").prop("checked", false);
+        $("#build-update-download-csv-file").find("[name=labels]").bootstrapToggle("off");
+        $('#build-update-download-csv-file').find("[name=period-select]").empty();
+        $('#build-update-download-csv-file').find("[name=period-filter]").val("");
+    })
+};
+
+app.build.update.getAllPeriods = function () {
+
+    var newPeriods = {};
+    $(app.build.update.data.Dimension).each(function (key, value) {
+        if (value.LngIsoCode == app.config.language.iso.code) {
+            $(value.Frequency.Period).each(function (k, v) {
+                newPeriods[v.PrdCode] = v.PrdValue
+            })
+        }
+    });
+    var existingPeriods = {};
+    $(app.build.update.ajax.jsonStat).each(function (key, value) {
+        if (value.extension.language.code == app.config.language.iso.code) {
+            var jsonStat = JSONstat(value);
+            var timeDimension = jsonStat.Dimension({ role: "time" })[0];
+            //get dimension label from time dimension
+            $("#build-update-download-csv-file").find("[name=dimension-label]").text($("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val());
+            $(timeDimension.id).each(function (k, v) {
+                existingPeriods[v] = timeDimension.Category(v).label
+            });
+        }
+    });
+
+
+    return $.extend(true, {}, newPeriods, existingPeriods);
+
+}
+
+app.build.update.sortPeriods = function () {
+
+
+    var select = $("#build-update-download-csv-file select")
+    var status = select.attr("sort");
+    select.html(select.find('option').sort(function (x, y) {
+        switch (status) {
+            case "asc":
+                select.attr("sort", "desc");
+                return $(x).text() < $(y).text() ? 1 : -1;
+            case "desc":
+                select.attr("sort", "asc");
+                return $(x).text() > $(y).text() ? 1 : -1;
+            default:
+                break;
+        }
+
+    }));
+
+}
+
+app.build.update.downloadCsv = function () {
+    $(app.build.update.ajax.jsonStat).each(function (key, value) {
+        if (value.extension.language.code == app.config.language.iso.code) {
+            var jsonStat = JSONstat(value);
+            var dimensions = jsonStat.Dimension();
+            var numDatapoints = 1;
+            $(dimensions).each(function (k, v) {
+                if (v.role != "time") {
+                    numDatapoints = numDatapoints * v.length
+                }
+            })
+            numDatapoints = numDatapoints * $("#build-update-download-csv-file select").find('option:selected').length
+            if (numDatapoints > app.config.entity.build.threshold.downloadCsv) {
+                api.modal.confirm(
+                    app.library.html.parseDynamicLabel("confirm-update-csv-download", [app.library.utility.formatNumber(numDatapoints)]),
+                    app.build.update.upload.validate.ajax.read,
+                    { "callback": "app.build.update.upload.validate.callback.downloadData", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDataset"] });
+            }
+            else {
+                app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.downloadData", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDataset"] });
+            }
+        }
+    })
+}
+//#endregion

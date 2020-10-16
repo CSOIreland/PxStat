@@ -16,7 +16,7 @@ app.language.callback = {};
  */
 app.language.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.public,
+    app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.language.callback.readOnSuccess",
@@ -128,7 +128,7 @@ app.language.modal.update = function (idn) {
  */
 app.language.ajax.readUpdate = function (idn) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.public,
+    app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: idn },
     "app.language.callback.readUpdate",
@@ -200,7 +200,7 @@ app.language.ajax.update = function () {
   };
   //Ajax request Update
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Language_API.Update",
     apiParams,
     "app.language.callback.updateOnSuccess",
@@ -298,7 +298,7 @@ app.language.ajax.create = function () {
     LngIsoName: lngIsoName
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Language_API.Create",
     apiParams,
     "app.language.callback.createOnSuccess",
@@ -341,7 +341,7 @@ app.language.callback.createOnError = function (error) {
 app.language.ajax.delete = function (idn) {
   var apiParams = { LngIsoCode: idn };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Language_API.Delete",
     apiParams,
     "app.language.callback.deleteOnSuccess",

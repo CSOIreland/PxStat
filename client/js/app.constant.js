@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "2.5.0";
+const C_APP_VERSION = "2.6.0";
 
 // URLs GitHub
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
@@ -12,21 +12,11 @@ const C_APP_URL_GITHUB_RELEASE_TAG = "https://github.com/CSOIreland/PxStat/relea
 const C_APP_URL_GITHUB_REPORT_ISSUE = "https://github.com/CSOIreland/PxStat/issues/new/choose";
 const C_APP_URL_GITHUB_API_CUBE_JSONRPC = "https://github.com/CSOIreland/PxStat/wiki/API-Cube";
 const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-RESTful";
+const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.5/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.0.5/snippet.html";
-
-//Charts + Maps
-/*******************************************************************************
-PLEASE REFER TO https://shop.highsoft.com/highcharts
-PLEASE DO NOT SET app.config.plugin.highcharts.enabled UNLESS TO TRUE UNLESS YOU HAVE A VALID HIGHCHARTS LICENSE
-*******************************************************************************/
-const C_APP_HIGHCHARTS_NO_LICENSE_MESSAGE = $("<a>", {
-    href: "https://www.highcharts.com",
-    text: "https://www.highcharts.com",
-    target: "_blank"
-}).get(0).outerHTML;
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.1.0/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.1.0/snippet.html";
 
 // Public API
 const C_APP_API_SUCCESS = "success";
@@ -59,8 +49,7 @@ const C_APP_REGEX_NODOUBLEQUOTE = /[\"]/gi;
 
 // Cookies
 const C_COOKIE_LANGUAGE = "language";
-
-// Cookie Links
+const C_COOKIE_CONSENT = "cookie-consent";
 const C_COOKIE_LINK_SEARCH = "search";
 const C_COOKIE_LINK_PRODUCT = "product";
 const C_COOKIE_LINK_COPYRIGHT = "copyright";
@@ -148,10 +137,6 @@ const C_APP_CSV_VALUE = "VALUE";
 const C_APP_CSV_UNIT = "UNIT";
 const C_APP_CSV_DECIMAL = "DECIMAL";
 
-const C_APP_ANALYTIC_MODULE_HIGHCHARTS = "entity/analytic/js/analytic.library.highCharts.js";
-const C_APP_ANALYTIC_MODULE_GOOGLE = "entity/analytic/js/analytic.library.google.js";
-const C_APP_ANALYTIC_MODULE_DEFAULT = C_APP_ANALYTIC_MODULE_GOOGLE;
-
 //Toggle Length
 const C_APP_TOGGLE_LENGTH = 100;
 
@@ -161,9 +146,16 @@ const C_APP_GEOJSON_FEATURE_COLLECTION = "FeatureCollection";
 //Datetime 
 const C_APP_DATETIME_DEFAULT = "0001-01-01T0:00:00.000Z";
 
+//Search results sort options
+const C_APP_SORT_RELEVANCE = "relevance";
+const C_APP_SORT_ALPHABETICAL = "alphabetical";
+const C_APP_SORT_NEWEST = "newest";
+const C_APP_SORT_OLDEST = "oldest";
+
 // Widget
 const C_APP_PXWIDGET_TYPE_CHART = 'chart';
 const C_APP_PXWIDGET_TYPE_TABLE = 'table';
+const C_APP_PXWIDGET_TYPE_MAP = 'map';
 const C_APP_PXWIDGET_CHART_TYPES = ["line", "bar", "horizontalBar", "pie", "doughnut", "mixed", "polarArea", "radar"];
 const C_APP_PXWIDGET_CHART_TYPES_MIXED = ["line", "bar"];
 const C_APP_PXWIDGET_CHART_TYPES_DUAL_POSITION = ["y-axis-1", "y-axis-2"];

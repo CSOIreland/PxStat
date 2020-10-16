@@ -80,5 +80,4 @@ $(document).ready(function () {
       $('html, body').animate({ scrollTop: $('#data-filter-toggle').offset().top }, 1000);
     });
   });
-
 });

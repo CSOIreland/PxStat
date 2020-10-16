@@ -92,7 +92,7 @@ app.release.load = function () {
 
 app.release.ajax.read = function () {
   return api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Data.Release_API.Read",
     { RlsCode: app.release.RlsCode },
     "app.release.callback.read",
@@ -135,7 +135,7 @@ app.release.callback.read = function (data) {
  */
 app.release.ajax.isModerator = function () {
   return api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadIsModerator",
     null,
     "app.release.callback.isModerator",
@@ -159,7 +159,7 @@ app.release.callback.isModerator = function (data) {
  */
 app.release.ajax.isApprover = function () {
   return api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadIsApprover",
     { RlsCode: app.release.RlsCode },
     "app.release.callback.isApprover",

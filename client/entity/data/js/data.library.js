@@ -12,6 +12,7 @@ app.data.MtrCode = null;
 app.data.RlsCode = null;
 app.data.isModal = null;
 app.data.isLive = null;
+app.data.isSearch = null;
 app.data.fileNamePrefix = null;
 app.data.LngIsoCode = app.label.language.iso.code;
 app.data.collection.params = {
@@ -79,7 +80,7 @@ app.data.setDatePicker = function () {
 */
 app.data.ajax.readLatestReleases = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.public,
+        app.config.url.api.jsonrpc.public,
         "PxStat.Data.Cube_API.ReadCollection",
         app.data.collection.params,
         "app.data.callback.readLatestReleases",
@@ -113,7 +114,7 @@ app.data.callback.drawCallbackDrawLatestReleases = function () {
         //collapse navigation so filter abd sort visible at top of screen
         $("#data-navigation").find(".navbar-collapse").collapse("hide");
         app.data.init($(this).attr("lng-iso-code"), $(this).attr("mtr-code"), null, $(this).attr("mtr-code"), false, true);
-        app.data.dataset.ajax.readMetadata();
+        app.data.dataset.draw();
     });
 
     $('[data-toggle="tooltip"]').tooltip();
@@ -283,10 +284,10 @@ app.data.callback.drawCollectionApiDetails = function () {
         "params": app.data.collection.params
     }, null, "\t");
 
-    $("#data-dataset-collection-api-jsonrpc-post-url").text(app.config.url.api.public);
+    $("#data-dataset-collection-api-jsonrpc-post-url").text(app.config.url.api.jsonrpc.public);
     $("#data-dataset-collection-api-obj").hide().text(query).fadeIn();
 
-    $("#data-dataset-collection-api-jsonrpc-get-url").empty().text(encodeURI(app.config.url.api.public + C_APP_API_GET_PARAMATER_IDENTIFIER + query)).fadeIn();
+    $("#data-dataset-collection-api-jsonrpc-get-url").empty().text(encodeURI(app.config.url.api.jsonrpc.public + C_APP_API_GET_PARAMATER_IDENTIFIER + query)).fadeIn();
 
     $("#data-dataset-collection-api-restful-url").hide().text(C_APP_API_RESTFUL_READ_COLLECTION_URL.sprintf([app.config.url.restful, app.data.collection.params.datefrom, app.data.LngIsoCode])).fadeIn();
 

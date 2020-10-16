@@ -17,7 +17,7 @@ app.subject.validation = {};
 app.subject.ajax.read = function () {
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
       SbjCode: null,
@@ -185,7 +185,7 @@ app.subject.ajax.create = function () {
   $("#subject-modal-create").modal("hide");
   // A Subject is created always against the default Language
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Create",
     apiParams,
     "app.subject.callback.createOnSuccess",
@@ -231,7 +231,7 @@ app.subject.callback.createOnError = function (error) {
 app.subject.ajax.readUpdate = function (idn) {
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
       SbjCode: idn,
@@ -308,7 +308,7 @@ app.subject.ajax.update = function () {
     SbjValue: sbjValue
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Update",
     apiParams,
     "app.subject.callback.updateOnSuccess",
@@ -376,7 +376,7 @@ app.subject.ajax.delete = function (objToSend) {
   };
   // A Subject is deleted always against the default Language
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Delete",
     apiParams,
     "app.subject.callback.deleteOnSuccess",

@@ -17,10 +17,6 @@ app.map.draw = function (geoJsonURL, ClsCode, ClsValue) {
     app.map.ClsCode = ClsCode || null;
     app.map.ClsValue = ClsValue || null;
 
-    if (!app.config.plugin.highcharts.enabled) {
-        return;
-    }
-
     $("#build-map-modal").find(".modal-header [name=cls-code]").empty().text(app.map.ClsCode);
     $("#build-map-modal").find(".modal-header [name=cls-value]").empty().text(app.map.ClsValue);
 

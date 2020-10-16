@@ -15,7 +15,7 @@ app.email.validation = {};
  */
 app.email.ajax.selectGroup = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Group_API.ReadAccess",
         { CcnUsername: null },
         "app.email.callback.selectGroup"
@@ -105,7 +105,7 @@ app.email.validation.create = function () {
 app.email.ajax.create = function () {
     // CAll Ajax to Create send message.
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Notification.Email_API.GroupMessageCreate",
         {
             "GroupCodes": $("#email-container").find("[name=group]").val(),

@@ -45,7 +45,14 @@
             <!-- Top aligned -->
             <div class="row px-2 order-1 order-lg-1 order-md-1 order-sm-1">
                 <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
-                    <h5 name="mtr-title" class="mb-1"></h5>
+                    <h6 class="mb-1">
+                        <span name="mtr-code"></span>
+                        <i name="official-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
+                        <i name="geo-flag" class="fas fa-globe text-tertiary ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
+                        <i name="archive-flag" class="fas fa-file-archive text-dark mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
+                        <i name="reservation-flag" class="fas fa-exclamation text-danger mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
+                        <i name="analytical-flag" class="fas fa-chart-line text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
+                    </h6>
                 </div>
                 <div name="updated-date-and-time" class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1">
                     <small>
@@ -57,19 +64,11 @@
 
             <!-- Mid aligned -->
             <div class="row px-2 order-2 order-lg-2 order-md-2 order-sm-2">
-                <div class="col-4 px-0 order-1 my-auto">
-                    <h6 class="mb-1">
-                        <span name="mtr-code"></span>
-                        <i name="official-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
-                        <i name="geo-flag" class="fas fa-globe text-tertiary ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
-                    </h6>
+                <div class="col-8 px-0 order-1 my-auto">
+                    <h5 name="mtr-title" class="mb-1"></h5>
                 </div>
-                <div class="col-8 px-0 order-2 text-right my-auto">
-                    <p name="search-result-icons" class="mb-1">
-                        <i name="archive-flag" class="fas fa-file-archive text-dark mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
-                        <i name="reservation-flag" class="fas fa-exclamation text-danger mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
-                        <i name="analytical-flag" class="fas fa-chart-line text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
-                        <i name="dependency-flag" class="fab fa-hubspot text-tertiary mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="dependency"></i>
+                <div class="col-4 px-0 order-2 text-right my-auto">
+                    <p class="mb-1">
                         <span name="language" class="badge badge-primary"></span>
                     </p>
                 </div>
@@ -100,6 +99,37 @@
     </div>
 
     <div name="matrix-notes">
+        <div class="card m-3 border-info" name="notes" style="display: none;">
+            <div class="card-header bg-info text-light">
+                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="true" aria-controls="">
+                    <i class="fas fa-minus-circle"></i> <span label="note"></span>
+                </a>
+            </div>
+            <div id="" class="card-body collapse show"></div>
+        </div>
+        <div class="card m-3 border-info" name="reasons" style="display: none;">
+            <div class="card-header bg-info text-light">
+                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
+                    <i class="fas fa-plus-circle"></i> <span label="reasons-to-publish"></span>
+                </a>
+            </div>
+            <div id="" class="collapse card-body">
+                <ul class="list-group">
+
+                </ul>
+            </div>
+        </div>
+        <div class="card m-3 border-info" name="full-download-card">
+            <div class="card-header bg-info text-light">
+                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
+                    <i class="fas fa-plus-circle"></i> <span label="download-full-dataset"></span>
+                </a>
+            </div>
+            <div id="" class="collapse card-body">
+                <div name="download-full-dataset" class="list-group"></div>
+            </div>
+        </div>
+        <div name="share"></div>
         <div class="card border-info m-3">
             <div class="card-header bg-info text-light" label="contact"></div>
             <div class="card-body">
@@ -118,41 +148,6 @@
                 <div class="border-bottom row mx-0"></div>
             </div>
         </div>
-
-        <div class="card m-3 border-info" name="notes" style="display: none;">
-            <div class="card-header bg-info text-light">
-                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="true" aria-controls="">
-                    <i class="fas fa-minus-circle"></i> <span label="note"></span>
-                </a>
-            </div>
-            <div id="" class="card-body collapse show"></div>
-        </div>
-
-        <div class="card m-3 border-info" name="reasons" style="display: none;">
-            <div class="card-header bg-info text-light">
-                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
-                    <i class="fas fa-plus-circle"></i> <span label="reasons-to-publish"></span>
-                </a>
-            </div>
-            <div id="" class="collapse card-body">
-                <ul class="list-group">
-
-                </ul>
-            </div>
-        </div>
-
-        <div class="card m-3 border-info" name="full-download-card">
-            <div class="card-header bg-info text-light">
-                <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
-                    <i class="fas fa-plus-circle"></i> <span label="download-full-dataset"></span>
-                </a>
-            </div>
-            <div id="" class="collapse card-body">
-                <div name="download-full-dataset" class="list-group"></div>
-            </div>
-        </div>
-        <div name="share"></div>
-
     </div>
     <a name="download-dataset-format" href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span>

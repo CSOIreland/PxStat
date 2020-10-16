@@ -95,7 +95,7 @@ app.group.UpdateFields = function (activeMemberRecord) {
 app.group.ajax.read = function () {
     // Get data from API and Draw the Data Table for Group 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Group_API.Read",
         { CcnUsername: null },
         "app.group.callbackGroupRead");
@@ -286,7 +286,7 @@ app.group.ajax.create = function () {
     };
     // CAll Ajax to Create/Add User. Do Redraw Data Table for Create/Add User.
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Group_API.Create",
         apiParams,
         "app.group.callback.createOnSuccess",
@@ -355,7 +355,7 @@ app.group.ajax.delete = function (groupToDelete) {
 
     // Call the API by passing the idn to delete Group from DB
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Group_API.Delete",
         apiParams,
         "app.group.callback.deleteOnSuccess",
@@ -405,7 +405,7 @@ app.group.callback.deleteOnError = function (error) {
  */
 app.group.membergroup.ajax.read = function (groupCode) {
     // Get data from API and Draw the Data Table for Members Group. Group.GrpCode = membersgroups.GrpCode 
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.GroupAccount_API.Read", { GrpCode: groupCode }, "app.group.callbackMembersGroupRead", groupCode);
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private, "PxStat.Security.GroupAccount_API.Read", { GrpCode: groupCode }, "app.group.callbackMembersGroupRead", groupCode);
 };
 
 /**
@@ -515,7 +515,7 @@ app.group.ajax.readGroup = function (groupCode) {
         GrpCode: groupCode
     };
     // Get data from API and Draw the Data Table for Reason. Populate date to the modal "reason-modal-update"
-    api.ajax.jsonrpc.request(app.config.url.api.private, "PxStat.Security.Group_API.Read", apiParams, "app.group.callback.readgroup", callbackParam);
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private, "PxStat.Security.Group_API.Read", apiParams, "app.group.callback.readgroup", callbackParam);
 };
 
 /**
@@ -639,7 +639,7 @@ app.group.ajax.update = function () {
     };
     //Ajax call to add Add Group 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Group_API.Update",
         apiParams,
         "app.group.callback.updateOnSuccess",
@@ -713,7 +713,7 @@ app.group.membergroup.ajax.delete = function (rowToDelete) {
     };
     // Call the API by passing the idn to delete
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.GroupAccount_API.Delete",
         apiParams,
         "app.group.membergroup.callback.deleteOnSuccess",
@@ -764,7 +764,7 @@ app.group.membergroup.callback.deleteOnError = function (error, callbackParam) {
 app.group.membergroup.readUpdate = function (apiParams, callbackParam) {
     // Get data from API and Draw the Data Table for Reason. Populate date to the modal "reason-modal-update"
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.GroupAccount_API.Read",
         apiParams,
         "app.group.membergroup.callback.readUpdate",
@@ -844,7 +844,7 @@ app.group.membergroup.ajax.update = function () {
     };
     // CAll Ajax to Edit. Get the fresh new data. Redraw table
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.GroupAccount_API.Update",
         apiParams,
         "app.group.membergroup.callback.updateOnSuccess",
@@ -912,7 +912,7 @@ app.group.membergroup.modal.create = function () {
     // Call the API to get AD user names
     // Only a MODERATOR can be member of a group. 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Account_API.Read",
         { CcnUsername: null, "PrvCode": C_APP_PRIVILEGE_MODERATOR },
         "app.group.membergroup.callback.searchUser",
@@ -1011,7 +1011,7 @@ app.group.membergroup.ajax.create = function () {
     };
     // Do not Redraw table for Add User
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.GroupAccount_API.Create",
         apiParams,
         "app.group.membergroup.callback.createOnSuccess",

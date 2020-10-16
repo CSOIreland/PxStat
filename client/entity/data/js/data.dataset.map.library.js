@@ -6,11 +6,40 @@ Custom JS application specific
 app.data = app.data || {};
 app.data.dataset = app.data.dataset || {};
 app.data.dataset.map = {};
+app.data.dataset.map.template = {};
 app.data.dataset.map.ajax = {};
 app.data.dataset.map.callback = {};
 app.data.dataset.map.apiParamsData = {}
-
-
+app.data.dataset.map.snippetConfig = {};
+app.data.dataset.map.configuration = {};
+app.data.dataset.map.template.wrapper = {
+    "autoupdate": true,
+    "copyright": false,
+    "link": null,
+    "title": null,
+    "type": 'choropleth',
+    "data": {
+        "labels": null,
+        "datasets": [
+            {
+                "api": {
+                    "query": {
+                        "url": null,
+                        "data": {
+                            "jsonrpc": C_APP_API_JSONRPC_VERSION,
+                            "method": null,
+                            "params": {}
+                        }
+                    },
+                    "response": {}
+                },
+                "outline": null,
+                "data": [],
+            },
+        ],
+    },
+    "options": app.config.plugin.chartJs.options.map
+};
 //#endregion
 
 app.data.dataset.map.drawDimensions = function () {
@@ -50,173 +79,75 @@ app.data.dataset.map.drawDimensions = function () {
         allowClear: true,
         width: '100%',
         placeholder: app.label.static["start-typing"]
-    }).on('select2:select', function (e) {
-        app.data.dataset.map.ajax.readDataset();
-    }).on('select2:clear', function (e) {
+    }).on('select2:select', app.data.dataset.map.buildMapConfig).on('select2:clear', function (e) {
 
     }).prop("disabled", false);
-    app.data.dataset.map.ajax.readDataset();
+    app.data.dataset.map.buildMapConfig();
 };
 
-app.data.dataset.map.ajax.readDataset = function () {
+app.data.dataset.map.buildMapConfig = function () {
+    app.data.dataset.map.configuration = {};
+    $.extend(true, app.data.dataset.map.configuration, app.data.dataset.map.template.wrapper);
     app.data.dataset.map.buildApiParams();
+    app.data.dataset.map.configuration.data.datasets[0].api.query.data.params = app.data.dataset.map.apiParamsData;
+
+
     if (app.data.isLive) {
-        api.ajax.jsonrpc.request(
-            app.config.url.api.public,
-            "PxStat.Data.Cube_API.ReadDataset",
-            app.data.dataset.map.apiParamsData,
-            "app.data.dataset.map.callback.readDataset",
-            null,
-            null,
-            null,
-            { async: false }
-        );
+        app.data.dataset.map.configuration.data.datasets[0].api.query.data.params.extension.matrix = app.data.MtrCode;
+        app.data.dataset.map.configuration.data.datasets[0].api.query.url = app.config.url.api.jsonrpc.public;
+        app.data.dataset.map.configuration.data.datasets[0].api.query.data.method = "PxStat.Data.Cube_API.ReadDataset";
+        delete app.data.dataset.map.configuration.data.datasets[0].api.query.data.params.extension.release;
     }
-
     else {
-        api.ajax.jsonrpc.request(
-            app.config.url.api.private,
-            "PxStat.Data.Cube_API.ReadPreDataset",
-            app.data.dataset.map.apiParamsData,
-            "app.data.dataset.map.callback.readDataset",
-            null,
-            null,
-            null,
-            { async: false }
-        );
+        app.data.dataset.map.configuration.data.datasets[0].api.query.data.params.extension.release = app.data.RlsCode;
+        app.data.dataset.map.configuration.data.datasets[0].api.query.url = app.config.url.api.jsonrpc.private;
+        app.data.dataset.map.configuration.data.datasets[0].api.query.data.method = "PxStat.Data.Cube_API.ReadPreDataset";
+        delete app.data.dataset.map.configuration.data.datasets[0].api.query.data.params.extension.matrix;
     }
-};
 
-app.data.dataset.map.callback.readDataset = function (data) {
-    var data = data ? JSONstat(data) : null;
-    if (data && data.length) {
-        var chartTitle = app.data.fileNamePrefix + ": " +
-            $("#data-dataset-map-nav-content").find("[name=dimension-containers]").find("select[role=metric]").find("option:selected").text() + ", " +
-            $("#data-dataset-map-nav-content").find("[name=dimension-containers]").find("select[role=time]").find("option:selected").text() + ", ";
-        var totalClassifications = $("#data-dataset-map-nav-content").find("[name=dimension-containers]").find("select[role=classification]").length;
-        $("#data-dataset-map-nav-content").find("[name=dimension-containers]").find("select[role=classification]").each(function (index) {
-            if (index != totalClassifications - 1) {
-                chartTitle = chartTitle + $(this).find("option:selected").text() + ", ";
-            }
-            else {
-                chartTitle = chartTitle + $(this).find("option:selected").text();
-            }
-        });
-        //for each region, create a data point
-        var mapData = [];
-        var values = []; //used to find min/max for color scale
-        $.each(data.Dimension({ role: "geo" })[0].id, function (indexGeo, valueGeo) {
-            var dataQueryObj = {};
-            var mapDataObj = {
-                code: valueGeo,
-                value: null,
-                tooltip: {
-                    [data.Dimension(data.role.geo[0]).label]: data.Dimension(data.role.geo[0]).Category(valueGeo).label
-                }
-            };
-            dataQueryObj[data.role.geo[0]] = valueGeo;
-            $.each(data.Dimension(), function (indexDimension, valueDimension) {
-                if (valueDimension.role != "geo") {
-                    dataQueryObj[data.id[indexDimension]] = $("#data-dataset-map-nav-content").find("[name=dimension-containers]").find("select[idn='" + data.id[indexDimension] + "']").val();
-                    mapDataObj.tooltip[valueDimension.label] = $("#data-dataset-map-nav-content").find("[name=dimension-containers]").find("select[idn='" + data.id[indexDimension] + "'] option:selected").text();
-                }
-            });
-            if (valueGeo != "-") {
-                mapDataObj.value = data.Data(dataQueryObj).value;
-                mapData.push(mapDataObj);
-                values.push(data.Data(dataQueryObj).value);
-            }
-
-        });
-
-        var buttons = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
-        $.getJSON(data.Dimension({ role: "geo" })[0].link.enclosure[0].href, function (geojson) {
-            // Initiate the chart
-            Highcharts.mapChart($("#data-dataset-map-nav-content").find("[name=highmap-container]")[0], {
-                chart: {
-                    map: geojson,
-                    height: 500,
-                    backgroundColor: '#FFFFFF'
-                },
-                title: {
-                    text: null
-                },
-                credits: {
-                    enabled: false
-                },
-                mapNavigation: {
-                    enabled: true,
-                    buttonOptions: {
-                        verticalAlign: 'bottom'
-                    }
-                },
-                colorAxis: {
-                    min: Math.min.apply(Math, values.filter(function (el) {
-                        return el != null;
-                    })),
-                    max: Math.max.apply(Math, values.filter(function (el) {
-                        return el != null;
-                    })),
-                    type: 'linear',
-                    minColor: "#FFFF00",
-                    maxColor: "#ff0000"
-                },
-                series: [{
-                    data: mapData,
-                    nullInteraction: true,
-                    joinBy: [app.config.plugin.highmaps.featureIdentifier, 'code'],
-                    states: {
-                        hover: {
-                            borderColor: 'gray'
-                        }
-                    }
-                }],
-                tooltip: {
-                    useHTML: true,
-                    formatter: function () {
-                        if (this.point.options.tooltip) {
-                            var tooltip = $("<span>", {});
-                            $.each(this.point.options.tooltip, function (key, value) {
-                                tooltip.append(
-                                    $("<span>", {
-                                        text: key + " : " + value
-                                    })
-                                )
-                                tooltip.append($("<br>"))
-                            });
-                            var value = this.point.options.value == null ? ".." : this.point.options.value;
-                            tooltip.append(
-                                $("<span>", {
-                                    text: value == ".." ? app.label.static["value"] + " : " + app.library.utility.formatNumber(value) + " (" + app.label.static["confidential"] + ")" : app.label.static["value"] + " : " + app.library.utility.formatNumber(value)
-                                })
-                            )
-                            return tooltip.get(0).innerHTML;
-                        }
-                        else {
-                            return app.label.static["not-available"]
-                        }
-                    },
-                },
-                exporting: {
-                    buttons: {
-                        contextButton: {
-                            menuItems: buttons.slice(3, 5)
-                        }
-                    },
-                    allowHTML: true,
-                    filename: data.label.replace(/ /g, "_").toLowerCase() + '.' + moment(Date.now()).format(app.config.mask.datetime.file),
-                    chartOptions: {
-                        title: {
-                            text: chartTitle
-                        }
-                    }
-                }
-            });
-        });
-    }
-    // Handle Exception
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+    pxWidget.draw.init(C_APP_PXWIDGET_TYPE_MAP, "pxwidget-map", app.data.dataset.map.configuration, function () {
+        app.data.dataset.map.snippetConfig = {};
+        $.extend(true, app.data.dataset.map.snippetConfig, pxWidget.draw.params["pxwidget-map"]);
+        app.data.dataset.map.renderSnippet();
+    });
 }
+
+app.data.dataset.map.renderSnippet = function () {
+    var snippet = app.config.entity.data.snippet;
+    var config = $.extend(true, {}, app.data.dataset.map.snippetConfig);
+    config.autoupdate = $("#data-dataset-map-accordion-collapse-widget").find("[name=auto-update]").is(':checked');
+    config.link = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
+    config.copyright = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-copyright]").is(':checked');
+
+    if ($("#data-dataset-map-accordion-collapse-widget").find("[name=include-title]").is(':checked')) {
+        config.title = app.data.dataset.metadata.jsonStat.label.trim();
+    }
+
+    if ($("#data-dataset-map-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {
+        $.each(config.data.datasets, function (key, value) {
+            value.api.response = {};
+        });
+
+    } else {
+        $.each(config.data.datasets, function (key, value) {
+            value.api.query = {};
+        });
+    }
+
+    //add custom JSON
+    try {
+        var customOptions = JSON.parse($("#data-dataset-map-accordion [name=custom-config]").val().trim());
+        $.extend(true, config, customOptions);
+        $("#data-dataset-map-accordion [name=invalid-json-object]").hide();
+    } catch (err) {
+        $("#data-dataset-map-accordion [name=invalid-json-object]").show();
+    }
+
+    snippet = snippet.sprintf([C_APP_URL_PXWIDGET_ISOGRAM, C_APP_PXWIDGET_TYPE_MAP, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(config)]);
+
+    $("#data-dataset-map-accordion-snippet-code").hide().text(snippet.trim()).fadeIn();
+    Prism.highlightAll();
+};
 
 app.data.dataset.map.buildApiParams = function () {
     var localParams = {
@@ -259,3 +190,19 @@ app.data.dataset.map.buildApiParams = function () {
     //extend apiParams with local params
     $.extend(true, app.data.dataset.map.apiParamsData, localParams);
 };
+
+app.data.dataset.map.formatJson = function () {
+    $("#data-dataset-map-accordion [name=invalid-json-object]").hide();
+    if ($("#data-dataset-map-accordion [name=custom-config]").val().trim().length) {
+        var ugly = $("#data-dataset-map-accordion [name=custom-config]").val().trim();
+        var obj = null;
+        var pretty = null;
+        try {
+            obj = JSON.parse(ugly);
+            pretty = JSON.stringify(obj, undefined, 4);
+            $("#data-dataset-map-accordion [name=custom-config]").val(pretty);
+        } catch (err) {
+            $("#data-dataset-map-accordion [name=invalid-json-object]").show();
+        }
+    }
+}

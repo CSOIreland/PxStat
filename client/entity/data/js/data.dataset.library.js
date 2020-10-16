@@ -8,11 +8,40 @@ app.data.dataset = {};
 app.data.dataset.ajax = {};
 app.data.dataset.callback = {};
 app.data.dataset.variables = {};
+app.data.dataset.format = {};
+app.data.dataset.format.response = {};
 app.data.dataset.metadata = {};
 app.data.dataset.metadata.response = null;
 app.data.dataset.metadata.jsonStat = null;
 
 //#endregion
+app.data.dataset.draw = function () {
+    app.data.dataset.ajax.readformat();
+    app.data.dataset.ajax.readMetadata();
+}
+
+app.data.dataset.ajax.readformat = function () {
+    if ($.isEmptyObject(app.data.dataset.format.response)) {
+        api.ajax.jsonrpc.request(
+            app.config.url.api.jsonrpc.public,
+            "PxStat.System.Settings.Format_API.Read",
+            {
+                "LngIsoCode": app.data.LngIsoCode,
+                "FrmDirection": C_APP_TS_FORMAT_DIRECTION_DOWNLOAD
+            },
+            "app.data.dataset.callback.readformat"
+        );
+    }
+}
+
+app.data.dataset.callback.readformat = function (result) {
+    if (result && Array.isArray(result) && result.length) {
+        // Store for later use
+        app.data.dataset.format.response = result;
+    }
+    // Handle exception
+    else api.modal.exception(app.label.static["api-ajax-exception"]);
+}
 
 /**
 * 
@@ -20,7 +49,7 @@ app.data.dataset.metadata.jsonStat = null;
 app.data.dataset.ajax.readMetadata = function () {
     if (app.data.isLive) {
         api.ajax.jsonrpc.request(
-            app.config.url.api.public,
+            app.config.url.api.jsonrpc.public,
             "PxStat.Data.Cube_API.ReadMetadata",
             {
                 "matrix": app.data.MtrCode,
@@ -38,7 +67,7 @@ app.data.dataset.ajax.readMetadata = function () {
             { async: false });
     }
     else {
-        api.ajax.jsonrpc.request(app.config.url.api.private,
+        api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
             "PxStat.Data.Cube_API.ReadPreMetadata",
             {
                 "release": app.data.RlsCode,
@@ -91,30 +120,43 @@ app.data.dataset.callback.readMetadata = function (response) {
                 }]);
             };
 
-            if (!app.data.isModal) {
-                app.data.dataset.callback.readMatrixNotes();
-            }
             app.data.dataset.callback.drawDatasetHeading();
 
+            if (app.data.isModal) {
+                $('#data-view-modal').modal('show');
+            } else {
+                app.data.dataset.callback.readMatrixNotes();
+            }
         }
         // Handle Exception
         else api.modal.exception(app.label.static["api-ajax-exception"]);
-        //load tabs 
-        //table
+
+        //table tab
         api.content.load("#data-dataset-table-nav-content", "entity/data/index.dataset.table.html");
-        //chart
+
+        //chart tab
         if (app.config.entity.data.chart.enabled) {
             $("#data-dataset-chart-nav-tab").show();
-            api.content.load("#data-dataset-chart-nav-content", "entity/data/index.dataset.chart.html");
+
+            $('#data-dataset-chart-nav-tab').on('show.bs.tab', function (e) {
+                if (!$("#data-dataset-chart-nav-content").html()) {
+                    api.content.load("#data-dataset-chart-nav-content", "entity/data/index.dataset.chart.html");
+                }
+            });
         }
         else {
             $("#data-dataset-chart-nav-tab").hide();
             $("#data-dataset-chart-nav-content").empty()
         }
-        //map
-        if (app.data.dataset.metadata.jsonStat.role.geo && app.config.plugin.highcharts.enabled) {
+        //map tab
+        if (app.data.dataset.metadata.jsonStat.role.geo) {
             $("#data-dataset-map-nav-tab").show();
-            api.content.load("#data-dataset-map-nav-content", "entity/data/index.dataset.map.html");
+
+            $('#data-dataset-map-nav-tab').on('show.bs.tab', function (e) {
+                if (!$("#data-dataset-map-nav-content").html()) {
+                    api.content.load("#data-dataset-map-nav-content", "entity/data/index.dataset.map.html");
+                }
+            });
         }
         else {
             $("#data-dataset-map-nav-tab").hide();
@@ -127,8 +169,23 @@ app.data.dataset.callback.readMetadata = function (response) {
 
         $("#data-dataset-selected-table .tab-content").removeClass("show active");
         $("#data-dataset-table-nav-content").addClass("show active");
-    } else
+    } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+
+    // Load PxWidget ISOGRAM dynamically and sncronously to avoid race-conditions
+    /*
+    if (typeof pxWidget === "undefined") {
+        jQuery.ajax({
+            "url": C_APP_URL_PXWIDGET_ISOGRAM,
+            "dataType": "script",
+            "async": false,
+            "error": function (jqXHR, textStatus, errorThrown) {
+                api.modal.exception(app.label.static["api-ajax-exception"]);
+            }
+        });
+    }
+    */
 };
 
 app.data.dataset.callback.drawDatasetHeading = function () {
@@ -161,7 +218,7 @@ app.data.dataset.callback.drawDatasetHeading = function () {
         matrixSelectionHeading.find("[name=exceptional-flag]").removeClass("d-none");
     }
     //geo flag
-    if (data.role.geo && app.config.plugin.highcharts.enabled) {
+    if (data.role.geo) {
         matrixSelectionHeading.find("[name=geo-flag]").removeClass("d-none");
         matrixSelectionHeading.find("[name=map-header]").removeClass("d-none");
     }
@@ -176,10 +233,6 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     //archive flag
     if (data.extension.archive) {
         matrixSelectionHeading.find("[name=archive-flag], [name=archive-header]").removeClass("d-none");
-    }
-    //dependency flag
-    if (data.extension.dependency) {
-        matrixSelectionHeading.find("[name=dependency-flag]").removeClass("d-none");
     }
     //reservation flag
     if (data.extension.reservation) {
@@ -318,7 +371,7 @@ app.data.dataset.callback.readMatrixNotes = function () {
 
 app.data.dataset.ajax.format = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.public,
+        app.config.url.api.jsonrpc.public,
         "PxStat.System.Settings.Format_API.Read",
         {
             "FrmDirection": C_APP_TS_FORMAT_DIRECTION_DOWNLOAD
@@ -377,7 +430,7 @@ app.data.dataset.callback.fullDownload = function (format, version) {
 app.data.dataset.ajax.downloadDataset = function (apiParams) {
     if (app.data.isLive) {
         api.ajax.jsonrpc.request(
-            app.config.url.api.public,
+            app.config.url.api.jsonrpc.public,
             "PxStat.Data.Cube_API.ReadDataset",
             apiParams,
             "app.data.dataset.callback.downloadDataset",
@@ -388,7 +441,7 @@ app.data.dataset.ajax.downloadDataset = function (apiParams) {
     }
     else {
         api.ajax.jsonrpc.request(
-            app.config.url.api.private,
+            app.config.url.api.jsonrpc.private,
             "PxStat.Data.Cube_API.ReadPreDataset",
             apiParams,
             "app.data.dataset.callback.downloadDataset",

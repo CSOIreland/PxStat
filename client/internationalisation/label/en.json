@@ -32,9 +32,11 @@
 		"alerts": "Alerts",
 		"all-groups": "All Groups",
 		"all-periods": "All Periods",
+		"allow-non-essential-cookies": "Allow non-essential Cookies",
 		"allowed": "allowed",
 		"allowed-file-formats": "Allowed File Formats",
 		"allowed-languages": "Allowed Languages",
+		"alphabetical": "Alphabetical",
 		"amendments": "Amendments",
 		"analytical": "Analytical",
 		"analytics": "Analytics",
@@ -109,6 +111,7 @@
 		"contact-name": "Contact Name",
 		"contact-phone": "Contact Phone",
 		"consider-rollback": "Please consider the <b>Rollback</b> to re-publish the previous Version where applicable.",
+		"cookie-message": "This website uses cookies to improve your experience.",
 		"copy": "Copy",
 		"copy-to-clipboard": "Copy to Clipboard",
 		"copyright": "Copyright",
@@ -128,7 +131,7 @@
 		"create-success": "The file has been successfully created.",
 		"create-reset-dimension": "You are about to reset all Dimensions. </br>Are you sure you want to continue?",
 		"csv": "CSV",
-		"custom-JSON-configuration": "Custom JSON configuration",
+		"custom-JSON": "Custom JSON",
 		"daily": "Daily",
 		"dashboard": "Dashboard",
 		"data": "Data",
@@ -143,7 +146,6 @@
 		"delete-statistics": "Delete All Statistics",
 		"deleted-release": "It is not possible to recover a deleted Release.",
 		"deletions": "Deletions",
-		"dependency": "Dependency",
 		"description": "Description",
 		"details": "Details",
 		"dimension": "Dimension",
@@ -201,7 +203,6 @@
 		"groups": "Groups",
 		"quarterly": "Quarterly",
 		"half-yearly": "Half Yearly",
-		"highcharts-licensing": "For Highcharts licensing options please refer to ",
 		"historical": "Historical",
 		"hits": "Hits",
 		"hits-over-time": "Hits Over Time",
@@ -230,6 +231,8 @@
 		"keyword": "Keyword",
 		"keyword :": "Keyword :",
 		"keywords": "Keywords",
+		"labels": "Labels",
+		"labels-and-unit": "Labels and Unit",
 		"language": "Language",
 		"languages": "Languages",
 		"last-7-days": "Last 7 Days",
@@ -252,6 +255,7 @@
 		"lookup": "Lookup",
 		"m2m": "M2M",
 		"manage": "Manage",
+		"manage-cookies": "Manage Cookies",
 		"mandatory": "Mandatory",
 		"manual": "Manual",
 		"map": "Map",
@@ -318,8 +322,8 @@
 		"reason-code": "Reason Code",
 		"reasons": "Reasons",
 		"reasons-to-publish": "Reasons to Publish",
-		"records-to-be-ignored": "Records to be ignored",
-		"records-to-be-updated": "Records to be updated",
+		"records-to-be-ignored": "Invalid records to be ignored",
+		"records-to-be-updated": "Valid records to be updated",
 		"referrer": "Referrer",
 		"registered": "Registered",
 		"reject": "Reject",
@@ -483,6 +487,7 @@
 		"confirm-delete-periods": "Are you sure you want to delete all the Periods for the language <b>{0}</b>?",
 		"confirm-delete-statistics": "Are you sure you want to delete all the Statistics for the language <b>{0}</b>?",
 		"confirm-preview": "You are about to preview a large file of <b>{0}</b>. Depending on your device performance, this may cause your browser to become unresponsive. </br>Confirm to continue, or Cancel.",
+		"confirm-update-csv-download": "You are about to download a large file of <b>{0}</b> rows. Depending on your device performance, this may cause your browser to become unresponsive. </br><b>Confirm</b> to continue or <b>Cancel</b> and select a smaller number of periods.",
 		"confirm-read": "You are about to display a large selection of <b>{0}</b> records which may cause your browser to become unresponsive.</br> </br><b>Confirm</b> to continue, <b>Cancel</b> and make a smaller selection or <b>Download Results</b> to save your selection.",
 		"create-dimension-code": "A duplicate Dimension code has been detected for the language <b>{0}</b>. </br>Please review the Dimension codes.",
 		"create-dimension-value": "A duplicate Dimension value has been detected for the language <b>{0}</b>. </br>Please review the Dimension values.",
@@ -549,46 +554,6 @@
 				"sortDescending": ": activate to sort column descending"
 			}
 		},
-		"highcharts": {
-			"lang": {
-				"contextButtonTitle": "Chart context menu",
-				"printChart": "Print Chart",
-				"downloadCSV": "Download CSV",
-				"downloadJPEG": "Download JPEG Image",
-				"downloadPDF": "Download PDF Document",
-				"downloadPNG": "Download PNG Image",
-				"downloadSVG": "Download SVG Vector Image",
-				"downloadXLS": "Download XLS",
-				"openInCloud": "Open in Highcharts Cloud",
-				"viewData": "View Data Table",
-				"viewFullscreen": "View in Full Screen",
-				"resetZoom": "Reset Zoom",
-				"resetZoomTitle": "Reset Zoom Level 1:1",
-				"months": [
-					"January",
-					"February",
-					"March",
-					"April",
-					"May",
-					"June",
-					"July",
-					"August",
-					"September",
-					"October",
-					"November",
-					"December"
-				],
-				"weekdays": [
-					"Sunday",
-					"Monday",
-					"Tuesday",
-					"Wednesday",
-					"Thursday",
-					"Friday",
-					"Saturday"
-				]
-			}
-		},
 		"daterangepicker": {
 			"format": "DD/MM/YYYY HH:mm:ss",
 			"separator": " - ",
@@ -636,15 +601,6 @@
 			"Cancel": "Cancel",
 			"Save": "Save",
 			"Close": "Close"
-		},
-		"cookieConsent": {
-			"content": {
-				"message": "The website uses cookies to improve your experience and to monitor the site traffic.",
-				"link": "Privacy Policy",
-				"allow": "Accept",
-				"deny": "Reject",
-				"policy": "Cookies"
-			}
 		}
 	},
 	"datamodel": {

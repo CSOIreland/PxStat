@@ -132,7 +132,7 @@ app.build.update.dimension.drawClassification = function (lngIsoCode) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        if (row.ClsGeoUrl && app.config.plugin.highcharts.enabled) {
+                        if (row.ClsGeoUrl) {
                             return app.library.html.link.geoJson({ "geojson-url": row.ClsGeoUrl, "cls-value": row.ClsValue, "cls-code": row.ClsCode }, row.ClsGeoUrl);
                         }
                         else if (row.ClsGeoUrl) {

@@ -43,7 +43,7 @@ app.logging.ajax.read = function () {
     var datePicker = $("#logging-input").find("[name=input-date-range]").data('daterangepicker');
     var start = moment(datePicker.startDate).format(app.config.mask.datetime.ajax);
     var end = moment(datePicker.endDate).format(app.config.mask.datetime.ajax);
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Logging.Logging_API.Read",
         {
             "LggDatetimeStart": start,

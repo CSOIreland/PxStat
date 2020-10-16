@@ -16,7 +16,7 @@ app.tracing.callback = {};
  */
 app.tracing.ajax.readType = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Trace_API.ReadType",
         {},
         "app.tracing.callback.readType");
@@ -82,7 +82,7 @@ app.tracing.ajax.read = function () {
     var datePicker = $("#tracing-input").find("[name=input-date-range]").data('daterangepicker');
     var start = moment(datePicker.startDate).format(app.config.mask.datetime.ajax);
     var end = moment(datePicker.endDate).format(app.config.mask.datetime.ajax);
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Trace_API.Read",
         {
             "StartDate": start,

@@ -11,11 +11,14 @@ app.data.dataset.chart.ajax = {};
 app.data.dataset.chart.callback = {};
 app.data.dataset.chart.validation = {};
 app.data.dataset.chart.configuration = {};
+app.data.dataset.chart.snippetConfig = {
+
+};
 app.data.dataset.chart.template = {};
 app.data.dataset.chart.template.wrapper = {
+    "autoupdate": null,
     "type": null,
-    "autoupdate": true,
-    "copyright": true,
+    "copyright": false,
     "link": null,
     "metadata": {},
     "data": {
@@ -23,7 +26,7 @@ app.data.dataset.chart.template.wrapper = {
         "datasets": [],
         "null": app.config.entity.data.datatable.null
     },
-    "options": app.config.plugin.chartJs.options
+    "options": app.config.plugin.chartJs.options.chart
 };
 
 app.data.dataset.chart.template.metadata = {
@@ -198,7 +201,7 @@ app.data.dataset.chart.setLegendPosition = function () {
         "text": app.label.static["none"]
     }))
     $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").prop("disabled", false);
-    $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").val(app.config.plugin.chartJs.options.legend.position);
+    $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").val(app.config.plugin.chartJs.options.chart.legend.position);
 
     $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").once('change', function () {
         app.data.dataset.chart.resetChart();
@@ -299,7 +302,7 @@ app.data.dataset.chart.buildXAxisSelect = function () {
 
             if ((value.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
                 //variable is valid, append to select if not already selected
-                if (!select.find("option[value=" + key + "]").is(':selected')) {
+                if (!select.find("option[value='" + key + "']").is(':selected')) {
                     select.append($('<option>', {
                         "value": key,
                         "title": value,
@@ -578,7 +581,7 @@ app.data.dataset.chart.addSeries = function () {
 
             if ((value.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
                 //variable is valid, append to select if not already selected
-                if (!select.find("option[value=" + key + "]").is(':selected')) {
+                if (!select.find("option[value='" + key + "']").is(':selected')) {
                     select.append($('<option>', {
                         "value": key,
                         "title": value,
@@ -697,17 +700,18 @@ app.data.dataset.chart.deleteSeries = function (series) {
 }
 
 app.data.dataset.chart.formatJson = function () {
-    $("#data-dataset-chart-accordion-options-collapse [name=invalid-json-object]").hide();
-    if ($("#data-dataset-chart-accordion-options-collapse [name=custom-config]").val().trim().length) {
-        var ugly = $("#data-dataset-chart-accordion-options-collapse [name=custom-config]").val().trim();
+    $("#data-dataset-chart-snippet-code [name=invalid-json-object]").hide();
+    if ($("#data-dataset-chart-snippet-code [name=custom-config]").val().trim().length) {
+        var ugly = $("#data-dataset-chart-snippet-code [name=custom-config]").val().trim();
         var obj = null;
         var pretty = null;
         try {
             obj = JSON.parse(ugly);
             pretty = JSON.stringify(obj, undefined, 4);
-            $("#data-dataset-chart-accordion-options-collapse [name=custom-config]").val(pretty);
+            $("#data-dataset-chart-snippet-code [name=custom-config]").val(pretty);
+            app.data.dataset.chart.renderSnippet();
         } catch (err) {
-            $("#data-dataset-chart-accordion-options-collapse [name=invalid-json-object]").show();
+            $("#data-dataset-chart-snippet-code [name=invalid-json-object]").show();
         }
     }
 }
@@ -718,7 +722,7 @@ app.data.dataset.chart.formatJson = function () {
 app.data.dataset.chart.buildChartConfig = function (scroll) {
     $('#data-dataset-chart-errors').find("[name=errors]").empty();
     $('#data-dataset-chart-errors').hide();
-    $("canvas").remove();
+    $("#data-dataset-chart-accordion-series-collapse canvas").remove();
 
     app.data.dataset.chart.configuration = {};
     $.extend(true, app.data.dataset.chart.configuration, app.data.dataset.chart.template.wrapper);
@@ -780,24 +784,20 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
     if (app.data.isLive) {
         app.data.dataset.chart.configuration.metadata.api.query.data.params.matrix = app.data.MtrCode;
-        app.data.dataset.chart.configuration.metadata.api.query.url = app.config.url.api.public;
+        app.data.dataset.chart.configuration.metadata.api.query.url = app.config.url.api.jsonrpc.public;
         app.data.dataset.chart.configuration.metadata.api.query.data.method = "PxStat.Data.Cube_API.ReadMetadata";
         delete app.data.dataset.chart.configuration.metadata.api.query.data.params.release;
     }
     else {
         app.data.dataset.chart.configuration.metadata.api.query.data.params.release = app.data.RlsCode;
-        app.data.dataset.chart.configuration.metadata.api.query.url = app.config.url.api.private;
+        app.data.dataset.chart.configuration.metadata.api.query.url = app.config.url.api.jsonrpc.private;
         app.data.dataset.chart.configuration.metadata.api.query.data.method = "PxStat.Data.Cube_API.ReadPreMetadata";
         delete app.data.dataset.chart.configuration.metadata.api.query.data.params.matrix;
     }
 
     app.data.dataset.chart.configuration.type = $("#data-dataset-chart-properties").find("[name=type]").val() == "mixed" ? "bar" : $("#data-dataset-chart-properties").find("[name=type]").val();
-    app.data.dataset.chart.configuration.options.title.text.push(app.data.dataset.metadata.jsonStat.label.trim());
 
     app.data.dataset.chart.configuration.metadata.api.query.data.params.language = app.data.LngIsoCode;
-    app.data.dataset.chart.configuration.autoupdate = $("#data-dataset-chart-snippet-code").find("[name=auto-update]").is(':checked');
-    app.data.dataset.chart.configuration.copyright = $("#data-dataset-chart-accordion-options-collapse").find("[name=include-copyright]").is(':checked');
-    app.data.dataset.chart.configuration.link = $("#data-dataset-chart-accordion-options-collapse").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
 
     var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("select:enabled").attr("idn");
     var errors = [];
@@ -819,13 +819,13 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
         $.extend(true, thisDataset, app.data.dataset.chart.template.dataset);
         if (app.data.isLive) {
             thisDataset.api.query.data.params.extension.matrix = app.data.MtrCode;
-            thisDataset.api.query.url = app.config.url.api.public;
+            thisDataset.api.query.url = app.config.url.api.jsonrpc.public;
             thisDataset.api.query.data.method = "PxStat.Data.Cube_API.ReadDataset";
             delete thisDataset.api.query.data.params.extension.release;
         }
         else {
             thisDataset.api.query.data.params.extension.release = app.data.RlsCode;
-            thisDataset.api.query.url = app.config.url.api.private;
+            thisDataset.api.query.url = app.config.url.api.jsonrpc.private;
             thisDataset.api.query.data.method = "PxStat.Data.Cube_API.ReadPreDataset";
             delete thisDataset.api.query.data.params.extension.matrix;
         }
@@ -882,10 +882,6 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
     });
 
-    //remove title is include title is false
-    if (!$("#data-dataset-chart-accordion-options-collapse").find("[name=include-title]").is(':checked')) {
-        app.data.dataset.chart.configuration.options.title.text.shift();
-    }
 
     if (!errors.length) {
         if ($("#data-dataset-chart-accordion-options-collapse").find("[name=xaxis-max-steps]").val().trim()) {
@@ -946,27 +942,14 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
         var numSeriesCategories = app.data.dataset.chart.configuration.metadata.xAxis[xAxisDimensionCode].length;
         app.data.dataset.chart.configuration.options.plugins.colorschemes.scheme = numSeriesCategories <= 10 ? "tableau.Tableau10" : "tableau.Tableau20";
     }
-    //add custom options ALWAYS LAST
-    if (!errors.length) {
-        //check and validate custom code
-        if ($("#data-dataset-chart-accordion-options-collapse [name=custom-config]").val().trim().length) {
-            try {
-                var customOptions = JSON.parse($("#data-dataset-chart-accordion-options-collapse [name=custom-config]").val().trim());
-                $.extend(true, app.data.dataset.chart.configuration, customOptions);
-                $("#data-dataset-chart-accordion-options-collapse [name=invalid-json-object]").hide();
-            } catch (err) {
-                errors.push(app.label.static["chart-error-invalid-json"]);
-                $("#data-dataset-chart-accordion-options-collapse").collapse('show');
-                $("#data-dataset-chart-accordion-options-collapse [name=invalid-json-object]").show();
-            }
-        }
-    }
 
     if (!errors.length) {
         $("#data-dataset-chart-render, #data-dataset-chart-snippet-code").show();
-        pxWidget.draw.init(C_APP_PXWIDGET_TYPE_CHART, "pxwidget999999999", app.data.dataset.chart.configuration, function () {
+        pxWidget.draw.init(C_APP_PXWIDGET_TYPE_CHART, "pxwidget-chart", app.data.dataset.chart.configuration, function () {
             // Render the Snippet
-            app.data.dataset.chart.renderSnippet(pxWidget.draw.params["pxwidget999999999"]);
+            app.data.dataset.chart.snippetConfig = {};
+            $.extend(true, app.data.dataset.chart.snippetConfig, pxWidget.draw.params["pxwidget-chart"]);
+            app.data.dataset.chart.renderSnippet();
         });
 
         if (scroll) {
@@ -1006,9 +989,42 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
     }
 }
 
-app.data.dataset.chart.renderSnippet = function (params) {
+app.data.dataset.chart.renderSnippet = function () {
     var snippet = app.config.entity.data.snippet;
-    snippet = snippet.sprintf([C_APP_URL_PXWIDGET_ISOGRAM, C_APP_PXWIDGET_TYPE_CHART, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(params)]);
+    var config = $.extend(true, {}, app.data.dataset.chart.snippetConfig);
+    config.autoupdate = $("#data-dataset-chart-snippet-code").find("[name=auto-update]").is(':checked');
+    config.link = $("#data-dataset-chart-snippet-code").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
+    config.copyright = $("#data-dataset-chart-snippet-code").find("[name=include-copyright]").is(':checked');
+    if (!$("#data-dataset-chart-snippet-code").find("[name=include-title]").is(':checked')) {
+        config.options.title.text.shift();
+    }
+    else {
+        config.options.title.text.push(app.data.dataset.metadata.jsonStat.label.trim());
+    }
+    if ($("#data-dataset-chart-snippet-code").find("[name=auto-update]").is(':checked')) {
+        config.metadata.api.response = {};
+        $.each(config.data.datasets, function (key, value) {
+            value.api.response = {};
+        });
+    } else {
+        config.metadata.api.query = {};
+        $.each(config.data.datasets, function (key, value) {
+            value.api.query = {};
+        });
+
+    }
+
+    //add custom JSON
+    try {
+        var customOptions = JSON.parse($("#data-dataset-chart-snippet-code [name=custom-config]").val().trim());
+        $.extend(true, config, customOptions);
+        $("#data-dataset-chart-snippet-code [name=invalid-json-object]").hide();
+    } catch (err) {
+        $("#data-dataset-chart-accordion-options-collapse").collapse('show');
+        $("#data-dataset-chart-snippet-code [name=invalid-json-object]").show();
+    }
+
+    snippet = snippet.sprintf([C_APP_URL_PXWIDGET_ISOGRAM, C_APP_PXWIDGET_TYPE_CHART, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(config)]);
 
     $("#data-pxwidget-snippet-chart-code").hide().text(snippet.trim()).fadeIn();
     Prism.highlightAll();
@@ -1016,7 +1032,7 @@ app.data.dataset.chart.renderSnippet = function (params) {
 
 app.data.dataset.chart.resetChart = function () {
     //hide the chart
-    $("#pxwidget999999999, #data-pxwidget-snippet-chart-code").empty();
+    $("#pxwidget-chart, #data-pxwidget-snippet-chart-code").empty();
     $("#data-dataset-chart-render, #data-dataset-chart-snippet-code").hide();
 }
 
@@ -1024,14 +1040,14 @@ app.data.dataset.chart.resetAll = function () {
     //reset chart seriesId
     app.data.dataset.chart.seriesId = 0;
     //hide the chart
-    $("#pxwidget999999999, #data-pxwidget-snippet-chart-code").empty();
+    $("#pxwidget-chart, #data-pxwidget-snippet-chart-code").empty();
     $("#data-dataset-chart-render, #data-dataset-chart-snippet-code, #data-dataset-chart-accordion, #data-dataset-chart-errors").hide();
 
     //reset build card
     $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").empty();
     $("#data-dataset-chart-accordion-series-collapse").find("[name=series-tabs]").empty();
     $("#data-dataset-chart-accordion-series-collapse").find("[name=series-content]").empty();
-    $("#data-dataset-chart-accordion-options-collapse [name=custom-config]").val("");
+    $("#data-dataset-chart-snippet-code [name=custom-config]").val("");
 
     //disable add series accordion and view button
     $("#data-dataset-chart-accordion-series-heading button").prop("disabled", true);

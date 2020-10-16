@@ -24,7 +24,7 @@ app.release.information.read = function () {
 */
 app.release.information.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.Read",
         { RlsCode: app.release.RlsCode },
         "app.release.information.callback.read",
@@ -105,18 +105,6 @@ app.release.information.render = function (data) {
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle(data.RlsAnalyticalFlag ? "on" : "off");
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle('disable');
 
-        // Initiate toggle buttons
-        $("#release-information [name=rls-dependency-flag]").off("change");
-        $("#release-information [name=rls-dependency-flag]").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["true"],
-            off: app.label.static["false"],
-            onstyle: "light",
-            offstyle: "neutral",
-            width: C_APP_TOGGLE_LENGTH
-        });
-        $("#release-information [name=rls-dependency-flag]").bootstrapToggle(data.RlsDependencyFlag ? "on" : "off");
-        $("#release-information [name=rls-dependency-flag]").bootstrapToggle('disable');
-
         // Disable the ability to set the navigation
         $("#release-information [name=navigation]").attr("disabled", true);
     }
@@ -131,17 +119,6 @@ app.release.information.render = function (data) {
         });
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle(data.RlsAnalyticalFlag ? "on" : "off");
         $("#release-information [name=rls-analytical-flag]").once("change", app.release.information.ajax.updateAnalyticalFlag);
-
-        $("#release-information [name=rls-dependency-flag]").off("change");
-        $("#release-information [name=rls-dependency-flag]").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["true"],
-            off: app.label.static["false"],
-            onstyle: "success",
-            offstyle: "warning",
-            width: C_APP_TOGGLE_LENGTH
-        });
-        $("#release-information [name=rls-dependency-flag]").bootstrapToggle(data.RlsDependencyFlag ? "on" : "off");
-        $("#release-information [name=rls-dependency-flag]").once("change", app.release.information.ajax.updateDependencyFlag);
 
         // Enable the ability to set the navigation
         $("#release-information [name=update-navigation]").attr("disabled", false);
@@ -158,7 +135,7 @@ app.release.information.render = function (data) {
 */
 app.release.information.ajax.updateAnalyticalFlag = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.UpdateAnalyticalFlag",
         { "RlsCode": app.release.RlsCode, "RlsAnalyticalFlag": $("#release-information [name=rls-analytical-flag]").prop("checked") },
         "app.release.information.callback.updateAnalyticalFlag",
@@ -178,30 +155,6 @@ app.release.information.callback.updateAnalyticalFlag = function (data) {
     }
 };
 
-/**
-* 
-*/
-app.release.information.ajax.updateDependencyFlag = function () {
-    api.ajax.jsonrpc.request(
-        app.config.url.api.private,
-        "PxStat.Data.Release_API.UpdateDependencyFlag",
-        { "RlsCode": app.release.RlsCode, "RlsDependencyFlag": $("#release-information [name=rls-dependency-flag]").prop("checked") },
-        "app.release.information.callback.updateDependencyFlag",
-        null,
-        null,
-        null,
-        { async: false });
-};
 
-/**
-* 
-* @param {*} data
-*/
-app.release.information.callback.updateDependencyFlag = function (data) {
-    if (data == C_APP_API_SUCCESS) {
-        api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
-    } else {
-        api.modal.exception(app.label.static["api-ajax-exception"]);
-    }
-};
+
 //#endregion

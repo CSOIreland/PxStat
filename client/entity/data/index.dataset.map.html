@@ -1,6 +1,113 @@
 <div name="map-container" class="row">
-    <div name="dimension-containers" class="col-sm-6"></div>
-    <div name="highmap-container" class="col-sm-6"></div>
+    <div name="dimension-containers" class="col-sm-4"></div>
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-body p-2">
+                <div id="pxwidget-map" class="pxwidget">
+                </div>
+            </div>
+            <div class="card-footer text-right">
+                <a class="btn btn-primary" name="download-chart" href="#" role="button"><i class="fas fa-download"></i> <span label="download"></span></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion mt-2 col-sm-12" id="data-dataset-map-accordion">
+        <div class="card">
+            <div class="card-header" id="data-dataset-map-accordion-heading-widget">
+                <h2 class="mb-0">
+                    <button class="btn btn-link px-2" data-toggle="collapse" data-target="#data-dataset-map-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-map-accordion-collapse-widget">
+                        <i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="widget"></span>
+                    </button>
+                </h2>
+            </div>
+            <div id="data-dataset-map-accordion-collapse-widget" class="collapse" aria-labelledby="data-dataset-map-accordion-heading-widget" data-parent="#data-dataset-map-accordion">
+                <div class="card-body">
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="auto-update"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="copyright"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="include-copyright" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="link"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="include-link" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="title"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="include-title" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span label="custom-JSON"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <textarea class="form-control" name="custom-config" rows="3"></textarea>
+                            <div name="invalid-json-object" class="row text-danger" style="display: none;">
+                                <div class="col " label="invalid-json-object"></div>
+                            </div>
+                            <div name="valid-json-object" class="row text-primary" style="display: none;">
+                                <div class="col " label="valid"></div>
+                            </div>
+
+                            <button type="button" name="add-custom-configuration" class="btn btn-outline-primary btn-sm mt-2">
+                                <i class="fas fa-code"></i> <span label="validate"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-right border-left row mx-0" name="make-selection-message" style="display: none;">
+                        <div class="bg-info text-light border-right col p-2">
+                            <span label="widget-make-selection"></span>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-right border-left row mx-0" name="wip-widget-warning" style="display: none;">
+                        <div class="bg-warning border-right col p-2">
+                            <span label="wip-widget-warning"></span>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                            <span class="clearfix" label="snippet-code"></span>
+                            <i name="copy-snippet-code" class="far fa-copy fa-2x mt-2" data-toggle="tooltip" data-clipboard-target="#data-dataset-map-accordion-snippet-code" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" data-original-title="" label-tooltip="copy-to-clipboard"></i>
+                        </div>
+                        <div class="col-8 p-0">
+                            <pre class="line-numbers language-markup m-0"><code id="data-dataset-map-accordion-snippet-code"></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="border-top row mx-0"></div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 </div>
 
 <div id="data-dataset-map-templates" style="display: none">

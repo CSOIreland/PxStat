@@ -47,7 +47,7 @@ app.build.update.upload.file.content.data.size = null;
  */
 app.build.update.upload.ajax.matrixLookup = function () {
     // Change app.config.language.iso.code to the selected one
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
         null,
         "app.build.update.upload.callback.matrixLookup");
@@ -396,8 +396,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             readerUTF8.onload = function (e) {
                 app.build.update.upload.file.content.data.JSON = Papa.parse(e.target.result, {
                     header: true,
-                    skipEmptyLines: true,
-                    quotes: true
+                    skipEmptyLines: true
                 });
             };
             readerUTF8.readAsText(file);
@@ -427,10 +426,9 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 /**
  *
  */
-app.build.update.upload.validate.ajax.read = function (callback, unitsPerSecond) {
-
+app.build.update.upload.validate.ajax.read = function (params) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.Validate",
         {
             "FrqCodeTimeval": app.build.update.upload.FrqCode,
@@ -438,7 +436,7 @@ app.build.update.upload.validate.ajax.read = function (callback, unitsPerSecond)
             "MtrInput": app.build.update.upload.file.content.source.Base64,
             "LngIsoCode": app.label.language.iso.code
         },
-        callback,
+        params.callback,
         null,
         null,
         null,
@@ -448,7 +446,7 @@ app.build.update.upload.validate.ajax.read = function (callback, unitsPerSecond)
         }
     );
     // Add the progress bar
-    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.update.upload.file.content.source.Base64.length, unitsPerSecond));
+    api.spinner.progress.start(api.spinner.progress.getTimeout(app.build.update.upload.file.content.source.Base64.length, params.unitsPerSecond));
 };
 
 /**
@@ -497,44 +495,12 @@ app.build.update.upload.validate.callback.downloadDataTemplate = function (data)
     else api.modal.exception(app.label.static["api-ajax-exception"]);
 }
 
-/**
- * 
- */
-app.build.update.upload.validate.callback.downloadAllData = function (data) {
-    // N.B. This is a silent validation to catch hacks only
-    if (data && data.Signature) {
-        // Store for later use
-        app.build.update.upload.Signature = data.Signature;
 
-        var params = {
-            "MtrInput": app.build.update.upload.file.content.source.Base64,
-            "FrqValueTimeval": app.build.update.upload.FrqValue,
-            "FrqCodeTimeval": app.build.update.upload.FrqCode,
-            "Signature": app.build.update.upload.Signature,
-            "Dimension": []
-        };
-
-        //get new periods
-        $.each(app.build.update.data.Dimension, function (index, dimension) {
-            var language = {
-                "LngIsoCode": dimension.LngIsoCode,
-                "Frequency": {
-                    "Period": []
-                }
-            }
-            language.Frequency.Period = dimension.Frequency.Period;
-            params.Dimension.push(language);
-        });
-
-        app.build.update.ajax.downloadAllData(params);
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-}
 
 /**
  * 
  */
-app.build.update.upload.validate.callback.downloadNewData = function (data) {
+app.build.update.upload.validate.callback.downloadData = function (data) {
     // N.B. This is a silent validation to cathc hacks only
     if (data && data.Signature) {
         // Store for later use
@@ -545,52 +511,32 @@ app.build.update.upload.validate.callback.downloadNewData = function (data) {
             "FrqValueTimeval": app.build.update.upload.FrqValue,
             "FrqCodeTimeval": app.build.update.upload.FrqCode,
             "Signature": app.build.update.upload.Signature,
+            "Labels": $("#build-update-download-csv-file [name=labels]").is(":checked"),
             "Dimension": []
         };
+        var dimension =
+        {
+            "LngIsoCode": app.config.language.iso.code,
 
-        //get new periods
-        $.each(app.build.update.data.Dimension, function (index, dimension) {
-            var language = {
-                "LngIsoCode": dimension.LngIsoCode,
-                "Frequency": {
-                    "Period": []
+            "Frequency": {
+                "FrqValue": $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val(),
+                "Period": []
+            }
+        }
+
+        $("#build-update-download-csv-file select").find('option:selected').each(function () {
+            dimension.Frequency.Period.push(
+                {
+                    "PrdCode": $(this).val(),
+                    "PrdValue": $(this).text()
                 }
-            }
-            language.Frequency.Period = dimension.Frequency.Period;
-            params.Dimension.push(language);
+            )
+
         });
-
-        app.build.update.ajax.downloadNewData(params);
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
-}
-
-/**
- * 
- */
-app.build.update.upload.validate.callback.downloadExistingData = function (data) {
-    // N.B. This is a silent validation to cathc hacks only
-    if (data && data.Signature) {
-        // Store for later use
-        app.build.update.upload.Signature = data.Signature;
-
-        var params = {
-            "MtrInput": app.build.update.upload.file.content.source.Base64,
-            "FrqValueTimeval": app.build.update.upload.FrqValue,
-            "FrqCodeTimeval": app.build.update.upload.FrqCode,
-            "Signature": app.build.update.upload.Signature,
-            "Dimension": []
-        };
-
+        params.Dimension.push(dimension);
         //get new periods
-        $.each(app.build.update.data.Dimension, function (index, dimension) {
-            var language = {
-                "LngIsoCode": dimension.LngIsoCode
-            }
-            params.Dimension.push(language);
-        });
 
-        app.build.update.ajax.downloadExistingData(params);
+        app.build.update.ajax.downloadData(params);
     }
     else api.modal.exception(app.label.static["api-ajax-exception"]);
 }
@@ -613,7 +559,7 @@ app.build.update.upload.validate.callback.updateOutput = function (data) {
  */
 app.build.update.upload.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.Read",
         {
             "FrqCodeTimeval": app.build.update.upload.FrqCode,

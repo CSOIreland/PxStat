@@ -59,7 +59,7 @@ app.product.ajax.readSubject = function (SbjCode) {
 
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
       LngIsoCode: app.label.language.iso.code
@@ -122,7 +122,7 @@ app.product.callback.readSubject = function (data, SbjCode) {
 app.product.ajax.read = function (subject) {
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Read",
     {
       SbjCode: subject.SbjCode,
@@ -264,7 +264,7 @@ app.product.drawDataTableProduct = function (data) {
 app.product.ajax.readSubjectCreate = function (idn) {
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
       SbjCode: idn,
@@ -319,7 +319,7 @@ app.product.ajax.create = function () {
   };
   // A Product is created always against the default Language
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Create",
     apiParam,
     "app.product.callback.createOnSuccess",
@@ -378,7 +378,7 @@ app.product.modal.update = function (PrcCode) {
 app.product.ajax.readSubjectUpdate = function () {
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
       SbjCode: null,
@@ -434,7 +434,7 @@ app.product.callback.readSubjectUpdate = function (data) {
 app.product.ajax.readUpdate = function (PrcCode) {
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Read",
     {
       PrcCode: PrcCode,
@@ -497,7 +497,7 @@ app.product.ajax.update = function () {
     PrcValue: prcValue
   };
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Update",
     apiParams,
     "app.product.callback.updateOnSuccess",
@@ -557,7 +557,7 @@ app.product.modal.delete = function (productToDelete) {
 app.product.ajax.delete = function (productToDelete) {
   // A Product is deleted always against the default Language
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Delete",
     { PrcCode: productToDelete.idn },
     "app.product.callback.deleteOnSuccess",
@@ -600,7 +600,7 @@ app.product.callback.deleteOnError = function (error) {
  */
 app.product.ajax.readMatrixByProduct = function (callbackParam) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Data.Matrix_API.ReadByProduct",
     {
       PrcCode: callbackParam.idn,

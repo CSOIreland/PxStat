@@ -40,7 +40,7 @@ app.build.create.import.reset = function () {
  */
 app.build.create.import.validate.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.Validate",
         {
             "FrqCodeTimeval": app.build.create.file.import.FrqCode,
@@ -95,7 +95,7 @@ app.build.create.import.validate.callback.read = function (data) {
 
 app.build.create.import.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.Read",
         {
             "FrqCodeTimeval": app.build.create.file.import.FrqCode,

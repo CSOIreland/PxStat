@@ -193,7 +193,7 @@ app.build.import.ajax.validate = function () {
         "LngIsoCode": app.label.language.iso.code
     };
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.Validate",
         obj2send,
         "app.build.import.callback.validateOnSuccess",
@@ -264,7 +264,7 @@ app.build.import.callback.validateOnError = function (error) {
  */
 
 app.build.import.ajax.getFrequencyCodes = function () {
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Frequency_API.Read",
         null,
         "app.build.import.callback.getFrequencyCodes");
@@ -312,7 +312,7 @@ app.build.import.ajax.create = function (overwrite) {
         "Overwrite": overwrite
     };
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.Create",
         obj2send,
         "app.build.import.callback.createOnSuccess",
@@ -464,7 +464,7 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
  */
 app.build.import.ajax.selectGroup = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Group_API.ReadAccess",
         { CcnUsername: null },
         "app.build.import.callback.selectGroup"
@@ -508,7 +508,7 @@ app.build.import.callback.mapData = function (dataAPI) {
   */
 app.build.import.ajax.importHistory = function (dateFrom, dateTo) {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.ReadHistory",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),

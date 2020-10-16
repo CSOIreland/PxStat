@@ -31,7 +31,7 @@ app.navigation.language.callback = {};
  */
 app.navigation.access.ajax.set = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadCurrentAccess",
     { CcnUsername: null },
     "app.navigation.access.callback.set",
@@ -199,8 +199,11 @@ app.navigation.layout.set = function (isDataEntity) {
 
 app.navigation.breadcrumb.set = function (breadcrumb) {
   breadcrumb = breadcrumb || [];
+  var title = "";
 
   $("#breadcrumb-nav").find("[name=breadcrumb-list]").empty();
+
+  // Clone Home link
   var homeLink = $("#navigation-templates").find("[name=home]").clone();
   $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(homeLink);
 
@@ -208,7 +211,7 @@ app.navigation.breadcrumb.set = function (breadcrumb) {
     $.each(breadcrumb, function (index, value) {
       var test = typeof value;
       if (typeof value === 'object' && value !== null) {
-        var item = $("#navigation-templates").find("[name=link]").clone();
+        var linkItem = $("#navigation-templates").find("[name=link]").clone();
         var breadcrumbLink = $("<a>", {
           "text": value.text,
           "href": "#"
@@ -218,27 +221,31 @@ app.navigation.breadcrumb.set = function (breadcrumb) {
           api.content.goTo(value.goTo.pRelativeURL, value.goTo.pNav_link_SelectorToHighlight, null, value.goTo.pParams);
         });
 
-        item.find("a").html(breadcrumbLink);
-        $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(item);
+        linkItem.find("a").html(breadcrumbLink);
+        $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(linkItem);
+
+        title += '/' + value.text;
       }
       else {
-        var item = $("#navigation-templates").find("[name=item]").clone();
-        item.html(String(value));
-        $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(item);
+        var staticItem = $("#navigation-templates").find("[name=item]").clone();
+        staticItem.html(String(value));
+        $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(staticItem);
+
+        title += '/' + String(value);
       }
     });
   }
-
-
-
+  // Set Document Title
+  $("title").text(app.config.title + title);
 };
+
 /**
  * Check access against current user
  */
 app.navigation.access.check = function (PrvCodeList) {
   PrvCodeList = PrvCodeList || [];
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadCurrentAccess",
     null,
     "app.navigation.access.callback.check",
@@ -291,7 +298,7 @@ app.navigation.user.remove = function () {
 app.navigation.user.ajax.read = function () {
 
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadCurrent",
     { CcnUsername: null },
     "app.navigation.user.callback.read",
@@ -335,7 +342,7 @@ app.navigation.user.callback.read = function (data) {
 * Get languages
 */
 app.navigation.language.ajax.read = function () {
-  api.ajax.jsonrpc.request(app.config.url.api.public,
+  api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.navigation.language.callback.read",
@@ -375,6 +382,9 @@ app.navigation.language.callback.read = function (data) {
     // Set the selected language
     app.label.language.iso.code = $(this).attr('code');
     app.label.language.iso.name = $(this).attr('name');
+
+    // Update Document Language
+    $("html").attr("lang", app.label.language.iso.code);
 
     Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie);
 

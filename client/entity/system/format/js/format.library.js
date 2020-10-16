@@ -14,7 +14,7 @@ app.format.callback = {};
  */
 app.format.ajax.read = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.public,
+    app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Format_API.Read",
     { LngIsoCode: null },
     "app.format.callback.read"

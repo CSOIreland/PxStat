@@ -43,7 +43,7 @@ app.alert.initialiseDatePicker = function (params) {
 */
 app.alert.ajax.read = function () {
     // Get data from API and Draw the Data Table for alert 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Alert_API.Read",
         {
             RsnCode: null,
@@ -201,7 +201,7 @@ app.alert.ajax.create = function () {
     };
     // CAll Ajax to Create Reason. Do Redraw Data Table for Create Reason.
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Alert_API.Create",
         apiParams,
         "app.alert.callback.createOnSuccess",
@@ -249,7 +249,7 @@ app.alert.callback.createOnError = function (error) {
  */
 app.alert.ajax.readUpdate = function (idn) {
     // Get data from API and Draw the Data Table for Alert. Populate date to the modal "alert-modal-update"
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Alert_API.Read",
         {
             LrtCode: idn,
@@ -323,7 +323,7 @@ app.alert.ajax.update = function () {
     };
     // CAll Ajax to Update the Alert. Get the fresh new data. Redraw table
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Alert_API.Update",
         apiParams,
         "app.alert.callback.updateOnSuccess",
@@ -379,7 +379,7 @@ app.alert.modal.delete = function () {
 app.alert.ajax.delete = function (idn) {
     // Call the API by passing the idn to delete alert from DB
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Alert_API.Delete",
         {
             LrtCode: idn

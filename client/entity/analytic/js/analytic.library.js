@@ -49,7 +49,7 @@ app.analytic.setDatePicker = function () {
  */
 app.analytic.ajax.readSubject = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Subject_API.Read",
         { SbjCode: null },
         "app.analytic.callback.readSubject");
@@ -105,7 +105,7 @@ app.analytic.ajax.readProduct = function () {
         SbjCode = null
     }
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Product_API.Read",
         { SbjCode: SbjCode },
         "app.analytic.callback.readProduct");
@@ -170,7 +170,7 @@ app.analytic.ajax.readAnalytics = function () {
 
     api.spinner.start();
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.Read",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -310,7 +310,7 @@ app.analytic.ajax.readBrowser = function (MtrCode, selector) {
         PrcCode = null
     }
 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadBrowser",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -381,7 +381,7 @@ app.analytic.callback.readBrowser = function (data, selector) {
         localConfig.data.labels.push(key);
     });
     var config = {};
-    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=browser-pie-chart-canvas]"), config);
 };
@@ -409,7 +409,7 @@ app.analytic.ajax.readOs = function (MtrCode, selector) {
         PrcCode = null
     }
 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadOs",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -481,7 +481,7 @@ app.analytic.callback.readOs = function (data, selector) {
     });
 
     var config = {};
-    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=operating-system-pie-chart-canvas]"), config);
 };
@@ -508,7 +508,7 @@ app.analytic.ajax.readReferrer = function (MtrCode, selector) {
         PrcCode = null
     }
 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadReferrer",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -571,7 +571,7 @@ app.analytic.callback.readReferrer = function (data, selector) {
     });
 
     var config = {};
-    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
     new Chart($(selector).find("[name=referrer-column-chart-canvas]"), config);
 
 };
@@ -598,7 +598,7 @@ app.analytic.ajax.readUserLanguage = function (MtrCode, selector) {
         PrcCode = null
     }
 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadEnvironmentLanguage",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -663,7 +663,7 @@ app.analytic.callback.readUserLanguage = function (data, selector) {
     });
 
     var config = {};
-    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
     new Chart($(selector).find("[name=user-language-column-chart-canvas]"), config);
 };
 
@@ -689,7 +689,7 @@ app.analytic.ajax.readLanguage = function (MtrCode, selector) {
         PrcCode = null
     }
 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadLanguage",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -760,7 +760,7 @@ app.analytic.callback.readLanguage = function (data, selector) {
     });
 
     var config = {};
-    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=language-pie-chart-canvas]"), config);
 };
@@ -787,7 +787,7 @@ app.analytic.ajax.readTimeline = function (MtrCode, selector) {
         PrcCode = null
     }
 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadTimeline",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -872,7 +872,7 @@ app.analytic.callback.readTimeline = function (data, selector) {
     localConfig.data.datasets = [bots, M2M, users, total];
 
     var config = {};
-    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
     new Chart($(selector).find("[name=dates-line-chart-canvas]"), config);
 };
 
@@ -922,7 +922,7 @@ app.analytic.ajax.readFormat = function (MtrCode, selector) {
         PrcCode = null
     }
 
-    api.ajax.jsonrpc.request(app.config.url.api.private,
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadFormat",
         {
             "DateFrom": app.analytic.dateFrom.format(app.config.mask.date.ajax),
@@ -993,7 +993,7 @@ app.analytic.callback.readFromat = function (data, selector) {
     });
 
     var config = {};
-    $.extend(true, config, app.config.plugin.chartJs, localConfig);
+    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=format-pie-chart-canvas]"), config);
 };

@@ -34,12 +34,13 @@ app.release.comment.render = function (data) {
         $("#release-comment [name=create]").hide();
         $("#release-comment [name=update]").show();
 
-        $("#release-comment [name=delete]").prop("disabled", false);
-
-        var tinyMceId = $("#release-comment-modal-update [name=cmm-value]").attr("id");
-        tinymce.get(tinyMceId).setContent(data.CmmValue);
+        $("#release-comment [name=delete]").prop("disabled", app.release.isHistorical ? true : false);
 
         $("#release-comment [name=cmm-value]").empty().html(app.library.html.parseBbCode(data.CmmValue)).show();
+
+        $("#release-comment").find("[name=update]").once("click", function () {
+            app.release.comment.update(data.CmmValue)
+        });
     }
     // Create
     else {
@@ -65,6 +66,11 @@ app.release.comment.render = function (data) {
 */
 app.release.comment.create = function () {
     $("#release-comment-modal-create").modal("show");
+
+    $("#release-comment-modal-create").on("hide.bs.modal", function () {
+        var tinyMceId = $("#release-comment-modal-create").find("[name=cmm-value]").attr("id");
+        tinymce.get(tinyMceId).setContent("");
+    });
 };
 
 /**
@@ -99,7 +105,7 @@ app.release.comment.ajax.create = function () {
     var CmmValue = tinymce.get(tinyMceId).getContent();
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.UpdateComment",
         { "RlsCode": app.release.RlsCode, "CmmValue": CmmValue },
         "app.release.comment.callback.create",
@@ -129,7 +135,9 @@ app.release.comment.callback.create = function (data) {
 /**
 * 
 */
-app.release.comment.update = function () {
+app.release.comment.update = function (cmmValue) {
+    var tinyMceId = $("#release-comment-modal-update [name=cmm-value]").attr("id");
+    tinymce.get(tinyMceId).setContent(cmmValue);
     $("#release-comment-modal-update").modal("show");
 };
 
@@ -165,7 +173,7 @@ app.release.comment.ajax.update = function () {
     var CmmValue = tinymce.get(tinyMceId).getContent();
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.UpdateComment",
         { "RlsCode": app.release.RlsCode, "CmmValue": CmmValue },
         "app.release.comment.callback.update",
@@ -204,7 +212,7 @@ app.release.comment.delete = function () {
 */
 app.release.comment.ajax.delete = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.DeleteComment",
         { "RlsCode": app.release.RlsCode },
         "app.release.comment.callback.delete",

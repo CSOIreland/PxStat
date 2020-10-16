@@ -29,7 +29,7 @@ app.release.workflow.modal.signoff.render = function () {
  */
 app.release.workflow.modal.signoff.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.Read",
         { "RlsCode": app.release.RlsCode },
         "app.release.workflow.modal.signoff.callback.read");
@@ -226,7 +226,7 @@ app.release.workflow.modal.signoff.ajax.create = function () {
     };
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.WorkflowSignoff_API.Create",
         obj2send,
         "app.release.workflow.modal.signoff.callback.create",

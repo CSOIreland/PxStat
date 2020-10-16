@@ -18,7 +18,7 @@ app.release.reason.validation = {};
  */
 app.release.reason.ajax.readCode = function (RsnCode) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Reason_API.Read",
     {
       RsnCode: RsnCode,
@@ -54,7 +54,7 @@ app.release.reason.readCodeList = function () {
  */
 app.release.reason.ajax.readCodeList = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Reason_API.Read",
     { LngIsoCode: app.label.language.iso.code },
     "app.release.reason.callback.readCodeList");
@@ -121,7 +121,7 @@ app.release.reason.render = function () {
  */
 app.release.reason.ajax.readList = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Data.ReasonRelease_API.Read",
     {
       RlsCode: app.release.RlsCode,
@@ -253,7 +253,7 @@ app.release.reason.drawExtraInformation = function (d) {
  */
 app.release.reason.ajax.read = function (RsnCode) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Data.ReasonRelease_API.Read",
     {
       RlsCode: app.release.RlsCode,
@@ -326,7 +326,7 @@ app.release.reason.ajax.update = function () {
   var CmmValue = tinymce.get(tinyMceId).getContent().trim().length ? tinymce.get(tinyMceId).getContent().trim() : null;
 
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Data.ReasonRelease_API.Update",
     { "RlsCode": app.release.RlsCode, "RsnCode": RsnCode, "CmmValue": CmmValue, "LngIsoCode": app.label.language.iso.code },
     "app.release.reason.callback.update",
@@ -356,7 +356,7 @@ app.release.reason.callback.update = function (data, RsnCode) {
  */
 app.release.reason.ajax.delete = function (RsnCode) {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Data.ReasonRelease_API.Delete",
     { RlsCode: app.release.RlsCode, RsnCode: RsnCode, "LngIsoCode": app.label.language.iso.code },
     "app.release.reason.callback.delete",
@@ -423,7 +423,7 @@ app.release.reason.ajax.create = function () {
   var CmmValue = tinymce.get(tinyMceId).getContent();
 
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Data.ReasonRelease_API.Create",
     { "RlsCode": app.release.RlsCode, "RsnCode": RsnCode, "CmmValue": CmmValue, "LngIsoCode": app.label.language.iso.code },
     "app.release.reason.callback.createOnSuccess",

@@ -21,7 +21,7 @@ app.release.workflow.history.read = function () {
  */
 app.release.workflow.history.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadHistory",
         { RlsCode: app.release.RlsCode },
         "app.release.workflow.history.callback.read",
@@ -327,7 +327,7 @@ app.release.workflow.history.delete = function () {
 app.release.workflow.history.ajax.delete = function (idn) {
     // Call the API by passing the idn to delete User from DB
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.WorkflowRequest_API.Delete",
         { RlsCode: idn },
         "app.release.workflow.history.callback.deleteOnSuccess",

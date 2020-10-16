@@ -3,9 +3,11 @@ Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
     //insert navigation in navigation div
-    $("#data-navigation").html(
-        $("#data-search-templates").find("[name=navigation]").clone().get(0).outerHTML
-    );
+    var navigation = $("#data-search-templates").find("[name=navigation]").clone();;
+    navigation.find("[data-toggle=collapse]").attr("data-target", "#data-browse-collapse");
+    navigation.find(".collapse").attr("id", "data-browse-collapse");
+
+    $("#data-navigation").html(navigation.get(0).outerHTML);
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 

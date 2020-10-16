@@ -31,7 +31,7 @@ app.cache.render.chartOptions = {
 
 app.cache.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.cache_API.Read",
         {},
         "app.cache.callback.read"
@@ -120,7 +120,7 @@ app.cache.render.usedMemory = function (data) {
 //#region load config
 app.cache.ajax.flushCache = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Cache_API.FlushAll",
         {},
         "app.cache.callback.flushCache",

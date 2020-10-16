@@ -37,7 +37,7 @@ app.release.workflow.request.render = function () {
  */
 app.release.workflow.request.ajax.readType = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Request_API.Read",
         { "RlsCode": app.release.RlsCode },
         "app.release.workflow.request.callback.readType",

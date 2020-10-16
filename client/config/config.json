@@ -6,8 +6,13 @@
 			"server": "https://ws.domain.extension/public/Resources/Config/config.server.json"
 		},
 		"api": {
-			"public": "https://ws.domain.extension/public/api.jsonrpc",
-			"private": "https://ws.domain.extension/private/api.jsonrpc"
+			"jsonrpc": {
+				"public": "https://ws.domain.extension/public/api.jsonrpc",
+				"private": "https://ws.domain.extension/private/api.jsonrpc"
+			},
+			"restful": {
+				"public": "https://ws.domain.extension/public/api.restful"
+			}
 		},
 		"footer": [
 			{
@@ -41,9 +46,7 @@
 			"PxStat.Build.Build_API.Validate": 250000,
 			"PxStat.Build.Build_API.Read": 250000,
 			"PxStat.Build.Build_API.ReadTemplate": 250000,
-			"PxStat.Build.Build_API.ReadDatasetByAllPeriods": 250000,
-			"PxStat.Build.Build_API.ReadDatasetByNewPeriods": 250000,
-			"PxStat.Build.Build_API.ReadDatasetByExistingPeriods": 250000,
+			"PxStat.Build.Build_API.ReadDataset": 250000,
 			"PxStat.Build.Build_API.Update": 40000,
 			"PxStat.Data.Matrix_API.Validate": 500000,
 			"PxStat.Data.Matrix_API.Create": 70000
@@ -68,9 +71,12 @@
 			"snippet": null
 		},
 		"build": {
-			"threshold": 10000000,
+			"threshold": {
+				"downloadCsv": 1000000,
+				"dataset": 10000000
+			},
 			"geoJsonLookup": {
-				"enabled": true,
+				"enabled": false,
 				"href": "https://geojson.doamin.extension/"
 			}
 		},
@@ -91,17 +97,6 @@
 			"enabled": false,
 			"apiURL": "https://platform-api.sharethis.com/js/sharethis.js#property={0}&product=inline-share-buttons",
 			"apiKey": ""
-		},
-		"highcharts": {
-			"enabled": true,
-			"credits": false
-		},
-		"highmaps": {
-			"featureIdentifier": "AREA_ID",
-			"featureName": "AREA_NAME",
-			"minColor": "#FFFF00",
-			"maxColor": "#990041",
-			"useHTML": "true"
 		},
 		"tinymce": {
 			"apiURL": "https://cdn.tiny.cloud/1/{0}/tinymce/5.1.6-68/tinymce.min.js",
@@ -134,85 +129,97 @@
 			"dom": "fltip",
 			"deferRender": true
 		},
-		"cookieConsent": {
-			"palette": {
-				"popup": {
-					"background": "#45c1c0",
-					"text": "#ffffff"
-				},
-				"button": {
-					"background": "#006f74",
-					"text": "#ffffff"
-				}
-			},
-			"secure": true,
-			"position": "top",
-			"type": "opt-in",
-			"static": 1,
-			"revokable": 1,
-			"content": {}
-		},
 		"chartJs": {
 			"options": {
-				"responsive": true,
-				"maintainAspectRatio": false,
-				"title": {
-					"display": true,
-					"text": []
-				},
-				"tooltips": {
-					"mode": "index",
-					"callbacks": {
-						"label": null
-					}
-				},
-				"hover": {
-					"mode": "nearest",
-					"intersect": true
-				},
-				"scales": {
-					"xAxes": [
-						{
-							"ticks": {
-								"beginAtZero": false,
-								"maxTicksLimit": null
-							},
-							"gridLines": {
-								"display": false
-							},
-							"scaleLabel": {
-								"display": false,
-								"labelString": null
-							}
-						}
-					],
-					"yAxes": [
-						{
-							"display": true,
-							"position": "left",
-							"id": null,
-							"ticks": {
-								"beginAtZero": false
-							},
-							"callback": null,
-							"scaleLabel": {
-								"display": false,
-								"labelString": null
-							}
-						}
-					]
-				},
-				"plugins": {
-					"stacked100": {
-						"enable": false
+				"map": {
+					"featureIdentifier": "AREA_ID",
+					"showOutline": false,
+					"showGraticule": false,
+					"legend": {
+						"display": false
 					},
-					"colorschemes": {
-						"scheme": "tableau.Tableau10"
+					"tooltips": {
+						"mode": "index",
+						"callbacks": {
+							"label": null
+						}
+					},
+					"scale": {
+						"projection": "geoMercator"
+					},
+					"geo": {
+						"colorScale": {
+							"display": true,
+							"interpolate": "reds"
+						}
+					},
+					"plugins": {
+						"colorschemes": {
+							"scheme": null
+						}
 					}
 				},
-				"legend": {
-					"display": true,
-					"position": "bottom"
+				"chart": {
+					"responsive": true,
+					"maintainAspectRatio": false,
+					"title": {
+						"display": true,
+						"text": []
+					},
+					"tooltips": {
+						"mode": "index",
+						"callbacks": {
+							"label": null
+						}
+					},
+					"hover": {
+						"mode": "nearest",
+						"intersect": true
+					},
+					"scales": {
+						"xAxes": [
+							{
+								"ticks": {
+									"beginAtZero": false,
+									"maxTicksLimit": null
+								},
+								"gridLines": {
+									"display": false
+								},
+								"scaleLabel": {
+									"display": false,
+									"labelString": null
+								}
+							}
+						],
+						"yAxes": [
+							{
+								"display": true,
+								"position": "left",
+								"id": null,
+								"ticks": {
+									"beginAtZero": false
+								},
+								"callback": null,
+								"scaleLabel": {
+									"display": false,
+									"labelString": null
+								}
+							}
+						]
+					},
+					"plugins": {
+						"stacked100": {
+							"enable": false
+						},
+						"colorschemes": {
+							"scheme": "tableau.Tableau10"
+						}
+					},
+					"legend": {
+						"display": true,
+						"position": "bottom"
+					}
 				}
 			}
 		}

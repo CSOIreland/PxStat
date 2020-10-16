@@ -21,7 +21,7 @@ app.release.workflow.modal.response.fastrackSignoff = false;
 app.release.workflow.modal.response.ajax.ReadCurrentAccess = function () {
     //Check the privilege of the user 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Account_API.ReadCurrentAccess",
         { CcnUsername: null },
         "app.release.workflow.modal.response.callback.ReadCurrentAccess",
@@ -72,7 +72,7 @@ app.release.workflow.modal.response.render = function () {
  */
 app.release.workflow.modal.response.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.Read",
         { "RlsCode": app.release.RlsCode },
         "app.release.workflow.modal.response.callback.read");
@@ -287,7 +287,7 @@ app.release.workflow.modal.response.ajax.create = function () {
     };
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.WorkflowResponse_API.Create",
         obj2send,
         "app.release.workflow.modal.response.callback.create",

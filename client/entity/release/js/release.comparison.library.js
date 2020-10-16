@@ -40,7 +40,7 @@ app.release.comparison.render = function () {
  */
 app.release.comparison.ajax.readRlsCodePrevious = function () {
     return api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Compare_API.ReadPreviousRelease",
         { "RlsCode": app.release.RlsCode },
         "app.release.comparison.callback.readRlsCodePrevious",
@@ -71,7 +71,7 @@ app.release.comparison.callback.readRlsCodePrevious = function (data) {
  */
 app.release.comparison.ajax.readPreviousRelease = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.Read",
         {
             "RlsCode": app.release.RlsCodePrevious,
@@ -103,7 +103,6 @@ app.release.comparison.callback.readPreviousRelease = function (data) {
     $("#release-comparison-report [name=sbj-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.SbjCode + ") " + app.release.comparison.previousReleaseData.SbjValue);
     $("#release-comparison-report [name=prc-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.PrcCode + ") " + app.release.comparison.previousReleaseData.PrcValue);
     $("#release-comparison-report [name=rls-analytical-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsAnalyticalFlag, true, true));
-    $("#release-comparison-report [name=rls-dependency-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsDependencyFlag, true, true));
     $("#release-comparison-report [name=rls-reservation-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsReservationFlag, true, true));
     $("#release-comparison-report [name=rls-archive-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsArchiveFlag, true, true));
 };
@@ -113,7 +112,7 @@ app.release.comparison.callback.readPreviousRelease = function (data) {
  */
 app.release.comparison.ajax.readPreviousMatrix = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.Read",
         {
             "RlsCode": app.release.RlsCodePrevious,
@@ -148,7 +147,7 @@ app.release.comparison.callback.readPreviousMatrix = function (data) {
  */
 app.release.comparison.ajax.readCurrentRelease = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.Read",
         {
             "RlsCode": app.release.RlsCode,
@@ -181,7 +180,6 @@ app.release.comparison.callback.readCurrentRelease = function (data) {
     $("#release-comparison-report [name=sbj-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.SbjCode + ") " + app.release.comparison.currentReleaseData.SbjValue);
     $("#release-comparison-report [name=prc-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.PrcCode + ") " + app.release.comparison.currentReleaseData.PrcValue);
     $("#release-comparison-report [name=rls-analytical-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsAnalyticalFlag, true, true));
-    $("#release-comparison-report [name=rls-dependency-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsDependencyFlag, true, true));
     $("#release-comparison-report [name=rls-reservation-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsReservationFlag, true, true));
     $("#release-comparison-report [name=rls-archive-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsArchiveFlag, true, true));
 };
@@ -193,7 +191,7 @@ app.release.comparison.callback.readCurrentRelease = function (data) {
 */
 app.release.comparison.ajax.readCurrentMatrix = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.Read",
         {
             "RlsCode": app.release.RlsCode,
@@ -274,14 +272,6 @@ app.release.comparison.callback.styleDifferences = function () {
             $("#release-comparison-report").find("[name=analytical-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
         }
 
-        //dependency
-        if (app.release.comparison.previousReleaseData.RlsDependencyFlag != app.release.comparison.currentReleaseData.RlsDependencyFlag) {
-            $("#release-comparison-report").find("[name=dependency-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=dependency-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
-        }
-
         //title
         if (app.release.comparison.previousMatrixData.MtrTitle != app.release.comparison.currentMatrixData.MtrTitle) {
             $("#release-comparison-report").find("[name=title-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
@@ -351,7 +341,7 @@ app.release.comparison.callback.styleDifferences = function () {
  */
 app.release.comparison.ajax.readAmendment = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Compare_API.ReadAmendment",
         {
             "RlsCode": app.release.RlsCode,
@@ -384,7 +374,7 @@ app.release.comparison.callback.readAmendment = function (data) {
  */
 app.release.comparison.ajax.readDeletion = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Compare_API.ReadDeletion",
         {
             "RlsCode": app.release.RlsCode,
@@ -417,7 +407,7 @@ app.release.comparison.callback.readDeletion = function (data) {
  */
 app.release.comparison.ajax.readAddition = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Compare_API.ReadAddition",
         {
             "RlsCode": app.release.RlsCode,
@@ -664,7 +654,7 @@ app.release.comparison.callback.readComparison = function (data, selector) {
  */
 app.release.comparison.ajax.readReasonList = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.ReasonRelease_API.Read",
         { RlsCode: app.release.RlsCode }, //update to dynamic Rlscode when merging
         "app.release.comparison.callback.readReasonList",

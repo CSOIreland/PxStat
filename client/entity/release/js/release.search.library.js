@@ -23,7 +23,7 @@ app.release.search.readMatrixList = function () {
  */
 app.release.search.ajax.readMatrixList = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Matrix_API.ReadCodeList",
         null,
         "app.release.search.callback.readMatrixList");
@@ -100,7 +100,7 @@ app.release.search.readReleaseList = function () {
  */
 app.release.search.ajax.readReleaseList = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.ReadList",
         {
             "MtrCode": app.release.MtrCode,

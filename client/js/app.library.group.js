@@ -16,7 +16,7 @@ app.library.group.modal.callback = {};
 app.library.group.modal.read = function (GrpCode) {
   // Get data from API
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Group_API.Read",
     { "GrpCode": GrpCode },
     "app.library.group.modal.callback.read"
@@ -39,7 +39,7 @@ app.library.group.modal.callback.read = function (data) {
 
     // Get data from API
     api.ajax.jsonrpc.request(
-      app.config.url.api.private,
+      app.config.url.api.jsonrpc.private,
       "PxStat.Security.GroupAccount_API.Read",
       { "GrpCode": data.GrpCode },
       "app.library.group.modal.callback.readAccountList"

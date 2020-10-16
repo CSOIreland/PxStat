@@ -5,7 +5,7 @@ $(document).ready(function () {
   // Entity with restricted access
   app.navigation.access.check();
   app.navigation.layout.set(false);
-  app.navigation.breadcrumb.set([app.label.static["manage"], app.label.static["logging"]]);
+  app.navigation.breadcrumb.set([app.label.static["system"], app.label.static["logging"]]);
 
   app.logging.setDatePicker();
 

@@ -35,7 +35,7 @@ app.dashboard.render = {};
 app.dashboard.ajax.ReadCurrentAccess = function () {
     //Check the privilege of the user 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Security.Account_API.ReadCurrentAccess",
         { CcnUsername: null },
         "app.dashboard.callback.ReadCurrentAccess",
@@ -78,7 +78,7 @@ app.dashboard.callback.ReadCurrentAccess = function (data) {
 */
 app.dashboard.workInProgress.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadWorkInProgress",
         {
             LngIsoCode: app.label.language.iso.code
@@ -198,7 +198,7 @@ app.dashboard.workInProgress.drawDataTable = function (data) {
 */
 app.dashboard.awaitingResponse.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingResponse",
         {
             LngIsoCode: app.label.language.iso.code
@@ -349,7 +349,7 @@ app.dashboard.awaitingResponse.drawDataTable = function (data) {
 */
 app.dashboard.awaitingSignoff.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadAwaitingSignoff",
         {
             LngIsoCode: app.label.language.iso.code
@@ -497,7 +497,7 @@ app.dashboard.awaitingSignoff.drawDataTable = function (data) {
 */
 app.dashboard.pendinglive.ajax.read = function () {
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadPendingLive",
         {
             LngIsoCode: app.label.language.iso.code
@@ -644,7 +644,7 @@ app.dashboard.pendinglive.drawDataTable = function (data) {
 app.dashboard.liveReleases.ajax.read = function () {
 
     api.ajax.jsonrpc.request(
-        app.config.url.api.private,
+        app.config.url.api.jsonrpc.private,
         "PxStat.Workflow.Workflow_API.ReadLive",
         {
             LngIsoCode: app.label.language.iso.code

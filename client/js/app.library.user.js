@@ -22,7 +22,7 @@ app.library.user.modal.read = function (apiParams) {
   apiParams = apiParams || {};
   // Get data from API
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.Read",
     apiParams,
     "app.library.user.modal.callback.read"
@@ -35,7 +35,7 @@ app.library.user.modal.read = function (apiParams) {
 app.library.user.modal.readCurrent = function () {
   // Get data from API
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadCurrent",
     null,
     "app.library.user.modal.callback.read"
@@ -163,7 +163,7 @@ app.library.user.modal.buildGroupList = function (data) {
  */
 app.library.user.modal.ajax.update = function () {
   api.ajax.jsonrpc.request(
-    app.config.url.api.private,
+    app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.UpdateCurrent",
     { CcnNotificationFlag: $("#modal-read-user").find("[name=notification]").prop('checked') },
     "app.library.user.modal.callback.update",
