@@ -33,9 +33,23 @@ namespace PxStat.Data
         {
             Release_ADO adoRelease = new Release_ADO(Ado);
 
-            Release_DTO dtoRelease = new Release_DTO();
-            dtoRelease.RlsCode = DTO.RlsCode;
-            int deleted = adoRelease.DeleteComment(dtoRelease, SamAccountName);
+            Release_DTO dtoRelease = Release_ADO.GetReleaseDTO(adoRelease.Read(DTO.RlsCode, SamAccountName));
+
+
+            DTO.MtrCode = dtoRelease.MtrCode;
+
+
+            //We can do this now because the MtrCode is available to us
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
+
+            bool historicalTest = adoRelease.IsHistorical(DTO.RlsCode);
+            int deleted = 0;
+            if (!historicalTest)
+            {
+                deleted = adoRelease.DeleteComment(dtoRelease, SamAccountName);
+            }
+
 
             if (deleted == 0)
             {
@@ -44,6 +58,8 @@ namespace PxStat.Data
                 Response.error = Label.Get("error.delete");
                 return false;
             }
+
+
 
             Response.data = JSONRPC.success;
             return true;

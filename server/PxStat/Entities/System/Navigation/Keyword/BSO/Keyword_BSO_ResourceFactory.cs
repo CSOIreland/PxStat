@@ -105,7 +105,7 @@ namespace PxStat.System.Navigation
         {
             if (!Keywords.ContainsKey(lngIsoCode))
             {
-                lngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
                 dynamic keywordInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString(Utility.GetCustomConfig("APP_INTERNATIONALISATION_KEYWORD_FILE") + lngIsoCode));
                 if (!Keywords.ContainsKey(lngIsoCode))
                     Keywords.Add(lngIsoCode, keywordInstance);

@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static PxStat.Data.Matrix;
 
 namespace PxStat.Build
 {
@@ -25,7 +24,6 @@ namespace PxStat.Build
         /// <summary>
         /// 
         /// </summary>
-        static Specification spec;
 
         private bool NoDuplicatesExist(List<DataItem_DTO> csv)
         {
@@ -516,7 +514,6 @@ namespace PxStat.Build
             RuleFor(f => f.Dimension).Must(CustomValidations.LanguagesUnique).When(f => f.Dimension != null).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
             RuleFor(f => f.Dimension).NotNull();
-            // RuleFor(f => f.Dimension.Count).Equal(1).When(f => f.Dimension != null);
             RuleForEach(f => f.Dimension).SetValidator(new Dimension_VLD_UltraLite()).When(f => f.Dimension != null);
         }
     }
@@ -534,7 +531,7 @@ namespace PxStat.Build
 
             RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
             RuleFor(f => f.Dimension).NotNull();
-            // RuleFor(f => f.Dimension.Count).Equal(1).When(f => f.Dimension != null);
+
         }
     }
 
@@ -594,7 +591,7 @@ namespace PxStat.Build
                 points *= cls.Variable.Count;
             }
 
-            return points <= Configuration_BSO.GetCustomConfig("dataset.threshold");
+            return points <= Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.threshold");
         }
 
         internal static bool ValidateIgnoreEscapeChars(string readString)

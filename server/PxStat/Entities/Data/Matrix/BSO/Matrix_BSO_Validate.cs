@@ -100,16 +100,7 @@ namespace PxStat.Data
 
             if (MatrixData.MainSpec.Frequency == null)
             {
-                //if(MatrixData.OtherLanguageSpec!=null)
-                //{
-                //    var otherFreqSpec = MatrixData.OtherLanguageSpec.Where(x => x.Frequency != null).FirstOrDefault();
 
-                //    if(otherFreqSpec!=null)
-                //    {
-
-                //    }
-
-                //}
                 //This means that we failed to create a Frequency. This normally occurs where there is no Timeval but a FrqCode/FrqValue was not supplied
                 MatrixData.MainSpec.requiresResponse = true;
                 return false;
@@ -145,7 +136,7 @@ namespace PxStat.Data
                 return false;
             }
 
-
+           // MatrixData.Sort();
 
             sw.Stop();
             Log.Instance.Debug(string.Format("Matrix validated in {0} ms", Math.Round((double)sw.ElapsedMilliseconds)));
@@ -230,9 +221,9 @@ namespace PxStat.Data
             SettingsValidatorResult = new PxSettingsValidator(Ado, true, DTO.LngIsoCode).Validate(theMatrix);
             if (RequestLanguage.LngIsoCode != null)
             {
-                if (!DTO.LngIsoCode.Equals(Configuration_BSO.GetCustomConfig("language.iso.code")))
+                if (!DTO.LngIsoCode.Equals(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")))
                 {
-                    SettingsValidatorResultDefaultLanguage = new PxSettingsValidator(Ado, true, Configuration_BSO.GetCustomConfig("language.iso.code")).Validate(theMatrix);
+                    SettingsValidatorResultDefaultLanguage = new PxSettingsValidator(Ado, true, Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")).Validate(theMatrix);
                 }
             }
             return SettingsValidatorResult.IsValid;

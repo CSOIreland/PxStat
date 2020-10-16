@@ -28,31 +28,20 @@ namespace PxStat.System.Navigation
 
             Dictionary<string, List<Synonym>> synonymSets = Keyword_BSO_ResourceFactory.GetAllSynonymSets();
             dynamic results = new List<ExpandoObject>();
-            results.Add(GetListForLanguage(Configuration_BSO.GetCustomConfig("language.iso.code"), synonymSets));
+            results.Add(GetListForLanguage(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"), synonymSets));
 
             Language_ADO lAdo = new Language_ADO(Ado);
             var languages = lAdo.Read(new Language_DTO_Read());
 
-            //foreach (var s in synonymSets)
-            //{
+
             foreach (var l in languages.data)
             {
-                //  if (synonymSets.ContainsKey(l.LngIsoCode))
-                // {
-                if (l.LngIsoCode != Configuration_BSO.GetCustomConfig("language.iso.code"))
-                    results.Add(GetListForLanguage(l.LngIsoCode, synonymSets));
-                //}
-                //else
-                // {
 
-                // }
+                if (l.LngIsoCode != Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
+                    results.Add(GetListForLanguage(l.LngIsoCode, synonymSets));
+
 
             }
-            //}
-
-
-
-
 
 
             Response.data = results;

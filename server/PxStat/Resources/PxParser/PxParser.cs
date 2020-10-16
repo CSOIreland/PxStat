@@ -69,7 +69,7 @@ namespace PxParser.Resources.Parser
 
 
         static readonly Parser<char, string> Confidential =
-           String(Configuration_BSO.GetCustomConfig("px.confidential-value"))
+           String(Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value"))
             .Between(Quote);
 
         static readonly Parser<char, IPxSingleElement> PxLiteralValue =

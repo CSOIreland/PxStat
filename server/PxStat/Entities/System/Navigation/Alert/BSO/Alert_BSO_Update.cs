@@ -37,7 +37,7 @@ namespace PxStat.System.Navigation
 
             int updated = 0;
 
-            if (DTO.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code"))
+            if (DTO.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
             {
                 updated = adoAlert.Update(Ado, DTO, SamAccountName);
             }

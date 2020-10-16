@@ -4,7 +4,7 @@ using PxStat.Template;
 namespace PxStat.Data
 {
     /// <summary>
-    /// Updates the value of the Release Dependency flag
+    /// Updates the value of the Product
     /// </summary>
     internal class Release_BSO_UpdateProduct : BaseTemplate_Update<Release_DTO_Update, Release_VLD_Product>
     {

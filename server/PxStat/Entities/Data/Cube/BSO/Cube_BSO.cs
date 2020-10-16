@@ -60,8 +60,6 @@ namespace PxStat.Data
 
             var dbData = ado.ReadCollectionMetadata(DTO.language, DTO.datefrom, DTO.product);
 
-            var v = dbData.Where(x => x.MtrCode == "E1071");
-
             List<dynamic> jsonStatCollection = new List<dynamic>();
 
             //Get a list of individual matrix data entities
@@ -279,11 +277,11 @@ namespace PxStat.Data
             jsStat.Extension.Add("language", new { code = thisItem.LngIsoCode, name = thisItem.LngIsoName });
             jsStat.Extension.Add("matrix", thisItem.MtrCode);
 
-            Format_DTO_Read fDtoMain = formats.Where(x => x.FrmType == Constants.C_SYSTEM_JSON_STAT_NAME).FirstOrDefault();// new Format_DTO_Read() { FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME"), FrmType = Constants.C_SYSTEM_JSON_STAT_NAME };
+            Format_DTO_Read fDtoMain = formats.Where(x => x.FrmType == Constants.C_SYSTEM_JSON_STAT_NAME && x.FrmVersion == Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION")).FirstOrDefault();// new Format_DTO_Read() { FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME"), FrmType = Constants.C_SYSTEM_JSON_STAT_NAME };
 
 
 
-            jsStat.Href = new Uri(Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, fDtoMain.FrmType, fDtoMain.FrmVersion, thisItem.LngIsoCode));
+            jsStat.Href = new Uri(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, fDtoMain.FrmType, fDtoMain.FrmVersion, thisItem.LngIsoCode));
             jsStat.Label = thisItem.MtrTitle;
             jsStat.Updated = DataAdaptor.ConvertToString(thisItem.RlsLiveDatetimeFrom);
             jsStat.Dimension = new Dictionary<string, Dimension>();
@@ -297,7 +295,7 @@ namespace PxStat.Data
             };
             foreach (var f in formats)
             {
-                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig("url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode) });
+                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode) });
             }
             jsStat.Link = link;
 

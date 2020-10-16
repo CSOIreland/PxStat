@@ -14,7 +14,7 @@ namespace PxStat.System.Navigation
         {
             //There is no direct means of finding out which langauge the product name uses,
             // so we take a default language from the settings
-            string languageCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+            string languageCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             //Create the table that will be bulk inserted
             DataTable dt = new DataTable();

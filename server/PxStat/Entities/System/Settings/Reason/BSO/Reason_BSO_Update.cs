@@ -34,7 +34,7 @@ namespace PxStat.System.Settings
         {
             var adoReason = new Reason_ADO();
 
-            if (DTO.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code")) // we are updating the Reason in the default language
+            if (DTO.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) // we are updating the Reason in the default language
             {
                 //Update the Reason - and retrieve the number of updated rows
                 int nUpdated = adoReason.Update(Ado, DTO, SamAccountName);

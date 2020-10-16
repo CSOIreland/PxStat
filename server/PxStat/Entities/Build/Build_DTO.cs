@@ -83,12 +83,12 @@ namespace PxStat.Build
             if (parameters.MtrInput != null)
                 this.MtrInput = Utility.DecodeBase64ToUTF8((string)parameters["MtrInput"]);
 
-            this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+            this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
 
             if (parameters.MtrOfficialFlag != null)
                 this.MtrOfficialFlag = parameters.MtrOfficialFlag;
-            else this.MtrOfficialFlag = Configuration_BSO.GetCustomConfig("dataset.officialStatistics");
+            else this.MtrOfficialFlag = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.officialStatistics");
 
             if (parameters.MtrCode != null)
                 this.MtrCode = parameters.MtrCode;
@@ -117,7 +117,7 @@ namespace PxStat.Build
                 if (parameters.LngIsoCode != null)
                     matrixDto.LngIsoCode = parameters.LngIsoCode;
                 else
-                    matrixDto.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                    matrixDto.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
                 if (parameters.MtrCode != null)
                     matrixDto.MtrCode = parameters.MtrCode;
@@ -306,7 +306,7 @@ namespace PxStat.Build
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             Periods = new List<PeriodRecordDTO_Create>();
 
             if (parameters.MtrCode != null)
@@ -480,6 +480,7 @@ namespace PxStat.Build
 
         public string Signature { get; set; }
 
+        public bool Labels { get; set; }
 
         internal Signature_DTO GetSignatureDTO()
         {
@@ -509,7 +510,7 @@ namespace PxStat.Build
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             Periods = new List<PeriodRecordDTO_Create>();
 
             if (parameters.MtrCode != null)
@@ -533,14 +534,15 @@ namespace PxStat.Build
                 Format.FrmVersion = parameters.FrmVersion;
                 Format.FrmDirection = Format_DTO_Read.FormatDirection.UPLOAD.ToString();
             }
-            // if (parameters.FrmType != null)
 
-            //    if (parameters.FrmVersion != null)
 
             if (parameters.Signature != null)
                 this.Signature = parameters.Signature;
 
-
+            if (parameters.Labels != null)
+                this.Labels = parameters.Labels;
+            else
+                this.Labels = true;
 
             if (parameters.Dimension != null)
             {

@@ -134,10 +134,10 @@ namespace PxStat.Security
             {
                 if (new Language_BSO().Read((string)parameters.LngIsoCode) != null)
                     LngIsoCode = parameters.LngIsoCode;
-                else LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                else LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             }
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             if (parameters.FrmType != null)
                 FrmType = parameters.FrmType;
             if (parameters.FrmVersion != null)

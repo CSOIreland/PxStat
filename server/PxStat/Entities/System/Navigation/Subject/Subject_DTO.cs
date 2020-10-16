@@ -37,7 +37,7 @@ namespace PxStat.System.Navigation
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
             else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
         }
         /// <summary>

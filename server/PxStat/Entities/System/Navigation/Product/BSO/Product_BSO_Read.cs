@@ -38,7 +38,7 @@ namespace PxStat.System.Navigation
         protected override bool Execute()
         {
             if (DTO.LngIsoCode == null)
-                DTO.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                DTO.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             var adoProduct = new Product_ADO(Ado);
             var list = adoProduct.Read(DTO);

@@ -103,7 +103,7 @@ namespace PxStat.Data.Px
         /// </summary>
         public KeywordValidator()
         {
-            string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig("language.iso.code") : RequestLanguage.LngIsoCode;
+            string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : RequestLanguage.LngIsoCode;
             string errorMessageLenMinMax = Label.Get("px.schema.key-length-min-max", configLanguage);
             string errorMessageLenMin = Label.Get("px.schema.key-length-min", configLanguage);
             string errorMessageBoolean = Label.Get("px.schema.key-boolean", configLanguage);
@@ -187,7 +187,7 @@ namespace PxStat.Data.Px
         /// <returns></returns>
         private IRuleBuilderOptions<PxDocument, IList<IPxKeywordElement>> OneOfPxElementMustExist(string v1, string v2)
         {
-            string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig("language.iso.code") : RequestLanguage.LngIsoCode;
+            string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : RequestLanguage.LngIsoCode;
             return
                         RuleFor(doc => doc.Keywords)
                             .Must(keys => keys.Any(item => item.Key.Identifier == v1 || item.Key.Identifier == v2))
@@ -201,7 +201,7 @@ namespace PxStat.Data.Px
         /// <returns></returns>
         private IRuleBuilderOptions<PxDocument, IList<IPxKeywordElement>> PxElementMustExist(string identifier)
         {
-            string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig("language.iso.code") : RequestLanguage.LngIsoCode;
+            string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : RequestLanguage.LngIsoCode;
             return
                         RuleFor(doc => doc.Keywords)
                             .Must(keys => keys.Any(item => item.Key.Identifier == identifier))

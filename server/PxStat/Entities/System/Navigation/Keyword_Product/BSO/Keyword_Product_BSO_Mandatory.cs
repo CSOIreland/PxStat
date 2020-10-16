@@ -23,7 +23,7 @@ namespace PxStat.System.Navigation
             string LngIsoCode;
 
             if (productDto.LngIsoCode == null)
-                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             else
                 LngIsoCode = productDto.LngIsoCode;
 

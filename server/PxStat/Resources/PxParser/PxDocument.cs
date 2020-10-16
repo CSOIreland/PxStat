@@ -291,7 +291,6 @@ namespace PxParser.Resources.Parser
 
             foreach (var k in GetAllKeywordElementsThatMatchTheIdentifier(this, identifier, language))
             {
-                //IList<IPxSingleElement> list = new List<IPxSingleElement>();
                 var list = CastToListOfPxSingleElements((IPxMultipleElements)k.Element);
                 var kv = new KeyValuePair<string, IList<IPxSingleElement>>(k.Key.SubKey.Name, list);
                 r.Add(kv);
@@ -312,9 +311,13 @@ namespace PxParser.Resources.Parser
 
             foreach (var k in GetAllKeywordElementsThatMatchTheIdentifierStrictly(this, identifier, language))
             {
-                //IList<IPxSingleElement> list = new List<IPxSingleElement>();
                 var list = CastToListOfPxSingleElements((IPxMultipleElements)k.Element);
                 var kv = new KeyValuePair<string, IList<IPxSingleElement>>(k.Key.SubKey.Name, list);
+                //The newline character must not end up in the SingleValue:
+                foreach (var vl in kv.Value)
+                {
+                    vl.SingleValue = vl.SingleValue.Replace("\r\n", string.Empty);
+                }
                 r.Add(kv);
             }
 
@@ -327,7 +330,6 @@ namespace PxParser.Resources.Parser
 
             foreach (var k in GetAllKeywordElementsThatMatchTheIdentifierLanguageEmpty(this, identifier))
             {
-                //IList<IPxSingleElement> list = new List<IPxSingleElement>();
                 var list = CastToListOfPxSingleElements((IPxMultipleElements)k.Element);
                 var kv = new KeyValuePair<string, IList<IPxSingleElement>>(k.Key.SubKey.Name, list);
                 r.Add(kv);

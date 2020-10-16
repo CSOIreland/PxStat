@@ -75,7 +75,7 @@ namespace PxStat.Data
 
                     var vDefault =
                     from x in output.data
-                    where x.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code")
+                    where x.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")
                     select x;
 
                     if (vDefault.ToList().Count > 0)
@@ -124,7 +124,6 @@ namespace PxStat.Data
                     new ADO_inputParams() {name ="@RlsVersion",value= dto.RlsVersion},
                     new ADO_inputParams() {name ="@RlsRevision",value= dto.RlsRevision},
                     new ADO_inputParams() {name ="@RlsLiveFlag",value= dto.RlsLiveFlag},
-                    new ADO_inputParams() {name ="@RlsDependencyFlag",value= dto.RlsDependencyFlag},
                     new ADO_inputParams() {name ="@RlsExceptionalFlag",value= dto.RlsExceptionalFlag},
                     new ADO_inputParams() {name ="@RlsReservationFlag",value= dto.RlsReservationFlag},
                     new ADO_inputParams() {name ="@RlsArchiveFlag",value= dto.RlsArchiveFlag},
@@ -187,6 +186,20 @@ namespace PxStat.Data
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
 
             ado.ExecuteNonQueryProcedure("Data_Release_IsWIP", paramList, ref returnParam);
+
+            return Convert.ToBoolean(returnParam.value);
+        }
+
+        internal bool IsHistorical(int rlsCode)
+        {
+            if (rlsCode == 0) return false;
+
+            var paramList = new List<ADO_inputParams>();
+            paramList.Add(new ADO_inputParams { name = "@RlsCode", value = rlsCode });
+
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+
+            ado.ExecuteNonQueryProcedure("Data_Release_IsHistorical", paramList, ref returnParam);
 
             return Convert.ToBoolean(returnParam.value);
         }

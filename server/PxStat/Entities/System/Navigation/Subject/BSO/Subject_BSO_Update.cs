@@ -43,7 +43,7 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
-            if (DTO.LngIsoCode != Configuration_BSO.GetCustomConfig("language.iso.code"))
+            if (DTO.LngIsoCode != Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
             {
                 SubjectLanguage_BSO subjectLanguageBso = new SubjectLanguage_BSO();
                 nUpdatedSubjectId = subjectLanguageBso.CreateOrUpdate(DTO, Ado);

@@ -53,20 +53,7 @@ namespace PxStat.Data
             return new Release_BSO_UpdateAnalyticalFlag(jsonrpcRequest).Update().Response;
         }
 
-        /// <summary>
-        /// Updates the value of the Release Dependency flag
-        /// </summary>
-        /// <param name="jsonrpcRequest"></param>
-        /// <returns></returns>
-        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST =
-            Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + "/MtrCode,"
-            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + "/RlsCode,"
-            + Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + "/MtrCode,"
-            + Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + "/RlsCode")]
-        public static dynamic UpdateDependencyFlag(JSONRPC_API jsonrpcRequest)
-        {
-            return new Release_BSO_UpdateDependencyFlag(jsonrpcRequest).Update().Response;
-        }
+
 
         /// <summary>
         /// Updates the product for a Release

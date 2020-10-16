@@ -28,7 +28,7 @@ namespace PxStat.System.Navigation
                 SearchTerm = parameters.SearchTerm;
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
-            else LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+            else LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
         }
     }
 

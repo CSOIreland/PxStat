@@ -217,6 +217,7 @@
     <Content Include="Resources\Internationalisation\keyword\keyword_ga.json" />
     <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\Live.pubxml" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
@@ -320,7 +321,6 @@
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_Read.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadList.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateAnalyticalFlag.cs" />
-    <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateDependencyFlag.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateProduct.cs" />
     <Compile Include="Entities\Data\Release\Release_ADO _Workflow.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO.cs" />
@@ -345,6 +345,7 @@
     <Compile Include="Entities\Security\Cache\Cache_API.cs" />
     <Compile Include="Entities\Security\Cache\Cache_DTO.cs" />
     <Compile Include="Entities\Security\Cache\Cache_VLD.cs" />
+    <Compile Include="Entities\Security\Configuration\BSO\Configuration_BSO_Read.cs" />
     <Compile Include="Entities\Security\Logging\BSO\Logging_BSO_Read.cs" />
     <Compile Include="Entities\Security\Logging\Logging_ADO.cs" />
     <Compile Include="Entities\Security\Logging\Logging_API.cs" />

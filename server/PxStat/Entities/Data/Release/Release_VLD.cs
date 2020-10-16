@@ -82,19 +82,7 @@ namespace PxStat.Data
         }
     }
 
-    /// <summary>
-    /// Validator class for UpdateDependencyFlag
-    /// </summary>
-    internal class Release_VLD_UpdateDependencyFlag : AbstractValidator<Release_DTO_Update>
-    {
-        public Release_VLD_UpdateDependencyFlag()
-        {
-            //Mandatory - RlsCode
-            RuleFor(x => x.RlsCode).NotEmpty();
-            //Mandatory - RlsDependencyFlag
-            RuleFor(x => x.RlsDependencyFlag).NotNull();
-        }
-    }
+
 
     /// <summary>
     /// Validator class for UpdateProduct

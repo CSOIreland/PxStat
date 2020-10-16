@@ -1,7 +1,9 @@
 ﻿using API;
 using PxStat.Security;
 using PxStat.Template;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Dynamic;
 using System.Linq;
 
@@ -16,6 +18,10 @@ namespace PxStat.System.Navigation
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
+        /// 
+
+        int searchTermCount;
+
         internal Navigation_BSO_Search(JSONRPC_API request) : base(request, new Navigation_VLD_Search())
         { }
 
@@ -43,13 +49,112 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         protected override bool Execute()
         {
+
             Navigation_ADO adoNav = new Navigation_ADO(Ado);
 
-            dynamic data = adoNav.Search(DTO);
+            DTO.SearchTerms = PrepareSearchData();
+
+            //DTO.search has too much variation to use as a cache key - the search terms are formatted in the table so we don't need it any more     
+            DTO.Search = "";
+
+            MemCachedD_Value cache = MemCacheD.Get_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO); //
+            if (cache.hasData)
+            {
+                Response.data = cache.data;
+                return true;
+            }
+
+
+            dynamic data = adoNav.Search(DTO, searchTermCount);
 
             Response.data = FormatOutput(data, DTO.LngIsoCode);
 
+            MemCacheD.Store_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO, Response.data, default(DateTime), Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+
             return true;
+        }
+
+        private DataTable PrepareSearchData()
+        {
+            //Get a keyword extractor. The keyword extractor should, if possible, correspond to the supplied LngIsoCode
+            //If an extractor is not found for the supplied LngIsoCode then a basic default extractor is supplied.
+            Keyword_BSO_Extract kbe = new Keyword_BSO_Extract(DTO.LngIsoCode);
+            //  IKeywordExtractor extractor = kbe.GetExtractor();
+
+            //Get a list of keywords based on the supplied search term
+            List<string> searchList = new List<string>();
+            List<string> searchListInvariant = new List<string>();
+
+
+            if (DTO.Search != null)
+            {
+                //Get a singularised version of each word
+                searchList = kbe.ExtractSplitSingular(DTO.Search);
+                //We need a count of search terms (ignoring duplicates caused by singularisation)
+                searchTermCount = searchList.Count;
+                //Some words will not be searched for in their singular form (flagged on the table), so we need those as well
+                searchListInvariant = kbe.ExtractSplit(DTO.Search);
+                //Eliminate duplicates from the list
+                searchList = searchList.Union(searchListInvariant).ToList();
+            }
+
+
+
+            //The list of keywords must be supplied to the search stored procedure
+            //In order to do this,  we pass a datatable as a parameter
+            //First we create the table
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Key");
+            dt.Columns.Add("Value");
+            dt.Columns.Add("Attribute");
+
+            int searchSynonymMult = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.synonym-multiplier");
+            int searchWordMult = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.search-word-multiplier");
+
+            //Gather any synonyms and include them in the search, in the synonyms column
+            foreach (string word in searchList)
+            {
+
+                var hitlist = kbe.extractor.SynonymList.Where(x => x.match == word.ToLower());
+                if ((kbe.extractor.SynonymList.Where(x => x.match == word.ToLower())).Count() > 0)
+                {
+
+                    foreach (var syn in hitlist)
+                    {
+                        var row = dt.NewRow();
+                        row["Key"] = syn.lemma;
+                        row["Value"] = syn.match;
+                        row["Attribute"] = searchSynonymMult;
+                        dt.Rows.Add(row);
+                    }
+                }
+                else
+                {
+                    var row = dt.NewRow();
+                    row["Key"] = word;
+                    row["Value"] = word;
+                    row["Attribute"] = searchSynonymMult;
+                    dt.Rows.Add(row);
+
+                }
+                //The main search term must be included along with the synonyms, i.e. a word is a synonym of itself
+                //But with a higher search priority, which goes into the Attribute column
+                var keyrow = dt.NewRow();
+                if (dt.Select("Key = '" + word + "'").Count() == 0)
+                {
+                    keyrow["Key"] = word;
+                    keyrow["Value"] = word;
+                    keyrow["Attribute"] = searchWordMult;
+                    dt.Rows.Add(keyrow);
+                }
+            }
+
+
+            //Sort the search terms to ensure invariant word order in the search       
+            dt.DefaultView.Sort = "Key,Value asc";
+            dt = dt.DefaultView.ToTable();
+
+            return dt;
         }
 
         /// <summary>
@@ -81,7 +186,6 @@ namespace PxStat.System.Navigation
                 rel.RlsReservationFlag = release.RlsReservationFlag;
                 rel.RlsArchiveFlag = release.RlsArchiveFlag;
                 rel.RlsAnalyticalFlag = release.RlsAnalyticalFlag;
-                rel.RlsDependencyFlag = release.RlsDependencyFlag;
                 rel.CprCode = release.CprCode;
                 rel.CprValue = release.CprValue;
                 rel.LngIsoCode = release.LngIsoCode;
@@ -92,7 +196,7 @@ namespace PxStat.System.Navigation
                 foreach (var cls in rlsCls)
                 {
                     dynamic RlsCls = new ExpandoObject();
-                    string readLanguage = Configuration_BSO.GetCustomConfig("language.iso.code");
+                    string readLanguage = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
                     //If this classification exists in the requested language, return it, otherwise return it in the default language
                     if ((classifications.Where(x => (x.RlsCode == release.RlsCode && x.LngIsoCode == DTO.LngIsoCode)).Count() > 0))
                     {
@@ -131,7 +235,7 @@ namespace PxStat.System.Navigation
                 // We need to conditionally display our results depending on the preferred language
                 //Either this matrix exists in our preferred language..
                 //..Or else it doesn't exist in our preferred language but a version exists in the default language
-                if (release.LngIsoCode == lngIsoCode || (release.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code") && !existsInPreferredLangauge))
+                if (release.LngIsoCode == lngIsoCode || (release.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") && !existsInPreferredLangauge))
                 {
                     outList.Add(rel);
                 }
@@ -223,7 +327,6 @@ namespace PxStat.System.Navigation
                                 t.RlsReservationFlag,
                                 t.RlsArchiveFlag,
                                 t.RlsAnalyticalFlag,
-                                t.RlsDependencyFlag,
                                 t.CprCode,
                                 t.CprValue,
                                 t.FrqCode,
@@ -249,7 +352,6 @@ namespace PxStat.System.Navigation
                                 grp.Key.RlsReservationFlag,
                                 grp.Key.RlsArchiveFlag,
                                 grp.Key.RlsAnalyticalFlag,
-                                grp.Key.RlsDependencyFlag,
                                 grp.Key.CprCode,
                                 grp.Key.CprValue,
                                 grp.Key.FrqCode,

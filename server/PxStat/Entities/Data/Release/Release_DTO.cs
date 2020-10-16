@@ -71,7 +71,7 @@ namespace PxStat.Data
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
             else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -89,10 +89,7 @@ namespace PxStat.Data
         /// </summary>
         public bool? RlsAnalyticalFlag { get; internal set; }
 
-        /// <summary>
-        /// Release Dependency Flag
-        /// </summary>
-        public bool? RlsDependencyFlag { get; internal set; }
+
 
         /// <summary>
         /// Product Code
@@ -118,16 +115,13 @@ namespace PxStat.Data
             if (parameters.RlsCode != null)
             {
                 RlsCode = parameters.RlsCode;
-
             }
-            if (parameters.RlsAnalyticalFlag != null)
-                RlsAnalyticalFlag = parameters.RlsAnalyticalFlag;
-            if (parameters.RlsDependencyFlag != null)
-                RlsDependencyFlag = parameters.RlsDependencyFlag;
             if (parameters.PrcCode != null)
                 PrcCode = parameters.PrcCode;
             if (parameters.CmmValue != null)
                 CmmValue = parameters.CmmValue;
+            if (parameters.RlsAnalyticalFlag != null)
+                RlsAnalyticalFlag = parameters.RlsAnalyticalFlag;
 
         }
 
@@ -175,10 +169,6 @@ namespace PxStat.Data
         /// </summary>
         public int RlsVersion { get; internal set; }
 
-        /// <summary>
-        /// Release Dependency Flag
-        /// </summary>
-        public bool RlsDependencyFlag { get; internal set; }
 
         /// <summary>
         ///  Release Exceptional Flag

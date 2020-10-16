@@ -69,7 +69,9 @@ namespace PxStat.Data
         public Class Class { get; set; }
 
         [JsonProperty("dimension", Required = Required.Always)]
-        public Dictionary<string, DimensionV1_1> Dimension { get; set; }
+        public Dictionary<string, object> Dimension { get; set; }
+
+
 
         [JsonProperty("error", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public List<object> Error { get; set; }
@@ -105,15 +107,13 @@ namespace PxStat.Data
         [JsonProperty("value", Required = Required.DisallowNull)]
         public JsonStatValue Value { get; set; }
 
+
+
     }
 
     public partial class DimensionV1_1
     {
-        [JsonProperty("role", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public Role Role { get; set; }
 
-        [JsonProperty("size", Required = Required.Always)]
-        public List<long> Size { get; set; }
 
         [JsonProperty("category", Required = Required.Always)]
         public Category Category { get; set; }
@@ -136,8 +136,7 @@ namespace PxStat.Data
         [JsonProperty("note", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Note { get; set; }
 
-        [JsonProperty("id", Required = Required.Always)]
-        public List<string> Id { get; set; }
+
     }
 
     public partial class JsonStatV1
@@ -401,7 +400,7 @@ namespace PxStat.Data
                 return new ValueElement { String = null };
             else if (double.TryParse(String, out result))
                 return new ValueElement { Double = result };
-            else if (String.Equals(Configuration_BSO.GetCustomConfig("px.confidential-value"))) return new ValueElement { String = null };
+            else if (String.Equals(Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value"))) return new ValueElement { String = null };
             else if (String.Contains("\""))
             {
                 String = String.Replace("\"", String.Empty);

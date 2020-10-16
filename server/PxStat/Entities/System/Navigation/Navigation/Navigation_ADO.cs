@@ -2,8 +2,6 @@
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -36,7 +34,7 @@ namespace PxStat.System.Navigation
             var inputParams = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name="@LngIsoCode",value=dto.LngIsoCode  },
-                new ADO_inputParams() {name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig("language.iso.code") }
+                new ADO_inputParams() {name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
             };
 
             return ado.ExecuteReaderProcedure("System_Navigation_Navigation_Read", inputParams);
@@ -62,89 +60,10 @@ namespace PxStat.System.Navigation
             return ado.ExecuteReaderProcedure("Data_Release_ReadNext", inputParams);
         }
 
-        /// <summary>
-        /// Search method
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal dynamic Search(Navigation_DTO_Search dto)
+
+
+        internal dynamic Search(Navigation_DTO_Search dto, int searchTermCount)
         {
-            //Get a keyword extractor. The keyword extractor should, if possible, correspond to the supplied LngIsoCode
-            //If an extractor is not found for the supplied LngIsoCode then a basic default extractor is supplied.
-            Keyword_BSO_Extract kbe = new Keyword_BSO_Extract(dto.LngIsoCode);
-            //  IKeywordExtractor extractor = kbe.GetExtractor();
-
-            //Get a list of keywords based on the supplied search term
-            List<string> searchList = new List<string>();
-            List<string> searchListInvariant = new List<string>();
-            int searchTermCount = 0;
-
-            if (dto.Search != null)
-            {
-                //Get a singularised version of each word
-                searchList = kbe.ExtractSplitSingular(dto.Search);
-                //We need a count of search terms (ignoring duplicates caused by singularisation)
-                searchTermCount = searchList.Count;
-                //Some words will not be searched for in their singular form (flagged on the table), so we need those as well
-                searchListInvariant = kbe.ExtractSplit(dto.Search);
-                //Eliminate duplicates from the list
-                searchList = searchList.Union(searchListInvariant).ToList();
-            }
-
-
-
-            //The list of keywords must be supplied to the search stored procedure
-            //In order to do this,  we pass a datatable as a parameter
-            //First we create the table
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Key");
-            dt.Columns.Add("Value");
-            dt.Columns.Add("Attribute");
-
-
-
-            //Gather any synonyms and include them in the search, in the synonyms column
-            foreach (string word in searchList)
-            {
-
-                var hitlist = kbe.extractor.SynonymList.Where(x => x.match == word.ToLower());
-                if ((kbe.extractor.SynonymList.Where(x => x.match == word.ToLower())).Count() > 0)
-                {
-
-                    foreach (var syn in hitlist)
-                    {
-                        var row = dt.NewRow();
-                        row["Key"] = syn.lemma;
-                        row["Value"] = syn.match;
-                        row["Attribute"] = Configuration_BSO.GetCustomConfig("search.synonym-multiplier");
-                        dt.Rows.Add(row);
-                    }
-                }
-                else
-                {
-                    var row = dt.NewRow();
-                    row["Key"] = word;
-                    row["Value"] = word;
-                    row["Attribute"] = Configuration_BSO.GetCustomConfig("search.synonym-multiplier");
-                    dt.Rows.Add(row);
-
-                }
-                //The main search term must be included along with the synonyms, i.e. a word is a synonym of itself
-                //But with a higher search priority, which goes into the Attribute column
-                var keyrow = dt.NewRow();
-                if (dt.Select("Key = '" + word + "'").Count() == 0)
-                {
-                    keyrow["Key"] = word;
-                    keyrow["Value"] = word;
-                    keyrow["Attribute"] = Configuration_BSO.GetCustomConfig("search.search-word-multiplier");
-                    dt.Rows.Add(keyrow);
-                }
-            }
-
-
-            //Sort the search terms to ensure invariant word order in the search       
-            dt.DefaultView.Sort = "Key,Value asc";
-            dt = dt.DefaultView.ToTable();
 
 
             //The ExecuteReaderProcedure method requires that the parameters be contained in a List<ADO_inputParams>
@@ -154,7 +73,7 @@ namespace PxStat.System.Navigation
 
             };
 
-            ADO_inputParams param = new ADO_inputParams() { name = "@Search", value = dt };
+            ADO_inputParams param = new ADO_inputParams() { name = "@Search", value = dto.SearchTerms };
             param.typeName = "KeyValueVarcharAttribute";
             paramList.Add(param);
             //We need a count of search terms (ignoring duplicates caused by singularisation)
@@ -183,24 +102,10 @@ namespace PxStat.System.Navigation
 
 
 
-            //We store from the ADO because the search terms may have been changed by keyword rules
-            MemCachedD_Value cache = MemCacheD.Get_ADO("PxStat.System.Navigation", "System_Navigation_Search", paramList); //
-            if (cache.hasData)
-            {
-                return cache.data.ToObject<List<dynamic>>();
-
-            }
-
-
-
             //Call the stored procedure
             ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_Search", paramList);
 
-            MemCacheD.Store_ADO<dynamic>("PxStat.System.Navigation", "System_Navigation_Search", paramList, output.data, new DateTime(), Resources.Constants.C_CAS_NAVIGATION_SEARCH);
-            //return the list of entities that have been found
             return output.data;
         }
-
-
     }
 }

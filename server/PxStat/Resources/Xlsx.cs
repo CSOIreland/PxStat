@@ -35,7 +35,7 @@ namespace PxStat.Resources
             string sep = Label.Get("default.csv.separator");
 
             if (String.IsNullOrEmpty(lngIsoCode))
-                lngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             StringBuilder sb = new StringBuilder();
 
@@ -156,7 +156,7 @@ namespace PxStat.Resources
             {
                 if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
                 {
-                    string Href = Configuration_BSO.GetCustomConfig("url.restful") +
+                    string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") +
 string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Utility.GetCustomConfig("APP_FORMAT_PXAPI_TYPE_XLSX"), Utility.GetCustomConfig("APP_FORMAT_PXAPI_VERSION_XLSX"), spec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
                     line = new List<XlsxValue>();
                     line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.url", lngIsoCode), StyleId = 1 });
@@ -265,10 +265,6 @@ string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomC
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = theMatrix.Release.RlsAnalyticalFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode), StyleId = 0 });
             matrix.Add(line);
 
-            line = new List<XlsxValue>();
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.dependency", lngIsoCode), StyleId = 1 });
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = theMatrix.Release.RlsDependencyFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode), StyleId = 0 });
-            matrix.Add(line);
 
             line = new List<XlsxValue>();
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = "", StyleId = 0 });
@@ -294,7 +290,7 @@ string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomC
             xl.InsertDataWorksheet(matrix, Label.Get("About", lngIsoCode), OrientationValues.Landscape, true);
 
             //On the worksheet we've just created, add an image to the top left hand corner
-            xl.AddImage(Configuration_BSO.GetCustomConfig("url.logo"), Label.Get("About", lngIsoCode), 1, 1);
+            xl.AddImage(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo"), Label.Get("About", lngIsoCode), 1, 1);
 
             //Create a second worksheet based on the Matrix contents
             xl.InsertDataWorksheet(theMatrix.GetMatrixSheet(null, false, 1), theMatrix.Code, OrientationValues.Landscape, true);

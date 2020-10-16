@@ -23,6 +23,11 @@ namespace PxStat.Build
     /// </summary>
     internal class Build_BSO
     {
+        internal class MarkedCell
+        {
+            internal dynamic Cell { get; set; }
+            internal bool Marked { get; set; }
+        }
         allDTO AllMergeLists = new allDTO();
 
         /// <summary>
@@ -34,10 +39,21 @@ namespace PxStat.Build
         /// <param name="dataMatrix"></param>
         /// <param name="queryMatrix"></param>
         /// <returns></returns>
+        /// 
+
+        /*WARNING - Work in progress
+         Currently only reliably queries SPC sorted matrixes 
+         Queries limited  Period queries
+         */
         internal Matrix Query(Matrix dataMatrix, Matrix queryMatrix)
         {
-            List<dynamic> selectedCells = new List<dynamic>();
-            selectedCells.AddRange(dataMatrix.Cells.ToList());
+            if (queryMatrix.MainSpec.GetDataSize() == dataMatrix.Cells.Count) return dataMatrix;
+
+            List<MarkedCell> selectedCells = new List<MarkedCell>();
+            foreach (dynamic cell in dataMatrix.Cells)
+            {
+                selectedCells.Add(new MarkedCell() { Cell = cell, Marked = false });
+            };
 
             foreach (var val in dataMatrix.MainSpec.MainValues)
             {
@@ -52,12 +68,18 @@ namespace PxStat.Build
                 }
             }
 
-            dataMatrix.MainSpec.Classification = queryMatrix.MainSpec.Classification;
-            dataMatrix.MainSpec.Statistic = queryMatrix.MainSpec.Statistic;
-            dataMatrix.MainSpec.Frequency = queryMatrix.MainSpec.Frequency;
+            //Set metadata:
+
+            dataMatrix.MainSpec.Classification = dataMatrix.MainSpec.Classification.Intersect(queryMatrix.MainSpec.Classification).ToList();
+            dataMatrix.MainSpec.Statistic = dataMatrix.MainSpec.Statistic.Intersect(queryMatrix.MainSpec.Statistic).ToList();
+            dataMatrix.MainSpec.Frequency.Period = dataMatrix.MainSpec.Frequency.Period.Intersect(queryMatrix.MainSpec.Frequency.Period).ToList();
+
+
+
 
             if (dataMatrix.OtherLanguageSpec != null)
             {
+
                 foreach (var spec in dataMatrix.OtherLanguageSpec)
                 {
                     List<StatisticalRecordDTO_Create> sList = new List<StatisticalRecordDTO_Create>();
@@ -86,7 +108,8 @@ namespace PxStat.Build
                     }
                 }
             }
-            dataMatrix.Cells = selectedCells;
+
+            dataMatrix.Cells = selectedCells.Where(y => y.Marked).Select(x => x.Cell).ToList();
             return dataMatrix;
         }
 
@@ -108,67 +131,79 @@ namespace PxStat.Build
         }
 
 
-        private List<dynamic> ExtractForStatistic(Matrix dataMatrix, Matrix queryMatrix, List<dynamic> selectedCells)
+        private List<MarkedCell> ExtractForStatistic(Matrix dataMatrix, Matrix queryMatrix, List<MarkedCell> selectedCells)
         {
-            if (dataMatrix.MainSpec.Statistic.Count > queryMatrix.MainSpec.Statistic.Count)
-            {
-                int counter = 0;
 
-                int sliceCount = selectedCells.Count / dataMatrix.MainSpec.Statistic.Count;
-                foreach (var s in dataMatrix.MainSpec.Statistic)
-                {
+            //if (dataMatrix.MainSpec.Statistic.Count > queryMatrix.MainSpec.Statistic.Count)
+            //{
+            //    int counter = 0;
 
-                    if (!queryMatrix.MainSpec.Statistic.Contains(s))
-                    {
-                        selectedCells.RemoveRange(counter * sliceCount, sliceCount);
-                        counter--;
-                    }
+            //    int sliceCount = selectedCells.Count / dataMatrix.MainSpec.Statistic.Count;
+            //    foreach (var s in dataMatrix.MainSpec.Statistic)
+            //    {
 
-                    counter++;
-                }
+            //        if (!queryMatrix.MainSpec.Statistic.Contains(s))
+            //        {
+            //            selectedCells.RemoveRange(counter * sliceCount, sliceCount);
+            //            counter--;
+            //        }
 
-            }
+            //        counter++;
+            //    }
+
+            //}
             return selectedCells;
         }
 
-        private List<dynamic> ExtractForFrequency(Matrix dataMatrix, Matrix queryMatrix, List<dynamic> selectedCells)
+        private List<MarkedCell> ExtractForFrequency(Matrix dataMatrix, Matrix queryMatrix, List<MarkedCell> selectedCells)
         {
             if (dataMatrix.MainSpec.Frequency.Period.Count > queryMatrix.MainSpec.Frequency.Period.Count)
             {
-                int counter = 0;
-                int sliceCount = selectedCells.Count / dataMatrix.MainSpec.Frequency.Period.Count;
+                int slice = (selectedCells.Count / dataMatrix.MainSpec.Frequency.Period.Count) / dataMatrix.MainSpec.Statistic.Count;
+                int pcounter = 0;
                 foreach (var p in dataMatrix.MainSpec.Frequency.Period)
                 {
-                    if (!queryMatrix.MainSpec.Frequency.Period.Contains(p))
+                    int statcounter = 0;
+                    foreach (var s in dataMatrix.MainSpec.Statistic)
                     {
-                        selectedCells.RemoveRange(counter * sliceCount, sliceCount);
-                        counter--;
+                        if (queryMatrix.MainSpec.Frequency.Period.Contains(p))
+                        {
+                            int statslice = selectedCells.Count / dataMatrix.MainSpec.Statistic.Count;
+                            int periodslice = statslice / dataMatrix.MainSpec.Frequency.Period.Count;
+                            int statstart = statslice * statcounter;
+                            int periodstart = statstart + periodslice * pcounter;
+                            int startpos = periodstart;
+                            for (int i = startpos; i < startpos + slice; i++)
+                            {
+                                selectedCells.ElementAt(i).Marked = true;
+                            }
+                        }
+                        statcounter++;
                     }
-
-                    counter++;
+                    pcounter++;
                 }
             }
             return selectedCells;
         }
 
-        private List<dynamic> ExtractForClassification(Matrix dataMatrix, Matrix queryMatrix, List<dynamic> selectedCells, ClassificationRecordDTO_Create cls)
+        private List<MarkedCell> ExtractForClassification(Matrix dataMatrix, Matrix queryMatrix, List<MarkedCell> selectedCells, ClassificationRecordDTO_Create cls)
         {
-            int counter = 0;
-            ClassificationRecordDTO_Create qClass = queryMatrix.MainSpec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
+            //int counter = 0;
+            //ClassificationRecordDTO_Create qClass = queryMatrix.MainSpec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
 
-            int sliceCount = selectedCells.Count / cls.Variable.Count;
-            if (cls.Variable.Count > qClass.Variable.Count)
-            {
-                foreach (var v in cls.Variable)
-                {
-                    if (!qClass.Variable.Contains(v))
-                    {
-                        selectedCells.RemoveRange(counter * sliceCount, sliceCount);
-                        counter--;
-                    }
-                    counter++;
-                }
-            }
+            //int sliceCount = selectedCells.Count / cls.Variable.Count;
+            //if (cls.Variable.Count > qClass.Variable.Count)
+            //{
+            //    foreach (var v in cls.Variable)
+            //    {
+            //        if (!qClass.Variable.Contains(v))
+            //        {
+            //            selectedCells.RemoveRange(counter * sliceCount, sliceCount);
+            //            counter--;
+            //        }
+            //        counter++;
+            //    }
+            //}
 
             return selectedCells;
         }
@@ -202,12 +237,14 @@ namespace PxStat.Build
                 {
                     PxDoubleValue newpx = new PxDoubleValue(Convert.ToDouble(v.dataValue));
                     cl.TdtValue = newpx;
+                    cl.Value = newpx;
                     newCells.Add(cl);
                 }
                 else
                 {
                     // PxStringValue newpx = new PxStringValue(v.dataValue);
                     cl.TdtValue = v.dataValue;//.ToPxValue();
+                    cl.Value = v.dataValue;
                     newCells.Add(cl);
                 }
 
@@ -426,6 +463,7 @@ namespace PxStat.Build
                 DataItem_DTO dto = new DataItem_DTO();
                 populateDataItem(ref dto, item, true);
 
+
                 if (defaultValues) dto.dataValue = nullValue;
                 else
                     if (databaseDerived)
@@ -619,7 +657,7 @@ namespace PxStat.Build
             //To keep memory usage low, we can create and load the data in tranches
             //Set this high if you have lots of server memory and want relatively faster performance
             //Set this low if you want to conserve memory and you don't mind taking a hit on the time to upload          
-            long trancheSize = Configuration_BSO.GetCustomConfig("bulkcopy-tranche-multiplier") * Convert.ToInt32(ConfigurationManager.AppSettings["API_ADO_BULKCOPY_BATCHSIZE"]);
+            long trancheSize = Configuration_BSO.GetCustomConfig(ConfigType.server, "bulkcopy-tranche-multiplier") * Convert.ToInt32(ConfigurationManager.AppSettings["API_ADO_BULKCOPY_BATCHSIZE"]);
             Log.Instance.Debug(graph.Count().ToString() + " rows of data to be uploaded.");
             int counter = 0;
 
@@ -935,7 +973,7 @@ namespace PxStat.Build
             ClassificationRecordDTO_Create cDto = theMatrixData.MainSpec.Classification.FirstOrDefault();
 
 
-            if (lngIsoCode == null) lngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+            if (lngIsoCode == null) lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             Matrix.Specification theSpec = theMatrixData.GetSpecFromLanguage(lngIsoCode);
 
@@ -1155,8 +1193,11 @@ namespace PxStat.Build
                 var dtoDupes = (DTO.PxData.DataItems.Where(x => dupeIds.Contains((long)x.SortId)));
                 dtoDupes.ToList().ForEach(c => c.updated = false);
 
-
-
+                foreach (var v in dtoDupes)
+                {
+                    Log.Instance.Debug("**Build Validation** Dupe: " + Utility.JsonSerialize_IgnoreLoopingReference(v));
+                }
+                Log.Instance.Debug("**Build Validation** Count of Dupes found : " + dtoDupes.Count().ToString());
             }
             AllMergeLists.request = requestItems;
 
@@ -1175,11 +1216,9 @@ namespace PxStat.Build
 
         internal void UpdateMatrixMetadata(ref Matrix theMatrixData, BuildUpdate_DTO DTO)
         {
-            theMatrixData.Code = DTO.MtrCode;
+            theMatrixData.Code = DTO.MtrCode != null ? DTO.MtrCode : theMatrixData.Code;
             theMatrixData.Copyright.CprCode = String.IsNullOrEmpty(DTO.CprCode) ? theMatrixData.Copyright.CprCode : DTO.CprCode;
             theMatrixData.IsOfficialStatistic = DTO.MtrOfficialFlag;
-
-
 
 
             foreach (Dimension_DTO dim in DTO.Dimension)
@@ -1198,11 +1237,14 @@ namespace PxStat.Build
             spec.Frequency.Code = String.IsNullOrEmpty(DTO.FrqCodeTimeval) ? spec.Frequency.Code : DTO.FrqCodeTimeval;
             spec.Frequency.Value = String.IsNullOrEmpty(dim.Frequency.Value) ? spec.Frequency.Value : dim.Frequency.Value;
 
-            foreach (var cls in spec.Classification)
+            if (dim.Classifications != null)
             {
-                var dtoCls = dim.Classifications.Where(x => x.Code == cls.Code).FirstOrDefault();
-                cls.GeoUrl = dtoCls.GeoUrl;
-                cls.GeoFlag = dtoCls.GeoFlag;
+                foreach (var cls in spec.Classification)
+                {
+                    var dtoCls = dim.Classifications.Where(x => x.Code == cls.Code).FirstOrDefault();
+                    cls.GeoUrl = dtoCls.GeoUrl;
+                    cls.GeoFlag = dtoCls.GeoFlag;
+                }
             }
 
             spec.Title = String.IsNullOrEmpty(dim.MtrTitle) ? spec.Title : dim.MtrTitle;
@@ -1217,124 +1259,7 @@ namespace PxStat.Build
             spec.Contents = spec.Title;
         }
 
-        //internal List<DataItem_DTO> UpdateDtoListFromBuild(Matrix theMatrixData, BuildUpdate_DTO DTO, ADO Ado)
-        //{
-        //    Stopwatch sw = new Stopwatch();
-        //    sw.Start();
 
-
-
-        //    Specification theSpec = theMatrixData.GetSpecFromLanguage(DTO.LngIsoCode);
-
-        //    SetMetadataSortIds(ref theSpec);
-
-
-
-        //    Matrix matrixNewMetadata = new Matrix(DTO);
-        //    if (DTO.Dimension.Count > 0)
-        //    {
-        //        matrixNewMetadata.OtherLanguageSpec = new List<Matrix.Specification>();
-        //        foreach (var dimension in DTO.Dimension)
-        //        {
-        //            matrixNewMetadata.OtherLanguageSpec.Add(new Matrix.Specification(dimension.LngIsoCode, DTO));
-
-        //        }
-
-        //    }
-
-
-        //    if (DTO.MtrCode != null)
-        //        theMatrixData.Code = DTO.MtrCode;
-
-
-        //    if (DTO.CprCode != null)
-        //    {
-        //        //Look this up from 
-        //        Copyright_ADO cAdo = new Copyright_ADO();
-        //        Copyright_DTO_Read cDto = new Copyright_DTO_Read();
-        //        cDto.CprCode = DTO.CprCode;
-        //        var result = cAdo.Read(Ado, cDto);
-        //        if (result.hasData)
-        //        {
-        //            theSpec.Source = result.data[0].CprValue;
-        //        }
-        //        else
-        //        {
-
-        //            return null;
-        //        }
-        //    }
-
-        //    theMatrixData.IsOfficialStatistic = DTO.MtrOfficialFlag;
-
-        //    if (theSpec == null)
-        //        throw new FormatException(Label.Get("px.build.language"));
-
-
-        //    List<PeriodRecordDTO_Create> Periods = new List<PeriodRecordDTO_Create>();
-
-
-        //    Log.Instance.Debug("*Diagnostic* Matrix created: " + sw.ElapsedMilliseconds); //141942
-
-
-
-
-        //    Periods.AddRange(theSpec.Frequency.Period);
-
-
-
-        //    //Periods may have been added or removed. Furthermore, the same periods may have different values for different languages
-
-
-        //    var dim = DTO.Dimension.Where(x => x.LngIsoCode == theSpec.Language).FirstOrDefault();
-
-
-
-        //    if (dim.Frequency != null)
-        //    {
-        //        Periods.AddRange(DTO.Dimension.Where(x => x.LngIsoCode == DTO.LngIsoCode).FirstOrDefault().Frequency.Period.Except(theSpec.Frequency.Period));
-        //    }
-
-        //    int counter = 1;
-        //    foreach (var period in Periods)
-        //    {
-        //        period.SortId = counter;
-        //        counter++;
-        //    }
-
-
-
-        //    Matrix defaultMatrix = new Matrix();
-        //    defaultMatrix.MainSpec = theSpec;
-
-        //    defaultMatrix.MainSpec.Frequency.Period = Periods;
-
-        //    if (theMatrixData.OtherLanguageSpec != null)
-        //    {
-        //        defaultMatrix.OtherLanguageSpec = new List<Specification>();
-        //        foreach (var spec in theMatrixData.OtherLanguageSpec)
-        //        {
-        //            spec.Frequency.Period = Periods;
-        //            defaultMatrix.OtherLanguageSpec.Add(spec);
-
-        //        }
-        //    }
-
-        //    SetMetadataSortIds(ref theSpec);
-
-        //    Log.Instance.Debug("*Diagnostic* Preparing all dto item lists " + sw.ElapsedMilliseconds);
-
-        //    Parallel.Invoke(() => createRequestItems(theMatrixData, Periods, theSpec, DTO), () => createExistingItems(theMatrixData, DTO.LngIsoCode, theSpec),
-        //        () => createDefaultItems(defaultMatrix, DTO.LngIsoCode, theSpec));
-
-        //    Log.Instance.Debug("*Diagnostic* All dto item lists complete " + sw.ElapsedMilliseconds); //421301
-
-
-
-        //    List<DataItem_DTO> merged = MergeAndSortData(allDto["existing"], allDto["request"], allDto["default"]);
-
-        //    return merged;
-        //}
 
         /// <summary>
         /// Updates a matrix based on the extra items supplied in the BuildUpdate_DTO
@@ -1354,7 +1279,7 @@ namespace PxStat.Build
 
             theSpec = theSpec.Clone(theMatrixData.GetSpecFromLanguage(DTO.LngIsoCode));
 
-            SetMetadataSortIds(ref theSpec);
+            SetMetadataSortIds(ref theSpec, DTO.Periods);
 
             List<PeriodRecordDTO_Create> existingPeriods = new List<PeriodRecordDTO_Create>();
             foreach (var period in theSpec.Frequency.Period) existingPeriods.Add(period);
@@ -1451,30 +1376,37 @@ namespace PxStat.Build
                 }
             }
 
-            SetMetadataSortIds(ref theSpec);
+
 
             Log.Instance.Debug("*Diagnostic* Preparing all dto item lists " + sw.ElapsedMilliseconds);
 
             Specification existingSpec = theSpec.Clone();
             Specification requestSpec = theSpec.Clone();
-            //Specification defaultSpec = defaultMatrix.MainSpec.Clone();
 
 
 
-            //createRequestItems(Periods, requestSpec, DTO);
-            //createExistingItems(theMatrixData, DTO.LngIsoCode, existingSpec);
-            //createDefaultItems(defaultMatrix, DTO.LngIsoCode, defaultMatrix.MainSpec);
 
-            Parallel.Invoke(() => createRequestItems(Periods, requestSpec, DTO), () => createExistingItems(theMatrixData, DTO.LngIsoCode, existingSpec),
-                () => createDefaultItems(defaultMatrix, DTO.LngIsoCode, defaultMatrix.MainSpec));
+            createRequestItems(Periods, requestSpec, DTO);
+            createExistingItems(theMatrixData, DTO.LngIsoCode, existingSpec);
+            createDefaultItems(defaultMatrix, DTO.LngIsoCode, defaultMatrix.MainSpec);
+            //if (DTO.PxData == null)
+            //{
+            //    //There is no new update data, just deal with the existing and default items
+            //    Parallel.Invoke(() => createExistingItems(theMatrixData, DTO.LngIsoCode, existingSpec),
+            //        () => createDefaultItems(defaultMatrix, DTO.LngIsoCode, defaultMatrix.MainSpec));
+            //    AllMergeLists.request = new List<DataItem_DTO>();
+            //}
+            //else
+            //    Parallel.Invoke(() => createRequestItems(Periods, requestSpec, DTO), () => createExistingItems(theMatrixData, DTO.LngIsoCode, existingSpec),
+            //        () => createDefaultItems(defaultMatrix, DTO.LngIsoCode, defaultMatrix.MainSpec));
 
-            Log.Instance.Debug("*Diagnostic* All dto item lists complete " + sw.ElapsedMilliseconds); //421301
+            Log.Instance.Debug("*Diagnostic* All dto item lists complete " + sw.ElapsedMilliseconds);
 
 
             List<DataItem_DTO> merged = MergeAndSortData(AllMergeLists.existing, AllMergeLists.request, AllMergeLists.defaultItems);
 
 
-            Log.Instance.Debug("*Diagnostic* Merge and sort: " + sw.ElapsedMilliseconds); //425451
+            Log.Instance.Debug("*Diagnostic* Merge and sort: " + sw.ElapsedMilliseconds);
 
             //Set the Cells to the merged and sorted data
             Build_BSO pBso = new Build_BSO();
@@ -1483,7 +1415,7 @@ namespace PxStat.Build
             UpdateMatrixMetadata(ref theMatrixData, DTO);
 
             sw.Stop();
-            Log.Instance.Debug("Update and merge complete in " + (int)sw.ElapsedMilliseconds / 1000 + " seconds");  //429000
+            Log.Instance.Debug("Update and merge complete in " + (int)sw.ElapsedMilliseconds / 1000 + " seconds");
 
             return theMatrixData;
         }
@@ -1541,10 +1473,10 @@ namespace PxStat.Build
         /// Set the Sort Id root values for each dimension
         /// </summary>
         /// <param name="theSpec"></param>
-        internal void SetMetadataSortIds(ref Specification theSpec)
+        internal void SetMetadataSortIds(ref Specification theSpec, List<PeriodRecordDTO_Create> periods = null)
         {
             int total = 0;
-
+            int pcount = periods == null ? 0 : periods.Count;
 
             for (int i = theSpec.Classification.Count - 1; i >= 0; i--)
             {
@@ -1556,7 +1488,8 @@ namespace PxStat.Build
 
             theSpec.Frequency.IdMultiplier = total;
 
-            total += (int)Math.Log10(theSpec.Frequency.Period.Count) + 1;
+            total += (int)Math.Log10(theSpec.Frequency.Period.Count + pcount) + 1;
+
 
             theSpec.StatisticMetadata = new StatisticMetadata() { IdMultiplier = total };
 
@@ -1610,12 +1543,11 @@ namespace PxStat.Build
                     //Forget about this iteration if we can't line up with the Frequency code
                     if (!readData.ContainsKey(theSpec.Frequency.Code))
                     {
+                        Log.Instance.Debug("**Build Validation** request item does not contain frequency code: " + theSpec.Frequency.Code);
                         item.updated = false;
                         continue;
                     }
 
-
-                    // readItem.period = periods.Where(x => x.Code == readItem.period.Code).FirstOrDefault();
 
                     readItem.period.Code = readData[theSpec.Frequency.Code] != null ? readData[theSpec.Frequency.Code] : "";
 
@@ -1623,6 +1555,7 @@ namespace PxStat.Build
 
                     if (readItem.period == null)
                     {
+                        Log.Instance.Debug("**Build Validation** Period not found ");
                         item.updated = false;
                         continue;
                     }
@@ -1630,6 +1563,7 @@ namespace PxStat.Build
                     //Skip this iteration if the data doesn't contain the statistic indicator
                     if (!readData.ContainsKey(Utility.GetCustomConfig("APP_CSV_STATISTIC")))
                     {
+                        Log.Instance.Debug("**Build Validation** statistic full set code not contained in " + Utility.GetCustomConfig("APP_CSV_STATISTIC"));
                         item.updated = false;
                         continue;
                     }
@@ -1639,6 +1573,7 @@ namespace PxStat.Build
                     var sttRead = theSpec.Statistic.Where(x => x.Code == readItem.statistic.Code).FirstOrDefault();
                     if (sttRead == null)
                     {
+                        Log.Instance.Debug("**Build Validation** statistic items do not contain " + readItem.statistic.Code);
                         item.updated = false;
                         continue;
                     }
@@ -1711,15 +1646,39 @@ namespace PxStat.Build
 
         private bool CheckReadItem(DataItem_DTO dataItem, List<PeriodRecordDTO_Create> periods, Specification theSpec)
         {
-            if (theSpec.Statistic.Where(x => x.Code == dataItem.statistic.Code).Count() == 0) return false;
-            if (periods.Where(x => x.Code == dataItem.period.Code).Count() == 0) return false;
+            if (theSpec.Statistic.Where(x => x.Code == dataItem.statistic.Code).Count() == 0)
+            {
+                Log.Instance.Debug("**Build Validation**" + " statistic:" + dataItem.statistic.Code);
+                return false;
+            }
+            if (periods.Where(x => x.Code == dataItem.period.Code).Count() == 0)
+            {
+                Log.Instance.Debug("**Build Validation**" + " period:" + dataItem.period.Code);
+                return false;
+            }
             foreach (ClassificationRecordDTO_Create cls in dataItem.classifications)
             {
                 var specClassification = theSpec.Classification.Where(x => x.Code == cls.Code).FirstOrDefault();
-                if (specClassification == null) return false;
-                if (specClassification.Variable.Count == 0) return false;
-                if (cls.Variable[0] == null) return false;
-                if (specClassification.Variable.Where(x => x.Code == cls.Variable[0].Code).Count() == 0) return false;
+                if (specClassification == null)
+                {
+                    Log.Instance.Debug("**Build Validation**" + "classification code null:" + cls.Code);
+                    return false;
+                }
+                if (specClassification.Variable.Count == 0)
+                {
+                    Log.Instance.Debug("**Build Validation**" + " variables null - cls code: " + specClassification.Code);
+                    return false;
+                }
+                if (cls.Variable[0] == null)
+                {
+                    Log.Instance.Debug("**Build Validation**" + " first variable null - cls code: " + specClassification.Code);
+                    return false;
+                }
+                if (specClassification.Variable.Where(x => x.Code == cls.Variable[0].Code).Count() == 0)
+                {
+                    Log.Instance.Debug("**Build Validation**" + " null variables2  " + specClassification.Code);
+                    return false;
+                }
             }
 
 
@@ -1744,7 +1703,7 @@ namespace PxStat.Build
 
             if (result.data[0].PrvCode.Equals(Constants.C_SECURITY_PRIVILEGE_MODERATOR))
             {
-                return Configuration_BSO.GetCustomConfig("build." + BuildAction + ".moderator");
+                return Configuration_BSO.GetCustomConfig(ConfigType.global, "build." + BuildAction + ".moderator");
             }
             return true;
         }

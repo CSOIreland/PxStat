@@ -42,19 +42,22 @@ namespace PxStat.Data
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
 
-
-            int updated;
-            if (dtoRelease.CmmCode == 0)
+            bool historicalTest = adoRelease.IsHistorical(DTO.RlsCode);
+            int updated = 0;
+            if (!historicalTest)
             {
-                dtoRelease.CmmValue = DTO.CmmValue;
-                updated = adoRelease.CreateComment(dtoRelease, SamAccountName);
-            }
-            else
-            {
-                dtoRelease.CmmValue = DTO.CmmValue;
-                updated = adoRelease.UpdateComment(dtoRelease, SamAccountName);
-            }
 
+                if (dtoRelease.CmmCode == 0)
+                {
+                    dtoRelease.CmmValue = DTO.CmmValue;
+                    updated = adoRelease.CreateComment(dtoRelease, SamAccountName);
+                }
+                else
+                {
+                    dtoRelease.CmmValue = DTO.CmmValue;
+                    updated = adoRelease.UpdateComment(dtoRelease, SamAccountName);
+                }
+            }
             if (updated == 0)
             {
                 Log.Instance.Debug("Failed to update Release Comment");

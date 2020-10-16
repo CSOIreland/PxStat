@@ -114,6 +114,7 @@ namespace PxStat.Data
 
 
             int counter = 0;
+            string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
             foreach (var cell in rightMatrix.Cells)
             {
                 //If there are no periods in common then nothing could have been amended.
@@ -124,8 +125,8 @@ namespace PxStat.Data
                 }
                 else
                 {
-                    if (cell.TdtValue.Equals(DBNull.Value)) cell.TdtValue = Configuration_BSO.GetCustomConfig("px.confidential-value");
-                    if (leftMatrix.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value)) leftMatrix.Cells.ElementAt(counter).TdtValue = Configuration_BSO.GetCustomConfig("px.confidential-value");
+                    if (cell.TdtValue.Equals(DBNull.Value)) cell.TdtValue = confidential;
+                    if (leftMatrix.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value)) leftMatrix.Cells.ElementAt(counter).TdtValue = confidential;
 
                     if (cell.TdtValue != leftMatrix.Cells.ElementAt(counter).TdtValue)
                         cell.WasAmendment = true;
@@ -374,10 +375,11 @@ namespace PxStat.Data
         internal List<DataItem_DTO> GetFlaggedItemsAddDelete(List<DataItem_DTO> dataItems, Specification theSpec, Matrix theMatrixData)
         {
             int counter = 0;
+            string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
             //Now mark any ADDED datapoint
             foreach (DataItem_DTO dataItem in dataItems)
             {
-                dataItem.dataValue = theMatrixData.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value) ? Configuration_BSO.GetCustomConfig("px.confidential-value") : theMatrixData.Cells.ElementAt(counter).TdtValue;
+                dataItem.dataValue = theMatrixData.Cells.ElementAt(counter).TdtValue.Equals(DBNull.Value) ? confidential : theMatrixData.Cells.ElementAt(counter).TdtValue;
 
 
                 counter++;

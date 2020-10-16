@@ -64,6 +64,7 @@ namespace PxStat.Template
         /// <param name="validator"></param>
         protected BaseTemplate(JSONRPC_API request, IValidator<T> validator)
         {
+            Configuration_BSO.SetConfigFromFiles();
             Ado = new ADO("defaultConnection");
 
             if (ActiveDirectory.IsAuthenticated(request.userPrincipal))

@@ -26,7 +26,7 @@ namespace PxParser.Resources.Parser
         {
             get
             {
-                return Configuration_BSO.GetCustomConfig("px.confidential-value");
+                return Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
             }
             set { throw new NotImplementedException(); }
 
@@ -49,7 +49,7 @@ namespace PxParser.Resources.Parser
         /// <returns></returns>
         public string ToPxString()
         {
-            return Configuration_BSO.GetCustomConfig("px.confidential-value");
+            return Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
         }
 
         /// <summary>

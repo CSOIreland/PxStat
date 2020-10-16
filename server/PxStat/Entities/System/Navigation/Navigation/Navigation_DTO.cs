@@ -1,4 +1,5 @@
 ﻿using PxStat.Security;
+using System.Data;
 
 namespace PxStat.System.Navigation
 {
@@ -21,7 +22,7 @@ namespace PxStat.System.Navigation
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -88,6 +89,7 @@ namespace PxStat.System.Navigation
         public string Search { get; set; }
         #endregion
 
+        public DataTable SearchTerms { get; set; }
         /// <summary>
         /// Constructor
         /// </summary>
@@ -96,7 +98,7 @@ namespace PxStat.System.Navigation
         {
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
-            else LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+            else LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             if (parameters.MtrCode != null)
                 MtrCode = parameters.MtrCode;

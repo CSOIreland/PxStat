@@ -163,16 +163,16 @@ namespace PxStat.Workflow
                 case Constants.C_SECURITY_PRIVILEGE_MODERATOR:
                     if (workflowStage.Equals("workflow.fastrack.signoff")) return false;
 
-                    if (Configuration_BSO.GetCustomConfig(workflowStage + ".approver"))
+                    if (Configuration_BSO.GetCustomConfig(ConfigType.global, workflowStage + ".approver"))
                     {
                         return (this.IsModeratorApprover(ado, ccnUsername, RlsCode));
                     }
                     return false;
 
                 case Constants.C_SECURITY_PRIVILEGE_ADMINISTRATOR:
-                    return Configuration_BSO.GetCustomConfig(workflowStage + ".administrator");
+                    return Configuration_BSO.GetCustomConfig(ConfigType.global, workflowStage + ".administrator");
                 case Constants.C_SECURITY_PRIVILEGE_POWER_USER:
-                    return Configuration_BSO.GetCustomConfig(workflowStage + ".poweruser");
+                    return Configuration_BSO.GetCustomConfig(ConfigType.global, workflowStage + ".poweruser");
 
             }
 
@@ -327,7 +327,7 @@ namespace PxStat.Workflow
 
             //Is this awaiting signoff?
             var adoWorkflow = new Workflow_ADO();
-            ADO_readerOutput resultStatus = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode, Configuration_BSO.GetCustomConfig("language.iso.code"));
+            ADO_readerOutput resultStatus = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode, Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
 
             if (!resultStatus.hasData)
             {

@@ -49,7 +49,7 @@ namespace PxStat.Security
             if (MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension")) aDto.matrix = requestDTO.jStatQueryExtension.extension.Matrix;
 
             // Get the Referer
-            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig("analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
+            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
 
             //The m2m parameter will not be translated into a DTO property so we just read it from the request parameters if it exists
             if (MethodReader.DynamicHasProperty(requestDTO, "m2m"))
@@ -120,7 +120,7 @@ namespace PxStat.Security
 
 
                 // Get the Referer
-                aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig("analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
+                aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
 
 
                 //Get the device detector and populate the dto attributes

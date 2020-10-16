@@ -39,7 +39,7 @@ namespace PxStat.Data
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
             else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace PxStat.Data
             if (parameters.LngIsocode != null)
                 this.LngIsoCode = parameters.LngIsocode;
             else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig("language.iso.code");
+                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
         }
 

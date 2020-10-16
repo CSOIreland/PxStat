@@ -43,9 +43,9 @@ namespace PxStat.Build
                 return false;
             }
 
-
-
             //There might be a cache:
+
+
 
             Matrix theMatrixData;
             MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + DTO.Signature);
@@ -61,15 +61,29 @@ namespace PxStat.Build
 
             Build_BSO bBso = new Build_BSO();
 
-            theMatrixData = bBso.Query(theMatrixData, GetQueryMatrix(new List<string>() { "2020M05", "2020M06" }, theMatrixData));
+            //We need to add the new periods to the matrix
+            //And either add cells of default data or else the values from DTO.data
 
-            //var dataList = bBso.GetDataForAllPeriods(theMatrixData, DTO, Ado);
+            var requestPeriods = DTO.Periods;//.OrderBy(x => x.Code).ToList();
 
-            var dataList = bBso.GetMatrixDataItems(theMatrixData, DTO.LngIsoCode, theMatrixData.MainSpec);
+
+            DTO.Periods = DTO.Periods.Except(theMatrixData.MainSpec.Frequency.Period).ToList();
+
+            theMatrixData = bBso.UpdateMatrixFromBuild(theMatrixData, DTO, Ado);
+
+            theMatrixData.MainSpec.MainValues = sortMainValuesSpc(theMatrixData.MainSpec);
+
+            theMatrixData.MainSpec.Values = theMatrixData.MainSpec.MainValues;
+
+            //bBso.Query needs to be in the same order as the periods in the matrix - why?
+            theMatrixData = bBso.Query(theMatrixData, GetQueryMatrix(requestPeriods, theMatrixData));
+
+
+            var dataList = bBso.GetMatrixDataItems(theMatrixData, DTO.LngIsoCode, theMatrixData.MainSpec, false);
 
             dynamic result = new ExpandoObject();
 
-            result.csv = theMatrixData.GetCsvObject(dataList, DTO.LngIsoCode, true);
+            result.csv = theMatrixData.GetCsvObject(dataList, DTO.LngIsoCode, true, null, DTO.Labels);
             result.MtrCode = theMatrixData.Code;
             Response.data = result;
 
@@ -77,7 +91,42 @@ namespace PxStat.Build
             return true;
         }
 
-        private Matrix GetQueryMatrix(List<string> periods, Matrix dataMatrix)
+        private IList<KeyValuePair<string, IList<IPxSingleElement>>> sortMainValuesSpc(Matrix.Specification spec)
+        {
+            var newValues = new List<object>();
+
+
+            if (spec.MainValues.Where(x => x.Key == spec.ContentVariable).Count() > 0)
+            {
+                var val = spec.MainValues.Where(x => x.Key == spec.ContentVariable).FirstOrDefault();
+                newValues.Add(val);
+            }
+
+            if (spec.MainValues.Where(x => x.Key == spec.Frequency.Value).Count() > 0)
+            {
+                var val = spec.MainValues.Where(x => x.Key == spec.Frequency.Value).FirstOrDefault();
+                newValues.Add(val);
+            }
+
+            foreach (var cls in spec.Classification)
+            {
+                if (spec.MainValues.Where(x => x.Key == cls.Value).Count() > 0)
+                {
+                    var val = spec.MainValues.Where(x => x.Key == cls.Value).FirstOrDefault();
+                    newValues.Add(val);
+                }
+            }
+
+            spec.MainValues.Clear();
+            foreach (var v in newValues)
+            {
+                spec.MainValues.Add((KeyValuePair<string, IList<PxParser.Resources.Parser.IPxSingleElement>>)v);
+            }
+
+            return spec.MainValues;
+        }
+
+        private Matrix GetQueryMatrix(List<PeriodRecordDTO_Create> periods, Matrix dataMatrix)
         {
             Matrix queryMatrix = new Matrix();
             queryMatrix.MainSpec = new Matrix.Specification();
@@ -90,9 +139,9 @@ namespace PxStat.Build
             else
             {
                 queryMatrix.MainSpec.Frequency.Period = new List<PeriodRecordDTO_Create>();
-                foreach (string per in periods)
+                foreach (var per in periods)
                 {
-                    queryMatrix.MainSpec.Frequency.Period.AddRange(dataMatrix.MainSpec.Frequency.Period.Where(x => x.Code == per));
+                    queryMatrix.MainSpec.Frequency.Period.AddRange(dataMatrix.MainSpec.Frequency.Period.Where(x => x.Code == per.Code));
                 }
             }
 

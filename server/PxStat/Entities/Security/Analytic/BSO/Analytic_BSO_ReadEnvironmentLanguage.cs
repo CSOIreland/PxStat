@@ -51,7 +51,7 @@ namespace PxStat.Security
         {
             dynamic output = new ExpandoObject();
             var itemDict = output as IDictionary<string, object>;
-            int limit = Configuration_BSO.GetCustomConfig("analytic.read-environment-language-limit");
+            int limit = Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.read-environment-language-limit");
             int counter = 1;
             int otherSum = 0;
             foreach (dynamic item in readData)

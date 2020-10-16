@@ -100,9 +100,9 @@ namespace PxStat.Data
 
             extension.matrix = restfulParameters[1];
 
-            extension.language = restfulParameters.Count >= 5 ? new { code = restfulParameters[4] } : new { code = Configuration_BSO.GetCustomConfig("language.iso.code") };
+            extension.language = restfulParameters.Count >= 5 ? new { code = restfulParameters[4] } : new { code = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") };
 
-            if (((string)extension.language.code).Length == 0) extension.language = new { code = Configuration_BSO.GetCustomConfig("language.iso.code") };
+            if (((string)extension.language.code).Length == 0) extension.language = new { code = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") };
 
             extension.format = new { type = restfulParameters[2], version = restfulParameters[3] };
 

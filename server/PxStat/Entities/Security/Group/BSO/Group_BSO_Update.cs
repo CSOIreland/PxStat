@@ -73,7 +73,7 @@ namespace PxStat.Security
             Matrix_ADO mAdo = new Matrix_ADO(Ado);
 
             //Get all the matrixes for Group
-            var readGroupAccess = mAdo.ReadByGroup(dto.GrpCodeOld, Configuration_BSO.GetCustomConfig("language.iso.code"));
+            var readGroupAccess = mAdo.ReadByGroup(dto.GrpCodeOld, Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
 
             if (!readGroupAccess.hasData) return;
 

@@ -76,7 +76,7 @@ namespace PxStat.System.Notification
             email.Subject = DTO.Subject;
             email.Body = DTO.Body;
 
-            sendMail(email, Configuration_BSO.GetCustomConfig("title"), DTO.Subject, DTO.Body);
+            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), DTO.Subject, DTO.Body);
 
             Response.data = JSONRPC.success;
             return true;
@@ -100,8 +100,8 @@ namespace PxStat.System.Notification
             listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
             listToParse.Add(new eMail_KeyValuePair() { key = "{grouplist}", value = grpCodes.Any() ? String.Join(", ", grpCodes) : Label.Get("static.all-groups") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig("title") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig("url.application") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "title") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") });
 
             email.Subject = subject;
             email.Body = email.ParseTemplate(Properties.Resources.template_GroupMessage, listToParse);

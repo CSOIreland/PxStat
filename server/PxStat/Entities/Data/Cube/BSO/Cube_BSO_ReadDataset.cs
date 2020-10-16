@@ -79,6 +79,7 @@ namespace PxStat.Data
         internal static bool ExecuteReadDataset(ADO theAdo, CubeQuery_DTO theDto, Release_DTO releaseDto, JSONRPC_Output theResponse, string requestLanguage, string culture = null)
         {
 
+
             var theMatrix = new Matrix(theAdo, releaseDto, theDto.jStatQueryExtension.extension.Language.Code).ApplySearchCriteria(theDto);
             if (theMatrix == null)
             {
@@ -116,6 +117,7 @@ namespace PxStat.Data
                     {
                         var jsonStat = matrix.GetJsonStatV1_1Object(false, true, null, readCulture);
                         theResponse.data = new JRaw(SerializeJsonStatV1_1.ToJson(jsonStat));
+
                     }
                     else
                     {

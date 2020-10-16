@@ -79,7 +79,7 @@ namespace PxStat.Data
                 string theStringValue = pxElement.Value.ToString();
                 double doubleValue = 0;
 
-                if (String.IsNullOrEmpty(theStringValue) || theStringValue == Configuration_BSO.GetCustomConfig("px.confidential-value"))
+                if (String.IsNullOrEmpty(theStringValue) || theStringValue == Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value"))
                 {
                     return true;
                 }
@@ -222,7 +222,7 @@ namespace PxStat.Data
     {
         public PxIntegrityValidator(Matrix.Specification spec, string lngIsoCode = null)
         {
-            long threshold = Configuration_BSO.GetCustomConfig("dataset.threshold"); ;
+            long threshold = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.threshold"); ;
             RuleFor(x => x).Must(PxStat.Build.CustomValidations.BelowLimitDatapoints).WithMessage(lngIsoCode == null ? String.Format(Label.Get("integrity.cell-count"), spec.GetRequiredDatapointCount(), threshold.ToString()) : String.Format(Label.Get("integrity.cell-count", lngIsoCode), spec.GetRequiredDatapointCount(), threshold.ToString()));
             RuleFor(x => x.MainSpec).HaveFactsAndDimensionsMatching().WithMessage(Label.Get("integrity.size"));
             RuleFor(x => x.OtherLanguageSpec).HaveFactsAndDimensionsMatching().When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage(Label.Get("integrity.size"));

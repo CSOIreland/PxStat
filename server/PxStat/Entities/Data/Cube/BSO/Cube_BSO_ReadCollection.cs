@@ -106,7 +106,7 @@ namespace PxStat.Data
 
                 var aItem = new Item()
                 {
-                    Href = new Uri(string.Format("{0}/{1}/{2}", Configuration_BSO.GetCustomConfig("url.application"), Utility.GetCustomConfig("APP_COOKIELINK_TABLE"), element.MtrCode)),
+                    Href = new Uri(string.Format("{0}/{1}/{2}", Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application"), Utility.GetCustomConfig("APP_COOKIELINK_TABLE"), element.MtrCode)),
                     Class = ItemClass.Dataset,
                     Label = element.MtrTitle,
                     Updated = DataAdaptor.ConvertToString(element.RlsLiveDatetimeFrom),

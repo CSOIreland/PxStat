@@ -33,7 +33,7 @@ namespace PxStat.Data
         protected override bool Execute()
         {
             // uses authentication and filters privileges according to user access
-            var currentRelease = Release_ADO.GetReleaseDTO(new Matrix_ADO(Ado).Read(DTO.RlsCode, Configuration_BSO.GetCustomConfig("language.iso.code"), SamAccountName));
+            var currentRelease = Release_ADO.GetReleaseDTO(new Matrix_ADO(Ado).Read(DTO.RlsCode, Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"), SamAccountName));
             if (currentRelease == null)
             {
                 Response.data = null;

@@ -41,7 +41,6 @@ namespace PxStat.Data
                     new ADO_inputParams() {name ="@GrpCode",value= dto.GrpCode},
 
                     new ADO_inputParams() {name ="@RlsLiveFlag",value= dto.RlsLiveFlag},
-                    new ADO_inputParams() {name ="@RlsDependencyFlag",value= dto.RlsDependencyFlag},
                     new ADO_inputParams() {name ="@RlsExceptionalFlag",value= dto.RlsExceptionalFlag},
                     new ADO_inputParams() {name ="@RlsReservationFlag",value= dto.RlsReservationFlag},
                     new ADO_inputParams() {name ="@RlsArchiveFlag",value= dto.RlsArchiveFlag},
@@ -267,7 +266,6 @@ namespace PxStat.Data
             release.RlsLiveFlag = ReadBool(element.RlsLiveFlag);
             release.RlsLiveDatetimeFrom = ReadDateTime(element.RlsLiveDatetimeFrom);
             release.RlsLiveDatetimeTo = ReadDateTime(element.RlsLiveDatetimeTo);
-            release.RlsDependencyFlag = ReadBool(element.RlsDependencyFlag);
             release.RlsExceptionalFlag = ReadBool(element.RlsExceptionalFlag);
             release.RlsReservationFlag = ReadBool(element.RlsReservationFlag);
             release.RlsArchiveFlag = ReadBool(element.RlsArchiveFlag);
@@ -400,7 +398,7 @@ namespace PxStat.Data
                 new ADO_inputParams { name = "@CcnUsername", value = userName },
                 new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode },
                 new ADO_inputParams { name = "@LngIsoCode", value = dto.LngIsoCode },
-                new ADO_inputParams{name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig("language.iso.code")}
+                new ADO_inputParams{name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")}
 
             };
 

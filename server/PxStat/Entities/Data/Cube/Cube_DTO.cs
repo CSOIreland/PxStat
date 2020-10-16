@@ -36,7 +36,7 @@ namespace PxStat.Data
             if (parameters.language != null)
                 this.language = parameters.language;
             else
-                this.language = Configuration_BSO.GetCustomConfig("language.iso.code");
+                this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             if (parameters.datefrom != null)
             {
@@ -101,7 +101,7 @@ namespace PxStat.Data
 
             if (parameters.language != null)
                 this.language = parameters.language;
-            else this.language = Configuration_BSO.GetCustomConfig("language.iso.code");
+            else this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             Format = new Format_DTO_Read();
             if (parameters.format != null)
@@ -132,7 +132,7 @@ namespace PxStat.Data
             // Default language
             if (string.IsNullOrEmpty(this.language))
             {
-                this.language = Configuration_BSO.GetCustomConfig("language.iso.code");
+                this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             }
             // Default format
             if (string.IsNullOrEmpty(this.Format.FrmType))

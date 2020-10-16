@@ -52,7 +52,7 @@ namespace PxStat.Security
         {
             dynamic output = new ExpandoObject();
             var itemDict = output as IDictionary<string, object>;
-            int limit = Configuration_BSO.GetCustomConfig("analytic.read-os-item-limit");
+            int limit = Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.read-os-item-limit");
             int counter = 1;
             int otherSum = 0;
 

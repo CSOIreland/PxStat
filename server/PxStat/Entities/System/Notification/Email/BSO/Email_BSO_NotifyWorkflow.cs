@@ -43,7 +43,7 @@ namespace PxStat.System.Notification
             String subject = string.Format(Label.Get("email.subject.request-create"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
             String body = string.Format(Label.Get("email.body.request-create"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, requestDTO.RequestAccount.CcnEmail, requestDTO.RequestAccount.CcnUsername, requestDTO.RequestAccount.CcnName);
 
-            sendMail(email, Configuration_BSO.GetCustomConfig("title"), subject, body);
+            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), subject, body);
 
             email.Dispose();
         }
@@ -103,7 +103,7 @@ namespace PxStat.System.Notification
             }
 
 
-            sendMail(email, Configuration_BSO.GetCustomConfig("title"), subject, body);
+            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), subject, body);
             email.Dispose();
         }
 
@@ -151,7 +151,7 @@ namespace PxStat.System.Notification
 
                     break;
             }
-            sendMail(email, Configuration_BSO.GetCustomConfig("title"), subject, body);
+            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), subject, body);
             email.Dispose();
         }
 
@@ -170,8 +170,8 @@ namespace PxStat.System.Notification
 
             listToParse.Add(new eMail_KeyValuePair() { key = "{title}", value = title });
             listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig("title") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig("url.application") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "title") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
 
             email.Subject = subject;
@@ -223,7 +223,7 @@ namespace PxStat.System.Notification
         /// <returns></returns>
         private string getReleaseUrl(Release_DTO dto)
         {
-            return "[url=" + Configuration_BSO.GetCustomConfig("url.application") + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + " " + dto.RlsVersion.ToString() + "." + dto.RlsRevision.ToString() + "[/url]";
+            return "[url=" + Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + " " + dto.RlsVersion.ToString() + "." + dto.RlsRevision.ToString() + "[/url]";
         }
 
     }

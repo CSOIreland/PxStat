@@ -75,7 +75,7 @@ namespace PxStat.Data
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@GrpCode", value = grpCode },
                 new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
-                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig("language.iso.code") }
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
 
             };
 
@@ -94,7 +94,7 @@ namespace PxStat.Data
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@PrcCode", value = prcCode },
                 new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
-                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig("language.iso.code") }
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
 
             };
 
@@ -134,7 +134,7 @@ namespace PxStat.Data
 
                     var vDefault =
                     from x in reader.data
-                    where x.LngIsoCode == Configuration_BSO.GetCustomConfig("language.iso.code")
+                    where x.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")
                     select x;
 
                     if (vDefault.ToList().Count > 0)
@@ -576,7 +576,7 @@ namespace PxStat.Data
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@RlsCode", value = releaseCode },
                 new ADO_inputParams { name = "@LngIsoCode", value = languageCode },
-                new ADO_inputParams { name ="LngIsoCodeDefault", value=Configuration_BSO.GetCustomConfig("language.iso.code")}
+                new ADO_inputParams { name ="LngIsoCodeDefault", value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")}
 
             };
 
@@ -607,7 +607,7 @@ namespace PxStat.Data
                 new ADO_inputParams { name = "@DateFrom", value = dto.DateFrom   },
                 new ADO_inputParams { name = "@DateTo", value = dto.DateTo },
                 new ADO_inputParams { name = "@LngIsoCode", value = dto.LngIsoCode   },
-                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig("language.iso.code")  }
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")  }
             };
 
             var output = ado.ExecuteReaderProcedure("Data_Matrix_ReadHistory", inputParams);
