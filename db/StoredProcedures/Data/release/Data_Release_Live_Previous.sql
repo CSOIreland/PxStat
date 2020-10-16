@@ -42,7 +42,6 @@ BEGIN
 		,rlsPrevious.RLS_LIVE_FLAG AS RlsLiveFlag
 		,rlsPrevious.RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
 		,rlsPrevious.RLS_LIVE_DATETIME_TO AS RlsLiveDatetimeTo
-		,rlsPrevious.RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
 		,rlsPrevious.RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 		,rlsPrevious.RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,rlsPrevious.RLS_ARCHIVE_FLAG AS RlsArchiveFlag

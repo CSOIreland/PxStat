@@ -51,7 +51,6 @@ BEGIN
 		,q.RlsReservationFlag
 		,q.RlsVersion
 		,q.RlsRevision
-		,q.RlsDependencyFlag
 		,q.RlsExceptionalFlag
 		,q.RlsLiveDatetimeFrom
 		,q.MtrTitle
@@ -71,7 +70,6 @@ BEGIN
 			,RLS_RESERVATION_FLAG RlsReservationFlag
 			,RLS_REVISION RlsRevision
 			,RLS_VERSION RlsVersion
-			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
 			,RLS_EXCEPTIONAL_FLAG RlsExceptionalFlag
 			,RLS_LIVE_DATETIME_FROM RlsLiveDatetimeFrom
 			,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle

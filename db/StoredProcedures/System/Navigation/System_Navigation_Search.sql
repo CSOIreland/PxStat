@@ -239,7 +239,6 @@ BEGIN
 		,RlsReservationFlag
 		,RlsArchiveFlag
 		,RlsAnalyticalFlag
-		,RlsDependencyFlag
 		,CprCode
 		,CprValue
 		,ClsCode
@@ -270,7 +269,6 @@ BEGIN
 			,RLS_RESERVATION_FLAG RlsReservationFlag
 			,RLS_ARCHIVE_FLAG RlsArchiveFlag
 			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
-			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -320,7 +318,6 @@ BEGIN
 			,RLS_RESERVATION_FLAG RlsReservationFlag
 			,RLS_ARCHIVE_FLAG RlsArchiveFlag
 			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
-			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -370,7 +367,6 @@ BEGIN
 			,RLS_RESERVATION_FLAG RlsReservationFlag
 			,RLS_ARCHIVE_FLAG RlsArchiveFlag
 			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
-			,RLS_DEPENDENCY_FLAG RlsDependencyFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -417,7 +413,6 @@ BEGIN
 		,RlsReservationFlag
 		,RlsArchiveFlag
 		,RlsAnalyticalFlag
-		,RlsDependencyFlag
 		,CprCode
 		,CprValue
 		,ClsCode
@@ -446,7 +441,6 @@ BEGIN
 		,RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 		,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
-		,RLS_DEPENDENCY_FLAG AS RlsDependencyFlag
 		,CPR_CODE AS CprCode
 		,CPR_VALUE AS CprValue
 		,CLS_CODE AS ClsCode
@@ -575,7 +569,6 @@ BEGIN
 				,RlsReservationFlag
 				,RlsArchiveFlag
 				,RlsAnalyticalFlag
-				,RlsDependencyFlag
 				,CprCode
 				,CprValue
 				,ClsCode
@@ -605,7 +598,6 @@ BEGIN
 				,RlsReservationFlag
 				,RlsArchiveFlag
 				,RlsAnalyticalFlag
-				,RlsDependencyFlag
 				,CprCode
 				,ClsId
 				,CprValue
