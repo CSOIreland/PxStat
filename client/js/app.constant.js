@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "2.6.0";
+const C_APP_VERSION = "2.6.1";
 
 // URLs GitHub
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
