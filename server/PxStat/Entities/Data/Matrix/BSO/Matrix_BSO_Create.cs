@@ -82,8 +82,7 @@ namespace PxStat.Data
 
             if (mtrCache.hasData)
             {
-                SerializableMatrix sm = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
-                theMatrixData = new Matrix().ExtractFromSerializableMatrix(sm);
+                theMatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
             }
             else
             {

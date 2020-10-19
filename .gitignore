@@ -8,3 +8,8 @@
 /server/PxStat/Resources/Config/config.global.test.json
 /server/PxStat/Resources/Config/config.global.uat.json
 /server/PxStat/Resources/Config/config.global.live.json
+/server/PxStat/PxStat.csproj.user
+/server/PxStat/Properties/PublishProfiles/UAT.pubxml.user
+/server/PxStat/Properties/PublishProfiles/TEST.pubxml.user
+/server/PxStat/Properties/PublishProfiles/Live.pubxml.user
+/server/.vs

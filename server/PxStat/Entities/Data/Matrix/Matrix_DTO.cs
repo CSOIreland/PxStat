@@ -10,6 +10,7 @@ using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
@@ -182,7 +183,8 @@ namespace PxStat.Data
         /// <returns></returns>
         internal Matrix ExtractFromSerializableMatrix(SerializableMatrix sm)
         {
-
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             sm.TheMatrix.MainSpec = DeserializeSpec(sm, sm.TheMatrix.MainSpec.Language);
 
             if (sm.TheMatrix.OtherLanguageSpec != null)
@@ -207,6 +209,8 @@ namespace PxStat.Data
             }
 
             if (sm.OtherLanguages != null) sm.TheMatrix.OtherLanguages = sm.OtherLanguages;
+            sw.Stop();
+            Log.Instance.Fatal("Matrix extracted in " + sw.ElapsedMilliseconds + " ms");
             return sm.TheMatrix;
         }
         /// <summary>

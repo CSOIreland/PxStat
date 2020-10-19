@@ -65,40 +65,52 @@ namespace PxStat.Build
                 Response.error = Error.GetValidationFailure(ppValidator.ParseValidatorResult.Errors);
                 return false;
             }
+
+
             //There might be a cache:
             MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + signature);
 
             if (mtrCache.hasData)
             {
-                SerializableMatrix smtx = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
-                MatrixData = new Matrix().ExtractFromSerializableMatrix(smtx);
+                MatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
+                if (MatrixData.MainSpec.requiresResponse)
+                {
+
+                    this.RequiresResponse = true;
+                    return false;
+                }
+
             }
             else
+            {
+
                 MatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
+
+                if (MatrixData.MainSpec.requiresResponse)
+                {
+                    this.RequiresResponse = true;
+                    return false;
+                }
+
+
+
+                MatrixValidator matrixValidator = new MatrixValidator();
+                if (!matrixValidator.Validate(MatrixData, false))
+                {
+                    Response.error = Error.GetValidationFailure(matrixValidator.MatrixValidatorResult.Errors);
+                    return false;
+                }
+
+                MemCacheD.Store_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + signature, MatrixData.GetSerializableObject(), DateTime.Now.AddDays(Convert.ToInt32(Utility.GetCustomConfig("APP_BUILD_MATRIX_CACHE_LIFETIME_DAYS"))), Constants.C_CAS_BUILD_MATRIX);
+
+
+            }
 
             if (MatrixData.MainSpec.requiresResponse)
             {
                 this.RequiresResponse = true;
                 return false;
-            }
-
-
-            MatrixValidator matrixValidator = new MatrixValidator();
-            if (!matrixValidator.Validate(MatrixData, false))
-            {
-                Response.error = Error.GetValidationFailure(matrixValidator.MatrixValidatorResult.Errors);
-                return false;
-            }
-
-            //If we've new data then cache it for a set period.
-            if (!mtrCache.hasData)
-            {
-
-                SerializableMatrix sm = MatrixData.GetSerializableObject();
-                MemCacheD.Store_BSO<string>("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + signature, sm, DateTime.Now.AddDays(Convert.ToInt32(Utility.GetCustomConfig("APP_BUILD_MATRIX_CACHE_LIFETIME_DAYS"))), Constants.C_CAS_BUILD_MATRIX);
-
-
             }
 
             return true;

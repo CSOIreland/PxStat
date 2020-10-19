@@ -136,7 +136,7 @@ namespace PxStat.Data
                 return false;
             }
 
-           // MatrixData.Sort();
+            // MatrixData.Sort();
 
             sw.Stop();
             Log.Instance.Debug(string.Format("Matrix validated in {0} ms", Math.Round((double)sw.ElapsedMilliseconds)));
@@ -174,7 +174,23 @@ namespace PxStat.Data
             List<string> FrqValues = new List<string>();
             PxStat.RequestLanguage.LngIsoCode = DTO.LngIsoCode;
 
-            if (Validate())
+            bool isValid = false;
+
+            //Get the matrix, but use the cached version that was created during validation if at all possible
+            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Data", "Matrix_API", "Validate", Constants.C_CAS_MATRIX_VALIDATE + signature);
+
+            if (mtrCache.hasData)
+            {
+                MatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
+                isValid = true;
+            }
+            else
+            {
+                isValid = Validate();
+            }
+
+
+            if (isValid)
             {
                 validationResult.Signature = signature;
                 validationResult.FrqValueCandidate = FrqValues;
@@ -186,10 +202,7 @@ namespace PxStat.Data
 
                 return true;
             }
-            else if (MatrixData == null)
-            {
-                return false;
-            }
+
             else if (MatrixData.MainSpec.requiresResponse)
             {
                 //cancel any validation errors and return an object to enable the user to choose which should be the time dimension
@@ -206,6 +219,7 @@ namespace PxStat.Data
                 Response.data = validationResult;
                 return true;
             }
+
 
             //Response.error = Label.Get("error.validation");
             return false;

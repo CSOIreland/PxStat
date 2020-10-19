@@ -153,7 +153,7 @@ namespace PxStat.Data
                                prd.Key.PrdCode,
                                prd.Key.PrdValue
                            }
-                       ).ToList<dynamic>();
+                       ).OrderBy(x => x.PrdCode).ToList<dynamic>();
             return periods;
         }
 

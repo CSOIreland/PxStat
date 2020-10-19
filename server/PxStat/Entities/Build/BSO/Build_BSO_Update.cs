@@ -82,11 +82,10 @@ namespace PxStat.Build
 
             if (mtrCache.hasData)
             {
-                SerializableMatrix sm = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
-                theMatrixData = new Matrix().ExtractFromSerializableMatrix(sm);
+                theMatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
             }
             else
-                //Get this matrix from the px file 
+                //Get this matrix from the px file
                 theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
 
