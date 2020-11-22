@@ -46,6 +46,7 @@ BEGIN
 		,q.RlsCode
 		,q.RlsAnalyticalFlag
 		,q.RlsArchiveFlag
+		,q.RlsExperimentalFlag 
 		,q.RlsLiveFlag
 		,q.RlsLiveDatetimeTo
 		,q.RlsReservationFlag
@@ -65,6 +66,7 @@ BEGIN
 			,RLS_CODE RlsCode
 			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
 			,RLS_ARCHIVE_FLAG RlsArchiveFlag
+			,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 			,RLS_LIVE_FLAG RlsLiveFlag
 			,RLS_LIVE_DATETIME_TO RlsLiveDatetimeTo
 			,RLS_RESERVATION_FLAG RlsReservationFlag

@@ -26,6 +26,7 @@ ALTER PROCEDURE System_Navigation_Search @LngIsoCode CHAR(2)
 	,@RlsReservationFlag BIT = NULL
 	,@RlsArchiveFlag BIT = NULL
 	,@RlsAnalyticalFlag BIT = NULL
+	,@RlsExperimentalFlag BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -51,6 +52,7 @@ BEGIN
 		AND @RlsReservationFlag IS NULL
 		AND @RlsArchiveFlag IS NULL
 		AND @RlsAnalyticalFlag IS NULL
+		AND @RlsExperimentalFlag IS NULL
 	BEGIN
 		SET @EntitySearchNotNull = 0
 	END
@@ -239,6 +241,7 @@ BEGIN
 		,RlsReservationFlag
 		,RlsArchiveFlag
 		,RlsAnalyticalFlag
+		,RlsExperimentalFlag
 		,CprCode
 		,CprValue
 		,ClsCode
@@ -269,6 +272,7 @@ BEGIN
 			,RLS_RESERVATION_FLAG RlsReservationFlag
 			,RLS_ARCHIVE_FLAG RlsArchiveFlag
 			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+			,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -318,6 +322,7 @@ BEGIN
 			,RLS_RESERVATION_FLAG RlsReservationFlag
 			,RLS_ARCHIVE_FLAG RlsArchiveFlag
 			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+			,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -367,6 +372,7 @@ BEGIN
 			,RLS_RESERVATION_FLAG RlsReservationFlag
 			,RLS_ARCHIVE_FLAG RlsArchiveFlag
 			,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+			,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 			,CPR_CODE AS CprCode
 			,CPR_VALUE AS CprValue
 			,CLS_CODE AS ClsCode
@@ -413,6 +419,7 @@ BEGIN
 		,RlsReservationFlag
 		,RlsArchiveFlag
 		,RlsAnalyticalFlag
+		,RlsExperimentalFlag 
 		,CprCode
 		,CprValue
 		,ClsCode
@@ -441,6 +448,7 @@ BEGIN
 		,RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 		,RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
+		,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 		,CPR_CODE AS CprCode
 		,CPR_VALUE AS CprValue
 		,CLS_CODE AS ClsCode
@@ -516,6 +524,10 @@ BEGIN
 			OR @RlsAnalyticalFlag = RLS_ANALYTICAL_FLAG
 			)
 		AND (
+			@RlsExperimentalFlag IS NULL
+			OR @RlsExperimentalFlag = RLS_EXPERIMENTAL_FLAG
+			)
+		AND (
 			@EntitySearchNotNull = 1
 			OR @EmptySearch = 1
 			)
@@ -569,6 +581,7 @@ BEGIN
 				,RlsReservationFlag
 				,RlsArchiveFlag
 				,RlsAnalyticalFlag
+				,RlsExperimentalFlag 
 				,CprCode
 				,CprValue
 				,ClsCode
@@ -598,6 +611,7 @@ BEGIN
 				,RlsReservationFlag
 				,RlsArchiveFlag
 				,RlsAnalyticalFlag
+				,RlsExperimentalFlag 
 				,CprCode
 				,ClsId
 				,CprValue

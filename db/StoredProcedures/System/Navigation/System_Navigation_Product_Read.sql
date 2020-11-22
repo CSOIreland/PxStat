@@ -27,23 +27,44 @@ BEGIN
 		,SBJ_VALUE AS SbjValue
 		,sum((
 				CASE 
-					WHEN RLS_ID IS NOT NULL and RLS_DELETE_FLAG=0
+					WHEN RLS_ID IS NOT NULL
+						AND RLS_DELETE_FLAG = 0
 						THEN 1
 					ELSE 0
 					END
-				)) AS PrcReleaseCount
+				)) AS RlsLiveCount
+		,coalesce(MtrCount, 0) AS MtrCount
 	FROM (
-		SELECT PRC_CODE
+		SELECT TD_PRODUCT.PRC_CODE
 			,SBJ_CODE
 			,coalesce(PLG_Value, PRC_VALUE) AS PRC_VALUE
 			,coalesce(SLG_VALUE, SBJ_VALUE) AS SBJ_VALUE
 			,RLS_ID
 			,PRC_DELETE_FLAG
-			,RLS_DELETE_FLAG 
+			,RLS_DELETE_FLAG
+			,mtrCount AS MtrCount
 		FROM TD_PRODUCT
 		INNER JOIN [TD_SUBJECT]
 			ON SBJ_ID = PRC_SBJ_ID
 				AND SBJ_DELETE_FLAG = 0
+		LEFT JOIN (
+			SELECT PRC_CODE
+				,COUNT(*) AS mtrCount
+			FROM (
+				SELECT DISTINCT PRC_CODE
+					,MTR_CODE
+				FROM TD_PRODUCT
+				INNER JOIN TD_RELEASE
+					ON PRC_ID = RLS_PRC_ID
+						AND PRC_DELETE_FLAG = 0
+						AND RLS_DELETE_FLAG = 0
+				INNER JOIN TD_MATRIX
+					ON MTR_RLS_ID = RLS_ID
+						AND MTR_DELETE_FLAG = 0
+				) prcInner
+			GROUP BY PRC_CODE
+			) prcMtrCounter
+			ON TD_PRODUCT.PRC_CODE = prcMtrCounter.PRC_CODE
 		LEFT JOIN (
 			SELECT SLG_SBJ_ID
 				,SLG_VALUE
@@ -98,6 +119,7 @@ BEGIN
 		,PRC_VALUE
 		,SBJ_CODE
 		,SBJ_VALUE
+		,MtrCount
 END
 GO
 

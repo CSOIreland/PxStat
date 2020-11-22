@@ -46,6 +46,7 @@ BEGIN
 		,rlsPrevious.RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,rlsPrevious.RLS_ARCHIVE_FLAG AS RlsArchiveFlag
 		,rlsPrevious.RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
+		,rlsPrevious.RLS_EXPERIMENTAL_FLAG AS RlsExperimentalFlag
 		,@MtrCode AS MtrCode
 		,GRP_CODE GrpCode
 		,GRP_NAME GrpName

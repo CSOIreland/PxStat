@@ -46,6 +46,7 @@ BEGIN
 		,RLS_RESERVATION_FLAG RlsReservationFlag
 		,RLS_ARCHIVE_FLAG RlsArchiveFlag
 		,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+		,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 		,LNG_ISO_CODE LngIsoCode
 		,LNG_ISO_NAME LngIsoName
 		,CPR_VALUE CprValue

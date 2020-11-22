@@ -49,6 +49,7 @@ BEGIN
 		,CCN_USERNAME CcnUsername
 		,RLS_RESERVATION_FLAG RlsReservationFlag
 		,RLS_ARCHIVE_FLAG RlsArchiveFlag
+		,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 		,MTR_OFFICIAL_FLAG MtrOfficialFlag
 		,RLS_LIVE_DATETIME_FROM RlsLiveDatimeFrom
 		,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle

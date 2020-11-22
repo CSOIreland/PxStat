@@ -10,7 +10,7 @@ GO
 -- Description:	Lists all the live releases. The @LngIsoCodeDefault parameter is the default language for the system
 -- The optional parameter @LngIsoCodeRead is the preferred language for reading. If this is supplied it will return the matrix in the requested
 -- language if it exists. If the matrix doesn't exist in that language, then it returns the default language version of that matrix.
---EXEC Data_Release_ReadListLive_dev 'en','ga','2019-12-01',4,'C2016P3'
+--EXEC Data_Release_ReadListLive 'en','ga','2019-12-01',4,'C2016P3'
 --EXEC Data_Release_ReadListLive 'en','ga','2019-12-01','C2016P3'
 -- =============================================
 CREATE
@@ -29,7 +29,6 @@ BEGIN
 	DECLARE @LngIdRead INT
 	DECLARE @SbjId INT
 	DECLARE @PrcId INT
-
 
 	SET @LngIdDefault = (
 			SELECT LNG_ID
@@ -57,12 +56,15 @@ BEGIN
 		SET @LngIdRead = 0
 	END
 
-	
 	BEGIN
-		SET @SbjId=(SELECT SBJ_ID FROM TD_SUBJECT WHERE SBJ_CODE=@SbjCode AND SBJ_DELETE_FLAG=0)
+		SET @SbjId = (
+				SELECT SBJ_ID
+				FROM TD_SUBJECT
+				WHERE SBJ_CODE = @SbjCode
+					AND SBJ_DELETE_FLAG = 0
+				)
 	END
 
-	
 	BEGIN
 		SET @PrcId = (
 				SELECT PRC_ID
@@ -71,8 +73,6 @@ BEGIN
 					AND PRC_DELETE_FLAG = 0
 				)
 	END
-
-
 
 	SELECT RLS_CODE AS RlsCode
 		,mtr.MTR_CODE AS MtrCode
@@ -111,10 +111,10 @@ BEGIN
 			AND LNG_DELETE_FLAG = 0
 	INNER JOIN TD_FREQUENCY
 		ON FRQ_MTR_ID = MTR_ID
-	INNER JOIN TD_PRODUCT 
-	ON RLS_PRC_ID=PRC_ID
-	and PRC_ID=@PrcId
-	and PRC_SBJ_ID=@SbjId 
+	INNER JOIN TD_PRODUCT
+		ON RLS_PRC_ID = PRC_ID
+			AND PRC_ID = @PrcId
+			AND PRC_SBJ_ID = @SbjId
 	LEFT JOIN (
 		SELECT MTR_CODE
 			,MTR_ID
@@ -130,8 +130,6 @@ BEGIN
 			AND MTR_DELETE_FLAG = 0
 		) lngMtr
 		ON lngMtr.MTR_CODE = mtr.MTR_CODE
-	
-	
 END
 GO
 

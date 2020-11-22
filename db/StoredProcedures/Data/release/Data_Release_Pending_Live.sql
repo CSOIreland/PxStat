@@ -10,12 +10,12 @@ GO
 -- Description:	Gets the Live Current Release for a Release Code. 
 -- This is where the current data is after the start date and (before the end date or the end date is null)
 -- The returned release entry must have the same Matrix Code as that of the input RlsCode
--- exec Data_Release_Live_Now null,'HH1','pl'
+-- exec Data_Release_Pending_Live 168,null,'en'
 -- =============================================
 CREATE
 	OR
 
-ALTER PROCEDURE Data_Release_Live_Now @RlsCode INT = NULL
+ALTER PROCEDURE Data_Release_Pending_Live @RlsCode INT = NULL
 	,@MtrCode NVARCHAR(256) = NULL
 	,@LngIsoCode CHAR(2) = NULL
 AS
@@ -47,13 +47,13 @@ BEGIN
 		,PRC_VALUE PrcValue
 		,LNG_ISO_CODE  LngIsoCode
 	FROM TD_RELEASE rls
-	INNER JOIN VW_RELEASE_LIVE_NOW
-		ON VRN_RLS_ID = rls.RLS_ID
+	INNER JOIN  VW_RELEASE_LIVE_NEXT
+		ON VRX_RLS_ID  = rls.RLS_ID
 	INNER JOIN TD_MATRIX mtr
 		ON rls.RLS_ID = mtr.MTR_RLS_ID
 			AND mtr.MTR_DELETE_FLAG = 0
 			AND rls.RLS_DELETE_FLAG = 0
-			AND VRN_MTR_ID = mtr.MTR_ID
+			AND VRX_MTR_ID = mtr.MTR_ID
 	INNER JOIN TD_GROUP
 		ON RLS_GRP_ID = GRP_ID
 			AND GRP_DELETE_FLAG = 0

@@ -24,8 +24,8 @@ BEGIN
 		,wrq.WRQ_EXCEPTIONAL_FLAG AS WrqExceptionalFlag
 		,wrq.WRQ_RESERVATION_FLAG AS WrqReservationFlag
 		,wrq.WRQ_ARCHIVE_FLAG AS WrqArchiveFlag
-		,wrq.WRQ_ALERT_FLAG AS WrqAlertFlag
 		,wrq.WRQ_CURRENT_FLAG AS WrqCurrentFlag
+		,wrq.WRQ_EXPERIMENTAL_FLAG AS WrqExperimentalFlag
 		,rqs.RQS_VALUE AS RqsValue
 		,rqs.RQS_CODE AS RqsCode
 		,CCN_USERNAME As CcnUsername

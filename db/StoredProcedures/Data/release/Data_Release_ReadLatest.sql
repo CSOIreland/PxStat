@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
 -- Description:	Reads record(s) from the TD_Release & dependant tables
--- exec Data_Release_ReadLatest 'nea06'
+-- exec Data_Release_ReadLatest 'FSA26'
 -- =============================================
 CREATE
 	OR
@@ -29,6 +29,7 @@ BEGIN
 		,RLS_RESERVATION_FLAG RlsReservationFlag
 		,RLS_ARCHIVE_FLAG RlsArchiveFlag
 		,RLS_ANALYTICAL_FLAG RlsAnalyticalFlag
+		,RLS_EXPERIMENTAL_FLAG RlsExperimentalFlag
 		,GRP_CODE GrpCode
 		,GRP_NAME GrpName
 		,CMM_CODE CmmCode
@@ -69,6 +70,7 @@ BEGIN
 		,RLS_RESERVATION_FLAG
 		,RLS_ARCHIVE_FLAG
 		,RLS_ANALYTICAL_FLAG
+		,RLS_EXPERIMENTAL_FLAG
 		,GRP_CODE
 		,GRP_NAME
 		,CMM_CODE

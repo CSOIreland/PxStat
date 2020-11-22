@@ -35,8 +35,8 @@ BEGIN
 		,wrq.WRQ_DATETIME AS WrqDatetime
 		,wrq.WRQ_EXCEPTIONAL_FLAG AS WrqExceptionalFlag
 		,wrq.WRQ_RESERVATION_FLAG AS WrqReservationFlag
-		,wrq.WRQ_ALERT_FLAG AS WrqAlertFlag
 		,wrq.WRQ_ARCHIVE_FLAG AS WrqArchiveFlag
+		,wrq.WRQ_EXPERIMENTAL_FLAG As WrqExperimentalFlag
 		,wrqCcn.CCN_USERNAME AS WrqDtgCreateCcnUsername
 		,wrqDht.DHT_DATETIME AS WrqDtgCreateDatetime
 		,rsp.RSP_CODE AS RspCode

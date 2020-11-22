@@ -19,7 +19,7 @@ ALTER PROCEDURE Workflow_WorkflowRequest_Create @CcnUsername NVARCHAR(256)
 	,@WrqExceptionalFlag BIT = NULL
 	,@WrqReservationFlag BIT = NULL
 	,@WrqArchiveFlag BIT = NULL
-	,@WrqAlertFlag BIT = NULL
+	,@WrqExperimentalFlag BIT=NULL
 	,@RlsCode INT
 AS
 BEGIN
@@ -116,7 +116,7 @@ BEGIN
 		,WRQ_EXCEPTIONAL_FLAG
 		,WRQ_RESERVATION_FLAG
 		,WRQ_ARCHIVE_FLAG
-		,WRQ_ALERT_FLAG
+		,WRQ_EXPERIMENTAL_FLAG
 		,WRQ_RQS_ID
 		,WRQ_DTG_ID
 		,WRQ_DELETE_FLAG
@@ -129,7 +129,7 @@ BEGIN
 		,@WrqExceptionalFlag
 		,@WrqReservationFlag
 		,@WrqArchiveFlag
-		,@WrqAlertFlag
+		,@WrqExperimentalFlag
 		,@RqsID
 		,@DtgID
 		,0

@@ -23,19 +23,36 @@ BEGIN
 	DECLARE @LngId INT
 	DECLARE @LngDefaultId INT
 
-
 	-- Preferably get the data in the requested language, otherwise get the data in the default language
-	SET @LngId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCode 
-	AND LNG_DELETE_FLAG=0)
-	SET @LngDefaultId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCodeDefault AND LNG_DELETE_FLAG=0)
+	SET @LngId = (
+			SELECT LNG_ID
+			FROM TS_LANGUAGE
+			WHERE LNG_ISO_CODE = @LngIsoCode
+				AND LNG_DELETE_FLAG = 0
+			)
+	SET @LngDefaultId = (
+			SELECT LNG_ID
+			FROM TS_LANGUAGE
+			WHERE LNG_ISO_CODE = @LngIsoCodeDefault
+				AND LNG_DELETE_FLAG = 0
+			)
 
-	IF(SELECT COUNT(*) FROM TD_MATRIX INNER JOIN TD_RELEASE ON MTR_RLS_ID=RLS_ID AND RLS_DELETE_FLAG=0 AND RLS_CODE=@RlsCode  WHERE MTR_LNG_ID=@LngId AND MTR_DELETE_FLAG=0) >0
+	IF (
+			SELECT COUNT(*)
+			FROM TD_MATRIX
+			INNER JOIN TD_RELEASE
+				ON MTR_RLS_ID = RLS_ID
+					AND RLS_DELETE_FLAG = 0
+					AND RLS_CODE = @RlsCode
+			WHERE MTR_LNG_ID = @LngId
+				AND MTR_DELETE_FLAG = 0
+			) > 0
 	BEGIN
-		SET @LngCode=@LngIsoCode
+		SET @LngCode = @LngIsoCode
 	END
 	ELSE
 	BEGIN
-		SET @LngCode=@LngIsoCodeDefault 
+		SET @LngCode = @LngIsoCodeDefault
 	END
 
 	SELECT MTR_CODE MtrCode

@@ -21,6 +21,7 @@ ALTER PROCEDURE Data_Release_Create @RlsVersion INT
 	,@RlsReservationFlag BIT = 0
 	,@RlsArchiveFlag BIT = 0
 	,@RlsAnalyticalFlag BIT = 0
+	,@RlsExperimentalFlag BIT = 0
 	,@GrpCode NVARCHAR(32)
 	,@PrcCode NVARCHAR(32) = NULL
 	,@CmmCode INT = NULL
@@ -112,6 +113,7 @@ BEGIN
 		,[RLS_RESERVATION_FLAG]
 		,[RLS_ARCHIVE_FLAG]
 		,[RLS_ANALYTICAL_FLAG]
+		,[RLS_EXPERIMENTAL_FLAG]
 		,[RLS_GRP_ID]
 		,[RLS_PRC_ID]
 		,[RLS_CMM_ID]
@@ -129,6 +131,7 @@ BEGIN
 		,@RlsReservationFlag
 		,@RlsArchiveFlag
 		,@RlsAnalyticalFlag
+		,@RlsExperimentalFlag 
 		,@RlsGrpId
 		,@RlsPrcId
 		,@RlsCmmId

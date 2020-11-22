@@ -22,6 +22,7 @@ ALTER PROCEDURE Data_Release_Update @CcnUsername NVARCHAR(256)
 	,@RlsExceptionalFlag BIT
 	,@RlsReservationFlag BIT
 	,@RlsArchiveFlag BIT
+	,@RlsExperimentalFlag BIT
 	,@RlsAnalyticalFlag BIT
 	,@PrcCode NVARCHAR(32) = NULL
 AS
@@ -63,6 +64,7 @@ BEGIN
 		,RLS_RESERVATION_FLAG = @RlsReservationFlag
 		,RLS_ARCHIVE_FLAG = @RlsArchiveFlag
 		,RLS_ANALYTICAL_FLAG = @RlsAnalyticalFlag
+		,RLS_EXPERIMENTAL_FLAG = @RlsExperimentalFlag
 		,RLS_PRC_ID = CASE 
 			WHEN @PrcID > 0
 				THEN @PrcID
@@ -72,8 +74,6 @@ BEGIN
 		AND RLS_DELETE_FLAG = 0
 
 	SET @updateCount = @@ROWCOUNT
-
-
 
 	IF @updateCount > 0
 	BEGIN

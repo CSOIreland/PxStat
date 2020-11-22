@@ -28,6 +28,7 @@ BEGIN
 		,rls.RLS_EXCEPTIONAL_FLAG AS RlsExceptionalFlag
 		,rls.RLS_RESERVATION_FLAG AS RlsReservationFlag
 		,rls.RLS_ARCHIVE_FLAG AS RlsArchiveFlag
+		,rls.RLS_EXPERIMENTAL_FLAG AS RlsExperimentalFlag
 		,rls.RLS_ANALYTICAL_FLAG AS RlsAnalyticalFlag
 		,mtrView_mtrRls.MTR_CODE AS MtrCode
 	FROM (

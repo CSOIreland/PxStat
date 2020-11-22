@@ -6,19 +6,25 @@ GO
 
 -- =============================================
 -- Author:		Neil O'Keeffe
--- Create date: 03/12/2019
--- Description:	Returns a list of individual Matrix codes that are associated with a given product code (via the Release entity)
--- EXEC Data_Matrix_ReadByProduct 'CP1HII','ga','en'
+-- Create date: 07/02/2020
+-- Description:	Returns a list of individual Matrix codes that are associated with a given group
+-- EXEC Data_Matrix_ReadByGroup 'GROUPCODE1','en','en'
 -- =============================================
 CREATE
 	OR
 
-ALTER PROCEDURE Data_Matrix_ReadByProduct @PrcCode NVARCHAR(32)
+ALTER PROCEDURE Data_Release_ReadByGroup @GrpCode NVARCHAR(32)
 	,@LngIsoCode CHAR(2)
 	,@LngIsoCodeDefault CHAR(2)
 AS
 BEGIN
 	SET NOCOUNT ON;
+
+	DECLARE @IsLive BIT
+	DECLARE @IsNotLive BIT
+
+	SET @IsLive=1
+	SET @IsNotLive=0
 
 	DECLARE @LngId INT
 	DECLARE @LngDefaultId INT
@@ -37,7 +43,8 @@ BEGIN
 			)
 	
 	SELECT DISTINCT mtr.MTR_CODE MtrCode
-	,max(coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE)) MtrTitle
+	,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle,RLS_CODE RlsCode
+	,CASE WHEN VRN_MTR_ID IS NOT NULL THEN @IsLive ELSE @IsNotLive END AS IsLive
 	FROM TD_MATRIX mtr
 	LEFT JOIN (
 			SELECT MTR_CODE
@@ -53,11 +60,12 @@ BEGIN
 		ON mtr.MTR_RLS_ID = RLS_ID
 			AND MTR_DELETE_FLAG = 0
 			AND RLS_DELETE_FLAG = 0
-	INNER JOIN TD_PRODUCT
-		ON RLS_PRC_ID = PRC_ID
-			AND PRC_DELETE_FLAG = 0
-	WHERE PRC_CODE = @PrcCode
-	GROUP BY mtr.MTR_CODE
+	INNER JOIN TD_GROUP
+	ON RLS_GRP_ID=GRP_ID
+	AND GRP_CODE=@GrpCode 
+	AND GRP_DELETE_FLAG=0
+	LEFT JOIN VW_RELEASE_LIVE_NOW 
+	ON MTR_ID=VRN_MTR_ID 
 	ORDER BY mtr.MTR_CODE
 END
 GO

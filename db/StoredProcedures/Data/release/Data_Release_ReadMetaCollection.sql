@@ -8,12 +8,12 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 02/01/2020
 -- Description:	Reads current releases, referencing metadata
--- exec Data_Release_ReadCollectionLight 'en','ga','2020-09-02','C2016P3'
+-- exec Data_Release_ReadMetaCollection 'en','ga','2020-09-02','C2016P3'
 -- =============================================
 CREATE
 	OR
 
-ALTER PROCEDURE Data_Release_ReadCollection @LngIsoCodeDefault CHAR(2)
+ALTER PROCEDURE Data_Release_ReadMetaCollection @LngIsoCodeDefault CHAR(2)
 	,@LngIsoCodeRead CHAR(2) = NULL
 	,@DateFrom DATE = NULL
 	,@PrcCode NVARCHAR(32) = NULL
@@ -68,9 +68,21 @@ BEGIN
 			,coalesce(lngMTR.LNG_ISO_CODE, TS_LANGUAGE.LNG_ISO_CODE) AS LngIsoCode
 			,coalesce(lngMtr.LNG_ISO_NAME, TS_LANGUAGE.LNG_ISO_NAME) AS LngIsoName
 			,coalesce(lngMTR.MTR_TITLE, mtr.MTR_TITLE) AS MtrTitle
+			,CPR_VALUE AS CprValue
+			,CPR_URL AS CprUrl
+			,CPR_CODE AS CprCode
 			,RLS_LIVE_DATETIME_FROM AS RlsLiveDatetimeFrom
 			,RLS_LIVE_DATETIME_TO AS RlsLiveDatetimeTo
 			,RLS_EXCEPTIONAL_FLAG AS ExceptionalFlag
+			,FRQ_CODE AS FrqCode
+			,FRQ_VALUE AS FrqValue
+			,PRD_CODE AS PrdCode
+			,PRD_VALUE AS PrdValue
+			,STT_CODE AS SttCode
+			,STT_VALUE AS SttValue
+			,CLS_CODE AS ClsCode
+			,CLS_VALUE AS ClsValue
+			,VrbCount
 		FROM TD_RELEASE rls
 		INNER JOIN VW_RELEASE_LIVE_NOW
 			ON VRN_RLS_ID = RLS_ID
@@ -93,6 +105,22 @@ BEGIN
 		INNER JOIN TS_LANGUAGE
 			ON LNG_ID = MTR_LNG_ID
 				AND LNG_DELETE_FLAG = 0
+		INNER JOIN TD_FREQUENCY
+			ON FRQ_MTR_ID = MTR_ID
+		INNER JOIN TD_PERIOD
+			ON FRQ_ID = PRD_FRQ_ID
+		INNER JOIN TD_STATISTIC
+			ON MTR_ID = STT_MTR_ID
+		--INNER JOIN TD_CLASSIFICATION
+		--	ON MTR_ID = CLS_MTR_ID
+		INNER JOIN(
+		SELECT CLS_MTR_ID,CLS_CODE, CLS_VALUE,count(*) as VrbCount
+		FROM TD_CLASSIFICATION 
+		INNER JOIN TD_VARIABLE
+		ON VRB_CLS_ID=CLS_ID 
+		GROUP BY CLS_MTR_ID, CLS_CODE, CLS_VALUE
+		) clsVrb
+		on MTR_ID = CLS_MTR_ID
 		LEFT JOIN (
 			SELECT MTR_CODE
 				,MTR_ID

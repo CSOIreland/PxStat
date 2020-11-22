@@ -8,12 +8,12 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 05/10/2018
 -- Description:	Read a Copyright entry
--- exec System_Settings_Copyright_Read
+-- exec System_Settings_Copyright_Read 'CSO'
 -- =============================================
 CREATE
 	OR
 
-ALTER PROCEDURE System_Settings_Copyright_Read @source NVARCHAR(256) = NULL
+ALTER PROCEDURE System_Settings_Copyright_Read @CprCode NVARCHAR(256) = NULL
 	,@CprValue NVARCHAR(256) = NULL
 	,@CprUrl NVARCHAR(2048) = NULL
 AS
@@ -23,27 +23,28 @@ BEGIN
 	SELECT CPR_CODE AS CprCode
 		,CPR_VALUE AS CprValue
 		,CPR_URL AS CprUrl
-		,CASE 
-			WHEN RlsCount IS NULL
-				THEN 0
-			ELSE RlsCount
-			END AS RlsCount
+		,coalesce(mtr.mtrCount,0) AS MtrCount
 	FROM TS_COPYRIGHT
 	LEFT JOIN (
-		SELECT MTR_CPR_ID
-			,count(*) AS RlsCount
-		FROM TD_MATRIX
-		INNER JOIN TD_RELEASE
-			ON MTR_RLS_ID = RLS_ID
-		WHERE MTR_DELETE_FLAG = 0
-			AND RLS_DELETE_FLAG = 0
-		GROUP BY MTR_CPR_ID
-		) RLS
-		ON RLS.MTR_CPR_ID = CPR_ID
+		SELECT mtrInner.CPR_ID
+			,count(*) AS mtrCount
+		FROM (
+			SELECT DISTINCT CPR_ID
+				,MTR_CODE
+			FROM TS_COPYRIGHT
+			INNER JOIN TD_MATRIX
+				ON CPR_ID =MTR_CPR_ID
+					AND CPR_DELETE_FLAG = 0
+					AND MTR_DELETE_FLAG = 0
+			) mtrInner
+			GROUP BY mtrInner.CPR_ID
+		) MTR
+	
+		ON MTR.CPR_ID = TS_COPYRIGHT.CPR_ID
 	WHERE CPR_DELETE_FLAG = 0
 		AND (
-			@source IS NULL
-			OR @source = TS_COPYRIGHT.CPR_CODE
+			@CprCode IS NULL
+			OR @CprCode = TS_COPYRIGHT.CPR_CODE
 			)
 		AND (
 			@CprValue IS NULL
