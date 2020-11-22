@@ -82,7 +82,38 @@ namespace PxStat.Data
             return ado.ExecuteReaderProcedure("Data_Matrix_ReadByGroup", inputParams);
         }
 
+        /// <summary>
+        ///  Get a list of Matrix codes based on copyrights
+        /// </summary>
+        /// <param name="prcCode"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput ReadByCopyright(string cprCode, string lngIsoCode)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@CprCode", value = cprCode },
+                new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
 
+            };
+
+            return ado.ExecuteReaderProcedure("Data_Matrix_ReadByCopyright", inputParams);
+        }
+
+        /// <summary>
+        ///  Get a list of Matrix codes based on copyrights
+        /// </summary>
+        /// <param name="prcCode"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput ReadByLanguage(string lngIsoCode)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
+
+            };
+
+            return ado.ExecuteReaderProcedure("Data_Matrix_ReadByLanguage", inputParams);
+        }
 
         /// <summary>
         ///  Get a list of Matrix codes based on usage of products

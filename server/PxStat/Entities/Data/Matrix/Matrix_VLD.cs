@@ -23,6 +23,32 @@ namespace PxStat.Data
         }
     }
 
+    internal class Matrix_VLD_ReadByGroup : AbstractValidator<Matrix_DTO_ReadByGroup>
+    {
+        public Matrix_VLD_ReadByGroup()
+        {
+            RuleFor(x => x.GrpCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
+        }
+    }
+
+    internal class Matrix_VLD_ReadByCopyright : AbstractValidator<Matrix_DTO_ReadByCopyright>
+    {
+        public Matrix_VLD_ReadByCopyright()
+        {
+            RuleFor(x => x.CprCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
+        }
+    }
+
+    internal class Matrix_VLD_ReadByLanguage : AbstractValidator<Matrix_DTO_ReadByLanguage>
+    {
+        public Matrix_VLD_ReadByLanguage()
+        {
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
     /// <summary>
     /// 
     /// </summary>

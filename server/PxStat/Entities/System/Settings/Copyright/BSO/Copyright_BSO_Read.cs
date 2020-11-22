@@ -17,12 +17,21 @@ namespace PxStat.System.Settings
         }
 
         /// <summary>
+        /// Test authentication
+        /// </summary>
+        /// <returns></returns>
+        protected override bool HasUserToBeAuthenticated()
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Test privilege
         /// </summary>
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            return true;
         }
 
         /// <summary>

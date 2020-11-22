@@ -751,16 +751,18 @@ namespace PxParser.Resources.Parser
             List<string> formatList = new List<string>();
             int charCount = key.Length + 1;
             string line = "";
+            int counter = 0;
             foreach (var v in Values)
             {
                 line = '"' + v.ToPxString() + '"';
                 charCount = charCount + line.Length;
-                if (charCount > newlineLengthLimit)
+                if (charCount > newlineLengthLimit && counter > 0)
                 {
                     charCount = 0;
                     line = Environment.NewLine + line;
                 }
                 formatList.Add(line);
+                counter++;
             }
             return string.Join(",", formatList);
         }

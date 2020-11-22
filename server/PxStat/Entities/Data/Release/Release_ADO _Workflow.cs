@@ -127,6 +127,7 @@ namespace PxStat.Data
                     new ADO_inputParams() {name ="@RlsExceptionalFlag",value= dto.RlsExceptionalFlag},
                     new ADO_inputParams() {name ="@RlsReservationFlag",value= dto.RlsReservationFlag},
                     new ADO_inputParams() {name ="@RlsArchiveFlag",value= dto.RlsArchiveFlag},
+                    new ADO_inputParams() {name ="@RlsExperimentalFlag",value= dto.RlsExperimentalFlag },
                     new ADO_inputParams() {name ="@RlsAnalyticalFlag",value= dto.RlsAnalyticalFlag},
                     new ADO_inputParams() {name ="@CcnUsername",value= userName},
                     new ADO_inputParams() {name="@PrcCode",value=dto.PrcCode!=null? dto.PrcCode : null  }

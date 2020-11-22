@@ -1,72 +1,72 @@
 ﻿{
   "static": {
-    "release": "Scaoileadh ",
+    "release": "Eisiúint ",
     "all-groups": "Gach grúpa"
   },
   "error": {
-    "authentication": "Fíordheimhniú neamhbhailí. Ní cheadaítear rochtain",
-    "create": "Níor cruthaíodh aon taifead. Déan athbhreithniú ar d’ionchur le do thoil.",
-    "delete": "Níor scriosadh aon taifead. Déan athbhreithniú ar do rogha le do thoil.",
-    "duplicate": "Níor cruthaíodh aon taifead. Tá taifead dúblach ann cheana féin. Déan athbhreithniú ar d’ionchur le do thoil.",
-    "exception": "Tharla earráid gan choinne. Faigh tacaíocht theicniúil le do thoil.",
+    "authentication": "Fíordheimhniú neamhbhailí. Níl cead isteach.",
+    "create": "Níor cruthaíodh taifead. Athbhreithnigh an méid a chuir tú isteach.",
+    "delete": "Níor scriosadh taifead. Athbhreithnigh an rogha a rinne tú.",
+    "duplicate": "Níor cruthaíodh taifead. Tá taifead dúblach ann cheana. Athbhreithnigh an méid a chuir tú isteach.",
+    "exception": "Tharla earráid neamhthuartha. Iarr tacaíocht theicniúil le do thoil.",
     "invalid": "Ionchur neamhbhailí",
-    "privilege": "Iarraidh neamhúdaraithe. ní cheadaítear rochtain.",
-    "publish": "Sonraí neamhiomlána sa Scaoileadh. Déan athbhreithniú ar do chuid sonraí le do thoil.",
-    "schema": "Sáraíodh Scéimre API. Déan athbhreithniú ar chomhréir d’iarratas API le do thoil.",
-    "update": "Níor nuashonraíodh aon taifead. Déan athbhreithniú ar d’ionchur le do thoil.",
-    "validation": "Theip ar bhailíochtú. Déan athbhreithniú ar d’ionchur le do thoil.",
-    "workflow": "Tá sreabhadh oibre idir lámha ag an Tábla &quot;{0}&quot;. Fan go gcríochnóidh an sreabhadh oibre sula ndéanfar athbhreithniú nua a uaslódáil.",
-    "image": "Ní fhéadfaí íomhá a chruthú ón acmhainn ag {0}",
+    "privilege": "Iarratas neamhúdaraithe. Níl cead isteach.",
+    "publish": "Sonraí neamhiomlána san Eisiúint. Athbhreithnigh do chuid sonraí.",
+    "schema": "Scéimre API sáraithe. Athbhreithnigh comhréir d’iarratais API.",
+    "update": "Níor nuashonraíodh aon taifead. Athbhreithnigh d’ionchur le do thoil.",
+    "validation": "Theip ar an mbailíochtú. Athbhreithnigh d’ionchur le do thoil..",
+    "workflow": "Tá sreabhadh oibre ar siúl cheana sa Tábla &quot;{0}&quot;. Fan leis an sreabhadh críochnú roimh leagan nua a uaslódáil.",
+    "image": "Níorbh fhéidir íomhá a chruthú ón acmhainn ag  {0}",
     "parsing": {
-      "parse-error": "Earráid pharsála",
-      "unexpected": "Carachtar gan choinne {0} i rang {1}, colún {2}",
-      "expected": "Luach ionchais: {0}",
+      "parse-error": "Earráid parsála",
+      "unexpected": "Fuarthas carachtar neamhthuartha {0} ag ró {1}, colún {2}",
+      "expected": "Luach neamhthuartha: {0}",
       "eof": "EOF",
-      "unmatched-parameters": "Theip ar pharaiméadair iarratais a réiteach leis na sonraí atá ar fáil."
+      "unmatched-parameters": "Ní rabhthas ábalta paraiméadair an iarratais a nascadh le sonraí atá ar fáil."
 
     }
   },
 
   "authentication": {
-    "authenticated": "ÚDARAITHE",
+    "authenticated": "FÍORDHEIMHNITHE",
     "registered": "CLÁRAITHE",
-    "anonymous": "GAN AINM",
-    "any": "AON"
+    "anonymous": "ANAITHNID",
+    "any": "AON CHEANN AR BITH"
   },
   "integrity": {
-    "data": "Ionracas PX: Tá an sonraí  &quot;{Data}&quot; neamhbhailí.",
-    "size": "Ionracas PX: Bhíothas ag súil le  &quot;{Expected}&quot; chealla sonraí ach fuarthas &quot;{Found}&quot; cinn don teanga &quot;{Language}&quot;.",
-    "cell-count": "Tá {0} cealla sa tacar sonraí seo. Is é {1} an t-uasmhéid a cheadaítear.",
-    "codes": "Fuarthas cóid dúblacha",
-    "values": "Fuarthas luachanna dúblacha"
+    "data": "Iontaofacht PX: Ní bailí na sonraí &quot;{Data}&quot;.",
+    "size": "Iontaofacht PX: &quot;{Expected}&quot; cill sonraí tuartha ach  &quot;{Found}&quot; faighte don Teanga &quot;{Language}&quot;.",
+    "cell-count": "Tá {0}  cill sa tacar sonraí seo. {1} an líon uasta ceadaithe.",
+    "codes": "Cóid dhúblacha faighte.",
+    "values": "Luachanna dúblacha faighte."
   },
   "px": {
 
     "build": {
-      "language": "Ní bhfuarthas an teanga shonraithe sa chomhad px a soláthraíodh."
+      "language": "Ní bhfuarthas an teanga a sonraíodh a chomhad px a tugadh."
     },
-    "duplicate": "Tá tú ar tí athbhreithniú nua ar an Tábla atá ann a uaslódáil &quot;{0}&quot;. An bhfuil tú cinnte?",
-    "duplicate-different-group": "Tá tú ar tí athbhreithniú nua ar an Tábla atá ann a uaslódáil &quot;{0}&quot; agus an grúpa a athrú ó &quot;{1}&quot; go &quot;{2}&quot;. An bhfu tú cinnte?",
+    "duplicate": "Tá tú ar tí leasú nua ar an Tábla &quot;{0}&quot;. An bhfuil tú cinnte?",
+    "duplicate-different-group": "Tá tú ar tí leasú nua ar an Tábla &quot;{0}&quot;  a uaslódáil agus an grúpa a athrú ó &quot;{1}&quot; go &quot;{2}&quot;. An bhfuil tú cinnte?",
 
     "parse": "Parsáil PX: tá comhréir neamhbhailí san ionchur.",
-    "pendinglive": "Tá scaoileadh beo ar an tábla &quot;{0}&quot; ar feitheamh. Fan go mbeidh an scaoileadh beo sula ndéanfar athbhreithniú nua a uaslódáil.",
+    "pendinglive": "Tá eisiúint bheo ar feitheamh ag Tábla &quot;{0}&quot;. Fan le do thoil leis an eisiúint bheith beo roimh leagan nua a uaslódáil.",
 
     "schema": {
-      "key-alphanumeric": "Scéimre PX: Caithfidh an eochairfhocal {0} a bheith alfa-uimhriúil.",
-      "key-any-of": "Scéimre PX: caithfidh an eochair &quot;{0}&quot; nó &quot;{1}&quot; a bheith san ionchur.",
-      "key-boolean": "Scéimre PX: caithfidh an eochairfhocal {0} a bheith tá nó níl.",
-      "key-length-min": "Scéimre PX: caithfidh íosfhad {1} charachtar a bheith ag an eochairfhocal {0}.",
-      "key-length-min-max": "Scéimre PX: caithfidh fad a bheith ag an eochairfhocal {0} idir {1} agus {2} carachtar.",
-      "key-mandatory": "Scéimre PX: caithfidh an eochair &quot;{0}&quot; a bheith san ionchur.",
-      "key-not-found": "Scéimre PX: níor aimsíodh an eochairfhocal &quot;{0}&quot; don teanga &quot;{1}&quot .",
-      "key-numeric-min-max": "Scéimre PX: caithfidh luach a bheith ag an eochairfhocal {0} idir {1} agus {2}."
+      "key-alphanumeric": "Scéimre PX: ní mór don eochairfhocal  {0} bheith alfa-uimhriúil.",
+      "key-any-of": "Scéimre PX: ní mór an eochair &quot;{0}&quot; nó &quot;{1}&quot; bheith san ionchur.",
+      "key-boolean": "Scéimre PX: caithfidh an eochairfhocal {0} a bheith &quot;YES&quot; nó &quot;NO&quot;.",
+      "key-length-min": "Scéimre PX: ní mór fad íosta {1} charachtar bheith ag an eochairfhocal {0}.",
+      "key-length-min-max": "Scéimre PX: ní mór fad idir {1} agus {2} carachtar bheith san eochairfhocal {0}.",
+      "key-mandatory": "Scéimre PX: ní mór an eochair  &quot;{0}&quot; a bheith san ionchur.",
+      "key-not-found": "Scéimre PX: ní bhfuarthas an eochairfhocal  &quot;{0}&quot; don teanga &quot;{1}&quot .",
+      "key-numeric-min-max": "Scéimre PX: ní mór luach idir {1} agus {2} bheith san eochairfhocal {0}."
     },
     "setting": {
-      "axisversion-invalid": "Tá an curadóireacht PX [AXIS-VERSION]: &quot;{PropertyValue}&quot; neamhbhailí",
-      "language-invalid": "Tá an curadóireacht PX [LANGUAGE]: &quot;{PropertyValue}&quot; neamhbhailí.",
-      "languages-invalid": "Tá an curadóireacht PX [LANGUAGE]: &quot;{Language}&quot; neamhbhailí.",
-      "source-invalid": "Tá an curadóireacht PX [SOURCE]: &quot;{PropertyValue}&quot; neamhbhailí.",
-      "sources-invalid": "Tá an curadóireacht PX [SOURCE]: &quot;{Source}&quot; neamhbhailí."
+      "axisversion-invalid": "Socrú PX [AXIS-VERSION]: tá &quot;{PropertyValue}&quot; neamhbhailí",
+      "language-invalid": "Socrú PX [LANGUAGE]: tá &quot;{PropertyValue}&quot; neamhbhailí.",
+      "languages-invalid": "Socrú PX [LANGUAGES]: tá &quot;{Language}&quot; neamhbhailí.",
+      "source-invalid": "Socrú PX [SOURCE]: tá &quot;{PropertyValue}&quot; neamhbhailí.",
+      "sources-invalid": "Socrú PX [SOURCE]: tá &quot;{Source}&quot; neamhbhailí."
     }
   },
   "xlsx": {
@@ -77,26 +77,27 @@
     "note": "Nóta",
     "url": "Url",
     "product": "Táirge",
-    "contacts": "Teagmháil",
+    "contacts": "Teagmhálacha",
     "email": "Ríomhphost",
-    "phone": "Guthán",
+    "phone": "Fón",
     "copyright": "Cóipcheart",
     "properties": "Airíonna",
-    "official-statistics": "Staitisticí Oifigiúla?",
-    "exceptional": "Eisceachtúil?",
-    "archived": "I gCartlann?",
-    "dependency": "Spleáchas?",
-    "analytical": "Anailíseacha?",
+    "official-statistics": "Staidreamh Oifigiúil?",
+    "exceptional": "Eisceachtúil",
+    "archived": "Cartlannaithe",
+    "dependency": "Spleáchas",
+    "analytical": "Anailíseach",
+    "experimental": "Triaileach",
     "language": "Teanga",
     "iso-code": "Cód ISO",
     "iso-name": "Ainm ISO",
     "unit": "Aonad",
     "value": "Luach",
-    "yes": "Tá",
-    "no": "Níl"
+    "yes": "Is ea",
+    "no": "Ní hea"
   },
   "default": {
-    "classification": "An Stát",
+    "classification": "Stát",
     "csv": {
       "code": " CÓD",
       "header": "Aonad, Luach",
@@ -104,40 +105,40 @@
       "value": "LUACH",
       "separator": ","
     },
-    "statistic": "Statistic",
-    "subject-area": "n/a",
-    "subject-code": "NA",
+    "statistic": "Staidreamh",
+    "subject-area": "n/b",
+    "subject-code": "NB",
     "variable": "Stát"
   },
   "email": {
     "body": {
-      "request-create": "Tá iarratas nua de chineál [b] {0} [/ b] curtha isteach i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}.{3} [/ b] agus tá sé ag fanacht lena cheadú . \n Féach ar an sreabhadh oibre seo ag {4}.",
-      "response-approve": "Tá iarratas nua de chineál [b] {0} [/ b] ceadaithe i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] agus tá sé ag fanacht sínithe. \n Féach ar an sreabhadh oibre seo ag {4}. ",
-      "response-reject": "Diúltaíodh don iarraidh ar chineál [b] {0} [/ b] a cheadú i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b]. \n Féach ar an sreabhadh oibre seo ag {4}. ",
-      "signoff-approve": "Tá an iarraidh ar shíniú de chineál [b] {0} [/ b] ceadaithe i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Féach ar an sreabhadh oibre seo ag {4}. ",
-      "signoff-reject": "Diúltaíodh don iarraidh ar shíniú de chineál [b] {0} [/ b] i gcoinne an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Féach ar an sreabhadh oibre seo ag {4}. "
+      "request-create": "Tá iarratas nua de saghas [b] {0} [/ b] curtha isteach le hais an Tábla [b] {1} [/ b] Leagan [b] {2}.{3} [/ b] agus tá sin ag fanacht le faomadh. \n Athbhreithnigh an sreabhadh oibre seo ag {4}.",
+      "response-approve": "Tá iarratas nua de saghas [b] {0} [/ b] faofa le hais an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] agus tá sin ag fanacht le síniú. \n Athbhreithnigh an sreabhadh oibre seo ag  {4}. ",
+      "response-reject": "Tá iarratas nua den saghas [b] {0} [/ b] diúltaithe le hais an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] agus tá sin ag fanacht le faomhadh. \n Athbhreithnigh an sreabhadh oibre seo ag {4}. ",
+      "signoff-approve": "Tá iarratas nua den saghas [b] {0} [/ b] curtha isteach le hais an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Athbhreithnigh an sreabhadh oibre seo ag {4}. ",
+      "signoff-reject": "Tá iarratas nua den saghas [b] {0} [/ b] diúltaithe le hais an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Athbhreithnigh an sreabhadh oibre seo ag {4}. "
     },
     "subject": {
-      "request-create": "{0} {1}.{2}: Ag feitheamh le Faomhadh",
-      "response-approve": "{0} {1}.{2}: Ag feitheamh le síniú amach",
-      "response-reject": "{0} {1}.{2}: Diúltaíodh don Cheadú",
-      "signoff-approve": "{0} {1}.{2}: Sínithe Ceadaithe",
+      "request-create": "{0} {1}.{2}: Ag feitheamh le faomhadh",
+      "response-approve": "{0} {1}.{2}: Ag feitheamh le síniú",
+      "response-reject": "{0} {1}.{2}: Faomhadh diúltaithe",
+      "signoff-approve": "{0} {1}.{2}: Sínithe Faofa",
       "signoff-reject": "{0} {1}.{2}: Sínithe Diúltaithe"
     }
   },
   "workflow": {
     "request": {
-      "publish": "Publish",
-      "rollback": "Rollback",
-      "delete": "Delete",
-      "update-properties": "Update Properties",
-      "auto-approve-comment": "Freagra Uathoibríoch",
+      "publish": "Foilsigh",
+      "rollback": "Rolladh siar",
+      "delete": "Scrios",
+      "update-properties": "Nuashonraigh Airíonna",
+      "auto-approve-comment": "Freagairt Uathoibríoch",
       "autoSignoff-comment": "Síniú Uathoibríoch"
     }
   },
   "analytic": {
-    "others": "Cinn eile",
-    "unknown": "Anaithnid",
+    "others": "Eile",
+    "unknown": "Ní fios",
     "date": "dáta",
     "total": "Iomlán"
   }

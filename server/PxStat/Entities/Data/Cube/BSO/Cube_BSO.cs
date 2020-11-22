@@ -54,7 +54,7 @@ namespace PxStat.Data
         /// <param name="theCubeDTO"></param>
         /// <param name="theResponse"></param>
         /// <returns></returns>
-        internal dynamic ExecuteReadCollection(ADO theAdo, Cube_DTO_ReadCollection DTO)
+        internal dynamic ExecuteReadCollection(ADO theAdo, Cube_DTO_ReadCollection DTO, bool meta = true)
         {
             var ado = new Cube_ADO(theAdo);
 
@@ -81,11 +81,18 @@ namespace PxStat.Data
             foreach (var rls in releases)
             {
                 List<dynamic> thisReleaseMetadata = dbData.Where(x => x.RlsCode == rls.RlsCode).Where(x => x.LngIsoCode == rls.LngIsoCode).ToList<dynamic>();
+                if (meta)
+                {
+                    List<dynamic> stats = getStatistics(thisReleaseMetadata);
+                    List<dynamic> classifications = getClassifications(thisReleaseMetadata);
+                    List<dynamic> periods = getPeriods(thisReleaseMetadata);
+                    theJsonStatCollection.Link.Item.Add(GetJsonStatRelease(thisReleaseMetadata, stats, classifications, periods, formats));
 
-                List<dynamic> stats = getStatistics(thisReleaseMetadata);
-                List<dynamic> classifications = getClassifications(thisReleaseMetadata);
-                List<dynamic> periods = getPeriods(thisReleaseMetadata);
-                theJsonStatCollection.Link.Item.Add(GetJsonStatRelease(thisReleaseMetadata, stats, classifications, periods, formats));
+                }
+                else
+                {
+                    theJsonStatCollection.Link.Item.Add(GetJsonStatReleaseLight(thisReleaseMetadata, formats));
+                }
 
 
             }
@@ -168,13 +175,15 @@ namespace PxStat.Data
                          group c by new
                          {
                              c.ClsCode,
-                             c.ClsValue
+                             c.ClsValue,
+                             c.VrbCount
                          }
                        into cls
                          select new
                          {
                              cls.Key.ClsCode,
-                             cls.Key.ClsValue
+                             cls.Key.ClsValue,
+                             cls.Key.VrbCount
                          }
                        ).ToList<dynamic>();
             return stats;
@@ -277,7 +286,7 @@ namespace PxStat.Data
             jsStat.Extension.Add("language", new { code = thisItem.LngIsoCode, name = thisItem.LngIsoName });
             jsStat.Extension.Add("matrix", thisItem.MtrCode);
 
-            Format_DTO_Read fDtoMain = formats.Where(x => x.FrmType == Constants.C_SYSTEM_JSON_STAT_NAME && x.FrmVersion == Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION")).FirstOrDefault();// new Format_DTO_Read() { FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME"), FrmType = Constants.C_SYSTEM_JSON_STAT_NAME };
+            Format_DTO_Read fDtoMain = formats.Where(x => x.FrmType == Constants.C_SYSTEM_JSON_STAT_NAME && x.FrmVersion == Constants.C_SYSTEM_JSON_STAT_2X_VERSION).FirstOrDefault();// new Format_DTO_Read() { FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME"), FrmType = Constants.C_SYSTEM_JSON_STAT_NAME };
 
 
 
@@ -295,7 +304,8 @@ namespace PxStat.Data
             };
             foreach (var f in formats)
             {
-                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode) });
+
+                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode), Type = f.FrmMimetype });
             }
             jsStat.Link = link;
 
@@ -312,6 +322,8 @@ namespace PxStat.Data
                 }
 
             };
+
+            jsStat.Size.Add(statistics.Count);
 
             jsStat.Dimension.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"), statDimension);
 
@@ -338,6 +350,7 @@ namespace PxStat.Data
             };
 
             jsStat.Dimension.Add(Frequency.code, timeDimension);
+            jsStat.Size.Add(periods.Count);
 
             foreach (var s in classifications)
             {
@@ -355,6 +368,7 @@ namespace PxStat.Data
                 };
 
                 jsStat.Dimension.Add(s.ClsCode, clsDimension);
+                jsStat.Size.Add(s.VrbCount);
             }
 
 
@@ -368,8 +382,56 @@ namespace PxStat.Data
                 thisItem.FrqCode
             };
 
-            //Values will be blank in this case, all we want is metadata
-            //jsStat.Value = new JsonStatValue() { AnythingArray = new List<ValueElement>() };
+            return jsStat;
+        }
+
+        /// <summary>
+        /// Get a JSON-stat metadata based on a database read of collections
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="statistics"></param>
+        /// <param name="classifications"></param>
+        /// <returns></returns>
+        private Item GetJsonStatReleaseLight(List<dynamic> collection, List<Format_DTO_Read> formats)
+        {
+
+            var jsStat = new Item();
+            // jsStat.Class = Class.Dataset;
+            //jsStat.Version = Version.The20;
+
+            var thisItem = collection.FirstOrDefault();
+
+            jsStat.Extension = new Dictionary<string, object>();
+
+            var Frequency = new { name = thisItem.FrqValue, code = thisItem.FrqCode };
+
+            jsStat.Extension.Add("copyright", new { name = thisItem.CprValue, code = thisItem.CprCode, href = thisItem.CprUrl });
+            jsStat.Extension.Add("exceptional", thisItem.ExceptionalFlag);
+            jsStat.Extension.Add("language", new { code = thisItem.LngIsoCode, name = thisItem.LngIsoName });
+            jsStat.Extension.Add("matrix", thisItem.MtrCode);
+
+            Format_DTO_Read fDtoMain = formats.Where(x => x.FrmType == Constants.C_SYSTEM_JSON_STAT_NAME && x.FrmVersion == Constants.C_SYSTEM_JSON_STAT_2X_VERSION).FirstOrDefault();// new Format_DTO_Read() { FrmDirection = Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME"), FrmType = Constants.C_SYSTEM_JSON_STAT_NAME };
+
+
+
+            jsStat.Href = new Uri(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, fDtoMain.FrmType, fDtoMain.FrmVersion, thisItem.LngIsoCode));
+            jsStat.Label = thisItem.MtrTitle;
+            jsStat.Updated = DataAdaptor.ConvertToString(thisItem.RlsLiveDatetimeFrom);
+
+
+
+            var link = new DimensionLink
+            {
+                Alternate = new List<Alternate>()
+            };
+            foreach (var f in formats)
+            {
+                if (f.FrmType != fDtoMain.FrmType || f.FrmVersion != fDtoMain.FrmVersion)
+                    link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode), Type = f.FrmMimetype });
+            }
+            jsStat.Link = link;
+
+
             return jsStat;
         }
 

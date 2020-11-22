@@ -38,6 +38,7 @@ namespace PxStat.JsonStatSchema
                 m2m = param.m2m;
             else
                 m2m = true;
+
         }
 
     }
@@ -61,6 +62,8 @@ namespace PxStat.JsonStatSchema
         public Language Language { get; set; }
         public Format Format { get; set; }
         public string RlsCode { get; set; }
+        public string Pivot { get; set; }
+        public bool? Codes { get; set; }
     }
 
     public class Language

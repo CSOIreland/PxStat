@@ -13,8 +13,13 @@ using Xdr = DocumentFormat.OpenXml.Drawing.Spreadsheet;
 
 namespace XLsxHelper
 {
+
+
     internal class Utilities
     {
+
+
+
         internal static ImagePartType GetImagePartTypeByBitmap(Bitmap image)
         {
             if (ImageFormat.Bmp.Equals(image.RawFormat))
@@ -121,6 +126,8 @@ namespace XLsxHelper
             spreadsheetDocument.Close();
         }
 
+
+
         internal static void AddImage(WorksheetPart worksheetPart,
                                     Stream imageStream, string imgDesc,
                                     int colNumber, int rowNumber)
@@ -199,4 +206,5 @@ namespace XLsxHelper
             worksheetDrawing.Append(oneCellAnchor);
         }
     }
+
 }

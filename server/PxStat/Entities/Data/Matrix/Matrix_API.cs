@@ -100,6 +100,36 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        /// Get a list of Matrix codes based on assignment of groups to tables
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadByGroup(JSONRPC_API jsonrpcRequest)
+        {
+            return new Matrix_BSO_ReadByGroup(jsonrpcRequest).Read().Response;
+        }
+
+        /// <summary>
+        /// Get a list of Matrix codes based on language
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadByLanguage(JSONRPC_API jsonrpcRequest)
+        {
+            return new Matrix_BSO_ReadByLanguage(jsonrpcRequest).Read().Response;
+        }
+
+        /// <summary>
+        /// Get a list of Matrix codes based on assignment of copyrights to tables
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadByCopyright(JSONRPC_API jsonrpcRequest)
+        {
+            return new Matrix_BSO_ReadByCopyright(jsonrpcRequest).Read().Response;
+        }
+
+        /// <summary>
         /// Returns the Matrix for a given release code and language
         /// </summary>
         /// <param name="jsonrpcRequest">The request containing the matrix code</param>

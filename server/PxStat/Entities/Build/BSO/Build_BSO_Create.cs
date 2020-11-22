@@ -89,7 +89,7 @@ namespace PxStat.Build
                 case Resources.Constants.C_SYSTEM_PX_NAME:
 
                     List<dynamic> resultPx = new List<dynamic>();
-                    resultPx.Add(matrix.GetPxObject(true).ToString());
+                    resultPx.Add(matrix.GetPxObject(true));
                     Response.data = resultPx;
                     break;
 

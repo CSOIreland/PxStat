@@ -16,10 +16,6 @@ namespace PxStat.System.Settings
         {
         }
 
-        /// <summary>
-        /// Test authentication
-        /// </summary>
-        /// <returns></returns>
         protected override bool HasUserToBeAuthenticated()
         {
             return false;

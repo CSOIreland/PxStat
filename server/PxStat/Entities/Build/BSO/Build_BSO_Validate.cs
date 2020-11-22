@@ -1,11 +1,8 @@
 ﻿using API;
 using PxParser.Resources.Parser;
 using PxStat.Data;
-using PxStat.Resources;
-using PxStat.Resources.PxParser;
 using PxStat.Security;
 using PxStat.Template;
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -57,63 +54,27 @@ namespace PxStat.Build
         /// <returns></returns>
         internal bool Validate(string signature)
         {
-            PxValidator ppValidator = new PxValidator();
-            PxDocument PxDoc = ppValidator.ParsePxFile(DTO.MtrInput);
+            Matrix_BSO mBso = new Matrix_BSO(Ado);
 
-            if (!ppValidator.ParseValidatorResult.IsValid)
+            if (mBso.Validate(new PxUpload_DTO() { MtrInput = DTO.MtrInput, FrqCodeTimeval = DTO.FrqCodeTimeval, FrqValueTimeval = DTO.FrqValueTimeval, Signature = DTO.Signature }))
             {
-                Response.error = Error.GetValidationFailure(ppValidator.ParseValidatorResult.Errors);
-                return false;
+
+
+                return true;
             }
-
-
-            //There might be a cache:
-            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + signature);
-
-            if (mtrCache.hasData)
+            MatrixData = mBso.MatrixData;
+            if (MatrixData != null)
             {
-                MatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
-                if (MatrixData.MainSpec.requiresResponse)
-                {
-
-                    this.RequiresResponse = true;
-                    return false;
-                }
-
-            }
-            else
-            {
-
-                MatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
-
 
                 if (MatrixData.MainSpec.requiresResponse)
                 {
                     this.RequiresResponse = true;
                     return false;
                 }
-
-
-
-                MatrixValidator matrixValidator = new MatrixValidator();
-                if (!matrixValidator.Validate(MatrixData, false))
-                {
-                    Response.error = Error.GetValidationFailure(matrixValidator.MatrixValidatorResult.Errors);
-                    return false;
-                }
-
-                MemCacheD.Store_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + signature, MatrixData.GetSerializableObject(), DateTime.Now.AddDays(Convert.ToInt32(Utility.GetCustomConfig("APP_BUILD_MATRIX_CACHE_LIFETIME_DAYS"))), Constants.C_CAS_BUILD_MATRIX);
-
-
             }
 
-            if (MatrixData.MainSpec.requiresResponse)
-            {
-                this.RequiresResponse = true;
-                return false;
-            }
-
-            return true;
+            Response.error = mBso.ResponseError;
+            return false;
         }
 
 
@@ -136,6 +97,7 @@ namespace PxStat.Build
 
             if (!Validate(validationResult.Signature) && !RequiresResponse)
             {
+
                 return false;
 
             }

@@ -44,6 +44,7 @@ namespace PxStat.Workflow
                         WrqExceptionalFlag = ReadBool(element.WrqExceptionalFlag),
                         WrqReservationFlag = ReadBool(element.WrqReservationFlag),
                         WrqArchiveFlag = ReadBool(element.WrqArchiveFlag),
+                        WrqExperimentalFlag = ReadBool(element.WrqExperimentalFlag),
                         WrqCurrentFlag = ReadBool(element.WrqCurrentFlag),
                         RqsCode = ReadString(element.RqsCode),
                         RqsValue = ReadString(element.RqsValue),
@@ -80,7 +81,8 @@ namespace PxStat.Workflow
                 inputParams.Add(new ADO_inputParams() { name = "@WrqReservationFlag", value = dto.WrqReservationFlag });
             if (dto.WrqArchiveFlag != null)
                 inputParams.Add(new ADO_inputParams() { name = "@WrqArchiveFlag", value = dto.WrqArchiveFlag });
-
+            if (dto.WrqExperimentalFlag != null)
+                inputParams.Add(new ADO_inputParams() { name = "@WrqExperimentalFlag", value = dto.WrqExperimentalFlag });
 
 
             var retParam = new ADO_returnParam() { name = "return", value = 0 };
@@ -107,6 +109,21 @@ namespace PxStat.Workflow
                 new ADO_inputParams() {name ="@RlsCode",value= dto.RlsCode },
                 new ADO_inputParams() {name ="@WrqCurrentFlag",value= dto.WrqCurrentFlag  }
             };
+
+            if (dto.WrqArchiveFlag != null)
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@WrqArchiveFlag", value = dto.WrqArchiveFlag });
+            }
+
+            if (dto.WrqReservationFlag != null)
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@WrqReservationFlag", value = dto.WrqReservationFlag });
+            }
+
+            if (dto.WrqExperimentalFlag != null)
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@WrqExperimentalFlag", value = dto.WrqExperimentalFlag });
+            }
 
             var retParam = new ADO_returnParam() { name = "return", value = 0 };
 

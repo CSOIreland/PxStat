@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using PxStat.Resources;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
@@ -202,13 +203,12 @@ namespace PxStat.Data
 
     public partial class DimensionV1
     {
-        [JsonProperty("category", Required = Required.Always)]
-        public CategoryV1 Category { get; set; }
-
-
         [JsonProperty("label", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string Label { get; set; }
 
+
+        [JsonProperty("category", Required = Required.Always)]
+        public CategoryV1 Category { get; set; }
 
 
         [JsonProperty("id", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -901,7 +901,7 @@ namespace PxStat.Data
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            if (value == "2.0")
+            if (value == Constants.C_SYSTEM_JSON_STAT_2X_VERSION)
             {
                 return Version.The20;
             }
@@ -924,7 +924,7 @@ namespace PxStat.Data
             var value = (Version)untypedValue;
             if (value == Version.The20)
             {
-                serializer.Serialize(writer, "2.0");
+                serializer.Serialize(writer, Constants.C_SYSTEM_JSON_STAT_2X_VERSION);
                 return;
             }
             throw new Exception("Cannot marshal type Version");

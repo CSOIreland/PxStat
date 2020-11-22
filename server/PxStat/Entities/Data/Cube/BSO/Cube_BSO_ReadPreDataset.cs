@@ -7,13 +7,13 @@ namespace PxStat.Data
     /// <summary>
     /// Read the dataset for a cube that has not yet been released
     /// </summary>
-    internal class Cube_BSO_ReadPreDataset : BaseTemplate_Read<CubeQuery_DTO, JsonStatQueryWip_VLD>
+    internal class Cube_BSO_ReadPreDataset : BaseTemplate_Read<CubeQuery_DTO, JsonStatPreQuery_VLD>
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="request"></param>
-        internal Cube_BSO_ReadPreDataset(JSONRPC_API request) : base(request, new JsonStatQueryWip_VLD())
+        internal Cube_BSO_ReadPreDataset(JSONRPC_API request) : base(request, new JsonStatPreQuery_VLD())
         {
 
         }

@@ -14,6 +14,17 @@ namespace PxStat.Data
         public int RlsCode { get; set; }
     }
 
+    public class Release_DTO_ReadWipForLive
+    {
+        public int RlsCode { get; set; }
+
+        public Release_DTO_ReadWipForLive(dynamic parameters)
+        {
+            if (parameters.RlsCode != null)
+                RlsCode = parameters.RlsCode;
+        }
+    }
+
     /// <summary>
     /// DTO class for Release Create
     /// </summary>
@@ -148,6 +159,11 @@ namespace PxStat.Data
         /// Release Archive Flag
         /// </summary>
         public bool RlsArchiveFlag { get; internal set; }
+
+        /// <summary>
+        /// Release Experimental Flag
+        /// </summary>
+        public bool RlsExperimentalFlag { get; internal set; }
 
         /// <summary>
         ///  End date and time of release

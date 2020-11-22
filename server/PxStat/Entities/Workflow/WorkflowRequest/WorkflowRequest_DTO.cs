@@ -43,7 +43,10 @@ namespace PxStat.Workflow
         /// </summary>
         public bool? WrqArchiveFlag { get; set; }
 
-
+        /// <summary>
+        /// Archive flag
+        /// </summary>
+        public bool? WrqExperimentalFlag { get; set; }
 
         /// <summary>
         /// Release Code
@@ -87,6 +90,8 @@ namespace PxStat.Workflow
             if (parameters.WrqArchiveFlag != null)
                 this.WrqArchiveFlag = parameters.WrqArchiveFlag;
 
+            if (parameters.WrqExperimentalFlag != null)
+                this.WrqExperimentalFlag = parameters.WrqExperimentalFlag;
 
             if (parameters.WrqDatetime != null)
             {
@@ -116,6 +121,10 @@ namespace PxStat.Workflow
         /// Current flag
         /// </summary>
         public bool WrqCurrentFlag { get; set; }
+
+        public bool? WrqReservationFlag { get; set; }
+        public bool? WrqArchiveFlag { get; set; }
+        public bool? WrqExperimentalFlag { get; set; }
         /// <summary>
         /// Constructor
         /// </summary>
@@ -130,6 +139,10 @@ namespace PxStat.Workflow
         public WorkflowRequest_DTO_Update(int RlsCode)
         {
             this.RlsCode = RlsCode;
+        }
+
+        public WorkflowRequest_DTO_Update()
+        {
         }
     }
 }

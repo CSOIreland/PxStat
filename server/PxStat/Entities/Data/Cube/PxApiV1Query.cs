@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using PxStat.Resources;
 using System.Collections.Generic;
 
 namespace PxStat.Data
 {
     public class PxApiV1Query
     {
-        [JsonProperty("query", Required = Required.Always)]
+        [JsonProperty(Constants.C_JSON_STAT_QUERY_CLASS, Required = Required.Always)]
         public Query[] Query { get; set; }
 
         [JsonProperty("response", Required = Required.Always)]

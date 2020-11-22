@@ -210,7 +210,6 @@ namespace PxStat.Data
 
             if (sm.OtherLanguages != null) sm.TheMatrix.OtherLanguages = sm.OtherLanguages;
             sw.Stop();
-            Log.Instance.Fatal("Matrix extracted in " + sw.ElapsedMilliseconds + " ms");
             return sm.TheMatrix;
         }
         /// <summary>
@@ -357,6 +356,31 @@ namespace PxStat.Data
             public Specification Clone()
             {
                 return Clone(this);
+            }
+
+            internal void SetIds()
+            {
+                int id = 1;
+                foreach (var period in this.Frequency.Period)
+                {
+                    period.Id = id;
+                    id++;
+                }
+                id = 1;
+                foreach (var stat in this.Statistic)
+                {
+                    stat.Id = id;
+                    id++;
+                }
+                foreach (var cls in this.Classification)
+                {
+                    id = 1;
+                    foreach (var vrb in cls.Variable)
+                    {
+                        vrb.Id = id;
+                        id++;
+                    }
+                }
             }
 
             public int GetDataSize()
@@ -713,6 +737,7 @@ namespace PxStat.Data
             /// </summary>
             public string Title { get; set; }
 
+
             /// <summary>
             /// class property
             /// </summary>
@@ -764,7 +789,9 @@ namespace PxStat.Data
 
                 // Title for main language and Title[by other language] and same with all the others.
                 Title = doc.GetStringElementValue("TITLE", language);
-                Values = doc.GetMultiValuesWithSubkeys("VALUES", language);
+                //Values = doc.GetMultiValuesWithSubkeys("VALUES", language);
+
+                Values = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
 
                 MatrixCode = doc.GetStringElementValue("MATRIX");
 
@@ -773,7 +800,13 @@ namespace PxStat.Data
                 MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
                 // MainValues = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
+                if (Values.Count != MainValues.Count)
+                    Values = MainValues;
+
                 Contents = doc.GetStringElementValue("CONTENTS", language);
+
+                string infofile = doc.GetStringValueIfExist("INFOFILE", language);
+
                 TimeVals = doc.GetMultiValuesWithSubkeysIfExist("TIMEVAL", language);
 
                 Source = doc.GetStringElementValue("SOURCE", language);
@@ -782,14 +815,33 @@ namespace PxStat.Data
                 Decimals = doc.GetShortElementValue("DECIMALS");
                 if (Decimals == -1) Decimals = doc.GetShortElementValue("DECIMAL");
 
-                // NOTEX takes over NOTE
-                Notes = doc.GetListOfStringValuesIfExist("NOTEX", language);
-                if (Notes == null)
-                {
-                    Notes = doc.GetListOfStringValuesIfExist("NOTE", language);
-                }
+                //Contatenate Notes, Notex and Infofile
+                List<string> notex = null;
+                var notexCheck = doc.GetListOfStringValuesIfExist("NOTEX", language);
+                if (notexCheck != null)
+                    notex = notexCheck.ToList();
+
+                Notes = doc.GetListOfStringValuesIfExist("NOTE", language);
+
+
                 // Concatenate notes into one string
-                NotesAsString = Notes == null ? "" : string.Join("", Notes.Select(e => e.ToString()));
+                if (Notes != null)
+                    NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                else
+                {
+                    Notes = new List<string>();
+                    NotesAsString = "";
+                }
+
+                //Get rid of multiple spaces
+                NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
+                if (notex != null)
+                    NotesAsString = NotesAsString + " " + string.Join("", notex.Select(e => e.ToString()));
+
+                if (Uri.TryCreate(infofile, UriKind.Absolute, out Uri uri))
+                    NotesAsString = NotesAsString.Trim() + " " + infofile;
+
+
 
                 var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
                 var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
@@ -864,21 +916,19 @@ namespace PxStat.Data
 
                 // Title for main language and Title[by other language] and same with all the others.
                 Title = doc.GetStringElementValue("TITLE", language);
-                // Values = doc.GetMultiValuesWithSubkeys("VALUES", language);
                 Values = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
 
 
                 MatrixCode = doc.GetStringElementValue("MATRIX");
 
                 MainValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
-                //MainValues = doc.GetMultiValuesWithSubkeys("VALUES", language);
 
                 Contents = doc.GetStringElementValue("CONTENTS", language);
 
+                string infofile = doc.GetStringValueIfExist("INFOFILE", language);
 
                 TimeVals = doc.GetMultiValuesWithSubkeysIfExist("TIMEVAL", language);
 
-                //    TimeVals = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("TIMEVAL", language);
 
                 Source = doc.GetStringElementValue("SOURCE", language);
 
@@ -886,16 +936,33 @@ namespace PxStat.Data
                 Decimals = doc.GetShortElementValue("DECIMALS");
                 if (Decimals == -1) Decimals = doc.GetShortElementValue("DECIMAL");
 
-                // NOTEX takes over NOTE
-                Notes = doc.GetListOfStringValuesIfExist("NOTEX", language);
-                if (Notes == null)
-                {
-                    Notes = doc.GetListOfStringValuesIfExist("NOTE", language);
-                }
+                //Contatenate Notes, Notex and Infofile
+                List<string> notex = null;
+                var notexCheck = doc.GetListOfStringValuesIfExist("NOTEX", language);
+                if (notexCheck != null)
+                    notex = notexCheck.ToList();
+
+                Notes = doc.GetListOfStringValuesIfExist("NOTE", language);
+
+
                 // Concatenate notes into one string
-                NotesAsString = Notes == null ? "" : string.Join("", Notes.Select(e => e.ToString()));
+                if (Notes != null)
+                    NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                else
+                {
+                    Notes = new List<string>();
+                    NotesAsString = "";
+                }
+
                 //Get rid of multiple spaces
                 NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
+
+                if (notex != null)
+                    NotesAsString = NotesAsString + string.Join("", notex.Select(e => e.ToString()));
+
+                if (Uri.TryCreate(infofile, UriKind.Absolute, out Uri uri))
+                    NotesAsString = NotesAsString.Trim() + " " + infofile;
+
 
                 var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
                 var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
@@ -1207,7 +1274,7 @@ namespace PxStat.Data
                 //This is being removed pending testing - Issue #180
                 //dimensionValues.RemoveAll(v => statisticValues.Contains(v));
 
-                dimensionValues.RemoveAll(v => v == ContentVariable || v == contents);
+                dimensionValues.RemoveAll(v => v == ContentVariable);// || v == contents);
 
 
                 LoopClassifications(domain, codes, retValue, dimensionValues, maps);
@@ -1401,7 +1468,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="forceStatisticEntry" - make sure there is at Statistic/Contvariable entry even if there's only one statistic></param>
         /// <returns></returns>
-        internal StringBuilder GetPxObject(bool forceStatisticEntry = false)
+        internal string GetPxObject(bool forceStatisticEntry = false)
         {
 
             var sb = new StringBuilder();
@@ -1508,7 +1575,7 @@ namespace PxStat.Data
                 sb.Append(doc.ToPxString());
             sb.Append(dataDoc.ToPxString());
 
-            return sb;
+            return new Resources.Xlsx().ConvertStringToUtf8Bom(sb.ToString());
         }
 
 
@@ -1553,12 +1620,11 @@ namespace PxStat.Data
 
             //Units
             var distinctUnits = theSpec.Statistic.Select(o => o.Unit).Distinct();
-            if (!contVariable)
+            if (distinctUnits != null)
                 keywordList.Add(CreatePxElement("UNITS" + lngTag, distinctUnits.ElementAt(0)));
             else
-            {
                 keywordList.Add(CreatePxElement("UNITS" + lngTag, Utility.GetCustomConfig("APP_PX_DEFAULT_UNITS")));
-            }
+
 
 
             //Create the Stub entries
@@ -1697,9 +1763,12 @@ namespace PxStat.Data
                 }
             }
 
+            if (theSpec.Notes != null)
+                theSpec.NotesAsString = String.Join(" ", theSpec.Notes);
+
             keywordList.Add(CreatePxElement("SOURCE" + lngTag, theSpec.Source));
 
-            keywordList.Add(CreatePxElement("NOTEX" + lngTag, theSpec.NotesAsString));
+            keywordList.Add(CreatePxElement("NOTE" + lngTag, theSpec.NotesAsString));
 
             if (MainSpec.Statistic.Count > 1)
             {
@@ -1961,27 +2030,33 @@ namespace PxStat.Data
 
         }
 
-        internal string GetXlsxObject(string lngIsoCode = null, CultureInfo ci = null)
+        internal string GetXlsxObject(string lngIsoCode = null, CultureInfo ci = null, string pivot = null, bool viewCodes = true)
         {
 
             Xlsx xl = new Xlsx();
-            return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode), lngIsoCode, ci);
+            if (pivot == null)
+                return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_DATA_STYLE")), viewCodes), lngIsoCode, ci);
+            else
+                return xl.GetXlsx(this, GetMatrixSheetPivoted(pivot, lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), lngIsoCode, ci);
 
         }
 
-        internal string GetCsvObject(string lngIsoCode = null, bool indicateBlankSymbols = false, CultureInfo ci = null)
+        internal string GetCsvObject(string lngIsoCode = null, bool indicateBlankSymbols = false, CultureInfo ci = null, string pivot = null, bool viewCodes = true)
         {
             Xlsx xl = new Xlsx();
-            return xl.GetCsv(GetMatrixSheet(lngIsoCode, indicateBlankSymbols), "\"", ci);
+            if (pivot == null)
+                return xl.GetCsv(GetMatrixSheet(lngIsoCode, indicateBlankSymbols, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_DATA_STYLE")), viewCodes), "\"", ci);
+            else
+                return xl.GetCsv(GetMatrixSheetPivoted(pivot, lngIsoCode, indicateBlankSymbols, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), "\"", ci);
         }
 
         internal string GetCsvObject(List<DataItem_DTO> dtoList, string lngIsoCode = null, bool indicateBlankSymbols = false, CultureInfo ci = null, bool getLabels = true)
         {
             Xlsx xl = new Xlsx();
-            return xl.GetCsv(GetMatrixSheet(dtoList, lngIsoCode, indicateBlankSymbols, 0, getLabels), "\"", ci);
+            return xl.GetCsv(GetMatrixSheet(dtoList, lngIsoCode, indicateBlankSymbols, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_DATA_STYLE")), getLabels), "\"", ci);
         }
 
-        internal List<List<XlsxValue>> GetMatrixSheet(List<DataItem_DTO> dtoList, string lngIsoCode = null, bool indicateBlankSymbols = false, int headerStyle = 0, bool getLabels = true)
+        internal List<List<XlsxValue>> GetMatrixSheet(List<DataItem_DTO> dtoList, string lngIsoCode = null, bool indicateBlankSymbols = false, int headerStyle = 1, bool getLabels = true)
         {
 
             List<List<XlsxValue>> rowLists = new List<List<XlsxValue>>();
@@ -2055,9 +2130,355 @@ namespace PxStat.Data
             return rowLists;
         }
 
+        /// <summary>
+        /// Returns a pivoted version of the dataset for CSV/XLSX
+        /// </summary>
+        /// <param name="pivotDimensionCode"></param>
+        /// <param name="lngIsoCode"></param>
+        /// <param name="indicateBlankSymbols"></param>
+        /// <param name="headerStyle"></param>
+        /// <returns></returns>
+        internal List<List<XlsxValue>> GetMatrixSheetPivoted(string pivotDimensionCode, string lngIsoCode = null, bool indicateBlankSymbols = false, int headerStyle = 1, bool viewCodes = true)
+        {
+
+            Specification theSpec;
 
 
-        internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null, bool indicateBlankSymbols = false, int headerStyle = 0)
+
+            Build_BSO bBso = new Build_BSO();
+
+
+            string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
+
+            if (lngIsoCode != null)
+            {
+                theSpec = this.GetSpecFromLanguage(lngIsoCode);
+                if (theSpec == null) theSpec = this.MainSpec;
+                theSpec.Frequency = MainSpec.Frequency;
+            }
+            else
+                theSpec = this.MainSpec;
+
+            theSpec.SetIds();
+
+            List<DataItem_DTO> dtoList = bBso.GetMatrixDataItems(this, lngIsoCode, null, false, true);
+
+            //if the pivotDimensionCode is the statistic code
+            if (pivotDimensionCode.Equals(Utility.GetCustomConfig("APP_CSV_STATISTIC")))
+                return GetDataStatPivot(dtoList, theSpec, headerStyle, viewCodes);
+            if (pivotDimensionCode.Equals(theSpec.Frequency.Code))
+                return GetDataPeriodPivot(dtoList, theSpec, headerStyle, viewCodes);
+            ClassificationRecordDTO_Create cls = theSpec.Classification.Where(x => x.Code == pivotDimensionCode).FirstOrDefault();
+            if (cls != null) return GetDataClassificationPivot(dtoList, theSpec, cls, headerStyle, viewCodes);
+            return null;
+
+        }
+
+        /// <summary>
+        /// Gets the pivoted data where the data is pivoted on a Classification Dimension
+        /// </summary>
+        /// <param name="matrixItems"></param>
+        /// <param name="theSpec"></param>
+        /// <param name="cls"></param>
+        /// <param name="headerStyle"></param>
+        /// <returns></returns>
+        private List<List<XlsxValue>> GetDataClassificationPivot(List<DataItem_DTO> matrixItems, Specification theSpec, ClassificationRecordDTO_Create cls, int headerStyle = 1, bool viewCodes = true)
+        {
+            List<List<XlsxValue>> readList = new List<List<XlsxValue>>();
+
+            for (int i = theSpec.Classification.Count - 1; i >= 0; i--)
+            {
+                if (theSpec.Classification[i] != cls)
+                    matrixItems = matrixItems.OrderBy(w => w.classifications[i].Variable[0].Id).ToList();
+            }
+            matrixItems = matrixItems.OrderBy(z => z.period.Id).ToList();
+            matrixItems = matrixItems.OrderBy(z => z.statistic.Id).ToList();
+
+            int counter = 0;
+            List<XlsxValue> rowList = null;
+
+            List<XlsxValue> headingList;
+            if (viewCodes)
+            {
+                headingList = new List<XlsxValue>
+                {
+                    new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC"), StyleId = headerStyle },
+                    new XlsxValue() { Value =  (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")), StyleId = headerStyle }
+                };
+            }
+            else
+            {
+                headingList = new List<XlsxValue>
+                {
+                    new XlsxValue() { Value =  (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")), StyleId = headerStyle }
+                };
+
+            }
+
+            if (viewCodes)
+                headingList.Add(new XlsxValue() { Value = theSpec.Frequency.Code, StyleId = headerStyle });
+
+            headingList.Add(new XlsxValue() { Value = theSpec.Frequency.Value, StyleId = headerStyle });
+
+            foreach (var clsNoPivot in theSpec.Classification.Where(x => x != cls))
+            {
+                if (viewCodes)
+                    headingList.Add(new XlsxValue() { Value = clsNoPivot.Code, StyleId = headerStyle });
+                headingList.Add(new XlsxValue() { Value = clsNoPivot.Value, StyleId = headerStyle });
+            }
+
+            headingList.Add(new XlsxValue() { Value = Label.Get("xlsx.unit", theSpec.Language), StyleId = headerStyle });
+
+            foreach (var vrb in cls.Variable)
+            {
+                headingList.Add(new XlsxValue() { Value = vrb.Value, StyleId = headerStyle });
+            }
+            string nullValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+            readList.Add(headingList);
+
+            foreach (var dto in matrixItems)
+            {
+                if (counter == 0 || counter % cls.Variable.Count == 0)
+                {
+                    if (rowList != null) readList.Add(rowList);
+
+                    if (viewCodes)
+                        rowList = new List<XlsxValue>()
+                    {
+                        new XlsxValue() { Value = dto.statistic.Code },
+                        new XlsxValue() { Value = dto.statistic.Value  }
+                    };
+                    else
+                    {
+                        rowList = new List<XlsxValue>()
+                    {
+                        new XlsxValue() { Value = dto.statistic.Value  }
+                    };
+
+                    }
+
+                    if (viewCodes)
+                        rowList.Add(new XlsxValue() { Value = dto.period.Code });
+
+                    rowList.Add(new XlsxValue() { Value = dto.period.Value });
+
+
+
+                    foreach (var clsNoPivot in dto.classifications.Where(x => x.Code != cls.Code))
+                    {
+                        if (viewCodes)
+                            rowList.Add(new XlsxValue() { Value = clsNoPivot.Variable[0].Code });
+                        rowList.Add(new XlsxValue() { Value = clsNoPivot.Variable[0].Value });
+                    }
+                    rowList.Add(new XlsxValue() { Value = dto.statistic.Unit });
+                    rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
+                }
+
+                else
+                {
+
+                    rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
+                }
+                counter++;
+                if (counter == matrixItems.Count - 1) readList.Add(rowList);
+            }
+            return readList;
+        }
+
+
+        /// <summary>
+        /// Gets the pivoted data where the pivot dimension is the time dimension
+        /// </summary>
+        /// <param name="matrixItems"></param>
+        /// <param name="theSpec"></param>
+        /// <param name="headerStyle"></param>
+        /// <returns></returns>
+        private List<List<XlsxValue>> GetDataPeriodPivot(List<DataItem_DTO> matrixItems, Specification theSpec, int headerStyle = 0, bool viewCodes = true)
+        {
+            List<List<XlsxValue>> readList = new List<List<XlsxValue>>();
+            string nullValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+
+            for (int i = theSpec.Classification.Count - 1; i >= 0; i--)
+            {
+                matrixItems = matrixItems.OrderBy(w => w.classifications[i].Variable[0].Id).ToList();
+            }
+            matrixItems = matrixItems.OrderBy(z => z.statistic.Id).ToList();
+
+
+            int counter = 0;
+            List<XlsxValue> rowList = null;
+
+            List<XlsxValue> headingList;
+            if (viewCodes)
+                headingList = new List<XlsxValue>
+                {
+                    new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC"), StyleId = headerStyle },
+                    new XlsxValue() { Value = (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")), StyleId = headerStyle }
+                };
+            else
+            {
+                headingList = new List<XlsxValue>
+                {
+                    new XlsxValue() { Value = (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")), StyleId = headerStyle }
+                };
+            }
+
+            foreach (var cls in theSpec.Classification)
+            {
+                if (viewCodes)
+                    headingList.Add(new XlsxValue() { Value = cls.Code, StyleId = headerStyle });
+                headingList.Add(new XlsxValue() { Value = cls.Value, StyleId = headerStyle });
+            }
+
+            headingList.Add(new XlsxValue() { Value = Label.Get("xlsx.unit", theSpec.Language), StyleId = headerStyle });
+
+            foreach (var period in theSpec.Frequency.Period)
+            {
+                headingList.Add(new XlsxValue() { Value = period.Value, StyleId = headerStyle });
+            }
+            readList.Add(headingList);
+
+            foreach (var dto in matrixItems)
+            {
+                if (counter == 0 || counter % theSpec.Frequency.Period.Count == 0)
+                {
+                    if (rowList != null) readList.Add(rowList);
+                    if (viewCodes)
+                    {
+                        rowList = new List<XlsxValue>()
+                        {
+                            new XlsxValue() { Value = dto.statistic.Code },
+                            new XlsxValue() { Value = dto.statistic.Value  }
+                        };
+                    }
+                    else
+                    {
+                        rowList = new List<XlsxValue>()
+                        {
+                            new XlsxValue() { Value = dto.statistic.Value  }
+                        };
+                    }
+                    foreach (var cls in dto.classifications)
+                    {
+                        if (viewCodes)
+                            rowList.Add(new XlsxValue() { Value = cls.Variable[0].Code });
+                        rowList.Add(new XlsxValue() { Value = cls.Variable[0].Value });
+                    }
+                    rowList.Add(new XlsxValue() { Value = dto.statistic.Unit });
+                    rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
+                }
+                else
+                {
+
+                    rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
+                }
+                counter++;
+                if (counter == matrixItems.Count - 1) readList.Add(rowList);
+            }
+            return readList;
+        }
+
+        /// <summary>
+        /// Gets the pivoted data where the pivot dimension is the Statistics dimension
+        /// </summary>
+        /// <param name="matrixItems"></param>
+        /// <param name="theSpec"></param>
+        /// <param name="headerStyle"></param>
+        /// <returns></returns>
+        private List<List<XlsxValue>> GetDataStatPivot(List<DataItem_DTO> matrixItems, Specification theSpec, int headerStyle = 0, bool viewCodes = true)
+        {
+            List<List<XlsxValue>> readList = new List<List<XlsxValue>>();
+            string nullValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+
+            for (int i = theSpec.Classification.Count - 1; i >= 0; i--)
+            {
+                matrixItems = matrixItems.OrderBy(w => w.classifications[i].Variable[0].Id).ToList();
+            }
+            matrixItems = matrixItems.OrderBy(z => z.period.Id).ToList();
+
+            int counter = 0;
+            List<XlsxValue> rowList = null;
+            List<XlsxValue> headingList;
+            if (viewCodes)
+            {
+                headingList = new List<XlsxValue>
+                {
+                    new XlsxValue() { Value = theSpec.Frequency.Code, StyleId = headerStyle },
+                    new XlsxValue() { Value =  theSpec.Frequency.Value, StyleId = headerStyle },
+
+                };
+            }
+            else
+            {
+                headingList = new List<XlsxValue>
+                {
+                    new XlsxValue() { Value =  theSpec.Frequency.Value, StyleId = headerStyle },
+
+                };
+            }
+            foreach (var cls in theSpec.Classification)
+            {
+                if (viewCodes)
+                    headingList.Add(new XlsxValue() { Value = cls.Code, StyleId = headerStyle });
+                headingList.Add(new XlsxValue() { Value = cls.Value, StyleId = headerStyle });
+            }
+            foreach (var stat in theSpec.Statistic)
+            {
+                headingList.Add(new XlsxValue()
+                {
+                    Value = stat.Value
+                     + " (" + stat.Unit + ")",
+                    StyleId = headerStyle
+                });
+            }
+            readList.Add(headingList);
+
+            foreach (var dto in matrixItems)
+            {
+                if (counter == 0 || counter % theSpec.Statistic.Count == 0)
+                {
+                    if (rowList != null) readList.Add(rowList);
+                    if (viewCodes)
+                    {
+                        rowList = new List<XlsxValue>()
+                        {
+                            new XlsxValue() { Value = dto.period.Code },
+                            new XlsxValue() { Value = dto.period.Value }
+                        };
+                    }
+                    else
+                    {
+                        rowList = new List<XlsxValue>()
+                        {
+                            new XlsxValue() { Value = dto.period.Value }
+                        };
+                    }
+                    foreach (var cls in dto.classifications)
+                    {
+                        if (viewCodes)
+                            rowList.Add(new XlsxValue() { Value = cls.Variable[0].Code });
+                        rowList.Add(new XlsxValue() { Value = cls.Variable[0].Value });
+                    }
+                    rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
+                }
+                else
+                {
+
+                    rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
+                }
+                counter++;
+                if (counter == matrixItems.Count - 1) readList.Add(rowList);
+            }
+            return readList;
+        }
+        /// <summary>
+        /// Gets the dataset expressed as an xlsx/csv matrix
+        /// </summary>
+        /// <param name="lngIsoCode"></param>
+        /// <param name="indicateBlankSymbols"></param>
+        /// <param name="headerStyle"></param>
+        /// <returns></returns>
+        internal List<List<XlsxValue>> GetMatrixSheet(string lngIsoCode = null, bool indicateBlankSymbols = false, int headerStyle = 0, bool viewCodes = true)
         {
 
             List<List<XlsxValue>> rowLists = new List<List<XlsxValue>>();
@@ -2075,15 +2496,18 @@ namespace PxStat.Data
                 theSpec = this.MainSpec;
 
             List<XlsxValue> rowList = new List<XlsxValue>();
-            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC"), StyleId = headerStyle });
-            rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC") + Utility.GetCustomConfig("APP_CSV_DIVIDER") + (theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic")), StyleId = headerStyle });
-            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code, StyleId = headerStyle });
-            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + theSpec.Frequency.Value, StyleId = headerStyle });
+            if (viewCodes)
+                rowList.Add(new XlsxValue() { Value = Utility.GetCustomConfig("APP_CSV_STATISTIC"), StyleId = headerStyle });
+            rowList.Add(new XlsxValue() { Value = theSpec.ContentVariable != null ? theSpec.ContentVariable : Label.Get("default.statistic"), StyleId = headerStyle });
+            if (viewCodes)
+                rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Code, StyleId = headerStyle });
+            rowList.Add(new XlsxValue() { Value = theSpec.Frequency.Value, StyleId = headerStyle });
 
             foreach (var cls in theSpec.Classification)
             {
-                rowList.Add(new XlsxValue() { Value = cls.Code, StyleId = headerStyle });
-                rowList.Add(new XlsxValue() { Value = cls.Code + Utility.GetCustomConfig("APP_CSV_DIVIDER") + cls.Value, StyleId = headerStyle });
+                if (viewCodes)
+                    rowList.Add(new XlsxValue() { Value = cls.Code, StyleId = headerStyle });
+                rowList.Add(new XlsxValue() { Value = cls.Value, StyleId = headerStyle });
             }
 
             rowList.Add(new XlsxValue() { Value = Label.Get("xlsx.unit", lngIsoCode), StyleId = headerStyle });
@@ -2114,16 +2538,30 @@ namespace PxStat.Data
                 string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
                 foreach (var dto in matrixItems)
                 {
-                    List<XlsxValue> rowlist = new List<XlsxValue>
+                    List<XlsxValue> rowlist;
+
+                    if (viewCodes)
                     {
-                        new XlsxValue() { Value = dto.statistic.Code },
-                        new XlsxValue() { Value = dto.statistic.Value },
-                        new XlsxValue() { Value = dto.period.Code },
-                        new XlsxValue() { Value = dto.period.Value }
-                    };
+                        rowlist = new List<XlsxValue>
+                        {
+                            new XlsxValue() { Value = dto.statistic.Code },
+                            new XlsxValue() { Value = dto.statistic.Value },
+                            new XlsxValue() { Value = dto.period.Code },
+                            new XlsxValue() { Value = dto.period.Value }
+                        };
+                    }
+                    else
+                    {
+                        rowlist = new List<XlsxValue>
+                        {
+                            new XlsxValue() { Value = dto.statistic.Value },
+                            new XlsxValue() { Value = dto.period.Value }
+                        };
+                    }
                     foreach (var cls in dto.classifications)
                     {
-                        rowlist.Add(new XlsxValue() { Value = cls.Variable[0].Code });
+                        if (viewCodes)
+                            rowlist.Add(new XlsxValue() { Value = cls.Variable[0].Code });
                         rowlist.Add(new XlsxValue() { Value = cls.Variable[0].Value });
                     }
                     rowlist.Add(new XlsxValue() { Value = dto.statistic.Unit });
@@ -2134,6 +2572,7 @@ namespace PxStat.Data
                     cellCounter++;
                     rowLists.Add(rowlist);
                 }
+
             }
 
             return rowLists;
@@ -2247,7 +2686,11 @@ namespace PxStat.Data
             }
             return result;
         }
-
+        /// <summary>
+        /// Get a list of classifications for the matrix
+        /// </summary>
+        /// <param name="dimension"></param>
+        /// <returns></returns>
         private IList<ClassificationRecordDTO_Create> GetClassFilter(JsonQuery.Dimension dimension)
         {
             var cls = this.MainSpec.Classification.Where(x => x.Code == dimension.Id).FirstOrDefault();
@@ -2288,7 +2731,10 @@ namespace PxStat.Data
                 TimeFilterWasApplied = true;
             }
         }
-
+        /// <summary>
+        /// Filter by time 
+        /// </summary>
+        /// <param name="dimension"></param>
         private void ApplyTimeFilter(JsonQuery.Dimension dimension)
         {
             //If none of the period codes make any sense, then bail immediately and assume we want to read via all periods
@@ -2345,7 +2791,10 @@ namespace PxStat.Data
                 StatFilterWasApplied = true;
             }
         }
-
+        /// <summary>
+        /// Filter by statistic
+        /// </summary>
+        /// <param name="dimension"></param>
         private void ApplyStatFilter(JsonQuery.Dimension dimension)
         {
             //If none of the stat codes make any sense, then bail immediately and assume we want to read via all stat codes
@@ -2364,9 +2813,6 @@ namespace PxStat.Data
 
 
         }
-
-
-
 
         /// <summary>
         /// DimensionExistinList
@@ -2457,6 +2903,9 @@ namespace PxStat.Data
             this.Copyright = bso.Read(pxDto.CprCode);
         }
 
+        /// <summary>
+        /// Sort matrix metadata in Statistic, Period, Classification order
+        /// </summary>
         internal void SortMatrixMetadataSpc()
         {
             this.MainSpec = SortSpecSpc(this.MainSpec);
@@ -2586,7 +3035,14 @@ namespace PxStat.Data
         }
 
 
-
+        /// <summary>
+        /// Get a matrix as a JSON-stat 2.0 object
+        /// </summary>
+        /// <param name="doStatus"></param>
+        /// <param name="showData"></param>
+        /// <param name="lngIsoCode"></param>
+        /// <param name="ci"></param>
+        /// <returns></returns>
         public JsonStat GetJsonStatObject(bool doStatus = false, bool showData = true, string lngIsoCode = null, CultureInfo ci = null)
         {
 
@@ -2621,6 +3077,7 @@ namespace PxStat.Data
                     jsStat.Href = new Uri(urlBase);
             }
 
+            lngIsoCode = lngIsoCode ?? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             if (lngIsoCode != null)
             {
@@ -2740,6 +3197,7 @@ namespace PxStat.Data
 
                 jsStat.Extension.Add("reservation", Release.RlsReservationFlag);
                 jsStat.Extension.Add("archive", Release.RlsArchiveFlag);
+                jsStat.Extension.Add("experimental", Release.RlsExperimentalFlag);
                 jsStat.Extension.Add("analytical", Release.RlsAnalyticalFlag);
 
                 if (Release.RlsLiveDatetimeFrom != default)
@@ -2842,6 +3300,14 @@ namespace PxStat.Data
             return jsStat;
         }
 
+        /// <summary>
+        /// Get a matrix as a JSON-stat 1.1 object
+        /// </summary>
+        /// <param name="doStatus"></param>
+        /// <param name="showData"></param>
+        /// <param name="lngIsoCode"></param>
+        /// <param name="ci"></param>
+        /// <returns></returns>
         public JsonStatV1_1 GetJsonStatV1_1Object(bool doStatus = false, bool showData = true, string lngIsoCode = null, CultureInfo ci = null)
         {
 
@@ -2989,6 +3455,7 @@ namespace PxStat.Data
 
                 jsStat.Extension.Add("reservation", Release.RlsReservationFlag);
                 jsStat.Extension.Add("archive", Release.RlsArchiveFlag);
+                jsStat.Extension.Add("experimental", Release.RlsExperimentalFlag);
                 jsStat.Extension.Add("analytical", Release.RlsAnalyticalFlag);
 
                 if (Release.RlsLiveDatetimeFrom != default)
@@ -3178,11 +3645,13 @@ namespace PxStat.Data
                     //Index = spec.Statistic.Select(v => v.Value).ToList(),
                     Index = spec.Statistic.ToDictionary(v => v.Code, v => spec.Statistic.IndexOf(v)),
                     Label = spec.Statistic.ToDictionary(v => v.Code, v => v.Value),
-                    Unit = spec.Statistic.ToDictionary(v => v.Value, v => new UnitV1() { Label = v.Code })
+                    Unit = spec.Statistic.ToDictionary(v => v.Code, v => new UnitV1() { Label = v.Unit })
                 }
             };
 
-            Id.Add(spec.ContentVariable);
+            //Id.Add(spec.ContentVariable);
+            Id.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"));
+
 
             RoleV1 role = new RoleV1();
             dimension.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"), statDimension);
@@ -3191,7 +3660,7 @@ namespace PxStat.Data
             Size.Add(spec.Statistic.Count);
 
             // time role
-            Id.Add(spec.Frequency.Value);
+            Id.Add(spec.Frequency.Code);
             var timeDimension = new DimensionV1()
             {
                 Label = spec.Frequency.Value,
@@ -3202,10 +3671,10 @@ namespace PxStat.Data
                     Label = spec.Frequency.Period.ToDictionary(v => v.Code, v => v.Value)
                 }
             };
-            dimension.Add(spec.Frequency.Value, timeDimension);
+            dimension.Add(spec.Frequency.Code, timeDimension);
 
 
-            role.Time = new List<string> { spec.Frequency.Value };
+            role.Time = new List<string> { spec.Frequency.Code };
             Size.Add(spec.Frequency.Period.Count);
 
             // other dimensions
@@ -3222,8 +3691,8 @@ namespace PxStat.Data
                     }
                 };
 
-                dimension.Add(aDimension.Value, theDimension);
-                Id.Add(aDimension.Value);
+                dimension.Add(aDimension.Code, theDimension);
+                Id.Add(aDimension.Code);
                 Size.Add(aDimension.Variable.Count);
 
                 if (aDimension.GeoFlag && !string.IsNullOrEmpty(aDimension.GeoUrl))
@@ -3247,7 +3716,7 @@ namespace PxStat.Data
             jsStat.Dataset.Dimension = dimension;
 
             jsStat.Dataset.Source = this.Copyright.CprValue;
-            jsStat.Dataset.Updated = this.CreationDateTime.ToString("yyyy-MM-ddTHH:mmZ");
+            jsStat.Dataset.Updated = this.CreationDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
             jsStat.Dataset.Value = new JsonStatValue() { AnythingArray = Cells.Select(c => (ValueElement)c.TdtValue).ToList() };
 
@@ -3319,6 +3788,7 @@ namespace PxStat.Data
                     OtherLanguageSpec.Add(new Specification(doc, domain, otherlanguage, frqCodeTimeval, frqValueTimeval));
                 }
             }
+
         }
 
 
@@ -3768,7 +4238,58 @@ namespace PxStat.Data
                 PrcCode = parameters.PrcCode;
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
         }
+    }
+
+    internal class Matrix_DTO_ReadByGroup
+    {
+        public string GrpCode { get; internal set; }
+        public string LngIsoCode { get; internal set; }
+
+
+        public Matrix_DTO_ReadByGroup(dynamic parameters)
+        {
+            if (parameters.GrpCode != null)
+                GrpCode = parameters.GrpCode;
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+        }
+
+    }
+
+    internal class Matrix_DTO_ReadByCopyright
+    {
+        public string CprCode { get; internal set; }
+        public string LngIsoCode { get; internal set; }
+
+
+        public Matrix_DTO_ReadByCopyright(dynamic parameters)
+        {
+            if (parameters.CprCode != null)
+                CprCode = parameters.CprCode;
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+        }
+
+    }
+
+    internal class Matrix_DTO_ReadByLanguage
+    {
+        public string LngIsoCode { get; internal set; }
+
+
+        public Matrix_DTO_ReadByLanguage(dynamic parameters)
+        {
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+        }
+
     }
 
     /// <summary>
@@ -3832,6 +4353,7 @@ namespace PxStat.Data
         public short Decimal { get; set; }
 
         public long SortId { get; internal set; }
+        public int Id { get; internal set; }
         public StatisticalRecordDTO_Create(dynamic stat)
         {
             if (stat.SttCode != null)
@@ -4014,6 +4536,7 @@ namespace PxStat.Data
 
         public long SortId { get; internal set; }
 
+
         public VariableRecordDTO_Create() { }
         public VariableRecordDTO_Create(dynamic vrb)
         {
@@ -4103,6 +4626,7 @@ namespace PxStat.Data
         public string Code { get; set; }
 
         public long SortId { get; internal set; }
+        public int Id { get; internal set; }
         /// <summary>
         /// Get a hash of this object
         /// </summary>

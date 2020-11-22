@@ -146,9 +146,15 @@ namespace PxStat.Data
 
                         return output;
 
-                    case Constants.C_DATA_PXAPIV1_METADATA_QUERY:
+                    default:
+
+                        if (pcount < Constants.C_DATA_PXAPIV1_METADATA_QUERY)
+                        {
+                            throw new Exception(Label.Get("error.validation"));
+                        }
+
                         //Either get the metadata for the table or, if a query has been supplied, get the table data based on the query
-                        string request = string.IsNullOrWhiteSpace(Utility.HttpPOST()) ? Utility.HttpGET()["query"] : Utility.HttpPOST();
+                        string request = string.IsNullOrWhiteSpace(restfulRequest.httpPOST) ? restfulRequest.httpGET[Constants.C_JSON_STAT_QUERY_CLASS] : restfulRequest.httpPOST;
 
                         //For conventional RESTful patterns, don't return metadata unless the requested MtrCode is contained in the collection
                         //for the subject and product parameters
@@ -179,7 +185,7 @@ namespace PxStat.Data
 
                             rpcParams.Add("matrix", parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY));
 
-                            rpcParams.Add("format", JToken.FromObject(new { type = "JSON-stat", version = "2.0" }));
+                            rpcParams.Add("format", JToken.FromObject(new { type = Constants.C_SYSTEM_JSON_STAT_NAME, version = Constants.C_SYSTEM_JSON_STAT_2X_VERSION }));
 
                             Matrix theMatrix;
                             using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
@@ -231,7 +237,7 @@ namespace PxStat.Data
                             }
 
 
-                            string queryString = string.IsNullOrWhiteSpace(Utility.HttpPOST()) ? Utility.HttpGET()["query"] : Utility.HttpPOST();
+                            string queryString = string.IsNullOrWhiteSpace(restfulRequest.httpPOST) ? restfulRequest.httpGET[Constants.C_JSON_STAT_QUERY_CLASS] : restfulRequest.httpPOST;
 
                             PxApiV1Query pxapiQuery = Utility.JsonDeserialize_IgnoreLoopingReference<PxApiV1Query>(queryString);
 
@@ -242,7 +248,7 @@ namespace PxStat.Data
                               restfulRequest.ipAddress, parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY), false, format);
 
                             JsonStatQuery jsQuery = new JsonStatQuery();
-                            jsQuery.Class = "query";
+                            jsQuery.Class = Constants.C_JSON_STAT_QUERY_CLASS;
                             jsQuery.Id = new List<string>();
                             jsQuery.Dimensions = new Dictionary<string, JsonQuery.Dimension>();
                             foreach (var q in pxapiQuery.Query)
@@ -254,13 +260,20 @@ namespace PxStat.Data
                             jsQuery.Extension.Add("matrix", parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY));
                             jsQuery.Extension.Add("language", new Language() { Code = parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY) });
                             jsQuery.Extension.Add("format", new JsonQuery.Format() { Type = format.FrmType, Version = format.FrmVersion });
-                            jsQuery.Version = Utility.GetCustomConfig("APP_JSON_STAT_QUERY_VERSION");
+                            if (pcount >= Constants.C_DATA_PXAPIV1_DATA_QUERY)
+                            {
+                                jsQuery.Extension.Add("pivot", parameters.ElementAt(Constants.C_DATA_PXAPIV1_DATA_QUERY));
+                            }
+                            jsQuery.Version = Constants.C_JSON_STAT_QUERY_VERSION;
+
+
+
 
                             JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
 
                             jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jsQuery);
                             //Run the request as a Json Rpc call
-                            JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;
+                            JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest, true).Read().Response;
                             // Convert the JsonRpc output to RESTful output
                             var response = Map.JSONRPC2RESTful_Output(rsp, format.FrmMimetype, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
 
@@ -276,9 +289,6 @@ namespace PxStat.Data
 
                         }
 
-
-                    default:
-                        throw new Exception(Label.Get("error.validation"));
                 }
             }
             catch (Exception ex)
@@ -299,7 +309,7 @@ namespace PxStat.Data
         private static dynamic RunQuery()
         {
             JsonStatQuery jq = new JsonStatQuery();
-            jq.Class = "query";
+            jq.Class = Constants.C_JSON_STAT_QUERY_CLASS;
 
             return null;
         }
@@ -437,10 +447,14 @@ namespace PxStat.Data
         /// <returns></returns>
         public static dynamic ReadCollection(JSONRPC_API jsonrpcRequest)
         {
-            return new Cube_BSO_ReadCollection(jsonrpcRequest).Read().Response;
-
-
+            return new Cube_BSO_ReadCollection(jsonrpcRequest, false).Read().Response;
         }
+
+        public static dynamic ReadMetaCollection(JSONRPC_API jsonrpcRequest)
+        {
+            return new Cube_BSO_ReadCollection(jsonrpcRequest, true).Read().Response;
+        }
+
         /// <summary>
         ///  Returns a Collection of JsonStat items. RESTful version
         /// </summary>
@@ -460,7 +474,7 @@ namespace PxStat.Data
             jsonRpcRequest.parameters = map.ReadCollection_MapParameters(jsonRpcRequest.parameters);
 
             //Run the request as a Json Rpc call
-            JSONRPC_Output rsp = new Cube_BSO_ReadCollection(jsonRpcRequest).Read().Response;
+            JSONRPC_Output rsp = new Cube_BSO_ReadCollection(jsonRpcRequest, false).Read().Response;
 
             string mimeType;
             using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))

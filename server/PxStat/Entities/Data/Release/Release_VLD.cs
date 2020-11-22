@@ -16,6 +16,16 @@ namespace PxStat.Data
         }
     }
 
+    internal class Release_VLD_ReadWipForLive : AbstractValidator<Release_DTO_ReadWipForLive>
+    {
+
+        public Release_VLD_ReadWipForLive()
+        {
+            //Mandatory - RlsCode
+            RuleFor(x => x.RlsCode).NotEmpty();
+        }
+    }
+
     /// <summary>
     /// Validator class for Release_DTO_Read Read
     /// </summary>

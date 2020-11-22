@@ -19,7 +19,7 @@ namespace PxStat.System.Settings
 
             List<ADO_inputParams> paramList = new List<ADO_inputParams>();
             if (!string.IsNullOrEmpty(copyright.CprCode))
-                paramList.Add(new ADO_inputParams() { name = "@source", value = copyright.CprCode });
+                paramList.Add(new ADO_inputParams() { name = "@CprCode", value = copyright.CprCode });
 
             if (!string.IsNullOrEmpty(copyright.CprValue))
                 paramList.Add(new ADO_inputParams() { name = "@CprValue", value = copyright.CprValue });
@@ -128,7 +128,7 @@ namespace PxStat.System.Settings
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() { name = "@source", value = cprCode }
+                new ADO_inputParams() { name = "@CprCode", value = cprCode }
             };
 
             ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Settings_Copyright_Read", paramList);

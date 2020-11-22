@@ -3,7 +3,6 @@ using FluentValidation;
 using Newtonsoft.Json.Linq;
 using PxParser.Resources.Parser;
 using PxStat.Data;
-using PxStat.Resources;
 using PxStat.Resources.PxParser;
 using PxStat.Template;
 using System.Collections.Generic;
@@ -48,6 +47,7 @@ namespace PxStat.Build
         /// <returns></returns>
         protected override bool Execute()
         {
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -75,19 +75,8 @@ namespace PxStat.Build
                 return false;
             }
 
-            //There might be a cache:
-            Matrix theMatrixData;
 
-            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + DTO.Signature);
-
-            if (mtrCache.hasData)
-            {
-                theMatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
-            }
-            else
-                //Get this matrix from the px file
-                theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
-
+            Matrix theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
 
             Log.Instance.Debug("Object updated - " + theMatrixData.Cells.Count + " rows in " + sw.ElapsedMilliseconds + " milliseconds");
@@ -119,15 +108,17 @@ namespace PxStat.Build
             if (DTO.Format.FrmType == DatasetFormat.Px)
             {
                 dynamic result = new ExpandoObject();
-                List<dynamic> file = new List<dynamic>();
-                file.Add(theMatrixData.GetPxObject(true).ToString());
+                List<string> file = new List<string>
+                {
+                    theMatrixData.GetPxObject(true)
+                };
                 result.file = file;
 
 
                 result.report = DTO.PxData.DataItems;
 
-
                 Response.data = result;
+
                 Log.Instance.Debug("Update complete in " + sw.ElapsedMilliseconds + " milliseconds");
                 return true;
             }

@@ -10,6 +10,21 @@ namespace PxStat.Workflow
 {
     internal class Workflow_BSO
     {
+        internal Workflow_DTO Populate(ADO ado, Workflow_DTO dto, string ccnUsername)
+        {
+            Workflow_ADO wAdo = new Workflow_ADO();
+            ADO_readerOutput reader = wAdo.Read(ado, dto, ccnUsername, "PUBLISH");
+            if (!reader.hasData) return dto;
+
+            return new Workflow_DTO()
+            {
+                WrqDatetime = DataAdaptor.ReadDateTime(reader.data[0].WrqDatetime),
+                WrqExceptionalFlag = DataAdaptor.ReadBool(reader.data[0].WrqExceptionalFlag),
+                WrqReservationFlag = DataAdaptor.ReadBool(reader.data[0].WrqReservationFlag),
+                WrqArchiveFlag = DataAdaptor.ReadBool(reader.data[0].WrqArchiveFlag),
+                WrqExperimentalFlag = DataAdaptor.ReadBool(reader.data[0].WrqExperimentalFlag)
+            };
+        }
         internal JSONRPC_Output WorkflowRequestCreate(WorkflowRequest_DTO DTO, ADO Ado, string SamAccountName)
         {
             JSONRPC_Output response = new JSONRPC_Output();
@@ -316,6 +331,8 @@ namespace PxStat.Workflow
             var adoWorkflowRequest = new WorkflowRequest_ADO();
             var adoWorkflowResponse = new WorkflowResponse_ADO();
 
+            Release_DTO dtoWip = null;
+
 
             if (!adoWorkflowResponse.IsInUse(Ado, DTO)) // is current workflow -- this should be the response!!
             {
@@ -459,7 +476,10 @@ namespace PxStat.Workflow
                     dtoRelease.RlsExceptionalFlag = dtoWrq.WrqExceptionalFlag != null ? dtoWrq.WrqExceptionalFlag.Value : false;
                     dtoRelease.RlsReservationFlag = dtoWrq.WrqReservationFlag != null ? dtoWrq.WrqReservationFlag.Value : false;
                     dtoRelease.RlsArchiveFlag = dtoWrq.WrqArchiveFlag != null ? dtoWrq.WrqArchiveFlag.Value : false;
+                    dtoRelease.RlsExperimentalFlag = dtoWrq.WrqExperimentalFlag != null ? dtoWrq.WrqExperimentalFlag.Value : false;
                     dtoRelease.RlsLiveDatetimeFrom = switchDate;
+
+
 
                     //get the current live release
 
@@ -487,12 +507,14 @@ namespace PxStat.Workflow
                         }
                     }
 
+
                     break;
 
                 case Constants.C_WORKFLOW_REQUEST_PROPERTY:
                     //update release to transfer all flag values from the request to the release                            
                     dtoRelease.RlsReservationFlag = dtoWrq.WrqReservationFlag != null ? dtoWrq.WrqReservationFlag.Value : false;
                     dtoRelease.RlsArchiveFlag = dtoWrq.WrqArchiveFlag != null ? dtoWrq.WrqArchiveFlag.Value : false;
+                    dtoRelease.RlsExperimentalFlag = dtoWrq.WrqExperimentalFlag != null ? dtoWrq.WrqExperimentalFlag.Value : false;
 
                     //Save the release
                     int updateCount = adoRelease.Update(dtoRelease, SamAccountName);
@@ -502,6 +524,67 @@ namespace PxStat.Workflow
                         Log.Instance.Debug("Can't update the Release, RlsCode:" + DTO.RlsCode);
                         response.error = Label.Get("error.update");
                         return response;
+                    }
+
+
+
+                    //if there is a WIP or a pending live associated with this matrix then we need to update the WIP/Pending Live as well:
+                    Release_BSO rBso = new Release_BSO(Ado);
+                    dynamic wipForLive = rBso.GetWipForLive(dtoRelease.RlsCode, SamAccountName);
+                    if (wipForLive == null)
+                    {
+                        wipForLive = rBso.GetPendingLiveForLive(dtoRelease.RlsCode, SamAccountName);
+                    }
+                    if (wipForLive != null)
+                    {
+
+                        //if a workflow exists for wipForLive, then we must update the flags on that workflow as well
+                        var wfForLive = adoWorkflowRequest.Read(Ado, wipForLive.RlsCode, true);
+                        if (wfForLive != null)
+                        {
+                            if (wfForLive.Count > 0)
+                            {
+                                adoWorkflowRequest.Update(Ado, new WorkflowRequest_DTO_Update()
+                                {
+                                    RlsCode = wipForLive.RlsCode,
+                                    WrqArchiveFlag = dtoWrq.WrqArchiveFlag,
+                                    WrqCurrentFlag = true,
+                                    WrqExperimentalFlag = dtoWrq.WrqExperimentalFlag,
+                                    WrqReservationFlag = dtoWrq.WrqReservationFlag
+                                }, SamAccountName);
+                            }
+                        }
+
+                        dtoWip = Release_ADO.GetReleaseDTO(adoRelease.Read(wipForLive.RlsCode, SamAccountName));
+                        dtoWip.RlsReservationFlag = dtoRelease.RlsReservationFlag;
+                        dtoWip.RlsArchiveFlag = dtoRelease.RlsArchiveFlag;
+                        dtoWip.RlsExperimentalFlag = dtoRelease.RlsExperimentalFlag;
+
+                        if (adoRelease.Update(dtoWip, SamAccountName) == 0)
+                        {
+                            Log.Instance.Debug("Failed to update associated WIP " + dtoWip.MtrCode + " " + dtoWip.RlsVersion + '.' + dtoWip.RlsRevision);
+                        }
+
+                        //if this wip has a workflow request, then the workflow request details must also be updated
+
+                        List<WorkflowRequest_DTO> wfList = adoWrq.Read(Ado, dtoWip.RlsCode, true);
+                        if (wfList.Count > 0)
+                        {
+                            foreach (var wf in wfList)
+                            {
+                                wf.WrqReservationFlag = dtoWrq.WrqReservationFlag;
+                                wf.WrqArchiveFlag = dtoWrq.WrqArchiveFlag;
+                                wf.WrqExperimentalFlag = dtoWrq.WrqExperimentalFlag;
+                                adoWrq.Update(Ado, new WorkflowRequest_DTO_Update()
+                                {
+                                    RlsCode = wf.RlsCode,
+                                    WrqCurrentFlag = dtoWrq.WrqCurrentFlag,
+                                    WrqArchiveFlag = dtoWrq.WrqArchiveFlag,
+                                    WrqExperimentalFlag = dtoWrq.WrqExperimentalFlag,
+                                    WrqReservationFlag = dtoWrq.WrqReservationFlag
+                                }, SamAccountName);
+                            }
+                        }
                     }
 
                     break;
@@ -762,6 +845,16 @@ namespace PxStat.Workflow
 
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + DTO.RlsCode);
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + DTO.RlsCode);
+
+            if (dtoWip != null)
+            {
+                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + dtoWip.RlsCode);
+                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + dtoWip.RlsCode);
+                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + dtoWip.RlsCode);
+
+                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + dtoWip.RlsCode);
+                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + dtoWip.RlsCode);
+            }
 
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_READ);

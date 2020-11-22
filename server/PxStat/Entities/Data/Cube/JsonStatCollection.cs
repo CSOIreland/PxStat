@@ -63,7 +63,7 @@ namespace PxStat.Data
         [JsonProperty("class", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public ItemClass? Class { get; set; }
 
-        [JsonProperty("dimension", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("dimension", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, Dimension> Dimension { get; set; }
 
         [JsonProperty("extension", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -72,7 +72,7 @@ namespace PxStat.Data
         [JsonProperty("href", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public Uri Href { get; set; }
 
-        [JsonProperty("id", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("id", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Id { get; set; }
 
         [JsonProperty("label", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -84,10 +84,10 @@ namespace PxStat.Data
         [JsonProperty("note", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Note { get; set; }
 
-        [JsonProperty("role", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("role", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public Role Role { get; set; }
 
-        [JsonProperty("size", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("size", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public List<long> Size { get; set; }
 
         [JsonProperty("source", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]

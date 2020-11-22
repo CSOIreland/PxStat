@@ -11,7 +11,6 @@ Global
 		Live|Any CPU = Live|Any CPU
 		Release|Any CPU = Release|Any CPU
 		Test|Any CPU = Test|Any CPU
-		UAT|Any CPU = UAT|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -22,8 +21,6 @@ Global
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Test|Any CPU.Build.0 = Test|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.UAT|Any CPU.ActiveCfg = UAT|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.UAT|Any CPU.Build.0 = UAT|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

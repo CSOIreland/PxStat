@@ -22,6 +22,7 @@ namespace PxStat.Data
         public string Text { get; set; }
         [JsonProperty("values", Required = Required.Always)]
         public List<string> Values { get; set; }
+        public List<string> valueTexts { get; set; }
 
         [JsonProperty("elimination", Required = Required.AllowNull)]
         public bool Elimination { get; set; }
@@ -43,17 +44,21 @@ namespace PxStat.Data
 
             Variable statVariable = new Variable() { Code = theSpec.ContentVariable, Text = theSpec.Title };
             statVariable.Values = new List<string>();
+            statVariable.valueTexts = new List<string>();
             foreach (var stat in theSpec.Statistic)
             {
                 statVariable.Values.Add(stat.Code);
+                statVariable.valueTexts.Add(stat.Value);
             }
             json.Variables.Add(statVariable);
 
             Variable perVariable = new Variable() { Code = theSpec.Frequency.Code, Text = theSpec.Frequency.Value };
             perVariable.Values = new List<string>();
+            perVariable.valueTexts = new List<string>();
             foreach (var period in theSpec.Frequency.Period)
             {
                 perVariable.Values.Add(period.Code);
+                perVariable.valueTexts.Add(period.Value);
             }
             json.Variables.Add(perVariable);
 
@@ -61,9 +66,11 @@ namespace PxStat.Data
             {
                 Variable clsVariable = new Variable() { Code = cls.Code, Text = cls.Value };
                 clsVariable.Values = new List<string>();
+                clsVariable.valueTexts = new List<string>();
                 foreach (var v in cls.Variable)
                 {
                     clsVariable.Values.Add(v.Code);
+                    clsVariable.valueTexts.Add(v.Value);
                 }
                 json.Variables.Add(clsVariable);
             }

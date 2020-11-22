@@ -185,6 +185,7 @@ namespace PxStat.System.Navigation
                 rel.RlsExceptionalFlag = release.RlsExceptionalFlag;
                 rel.RlsReservationFlag = release.RlsReservationFlag;
                 rel.RlsArchiveFlag = release.RlsArchiveFlag;
+                rel.RlsExperimentalFlag = release.RlsExperimentalFlag;
                 rel.RlsAnalyticalFlag = release.RlsAnalyticalFlag;
                 rel.CprCode = release.CprCode;
                 rel.CprValue = release.CprValue;
@@ -240,8 +241,12 @@ namespace PxStat.System.Navigation
                     outList.Add(rel);
                 }
             }
-            //merged.OrderBy(x => x.sortID).ToList();
-            return outList.OrderByDescending(x => x.Score).ToList();
+
+            if (DTO.PrcCode == null)
+                return outList.OrderByDescending(x => x.Score).ThenByDescending(x => x.RlsLiveDatetimeFrom).ThenBy(x => x.MtrCode).ToList();
+            else
+                return outList.OrderBy(x => x.MtrCode).ToList();
+
         }
 
         /// <summary>
@@ -326,6 +331,7 @@ namespace PxStat.System.Navigation
                                 t.RlsExceptionalFlag,
                                 t.RlsReservationFlag,
                                 t.RlsArchiveFlag,
+                                t.RlsExperimentalFlag,
                                 t.RlsAnalyticalFlag,
                                 t.CprCode,
                                 t.CprValue,
@@ -351,6 +357,7 @@ namespace PxStat.System.Navigation
                                 grp.Key.RlsExceptionalFlag,
                                 grp.Key.RlsReservationFlag,
                                 grp.Key.RlsArchiveFlag,
+                                grp.Key.RlsExperimentalFlag,
                                 grp.Key.RlsAnalyticalFlag,
                                 grp.Key.CprCode,
                                 grp.Key.CprValue,

@@ -88,30 +88,40 @@ namespace PxStat.Data
             {
                 LogValidatorErrors(ParseValidatorResult);
                 ResponseError = Error.GetValidationFailure(ParseValidatorResult.Errors);
-                return true;
+                return false;
             }
 
             if (!PxSchemaIsValid())
             {
                 LogValidatorErrors(SchemaValidatorResult);
                 ResponseError = Error.GetValidationFailure(SchemaValidatorResult.Errors);
-                return true;
+                return false;
             }
 
-            MatrixData = GetMatrixData(PxDoc);
+            MatrixData = GetMatrixData(PxDoc, DTO);
+
+            if (MatrixData.MainSpec.requiresResponse) return false;
+
+            if (MatrixData.OtherLanguageSpec != null)
+            {
+                foreach (var spec in MatrixData.OtherLanguageSpec)
+                {
+                    if (spec.requiresResponse) return false;
+                }
+            }
 
             if (!PxIntegrityIsValid(MatrixData))
             {
                 LogValidatorErrors(IntegrityValidatorResult);
                 ResponseError = Error.GetValidationFailure(IntegrityValidatorResult.Errors);
-                return true;
+                return false;
             }
 
             if (!PxSettingsAreValid(MatrixData))
             {
                 LogValidatorErrors(SettingsValidatorResult);
                 ResponseError = Error.GetValidationFailure(SettingsValidatorResult.Errors);
-                return true;
+                return false;
             }
 
             ResponseData = API.JSONRPC.success;
@@ -145,9 +155,9 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="doc"></param>
         /// <returns></returns>
-        private Matrix GetMatrixData(PxDocument doc)
+        private Matrix GetMatrixData(PxDocument doc, PxUpload_DTO dto = null)
         {
-            return new Matrix(doc);
+            return new Matrix(doc, dto);
         }
 
         /// <summary>

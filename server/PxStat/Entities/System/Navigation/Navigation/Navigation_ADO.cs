@@ -95,6 +95,8 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@RlsReservationFlag", value = dto.RlsReservationFlag });
             if (dto.RlsArchiveFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsArchiveFlag", value = dto.RlsArchiveFlag });
+            if (dto.RlsExperimentalFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@RlsExperiementalFlag", value = dto.RlsExperimentalFlag });
             if (dto.RlsAnalyticalFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsAnalyticalFlag", value = dto.RlsAnalyticalFlag });
 

@@ -37,7 +37,8 @@ namespace PxStat.Workflow
             RuleFor(f => f.WrqReservationFlag).NotNull().When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH) || f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PROPERTY));
             //Mandatory - WrqArchiveFlag - Mandatory for Publish and Flag
             RuleFor(f => f.WrqArchiveFlag).NotNull().When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH) || f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PROPERTY));
-
+            //Mandatory - WrqArchiveFlag - Mandatory for Publish and Flag
+            RuleFor(f => f.WrqExperimentalFlag).NotNull().When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH) || f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PROPERTY));
         }
     }
 

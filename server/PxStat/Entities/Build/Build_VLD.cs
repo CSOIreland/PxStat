@@ -102,8 +102,11 @@ namespace PxStat.Build
         internal Build_VLD_Create()
         {
             RuleFor(f => f.MtrCode).NotEmpty().Length(1, 20);
+            RuleFor(f => f.MtrCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.CprCode).NotEmpty().Length(1, 32);
+            RuleFor(f => f.CprCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.FrqCode).NotEmpty().Length(1, 256);
+            RuleFor(f => f.FrqCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
 
             RuleFor(f => f.DimensionList).Must(CustomValidations.DimensionsValid).WithMessage("Invalid Dimensions");
@@ -232,6 +235,7 @@ namespace PxStat.Build
         internal Frequency_VLD()
         {
             RuleFor(x => x.Value).NotEmpty().Length(1, 256);
+            RuleFor(x => x.Code).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleForEach(x => x.Period).SetValidator(new Period_VLD());
             RuleFor(x => x.Period).Must(CustomValidations.PeriodCodeNotRepeatedInList).WithMessage("Duplicate period codes ");
             RuleFor(x => x.Period).Must(CustomValidations.PeriodValueNotRepeatedInList).WithMessage("Duplicate period codes ");
@@ -250,6 +254,7 @@ namespace PxStat.Build
             RuleFor(x => x.Code).NotEmpty().Length(1, 256);
             RuleFor(x => x.Value).NotEmpty().Length(1, 256);
             RuleFor(x => x.Code).Must(CustomValidations.NotReservedWord);
+            RuleFor(x => x.Code).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
 
             //Does not contain inverted commas
             RuleFor(f => f.Code).Matches(fchars);
@@ -270,6 +275,7 @@ namespace PxStat.Build
         {
             string geoCodeRegex = Utility.GetCustomConfig("APP_REGEX_URL");
             RuleFor(f => f.Code).NotEmpty().Length(1, 256);
+            RuleFor(f => f.Code).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.Value).NotEmpty().Length(1, 256);
             RuleFor(f => f.GeoUrl).NotEmpty().Length(1, 2048).When(f => !string.IsNullOrEmpty(f.GeoUrl));
             RuleFor(f => f.GeoUrl).Matches(geoCodeRegex).When(f => !string.IsNullOrEmpty(f.GeoUrl));
@@ -300,6 +306,7 @@ namespace PxStat.Build
             RuleFor(f => f.Code).NotEmpty().Length(1, 256);
 
             RuleFor(f => f.Code).Must(CustomValidations.NotReservedWord);
+            RuleFor(f => f.Code).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
 
             //Does not contain inverted commas
             RuleFor(f => f.Code).Matches(fchars);
@@ -324,6 +331,7 @@ namespace PxStat.Build
 
             //Does not contain inverted commas
             RuleFor(f => f.Code).Matches(fchars);
+            RuleFor(f => f.Code).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.Value).Matches(fchars);
         }
     }
@@ -337,6 +345,7 @@ namespace PxStat.Build
         internal Statistic_VLD()
         {
             RuleFor(f => f.Code).NotEmpty().Length(1, 256);
+            RuleFor(f => f.Code).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.Value).NotEmpty().Length(1, 256);
             RuleFor(f => f.Unit).NotEmpty().Length(1, 256); ;
             RuleFor(f => Convert.ToInt32(f.Decimal)).InclusiveBetween(0, 6);
@@ -437,11 +446,14 @@ namespace PxStat.Build
         {
             RuleFor(x => x.MtrInput).NotEmpty().WithMessage("Matrix data must not be empty");
             RuleFor(x => x.MtrCode).Length(1, 20).When(f => !string.IsNullOrEmpty(f.MtrCode)).WithMessage("Matrix code must not be empty");
+            RuleFor(x => x.MtrCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(x => x.CprCode).Length(1, 20).When(f => !string.IsNullOrEmpty(f.CprCode)).WithMessage("Copyright code must not be empty");
+            RuleFor(x => x.CprCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
 
             RuleFor(x => x).Must(CustomValidations.PeriodsNotRepeated).WithMessage("One or more period codes have been repeated");
             RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
             RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
             RuleFor(f => f.Dimension).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.FormatExists).WithMessage("Requested format/version not found in the system");

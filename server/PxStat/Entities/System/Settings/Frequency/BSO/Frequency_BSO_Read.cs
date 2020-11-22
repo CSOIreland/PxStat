@@ -33,7 +33,6 @@ namespace PxStat.System.Settings
         /// <returns></returns>
         protected override bool Execute()
         {
-
             List<string> configList = Utility.GetCustomConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList();
             List<dynamic> configs = new List<dynamic>();
             foreach (var v in configList)

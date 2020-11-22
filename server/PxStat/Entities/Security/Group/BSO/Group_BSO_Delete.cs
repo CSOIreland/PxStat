@@ -50,10 +50,8 @@ namespace PxStat.Security
                 Response.error = Label.Get("error.delete");
                 return false;
             }
-
             Response.data = JSONRPC.success;
             return true;
         }
     }
 }
-

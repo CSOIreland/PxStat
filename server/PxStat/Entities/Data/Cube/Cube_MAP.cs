@@ -106,15 +106,17 @@ namespace PxStat.Data
 
             extension.format = new { type = restfulParameters[2], version = restfulParameters[3] };
 
+            if (restfulParameters.Count >= 6)
+                extension.pivot = restfulParameters[5];
 
             jsonStatParameters.extension = extension;
             jsonStatParameters.dimension = dimension;
 
-            dict["class"] = "query";
+            dict["class"] = Constants.C_JSON_STAT_QUERY_CLASS;
             dict["id"] = new string[] { };
             dict["dimension"] = dimension;
             dict["extension"] = extension;
-            dict["version"] = "2.0";
+            dict["version"] = Constants.C_JSON_STAT_QUERY_VERSION;
             dict["m2m"] = true;
 
 

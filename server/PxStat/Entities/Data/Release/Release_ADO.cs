@@ -44,6 +44,7 @@ namespace PxStat.Data
                     new ADO_inputParams() {name ="@RlsExceptionalFlag",value= dto.RlsExceptionalFlag},
                     new ADO_inputParams() {name ="@RlsReservationFlag",value= dto.RlsReservationFlag},
                     new ADO_inputParams() {name ="@RlsArchiveFlag",value= dto.RlsArchiveFlag},
+                    new ADO_inputParams() {name ="@RlsExperimentalFlag",value= dto.RlsExperimentalFlag},
                     new ADO_inputParams() {name ="@RlsAnalyticalFlag",value= dto.RlsAnalyticalFlag},
                     new ADO_inputParams() {name ="@userName",value= userName},
 
@@ -206,6 +207,26 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        /// Read any pending live release for a matrix code
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal dynamic ReadPendingLive(Release_DTO_Read dto)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode });
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_Pending_Live", inputParams);
+            if (reader.hasData)
+            {
+                return reader.data[0];
+
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Reads record(s) from the TD_RELEASE & dependent tables
         /// </summary>
         /// <param name="dto"></param>
@@ -269,6 +290,7 @@ namespace PxStat.Data
             release.RlsExceptionalFlag = ReadBool(element.RlsExceptionalFlag);
             release.RlsReservationFlag = ReadBool(element.RlsReservationFlag);
             release.RlsArchiveFlag = ReadBool(element.RlsArchiveFlag);
+            release.RlsExperimentalFlag = ReadBool(element.RlsExperimentalFlag);
             release.RlsAnalyticalFlag = ReadBool(element.RlsAnalyticalFlag);
 
 

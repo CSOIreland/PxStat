@@ -48,12 +48,38 @@ namespace PxStat.System.Settings
         /// <param name="pxApiValue"></param>
         public Format_DTO_Read(string pxApiValue)
         {
-            try
+
+            switch (pxApiValue)
             {
-                this.FrmType = Utility.GetCustomConfig("APP_FORMAT_PXAPI_TYPE_" + pxApiValue);
-                this.FrmVersion = Utility.GetCustomConfig("APP_FORMAT_PXAPI_VERSION_" + pxApiValue);
+                case Constants.C_PXAPIV1_PX:
+                    this.FrmType = Constants.C_SYSTEM_PX_NAME;
+                    this.FrmVersion = Constants.C_SYSTEM_PX_VERSION;
+                    break;
+
+                case Constants.C_PXAPIV1_JSON_STAT_1X:
+                    this.FrmType = Constants.C_SYSTEM_JSON_STAT_NAME;
+                    this.FrmVersion = Constants.C_SYSTEM_JSON_STAT_1X_VERSION;
+                    break;
+                case Constants.C_PXAPIV1_JSON_STAT_2X:
+                    this.FrmType = Constants.C_SYSTEM_JSON_STAT_NAME;
+                    this.FrmVersion = Constants.C_SYSTEM_JSON_STAT_2X_VERSION;
+                    break;
+                case Constants.C_PXAPIV1_CSV:
+                    this.FrmType = Constants.C_SYSTEM_CSV_NAME;
+                    this.FrmVersion = Constants.C_SYSTEM_CSV_VERSION;
+                    break;
+                case Constants.C_PXAPIV1_XLSX:
+                    this.FrmType = Constants.C_SYSTEM_XLSX_NAME;
+                    this.FrmVersion = Constants.C_SYSTEM_XLSX_VERSION;
+                    break;
+                default:
+
+                    break;
+
+
             }
-            catch { }
+
+
 
             string mtype = "";
             using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))

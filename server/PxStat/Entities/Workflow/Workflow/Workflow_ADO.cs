@@ -60,7 +60,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Workflow_DTO dto, string ccnUsername)
+        internal ADO_readerOutput Read(ADO ado, Workflow_DTO dto, string ccnUsername, string rqsCode = null)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -72,6 +72,9 @@ namespace PxStat.Workflow
             };
 
             inputParams.Add(new ADO_inputParams() { name = "@WrqCurrentRequestOnly", value = dto.WrqCurrentFlagOnly });
+
+            if (rqsCode != null)
+                inputParams.Add(new ADO_inputParams() { name = "@RqsCode", value = rqsCode });
 
             //Call the stored procedure
             output = ado.ExecuteReaderProcedure("Workflow_Read", inputParams);

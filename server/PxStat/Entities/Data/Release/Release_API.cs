@@ -36,6 +36,10 @@ namespace PxStat.Data
             return new Release_BSO_ReadList(jsonrpcRequest).Read().Response;
         }
 
+        public static dynamic ReadHasWipForLive(JSONRPC_API jsonrpcRequest)
+        {
+            return new Release_BSO_ReadWipForLive(jsonrpcRequest).Read().Response;
+        }
 
 
         /// <summary>

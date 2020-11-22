@@ -1,4 +1,5 @@
 ﻿using PxStat.Security;
+using System;
 
 namespace PxStat.Workflow
 {
@@ -18,6 +19,12 @@ namespace PxStat.Workflow
         public bool WrqCurrentFlagOnly { get; set; }
 
         public string LngIsoCode { get; set; }
+
+        internal DateTime WrqDatetime { get; set; }
+        internal bool WrqExceptionalFlag { get; set; }
+        internal bool WrqReservationFlag { get; set; }
+        internal bool WrqArchiveFlag { get; set; }
+        internal bool WrqExperimentalFlag { get; set; }
 
         /// <summary>
         /// Constructor

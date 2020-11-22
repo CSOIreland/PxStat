@@ -13,12 +13,14 @@ namespace PxStat.Data
     /// </summary>
     internal class Cube_BSO_ReadCollection : BaseTemplate_Read<Cube_DTO_ReadCollection, Cube_VLD_ReadCollection>
     {
+        bool _meta;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Cube_BSO_ReadCollection(JSONRPC_API request) : base(request, new Cube_VLD_ReadCollection())
+        internal Cube_BSO_ReadCollection(JSONRPC_API request, bool meta = true) : base(request, new Cube_VLD_ReadCollection())
         {
+            _meta = meta;
         }
 
         /// <summary>
@@ -45,6 +47,9 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+            //so that caches don't get mixed up..
+            DTO.Meta = _meta;
+
             //See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO);
 
@@ -69,7 +74,7 @@ namespace PxStat.Data
             Cube_BSO cBso = new Cube_BSO();
 
             // cache store is done in the following function
-            Response.data = cBso.ExecuteReadCollection(Ado, DTO);
+            Response.data = cBso.ExecuteReadCollection(Ado, DTO, _meta);
 
 
             return true;

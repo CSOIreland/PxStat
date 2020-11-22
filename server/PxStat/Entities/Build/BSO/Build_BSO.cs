@@ -352,7 +352,7 @@ namespace PxStat.Build
             if (!databaseDerived)
             {
                 int count = 0;
-                foreach (var val in theMatrix.MainSpec.Values)
+                foreach (var val in theSpec.Values)
                 {
                     foreach (var pair in val.Value)
                     {
@@ -548,6 +548,7 @@ namespace PxStat.Build
                             dto.statistic.Unit = newStat.Unit;
                             dto.statistic.StatisticalProductId = newStat.StatisticalProductId;
                             dto.statistic.SortId = newStat.SortId;
+                            dto.statistic.Id = newStat.Id;
                             break;
                         case DimensionType.PERIOD:
                             dto.period.Code = v.key;
@@ -557,6 +558,7 @@ namespace PxStat.Build
                                 PeriodRecordDTO_Create newPer = pxSpec.Frequency.Period.Where(x => x.Code == v.key).FirstOrDefault();
                                 dto.period.FrequencyPeriodId = newPer.FrequencyPeriodId;
                                 dto.period.SortId = newPer.SortId;
+                                dto.period.Id = newPer.Id;
                             }
                             break;
                         case DimensionType.CLASSIFICATION:
@@ -574,6 +576,7 @@ namespace PxStat.Build
                                 VariableRecordDTO_Create newVar = newCls.Variable.Where(x => x.Code == v.key).FirstOrDefault();
                                 vrb.ClassificationVariableId = newVar.ClassificationVariableId;
                                 vrb.SortId = newVar.SortId;
+                                vrb.Id = newVar.Id;
                             }
                             cls.ClassificationId = newCls.ClassificationId;
                             cls.Value = newCls.Value;
@@ -1192,6 +1195,7 @@ namespace PxStat.Build
                 //Also we must flag the DTO items for the report to indicate that these values were not updated
                 var dtoDupes = (DTO.PxData.DataItems.Where(x => dupeIds.Contains((long)x.SortId)));
                 dtoDupes.ToList().ForEach(c => c.updated = false);
+                dtoDupes.ToList().ForEach(c => c.duplicate = true);
 
                 foreach (var v in dtoDupes)
                 {
@@ -1199,6 +1203,9 @@ namespace PxStat.Build
                 }
                 Log.Instance.Debug("**Build Validation** Count of Dupes found : " + dtoDupes.Count().ToString());
             }
+            else
+                requestItems.ToList().ForEach(c => c.duplicate = false);
+
             AllMergeLists.request = requestItems;
 
         }
@@ -1545,6 +1552,7 @@ namespace PxStat.Build
                     {
                         Log.Instance.Debug("**Build Validation** request item does not contain frequency code: " + theSpec.Frequency.Code);
                         item.updated = false;
+                        item.duplicate = false;
                         continue;
                     }
 
@@ -1557,6 +1565,7 @@ namespace PxStat.Build
                     {
                         Log.Instance.Debug("**Build Validation** Period not found ");
                         item.updated = false;
+                        item.duplicate = false;
                         continue;
                     }
 
@@ -1565,6 +1574,7 @@ namespace PxStat.Build
                     {
                         Log.Instance.Debug("**Build Validation** statistic full set code not contained in " + Utility.GetCustomConfig("APP_CSV_STATISTIC"));
                         item.updated = false;
+                        item.duplicate = false;
                         continue;
                     }
 
@@ -1575,11 +1585,13 @@ namespace PxStat.Build
                     {
                         Log.Instance.Debug("**Build Validation** statistic items do not contain " + readItem.statistic.Code);
                         item.updated = false;
+                        item.duplicate = false;
                         continue;
                     }
 
                     readItem.statistic.Value = sttRead != null ? sttRead.Value : "";
                     readItem.statistic.SortId = sttRead != null ? sttRead.SortId : 0;
+
 
                     foreach (var c in theSpec.Classification)
                     {
@@ -1606,8 +1618,11 @@ namespace PxStat.Build
                         item.SortId = readItem.sortID;
                         buildList.Add(readItem);
                         item.updated = true;
+
                     }
                     else item.updated = false;
+
+                    item.duplicate = readItem.duplicate;
                 }
             }
             catch (Exception ex)
@@ -1762,6 +1777,8 @@ internal class DataItem_DTO : IEquatable<DataItem_DTO>
 
 
     internal string identifier { get; set; }
+
+    internal bool duplicate { get; set; }
 
     /// <summary>
     /// Constructor

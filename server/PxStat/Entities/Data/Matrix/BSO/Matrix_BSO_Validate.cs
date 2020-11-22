@@ -202,22 +202,29 @@ namespace PxStat.Data
 
                 return true;
             }
-
-            else if (MatrixData.MainSpec.requiresResponse)
+            if (!isValid)
             {
-                //cancel any validation errors and return an object to enable the user to choose which should be the time dimension
-                Matrix.Specification langSpec = MatrixData.GetSpecFromLanguage(DTO.LngIsoCode);
-                if (langSpec == null) langSpec = MatrixData.MainSpec;
-
-                foreach (var v in langSpec.MainValues)
+                if (MatrixData != null)
                 {
-                    FrqValues.Add(v.Key);
-                }
+                    if (MatrixData.MainSpec.requiresResponse)
+                    {
+                        //cancel any validation errors and return an object to enable the user to choose which should be the time dimension
+                        Matrix.Specification langSpec = MatrixData.GetSpecFromLanguage(DTO.LngIsoCode);
+                        if (langSpec == null) langSpec = MatrixData.MainSpec;
 
-                validationResult.Signature = null;
-                validationResult.FrqValueCandidate = FrqValues;
+                        foreach (var v in langSpec.MainValues)
+                        {
+                            FrqValues.Add(v.Key);
+                        }
+
+                        validationResult.Signature = null;
+                        validationResult.FrqValueCandidate = FrqValues;
+                        Response.data = validationResult;
+                        return true;
+                    }
+                }
                 Response.data = validationResult;
-                return true;
+                return false;
             }
 
 

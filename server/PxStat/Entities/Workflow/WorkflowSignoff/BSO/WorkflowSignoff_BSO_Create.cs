@@ -11,12 +11,12 @@ namespace PxStat.Workflow
     /// Request type PUBLISH
     /// - Release must be Work In Progress (WIP)
     /// - Set the DatetimeFrom of the release to the WorkflowRequest Date time
-    /// - Update the Exceptional flag, Reservation flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request 
+    /// - Update the Exceptional flag, Reservation flag, Experimental flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request 
     /// - If there is a previous release for that Matrix Code, set the DatetimeTo to the WorkflowRequest Date time
     /// 
     /// Request type FLAG
     /// - Release must either be LiveNow or LiveNext
-    /// - Update the Exceptional flag, Reservation flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request
+    /// - Update the Exceptional flag, Reservation flag, Experimental flag, Archive flag, Alert flag values of the release to the corresponding values of the Workflow Request
     /// 
     /// Request type DELETE (not to be confused with Rollback - see below)
     /// - Release must either be LiveNow or LiveNext or WIP

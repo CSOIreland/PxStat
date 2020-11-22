@@ -53,7 +53,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Dev|AnyCPU' ">
     <OutputPath>bin\UAT\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.1.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.1.2\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.3.0\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
@@ -217,12 +217,11 @@
     <Content Include="Resources\Internationalisation\keyword\keyword_ga.json" />
     <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\Live.pubxml" />
-    <None Include="Properties\PublishProfiles\Test.pubxml" />
-    <None Include="Properties\PublishProfiles\UAT.pubxml" />
     <Content Include="Resources\Config\config.global.json" />
     <Content Include="Resources\Config\config.server.json" />
+    <None Include="Properties\PublishProfiles\Test.pubxml" />
     <None Include="Resources\Internationalisation\keyword\dictionary_en.json" />
     <None Include="Resources\Internationalisation\keyword\dictionary_ga.json" />
     <None Include="Resources\Internationalisation\keyword\synonym_en.json" />
@@ -232,10 +231,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Web.Test.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web.UAT.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </None>
@@ -298,7 +293,10 @@
     <Compile Include="Entities\Data\Cube\Sdmx.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\MatrixValidator.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.ReadByCopyright.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Create.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByGroup.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByLanguage.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByProduct.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadHistory.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Read.cs" />
@@ -313,8 +311,10 @@
     <Compile Include="Entities\Data\ReasonRelease\ReasonRelease_API.cs" />
     <Compile Include="Entities\Data\ReasonRelease\ReasonRelease_DTO.cs" />
     <Compile Include="Entities\Data\ReasonRelease\ReasonRelease_VLD.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_DeleteComment.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadPrevious.cs" />
+    <Compile Include="Entities\Data\Release\BSO\Release_BSO_ReadWipForLive.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateComment.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_Delete.cs" />
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_DeleteWip.cs" />
@@ -351,6 +351,15 @@
     <Compile Include="Entities\Security\Logging\Logging_API.cs" />
     <Compile Include="Entities\Security\Logging\Logging_DTO.cs" />
     <Compile Include="Entities\Security\Logging\Logging_VLD.cs" />
+    <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_ReadPrfMemoryAvailable.cs" />
+    <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_ReadPrfProcessorPercentage.cs" />
+    <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_ReadPrfRequestPerSecond.cs" />
+    <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_ReadPrfRequestQueue.cs" />
+    <Compile Include="Entities\Security\Performance\Performance_ADO.cs" />
+    <Compile Include="Entities\Security\Performance\Performance_API.cs" />
+    <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_Delete.cs" />
+    <Compile Include="Entities\Security\Performance\Performance_DTO.cs" />
+    <Compile Include="Entities\Security\Performance\Performance_VLD.cs" />
     <Compile Include="Entities\Security\Trace\BSO\Trace_BSO_Create.cs" />
     <Compile Include="Entities\Security\Trace\BSO\Trace_BSO_ReadType.cs" />
     <Compile Include="Entities\System\Navigation\AlertLanguage\AlertLanguage_ADO.cs" />

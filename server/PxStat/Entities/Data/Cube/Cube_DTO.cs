@@ -27,6 +27,8 @@ namespace PxStat.Data
 
         public string product { get; set; }
 
+        internal bool Meta { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>

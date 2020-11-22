@@ -44,6 +44,23 @@ namespace PxStat.Resources
         internal const string C_SYSTEM_XLSX_NAME = "XLSX";
         internal const string C_SYSTEM_SDMX_NAME = "SDMX";
 
+        internal const string C_SYSTEM_PX_VERSION = "2013";
+        internal const string C_SYSTEM_JSON_STAT_1X_VERSION = "1.0";
+        internal const string C_SYSTEM_JSON_STAT_2X_VERSION = "2.0";
+        internal const string C_SYSTEM_CSV_VERSION = "1.0";
+        internal const string C_SYSTEM_XLSX_VERSION = "2007";
+
+
+
+        internal const string C_PXAPIV1_PX = "PX";
+        internal const string C_PXAPIV1_JSON_STAT_1X = "json-stat";
+        internal const string C_PXAPIV1_JSON_STAT_2X = "json-stat2";
+        internal const string C_PXAPIV1_CSV = "csv";
+        internal const string C_PXAPIV1_XLSX = "xlsx";
+
+        internal const string C_JSON_STAT_QUERY_CLASS = "query";
+        internal const string C_JSON_STAT_QUERY_VERSION = "2.0";
+
 
         private const string C_SYSTEM_CODE_RESERVED_WORD_VALUE = "Value";
         private const string C_SYSTEM_CODE_RESERVED_WORD_UNIT = "Unit";
@@ -52,6 +69,8 @@ namespace PxStat.Resources
         internal const int C_DATA_PXAPIV1_PRODUCT_QUERY = 2;
         internal const int C_DATA_PXAPIV1_COLLECTION_QUERY = 3;
         internal const int C_DATA_PXAPIV1_METADATA_QUERY = 4;
+        internal const int C_DATA_PXAPIV1_DATA_QUERY = 5;
+        internal const int C_DATA_PXAPIV1_DATA_PIVOT = 6;
 
 
         /// <summary>

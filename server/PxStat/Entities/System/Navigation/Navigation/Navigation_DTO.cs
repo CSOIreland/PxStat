@@ -78,6 +78,11 @@ namespace PxStat.System.Navigation
         public bool? RlsArchiveFlag { get; set; }//*** Not used by the Front End yet **
 
         /// <summary>
+        /// Experimental Flag
+        /// </summary>
+        public bool? RlsExperimentalFlag { get; set; }//*** Not used by the Front End yet **
+
+        /// <summary>
         /// Analytical Flag
         /// </summary>
         public bool? RlsAnalyticalFlag { get; set; }//*** Not used by the Front End yet **
@@ -123,6 +128,9 @@ namespace PxStat.System.Navigation
 
             if (parameters.RlsArchiveFlag != null)
                 RlsArchiveFlag = parameters.RlsArchiveFlag;
+
+            if (parameters.RlsExperimentalFlag != null)
+                RlsExperimentalFlag = parameters.RlsExperimentalFlag;
 
             if (parameters.RlsAnalyticalFlag != null)
                 RlsAnalyticalFlag = parameters.RlsAnalyticalFlag;
