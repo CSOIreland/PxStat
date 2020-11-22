@@ -773,6 +773,14 @@ app.dashboard.liveReleases.drawDataTable = function (data) {
                     data: null,
                     type: "natural",
                     render: function (data, type, row) {
+                        return app.library.html.boolean(row.RlsExperimentalFlag, true, true);
+
+                    }
+                },
+                {
+                    data: null,
+                    type: "natural",
+                    render: function (data, type, row) {
                         return app.library.html.boolean(row.RlsArchiveFlag, true, true);
 
                     }

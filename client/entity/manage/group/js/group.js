@@ -22,7 +22,15 @@ $(document).ready(function () {
         $("#accordion-group").hide();
     }
     //initiate toggle buttons
-    $('.bootstrap-toggle').bootstrapToggle("destroy").bootstrapToggle({
+    $('#group-modal-add-member [name=group-input-add-member-approve-flag]').bootstrapToggle("destroy").bootstrapToggle({
+        on: app.label.static["true"],
+        off: app.label.static["false"],
+        onstyle: "success",
+        offstyle: "warning",
+        width: C_APP_TOGGLE_LENGTH //Depend on language translation.
+    });
+    //initiate toggle buttons
+    $('#group-modal-update-group-member [name=gcc-approve-flag]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "success",

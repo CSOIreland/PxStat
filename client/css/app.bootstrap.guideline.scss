@@ -1,0 +1,92 @@
+/*!
+ * Bootstrap Grid v4.5.2 (https://getbootstrap.com/)
+ * Copyright 2011-2020 The Bootstrap Authors
+ * Copyright 2011-2020 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+ $theme-colors : (
+    // Use functional color palette for Branding maintenance
+    "primary": #006F74,
+    "secondary": #17a2b8,
+    "tertiary": #35456B,
+    "navbar": #004F50,
+    "success": #019E79,
+    "info": #008FAA,
+    "warning": #EBA900,
+    "danger": #DC4128,
+    "light": #fff,
+    "dark": #343a40,
+    "neutral": #CDD3D9,
+    "default": #f8f9fa,
+    // Functional Colors for flags
+    "official": #DC4128,
+    "exceptional": #EBA900,
+    "reservation": #DC4128,
+    "archive": #343a40,
+    "analytical": #EBA900,
+    "experimental": #EBA900,
+
+    // Do NOT use standard color palette for Branding maintenance
+    "blue" : #008FAA,
+    "indigo" : #6610f2,
+    "purple": #1D345C,
+    "pink": #B51E83,
+    "red": #DC4128,
+    "orange": #fd7e14,
+    "yellow": #FAA21B,
+    "green": #006168,
+    "teal": #45C1C0,
+    "cyan": #17a2b8,
+    "white": #fff,
+    "gray": #6c757d,
+    "gray-dark": #343a40,
+  );
+
+  // Website font
+  @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,300italic,400italic,700,700italic);
+
+  $font-family-sans-serif:      'Roboto Sans', sans-serif;
+  $font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+  $font-family-base:            $font-family-sans-serif !default;
+  $headings-font-family:        'Roboto Slab', sans-serif;
+
+  // Bootstrap imports
+  @import "functions";
+  @import "variables";
+  @import "mixins";
+  @import "root";
+  @import "reboot";
+  @import "type";
+  @import "images";
+  @import "code";
+  @import "grid";
+  @import "tables";
+  @import "forms";
+  @import "buttons";
+  @import "transitions";
+  @import "dropdown";
+  @import "button-group";
+  @import "input-group";
+  @import "custom-forms";
+  @import "nav";
+  @import "navbar";
+  @import "card";
+  @import "breadcrumb";
+  @import "pagination";
+  @import "badge";
+  @import "jumbotron";
+  @import "alert";
+  @import "progress";
+  @import "media";
+  @import "list-group";
+  @import "close";
+  @import "toasts";
+  @import "modal";
+  @import "tooltip";
+  @import "popover";
+  @import "carousel";
+  @import "spinners";
+  @import "utilities";
+  @import "print";
+  

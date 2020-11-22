@@ -9,6 +9,7 @@ app.data.callback = {};
 app.data.collection = {};
 
 app.data.MtrCode = null;
+app.data.PrdCode = null;
 app.data.RlsCode = null;
 app.data.isModal = null;
 app.data.isLive = null;
@@ -81,7 +82,7 @@ app.data.setDatePicker = function () {
 app.data.ajax.readLatestReleases = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.public,
-        "PxStat.Data.Cube_API.ReadCollection",
+        "PxStat.Data.Cube_API.ReadMetaCollection",
         app.data.collection.params,
         "app.data.callback.readLatestReleases",
         null,

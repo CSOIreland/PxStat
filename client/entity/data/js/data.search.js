@@ -7,6 +7,14 @@ $(document).ready(function () {
     navigation.find("[data-toggle=collapse]").attr("data-target", "#data-browse-collapse");
     navigation.find(".collapse").attr("id", "data-browse-collapse");
 
+    $('#data-search-result-pagination-toggle').bootstrapToggle("destroy").bootstrapToggle({
+        on: app.label.static["true"],
+        off: app.label.static["false"],
+        onstyle: "success",
+        offstyle: "warning",
+        width: C_APP_TOGGLE_LENGTH
+    });
+
     $("#data-navigation").html(navigation.get(0).outerHTML);
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());

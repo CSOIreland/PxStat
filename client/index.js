@@ -29,32 +29,6 @@ $(document).ready(function () {
   // Get Spinner
   api.content.load("#spinner", "template/spinner.html");
 
-  // Load a CookieLink or the Default page
-  if (Cookies.get(C_COOKIE_LINK_SEARCH)) {
-    app.library.utility.cookieLink(C_COOKIE_LINK_SEARCH, "Search", "entity/data/", "#nav-link-data");
-  } else if (Cookies.get(C_COOKIE_LINK_PRODUCT)) {
-    app.library.utility.cookieLink(C_COOKIE_LINK_PRODUCT, "PrcCode", "entity/data/", "#nav-link-data");
-  } else if (Cookies.get(C_COOKIE_LINK_COPYRIGHT)) {
-    app.library.utility.cookieLink(C_COOKIE_LINK_COPYRIGHT, "CprCode", "entity/data/", "#nav-link-data");
-  } else if (Cookies.get(C_COOKIE_LINK_TABLE)) {
-    app.library.utility.cookieLink(C_COOKIE_LINK_TABLE, "MtrCode", "entity/data/", "#nav-link-data");
-  } else if (Cookies.get(C_COOKIE_LINK_RELEASE)) {
-    app.library.utility.cookieLink(C_COOKIE_LINK_RELEASE, "RlsCode", "entity/release/", "#nav-link-release");
-  } else {
-    // Load default Entity
-    api.content.goTo("entity/data/", "#nav-link-data");
-  }
-
-  //init bootstrap breatpoints for toggle panel
-  $(window).on('init.bs.breakpoint', function (e) {
-    bsBreakpoints.toggle(e.breakpoint);
-  });
-
-  $(window).on('new.bs.breakpoint', function (e) {
-    bsBreakpoints.toggle(e.breakpoint);
-  });
-  bsBreakpoints.init();
-
   // Responsivness
   $("#panel-toggle").once("click", function (e) {
     $("#panel").slideToggle("slow", function () {
@@ -80,4 +54,33 @@ $(document).ready(function () {
       $('html, body').animate({ scrollTop: $('#data-filter-toggle').offset().top }, 1000);
     });
   });
+
+  //init bootstrap breatpoints for toggle panel
+  $(window).on('init.bs.breakpoint', function (e) {
+    bsBreakpoints.toggle(e.breakpoint);
+  });
+
+  $(window).on('new.bs.breakpoint', function (e) {
+    bsBreakpoints.toggle(e.breakpoint);
+  });
+  bsBreakpoints.init();
+
+  // Check and stop if IE browser detected
+  if (!app.library.utility.isIE()) {
+    // Load a CookieLink or the Default page
+    if (Cookies.get(C_COOKIE_LINK_SEARCH)) {
+      app.library.utility.cookieLink(C_COOKIE_LINK_SEARCH, "Search", "entity/data/", "#nav-link-data");
+    } else if (Cookies.get(C_COOKIE_LINK_PRODUCT)) {
+      app.library.utility.cookieLink(C_COOKIE_LINK_PRODUCT, "PrcCode", "entity/data/", "#nav-link-data");
+    } else if (Cookies.get(C_COOKIE_LINK_COPYRIGHT)) {
+      app.library.utility.cookieLink(C_COOKIE_LINK_COPYRIGHT, "CprCode", "entity/data/", "#nav-link-data");
+    } else if (Cookies.get(C_COOKIE_LINK_TABLE)) {
+      app.library.utility.cookieLink(C_COOKIE_LINK_TABLE, "MtrCode", "entity/data/", "#nav-link-data");
+    } else if (Cookies.get(C_COOKIE_LINK_RELEASE)) {
+      app.library.utility.cookieLink(C_COOKIE_LINK_RELEASE, "RlsCode", "entity/release/", "#nav-link-release");
+    } else {
+      // Load default Entity
+      api.content.goTo("entity/data/", "#nav-link-data");
+    }
+  }
 });

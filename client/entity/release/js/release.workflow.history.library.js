@@ -122,7 +122,7 @@ app.release.workflow.history.callback.drawDataTable = function (data) {
                     defaultContent: '',
                     type: "natural",
                     "render": function (data, type, row) {
-                        return app.release.workflow.history.render.reply(row.RspCode, row.RspValue);
+                        return app.release.workflow.history.render.replyResponse(row.RspCode, row.RspValue);
                     },
                 },
                 {
@@ -145,7 +145,7 @@ app.release.workflow.history.callback.drawDataTable = function (data) {
                     defaultContent: '',
                     type: "natural",
                     "render": function (data, type, row) {
-                        return app.release.workflow.history.render.reply(row.SgnCode, row.SgnValue);
+                        return app.release.workflow.history.render.replySignoff(row.SgnCode, row.SgnValue);
                     },
                 },
                 {
@@ -190,27 +190,17 @@ app.release.workflow.history.callback.drawDataTable = function (data) {
 
 //#region Render
 /**
- * Generate an HTML workflow replay (Response or Publish)
+ * Generate an HTML workflow Response replay
  * @param {*} requestType
  * @param {*} textTooltip
  */
-app.release.workflow.history.render.reply = function (requestType, textTooltip) {
+app.release.workflow.history.render.replyResponse = function (requestType, textTooltip) {
 
     switch (requestType) {
         case C_APP_TS_RESPONSE_APPROVED:
             return $("<a>", {
                 "data-toggle": "tooltip",
                 "data-original-title": textTooltip ? app.label.datamodel.response[textTooltip] : "", //textTooltip,
-                html:
-                    $("<i>", {
-                        class: "fas fa-check-circle text-success"
-                    }).get(0).outerHTML
-            }).get(0).outerHTML;
-            break;
-        case C_APP_TS_SIGNOFF_APPROVED:
-            return $("<a>", {
-                "data-toggle": "tooltip",
-                "data-original-title": textTooltip ? app.label.datamodel.signoff[textTooltip] : "", //textTooltip,
                 html:
                     $("<i>", {
                         class: "fas fa-check-circle text-success"
@@ -224,6 +214,37 @@ app.release.workflow.history.render.reply = function (requestType, textTooltip) 
                 html:
                     $("<i>", {
                         class: "fas fa-times-circle text-danger"
+                    }).get(0).outerHTML
+            }).get(0).outerHTML;
+            break;
+        default:
+            return $("<a>", {
+                "data-toggle": "tooltip",
+                "data-original-title": app.label.static["pending"], //textTooltip,
+                html:
+                    $("<i>", {
+                        class: "fas fa-question-circle text-info"
+                    }).get(0).outerHTML
+            }).get(0).outerHTML;
+            break;
+    }
+};
+
+/**
+ * Generate an HTML workflow Signoff replay
+ * @param {*} requestType
+ * @param {*} textTooltip
+ */
+app.release.workflow.history.render.replySignoff = function (requestType, textTooltip) {
+
+    switch (requestType) {
+        case C_APP_TS_SIGNOFF_APPROVED:
+            return $("<a>", {
+                "data-toggle": "tooltip",
+                "data-original-title": textTooltip ? app.label.datamodel.signoff[textTooltip] : "", //textTooltip,
+                html:
+                    $("<i>", {
+                        class: "fas fa-check-circle text-success"
                     }).get(0).outerHTML
             }).get(0).outerHTML;
             break;
@@ -263,19 +284,20 @@ app.release.workflow.history.render.extraInfo = function (row) {
     grid.find("[name=wrq-exceptional-flag]").empty().html(app.library.html.boolean(row.WrqExceptionalFlag, true, true));
     grid.find("[name=wrq-datetime]").empty().html(row.WrqDatetime ? moment(row.WrqDatetime).format(app.config.mask.datetime.display) : "");
     grid.find("[name=wrq-reservation-flag]").empty().html(app.library.html.boolean(row.WrqReservationFlag, true, true));
+    grid.find("[name=wrq-experimental-flag]").empty().html(app.library.html.boolean(row.WrqExperimentalFlag, true, true));
     grid.find("[name=wrq-archive-flag]").empty().html(app.library.html.boolean(row.WrqArchiveFlag, true, true));
     grid.find("[name=wrq-cmm-value]").empty().html(app.library.html.parseBbCode(row.WrqCmmValue));
     grid.find("[name=wrq-create-datetime]").empty().html(row.WrqDtgCreateDatetime ? moment(row.WrqDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
     grid.find("[name=wrq-create-username]").empty().html(app.library.html.link.user(row.WrqDtgCreateCcnUsername));
 
     // Response
-    grid.find("[name=rsp-value]").empty().html(app.release.workflow.history.render.reply(row.RspCode, row.RspValue));
+    grid.find("[name=rsp-value]").empty().html(app.release.workflow.history.render.replyResponse(row.RspCode, row.RspValue));
     grid.find("[name=wrs-cmm-value]").empty().html(app.library.html.parseBbCode(row.WrsCmmValue));
     grid.find("[name=wrs-create-datetime]").empty().html(row.WrsDtgCreateDatetime ? moment(row.WrsDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
     grid.find("[name=wrs-create-username]").empty().html(app.library.html.link.user(row.WrsDtgCreateCcnUsername));
 
     // Signoff
-    grid.find("[name=sgn-value]").empty().html(app.release.workflow.history.render.reply(row.SgnCode, row.SgnValue));
+    grid.find("[name=sgn-value]").empty().html(app.release.workflow.history.render.replySignoff(row.SgnCode, row.SgnValue));
     grid.find("[name=sgn-cmm-value]").empty().html(app.library.html.parseBbCode(row.WsgCmmValue)); //No Translation - User comment
     grid.find("[name=sgn-create-datetime]").empty().html(row.WsgDtgCreateDatetime ? moment(row.WsgDtgCreateDatetime).format(app.config.mask.datetime.display) : "");
     grid.find("[name=sgn-create-ccn-username]").empty().html(app.library.html.link.user(row.WsgDtgCreateCcnUsername));
@@ -294,6 +316,7 @@ app.release.workflow.history.render.extraInfo = function (row) {
             grid.find("[name=wrq-exceptional-flag]").parent().remove();
             grid.find("[name=wrq-datetime]").parent().remove();
             grid.find("[name=wrq-reservation-flag]").parent().remove();
+            grid.find("[name=wrq-experimental-flag]").parent().remove();
             grid.find("[name=wrq-archive-flag]").parent().remove();
             break;
     }

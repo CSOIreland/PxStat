@@ -43,6 +43,7 @@ app.release.information.callback.read = function (data) {
     app.release.SbjCode = data.SbjCode;
     app.release.PrcCode = data.PrcCode;
     app.release.RlsReservationFlag = data.RlsReservationFlag;
+    app.release.RlsExperimentalFlag = data.RlsExperimentalFlag;
     app.release.RlsArchiveFlag = data.RlsArchiveFlag;
 
     app.release.isLive = app.release.checkStatusLive(data);
@@ -60,6 +61,7 @@ app.release.information.callback.read = function (data) {
     app.release.reason.render();
     app.release.workflow.modal.signoff.checkNavigation();
     app.release.workflow.read();
+    app.release.ajax.checkLiveHasWorkInProgress();
 };
 
 

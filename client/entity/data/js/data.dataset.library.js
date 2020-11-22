@@ -172,20 +172,6 @@ app.data.dataset.callback.readMetadata = function (response) {
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
-
-    // Load PxWidget ISOGRAM dynamically and sncronously to avoid race-conditions
-    /*
-    if (typeof pxWidget === "undefined") {
-        jQuery.ajax({
-            "url": C_APP_URL_PXWIDGET_ISOGRAM,
-            "dataType": "script",
-            "async": false,
-            "error": function (jqXHR, textStatus, errorThrown) {
-                api.modal.exception(app.label.static["api-ajax-exception"]);
-            }
-        });
-    }
-    */
 };
 
 app.data.dataset.callback.drawDatasetHeading = function () {
@@ -232,11 +218,41 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     }
     //archive flag
     if (data.extension.archive) {
-        matrixSelectionHeading.find("[name=archive-flag], [name=archive-header]").removeClass("d-none");
+        matrixSelectionHeading.find("[name=archive-flag]").removeClass("d-none");
+        //show header
+        matrixSelectionHeading.find("[name=archive-header]").show().addClass("d-flex justify-content-between align-items-center");
+
+        //show more info link if exists
+        if (app.config.entity.data.properties.archive) {
+            matrixSelectionHeading.find("[name=archive-header]").find("[name=more-info]").show();
+            matrixSelectionHeading.find("[name=archive-header]").find("[name=more-info-link]").attr("href", app.config.entity.data.properties.archive);
+        }
+    }
+
+    //experimental flag
+    if (data.extension.experimental) {
+        matrixSelectionHeading.find("[name=experimental-flag]").removeClass("d-none");
+        //show header
+        matrixSelectionHeading.find("[name=experimental-header]").show().addClass("d-flex justify-content-between align-items-center");
+
+        //show more info link if exists
+        if (app.config.entity.data.properties.experimental) {
+            matrixSelectionHeading.find("[name=experimental-header]").find("[name=more-info]").show();
+            matrixSelectionHeading.find("[name=experimental-header]").find("[name=more-info-link]").attr("href", app.config.entity.data.properties.experimental);
+        }
     }
     //reservation flag
     if (data.extension.reservation) {
-        matrixSelectionHeading.find("[name=reservation-flag], [name=under-reservation-header]").removeClass("d-none");
+        matrixSelectionHeading.find("[name=reservation-flag]").removeClass("d-none");
+
+        //show header
+        matrixSelectionHeading.find("[name=under-reservation-header]").show().addClass("d-flex justify-content-between align-items-center");
+
+        //show more info link if exists
+        if (app.config.entity.data.properties.underReservation) {
+            matrixSelectionHeading.find("[name=under-reservation-header]").find("[name=more-info]").show();
+            matrixSelectionHeading.find("[name=under-reservation-header]").find("[name=more-info-link]").attr("href", app.config.entity.data.properties.underReservation);
+        }
     }
     //Add badge for language.
     matrixSelectionHeading.find("[name=language]").text(data.extension.language.name);
@@ -244,7 +260,7 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     //dimension pill
     for (i = 0; i < data.length; i++) {
         if (data.Dimension(i).role == "classification" || data.Dimension(i).role == "geo") {
-            var dimension = $("#data-search-result-templates").find("[name=dimension]").clone();
+            var dimension = $("#data-dataset-templates").find("[name=dimension]").clone();
             dimension.text(data.Dimension(i).label);
             matrixSelectionHeading.find("[name=dimensions]").append(dimension);
         }
@@ -253,12 +269,12 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     for (i = 0; i < data.length; i++) {
         if (data.Dimension(i).role == "time") {
             //frequency pill
-            var frequency = $("#data-search-result-templates").find("[name=frequency]").clone();
+            var frequency = $("#data-dataset-templates").find("[name=frequency]").clone();
             frequency.text(data.Dimension(i).label);
             matrixSelectionHeading.find("[name=dimensions]").append(frequency);
 
             //frequency span
-            var frequencySpan = $("#data-search-result-templates").find("[name=frequency-span]").clone();
+            var frequencySpan = $("#data-dataset-templates").find("[name=frequency-span]").clone();
             frequencySpan.text(function () {
                 if (data.Dimension(i).id.length > 1) {
                     return data.Dimension(i).Category(0).label + " - " + data.Dimension(i).Category(data.Dimension(i).length - 1).label;
@@ -356,7 +372,7 @@ app.data.dataset.callback.readMatrixNotes = function () {
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 
     // Run Sharethis.
-    app.data.share(data.extension.matrix);
+    app.data.share(data.extension.matrix, null);
     app.data.dataset.ajax.format();
 
 
@@ -390,6 +406,13 @@ app.data.dataset.callback.format = function (data) {
                     "frm-type": format.FrmType,
                     "frm-version": format.FrmVersion
                 });
+
+            formatLink.attr("href", C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.restful,
+            encodeURI(app.data.MtrCode),
+            format.FrmType,
+            format.FrmVersion,
+                ""]));
+
             formatLink.find("[name=type]").text(format.FrmType);
             formatLink.find("[name=version]").text(format.FrmVersion);
             $("#panel [name=download-full-dataset]").append(formatLink);
@@ -407,11 +430,13 @@ app.data.dataset.callback.format = function (data) {
 
 app.data.dataset.callback.fullDownload = function (format, version) {
     var apiParams = {
-        "class": "query",
+        "class": C_APP_JSONSTAT_QUERY_CLASS,
         "id": [],
         "dimension": {},
         "extension": {
             "matrix": app.data.MtrCode,
+            "codes": true,
+            "pivot": null,
             "language": {
                 "code": app.data.LngIsoCode
             },
@@ -420,7 +445,7 @@ app.data.dataset.callback.fullDownload = function (format, version) {
                 "version": version
             }
         },
-        "version": "2.0",
+        "version": C_APP_JSONSTAT_QUERY_VERSION,
         "m2m": false
     };
 
@@ -491,10 +516,13 @@ app.data.dataset.callback.back = function () {
     if (numSearchResults > 0) {
         //back to search results
         $("#data-dataset-selected-table [name=card-header], #panel, #data-view-container").empty();
-        $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination]").show();
+        $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").show();
         $("#data-accordion-api").hide();
         //run bootstrap toggle to show/hide toggle button
         bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+        $('html, body').animate({
+            scrollTop: $("[name=search-results]").parent().offset().top
+        }, 1000);
     }
     else {
         // Load default Entity

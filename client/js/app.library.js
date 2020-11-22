@@ -9,7 +9,6 @@ app.library.datatable = {};
 app.library.html = {};
 app.library.html.link = {};
 app.library.bootstrap = {};
-app.library.message = {};
 
 //#region DataTable
 
@@ -556,6 +555,7 @@ app.library.utility.initTinyMce = function (stripDoubleQuotes) {
     target_list: false,
     default_link_target: "_blank",
     language: app.label.language.iso.code,
+    entity_encoding: "raw",
     setup: function (editor) {
       // Trigger save on focus out so that cursor focus doesn't move
       // Do NOT use the "change" event because it is indirectly called by tinyMce to parse HTML characters 
@@ -582,7 +582,7 @@ app.library.utility.initTinyMce = function (stripDoubleQuotes) {
         // Format the structured information message
         if (isSanitised) {
           contentPreview = $("<p>", {
-            class: "bg-light p-2 my-2",
+            class: "bg-default p-2 my-2",
             html: app.library.html.parseBbCode(content)
           }).get(0).outerHTML;
 
@@ -730,6 +730,20 @@ app.library.utility.download = function (fileName, fileData, fileExtension, mime
   }
   else {
     a.click();
+  }
+};
+
+/**
+ * Check and block deprecated IE browser
+ */
+app.library.utility.isIE = function () {
+  if (window.navigator.userAgent.match(/MSIE|Trident/) == null) {
+    return false;
+  } else {
+    $("#modal-information").attr("data-backdrop", "static");
+    $("#modal-information").find("button").remove();
+    api.modal.information(app.label.static["ie-information"]);
+    return true;
   }
 };
 //#endregion

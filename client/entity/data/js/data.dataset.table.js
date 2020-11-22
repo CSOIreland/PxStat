@@ -4,8 +4,9 @@ Custom JS application specific
 $(document).ready(function () {
     app.data.dataset.table.drawDimensions();
     app.data.dataset.table.drawFormat();
+    app.data.dataset.table.drawPivotDropdown();
     //show codes
-    $('#data-dataset-table-code-toggle-select, #data-dataset-table-code-toggle-result').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-table-code-toggle').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["false"],
         off: app.label.static["true"],
         onstyle: "tertiary",
@@ -25,29 +26,9 @@ $(document).ready(function () {
     app.data.dataset.table.callback.formatJson();
     $("#data-dataset-table-accordion-collapse-widget [name=valid-json-object]").hide();
 
-    if (app.data.RlsCode) {
-        if (!app.data.isLive) {
-            $("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").bootstrapToggle('off');
-            $("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").bootstrapToggle('disable');
-            $("#data-dataset-table-accordion-collapse-widget").find("[name=wip-widget-warning]").show();
-        }
-    }
-
-    //show/hide codes
-    $('#data-dataset-table-code-toggle-result').once("change", function () {
-        if (!$(this).is(':checked')) {
-            $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=code]").removeClass("d-none");
-        }
-        else {
-            $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=code]").addClass("d-none");
-        }
-        // Trigger the responsivness when changing the lenght of the table cells because of the code
-        // https://datatables.net/forums/discussion/44766/responsive-doesnt-immediately-resize-the-table
-        $(window).trigger('resize');
-    });
-
     //reset
     $("#data-dataset-table-nav-content").find("[name=reset]").once("click", function () {
+        $("#data-dataset-table-nav-content select[name=pivot]").val($("#data-dataset-table-nav-content select[name=pivot] option:first").val());
         app.data.dataset.table.drawDimensions();
     });
 
@@ -85,31 +66,6 @@ $(document).ready(function () {
             }, 1000);
         }
     });
-
-    $('#data-dataset-table-accordion-collapse-api a[data-toggle="tab"]').once('click', function (e) {
-        //disable json-stat 1.1 format if in pxapi v1 tab as this format is not supported in this API
-        switch (e.target.id) {
-            case "data-dataset-table-api-pxapiv1-tab":
-                $("#data-dataset-table-accordion [name=format] option[frm-type='JSON-stat'][frm-version='1.1']").prop("disabled", true);
-                var formatSelected = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type");
-                var versionSelected = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version");
-                if (formatSelected == "JSON-stat" && versionSelected == "1.1") {
-                    $("#data-dataset-table-accordion [name=format] option[frm-type='JSON-stat'][frm-version='2.0']").prop("selected", true);
-                }
-                //rebuild copy code in case select has changed
-                app.data.dataset.table.buildApiParams();
-                break;
-            case "data-dataset-table-api-jspnrpc-tab":
-            case "data-dataset-table-api-restful-tab":
-                $("#data-dataset-table-accordion [name=format] option[frm-type='JSON-stat'][frm-version='1.1']").prop("disabled", false);
-                //rebuild copy code in case select has changed
-                app.data.dataset.table.buildApiParams();
-                break;
-            default:
-                break;
-        }
-    })
-
 
     $('[data-toggle="tooltip"]').tooltip();
     new ClipboardJS("#data-dataset-table-accordion [name=copy-api-info], #data-dataset-table-accordion [name=copy-api-object], #data-dataset-table-accordion [name=copy-snippet-code]");

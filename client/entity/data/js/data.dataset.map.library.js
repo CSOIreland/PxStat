@@ -151,7 +151,7 @@ app.data.dataset.map.renderSnippet = function () {
 
 app.data.dataset.map.buildApiParams = function () {
     var localParams = {
-        "class": "query",
+        "class": C_APP_JSONSTAT_QUERY_CLASS,
         "id": [],
         "dimension": {},
         "extension": {
@@ -163,7 +163,7 @@ app.data.dataset.map.buildApiParams = function () {
                 "version": C_APP_FORMAT_VERSION_DEFAULT
             }
         },
-        "version": "2.0",
+        "version": C_APP_JSONSTAT_QUERY_VERSION,
         "m2m": false
     };
 

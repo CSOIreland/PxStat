@@ -56,9 +56,101 @@ app.language.drawCallback = function () {
     var idn = $(this).attr("idn");
     app.language.modal.update(idn);
   });
+
+  // Click event "internalLink"
+  $("#language-read-container table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+    e.preventDefault();
+    var callbackParam = {
+      idn: $(this).attr("idn"),
+      "LngValue": $(this).attr("lng-value")
+    };
+    // Ajax read 
+    app.language.ajax.readMatrixByLanguage(callbackParam);
+
+    $("#language-matrix-modal").modal("show");
+
+  });
+
   // Delete action
   $("#language-read-container table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.language.modal.delete);
 
+}
+
+/**
+ * Ajax Read Release List
+ * @param  {} callbackParam
+ */
+app.language.ajax.readMatrixByLanguage = function (callbackParam) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Data.Matrix_API.ReadByLanguage",
+    {
+      LngIsoCode: callbackParam.idn
+    },
+    "app.language.callback.readMatrixByLanguage",
+    callbackParam);
+};
+
+/**
+* Handle data from Ajax
+* @param  {} data
+* @param  {} callbackParam
+*/
+app.language.callback.readMatrixByLanguage = function (data, callbackParam) {
+  app.language.drawMatrixByLanguageDataTable(data, callbackParam);
+};
+
+app.language.drawMatrixByLanguageDataTable = function (data, callbackParam) {
+  $("#language-matrix-modal").find("[name=language-code]").text(callbackParam.idn);
+  $("#language-matrix-modal").find("[name=language-value]").text(callbackParam.LngValue);
+  if ($.fn.dataTable.isDataTable("#language-matrix-modal table")) {
+    app.library.datatable.reDraw("#language-matrix-modal table", data);
+  } else {
+    var localOptions = {
+      data: data,
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row) {
+            var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
+            return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
+          }
+        }
+      ],
+      drawCallback: function (settings) {
+        app.language.drawCallbackMatrix();
+      },
+      //Translate labels language
+      language: app.label.plugin.datatable
+    };
+    $("#language-matrix-modal table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+      app.language.drawCallbackMatrix();
+    });
+  }
+
+}
+
+app.language.drawCallbackMatrix = function () {
+  $('[data-toggle="tooltip"]').tooltip();
+
+  //Release version link click redirect to 
+  $("#language-matrix-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+    e.preventDefault();
+    //Set the code
+    var MtrCode = $(this).attr("MtrCode");
+
+    $("#language-matrix-modal").modal("hide");
+
+    //Wait for the modal to close
+    $("#language-matrix-modal").on('hidden.bs.modal', function (e) {
+      //Unbind the event for next call
+      $("#language-matrix-modal").off('hidden.bs.modal');
+
+      api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": MtrCode });
+    })
+
+
+  });
 }
 
 /**
@@ -80,17 +172,18 @@ app.language.drawDatatable = function (data) {
           }
         },
         { data: "LngIsoName" },
-        { data: "RlsCount" },
+        {
+          data: null,
+          render: function (_data, _type, row) {
+            return app.library.html.link.internal({ idn: row.LngIsoCode, "lng-value": row.LngIsoName }, String(row.MtrCount));
+          }
+        },
         {
           data: null,
           sorting: false,
           searchable: false,
           render: function (data, type, row) {
-            var deleteButton = app.library.html.deleteButton({ idn: row.LngIsoCode }, false);
-            if (row.RlsCount > 0 || row.GrpReleaseCount > 0) {
-              deleteButton = app.library.html.deleteButton({ idn: row.LngIsoCode }, true);
-            }
-            return deleteButton;
+            return app.library.html.deleteButton({ idn: row.LngIsoCode }, row.MtrCount > 0 ? true : false);
           },
           "width": "1%"
         },

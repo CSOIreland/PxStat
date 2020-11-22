@@ -4,7 +4,10 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "2.6.1";
+const C_APP_VERSION = "2.7.0";
+
+// Master language
+const C_APP_MASTER_LANGUAGE = "en";
 
 // URLs GitHub
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
@@ -24,6 +27,14 @@ const C_APP_API_JSONRPC_VERSION = "2.0";
 const C_APP_API_GET_PARAMATER_IDENTIFIER = "?data=";
 const C_APP_API_RESTFUL_READ_DATASET_URL = "{0}PxStat.Data.Cube_API.ReadDataset/{1}/{2}/{3}/{4}";
 const C_APP_API_RESTFUL_READ_COLLECTION_URL = "{0}PxStat.Data.Cube_API.ReadCollection/{1}/{2}";
+
+// JSON-stat QUERY
+const C_APP_JSONSTAT_QUERY_CLASS = "query"
+const C_APP_JSONSTAT_QUERY_VERSION = "2.0";
+
+// PxAPIv1
+const C_APP_PXAPIV1_JSONSTAT_1X = "json-stat"
+const C_APP_PXAPIV1_JSONSTAT_2X = "json-stat2";
 
 // Names
 const C_APP_NAME_LINK_EDIT = "link-edit";
@@ -81,13 +92,17 @@ const C_APP_TS_FORMAT_TYPE_JSONSTAT = "JSON-stat";
 const C_APP_TS_FORMAT_TYPE_CSV = "CSV";
 const C_APP_TS_FORMAT_TYPE_XLSX = "XLSX";
 
+//Formats (FRM_VERSION)
+const C_APP_TS_FORMAT_VERSION_JSONSTAT_1X = "1.0";
+const C_APP_TS_FORMAT_VERSION_JSONSTAT_2X = "2.0";
+
 //Formats (FRM_DIRECTION)
 const C_APP_TS_FORMAT_DIRECTION_UPLOAD = "UPLOAD";
 const C_APP_TS_FORMAT_DIRECTION_DOWNLOAD = "DOWNLOAD";
 
 //Default formats
 const C_APP_FORMAT_TYPE_DEFAULT = C_APP_TS_FORMAT_TYPE_JSONSTAT;
-const C_APP_FORMAT_VERSION_DEFAULT = "2.0";
+const C_APP_FORMAT_VERSION_DEFAULT = C_APP_TS_FORMAT_VERSION_JSONSTAT_2X;
 
 // File extensions
 const C_APP_EXTENSION_PX = "px";

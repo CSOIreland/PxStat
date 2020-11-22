@@ -28,30 +28,49 @@ app.build.update.data.report.drawReport = function (data, frmType) {
         return
     }
 
-    var datatableHeadings = [];
+    var datatableHeadingsUpdated = [];
+    var datatableHeadingsIgnored = [];
     $.each(updatedRecords[0], function (key, value) {
-        datatableHeadings.push(key);
+        datatableHeadingsUpdated.push(key);
+        datatableHeadingsIgnored.push(key)
     });
 
     //build dynamic table header and columns array for datatable
     $("#build-update-modal-view-report [name=ignored-records] [name=header-row]").empty();
     var columnsIgnoredRecords = [];
-
-    $.each(datatableHeadings, function (key, value) {
+    $.each(datatableHeadingsIgnored, function (key, value) {
         if (value != "updated") {
-            var tableHeading = $("<th>", {
-                "html": value
-            });
-            $("#build-update-modal-view-report [name=ignored-records] [name=header-row]").append(tableHeading);
-            columnsIgnoredRecords.push(
-                { data: value }
-            );
+            if (value == "duplicate") {
+                var tableHeading = $("<th>", {
+                    "html": app.label.static["duplicate"]
+                });
+                $("#build-update-modal-view-report [name=ignored-records] [name=header-row]").append(tableHeading);
+                columnsIgnoredRecords.push(
+                    {
+                        data: null,
+                        type: "natural",
+                        render: function (data, type, row) {
+                            return app.library.html.boolean(row.duplicate, true, false);
+                        }
+                    }
+                );
+            }
+            else {
+                var tableHeading = $("<th>", {
+                    "html": value
+                });
+                $("#build-update-modal-view-report [name=ignored-records] [name=header-row]").append(tableHeading);
+                columnsIgnoredRecords.push(
+                    { data: value }
+                );
+            }
         }
 
     });
     var localOptions = {
         data: ignoredRecords,
         columns: columnsIgnoredRecords,
+        order: [[columnsIgnoredRecords.length - 1, "desc"]],
         buttons: [{
             extend: 'csv',
             title: app.build.update.data.MtrCode + "." + app.label.static["records-to-be-ignored"].replace(/ /g, "_").toUpperCase() + "." + moment().format(app.config.mask.datetime.file)
@@ -78,8 +97,8 @@ app.build.update.data.report.drawReport = function (data, frmType) {
     //build dynamic table header and columns array for datatable
     $("#build-update-modal-view-report [name=updated-records] [name=header-row]").empty();
     var columnsUpdatedRecords = [];
-    $.each(datatableHeadings, function (key, value) {
-        if (value != "updated") {
+    $.each(datatableHeadingsUpdated, function (key, value) {
+        if (value != "updated" && value != "duplicate") {
             var tableHeading = $("<th>", {
                 "html": value
             });

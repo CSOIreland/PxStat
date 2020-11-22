@@ -45,9 +45,102 @@ app.copyright.drawCallback = function () {
     app.copyright.modal.update(idn);
   });
 
+  // Click event "internalLink"
+  $("#copyright-read-container table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+    e.preventDefault();
+    var callbackParam = {
+      idn: $(this).attr("idn"),
+      "CprValue": $(this).attr("cpr-value")
+    };
+    // Ajax read 
+    app.copyright.ajax.readMatrixByCopyright(callbackParam);
+
+    $("#copyright-matrix-modal").modal("show");
+
+  });
+
   // Display Delete Modal
   $("#copyright-read-container table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.copyright.modal.delete);
+};
+
+/**
+ * Ajax Read Release List
+ * @param  {} callbackParam
+ */
+app.copyright.ajax.readMatrixByCopyright = function (callbackParam) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Data.Matrix_API.ReadByCopyright",
+    {
+      CprCode: callbackParam.idn,
+      LngIsoCode: app.label.language.iso.code
+    },
+    "app.copyright.callback.readMatrixByCopyright",
+    callbackParam);
+};
+
+/**
+* Handle data from Ajax
+* @param  {} data
+* @param  {} callbackParam
+*/
+app.copyright.callback.readMatrixByCopyright = function (data, callbackParam) {
+  app.copyright.drawMatrixByCopyrightDataTable(data, callbackParam);
+};
+
+app.copyright.drawMatrixByCopyrightDataTable = function (data, callbackParam) {
+  $("#copyright-matrix-modal").find("[name=copyright-code]").text(callbackParam.idn);
+  $("#copyright-matrix-modal").find("[name=copyright-value]").text(callbackParam.CprValue);
+  if ($.fn.dataTable.isDataTable("#copyright-matrix-modal table")) {
+    app.library.datatable.reDraw("#copyright-matrix-modal table", data);
+  } else {
+    var localOptions = {
+      data: data,
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row) {
+            var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
+            return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
+          }
+        }
+      ],
+      drawCallback: function (settings) {
+        app.copyright.drawCallbackMatrix();
+      },
+      //Translate labels language
+      language: app.label.plugin.datatable
+    };
+    $("#copyright-matrix-modal table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+      app.copyright.drawCallbackMatrix();
+    });
+  }
+
 }
+
+app.copyright.drawCallbackMatrix = function () {
+  $('[data-toggle="tooltip"]').tooltip();
+
+  //Release version link click redirect to 
+  $("#copyright-matrix-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+    e.preventDefault();
+    //Set the code
+    var MtrCode = $(this).attr("MtrCode");
+
+    $("#copyright-matrix-modal").modal("hide");
+
+    //Wait for the modal to close
+    $("#copyright-matrix-modal").on('hidden.bs.modal', function (e) {
+      //Unbind the event for next call
+      $("#copyright-matrix-modal").off('hidden.bs.modal');
+
+      api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": MtrCode });
+    })
+
+
+  });
+}
+
 
 /**
  * Draw DataTable
@@ -73,17 +166,18 @@ app.copyright.drawDatatable = function (data) {
             return app.library.html.link.external({}, row.CprUrl);
           }
         },
-        { data: "RlsCount" },
+        {
+          data: null,
+          render: function (_data, _type, row) {
+            return app.library.html.link.internal({ idn: row.CprCode, "cpr-value": row.CprValue }, String(row.MtrCount));
+          }
+        },
         {
           data: null,
           sorting: false,
           searchable: false,
           render: function (data, type, row) {
-            var deleteButton = app.library.html.deleteButton({ idn: row.CprCode }, false);
-            if (row.RlsCount > 0 || row.GrpReleaseCount > 0) {
-              deleteButton = app.library.html.deleteButton({ idn: row.CprCode }, true);
-            }
-            return deleteButton;
+            return app.library.html.deleteButton({ idn: row.CprCode }, false);
           },
           "width": "1%"
         }

@@ -1,9 +1,21 @@
 <div name="search-input-group-holder" class="col-sm-12 my-2"></div>
-<div name="search-results" class="list-group col-12 px-3 mt-2"></div>
+<div name="search-results" class="list-group col-12 px-3 mt-2">
+    <div class="list-group-item border-bottom-0 p-2 bg-primary text-light" name="non-archived-heading" style="display: none;">
+        <h5 label="current" class="mb-0 p-1"></h5>
+    </div>
+    <div name="search-results-non-archived"></div>
+    <div class="list-group-item border-bottom-0 rounded-top p-2 mt-4 bg-dark text-light" name="archived-heading" style="display: none;">
+        <h5 label="archived" class="mb-0 p-1"></h5>
+    </div>
+
+    <div name="search-results-archived"></div>
+</div>
 <div id="data-search-result-pagination" class="col-12 px-3 mt-2" style="display: none;">
+    <span name="pagination-toggle"><span label="show-all"></span> <input type="checkbox" id="data-search-result-pagination-toggle"></span>
     <ul name="pagination" class="mb-4 pagination float-right"></ul>
 </div>
 <div id="data-search-result-templates" style="display: none">
+    <div name="share" style="display: none;"></div>
     <div name="search-results-sort" class="mt-2">
         <div class="input-group px-3">
             <select name="search-results-sort-select" class="custom-select">
@@ -13,6 +25,7 @@
                 <label class="input-group-text" for="inputGroupSortSelect" label="sort"></label>
             </div>
         </div>
+
     </div>
 
     <div name="filter-list" class="list-group p-3">
@@ -33,16 +46,17 @@
             <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
                 <h6 class="mb-1">
                     <span name="mtr-code"></span>
-                    <i name="official-flag" class="fas fa-certificate text-danger ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
+                    <i name="official-flag" class="fas fa-certificate text-official ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="unofficial-statistics"></i>
                     <i name="geo-flag" class="fas fa-globe text-tertiary ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
-                    <i name="archive-flag" class="fas fa-file-archive text-dark mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
-                    <i name="reservation-flag" class="fas fa-exclamation text-danger mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
-                    <i name="analytical-flag" class="fas fa-chart-line text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
+                    <i name="archive-flag" class="fas fa-file-archive text-archive mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
+                    <i name="reservation-flag" class="fas fa-exclamation text-reservation mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
+                    <i name="analytical-flag" class="fas fa-chart-line text-analytical mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
+                    <i name="experimental-flag" class="fas fa-flask text-experimental mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="experimental"></i>
                 </h6>
             </div>
             <div class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1">
                 <small>
-                    <i name="exceptional-flag" class="fas fa-exclamation-triangle text-warning mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="exceptional-release"></i>
+                    <i name="exceptional-flag" class="fas fa-exclamation-triangle text-exceptional mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="exceptional-release"></i>
                     <span label="last-updated"></span>: <b name="from-date"></b> <span name="from-time"></span>
                 </small>
             </div>
@@ -99,7 +113,7 @@
     </div>
 
     <!-- Template: data-search-navigation-->
-    <div name="navigation" class="col p-2">
+    <div name="navigation" class="col px-2 pt-2">
         <nav class="navbar px-2">
             <a class="w-100 p-1 text-light bg-primary rounded-top p-3" data-toggle="collapse" data-target="" href="#"><i class="fas fa-bars"></i>
                 <span label="browse"></span>

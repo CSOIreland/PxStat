@@ -10,7 +10,7 @@
                 <div class="modal-body">
 
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                             <label class="mandatory" for="lng-iso-code" label="iso-code"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                             <label class="mandatory" for="lng-iso-name" label="iso-language"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -57,7 +57,7 @@
             <form>
                 <div class="modal-body">
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                             <label for="lng-iso-code" label="iso-code"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -66,7 +66,7 @@
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                             <label class="mandatory" for="lng-iso-name" label="iso-language"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -85,6 +85,44 @@
                             <button class="btn btn-primary text-light" type="submit">
                                 <i class="far fa-save"></i> <span label="update"></span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal - tables-->
+<div id="language-matrix-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-primary text-light">
+                    <h5>
+                        <span name="language-code"></span>: <span name="language-value"></span>
+                    </h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-striped hover" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th label="table"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container-fluid">
+                            <div class="text-right">
+                                <button type="button" name="cancel" class="btn btn-neutral" data-dismiss="modal">
+                                    <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -13,10 +13,10 @@ $(document).ready(function () {
 
     // Load Modal - must be after GoTo
     api.content.load("#overlay", "entity/data/index.modal.html");
-
+    api.content.load("#data-share-row", "entity/data/index.share.html");
     api.content.load("#data-search-row-desktop", "entity/data/index.search.html");
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
-    api.content.load("#data-share-row", "entity/data/index.share.html");
+
     // Init DatePicker
     app.data.setDatePicker();
 
@@ -61,7 +61,9 @@ $(document).ready(function () {
     if (app.data.goTo.Search) {
         app.data.searchResult.ajax.readSearch(app.data.goTo.Search);
     } else if (app.data.goTo.PrcCode) {
+        // Run Sharethis.
         app.data.isSearch = false;
+        app.data.PrdCode = app.data.goTo.PrcCode;
         api.ajax.jsonrpc.request(
             app.config.url.api.jsonrpc.public,
             "PxStat.System.Navigation.Navigation_API.Search",

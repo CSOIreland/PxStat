@@ -96,14 +96,15 @@ app.release.comparison.callback.readPreviousRelease = function (data) {
     $("#release-comparison-report [name=rls-version-previous]").empty().html(app.release.comparison.previousReleaseData.RlsVersion);
     $("#release-comparison-report [name=rls-revision-previous]").empty().html(app.release.comparison.previousReleaseData.RlsRevision);
     $("#release-comparison-report [name=status-previous]").empty().html(app.release.renderStatus(app.release.comparison.previousReleaseData));
-    $("#release-comparison-report [name=rls-live-datetime-from-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
-    $("#release-comparison-report [name=rls-live-datetime-to-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=rls-live-datetime-from-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : null);
+    $("#release-comparison-report [name=rls-live-datetime-to-previous]").empty().html(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.previousReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : null);
     $("#release-comparison-report [name=rls-exceptional-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsExceptionalFlag, true, true));
     $("#release-comparison-report [name=grp-name-previous]").empty().html(app.library.html.link.group(app.release.comparison.previousReleaseData.GrpCode));
     $("#release-comparison-report [name=sbj-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.SbjCode + ") " + app.release.comparison.previousReleaseData.SbjValue);
-    $("#release-comparison-report [name=prc-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.PrcCode + ") " + app.release.comparison.previousReleaseData.PrcValue);
+    $("#release-comparison-report [name=prd-value-previous]").empty().html("(" + app.release.comparison.previousReleaseData.PrcCode + ") " + app.release.comparison.previousReleaseData.PrcValue);
     $("#release-comparison-report [name=rls-analytical-flag-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsAnalyticalFlag, true, true));
     $("#release-comparison-report [name=rls-reservation-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsReservationFlag, true, true));
+    $("#release-comparison-report [name=rls-experimental-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsExperimentalFlag, true, true));
     $("#release-comparison-report [name=rls-archive-previous]").empty().html(app.library.html.boolean(app.release.comparison.previousReleaseData.RlsArchiveFlag, true, true));
 };
 
@@ -134,7 +135,7 @@ app.release.comparison.callback.readPreviousMatrix = function (data) {
     app.release.comparison.previousMatrixData = data;
     app.release.comparison.callback.styleDifferences();
     $("#release-comparison-report [name=mtr-title-previous]").empty().html(app.release.comparison.previousMatrixData.MtrTitle);
-    $("#release-comparison-report [name=dtg-create-datetime-previous]").empty().html(app.release.comparison.previousMatrixData.DtgCreateDatetime ? moment(app.release.comparison.previousMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=dtg-create-datetime-previous]").empty().html(app.release.comparison.previousMatrixData.DtgCreateDatetime ? moment(app.release.comparison.previousMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : null);
     $("#release-comparison-report [name=ccn-username-previous]").empty().html(app.library.html.link.user(app.release.comparison.previousMatrixData.CcnUsernameCreate));
     $("#release-comparison-report [name=frq-value-previous]").empty().html(app.release.comparison.previousMatrixData.FrqValue);
     $("#release-comparison-report [name=cpr-value-previous]").empty().html(app.release.comparison.previousMatrixData.CprValue);
@@ -168,20 +169,30 @@ app.release.comparison.ajax.readCurrentRelease = function () {
 app.release.comparison.callback.readCurrentRelease = function (data) {
     app.release.comparison.currentReleaseData = data;
     app.release.comparison.callback.styleDifferences();
+
     //Information
+    $("#release-comparison-report [name=workflow-request-heading]").empty().html(app.release.comparison.currentReleaseData.RqsCode ? app.label.static[app.release.comparison.currentReleaseData.RqsValue] : null);
     $("#release-comparison-report [name=rls-version-current]").empty().html(app.release.comparison.currentReleaseData.RlsVersion);
     $("#release-comparison-report [name=rls-revision-current]").empty().html(app.release.comparison.currentReleaseData.RlsRevision);
     $("#release-comparison-report [name=status-current]").empty().html(app.release.renderStatus(app.release.comparison.currentReleaseData));
-    $("#release-comparison-report [name=request-current]").empty().html(app.release.renderRequest(app.release.comparison.currentReleaseData.RqsCode));
-    $("#release-comparison-report [name=rls-live-datetime-from-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
-    $("#release-comparison-report [name=rls-live-datetime-to-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=rls-live-datetime-from-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : null);
+    $("#release-comparison-report [name=wrq-live-datetime-from-current]").empty().html(app.release.comparison.currentReleaseData.RqsCode ? moment(app.release.comparison.currentReleaseData.WrqDatetime).format(app.config.mask.datetime.display) : null);
+    $("#release-comparison-report [name=rls-live-datetime-to-current]").empty().html(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo ? moment(app.release.comparison.currentReleaseData.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : null);
     $("#release-comparison-report [name=rls-exceptional-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsExceptionalFlag, true, true));
+    $("#release-comparison-report [name=wrq-exceptional-flag-current]").empty().html(app.release.comparison.currentReleaseData.RqsCode ? app.library.html.boolean(app.release.comparison.currentReleaseData.WrqExceptionalFlag, true, true) : null);
     $("#release-comparison-report [name=grp-name-current]").empty().html(app.library.html.link.group(app.release.comparison.currentReleaseData.GrpCode));
     $("#release-comparison-report [name=sbj-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.SbjCode + ") " + app.release.comparison.currentReleaseData.SbjValue);
     $("#release-comparison-report [name=prc-value-current]").empty().html("(" + app.release.comparison.currentReleaseData.PrcCode + ") " + app.release.comparison.currentReleaseData.PrcValue);
     $("#release-comparison-report [name=rls-analytical-flag-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsAnalyticalFlag, true, true));
     $("#release-comparison-report [name=rls-reservation-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsReservationFlag, true, true));
+
+    $("#release-comparison-report [name=wrq-reservation-current]").empty().html(app.release.comparison.currentReleaseData.RqsCode ? app.library.html.boolean(app.release.comparison.currentReleaseData.WrqReservationFlag, true, true) : null); $("#release-comparison-report [name=rls-experimental-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsExperimentalFlag, true, true));
+
+    $("#release-comparison-report [name=wrq-experimental-current]").empty().html(app.release.comparison.currentReleaseData.RqsCode ? app.library.html.boolean(app.release.comparison.currentReleaseData.WrqExperimentalFlag, true, true) : null);
+
     $("#release-comparison-report [name=rls-archive-current]").empty().html(app.library.html.boolean(app.release.comparison.currentReleaseData.RlsArchiveFlag, true, true));
+
+    $("#release-comparison-report [name=wrq-archive-current]").empty().html(app.release.comparison.currentReleaseData.RqsCode ? app.library.html.boolean(app.release.comparison.currentReleaseData.WrqArchiveFlag, true, true) : null);
 };
 
 
@@ -213,7 +224,7 @@ app.release.comparison.callback.readCurrentMatrix = function (data) {
     app.release.comparison.currentMatrixData = data;
     app.release.comparison.callback.styleDifferences();
     $("#release-comparison-report [name=mtr-title-current]").empty().html(app.release.comparison.currentMatrixData.MtrTitle);
-    $("#release-comparison-report [name=dtg-create-datetime-current]").empty().html(app.release.comparison.currentMatrixData.DtgCreateDatetime ? moment(app.release.comparison.currentMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : "");
+    $("#release-comparison-report [name=dtg-create-datetime-current]").empty().html(app.release.comparison.currentMatrixData.DtgCreateDatetime ? moment(app.release.comparison.currentMatrixData.DtgCreateDatetime).format(app.config.mask.datetime.display) : null);
     $("#release-comparison-report [name=ccn-username-current]").empty().html(app.library.html.link.user(app.release.comparison.currentMatrixData.CcnUsernameCreate));
     $("#release-comparison-report [name=frq-value-current]").empty().html(app.release.comparison.currentMatrixData.FrqValue);
     $("#release-comparison-report [name=cpr-value-current]").empty().html(app.release.comparison.currentMatrixData.CprValue);
@@ -230,103 +241,110 @@ app.release.comparison.callback.styleDifferences = function () {
         app.release.comparison.currentReleaseData &&
         app.release.comparison.currentMatrixData) {
         //exceptional
-        if (app.release.comparison.previousReleaseData.RlsExceptionalFlag != app.release.comparison.currentReleaseData.RlsExceptionalFlag) {
-            $("#release-comparison-report").find("[name=exceptional-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
+        if (app.release.comparison.currentReleaseData.RqsCode) {
+            if (app.release.comparison.previousReleaseData.RlsExceptionalFlag != app.release.comparison.currentReleaseData.RlsExceptionalFlag
+                || app.release.comparison.currentReleaseData.RlsExceptionalFlag != app.release.comparison.currentReleaseData.WrqExceptionalFlag
+                || app.release.comparison.previousReleaseData.RlsExceptionalFlag != app.release.comparison.currentReleaseData.WrqExceptionalFlag) {
+                $("#release-comparison-report").find("[name=exceptional-row]").find("td[name=rls-exceptional-flag-previous],td[name=rls-exceptional-flag-current], td[name=wrq-exceptional-flag-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
         }
         else {
-            $("#release-comparison-report").find("[name=exceptional-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            if (app.release.comparison.previousReleaseData.RlsExceptionalFlag != app.release.comparison.currentReleaseData.RlsExceptionalFlag) {
+                $("#release-comparison-report").find("[name=exceptional-row]").find("td[name=rls-exceptional-flag-previous],td[name=rls-exceptional-flag-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
         }
 
         //group
         if ((app.release.comparison.previousReleaseData.GrpCode != app.release.comparison.currentReleaseData.GrpCode) ||
             (app.release.comparison.previousReleaseData.GrpValue != app.release.comparison.currentReleaseData.GrpValue)) {
-            $("#release-comparison-report").find("[name=group-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=group-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=group-row]").find("td[name=grp-name-previous],td[name=grp-name-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //subject
         if ((app.release.comparison.previousReleaseData.SbjCode != app.release.comparison.currentReleaseData.SbjCode) ||
             (app.release.comparison.previousReleaseData.SbjValue != app.release.comparison.currentReleaseData.SbjValue)) {
-            $("#release-comparison-report").find("[name=subject-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=subject-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=subject-row]").find("td[name=sbj-value-previous], td[name=sbj-value-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //product
         if ((app.release.comparison.previousReleaseData.PrcCode != app.release.comparison.currentReleaseData.PrcCode) ||
             (app.release.comparison.previousReleaseData.PrcValue != app.release.comparison.currentReleaseData.PrcValue)) {
-            $("#release-comparison-report").find("[name=product-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=product-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=product-row]").find("td[name=prd-value-previous], td[name=prd-value-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //analytical
         if (app.release.comparison.previousReleaseData.RlsAnalyticalFlag != app.release.comparison.currentReleaseData.RlsAnalyticalFlag) {
-            $("#release-comparison-report").find("[name=analytical-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=analytical-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=analytical-row]").find("td[name=rls-analytical-flag-previous], td[name=rls-analytical-flag-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //title
         if (app.release.comparison.previousMatrixData.MtrTitle != app.release.comparison.currentMatrixData.MtrTitle) {
-            $("#release-comparison-report").find("[name=title-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=title-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=title-row]").find("td[name=mtr-title-previous], td[name=mtr-title-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //frequency
         if (app.release.comparison.previousMatrixData.FrqValue != app.release.comparison.currentMatrixData.FrqValue) {
-            $("#release-comparison-report").find("[name=frequency-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=frequency-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=frequency-row]").find("td[name=frq-value-previous], td[name=frq-value-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //copyright
         if (app.release.comparison.previousMatrixData.CprValue != app.release.comparison.currentMatrixData.CprValue) {
-            $("#release-comparison-report").find("[name=copyright-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=copyright-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=copyright-row]").find("td[name=cpr-value-previous], td[name=cpr-value-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //official
         if (app.release.comparison.previousMatrixData.MtrOfficialFlag != app.release.comparison.currentMatrixData.MtrOfficialFlag) {
-            $("#release-comparison-report").find("[name=official-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
-        }
-        else {
-            $("#release-comparison-report").find("[name=official-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=official-row]").find("td[name=mtr-official-flag-previous], td[name=mtr-official-flag-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
 
         //footnote
         if (app.release.comparison.previousMatrixData.MtrNote != app.release.comparison.currentMatrixData.MtrNote) {
-            $("#release-comparison-report").find("[name=footnote-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
+            $("#release-comparison-report").find("[name=footnote-row]").find("td[name=mtr-note-previous], td[name=mtr-note-current]").addClass(app.config.entity.release.comparison.differenceClass);
         }
-        else {
-            $("#release-comparison-report").find("[name=footnote-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
-        }
-
 
         //reservation
-        if (app.release.comparison.previousReleaseData.RlsReservationFlag != app.release.comparison.currentReleaseData.RlsReservationFlag) {
-            $("#release-comparison-report").find("[name=reservation-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
+        if (app.release.comparison.currentReleaseData.RqsCode) {
+            if (app.release.comparison.previousReleaseData.RlsReservationFlag != app.release.comparison.currentReleaseData.RlsReservationFlag
+                || app.release.comparison.previousReleaseData.RlsReservationFlag != app.release.comparison.currentReleaseData.WrqReservationFlag
+                || app.release.comparison.currentReleaseData.RlsReservationFlag != app.release.comparison.currentReleaseData.WrqReservationFlag
+            ) {
+                $("#release-comparison-report").find("[name=reservation-row]").find("td[name=rls-reservation-previous], td[name=rls-reservation-current], td[name=wrq-reservation-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
         }
         else {
-            $("#release-comparison-report").find("[name=reservation-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            if (app.release.comparison.previousReleaseData.RlsReservationFlag != app.release.comparison.currentReleaseData.RlsReservationFlag) {
+                $("#release-comparison-report").find("[name=reservation-row]").find("td[name=rls-reservation-previous], td[name=rls-reservation-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
         }
 
         //archive
-        if (app.release.comparison.previousReleaseData.RlsArchiveFlag != app.release.comparison.currentReleaseData.RlsArchiveFlag) {
-            $("#release-comparison-report").find("[name=archive-row]").find("td").addClass(app.config.entity.release.comparison.differenceClass);
+        if (app.release.comparison.currentReleaseData.RqsCode) {
+            if (app.release.comparison.previousReleaseData.RlsArchiveFlag != app.release.comparison.currentReleaseData.RlsArchiveFlag
+                || app.release.comparison.previousReleaseData.RlsArchiveFlag != app.release.comparison.currentReleaseData.WrqArchiveFlag
+                || app.release.comparison.currentReleaseData.RlsArchiveFlag != app.release.comparison.currentReleaseData.WrqArchiveFlag
+            ) {
+                $("#release-comparison-report").find("[name=archive-row]").find("td[name=rls-archive-previous], td[name=rls-archive-current], td[name=wrq-archive-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
         }
         else {
-            $("#release-comparison-report").find("[name=archive-row]").find("td").removeClass(app.config.entity.release.comparison.differenceClass);
+            if (app.release.comparison.previousReleaseData.RlsArchiveFlag != app.release.comparison.currentReleaseData.RlsArchiveFlag) {
+                $("#release-comparison-report").find("[name=archive-row]").find("td[name=rls-archive-previous], td[name=rls-archive-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
+        }
+
+        //experimental
+        if (app.release.comparison.currentReleaseData.RqsCode) {
+            if (app.release.comparison.previousReleaseData.RlsExperimentalFlag != app.release.comparison.currentReleaseData.RlsExperimentalFlag
+                || app.release.comparison.previousReleaseData.RlsExperimentalFlag != app.release.comparison.currentReleaseData.WrqExperimentalFlag
+                || app.release.comparison.currentReleaseData.RlsExperimentalFlag != app.release.comparison.currentReleaseData.WrqExperimentalFlag
+            ) {
+                $("#release-comparison-report").find("[name=experimental-row]").find("td[name=rls-experimental-previous], td[name=rls-experimental-current], td[name=wrq-experimental-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
+        }
+        else {
+            if (app.release.comparison.previousReleaseData.RlsExperimentalFlag != app.release.comparison.currentReleaseData.RlsExperimentalFlag) {
+                $("#release-comparison-report").find("[name=experimental-row]").find("td[name=rls-experimental-previous], td[name=rls-archive-current]").addClass(app.config.entity.release.comparison.differenceClass);
+            }
         }
 
     }

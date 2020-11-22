@@ -53,6 +53,7 @@ app.release.workflow.modal.signoff.callback.read = function (data) {
                 $("#request-workflow-modal-signoff-publish [name=wrq-exceptional-flag]").html(app.library.html.boolean(data.WrqExceptionalFlag, true, true));
                 $("#request-workflow-modal-signoff-publish [name=wrq-datetime]").html(data.WrqDatetime ? moment(data.WrqDatetime).format(app.config.mask.datetime.display) : "");
                 $("#request-workflow-modal-signoff-publish [name=wrq-reservation-flag]").html(app.library.html.boolean(data.WrqReservationFlag, true, true));
+                $("#request-workflow-modal-signoff-publish [name=wrq-experimental-flag]").html(app.library.html.boolean(data.WrqExperimentalFlag, true, true));
                 $("#request-workflow-modal-signoff-publish [name=wrq-archive-flag]").html(app.library.html.boolean(data.WrqArchiveFlag, true, true));
 
                 $("#request-workflow-modal-signoff-publish [name=rqs-create-username]").html(app.library.html.link.user(data.RqsCcnCreateUsername));
@@ -67,6 +68,7 @@ app.release.workflow.modal.signoff.callback.read = function (data) {
                 $("#request-workflow-modal-signoff-flag [name=rqs-value]").html(app.label.datamodel.request[data.RqsValue]);
 
                 $("#request-workflow-modal-signoff-flag [name=wrq-reservation-flag]").html(app.library.html.boolean(data.WrqReservationFlag, true, true));
+                $("#request-workflow-modal-signoff-flag [name=wrq-experimental-flag]").html(app.library.html.boolean(data.WrqExperimentalFlag, true, true));
                 $("#request-workflow-modal-signoff-flag [name=wrq-archive-flag]").html(app.library.html.boolean(data.WrqArchiveFlag, true, true));
 
                 $("#request-workflow-modal-signoff-flag [name=rqs-create-username]").html(app.library.html.link.user(data.RqsCcnCreateUsername));
@@ -111,7 +113,14 @@ app.release.workflow.modal.signoff.create = function () {
             $("#request-workflow-modal-signoff-publish").modal("show");
             break;
         case C_APP_TS_REQUEST_PROPERTY:
-            $("#request-workflow-modal-signoff-flag").modal("show");
+            $("#request-workflow-modal-signoff-flag").modal("show").on('hide.bs.modal', function (e) { //clean up
+                $("#request-workflow-modal-signoff-flag [name=update-wip-properties-warning]").hide();
+            });
+
+            //if updating properties and there is a WIP, warn user that this will be updated in WIP also
+            if (app.release.liveHasWorkInProgress) {
+                $("#request-workflow-modal-signoff-flag [name=update-wip-properties-warning]").show();
+            }
             break;
         case C_APP_TS_REQUEST_DELETE:
             $("#request-workflow-modal-signoff-delete").modal("show");

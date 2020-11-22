@@ -186,9 +186,13 @@ app.plugin.sharethis.load = function (drawShareThis) {
       "url": app.config.plugin.sharethis.apiURL.sprintf([app.config.plugin.sharethis.apiKey]),
       "dataType": "script",
       "success": function () {
-        if (app.data && app.data.MtrCode) {
-          app.data.share(app.data.MtrCode);
+        if (app.data && app.data.MtrCode && $("#data-dataset-selected-table").is(":visible")) { //in dataset view
+          app.data.share(app.data.MtrCode, null);
         }
+        if (app.data && !app.data.isSearch && app.data.PrdCode && $("#data-filter").is(":visible")) {
+          app.data.share(null, app.data.PrdCode);
+        }
+
       },
       "error": function (jqXHR, textStatus, errorThrown) {
         api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -294,7 +298,7 @@ $(document).ready(function () {
         $("#data-navigation").find(".navbar-collapse").collapse('hide');
 
         //if search results on page
-        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && !$("#data-search-row-desktop").find("[name=search-results]").is(":empty")) {
+        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && !$("#data-search-row-desktop").find("[name=search-results-non-archived]").is(":empty") && !$("#data-search-row-desktop").find("[name=search-results-archived]").is(":empty")) {
           $("#data-filter-toggle").show();
           $("#data-filter").hide();
           $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
@@ -313,10 +317,6 @@ $(document).ready(function () {
           $("#data-search-row-responsive").hide();
         };
 
-        if ($("#panel").is(":empty") && !$("#data-search-row-desktop").find("[name=search-results]").is(":visible")) {
-          $("#data-navigation").find(".navbar-collapse").collapse('show');
-        }
-
         $("#panel [name=matrix-notes] [name=notes]").find(".collapse").collapse('show');
 
         //always show panel
@@ -327,7 +327,7 @@ $(document).ready(function () {
         $("#data-filter-toggle").hide();
 
         //if search results on page
-        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && !$("#data-search-row-desktop").find("[name=search-results]").is(":empty")) {
+        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && (!$("#data-search-row-desktop").find("[name=search-results-non-archived]").is(":empty") || !$("#data-search-row-desktop").find("[name=search-results-archived]").is(":empty"))) {
           $("#data-filter").show();
           $("#data-navigation").find(".navbar-collapse").collapse('hide');
         };

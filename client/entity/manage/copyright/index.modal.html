@@ -9,19 +9,19 @@
             <form>
                 <div class="modal-body">
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-code" label="code"></label></div>
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-code" label="code"></label></div>
                         <div class="col-8 p-2">
                             <input type="text" class="form-control text-uppercase" name="cpr-code" placeholder="" maxlength="32">
                             <span class="serverValidationError text-danger" name="cpr-code-error-holder"></span>
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-value" label="name"></label></div>
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-value" label="name"></label></div>
                         <div class="col-8 p-2"><input type="text" class="form-control" name="cpr-value" placeholder="" maxlength="256">
                             <span class="serverValidationError text-danger" name="cpr-value-error-holder"></span></div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-url" label="url"></label></div>
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-url" label="url"></label></div>
                         <div class="col-8 p-2"><input type="text" class="form-control" name="cpr-url" placeholder="" maxlength="2048">
                             <span class="serverValidationError text-danger" name="cpr-url-error-holder"></span></div>
                     </div>
@@ -55,19 +55,19 @@
                 <input type="hidden" name="idn">
                 <div class="modal-body">
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-code" label="code"></label></div>
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-code" label="code"></label></div>
                         <div class="col-8 p-2">
                             <input type="text" class="form-control text-uppercase" name="cpr-code" maxlength="32">
                             <span class="serverValidationError text-danger" name="cpr-code-error-holder"></span>
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-value" label="name"></label></div>
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-value" label="name"></label></div>
                         <div class="col-8 p-2"><input type="text" class="form-control" name="cpr-value" placeholder="" maxlength="256">
                             <span class="serverValidationError text-danger" name="cpr-value-error-holder"></span></div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-light border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-url" label="url"></label></div>
+                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cpr-url" label="url"></label></div>
                         <div class="col-8 p-2"><input type="text" class="form-control" name="cpr-url" placeholder="" maxlength="2048">
                             <span class="serverValidationError text-danger" name="cpr-url-error-holder"></span></div>
                     </div>
@@ -82,6 +82,44 @@
                             <button class="btn btn-primary text-light" type="submit">
                                 <i class="far fa-save"></i> <span label="update"></span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal - tables-->
+<div id="copyright-matrix-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-primary text-light">
+                    <h5>
+                        <span name="copyright-code"></span>: <span name="copyright-value"></span>
+                    </h5>
+                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-striped hover" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th label="table"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="container-fluid">
+                            <div class="text-right">
+                                <button type="button" name="cancel" class="btn btn-neutral" data-dismiss="modal">
+                                    <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

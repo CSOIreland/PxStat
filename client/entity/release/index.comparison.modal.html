@@ -12,127 +12,145 @@
                     <div id="release-comparison-report">
                         <table class="table table-bordered table-sm">
                             <thead>
-                                <tr>
-                                    <th class="bg-primary text-light" scope="col" colspan="3" label="information"></th>
+                                <tr class="bg-primary text-light">
+                                    <th scope="col" label="information"></th>
+                                    <th><span name="rls-version-previous"></span>.<span name="rls-revision-previous"></span></th>
+                                    <th><span name="rls-version-current"></span>.<span name="rls-revision-current"></span></th>
+                                    <th scope="col" colspan="1" name="workflow-request-heading"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <th class="bg-neutral" scope="row" style="width:33%" label="version"></th>
-                                    <td empty="true" style="width:33%">
-                                        <span name="rls-version-previous"></span>.<span name="rls-revision-previous"></span>
-                                    </td>
-                                    <td empty="true" style="width:33%">
-                                        <span name="rls-version-current"></span>.<span name="rls-revision-current"></span>
-                                    </td>
+                                    <th class="bg-default" scope="row" style="width:25%" label="status"></th>
+                                    <td name="status-previous" style="width:25%"></td>
+                                    <td name="status-current" style="width:25%"></td>
+                                    <td class="bg-default" style="width:25%" .></td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-neutral" scope="row" label="status"></th>
-                                    <td name="status-previous" empty="true"></td>
-                                    <td name="status-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="live-from"></th>
+                                    <td name="rls-live-datetime-from-previous"></td>
+                                    <td name="rls-live-datetime-from-current"></td>
+                                    <td name="wrq-live-datetime-from-current"></td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-neutral" scope="row" label="request"></th>
-                                    <td></td>
-                                    <td name="request-current"></td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-neutral" scope="row" label="live-from"></th>
-                                    <td name="rls-live-datetime-from-previous" empty="true"></td>
-                                    <td name="rls-live-datetime-from-current" empty="true"></td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-neutral" scope="row" label="live-to"></th>
-                                    <td name="rls-live-datetime-to-previous" empty="true"></td>
-                                    <td name="rls-live-datetime-to-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="live-to"></th>
+                                    <td name="rls-live-datetime-to-previous"></td>
+                                    <td name="rls-live-datetime-to-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="exceptional-row">
-                                    <th class="bg-neutral" scope="row" label="exceptional"></th>
-                                    <td name="rls-exceptional-flag-previous" empty="true"></td>
-                                    <td name="rls-exceptional-flag-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="exceptional"></th>
+                                    <td name="rls-exceptional-flag-previous"></td>
+                                    <td name="rls-exceptional-flag-current"></td>
+                                    <td name="wrq-exceptional-flag-current"></td>
                                 </tr>
                                 <tr name="group-row">
-                                    <th class="bg-neutral" scope="row" label="group"></th>
-                                    <td name="grp-name-previous" empty="true"></td>
-                                    <td name="grp-name-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="group"></th>
+                                    <td name="grp-name-previous"></td>
+                                    <td name="grp-name-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="subject-row">
-                                    <th class="bg-neutral" scope="row" label="subject"></th>
-                                    <td name="sbj-value-previous" empty="true"></td>
-                                    <td name="sbj-value-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="subject"></th>
+                                    <td name="sbj-value-previous"></td>
+                                    <td name="sbj-value-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="product-row">
-                                    <th class="bg-neutral" scope="row" label="product"></th>
-                                    <td name="prc-value-previous" empty="true"></td>
-                                    <td name="prc-value-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="product"></th>
+                                    <td name="prd-value-previous"></td>
+                                    <td name="prc-value-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="analytical-row">
-                                    <th class="bg-neutral" scope="row" label="analytical"></th>
-                                    <td name="rls-analytical-flag-previous" empty="true"></td>
-                                    <td name="rls-analytical-flag-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="analytical"></th>
+                                    <td name="rls-analytical-flag-previous"></td>
+                                    <td name="rls-analytical-flag-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                             </tbody>
                         </table>
                         <table class="table table-bordered table-sm">
                             <thead>
-                                <tr>
-                                    <th class="bg-primary text-light" scope="col" colspan="3" label="source"></th>
+                                <tr class="bg-primary text-light">
+                                    <th scope="col" label="source"></th>
+                                    <th><span name="rls-version-previous"></span>.<span name="rls-revision-previous"></span></th>
+                                    <th><span name="rls-version-current"></span>.<span name="rls-revision-current"></span></th>
+                                    <th scope="col" colspan="1"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr name="title-row">
-                                    <th class="bg-neutral" scope="row" style="width:33%" label="title"></th>
-                                    <td name="mtr-title-previous" empty="true" style="width:33%"></td>
-                                    <td name="mtr-title-current" empty="true" style="width:33%"></td>
+                                    <th class="bg-default" scope="row" style="width:25%" label="title"></th>
+                                    <td name="mtr-title-previous" style="width:25%"></td>
+                                    <td name="mtr-title-current" style="width:25%"></td>
+                                    <td class="bg-default" style="width:25%"></td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-neutral" scope="row" label="imported-date"></th>
-                                    <td name="dtg-create-datetime-previous" empty="true"></td>
-                                    <td name="dtg-create-datetime-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="imported-date"></th>
+                                    <td name="dtg-create-datetime-previous"></td>
+                                    <td name="dtg-create-datetime-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr>
-                                    <th class="bg-neutral" scope="row" label="imported-by"></th>
-                                    <td name="ccn-username-previous" empty="true"></td>
-                                    <td name="ccn-username-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="imported-by"></th>
+                                    <td name="ccn-username-previous"></td>
+                                    <td name="ccn-username-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="frequency-row">
-                                    <th class="bg-neutral" scope="row" label="frequency"></th>
-                                    <td name="frq-value-previous" empty="true"></td>
-                                    <td name="frq-value-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="frequency"></th>
+                                    <td name="frq-value-previous"></td>
+                                    <td name="frq-value-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="copyright-row">
-                                    <th class="bg-neutral" scope="row" label="copyright"></th>
-                                    <td name="cpr-value-previous" empty="true"></td>
-                                    <td name="cpr-value-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="copyright"></th>
+                                    <td name="cpr-value-previous"></td>
+                                    <td name="cpr-value-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="official-row">
-                                    <th class="bg-neutral" scope="row" label="official-statistics"></th>
-                                    <td name="mtr-official-flag-previous" empty="true"></td>
-                                    <td name="mtr-official-flag-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="official-statistics"></th>
+                                    <td name="mtr-official-flag-previous"></td>
+                                    <td name="mtr-official-flag-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                                 <tr name="footnote-row">
-                                    <th class="bg-neutral" scope="row" label="footnote"></th>
-                                    <td name="mtr-note-previous" empty="true"></td>
-                                    <td name="mtr-note-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="footnote"></th>
+                                    <td name="mtr-note-previous"></td>
+                                    <td name="mtr-note-current"></td>
+                                    <td class="bg-default"></td>
                                 </tr>
                             </tbody>
                         </table>
                         <table class="table table-bordered table-sm">
                             <thead>
-                                <tr>
-                                    <th class="bg-primary text-light" scope="col" colspan="3" label="properties"></th>
+                                <tr class="bg-primary text-light">
+                                    <th scope="col" label="properties"></th>
+                                    <th><span name="rls-version-previous"></span>.<span name="rls-revision-previous"></span></th>
+                                    <th><span name="rls-version-current"></span>.<span name="rls-revision-current"></span></th>
+                                    <th scope="col" colspan="1" name="workflow-request-heading"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr name="reservation-row">
-                                    <th class="bg-neutral" scope="row" style="width:33%" label="under-reservation"></th>
-                                    <td name="rls-reservation-previous" empty="true" style="width:33%"></td>
-                                    <td name="rls-reservation-current" empty="true" style="width:33%"></td>
+                                    <th class="bg-default" scope="row" style="width:25%" label="under-reservation"></th>
+                                    <td name="rls-reservation-previous" style="width:25%"></td>
+                                    <td name="rls-reservation-current" style="width:25%"></td>
+                                    <td name="wrq-reservation-current" style="width:25%"></td>
+                                </tr>
+                                <tr name="experimental-row">
+                                    <th class="bg-default" scope="row" label="experimental"></th>
+                                    <td name="rls-experimental-previous"></td>
+                                    <td name="rls-experimental-current"></td>
+                                    <td name="wrq-experimental-current"></td>
                                 </tr>
                                 <tr name="archive-row">
-                                    <th class="bg-neutral" scope="row" label="archived"></th>
-                                    <td name="rls-archive-previous" empty="true"></td>
-                                    <td name="rls-archive-current" empty="true"></td>
+                                    <th class="bg-default" scope="row" label="archived"></th>
+                                    <td name="rls-archive-previous"></td>
+                                    <td name="rls-archive-current"></td>
+                                    <td name="wrq-archive-current"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -140,8 +158,8 @@
                 </div>
                 <div class="container-fluid">
 
-                    <div id="comparison-datatable-amendment" class="card mb-2 border-primary">
-                        <div class="card-header bg-primary text-light" label="amendments"></div>
+                    <div id="comparison-datatable-amendment" class="card mb-2 border-info">
+                        <div class="card-header bg-info text-light" label="amendments"></div>
                         <div class="card-body">
                             <div name="table-wrapper"></div>
                         </div>
@@ -161,8 +179,8 @@
                             </div>
                         </div>
                     </div>
-                    <div id="comparison-datatable-addition" class="card mb-2 border-primary">
-                        <div class="card-header bg-primary text-light" label="additions"></div>
+                    <div id="comparison-datatable-addition" class="card mb-2 border-warning">
+                        <div class="card-header bg-warning text-light" label="additions"></div>
                         <div class="card-body">
                             <div name="table-wrapper"></div>
                         </div>
@@ -183,8 +201,8 @@
                             </div>
                         </div>
                     </div>
-                    <div id="comparison-datatable-deletion" class="card mb-2 border-primary">
-                        <div class="card-header bg-primary text-light" label="deletions"></div>
+                    <div id="comparison-datatable-deletion" class="card mb-2 border-danger">
+                        <div class="card-header bg-danger text-light" label="deletions"></div>
                         <div class="card-body">
                             <div name="table-wrapper"></div>
                         </div>

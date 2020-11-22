@@ -77,6 +77,7 @@ app.data.search.callback.readNav = function (data) {
             "PrcCode": $(this).attr("prc-code"),
             "LngIsoCode": $(this).attr("lng-iso-code")
         };
+        app.data.PrdCode = $(this).attr("prc-code");
         app.data.searchResult.ajax.readNavigationResults(apiParams);
         //Collapse navigation
         $("#data-navigation").find(".navbar-collapse").collapse('hide');
@@ -94,6 +95,7 @@ app.data.search.callback.readNav = function (data) {
 */
 app.data.searchResult.ajax.readNavigationResults = function (apiParams) {
     app.data.isSearch = false;
+    $("#data-search-result-pagination").hide();
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Navigation.Navigation_API.Search",
         apiParams,
@@ -109,6 +111,8 @@ app.data.searchResult.ajax.readNavigationResults = function (apiParams) {
 */
 app.data.searchResult.ajax.readSearch = function (search) {
     app.data.isSearch = true;
+    $("#data-search-result-pagination").show();
+    $('#data-search-result-pagination-toggle').bootstrapToggle("off");
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Navigation.Navigation_API.Search",
         {
@@ -132,14 +136,13 @@ app.data.searchResult.callback.readResults = function (data, params) {
     //always reset breadcrumb
     app.navigation.breadcrumb.set([]);
     params = params || {};
-    $("#data-filter, #data-search-row-desktop [name=search-results]").empty();
+    $("#data-filter, #data-search-row-desktop [name=search-results-non-archived], #data-search-row-desktop [name=search-results-archived]").empty();
     if (data && Array.isArray(data) && data.length) {
 
         $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").hide();
         $("#data-dataset-selected-table [name=card-header], #panel, #data-view-container").empty();
         $("#data-dataset-row").hide();
         $("#data-accordion-api").hide();
-        $("#data-search-result-pagination").show();
         if (params.PrcCode) {
             //update breadcrumb
             app.navigation.breadcrumb.set([data[0].SbjValue, {
@@ -179,7 +182,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
             app.data.init(data[0].LngIsoCode, data[0].MtrCode, null, data[0].MtrCode, false, true);
             app.data.dataset.draw();
 
-            $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination]").hide();
+            $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").hide();
             $("#data-dataset-row").find("[name=back-to-select-results]").show();
             return;
         }
@@ -211,13 +214,16 @@ app.data.searchResult.callback.readResults = function (data, params) {
         else {
             searchResultsSort.find("option[value=" + C_APP_SORT_RELEVANCE + "]").prop("selected", true);
         }
-
+        var productShare = $("#data-search-result-templates").find("[name=share]").clone();
+        $("#data-filter").append(productShare);
         $("#data-filter").append(searchResultsSort);
 
         var subjects = [];
         var products = [];
         var copyrights = [];
         var languages = [];
+        var archived = [];
+        var properties = [];
 
         $.each(app.data.searchResult.result, function (key, value) {
             subjects.push({
@@ -238,6 +244,14 @@ app.data.searchResult.callback.readResults = function (data, params) {
                 LngIsoCode: value.LngIsoCode,
                 LngIsoName: value.LngIsoName
             });
+            archived.push({
+                RlsArchiveFlag: value.RlsArchiveFlag
+            });
+            properties.push({
+                RlsArchiveFlag: value.RlsArchiveFlag,
+                RlsExperimentalFlag: value.RlsExperimentalFlag,
+                RlsReservationFlag: value.RlsReservationFlag
+            })
         });
 
         //build subjects filter list. Loop through all subjects and filter
@@ -351,6 +365,55 @@ app.data.searchResult.callback.readResults = function (data, params) {
             copyrightsFilterList.append(item);
         });
 
+        //if we have some true properties, draw properties filter
+        //properties
+        var numArchived = 0;
+        var numUnderReservation = 0;
+        var numExperimental = 0;
+
+        $.each(properties, function (key, value) {
+            if (value.RlsArchiveFlag) {
+                numArchived++;
+            }
+            if (value.RlsReservationFlag) {
+                numUnderReservation++;
+            }
+            if (value.RlsExperimentalFlag) {
+                numExperimental++;
+            }
+        });
+        var propertiesFilterList = null;
+        if (numArchived > 0 || numUnderReservation > 0 || numExperimental > 0) {
+            propertiesFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
+            propertiesFilterList.attr("filter-type", "properties");
+            var propertiesFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
+            propertiesFilterList.append(propertiesFilterHeading.text(app.label.static["properties"]));
+            if (numArchived > 0) {
+                var itemArchived = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                itemArchived.attr("archived", true);
+                itemArchived.attr("active", "false");
+                itemArchived.find("[name=filter-list-item-value]").text(app.label.static["archived"]);
+                itemArchived.find("[name=filter-list-item-count]").text(numArchived);
+                propertiesFilterList.append(itemArchived);
+            }
+            if (numUnderReservation > 0) {
+                var itemUnderReservation = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                itemUnderReservation.attr("under-reservation", true);
+                itemUnderReservation.attr("active", "false");
+                itemUnderReservation.find("[name=filter-list-item-value]").text(app.label.static["under-reservation"]);
+                itemUnderReservation.find("[name=filter-list-item-count]").text(numUnderReservation);
+                propertiesFilterList.append(itemUnderReservation);
+            }
+            if (numExperimental > 0) {
+                var itemExperimental = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                itemExperimental.attr("experimental", true);
+                itemExperimental.attr("active", "false");
+                itemExperimental.find("[name=filter-list-item-value]").text(app.label.static["experimental"]);
+                itemExperimental.find("[name=filter-list-item-count]").text(numExperimental);
+                propertiesFilterList.append(itemExperimental);
+            }
+        }
+
         //Languages Filter List
         var languagesFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
         languagesFilterList.attr("filter-type", "language");
@@ -365,8 +428,12 @@ app.data.searchResult.callback.readResults = function (data, params) {
             languagesFilterList.append(item);
         });
 
+
         //collapse navigation HTML
         $("#data-filter").append(languagesFilterList.get(0).outerHTML + subjectFilterList.get(0).outerHTML + productsFilterList.get(0).outerHTML + copyrightsFilterList.get(0).outerHTML);
+        if (propertiesFilterList) {
+            $("#data-filter").append(propertiesFilterList.get(0).outerHTML)
+        }
         //Prevent clicking on filter headings
         $("#data-filter").find("[name=filter-list-heading]").once("click", function (e) { e.preventDefault(); });
         //Filter Results Click
@@ -391,12 +458,19 @@ app.data.searchResult.callback.readResults = function (data, params) {
     // Handle no data
     else {
         $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").show();
-        $("#data-search-result-pagination [name=pagination]").hide();
+        $("#data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").hide();
         $("#data-navigation").find(".navbar-collapse").collapse('show');
     }
 
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    if (!app.data.isSearch) {
+        app.data.share(null, app.data.PrdCode);
+    }
+    else {
+        $("#data-filter").find("[name=share]").hide()
+    }
+
 };
 
 
@@ -409,6 +483,9 @@ app.data.searchResult.callback.filterResults = function () {
     var productsSelected = [];
     var copyrightsSelected = [];
     var languagesSelected = [];
+    var archivedSelected = [];
+    var underReservationSelected = [];
+    var experimentalSelected = [];
     //subjectsSelected
     $("#data-filter").find("[filter-type=subject]").find("[name=filter-list-item]").each(function (index) {
         if ($(this).attr("active") == "true") {
@@ -436,24 +513,79 @@ app.data.searchResult.callback.filterResults = function () {
             languagesSelected.push($(this).attr("lng-iso-code"));
         }
     });
+
+    //archivedSelected
+    $("#data-filter").find("[filter-type=properties]").find("[name=filter-list-item]").each(function (index) {
+        if ($(this).attr("active") == "true" && $(this).attr("archived")) {
+            switch ($(this).attr("archived")) {
+                case "true":
+                    archivedSelected.push(true);
+                    break;
+                case "false":
+                    archivedSelected.push(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if ($(this).attr("active") == "true" && $(this).attr("under-reservation")) {
+            switch ($(this).attr("under-reservation")) {
+                case "true":
+                    underReservationSelected.push(true);
+                    break;
+                case "false":
+                    underReservationSelected.push(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if ($(this).attr("active") == "true" && $(this).attr("experimental")) {
+            switch ($(this).attr("experimental")) {
+                case "true":
+                    experimentalSelected.push(true);
+                    break;
+                case "false":
+                    experimentalSelected.push(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+    });
+
     var filteredResults = [];
-    if (subjectsSelected.length || productsSelected.length || copyrightsSelected.length || languagesSelected.length) {
+    if (subjectsSelected.length || productsSelected.length || copyrightsSelected.length || languagesSelected.length || archivedSelected.length || underReservationSelected.length || experimentalSelected.length) {
         $.each(app.data.searchResult.result, function (key, value) {
             var count = 0;
             if (jQuery.inArray(value.SbjCode, subjectsSelected) != -1) {
                 count++;
             }
-            //if (productsSelected.includes(value.PrcCode)) {
+
             if (jQuery.inArray(value.PrcCode, productsSelected) != -1) {
                 count++;
             }
-            //if (copyrightsSelected.includes(value.CprCode)) {
+
             if (jQuery.inArray(value.CprCode, copyrightsSelected) != -1) {
 
                 count++;
             }
-            //if (languagesSelected.includes(value.LngIsoCode)) {
+
             if (jQuery.inArray(value.LngIsoCode, languagesSelected) != -1) {
+                count++;
+            }
+
+            if (jQuery.inArray(value.RlsArchiveFlag, archivedSelected) != -1) {
+                count++;
+            }
+
+            if (jQuery.inArray(value.RlsReservationFlag, underReservationSelected) != -1) {
+                count++;
+            }
+
+            if (jQuery.inArray(value.RlsExperimentalFlag, experimentalSelected) != -1) {
                 count++;
             }
             if (count > 0) {
@@ -532,12 +664,19 @@ app.data.searchResult.callback.drawPagination = function (filteredResults) {
     $("#data-latest-releases").remove();
     $("#data-accordion-collection-api").hide();
     $('#data-search-result-pagination').find("[name=pagination]").twbsPagination('destroy');
-    var numPages = Math.ceil(filteredResults.length / app.config.entity.data.pagination);
+    var paginationNumber = $('#data-search-result-pagination-toggle').is(':checked') ? filteredResults.length : app.config.entity.data.pagination;
+    var numPages = app.data.isSearch ? Math.ceil(filteredResults.length / paginationNumber) : 1;
+    if (filteredResults.length <= app.config.entity.data.pagination && app.data.isSearch) {
+        $("#data-search-result-pagination").hide();
+    }
+    else if (filteredResults.length > app.config.entity.data.pagination && app.data.isSearch) {
+        $("#data-search-result-pagination").show();
+    }
     $('#data-search-result-pagination').find("[name=pagination]").twbsPagination({
         totalPages: numPages,
         onPageClick: function (event, page) {
-            var positionTostart = (page - 1) * app.config.entity.data.pagination;
-            app.data.searchResult.callback.drawResults(filteredResults.slice(positionTostart, positionTostart + app.config.entity.data.pagination));
+            var positionTostart = (page - 1) * paginationNumber;
+            app.data.searchResult.callback.drawResults(app.data.isSearch ? filteredResults.slice(positionTostart, positionTostart + paginationNumber) : filteredResults);
         }
     });
 };
@@ -548,8 +687,9 @@ app.data.searchResult.callback.drawPagination = function (filteredResults) {
 */
 app.data.searchResult.callback.drawResults = function (paginatedResults) {
     $("#data-dataset-row").find("[name=back-to-select-results]").hide();
-    $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination]").show();
-    $("#data-search-row-desktop").find("[name=search-results]").empty();
+    $("#data-search-row-desktop [name=archived-heading], #data-search-row-desktop [name=non-archived-heading]").hide();
+    $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").show();
+    $("#data-search-row-desktop [name=search-results-non-archived], #data-search-row-desktop [name=search-results-archived]").empty();
 
     $.each(paginatedResults, function (key, entry) {
         var resultItem = $("#data-search-result-templates").find("[name=search-result-item]").clone(); //a Result Item
@@ -580,6 +720,11 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
         //archive flag
         if (entry.RlsArchiveFlag) {
             resultItem.find("[name=archive-flag]").removeClass("d-none");
+        }
+
+        //Experimental flag
+        if (entry.RlsExperimentalFlag) {
+            resultItem.find("[name=experimental-flag]").removeClass("d-none");
         }
 
         //reservation flag
@@ -627,17 +772,41 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
 
         // copyright
         resultItem.find("[name=copyright]").text(entry.CprValue);
-        $("#data-search-row-desktop").find("[name=search-results]").append(resultItem);
+        if (app.data.isSearch) {
+            $("#data-search-row-desktop").find("[name=search-results-non-archived]").append(resultItem);
+        }
+        else {
+            if (entry.RlsArchiveFlag) {
+                $("#data-search-row-desktop").find("[name=search-results-archived]").append(resultItem);
+                $("#data-search-row-desktop [name=archived-heading]").show();
+            }
+            else {
+                $("#data-search-row-desktop").find("[name=search-results-non-archived]").append(resultItem);
+                $("#data-search-row-desktop [name=non-archived-heading]").show();
+            }
+        }
+
+
+
     });
     $("#data-search-row-desktop").find("[name=search-result-item]").once("click", function (e) {
         e.preventDefault();
         app.data.init($(this).attr("lng-iso-code"), $(this).attr("mtr-code"), null, $(this).attr("mtr-code"), false, true);
-        $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination]").hide();
+        $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").hide();
         $("#data-dataset-row").find("[name=back-to-select-results]").show();
         $("#data-navigation").find(".navbar-collapse").collapse('hide');
         app.data.dataset.draw();
     });
     $('[data-toggle="tooltip"]').tooltip();
+
+    //empty any previous datasets that were shown earlier
+    $("#data-dataset-table-nav-content, #data-dataset-chart-nav-content, #data-dataset-map-nav-content").empty();
+    $("#data-dataset-chart-nav-content, #data-dataset-map-nav-content").removeClass("show").removeClass("active");
+    $("#data-dataset-table-nav-content").addClass("show").addClass("active");
+    $("#data-dataset-chart-nav-tab, #data-dataset-map-nav-tab").removeClass("active");
+    $("#data-dataset-table-nav-tab").addClass("active");
+
+    $('#data-search-result-pagination-toggle').bootstrapToggle().once("change", app.data.searchResult.callback.filterResults);
 
 };
 //#endregion search results

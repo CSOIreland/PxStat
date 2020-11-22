@@ -221,7 +221,7 @@ app.navigation.breadcrumb.set = function (breadcrumb) {
           api.content.goTo(value.goTo.pRelativeURL, value.goTo.pNav_link_SelectorToHighlight, null, value.goTo.pParams);
         });
 
-        linkItem.find("a").html(breadcrumbLink);
+        linkItem.html(breadcrumbLink);
         $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(linkItem);
 
         title += '/' + value.text;

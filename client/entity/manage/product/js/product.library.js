@@ -201,8 +201,7 @@ app.product.drawDataTableProduct = function (data) {
         {
           data: null,
           render: function (_data, _type, row) {
-            var attributes = { idn: row.PrcCode, "prc-value": row.PrcValue }; //idn PrcCode
-            return app.library.html.link.internal(attributes); //idn => PrcCode
+            return app.library.html.link.internal({ idn: row.PrcCode, "prc-value": row.PrcValue }, String(row.MtrCount));
           }
         },
         {
@@ -210,12 +209,7 @@ app.product.drawDataTableProduct = function (data) {
           sorting: false,
           searchable: false,
           render: function (data, type, row) {
-            var attributes = { idn: row.PrcCode, "prc-value": row.PrcValue, "sbj-code": row.SbjCode }; //idn PrcCode
-            var deleteButton = app.library.html.deleteButton(attributes, false);
-            if (row.PrcReleaseCount > 0) {
-              deleteButton = app.library.html.deleteButton(attributes, true);
-            }
-            return deleteButton;
+            return app.library.html.deleteButton({ idn: row.PrcCode, "prc-value": row.PrcValue, "sbj-code": row.SbjCode }, row.MtrCount > 0 ? true : false);
           },
           "width": "1%"
         }
@@ -651,7 +645,8 @@ app.product.drawCallbackRelease = function () {
  * @param  {} callbackParam
  */
 app.product.drawReleaseByProductDataTable = function (data, callbackParam) {
-  $("#product-release-modal").find("[name=product-release-modal-header]").text(callbackParam.PrcValue);
+  $("#product-release-modal").find("[name=product-code]").text(callbackParam.idn);
+  $("#product-release-modal").find("[name=product-value]").text(callbackParam.PrcValue);
   if ($.fn.dataTable.isDataTable("#product-release-modal table")) {
     app.library.datatable.reDraw("#product-release-modal table", data);
   } else {

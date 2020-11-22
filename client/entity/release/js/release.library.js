@@ -10,6 +10,7 @@ app.release.MtrCode = null;
 app.release.SbjCode = null;
 app.release.PrcCode = null;
 app.release.RlsReservationFlag = null;
+app.release.RlsExperimentalFlag = null;
 app.release.RlsArchiveFlag = null;
 
 app.release.isModerator = true;
@@ -19,6 +20,7 @@ app.release.isLive = false;
 app.release.isPending = false;
 app.release.isHistorical = false;
 app.release.isWorkInProgress = false;
+app.release.liveHasWorkInProgress = null;
 app.release.isAwaitingResponse = false;
 app.release.isAwaitingSignOff = false;
 
@@ -259,6 +261,22 @@ app.release.checkStatusAwaitingResponse = function (data) {
   }
 
 };
+
+app.release.ajax.checkLiveHasWorkInProgress = function () {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Data.Release_API.ReadHasWipForLive",
+    {
+      "RlsCode": app.release.RlsCode
+    },
+    "app.release.callback.checkLiveHasWorkInProgress"
+  );
+}
+
+app.release.callback.checkLiveHasWorkInProgress = function (response) {
+  app.release.liveHasWorkInProgress = response;
+}
+
 
 app.release.checkStatusAwaitingSignOff = function (data) {
   if (

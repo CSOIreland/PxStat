@@ -61,7 +61,7 @@ app.data.dataset.chart.template.dataset = {
                 "jsonrpc": C_APP_API_JSONRPC_VERSION,
                 "method": null,
                 "params": {
-                    "class": "query",
+                    "class": C_APP_JSONSTAT_QUERY_CLASS,
                     "id": [],
                     "dimension": {},
                     "extension": {

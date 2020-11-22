@@ -47,36 +47,15 @@ $(document).ready(function () {
 
     })
 
+    $("#release-comparison-modal").on('hide.bs.modal', function (e) {
+        app.release.comparison.previousReleaseData = null;
+        app.release.comparison.previousMatrixData = null;
+        app.release.comparison.currentReleaseData = null;
+        app.release.comparison.currentMatrixData = null;
+        //remove all difference styling on closing of modal
+        $(this).find("." + app.config.entity.release.comparison.differenceClass).removeClass(app.config.entity.release.comparison.differenceClass);
+    });
 
-
-
-
-
-
-
-
-
-
-
-
-    //empty dynamic data from modal when you close it
-    /* $('#release-comparison-modal').on('hide.bs.modal', function (e) {
-        $("[empty=true]").each(function () {
-            $(this).empty();
-        });
-
-        if ($.fn.DataTable.isDataTable($("#comparison-datatable-amendment").find("table"))) {
-            $("#comparison-datatable-amendment").find("table").DataTable().destroy();
-        }
-
-        if ($.fn.DataTable.isDataTable($("#comparison-datatable-addition").find("table"))) {
-            $("#comparison-datatable-comparison-datatable-addition").find("table").DataTable().destroy();
-        }
-
-        if ($.fn.DataTable.isDataTable($("#comparison-datatable-deletion").find("table"))) {
-            $("#comparison-datatable-deletion").find("table").DataTable().destroy();
-        }
-    }) */
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

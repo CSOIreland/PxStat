@@ -33,6 +33,7 @@ app.release.workflow.modal.request.setFlag = function () {
     });
     $("#request-workflow-modal-request-publish [name=wrq-exceptional-flag]").bootstrapToggle("off");
     $("#request-workflow-modal-request-publish [name=wrq-reservation-flag]").bootstrapToggle(app.release.RlsReservationFlag ? "on" : "off");
+    $("#request-workflow-modal-request-publish [name=wrq-experimental-flag]").bootstrapToggle(app.release.RlsExperimentalFlag ? "on" : "off");
     $("#request-workflow-modal-request-publish [name=wrq-archive-flag]").bootstrapToggle(app.release.RlsArchiveFlag ? "on" : "off");
 
     // Modal Request Flag
@@ -44,6 +45,7 @@ app.release.workflow.modal.request.setFlag = function () {
         width: C_APP_TOGGLE_LENGTH
     });
     $("#request-workflow-modal-request-flag [name=wrq-reservation-flag]").bootstrapToggle(app.release.RlsReservationFlag ? "on" : "off");
+    $("#request-workflow-modal-request-flag [name=wrq-experimental-flag]").bootstrapToggle(app.release.RlsExperimentalFlag ? "on" : "off");
     $("#request-workflow-modal-request-flag [name=wrq-archive-flag]").bootstrapToggle(app.release.RlsArchiveFlag ? "on" : "off");
 };
 
@@ -53,8 +55,11 @@ app.release.workflow.modal.request.setFlag = function () {
 app.release.workflow.modal.request.create = function () {
     var RqsCode = $("#release-workflow-request [name=rqs-code] option:selected").val();
     var RqsValue = $("#release-workflow-request [name=rqs-code] option:selected").text();
-    switch (RqsCode) {
 
+    // Run the validation before pre-setting the form
+    app.release.workflow.modal.request.validation.create(RqsCode);
+
+    switch (RqsCode) {
         case C_APP_TS_REQUEST_PUBLISH:
             app.release.workflow.modal.request.setFlag();
             if (app.release.workflow.modal.request.fastrackResponse) {
@@ -97,7 +102,13 @@ app.release.workflow.modal.request.create = function () {
             $("#request-workflow-modal-request-flag").modal("show").on('hide.bs.modal', function (e) { //hide warnings
                 $("#request-workflow-modal-request-flag [name=auto-signoff-warning]").hide();
                 $("#request-workflow-modal-request-flag [name=auto-response-warning]").hide();
+                $("#request-workflow-modal-request-flag [name=update-wip-properties-warning]").hide();
             });
+
+            //if updating properties and there is a WIP, warn user that this will be updated in WIP also
+            if (app.release.liveHasWorkInProgress) {
+                $("#request-workflow-modal-request-flag [name=update-wip-properties-warning]").show();
+            }
             break;
         case C_APP_TS_REQUEST_DELETE:
             $("#request-workflow-modal-request-delete [name=rqs-value]").html(RqsValue);
@@ -132,8 +143,6 @@ app.release.workflow.modal.request.create = function () {
             });
             break;
     }
-
-    app.release.workflow.modal.request.validation.create(RqsCode);
 };
 
 app.release.workflow.modal.request.ajax.ReadCurrentAccess = function () {
@@ -288,6 +297,7 @@ app.release.workflow.modal.request.ajax.create = function (RqsCode) {
                 "RqsCode": RqsCode,
                 "CmmValue": CmmValue,
                 "WrqReservationFlag": $("#request-workflow-modal-request-publish [name=wrq-reservation-flag]").prop("checked"),
+                "WrqExperimentalFlag": $("#request-workflow-modal-request-publish [name=wrq-experimental-flag]").prop("checked"),
                 "WrqArchiveFlag": $("#request-workflow-modal-request-publish [name=wrq-archive-flag]").prop("checked"),
                 "WrqExceptionalFlag": $("#request-workflow-modal-request-publish [name=wrq-exceptional-flag]").prop("checked"),
                 "WrqDatetime": moment($("#request-workflow-modal-request-publish [name=wrq-datetime]").val(), app.config.mask.datetime.display).format(app.config.mask.datetime.ajax)
@@ -302,6 +312,7 @@ app.release.workflow.modal.request.ajax.create = function (RqsCode) {
                 "RqsCode": RqsCode,
                 "CmmValue": CmmValue,
                 "WrqReservationFlag": $("#request-workflow-modal-request-flag [name=wrq-reservation-flag]").prop("checked"),
+                "WrqExperimentalFlag": $("#request-workflow-modal-request-flag [name=wrq-experimental-flag]").prop("checked"),
                 "WrqArchiveFlag": $("#request-workflow-modal-request-flag [name=wrq-archive-flag]").prop("checked")
             };
             break;

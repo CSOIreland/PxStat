@@ -38,7 +38,6 @@ $(document).ready(function () {
   bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
-  $("#tracing-input").find("[name='trc-ip']").attr('placeholder', app.label.static["sample-ip-address"]);
 
 });
 

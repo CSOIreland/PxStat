@@ -124,7 +124,100 @@ app.group.drawCallbackGroup = function () {
     $("#group-read table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.group.modal.delete);
     // Extra Info
     app.library.datatable.showExtraInfo('#group-read table', app.group.childRowContact);
+
+    // Click event "internalLink"
+    $("#group-read table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+        e.preventDefault();
+        var callbackParam = {
+            idn: $(this).attr("idn"),
+            "GrpValue": $(this).attr("grp-value")
+        };
+        // Ajax read 
+        app.group.ajax.readMatrixByGroup(callbackParam);
+
+        $("#group-matrix-modal").modal("show");
+
+    });
+};
+
+/**
+ * Ajax Read Release List
+ * @param  {} callbackParam
+ */
+app.group.ajax.readMatrixByGroup = function (callbackParam) {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Data.Matrix_API.ReadByGroup",
+        {
+            GrpCode: callbackParam.idn,
+            LngIsoCode: app.label.language.iso.code
+        },
+        "app.group.callback.readMatrixByGroup",
+        callbackParam);
+};
+
+/**
+ * Handle data from Ajax
+ * @param  {} data
+ * @param  {} callbackParam
+ */
+app.group.callback.readMatrixByGroup = function (data, callbackParam) {
+    app.group.drawMatrixByGroupDataTable(data, callbackParam);
+};
+
+app.group.drawMatrixByGroupDataTable = function (data, callbackParam) {
+    $("#group-matrix-modal").find("[name=group-code]").text(callbackParam.idn);
+    $("#group-matrix-modal").find("[name=group-value]").text(callbackParam.GrpValue);
+    if ($.fn.dataTable.isDataTable("#group-matrix-modal table")) {
+        app.library.datatable.reDraw("#group-matrix-modal table", data);
+    } else {
+        var localOptions = {
+            data: data,
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        var attributes = { MtrCode: row.MtrCode };
+                        return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
+                    }
+                }
+            ],
+            drawCallback: function (settings) {
+                app.group.drawCallbackMatrix();
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        $("#group-matrix-modal table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.group.drawCallbackMatrix();
+        });
+    }
+
 }
+
+app.group.drawCallbackMatrix = function () {
+    $('[data-toggle="tooltip"]').tooltip();
+
+    //Release version link click redirect to 
+    $("#group-matrix-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
+        e.preventDefault();
+        //Set the code
+        var MtrCode = $(this).attr("MtrCode");
+
+        $("#group-matrix-modal").modal("hide");
+
+        //Wait for the modal to close
+        $("#group-matrix-modal").on('hidden.bs.modal', function (e) {
+            //Unbind the event for next call
+            $("#group-matrix-modal").off('hidden.bs.modal');
+
+            api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": MtrCode });
+        })
+
+
+    });
+}
+
 
 /**
  * draw table with data from api
@@ -182,14 +275,19 @@ app.group.drawDataTable = function (data) {
                     "visible": false,
                     "searchable": true
                 },
-                { data: "GrpUserCount" },
-                { data: "GrpReleaseCount" },
+                { data: "CcnCount" },
+                {
+                    data: null,
+                    render: function (_data, _type, row) {
+                        return app.library.html.link.internal({ idn: row.GrpCode, "grp-value": row.GrpName }, String(row.MtrCount));
+                    }
+                },
                 {
                     data: null,
                     sorting: false,
                     searchable: false,
                     render: function (data, type, row) {
-                        return app.library.html.deleteButton({ idn: row.GrpCode }, row.GrpUserCount > 0 || row.GrpReleaseCount > 0 ? true : false);
+                        return app.library.html.deleteButton({ idn: row.GrpCode }, row.CcnCount > 0 || row.MtrCount > 0 ? true : false);
                     },
                     "width": "1%"
                 }
@@ -1038,7 +1136,6 @@ app.group.membergroup.callback.createOnSuccess = function (data, callbackParam) 
         $("#group-modal-add-member").find("[name=group-input-add-member-username]").text("");
         $("#group-modal-add-member").find("[name=group-input-add-member-name]").text("");
         $("#group-modal-add-member").find("[name=group-input-add-member-approve-flag]").bootstrapToggle('off');
-        //$("#group-modal-add-member").find("[name=group-input-add-member-approve-flag]").prop('checked');
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.CcnUsername]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);

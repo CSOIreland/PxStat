@@ -15,7 +15,7 @@ Application - Library
 /* DataTable - Override responsive bootstrap extension */
 
 table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
-    background-color: #17a2b8
+    background-color: #008FAA
 }
 
 table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th:first-child:before {
@@ -23,7 +23,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before, tabl
 }
 
 table.dataTable.dtr-column>tbody>tr>td.control:before, table.dataTable.dtr-column>tbody>tr>th.control:before {
-    background-color: #17a2b8
+    background-color: #008FAA
 }
 
 table.dataTable.dtr-column>tbody>tr.parent td.control:before, table.dataTable.dtr-column>tbody>tr.parent th.control:before {
@@ -45,5 +45,5 @@ table.dataTable.dtr-column>tbody>tr.parent td.control:before, table.dataTable.dt
 /* Accessibility requirements select2 Placeholder */
 
 .select2-selection__placeholder {
-    color: #212529 !important; 
+    color: #212529 !important;
 }

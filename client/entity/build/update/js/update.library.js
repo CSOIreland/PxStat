@@ -309,7 +309,7 @@ app.build.update.addManualPeriod = function () {
 
     //Append codes and values from new periods
     $('#build-update-manual-periods table').find("tbody tr").each(function (index) {
-        codes.push($(this).find("td[idn=code]").text());
+        codes.push($(this).find("td[idn=code]").text().replace(/ /g, ''));
         values.push($(this).find("td[idn=value]").text());
     });
 
@@ -445,7 +445,7 @@ app.build.update.addUploadPeriod = function () {
 
     //Append codes and values from new periods
     $.each(app.build.update.upload.file.content.period.data.JSON.data, function (key, value) {
-        codes.push(value[C_APP_CSV_CODE]);
+        codes.push(value[C_APP_CSV_CODE].replace(/ /g, ''));
         values.push(value[C_APP_CSV_VALUE]);
     });
 
@@ -630,47 +630,23 @@ app.build.update.updateOutput = function () {
         numPeriods = numPeriods + dimension.Frequency.Period.length;
 
         var numCells = numClassificationVariables * numStatistics * numPeriods;
-        if (numCells > app.config.entity.build.threshold.dataset) {
-            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.dataset)]));
+        if (numCells > app.config.entity.build.threshold.hard) {
+            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.hard)]));
+        }
+
+        if (!validationErrors.length) {
+            if (numCells < app.config.entity.build.threshold.soft) {
+                app.build.update.confirmUpdateOutput();
+            }
+            else {
+                api.modal.confirm(
+                    app.library.html.parseDynamicLabel("confirm-update-csv-download", [app.library.utility.formatNumber(numCells)]),
+                    app.build.update.confirmUpdateOutput
+                );
+            }
         }
     }
-    if (!validationErrors.length) {
-        //populate json data object
-        app.build.update.data = $.extend(true, app.build.update.data, {
-            "MtrInput": app.build.update.upload.file.content.source.Base64,
-            "MtrCode": $("#build-update-properties [name=mtr-value]").val(),
-            "FrqCodeTimeval": $("#build-update-properties").find("[name=frequency-code]").val(),
-            "FrqValueTimeval": $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val(),
-            "MtrOfficialFlag": $("#build-update-properties").find("[name=official-flag]").prop('checked'),
-            "CprCode": $("#build-update-properties").find("[name=copyright-code]").val(),
-            "Data": app.build.update.upload.file.content.data.JSON == null ? [] : app.build.update.upload.file.content.data.JSON.data
-        });
-
-        //build properties to dimensions 
-        $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
-            var lngIsoCode = jsonStat.extension.language.code;
-            var tinyMceId = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode).find("[name=note-value]").attr("id");
-            var noteValue = tinymce.get(tinyMceId).getContent();
-            $(app.build.update.data.Dimension).each(function (key, value) {
-                if (this.LngIsoCode == lngIsoCode) {
-                    this.MtrTitle = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=title-value]").val();
-                    this.Frequency.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=frequency-value]").val();
-                    this.MtrNote = noteValue;
-                    this.StatisticLabel = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=statistic-label]").val();
-                }
-            });
-        });
-
-
-
-        //Populate namespace variables
-        app.build.update.upload.FrqCode = $("#build-update-properties").find("[name=frequency-code]").val();
-        app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
-        app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.updateOutput", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Update"] });
-
-    }
-
-    else {
+    if (validationErrors.length) {
         //show errors to user
         var errorOutput = $("<ul>", {
             class: "list-group"
@@ -685,6 +661,40 @@ app.build.update.updateOutput = function () {
         api.modal.error(errorOutput);
     }
 };
+
+app.build.update.confirmUpdateOutput = function () {
+    //populate json data object
+    app.build.update.data = $.extend(true, app.build.update.data, {
+        "MtrInput": app.build.update.upload.file.content.source.Base64,
+        "MtrCode": $("#build-update-properties [name=mtr-value]").val(),
+        "FrqCodeTimeval": $("#build-update-properties").find("[name=frequency-code]").val(),
+        "FrqValueTimeval": $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val(),
+        "MtrOfficialFlag": $("#build-update-properties").find("[name=official-flag]").prop('checked'),
+        "CprCode": $("#build-update-properties").find("[name=copyright-code]").val(),
+        "Data": app.build.update.upload.file.content.data.JSON == null ? [] : app.build.update.upload.file.content.data.JSON.data
+    });
+
+    //build properties to dimensions 
+    $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
+        var lngIsoCode = jsonStat.extension.language.code;
+        var tinyMceId = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode).find("[name=note-value]").attr("id");
+        var noteValue = tinymce.get(tinyMceId).getContent();
+        $(app.build.update.data.Dimension).each(function (key, value) {
+            if (this.LngIsoCode == lngIsoCode) {
+                this.MtrTitle = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=title-value]").val();
+                this.Frequency.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=frequency-value]").val();
+                this.MtrNote = noteValue;
+                this.StatisticLabel = $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=statistic-label]").val();
+            }
+        });
+    });
+
+    //Populate namespace variables
+    app.build.update.upload.FrqCode = $("#build-update-properties").find("[name=frequency-code]").val();
+    app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
+    app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.updateOutput", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Update"] });
+
+}
 
 app.build.update.isPeriodsDimensionsValid = function () {
     var isValid = true;
@@ -1154,7 +1164,11 @@ app.build.update.downloadCsv = function () {
                 }
             })
             numDatapoints = numDatapoints * $("#build-update-download-csv-file select").find('option:selected').length
-            if (numDatapoints > app.config.entity.build.threshold.downloadCsv) {
+            if (numDatapoints > app.config.entity.build.threshold.hard) {
+                api.modal.error(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numDatapoints), app.library.utility.formatNumber(app.config.entity.build.threshold.hard)]));
+            }
+
+            else if (numDatapoints > app.config.entity.build.threshold.soft) {
                 api.modal.confirm(
                     app.library.html.parseDynamicLabel("confirm-update-csv-download", [app.library.utility.formatNumber(numDatapoints)]),
                     app.build.update.upload.validate.ajax.read,

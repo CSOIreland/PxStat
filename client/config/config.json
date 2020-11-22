@@ -68,12 +68,17 @@
 				"enabled": true,
 				"legendPosition": "bottom"
 			},
-			"snippet": null
+			"snippet": null,
+			"properties": {
+				"archive": "https://www.domain.extension/path",
+				"underReservation": "https://www.domain.extension/path",
+				"experimental": "https://www.domain.extension/path"
+			}
 		},
 		"build": {
 			"threshold": {
-				"downloadCsv": 1000000,
-				"dataset": 10000000
+				"hard": 10000000,
+				"soft": 1000000
 			},
 			"geoJsonLookup": {
 				"enabled": false,

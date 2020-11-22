@@ -32,8 +32,6 @@ $(document).ready(function () {
         app.analytic.setDatePicker();
     });
 
-    // Translate placheholder
-    $("#select-card").find("[name='nlt-masked-ip']").attr('placeholder', app.label.static["sample-ip-address"]);
 
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());

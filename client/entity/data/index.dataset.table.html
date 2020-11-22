@@ -1,23 +1,30 @@
 <div name="dimension-containers" class="row">
 </div>
 <div class="card rounded-0">
-    <div class="card-body bg-light p-2 border-bottom">
+    <div class="card-body bg-default p-2 border-bottom">
         <div class="row p-2">
-            <div class="col text-right "> <span label="data-selected" class="font-weight-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
+            <div class="col-xs-12 col-sm-6 text-left my-2">
+                <span label="codes" class="text-right font-weight-bold"></span>
+                <span><input checked type="checkbox" id="data-dataset-table-code-toggle"></span>
+                <span class="text-nowrap"><label label="pivot" class="m-2 font-weight-bold"></label>
+                    <select name="pivot" class="form-control d-inline w-auto">
+                    </select></span>
+            </div>
+            <div class="col-xs-12 col-sm-6 text-right my-2">
+                <span label="data-selected" class="font-weight-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
             </div>
         </div>
     </div>
-    <div class="card-body bg-light p-2">
+    <div class="card-body bg-default p-2">
         <div class="row p-2">
-            <div class="col-xs-12 col-sm-4 text-left my-2"> <span label="codes" class="text-right font-weight-bold"></span>
-                <span><input checked type="checkbox" id="data-dataset-table-code-toggle-select"></span>
-                <!-- Data Table data Download Results button-->
-            </div>
+            <div class="col-xs-12 col-sm-6 text-left my-2">
 
-            <div class="col-xs-12 col-sm-8 text-right my-2">
                 <button name="reset" type="button" class="btn btn-warning text-dark">
                     <i class="fas fa-undo"></i> <span label="reset"></span>
                 </button>
+            </div>
+
+            <div class="col-xs-12 col-sm-6 text-right my-2">
                 <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-download"></i> <span label="download"></span>
                 </button>
@@ -39,15 +46,7 @@
     <div class="col-sm px-0">
         <div class="card mb-2" name="result-table">
             <div class="card-header">
-                <div class="row justify-content-between align-items-center px-2">
-                    <h5 label="results"></h5>
-                    <span>
-                        <button name="data-pivot-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-arrows-alt"></i> <span label="pivot"></span>
-                        </button>
-                        <div name="pivot-dropdown" class="dropdown-menu" aria-labelledby="data-pivot-results"></div>
-                    </span>
-                </div>
+                <h5 label="results"></h5>
             </div>
             <!-- Data Table data table-->
             <div class="card-body">
@@ -57,23 +56,6 @@
                     </thead>
                     <tbody></tbody>
                 </table>
-            </div>
-            <div class="card-footer">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-4 text-left my-2">
-                        <!-- Data Table data Show Codes button-->
-                        <span><span label="codes" class="text-right font-weight-bold"></span>
-                            <span><input checked type="checkbox" id="data-dataset-table-code-toggle-result" name="code-toggle"></span></span>
-                        <span>
-                    </div>
-                    <div class="col-xs-12 col-sm-8 text-right my-2">
-                        <!-- Data Table data Download Results button-->
-                        <button name="data-pivot-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-arrows-alt"></i> <span label="pivot"></span>
-                        </button>
-                        <div name="pivot-dropdown" class="dropdown-menu" aria-labelledby="data-pivot-results"></div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -201,7 +183,7 @@
         <div id="data-dataset-table-accordion-collapse-widget" class="collapse" aria-labelledby="data-dataset-table-accordion-heading-widget" data-parent="#data-dataset-table-accordion">
             <div class="card-body">
                 <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="auto-update"></span>
                     </div>
                     <div class="col-8 p-2">
@@ -209,7 +191,7 @@
                     </div>
                 </div>
                 <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="copyright"></span>
                     </div>
                     <div class="col-8 p-2">
@@ -218,7 +200,7 @@
                 </div>
 
                 <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="link"></span>
                     </div>
                     <div class="col-8 p-2">
@@ -226,7 +208,7 @@
                     </div>
                 </div>
                 <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="title"></span>
                     </div>
                     <div class="col-8 p-2">
@@ -234,7 +216,7 @@
                     </div>
                 </div>
                 <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="custom-JSON"></span>
                     </div>
                     <div class="col-8 p-2">
@@ -265,7 +247,7 @@
                 </div>
 
                 <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-light border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span class="clearfix" label="snippet-code"></span>
                         <i name="copy-snippet-code" class="far fa-copy fa-2x mt-2" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-accordion-snippet-code" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" data-original-title="" label-tooltip="copy-to-clipboard"></i>
                     </div>
@@ -285,7 +267,7 @@
 <div id="data-dataset-table-templates" style="display: none">
     <div name="dimension-container" class="col-xl-6 col-sm-12">
         <div class="card mb-4">
-            <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center p-2"><span>
+            <div class="card-header bg-default text-dark d-flex justify-content-between align-items-center p-2"><span>
                     <span class="font-weight-bold">
                         <input name="select-all" data-toggle="tooltip" data-placement="top" title="" type="checkbox" value="" data-original-title="" label-tooltip="select-all">
                         <span name="dimension-label"></span></span>
@@ -306,8 +288,6 @@
         <span><small name="version" class="text-muted"></small></span>
     </a>
 
-    <a class="dropdown-item" name="pivot" href="#"> </a>
-    <a class="dropdown-item text-muted" name="un-pivot" label="un-pivot" href="#"></a>
     <div name="data-view">
         <!-- Data Table data set Header-->
 

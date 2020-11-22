@@ -507,7 +507,7 @@ app.build.create.dimension.submitManualStatistic = function () {
     var decimals = [];
     $('#build-create-manual-si table').find("tbody tr").each(function (index) {
         var row = $(this);
-        codes.push(row.find("td[idn=code]").text().trim());
+        codes.push(row.find("td[idn=code]").text().trim().replace(/ /g, ''));
         values.push(row.find("td[idn=value]").text().trim());
         units.push(row.find("td[idn=unit]").text().trim());
         decimals.push(row.find("td[idn=decimal]").text().trim());
@@ -596,7 +596,7 @@ app.build.create.dimension.submitUploadStatistic = function () {
     var units = [];
     var decimals = [];
     $(app.build.create.file.statistic.content.data.JSON.data).each(function (key, value) {
-        codes.push(value[C_APP_CSV_CODE]);
+        codes.push(value[C_APP_CSV_CODE].replace(/ /g, ''));
         values.push(value[C_APP_CSV_VALUE]);
         units.push(value[C_APP_CSV_UNIT]);
         decimals.push(value[C_APP_CSV_DECIMAL]);
@@ -1202,7 +1202,7 @@ app.build.create.dimension.callback.buildManualClassification = function () {
 
     $('#build-create-manual-classification table').find("tbody tr").each(function (index) {
         //populate codes array to check for duplicates
-        variableCodes.push($(this).find("td[idn=code]").text().trim());
+        variableCodes.push($(this).find("td[idn=code]").text().trim().replace(/ /g, ''));
         variableValues.push($(this).find("td[idn=value]").text().trim());
     });
 
@@ -1299,7 +1299,7 @@ app.build.create.dimension.callback.buildUploadClassification = function () {
     var variableCodes = [];
     var variableValues = [];
     $(app.build.create.file.classification.content.data.JSON.data).each(function (key, value) {
-        variableCodes.push(value[C_APP_CSV_CODE].trim());
+        variableCodes.push(value[C_APP_CSV_CODE].trim().replace(/ /g, ''));
         variableValues.push(value[C_APP_CSV_VALUE].trim());
     });
 
@@ -1602,7 +1602,7 @@ app.build.create.dimension.addPeriodsManual = function () {
     //add new periods to array
     $('#build-create-manual-periods table').find("tbody tr").each(function (index) {
         var row = $(this);
-        codes.push(row.find("td[idn=code]").text().trim());
+        codes.push(row.find("td[idn=code]").text().trim().replace(/ /g, ''));
         values.push(row.find("td[idn=value]").text().trim());
     });
 
@@ -1647,7 +1647,7 @@ app.build.create.dimension.addPeriodsUpload = function () {
     var codes = [];
     var values = [];
     $(app.build.create.file.period.content.data.JSON.data).each(function (key, value) {
-        codes.push(value[C_APP_CSV_CODE].trim().toLowerCase());
+        codes.push(value[C_APP_CSV_CODE].trim().toLowerCase().replace(/ /g, ''));
         values.push(value[C_APP_CSV_VALUE].trim().toLowerCase());
     });
 
@@ -2144,6 +2144,7 @@ app.build.create.dimension.buildDataObject = function () {
                 }
             });
         }
+
     }
     if (!errors.length) {
         var dimension = null;
@@ -2159,15 +2160,29 @@ app.build.create.dimension.buildDataObject = function () {
 
         var numCells = numClassificationVariables * dimension.Statistic.length * dimension.Frequency.Period.length;
 
-        if (numCells > app.config.entity.build.threshold.dataset) {
-            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.dataset)]));
+        if (numCells > app.config.entity.build.threshold.hard) {
+            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.hard)]));
+        }
+
+
+        if (!errors.length) {
+            //if under soft threshold - go to 2170, else run confirm, pass name of function & params - app.build.create.initiate.data
+            if (numCells < app.config.entity.build.threshold.soft) {
+                app.build.create.dimension.ajax.create(app.build.create.initiate.data);
+            }
+            else {
+                api.modal.confirm(
+                    app.library.html.parseDynamicLabel("confirm-update-csv-download", [app.library.utility.formatNumber(numCells)]),
+                    app.build.create.dimension.ajax.create,
+                    app.build.create.initiate.data
+                );
+
+            }
         }
 
     }
-    if (!errors.length) {
-        app.build.create.dimension.ajax.create(app.build.create.initiate.data);
-    }
-    else {
+
+    if (errors.length) {
         var errorOutput = $("<ul>", {
             class: "list-group"
         });
@@ -2180,7 +2195,9 @@ app.build.create.dimension.buildDataObject = function () {
         });
         api.modal.error(errorOutput);
     }
+
 };
+
 
 /**
  *Get px file
