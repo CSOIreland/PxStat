@@ -2,8 +2,10 @@ $(document).ready(function () {
   // Entity with restricted access
   app.navigation.access.check(app.config.build.import.moderator ? [C_APP_PRIVILEGE_MODERATOR, C_APP_PRIVILEGE_POWER_USER] : [C_APP_PRIVILEGE_POWER_USER]);
 
-  app.navigation.layout.set(false);
-  app.navigation.breadcrumb.set([app.label.static["build"], app.label.static["import"]]);
+  app.navigation.setLayout(false);
+  app.navigation.setBreadcrumb([[app.label.static["build"]], [app.label.static["import"]]]);
+  app.navigation.setMetaDescription();
+  app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["import"]);
 
   // Load Modal
   api.content.load("#overlay", "entity/build/import/index.modal.html");

@@ -1,7 +1,6 @@
 ﻿using API;
 using PxParser.Resources.Parser;
 using PxStat.Data;
-using PxStat.Resources;
 using PxStat.Resources.PxParser;
 using PxStat.Template;
 using System.Collections.Generic;
@@ -56,15 +55,8 @@ namespace PxStat.Build
 
             //There might be a cache:
             Matrix matrixPxFile;
-            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + DTO.Signature);
 
-            if (mtrCache.hasData)
-            {
-                SerializableMatrix sm = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
-                matrixPxFile = new Matrix().ExtractFromSerializableMatrix(sm);
-            }
-            else
-                matrixPxFile = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
+            matrixPxFile = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
 
 

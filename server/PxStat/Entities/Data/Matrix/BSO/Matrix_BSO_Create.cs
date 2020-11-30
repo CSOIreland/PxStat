@@ -2,7 +2,6 @@
 using PxParser.Resources.Parser;
 using PxStat.Build;
 using PxStat.Data.Px;
-using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Navigation;
 using PxStat.Template;
@@ -77,19 +76,11 @@ namespace PxStat.Data
 
             Matrix theMatrixData;
 
-            //Get the matrix, but use the cached version that was created during validation if at all possible
-            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Data", "Matrix_API", "Validate", Constants.C_CAS_MATRIX_VALIDATE + DTO.Signature);
 
-            if (mtrCache.hasData)
-            {
-                theMatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
-            }
-            else
-            {
 
-                PxDoc = PxStatEngine.ParsePxInput(DTO.MtrInput);
-                theMatrixData = new Matrix(PxDoc, DTO);
-            }
+            PxDoc = PxStatEngine.ParsePxInput(DTO.MtrInput);
+            theMatrixData = new Matrix(PxDoc, DTO);
+
 
             Matrix_BSO mBso = new Matrix_BSO(Ado);
 

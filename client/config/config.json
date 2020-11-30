@@ -30,7 +30,8 @@
 		},
 		"date": {
 			"ajax": "YYYY-MM-DD",
-			"display": "DD/MM/YYYY"
+			"display": "DD/MM/YYYY",
+			"dateRangePicker": "DD/MM/YYYY"
 		},
 		"time": {
 			"display": "HH:mm:ss"
@@ -63,7 +64,10 @@
 				"hard": 1000000
 			},
 			"pagination": 10,
-			"numberLatestReleases": 10,
+			"lastUpdatedTables": {
+				"defaultPageLength": 10,
+				"defaultNumDaysFrom": 6
+			},
 			"chart": {
 				"enabled": true,
 				"legendPosition": "bottom"

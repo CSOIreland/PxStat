@@ -108,18 +108,20 @@ app.data.dataset.callback.readMetadata = function (response) {
 
         if (app.data.dataset.metadata.jsonStat && app.data.dataset.metadata.jsonStat.length) {
             if (app.data.isLive) {
-                app.navigation.breadcrumb.set([app.data.dataset.metadata.jsonStat.extension.subject.value, {
-                    "text": app.data.dataset.metadata.jsonStat.extension.product.value,
-                    "goTo": {
-                        "pRelativeURL": "entity/data/",
-                        "pNav_link_SelectorToHighlight": "#nav-link-data",
-                        "pParams": {
-                            "PrcCode": app.data.dataset.metadata.jsonStat.extension.product.code
-                        }
-                    }
-                }]);
+                app.navigation.setBreadcrumb([
+                    [app.data.dataset.metadata.jsonStat.extension.subject.value],
+                    [app.data.dataset.metadata.jsonStat.extension.product.value, "entity/data/", "#nav-link-data", null, { "PrcCode": app.data.dataset.metadata.jsonStat.extension.product.code }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + app.data.dataset.metadata.jsonStat.extension.product.code],
+                    [app.data.dataset.metadata.jsonStat.extension.matrix + " - " + app.data.dataset.metadata.jsonStat.label, "entity/data/", "#nav-link-data", null, { "MtrCode": app.data.dataset.metadata.jsonStat.extension.matrix }, app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.dataset.metadata.jsonStat.extension.matrix]
+                ]);
             };
-
+            app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-table",
+                [
+                    app.data.dataset.metadata.jsonStat.extension.matrix,
+                    app.data.dataset.metadata.jsonStat.label,
+                    app.data.dataset.metadata.jsonStat.extension.copyright.name,
+                    moment(app.data.dataset.metadata.jsonStat.updated).format(app.config.mask.datetime.display)
+                ]));
+            app.navigation.setTitle(app.data.dataset.metadata.jsonStat.extension.matrix + " - " + app.data.dataset.metadata.jsonStat.label);
             app.data.dataset.callback.drawDatasetHeading();
 
             if (app.data.isModal) {
@@ -462,7 +464,10 @@ app.data.dataset.ajax.downloadDataset = function (apiParams) {
             apiParams,
             null,
             null,
-            { async: false });
+            {
+                async: false,
+                timeout: app.config.transfer.timeout
+            });
     }
     else {
         api.ajax.jsonrpc.request(
@@ -473,7 +478,10 @@ app.data.dataset.ajax.downloadDataset = function (apiParams) {
             apiParams,
             null,
             null,
-            { async: false });
+            {
+                async: false,
+                timeout: app.config.transfer.timeout
+            });
     }
 };
 
@@ -510,8 +518,14 @@ app.data.dataset.callback.downloadDataset = function (data, apiParams) {
 
 
 app.data.dataset.callback.back = function () {
+    //always remove last breadcrumb
+    $("#breadcrumb-nav").find(".breadcrumb-item").last().remove();
+    if (app.data.isSearch) {
+        //remove product and subject  also
+        $("#breadcrumb-nav").find(".breadcrumb-item").last().remove();
+        $("#breadcrumb-nav").find(".breadcrumb-item").last().remove();
+    }
     //first check if we have search results to display
-    var numSearchResults = $("#data-search-row-desktop [name=search-results] [name=search-result-item]").length;
     var numSearchResults = $("#data-search-row-desktop [name=search-results] [name=search-result-item]").length;
     if (numSearchResults > 0) {
         //back to search results

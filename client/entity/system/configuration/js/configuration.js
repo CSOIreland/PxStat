@@ -7,9 +7,10 @@ Custom JS application specific
 $(document).ready(function () {
   // Entity with restricted access
   app.navigation.access.check();
-  app.navigation.layout.set(false);
-  app.navigation.breadcrumb.set([app.label.static["system"], app.label.static["configuration"]]);
-
+  app.navigation.setLayout(false);
+  app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["configuration"]]]);
+  app.navigation.setMetaDescription();
+  app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["configuration"]);
   //Changing plus to minus
   $("#configuration-accordion").on('show.bs.collapse', function (e) {
     $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");

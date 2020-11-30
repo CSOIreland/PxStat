@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using XLsxHelper;
 using static PxStat.Data.Matrix;
 
@@ -147,9 +148,31 @@ namespace PxStat.Resources
                 }
             }
 
+            /*
+             If notes contains a BBCode link, then include the link in the notes
+             If there is a text with the link in  anchor (<a>) tags, then display the text with the hyperlink as the target
+             Otherwise, just show the note
+             */
+
             line = new List<XlsxValue>();
+            string noteString = null;
+
+
+            if (spec.NotesAsString != null)
+            {
+                noteString = new BBCode().Transform(spec.NotesAsString);
+
+                //This Regex must be compatible with the output of the BBCode Transform
+                noteString = Regex.Replace(noteString, "<a\\shref=\"([^\"]*)\">([^<]*)<\\/a>", "$2 ($1)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            }
+
+
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.note", lngIsoCode), StyleId = 1 });
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = spec.Notes != null ? String.Join(" ", spec.Notes) : spec.NotesAsString != null ? spec.NotesAsString : "", StyleId = 0 });
+
+
+            line.Add(new XlsxValue() { DataType = CellValues.String, Value = noteString != null ? noteString : "", StyleId = 0 });
+
+
             matrix.Add(line);
 
             if (theMatrix.Release != null)
@@ -157,10 +180,10 @@ namespace PxStat.Resources
                 if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
                 {
                     string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") +
-string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Constants.C_SYSTEM_XLSX_NAME, Constants.C_SYSTEM_XLSX_VERSION, spec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
+                        string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Constants.C_SYSTEM_XLSX_NAME, Constants.C_SYSTEM_XLSX_VERSION, spec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
                     line = new List<XlsxValue>();
                     line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.url", lngIsoCode), StyleId = 1 });
-                    line.Add(new XlsxValue() { DataType = CellValues.String, Value = Href, StyleId = 0 });
+                    line.Add(new XlsxValue() { DataType = CellValues.String, Value = Href, FormulaText = xl.GetHyperlink(Href), StyleId = 10 });
                     matrix.Add(line);
                 }
             }
@@ -232,7 +255,7 @@ string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomC
 
             line = new List<XlsxValue>();
             line.Add(new XlsxValue() { DataType = CellValues.String, Value = Label.Get("xlsx.url", lngIsoCode), StyleId = 1 });
-            line.Add(new XlsxValue() { DataType = CellValues.String, Value = theMatrix.Copyright.CprUrl, StyleId = 0 });
+            line.Add(new XlsxValue() { DataType = CellValues.String, StyleId = 10, Value = theMatrix.Copyright.CprUrl, FormulaText = xl.GetHyperlink(theMatrix.Copyright.CprUrl) });
             matrix.Add(line);
 
             line = new List<XlsxValue>();
@@ -307,7 +330,7 @@ string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomC
             xl.Close();
 
             //Test option...get a local version of the xlsx file
-           // xl.SaveToFile(@"C:\nok\Schemas\" + theMatrix.Code + ".xlsx");
+            // xl.SaveToFile(@"C:\nok\Schemas\" + theMatrix.Code + ".xlsx");
 
             //return the serialized version of the spreadsheet
             return xl.SerializeSpreadsheetFromByteArrayBase64();

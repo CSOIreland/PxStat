@@ -13,7 +13,11 @@
   },
   "search": {
     "synonym-multiplier": 1,
-    "search-word-multiplier": 5
+    "search-word-multiplier": 15,
+    "release_word_multiplier": 1,
+    "product_word_multiplier": 10,
+    "subject_word_multiplier": 100
+
   }
 
 

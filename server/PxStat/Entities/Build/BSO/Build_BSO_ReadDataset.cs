@@ -42,20 +42,10 @@ namespace PxStat.Build
                 return false;
             }
 
-            //There might be a cache:
-
-
 
             Matrix theMatrixData;
-            ///MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + DTO.Signature);
 
-            //if (mtrCache.hasData)
-            //{
-            //    SerializableMatrix sm = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
-            //    theMatrixData = new Matrix().ExtractFromSerializableMatrix(sm);
-            //}
-            //else
-            //    //Get this matrix from the px file 
+            //Get this matrix from the px file 
             theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
             Build_BSO bBso = new Build_BSO();

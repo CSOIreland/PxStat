@@ -1,7 +1,6 @@
 ﻿using API;
 using PxStat.Resources;
 using PxStat.Security;
-using PxStat.System.Navigation;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
@@ -53,18 +52,8 @@ namespace PxStat.Data
             //See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO);
 
-            Navigation_ADO adoNav = new Navigation_ADO(Ado);
-            //If we're cacheing, we only want the cache to live until the next scheduled release goes live
-            //Also, if there is a next release before the scheduled cache expiry time, then we won't trust the cache
-            var nextRelease = adoNav.ReadNextLiveDate(DateTime.Now);
-            DateTime nextReleaseDate = default;
-            if (nextRelease.hasData)
-            {
-                if (!nextRelease.data[0].NextRelease.Equals(DBNull.Value))
-                    nextReleaseDate = Convert.ToDateTime(nextRelease.data[0].NextRelease);
-            }
 
-            if (cache.hasData && nextReleaseDate >= cache.expiresAt)
+            if (cache.hasData)
             {
                 Response.data = cache.data;
                 return true;

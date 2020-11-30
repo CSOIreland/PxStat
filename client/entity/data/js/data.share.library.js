@@ -16,6 +16,7 @@ app.data.share = function (MtrCode, PrdCode) {
     share.attr("id", "data-share");
     share.find("[name=link]").attr("id", "data-share-table-link");
     share.find("[name=copy-link-info]").attr("data-clipboard-target", "#data-share-table-link");
+    new ClipboardJS("#data-share [name=copy-link-info]");
     //set share card title
     if (MtrCode) {
         share.find("[name=card-header]").text(app.label.static["share-table"]);

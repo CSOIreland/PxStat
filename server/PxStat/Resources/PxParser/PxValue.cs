@@ -372,10 +372,13 @@ namespace PxParser.Resources.Parser
         /// 
         /// </summary>
         /// <param name="value"></param>
-        public PxQuotedValue(string value)
+        public PxQuotedValue(string value, bool removeHtml = true)
         {
             // Strip HTLML tags
-            QuotedValue = Regex.Replace(value, @"<.*?>", "");
+            if (removeHtml)
+                QuotedValue = Regex.Replace(value, @"<.*?>", "");
+            else
+                QuotedValue = value;
         }
 
         /// <summary>

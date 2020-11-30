@@ -13,3 +13,5 @@
 /server/PxStat/Properties/PublishProfiles/TEST.pubxml.user
 /server/PxStat/Properties/PublishProfiles/Live.pubxml.user
 /server/.vs
+/db/Thumbs.db
+/server/PxStat/Properties/PublishProfiles/Dev.pubxml.user

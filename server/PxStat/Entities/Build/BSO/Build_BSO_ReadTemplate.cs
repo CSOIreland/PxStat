@@ -2,7 +2,6 @@
 using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Entities.BuildData;
-using PxStat.Resources;
 using PxStat.Resources.PxParser;
 using PxStat.Template;
 using System.Dynamic;
@@ -58,20 +57,9 @@ namespace PxStat.Build
 
 
 
-            //Get this matrix from the px file , but we also need to pass in the Timeval stuff
-            //The "" bit is temporary until we make the parameters optional (Currently this interferes with existing overloads)
-
-            //There might be a cache:
             Matrix theMatrixData;
-            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + DTO.Signature);
 
-            if (mtrCache.hasData)
-            {
-                SerializableMatrix sm = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
-                theMatrixData = new Matrix().ExtractFromSerializableMatrix(sm);
-            }
-            else
-                theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
+            theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
             var signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()));
             if (signature != DTO.Signature)

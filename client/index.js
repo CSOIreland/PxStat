@@ -12,10 +12,6 @@ $(document).ready(function () {
     // Get Navigation
     api.content.load("#navigation", "template/navigation.html");
 
-  if (api.uri.getBody())
-    // Get Custom Body
-    api.content.load("#body", api.uri.getBody());
-
   if (!api.uri.getNoFooter())
     // Get Footer
     api.content.load("#footer", "template/footer.html");
@@ -67,8 +63,12 @@ $(document).ready(function () {
 
   // Check and stop if IE browser detected
   if (!app.library.utility.isIE()) {
+    // Get Custom Body
+    if (api.uri.getBody()) {
+      api.content.goTo(api.uri.getBody());
+    }
     // Load a CookieLink or the Default page
-    if (Cookies.get(C_COOKIE_LINK_SEARCH)) {
+    else if (Cookies.get(C_COOKIE_LINK_SEARCH)) {
       app.library.utility.cookieLink(C_COOKIE_LINK_SEARCH, "Search", "entity/data/", "#nav-link-data");
     } else if (Cookies.get(C_COOKIE_LINK_PRODUCT)) {
       app.library.utility.cookieLink(C_COOKIE_LINK_PRODUCT, "PrcCode", "entity/data/", "#nav-link-data");

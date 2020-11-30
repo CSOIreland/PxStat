@@ -54,6 +54,7 @@ app.data.search.callback.readNav = function (data) {
         );
         $.each(sbjValue.product, function (key, prcValue) {
             var product = $("#data-search-templates").find("[name=navigation-product-item]").clone();
+            product.attr("href", app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + prcValue.PrcCode);
             product.attr("prc-code", prcValue.PrcCode);
             product.attr("lng-iso-code", app.label.language.iso.code);
             product.find("[name=product-name]").text(prcValue.PrcValue);
@@ -134,7 +135,7 @@ app.data.searchResult.ajax.readSearch = function (search) {
 */
 app.data.searchResult.callback.readResults = function (data, params) {
     //always reset breadcrumb
-    app.navigation.breadcrumb.set([]);
+    app.navigation.setBreadcrumb([]);
     params = params || {};
     $("#data-filter, #data-search-row-desktop [name=search-results-non-archived], #data-search-row-desktop [name=search-results-archived]").empty();
     if (data && Array.isArray(data) && data.length) {
@@ -145,34 +146,26 @@ app.data.searchResult.callback.readResults = function (data, params) {
         $("#data-accordion-api").hide();
         if (params.PrcCode) {
             //update breadcrumb
-            app.navigation.breadcrumb.set([data[0].SbjValue, {
-                "text": data[0].PrcValue,
-                "goTo": {
-                    "pRelativeURL": "entity/data/",
-                    "pNav_link_SelectorToHighlight": "#nav-link-data",
-                    "pParams": {
-                        "PrcCode": data[0].PrcCode
-                    }
-                }
-            }]);
-        };
+            app.navigation.setBreadcrumb([
+                [data[0].SbjValue],
+                [data[0].PrcValue, "entity/data/", "#nav-link-data", null, { "PrcCode": data[0].PrcCode }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + data[0].PrcCode]
+            ]);
+            app.navigation.setTitle(data[0].PrcValue);
+            app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-product", [data[0].PrcCode, data[0].PrcValue]));
+        }
 
-        if (params.CprCode) {
+        else if (params.CprCode) {
             //update breadcrumb with copyright value
-            app.navigation.breadcrumb.set([{
-                "text": data[0].CprValue,
-                "goTo": {
-                    "pRelativeURL": "entity/data/",
-                    "pNav_link_SelectorToHighlight": "#nav-link-data",
-                    "pParams": {
-                        "CprCode": params.CprCode
-                    }
-                }
-            }]);
+            app.navigation.setBreadcrumb([
+                [data[0].CprValue, "entity/data/", "#nav-link-data", null, { "CprCode": params.CprCode }, app.config.url.application + C_COOKIE_LINK_COPYRIGHT + "/" + data[0].CprCode]
+            ]);
+            app.navigation.setTitle(data[0].CprValue);
+            app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-copyright", [data[0].CprCode, data[0].CprValue]));
+
         }
 
         // Implement GoTo
-        if (params.MtrCode && data.length == 1) {
+        else if (params.MtrCode && data.length == 1) {
             //collapse latest releases
             $("#data-latest-releases").remove();
             $("#data-accordion-collection-api").hide();
@@ -319,36 +312,39 @@ app.data.searchResult.callback.readResults = function (data, params) {
                 });
             }
         }
+        if (app.data.isSearch || app.data.isCopyrightGoTo) {
+            //Subject Filter List
+            var subjectFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
+            subjectFilterList.attr("filter-type", "subject");
+            var subjectFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
+            subjectFilterList.append(subjectFilterHeading.text(app.label.static["subjects"]));
 
-        //Subject Filter List
-        var subjectFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
-        subjectFilterList.attr("filter-type", "subject");
-        var subjectFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
-        subjectFilterList.append(subjectFilterHeading.text(app.label.static["subjects"]));
+            $.each(subjectsFiltered, function (key, value) {
+                var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                item.attr("sbj-code", value.SbjCode);
+                item.attr("active", "false");
+                item.find("[name=filter-list-item-value]").text(value.SbjValue);
+                item.find("[name=filter-list-item-count]").text(value.SbjCount);
+                subjectFilterList.append(item);
+            });
 
-        $.each(subjectsFiltered, function (key, value) {
-            var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
-            item.attr("sbj-code", value.SbjCode);
-            item.attr("active", "false");
-            item.find("[name=filter-list-item-value]").text(value.SbjValue);
-            item.find("[name=filter-list-item-count]").text(value.SbjCount);
-            subjectFilterList.append(item);
-        });
+            //Products Filter List
+            var productsFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
+            productsFilterList.attr("filter-type", "product");
+            var productsFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
+            productsFilterList.append(productsFilterHeading.text(app.label.static["products"]));
 
-        //Products Filter List
-        var productsFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
-        productsFilterList.attr("filter-type", "product");
-        var productsFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
-        productsFilterList.append(productsFilterHeading.text(app.label.static["products"]));
+            $.each(productsFiltered, function (key, value) {
+                var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                item.attr("prc-code", value.PrcCode);
+                item.attr("active", "false");
+                item.find("[name=filter-list-item-value]").text(value.PrcValue);
+                item.find("[name=filter-list-item-count]").text(value.PrcCount);
+                productsFilterList.append(item);
+            });
+        }
 
-        $.each(productsFiltered, function (key, value) {
-            var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
-            item.attr("prc-code", value.PrcCode);
-            item.attr("active", "false");
-            item.find("[name=filter-list-item-value]").text(value.PrcValue);
-            item.find("[name=filter-list-item-count]").text(value.PrcCount);
-            productsFilterList.append(item);
-        });
+
 
         //Copyrights Filter List
         var copyrightsFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
@@ -430,7 +426,11 @@ app.data.searchResult.callback.readResults = function (data, params) {
 
 
         //collapse navigation HTML
-        $("#data-filter").append(languagesFilterList.get(0).outerHTML + subjectFilterList.get(0).outerHTML + productsFilterList.get(0).outerHTML + copyrightsFilterList.get(0).outerHTML);
+        $("#data-filter").append(languagesFilterList.get(0).outerHTML);
+        if (app.data.isSearch || app.data.isCopyrightGoTo) {
+            $("#data-filter").append(subjectFilterList.get(0).outerHTML + productsFilterList.get(0).outerHTML);
+        }
+        $("#data-filter").append(copyrightsFilterList.get(0).outerHTML);
         if (propertiesFilterList) {
             $("#data-filter").append(propertiesFilterList.get(0).outerHTML)
         }
@@ -693,7 +693,7 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
 
     $.each(paginatedResults, function (key, entry) {
         var resultItem = $("#data-search-result-templates").find("[name=search-result-item]").clone(); //a Result Item
-        resultItem.attr("mtr-code", entry.MtrCode).attr("lng-iso-code", entry.LngIsoCode);
+        resultItem.attr("mtr-code", entry.MtrCode).attr("lng-iso-code", entry.LngIsoCode).attr("href", app.config.url.application + C_COOKIE_LINK_TABLE + "/" + entry.MtrCode);
         resultItem.find("[name=mtr-title]").text(entry.MtrTitle);
 
         //release date & time   

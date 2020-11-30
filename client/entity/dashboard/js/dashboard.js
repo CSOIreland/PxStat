@@ -2,8 +2,10 @@
 Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
-    app.navigation.layout.set(false);
-    app.navigation.breadcrumb.set([app.label.static["dashboard"]]);
+    app.navigation.setLayout(false);
+    app.navigation.setBreadcrumb([[app.label.static["dashboard"]]]);
+    app.navigation.setMetaDescription();
+    app.navigation.setTitle(app.label.static["dashboard"]);
 
     // Load Analytics Modal 
     api.content.load("#overlay", "entity/analytic/index.modal.html");

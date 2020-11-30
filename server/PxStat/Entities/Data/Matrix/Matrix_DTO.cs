@@ -10,14 +10,12 @@ using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using XLsxHelper;
-using static PxStat.Data.Matrix;
 
 namespace PxStat.Data
 {
@@ -121,153 +119,9 @@ namespace PxStat.Data
             public List<ClassificationRecordDTO_Create> Classifications { get; set; }
         }
 
-        /// <summary>
-        /// Get an object which contains the matrix plus a data structure to contain Interface properties 
-        /// as definite objects. This enhances serialization and deserialization.
-        /// </summary>
-        /// <returns></returns>
-        internal SerializableMatrix GetSerializableObject()
-        {
-            SerializableMatrix sMatrix = new SerializableMatrix() { TheMatrix = this, SerialSpecs = new List<SerialSpec>() };
-
-            sMatrix.Cells = this.Cells;
-            if (this.Languages != null)
-            {
-                sMatrix.Languages = new List<PxQuotedValue>();
-                foreach (var lang in this.Languages)
-                {
-                    sMatrix.Languages.Add(new PxQuotedValue(lang.SingleValue));
-                }
-            }
-
-            if (this.OtherLanguages != null)
-            {
-                sMatrix.OtherLanguages = new List<string>();
-                foreach (var lang in this.OtherLanguages)
-                    sMatrix.OtherLanguages.Add(lang);
-            }
-            sMatrix.Domain = this.Domain != null ? GetDimensionAsList(this.Domain) : null;
-
-            sMatrix.SerialSpecs.Add(new SerialSpec()
-            {
-                LngIsoCode = this.MainSpec.Language,
-                TheSpec = this.MainSpec,
-                TimeValueSet = this.MainSpec.TimeValsIsDefined ? GetDimensionAsList(this.MainSpec.TimeVals) : null,
-                ValueSet = GetDimensionAsList(this.MainSpec.Values),
-                MainValueSet = GetDimensionAsList(this.MainSpec.MainValues)
-            });
-
-            if (this.OtherLanguageSpec != null)
-            {
-                foreach (var spec in OtherLanguageSpec)
-                {
-                    sMatrix.SerialSpecs.Add(new SerialSpec()
-                    {
-                        LngIsoCode = spec.Language,
-                        TheSpec = spec,
-                        TimeValueSet = spec.TimeValsIsDefined ? GetDimensionAsList(spec.TimeVals) : null,
-                        ValueSet = GetDimensionAsList(spec.Values),
-                        MainValueSet = GetDimensionAsList(this.MainSpec.MainValues)
-                    });
-                }
-            }
-
-            return sMatrix;
-        }
 
 
-        /// <summary>
-        /// Extract the fully restored Matrix from the serializable object
-        /// </summary>
-        /// <param name="sm"></param>
-        /// <returns></returns>
-        internal Matrix ExtractFromSerializableMatrix(SerializableMatrix sm)
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            sm.TheMatrix.MainSpec = DeserializeSpec(sm, sm.TheMatrix.MainSpec.Language);
 
-            if (sm.TheMatrix.OtherLanguageSpec != null)
-            {
-                List<Specification> specs = new List<Specification>();
-                foreach (var sp in sm.TheMatrix.OtherLanguageSpec)
-                {
-                    specs.Add(DeserializeSpec(sm, sp.Language));
-                }
-                sm.TheMatrix.OtherLanguageSpec = specs;
-            }
-
-            sm.TheMatrix.Cells = sm.Cells;
-            if (sm.Languages != null)
-            {
-                sm.TheMatrix.Languages = new List<IPxSingleElement>();
-                foreach (var lang in sm.Languages)
-                {
-                    sm.TheMatrix.Languages.Add(lang);
-                }
-
-            }
-
-            if (sm.OtherLanguages != null) sm.TheMatrix.OtherLanguages = sm.OtherLanguages;
-            sw.Stop();
-            return sm.TheMatrix;
-        }
-        /// <summary>
-        /// Get a specification with fully serializable data structures
-        /// </summary>
-        /// <param name="sm"></param>
-        /// <param name="LngIsoCode"></param>
-        /// <returns></returns>
-        private Specification DeserializeSpec(SerializableMatrix sm, string LngIsoCode)
-        {
-
-            SerialSpec mspec = sm.SerialSpecs.Where(x => x.LngIsoCode == LngIsoCode).FirstOrDefault();
-
-            Specification spec = sm.TheMatrix.GetSpecFromLanguage(LngIsoCode);
-
-            spec.Values = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
-
-            foreach (var dim in mspec.ValueSet)
-            {
-                IList<IPxSingleElement> dlist = new List<IPxSingleElement>();
-                foreach (var item in dim.Value)
-                {
-                    dlist.Add(new PxStringValue(item));
-                }
-                KeyValuePair<string, IList<IPxSingleElement>> kvp = new KeyValuePair<string, IList<IPxSingleElement>>(dim.Key, dlist);
-                spec.Values.Add(kvp);
-            }
-            if (mspec.TimeValueSet != null)
-            {
-                spec.TimeVals = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
-
-                foreach (var dim in mspec.TimeValueSet)
-                {
-                    IList<IPxSingleElement> dlist = new List<IPxSingleElement>();
-                    foreach (var item in dim.Value)
-                    {
-                        dlist.Add(new PxStringValue(item));
-                    }
-                    KeyValuePair<string, IList<IPxSingleElement>> kvp = new KeyValuePair<string, IList<IPxSingleElement>>(dim.Key, dlist);
-                    spec.TimeVals.Add(kvp);
-                }
-            }
-
-            spec.MainValues = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
-
-            foreach (var dim in mspec.MainValueSet)
-            {
-                IList<IPxSingleElement> dlist = new List<IPxSingleElement>();
-                foreach (var item in dim.Value)
-                {
-                    dlist.Add(new PxStringValue(item));
-                }
-                KeyValuePair<string, IList<IPxSingleElement>> kvp = new KeyValuePair<string, IList<IPxSingleElement>>(dim.Key, dlist);
-                spec.MainValues.Add(kvp);
-            }
-
-            return spec;
-        }
 
         /// <summary>
         /// Get a IList<KeyValuePair<string, IList<IPxSingleElement>>> expresses as a non abstract object. For serialization, deserialization
@@ -826,7 +680,11 @@ namespace PxStat.Data
 
                 // Concatenate notes into one string
                 if (Notes != null)
+                {
+
+
                     NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                }
                 else
                 {
                     Notes = new List<string>();
@@ -840,8 +698,6 @@ namespace PxStat.Data
 
                 if (Uri.TryCreate(infofile, UriKind.Absolute, out Uri uri))
                     NotesAsString = NotesAsString.Trim() + " " + infofile;
-
-
 
                 var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
                 var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
@@ -945,9 +801,13 @@ namespace PxStat.Data
                 Notes = doc.GetListOfStringValuesIfExist("NOTE", language);
 
 
+
                 // Concatenate notes into one string
                 if (Notes != null)
+                {
+
                     NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                }
                 else
                 {
                     Notes = new List<string>();
@@ -956,6 +816,8 @@ namespace PxStat.Data
 
                 //Get rid of multiple spaces
                 NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
+
+
 
                 if (notex != null)
                     NotesAsString = NotesAsString + string.Join("", notex.Select(e => e.ToString()));
@@ -1768,7 +1630,7 @@ namespace PxStat.Data
 
             keywordList.Add(CreatePxElement("SOURCE" + lngTag, theSpec.Source));
 
-            keywordList.Add(CreatePxElement("NOTE" + lngTag, theSpec.NotesAsString));
+            keywordList.Add(CreatePxElement("NOTE" + lngTag, theSpec.NotesAsString, false));
 
             if (MainSpec.Statistic.Count > 1)
             {
@@ -1890,9 +1752,9 @@ namespace PxStat.Data
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        private IPxKeywordElement CreatePxElement(string key, string value)
+        private IPxKeywordElement CreatePxElement(string key, string value, bool removeHtml = true)
         {
-            return new PxKeywordElement(new PxKey(key), new PxQuotedValue(value));
+            return new PxKeywordElement(new PxKey(key), new PxQuotedValue(value, removeHtml));
         }
 
         /// <summary>
@@ -2035,7 +1897,7 @@ namespace PxStat.Data
 
             Xlsx xl = new Xlsx();
             if (pivot == null)
-                return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_DATA_STYLE")), viewCodes), lngIsoCode, ci);
+                return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), lngIsoCode, ci);
             else
                 return xl.GetXlsx(this, GetMatrixSheetPivoted(pivot, lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), lngIsoCode, ci);
 
@@ -3085,7 +2947,7 @@ namespace PxStat.Data
                 jsStat.Note = new List<string>();
                 if (!string.IsNullOrEmpty(spec.NotesAsString))
                 {
-                    jsStat.Note.Add(spec.NotesAsString);
+                    jsStat.Note.Add(new BBCode().Transform(spec.NotesAsString));
                 }
             }
 
@@ -3098,7 +2960,7 @@ namespace PxStat.Data
             jsStat.Note = new List<string>();
             if (!string.IsNullOrEmpty(spec.NotesAsString))
             {
-                jsStat.Note.Add(spec.NotesAsString);
+                jsStat.Note.Add(new BBCode().Transform(spec.NotesAsString));
             }
 
             // the release note is now appended to the other notes from the px file
@@ -3346,7 +3208,7 @@ namespace PxStat.Data
                 jsStat.Note = new List<string>();
                 if (!string.IsNullOrEmpty(spec.NotesAsString))
                 {
-                    jsStat.Note.Add(spec.NotesAsString);
+                    jsStat.Note.Add(new BBCode().Transform(spec.NotesAsString));
                 }
             }
 
@@ -4675,25 +4537,8 @@ namespace PxStat.Data
         }
     }
 
-    public class SerialSpec
-    {
-        public string LngIsoCode { get; set; }
-        public List<KeyValuePair<string, List<PxStringValue>>> ValueSet { get; set; }
-        public List<KeyValuePair<string, List<PxStringValue>>> TimeValueSet { get; set; }
-        public List<KeyValuePair<string, List<PxStringValue>>> MainValueSet { get; set; }
-        public Specification TheSpec { get; set; }
 
-    }
 
-    public class SerializableMatrix
-    {
-        public List<SerialSpec> SerialSpecs { get; set; }
-        public List<PxQuotedValue> Languages { get; set; }
-        public List<string> OtherLanguages { get; set; }
-        public List<KeyValuePair<string, List<PxStringValue>>> Domain { get; set; }
-        public Matrix TheMatrix { get; set; }
-        public IList<dynamic> Cells { get; set; }
-    }
 
 
 }

@@ -4,6 +4,12 @@ Custom JS application specific
 $(document).ready(function () {
     app.data.dataset.chart.getChartTypes();
     app.data.dataset.chart.setLegendPosition();
+    if (app.data.isLive) {
+        $("#data-dataset-chart-nav-content").find("[name=confidential-data-warning]").hide();
+    }
+    else {
+        $("#data-dataset-chart-nav-content").find("[name=confidential-data-warning]").show();
+    }
     $("#data-dataset-chart-accordion-series-collapse").find("[name=add-series]").once("click", app.data.dataset.chart.addSeries);
     //add series if none already
     $('#data-dataset-chart-accordion-series-collapse').on('shown.bs.collapse', function () {
@@ -60,7 +66,6 @@ $(document).ready(function () {
         if (!app.data.isLive) {
             $("#data-dataset-chart-snippet-code").find("[name=auto-update]").bootstrapToggle('off');
             $("#data-dataset-chart-snippet-code").find("[name=auto-update]").bootstrapToggle('disable');
-            $("#data-dataset-chart-snippet-code").find("[name=wip-widget-warning]").show();
         }
     }
 

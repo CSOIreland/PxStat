@@ -177,6 +177,13 @@ $(document).ready(function () {
   );
 
   api.content.navigate(
+    "#nav-link-performance",
+    "entity/system/performance/",
+    "#nav-link-performance",
+    "#nav-link-system"
+  );
+
+  api.content.navigate(
     "#nav-link-format",
     "entity/system/format/",
     "#nav-link-format",

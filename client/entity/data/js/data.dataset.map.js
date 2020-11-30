@@ -4,6 +4,13 @@ Custom JS application specific
 $(document).ready(function () {
     app.data.dataset.map.drawDimensions();
 
+    if (app.data.isLive) {
+        $("#data-dataset-map-nav-content").find("[name=confidential-data-warning]").hide();
+    }
+    else {
+        $("#data-dataset-map-nav-content").find("[name=confidential-data-warning]").show();
+    }
+
     new ClipboardJS("#data-dataset-map-accordion-api [name=copy-api-info], #data-dataset-map-accordion-api [name=copy-api-object]");
     $('#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
@@ -54,7 +61,6 @@ $(document).ready(function () {
         if (!app.data.isLive) {
             $("#data-dataset-map-accordion").find("[name=auto-update]").bootstrapToggle('off');
             $("#data-dataset-map-accordion").find("[name=auto-update]").bootstrapToggle('disable');
-            $("#data-dataset-map-accordion").find("[name=wip-widget-warning]").show();
         }
     }
     $("#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link]").once("change", function () {

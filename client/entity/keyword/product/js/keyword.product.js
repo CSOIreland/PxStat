@@ -4,9 +4,10 @@ Custom JS application specific
 $(document).ready(function () {
   // Entity with restricted access
   app.navigation.access.check([C_APP_PRIVILEGE_POWER_USER]);
-  app.navigation.layout.set(false);
-  app.navigation.breadcrumb.set(["Keywords", "Products"]);
-  app.navigation.breadcrumb.set([app.label.static.keywords, app.label.static.products]);
+  app.navigation.setLayout(false);
+  app.navigation.setBreadcrumb([[app.label.static["keywords"]], [app.label.static["products"]]]);
+  app.navigation.setMetaDescription();
+  app.navigation.setTitle(app.label.static["keywords"] + " - " + app.label.static["products"]);
 
   // Load Modal
   api.content.load("#overlay", "entity/keyword/product/index.modal.html");

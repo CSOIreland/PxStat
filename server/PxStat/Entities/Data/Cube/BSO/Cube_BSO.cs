@@ -58,12 +58,12 @@ namespace PxStat.Data
         {
             var ado = new Cube_ADO(theAdo);
 
-            var dbData = ado.ReadCollectionMetadata(DTO.language, DTO.datefrom, DTO.product);
+            var dbData = ado.ReadCollectionMetadata(DTO.language, DTO.datefrom, DTO.product, meta);
 
             List<dynamic> jsonStatCollection = new List<dynamic>();
 
             //Get a list of individual matrix data entities
-            List<dynamic> releases = getReleases(dbData);
+            List<dynamic> releases = getReleases(dbData, meta);
 
 
             var theJsonStatCollection = new JsonStatCollection();
@@ -217,46 +217,85 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="dbData"></param>
         /// <returns></returns>
-        private List<dynamic> getReleases(List<dynamic> dbData)
+        private List<dynamic> getReleases(List<dynamic> dbData, bool meta = true)
 
         {
+
             if (dbData == null) return new List<dynamic>();
-            var releases = (from d in dbData
-                            group d by new
-                            {
-                                d.RlsCode,
-                                d.MtrCode,
-                                d.LngIsoCode,
-                                d.LngIsoName,
-                                d.MtrTitle,
-                                d.CprValue,
-                                d.CprUrl,
-                                d.CprCode,
-                                d.RlsLiveDatetimeFrom,
-                                d.RlsLiveDatetimeTo,
-                                d.ExceptionalFlag,
-                                d.FrqCode,
-                                d.FrqValue
-                            }
-                            into rls
-                            select new
-                            {
-                                rls.Key.RlsCode,
-                                rls.Key.MtrCode,
-                                rls.Key.LngIsoCode,
-                                rls.Key.LngIsoName,
-                                rls.Key.MtrTitle,
-                                rls.Key.CprValue,
-                                rls.Key.CprUrl,
-                                rls.Key.CprCode,
-                                rls.Key.RlsLiveDatetimeFrom,
-                                rls.Key.RlsLiveDatetimeTo,
-                                rls.Key.ExceptionalFlag,
-                                rls.Key.FrqCode,
-                                rls.Key.FrqValue
-                            }
-                            ).ToList<dynamic>();
-            return releases;
+            if (meta)
+            {
+                return (from d in dbData
+                        group d by new
+                        {
+                            d.RlsCode,
+                            d.MtrCode,
+                            d.LngIsoCode,
+                            d.LngIsoName,
+                            d.MtrTitle,
+                            d.CprValue,
+                            d.CprUrl,
+                            d.CprCode,
+                            d.RlsLiveDatetimeFrom,
+                            d.RlsLiveDatetimeTo,
+                            d.ExceptionalFlag,
+                            d.FrqCode,
+                            d.FrqValue
+                        }
+                                into rls
+                        select new
+                        {
+                            rls.Key.RlsCode,
+                            rls.Key.MtrCode,
+                            rls.Key.LngIsoCode,
+                            rls.Key.LngIsoName,
+                            rls.Key.MtrTitle,
+                            rls.Key.CprValue,
+                            rls.Key.CprUrl,
+                            rls.Key.CprCode,
+                            rls.Key.RlsLiveDatetimeFrom,
+                            rls.Key.RlsLiveDatetimeTo,
+                            rls.Key.ExceptionalFlag,
+                            rls.Key.FrqCode,
+                            rls.Key.FrqValue
+                        }
+                                ).ToList<dynamic>();
+
+            }
+            else
+            {
+                return (from d in dbData
+                        group d by new
+                        {
+                            d.RlsCode,
+                            d.MtrCode,
+                            d.LngIsoCode,
+                            d.LngIsoName,
+                            d.MtrTitle,
+                            d.CprValue,
+                            d.CprUrl,
+                            d.CprCode,
+                            d.RlsLiveDatetimeFrom,
+                            d.RlsLiveDatetimeTo,
+                            d.ExceptionalFlag
+                        }
+                                into rls
+                        select new
+                        {
+                            rls.Key.RlsCode,
+                            rls.Key.MtrCode,
+                            rls.Key.LngIsoCode,
+                            rls.Key.LngIsoName,
+                            rls.Key.MtrTitle,
+                            rls.Key.CprValue,
+                            rls.Key.CprUrl,
+                            rls.Key.CprCode,
+                            rls.Key.RlsLiveDatetimeFrom,
+                            rls.Key.RlsLiveDatetimeTo,
+                            rls.Key.ExceptionalFlag
+                        }
+                                ).ToList<dynamic>();
+
+            }
         }
 
         /// <summary>
@@ -403,7 +442,6 @@ namespace PxStat.Data
 
             jsStat.Extension = new Dictionary<string, object>();
 
-            var Frequency = new { name = thisItem.FrqValue, code = thisItem.FrqCode };
 
             jsStat.Extension.Add("copyright", new { name = thisItem.CprValue, code = thisItem.CprCode, href = thisItem.CprUrl });
             jsStat.Extension.Add("exceptional", thisItem.ExceptionalFlag);

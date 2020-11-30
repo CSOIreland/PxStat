@@ -82,18 +82,18 @@ namespace PxStat.Security
             foreach (var matrix in readGroupAccess.data)
             {
 
-                if (matrix.IsLive)
-                {
+                //if (matrix.IsLive)
+                //{
                     MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.MtrCode);
                     MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.MtrCode);
-                }
+               // }
             }
 
-            foreach (var matrix in readGroupAccess.data)
-            {
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + matrix.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + matrix.RlsCode);
-            }
+            //foreach (var matrix in readGroupAccess.data)
+            //{
+            //    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + matrix.RlsCode);
+            //    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + matrix.RlsCode);
+            //}
         }
     }
 }

@@ -64,16 +64,21 @@ namespace PxStat.System.Navigation
 
         internal dynamic Search(Navigation_DTO_Search dto, int searchTermCount)
         {
-
-
             //The ExecuteReaderProcedure method requires that the parameters be contained in a List<ADO_inputParams>
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode }
+                new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode },
+                new ADO_inputParams() { name = "@ReleaseWordMultiplier", value = Configuration_BSO.GetCustomConfig(ConfigType.server,"search.release_word_multiplier") },
+                new ADO_inputParams() { name = "@ProductWordMultiplier", value = Configuration_BSO.GetCustomConfig(ConfigType.server,"search.product_word_multiplier") },
+                new ADO_inputParams() { name = "@SubjectWordMultiplier", value = Configuration_BSO.GetCustomConfig(ConfigType.server,"search.subject_word_multiplier") }
 
             };
 
             ADO_inputParams param = new ADO_inputParams() { name = "@Search", value = dto.SearchTerms };
+
+
+
+
             param.typeName = "KeyValueVarcharAttribute";
             paramList.Add(param);
             //We need a count of search terms (ignoring duplicates caused by singularisation)
@@ -99,9 +104,6 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@RlsExperiementalFlag", value = dto.RlsExperimentalFlag });
             if (dto.RlsAnalyticalFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsAnalyticalFlag", value = dto.RlsAnalyticalFlag });
-
-
-
 
 
             //Call the stored procedure

@@ -6,8 +6,6 @@ Custom JS application specific
 
 //#region Namespaces 
 app.navigation = {};
-app.navigation.layout = {};
-app.navigation.breadcrumb = {};
 
 app.navigation.access = {};
 app.navigation.access.ajax = {};
@@ -168,7 +166,7 @@ app.navigation.access.render = function (PrvCode) {
 /**
  * Set up page layout
  */
-app.navigation.layout.set = function (isDataEntity) {
+app.navigation.setLayout = function (isDataEntity) {
   isDataEntity = isDataEntity || false;
   //empty and panel and navigation on all internal entities 
   $("#data-navigation").empty();
@@ -196,48 +194,72 @@ app.navigation.layout.set = function (isDataEntity) {
   }
 };
 
-
-app.navigation.breadcrumb.set = function (breadcrumb) {
+/**
+ * Set the breadcrumb
+ * breadcrumb[0] = text
+ * breadcrumb[1] = goTo relative url
+ * breadcrumb[2] = link to highlight
+ * breadcrumb[4] = goTo params
+ * breadcrumb[5] = goTo link
+ */
+app.navigation.setBreadcrumb = function (breadcrumb) {
   breadcrumb = breadcrumb || [];
-  var title = "";
 
   $("#breadcrumb-nav").find("[name=breadcrumb-list]").empty();
 
-  // Clone Home link
-  var homeLink = $("#navigation-templates").find("[name=home]").clone();
-  $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(homeLink);
+  //always start with home link
+  var homeItem = $("#navigation-templates").find("[name=item]").clone();
+  var homeLink = $("<a>", {
+    "text": app.label.static["home"],
+    "href": app.config.url.application
+  }).get(0);
 
-  if ($.isArray(breadcrumb) && breadcrumb.length > 0) {
-    $.each(breadcrumb, function (index, value) {
-      var test = typeof value;
-      if (typeof value === 'object' && value !== null) {
-        var linkItem = $("#navigation-templates").find("[name=link]").clone();
-        var breadcrumbLink = $("<a>", {
-          "text": value.text,
-          "href": "#"
-        }).get(0);
-        breadcrumbLink.addEventListener("click", function (e) {
-          e.preventDefault();
-          api.content.goTo(value.goTo.pRelativeURL, value.goTo.pNav_link_SelectorToHighlight, null, value.goTo.pParams);
-        });
+  homeItem.append(homeLink);
 
-        linkItem.html(breadcrumbLink);
-        $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(linkItem);
+  homeLink.addEventListener("click", function (e) {
+    e.preventDefault();
+    api.content.goTo("entity/data/", "#nav-link-data");
+  });
 
-        title += '/' + value.text;
-      }
-      else {
-        var staticItem = $("#navigation-templates").find("[name=item]").clone();
-        staticItem.html(String(value));
-        $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(staticItem);
+  $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(homeItem);
 
-        title += '/' + String(value);
-      }
-    });
-  }
-  // Set Document Title
-  $("title").text(app.config.title + title);
+  $.each(breadcrumb, function (index, value) {
+    if (value.length > 1) {
+      var item = $("#navigation-templates").find("[name=item]").clone();
+      var link = $("<a>", {
+        "text": value[0],
+        "href": value[5] || "#"
+      }).get(0);
+      item.append(link);
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        api.content.goTo(value[1], value[2], null, value[4]);
+      });
+      $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(item);
+    }
+    else {
+      var item = $("#navigation-templates").find("[name=item]").clone();
+      item.text(value[0])
+      $("#breadcrumb-nav").find("[name=breadcrumb-list]").append(item);
+    }
+  });
 };
+
+/**
+ * Set the page title
+ */
+app.navigation.setTitle = function (title) {
+  title = title || null;
+  // Set Document Title
+  $("title").text(title ? title : app.config.title);
+}
+
+/**
+ * Set the meta description
+ */
+app.navigation.setMetaDescription = function (description) {
+  $("meta[name='description']").attr("content", description ? description : "");
+}
 
 /**
  * Check access against current user

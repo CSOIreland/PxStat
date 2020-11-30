@@ -7,9 +7,11 @@ Custom JS application specific
 $(document).ready(function () {
   // Entity with restricted access
   app.navigation.access.check();
-  app.navigation.layout.set(false);
-  app.navigation.breadcrumb.set(["Configuration", "Languages"]);
-  app.navigation.breadcrumb.set([app.label.static["system"], app.label.static["languages"]]);
+  app.navigation.setLayout(false);
+  app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["languages"]]]);
+  app.navigation.setMetaDescription();
+  app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["languages"]);
+
 
   // Load Modal 
   api.content.load("#overlay", "entity/system/language/index.modal.html");

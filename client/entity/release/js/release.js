@@ -4,8 +4,10 @@ Custom JS application specific
 $(document).ready(function () {
   // Entity with restricted access
   app.navigation.access.check([C_APP_PRIVILEGE_MODERATOR, C_APP_PRIVILEGE_POWER_USER]);
-  app.navigation.layout.set(false);
-  app.navigation.breadcrumb.set([app.label.static["releases"]]);
+  app.navigation.setLayout(false);
+  app.navigation.setBreadcrumb([[app.label.static["releases"]]]);
+  app.navigation.setMetaDescription();
+  app.navigation.setTitle(app.label.static["releases"]);
   // Entity with restricted access
   app.navigation.access.check([C_APP_PRIVILEGE_MODERATOR, C_APP_PRIVILEGE_POWER_USER]);
 

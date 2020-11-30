@@ -56,6 +56,15 @@ namespace XLsxHelper
             sheets = spreadsheetDocument.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
         }
 
+        public string GetHyperlink(string link, string label = null)
+        {
+            if (label == null)
+                return "HYPERLINK(\"" + link + "\")";
+            else
+                return "HYPERLINK(\"" + link + "\",\"" + label + "\")";
+
+        }
+
         public List<List<XlsxValue>> GetBlankMatrix()
         {
             List<List<XlsxValue>> matrix = new List<List<XlsxValue>>();
@@ -141,8 +150,15 @@ namespace XLsxHelper
                 Cell refCell = null;
                 foreach (XlsxValue str in list)
                 {
+
                     Cell addCell = new Cell();
                     row.InsertAfter(addCell, refCell);
+                    if (str.FormulaText != null)
+                    {
+                        CellFormula cf = new CellFormula() { Space = SpaceProcessingModeValues.Preserve };
+                        cf.Text = str.FormulaText;
+                        addCell.Append(cf);
+                    }
                     addCell.CellValue = new CellValue(str.Value);
                     //If the value was flagged as a potential number, then check if it parses as a number.If so, it will be a number in Xlsx
                     if (str.DataType == CellValues.Number)
@@ -388,6 +404,11 @@ namespace XLsxHelper
                         new Bold(),                                                           // Index 4 - The Calibri font, bold with 13 size
                         new FontSize() { Val = 13 },
                         new Color() { Rgb = new HexBinaryValue() { Value = "000000" } },
+                        new FontName() { Val = "Calibri" }),
+                    new Font(                                                       // Index 4 - The Calibri font, bold with 13 size
+                        new Bold(),
+                        new FontSize() { Val = 11 },
+                        new Color() { Rgb = new HexBinaryValue() { Value = "0645AD" } }, //Index 5 - Calibri blue, suitable for hyperlinks
                         new FontName() { Val = "Calibri" })
                 ),
                 new Fills(
@@ -471,11 +492,14 @@ namespace XLsxHelper
                     new CellFormat() { FontId = 0, FillId = 0, BorderId = 1, ApplyBorder = true },      // Index 6 - Border
                     new CellFormat() { FontId = 0, FillId = 0, BorderId = 2, ApplyBorder = true },       //Index 7 - White (normally invisible) Border, standard fonts
                     new CellFormat() { FontId = 4, FillId = 0, BorderId = 3, ApplyBorder = true },       //Index 8 - White (normally invisible) Border, Calibri 13, Bold 
-                    new CellFormat() { FontId = 1, FillId = 0, BorderId = 2, ApplyBorder = true }       //Index 9 - White (normally invisible) Border, Bold
+                    new CellFormat() { FontId = 1, FillId = 0, BorderId = 2, ApplyBorder = true },      //Index 9 - White (normally invisible) Border, Bold
+                    new CellFormat() { FontId = 5, FillId = 0, BorderId = 0, ApplyFont = true } //Index 10 - hyperlink blue
                 )
             );
 
         }
+
+
 
         /// <summary>
         /// Set orientation of the worksheet, i.e. Portrait, Landscape or Default
@@ -550,6 +574,8 @@ namespace XLsxHelper
         /// Width of the cell. When calculating column widths, the application may set column width to the maximum column widths
         /// </summary>
         public int CellWidth { get; set; }
+
+        public string FormulaText { get; set; }
 
         /// <summary>
         /// Constructor - set some default values

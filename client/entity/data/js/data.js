@@ -2,8 +2,10 @@
 Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
-    app.navigation.layout.set(true);
-    app.navigation.breadcrumb.set([]);
+    app.navigation.setLayout(true);
+    app.navigation.setBreadcrumb([]);
+    app.navigation.setTitle(app.label.static["data"]);
+    app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-home", [app.config.organisation]))
 
     // Read GoTo
     app.data.goTo.Search = api.content.getParam("Search");
@@ -40,7 +42,7 @@ $(document).ready(function () {
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 
     //initiate all copy to clipboard 
-    new ClipboardJS("#data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object], #data-share [name=copy-link-info]");
+    new ClipboardJS("#data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object]");
     $("#data-accordion-collection-api").on('show.bs.collapse', function () {
         $("#data-accordion-collection-api").find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
     });
@@ -63,6 +65,7 @@ $(document).ready(function () {
     } else if (app.data.goTo.PrcCode) {
         // Run Sharethis.
         app.data.isSearch = false;
+        app.data.isCopyrightGoTo = false;
         app.data.PrdCode = app.data.goTo.PrcCode;
         api.ajax.jsonrpc.request(
             app.config.url.api.jsonrpc.public,
@@ -76,6 +79,7 @@ $(document).ready(function () {
         );
     } else if (app.data.goTo.CprCode) {
         app.data.isSearch = false;
+        app.data.isCopyrightGoTo = true;
         api.ajax.jsonrpc.request(
             app.config.url.api.jsonrpc.public,
             "PxStat.System.Navigation.Navigation_API.Search",
@@ -88,6 +92,7 @@ $(document).ready(function () {
         );
     } else if (app.data.goTo.MtrCode) {
         app.data.isSearch = false;
+        app.data.isCopyrightGoTo = false;
         api.ajax.jsonrpc.request(
             app.config.url.api.jsonrpc.public,
             "PxStat.System.Navigation.Navigation_API.Search",

@@ -1,7 +1,6 @@
 ﻿using API;
 using PxParser.Resources.Parser;
 using PxStat.Data;
-using PxStat.Resources;
 using PxStat.Resources.PxParser;
 using PxStat.Template;
 using System.Collections.Generic;
@@ -51,35 +50,15 @@ namespace PxStat.Build
 
             //There might be a cache:
             Matrix theMatrixData;
-            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Build", "Build_BSO_Validate", "Validate", Constants.C_CAS_BUILD_MATRIX + DTO.Signature);
 
-            if (mtrCache.hasData)
-            {
-                SerializableMatrix sm = Newtonsoft.Json.JsonConvert.DeserializeObject<SerializableMatrix>(mtrCache.data.ToString());
-                theMatrixData = new Matrix().ExtractFromSerializableMatrix(sm);
-            }
-            else
-                //Get this matrix from the px file 
-                theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
+            //Get this matrix from the px file 
+            theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
             Build_BSO bBso = new Build_BSO();
 
 
-            //Get this matrix from the px file 
-            //theMatrixData = bBso.UpdateMatrixFromDto(theMatrixData, DTO, Ado, false, true);
-
             List<DataItem_DTO> itemList = bBso.GetDataForNewPeriods(theMatrixData, DTO, Ado);
 
-            //We need to check the matrix in case it incurred any validation problems at the time of creation
-            //If there are, then we need to return the details of these errors to the caller and terminate this process
-            //if (theMatrixData.ValidationResult != null)
-            //{
-            //    if (!theMatrixData.ValidationResult.IsValid)
-            //    {
-            //        Response.error = Error.GetValidationFailure(theMatrixData.ValidationResult.Errors);
-            //        return false;
-            //    }
-            //}
 
             dynamic result = new ExpandoObject();
 

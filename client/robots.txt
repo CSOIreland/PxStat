@@ -1,0 +1,6 @@
+# User-agent: Name
+# Disallow: /URLs
+# Allow: /URLs
+
+User-agent: *
+Allow: /

@@ -299,7 +299,7 @@ namespace PxStat.Data
                     statusCode = HttpStatusCode.InternalServerError
                 };
 
-                Log.Instance.Error(ex.Message);
+                Log.Instance.Debug(ex.Message);
                 return error;
             }
 

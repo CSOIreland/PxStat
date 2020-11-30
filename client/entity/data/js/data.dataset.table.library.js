@@ -68,7 +68,6 @@ app.data.dataset.table.drawDimensions = function () {
     if (app.data.RlsCode) {
         if (!app.data.isLive) { //is WIP
             $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('off');
-            $("#data-dataset-table-accordion-collapse-widget [name=wip-widget-warning]").show();
         }
         $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('disable');
     }
@@ -332,6 +331,17 @@ app.data.dataset.table.countSelection = function () {
 
 app.data.dataset.table.buildApiParams = function () {
 
+    if (app.data.isLive) {
+        //enable RESTful and PxAPIv1 tabs
+        $("#data-dataset-table-api-restful-tab").removeClass("disabled");
+        $("#data-dataset-table-api-pxapiv1-tab").removeClass("disabled");
+    }
+    else {
+        //disable RESTful and PxAPIv1 tabs
+        $("#data-dataset-table-api-restful-tab").addClass("disabled");
+        $("#data-dataset-table-api-pxapiv1-tab").addClass("disabled");
+    }
+
     $("#data-dataset-table-api-jspnrpc-content [name=information-documentation]").html(
         app.library.html.parseDynamicLabel("information-api-documentation", ["JSON-RPC", $("<a>", {
             "href": C_APP_URL_GITHUB_API_CUBE_JSONRPC,
@@ -400,7 +410,7 @@ app.data.dataset.table.buildApiParams = function () {
     //extend apiParams with local params
     $.extend(true, app.data.dataset.table.apiParamsData, localParams);
 
-    $("#data-dataset-table-api-jsonrpc-post-url").text(app.config.url.api.jsonrpc.public);
+    $("#data-dataset-table-api-jsonrpc-post-url").text(app.data.isLive ? app.config.url.api.jsonrpc.public : app.config.url.api.jsonrpc.private);
     $("#data-dataset-table-api-restful-url").hide().text(
         C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.restful,
         encodeURI(app.data.MtrCode),
@@ -410,7 +420,7 @@ app.data.dataset.table.buildApiParams = function () {
 
     var JsonQuery = {
         "jsonrpc": C_APP_API_JSONRPC_VERSION,
-        "method": "PxStat.Data.Cube_API.ReadDataset",
+        "method": app.data.isLive ? "PxStat.Data.Cube_API.ReadDataset" : "PxStat.Data.Cube_API.ReadPreDataset",
         "params": null
     };
     var apiParams = $.extend(true, {}, app.data.dataset.table.apiParamsData);
@@ -418,7 +428,8 @@ app.data.dataset.table.buildApiParams = function () {
     JsonQuery.params = apiParams;
     JsonQuery.params.extension.format.type = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type");
     JsonQuery.params.extension.format.version = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version");
-    $("#data-dataset-table-api-jsonrpc-get-url").empty().text(encodeURI(app.config.url.api.jsonrpc.public + C_APP_API_GET_PARAMATER_IDENTIFIER + JSON.stringify(JsonQuery))).fadeIn();
+    var jsonrpcGetUrl = app.data.isLive ? app.config.url.api.jsonrpc.public : app.config.url.api.jsonrpc.private;
+    $("#data-dataset-table-api-jsonrpc-get-url").empty().text(encodeURI(jsonrpcGetUrl + C_APP_API_GET_PARAMATER_IDENTIFIER + JSON.stringify(JsonQuery))).fadeIn();
     $("#data-dataset-table-api-jsonrpc-post-body").hide().text(JSON.stringify(JsonQuery, null, "\t")).fadeIn();
     //pxapiv1
     var pxapiv1Query = {
@@ -593,8 +604,10 @@ app.data.dataset.table.ajax.data = function () {
             null,
             null,
             null,
-            { async: false }
-        );
+            {
+                async: false,
+                timeout: app.config.transfer.timeout
+            });
     }
 
     else {
@@ -606,8 +619,10 @@ app.data.dataset.table.ajax.data = function () {
             null,
             null,
             null,
-            { async: false }
-        );
+            {
+                async: false,
+                timeout: app.config.transfer.timeout
+            });
     }
 
 };
@@ -669,7 +684,6 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
             JsonQuery.params.extension.format.type = C_APP_FORMAT_TYPE_DEFAULT;
             JsonQuery.params.extension.format.version = C_APP_FORMAT_VERSION_DEFAULT;
 
-
             if (app.data.isLive) {
                 JsonQuery.params.extension.matrix = app.data.MtrCode;
                 app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.public;
@@ -681,6 +695,7 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
                 app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.private;
                 JsonQuery.method = "PxStat.Data.Cube_API.ReadPreDataset";
                 delete JsonQuery.params.extension.matrix;
+
             }
 
 

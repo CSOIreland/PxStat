@@ -6,8 +6,12 @@ $(document).ready(function () {
     app.navigation.access.check([C_APP_PRIVILEGE_POWER_USER]);
     // Entity with restricted access
     //app.navigation.access.check();
-    app.navigation.layout.set(false);
-    app.navigation.breadcrumb.set([app.label.static["keywords"], app.label.static["releases"]]);
+    app.navigation.setLayout(false);
+
+    app.navigation.setBreadcrumb([[app.label.static["keywords"]], [app.label.static["releases"]]]);
+    app.navigation.setMetaDescription();
+    app.navigation.setTitle(app.label.static["keywords"] + " - " + app.label.static["releases"]);
+
 
     // Load Modal
     api.content.load("#overlay", "entity/keyword/release/index.modal.html");

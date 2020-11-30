@@ -64,7 +64,6 @@ namespace PxStat.System.Navigation
                 return true;
             }
 
-
             dynamic data = adoNav.Search(DTO, searchTermCount);
 
             Response.data = FormatOutput(data, DTO.LngIsoCode);
@@ -96,6 +95,8 @@ namespace PxStat.System.Navigation
                 searchListInvariant = kbe.ExtractSplit(DTO.Search);
                 //Eliminate duplicates from the list
                 searchList = searchList.Union(searchListInvariant).ToList();
+
+                
             }
 
 

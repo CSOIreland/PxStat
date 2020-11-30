@@ -34,7 +34,11 @@ app.cache.ajax.read = function () {
         app.config.url.api.jsonrpc.private,
         "PxStat.Security.cache_API.Read",
         {},
-        "app.cache.callback.read"
+        "app.cache.callback.read",
+        null,
+        null,
+        null,
+        { async: false }
     );
 };
 
@@ -76,10 +80,10 @@ app.cache.render.byte = function (data) {
     new Chart($("#cache-read-container").find("[name=cache-chart]").find("[name=chart-byte]"), {
         type: 'pie',
         data: {
-            labels: [app.label.static["bytes-written"], app.label.static["bytes-read"]],
+            labels: [app.label.static["bytes-input"], app.label.static["bytes-output"]],
             datasets: [{
                 label: "Bytes",
-                data: [data.BytesWritten, data.BytesRead]
+                data: [data.BytesRead, data.BytesWritten]
             }]
         },
         options: app.cache.render.chartOptions,

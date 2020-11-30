@@ -14,6 +14,7 @@ app.data.RlsCode = null;
 app.data.isModal = null;
 app.data.isLive = null;
 app.data.isSearch = null;
+app.data.isCopyrightGoTo = null;
 app.data.fileNamePrefix = null;
 app.data.LngIsoCode = app.label.language.iso.code;
 app.data.collection.params = {
@@ -52,7 +53,7 @@ app.data.init = function (LngIsoCode, MtrCode, RlsCode, filenamePrefix, isModal,
 * 
 */
 app.data.setDatePicker = function () {
-    var startDate = moment().subtract(6, 'days');
+    var startDate = moment().subtract(app.config.entity.data.lastUpdatedTables.defaultNumDaysFrom, 'days');
     app.data.collection.params.datefrom = startDate.format(app.config.mask.date.ajax);
     app.data.ajax.readLatestReleases();
     $('#latest-releases-date-picker span').html(startDate.format(app.config.mask.date.display));
@@ -140,7 +141,7 @@ app.data.callback.drawLatestReleases = function (data) {
         var localOptions = {
             order: [[4, 'desc']],
             data: data,
-            "pageLength": app.config.entity.data.numberLatestReleases,
+            "pageLength": app.config.entity.data.lastUpdatedTables.defaultPageLength,
             createdRow: function (row, data, dataIndex) {
                 $(row).attr("mtr-code", data.extension.matrix).attr("lng-iso-code", data.extension.language.code);
             },
@@ -153,7 +154,7 @@ app.data.callback.drawLatestReleases = function (data) {
                             "mtr-code": data.extension.matrix,
                             "lng-iso-code": data.extension.language.code,
                             text: data.extension.matrix,
-                            href: "#",
+                            href: app.config.url.application + C_COOKIE_LINK_TABLE + "/" + data.extension.matrix,
                         }).get(0).outerHTML;
                     }
                 },
@@ -171,7 +172,7 @@ app.data.callback.drawLatestReleases = function (data) {
                             "mtr-code": data.extension.matrix,
                             "lng-iso-code": data.extension.language.code,
                             text: data.label,
-                            href: "#",
+                            href: app.config.url.application + C_COOKIE_LINK_TABLE + "/" + data.extension.matrix,
                         }).get(0).outerHTML);
 
                         //get time dimension

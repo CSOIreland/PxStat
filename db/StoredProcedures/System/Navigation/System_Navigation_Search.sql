@@ -17,6 +17,9 @@ CREATE
 ALTER PROCEDURE System_Navigation_Search @LngIsoCode CHAR(2)
 	,@Search KeyValueVarcharAttribute Readonly
 	,@SearchTermCount INT
+	,@ReleaseWordMultiplier INT
+	,@ProductWordMultiplier INT
+	,@SubjectWordMultiplier INT
 	,@MtrCode NVARCHAR(20) = NULL
 	,@MtrOfficialFlag BIT = NULL
 	,@SbjCode INT = NULL
@@ -30,14 +33,6 @@ ALTER PROCEDURE System_Navigation_Search @LngIsoCode CHAR(2)
 AS
 BEGIN
 	SET NOCOUNT ON;
-
-	DECLARE @MULTIPLIER_PRIORITY_1 INT
-	DECLARE @MULTIPLIER_PRIORITY_2 INT
-	DECLARE @MULTIPLIER_PRIORITY_3 INT
-
-	SET @MULTIPLIER_PRIORITY_1 = 100
-	SET @MULTIPLIER_PRIORITY_2 = 10
-	SET @MULTIPLIER_PRIORITY_3 = 1
 
 	DECLARE @LngID INT
 	--Check if an entity search term has been passed
@@ -118,7 +113,7 @@ BEGIN
 	-- keyword search terms as a temp table
 	-- This creates the temp table for Release Keywords
 	SELECT q2.RlsId AS RlsId
-		,sum(q2.rcount) * @MULTIPLIER_PRIORITY_1  AS score
+		,sum(q2.rcount) * @ReleaseWordMultiplier  AS score
 	INTO #kwRelease
 	FROM (
 		SELECT q.RlsId
@@ -126,7 +121,7 @@ BEGIN
 			,KRL_SINGULARISED_FLAG
 			,sum(q.[Priority]) AS rcount
 		FROM (
-			SELECT [key]
+			SELECT DISTINCT [key] --distinct means we only count a match in a table once, no matter how many times a match occurs
 				,[value]
 				,krl.KRL_RLS_ID AS RlsId
 				,KRL_SINGULARISED_FLAG
@@ -145,13 +140,13 @@ BEGIN
 		) q2
 	GROUP BY RlsId
 		,KRL_SINGULARISED_FLAG
-	HAVING count(*) = @SearchTermCount
-		OR KRL_SINGULARISED_FLAG = 0
+	--HAVING count(*) = @SearchTermCount
+		--OR KRL_SINGULARISED_FLAG = 0
 
 	-- This creates the temp table for Product Keywords
 	SELECT q2.RlsId AS RlsId
 		,KPR_SINGULARISED_FLAG
-		,sum(rcount) * @MULTIPLIER_PRIORITY_2 AS score
+		,sum(rcount) * @ProductWordMultiplier AS score
 	INTO #kwProduct
 	FROM (
 		SELECT q.RlsId
@@ -159,7 +154,7 @@ BEGIN
 			,KPR_SINGULARISED_FLAG
 			,sum([Priority]) AS rcount
 		FROM (
-			SELECT [key]
+			SELECT DISTINCT [key] --distinct means we only count a match in a table once, no matter how many times a match occurs
 				,[value]
 				,RLS_ID AS RlsId
 				,KPR_SINGULARISED_FLAG
@@ -180,12 +175,12 @@ BEGIN
 		) q2
 	GROUP BY RlsId
 		,KPR_SINGULARISED_FLAG
-	HAVING count(*) = @SearchTermCount
-		OR KPR_SINGULARISED_FLAG = 0
+	--HAVING count(*) = @SearchTermCount
+		--OR KPR_SINGULARISED_FLAG = 0
 
 	-- This creates the temp table for Subject Keywords
 	SELECT q2.RlsId AS RlsId
-		,sum(rcount) * @MULTIPLIER_PRIORITY_3 AS score
+		,sum(rcount) * @SubjectWordMultiplier  AS score
 		,KSB_SINGULARISED_FLAG
 	INTO #kwSubject
 	FROM (
@@ -194,7 +189,7 @@ BEGIN
 			,KSB_SINGULARISED_FLAG
 			,sum([Priority]) AS rcount
 		FROM (
-			SELECT [key]
+			SELECT DISTINCT [key] --distinct means we only count a match in a table once, no matter how many times a match occurs
 				,[value]
 				,RLS_ID AS RlsId
 				,KSB_SINGULARISED_FLAG
@@ -217,8 +212,8 @@ BEGIN
 		) q2
 	GROUP BY RlsId
 		,KSB_SINGULARISED_FLAG
-	HAVING count(*) = 1
-		OR KSB_SINGULARISED_FLAG = 0
+	--HAVING count(*) = @SearchTermCount
+		--OR KSB_SINGULARISED_FLAG = 0
 
 	--This is the Keyword search
 	-- The results are placed into the temporary table #KeywordsSearch

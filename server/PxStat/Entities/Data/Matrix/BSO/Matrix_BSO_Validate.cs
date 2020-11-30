@@ -2,7 +2,6 @@
 using FluentValidation.Results;
 using PxParser.Resources.Parser;
 using PxStat.Data.Px;
-using PxStat.Resources;
 using PxStat.Security;
 using PxStat.Template;
 using System;
@@ -176,18 +175,10 @@ namespace PxStat.Data
 
             bool isValid = false;
 
-            //Get the matrix, but use the cached version that was created during validation if at all possible
-            MemCachedD_Value mtrCache = MemCacheD.Get_BSO("PxStat.Data", "Matrix_API", "Validate", Constants.C_CAS_MATRIX_VALIDATE + signature);
 
-            if (mtrCache.hasData)
-            {
-                MatrixData = new Matrix().ExtractFromSerializableMatrix(mtrCache.data.ToObject<SerializableMatrix>());
-                isValid = true;
-            }
-            else
-            {
-                isValid = Validate();
-            }
+            isValid = Validate();
+
+            // }
 
 
             if (isValid)
@@ -196,9 +187,7 @@ namespace PxStat.Data
                 validationResult.FrqValueCandidate = FrqValues;
                 Response.data = validationResult;
 
-                //cache this so that we won't have to recreate the matrix in future steps
-                SerializableMatrix sm = MatrixData.GetSerializableObject();
-                MemCacheD.Store_BSO<string>("PxStat.Data", "Matrix_API", "Validate", Constants.C_CAS_MATRIX_VALIDATE + signature, sm, DateTime.Now.AddDays(Convert.ToInt32(Utility.GetCustomConfig("APP_BUILD_MATRIX_CACHE_LIFETIME_DAYS"))));
+
 
                 return true;
             }

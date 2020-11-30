@@ -5,6 +5,12 @@ $(document).ready(function () {
     app.data.dataset.table.drawDimensions();
     app.data.dataset.table.drawFormat();
     app.data.dataset.table.drawPivotDropdown();
+    if (app.data.isLive) {
+        $("#data-dataset-table-nav-content").find("[name=confidential-data-warning]").hide();
+    }
+    else {
+        $("#data-dataset-table-nav-content").find("[name=confidential-data-warning]").show();
+    }
     //show codes
     $('#data-dataset-table-code-toggle').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["false"],
