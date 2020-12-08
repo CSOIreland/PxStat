@@ -139,7 +139,7 @@ app.data.callback.drawLatestReleases = function (data) {
         $(window).trigger('resize');
     } else {
         var localOptions = {
-            order: [[4, 'desc']],
+            order: [[4, 'desc'], [0, 'asc']],
             data: data,
             "pageLength": app.config.entity.data.lastUpdatedTables.defaultPageLength,
             createdRow: function (row, data, dataIndex) {

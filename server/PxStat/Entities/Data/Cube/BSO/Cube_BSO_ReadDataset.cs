@@ -48,6 +48,9 @@ namespace PxStat.Data
         protected override bool Execute()
         {
 
+
+
+
             if (DTO.jStatQueryExtension.extension.Pivot != null)
             {
                 if (DTO.jStatQueryExtension.extension.Format.Type != "CSV" && DTO.jStatQueryExtension.extension.Format.Type != "XLSX")
@@ -60,7 +63,6 @@ namespace PxStat.Data
             //The Language of the received data may be different from the request - so we make sure it corresponds to the language of the dataset (???)
             var items = new Release_ADO(Ado).ReadLiveNow(DTO.jStatQueryExtension.extension.Matrix, DTO.jStatQueryExtension.extension.Language.Code);
 
-            string test = Utility.JsonSerialize_IgnoreLoopingReference(DTO);
             ////See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO);
 
@@ -124,7 +126,6 @@ namespace PxStat.Data
             {
                 theDto.jStatQueryExtension.extension.Pivot = matrix.MainSpec.Frequency.Code;
             }
-
 
 
             switch (theDto.jStatQueryExtension.extension.Format.Type)

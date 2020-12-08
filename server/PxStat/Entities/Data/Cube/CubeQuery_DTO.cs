@@ -1,9 +1,10 @@
 ﻿using API;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PxStat.Data;
 using PxStat.JsonQuery;
 using System.Collections.Generic;
 using System.Globalization;
-
 
 namespace PxStat.JsonStatSchema
 {
@@ -24,14 +25,21 @@ namespace PxStat.JsonStatSchema
         public CubeQuery_DTO(dynamic parameters)
         {
 
-            jStatQuery = Utility.JsonDeserialize_IgnoreLoopingReference<JsonStatQuery>(parameters.ToString());
-            jStatQueryExtension = Utility.JsonDeserialize_IgnoreLoopingReference<JsonStatQueryExtension>(parameters.ToString());
+            Cube_BSO cBso = new Cube_BSO();
+
+            string sortedObject = cBso.Sort((JObject)JsonConvert.DeserializeObject(parameters.ToString())).ToString();
+            jStatQuery = Utility.JsonDeserialize_IgnoreLoopingReference<JsonStatQuery>(sortedObject);
+            jStatQueryExtension = Utility.JsonDeserialize_IgnoreLoopingReference<JsonStatQueryExtension>(sortedObject);
+
+            jStatQuery = new Cube_MAP().SortJsonStatQuery(jStatQuery);
+
 
             foreach (var v in jStatQuery.Dimensions)
             {
                 v.Value.Id = v.Key;
 
             }
+
 
             var param = Utility.JsonDeserialize_IgnoreLoopingReference<dynamic>(parameters.ToString());
             if (param.m2m != null)
@@ -40,6 +48,9 @@ namespace PxStat.JsonStatSchema
                 m2m = true;
 
         }
+
+
+
 
     }
 

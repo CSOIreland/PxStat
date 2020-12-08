@@ -46,11 +46,13 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+
             //so that caches don't get mixed up..
-            DTO.Meta = _meta;
+            DTO.meta = _meta;
 
             //See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO);
+
 
 
             if (cache.hasData)

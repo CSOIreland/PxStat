@@ -2,7 +2,7 @@
 -- Author:		Neil O'Keeffe
 -- Create date: 21/01/2019
 -- Description:	Reads a summary of analytic data
--- exec Security_Analytic_Read '2019-09-01T12:00:00','2019-09-20T12:00:00', 1, "1",""
+-- exec Security_Analytic_Read '2020-09-20T12:00:00','2020-12-02T12:00:00', 1, "1",""
 -- =============================================
 CREATE
 	OR
@@ -26,7 +26,7 @@ BEGIN
 		,SBJ_Value AS SbjValue
 		,Bots AS NltBot
 		,M2M AS NltM2m
-		,Total - M2M - Bots AS NltUser
+		,NltUser
 		,Total
 	FROM (
 		SELECT MTR_CODE
@@ -38,7 +38,8 @@ BEGIN
 			,max(RLS_LIVE_DATETIME_FROM) as RLS_LIVE_DATETIME_FROM
 			,sum(cast(NLT_BOT_FLAG AS INT)) AS Bots
 			,sum(cast(NLT_M2M_FLAG AS INT)) AS M2M
-			,count(NLT_ID) AS Total
+			,sum(cast(NLT_USER_FLAG AS INT)) AS NltUser
+			,count(*) AS Total
 		FROM TD_ANALYTIC
 		INNER JOIN TD_MATRIX
 			ON NLT_MTR_ID = MTR_ID

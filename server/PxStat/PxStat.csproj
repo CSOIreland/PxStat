@@ -80,9 +80,8 @@
       <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DeviceDetector.NET, Version=3.11.6.0, Culture=neutral, PublicKeyToken=73b5cbe69dbf55fb, processorArchitecture=MSIL">
-      <HintPath>..\packages\DeviceDetector.NET.3.11.6\lib\net45\DeviceDetector.NET.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DeviceDetector.NET, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DeviceDetector.NET.4.2.0\lib\netstandard2.0\DeviceDetector.NET.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.10.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.10.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
@@ -174,9 +173,8 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
-    <Reference Include="YamlDotNet, Version=6.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.6.0.0\lib\net45\YamlDotNet.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="YamlDotNet, Version=8.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.8.1.2\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -664,10 +662,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.3.5.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
-  <Import Project="..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets" Condition="Exists('..\packages\DeviceDetector.NET.3.11.6\build\DeviceDetector.NET.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

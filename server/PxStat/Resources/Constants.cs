@@ -72,6 +72,11 @@ namespace PxStat.Resources
         internal const int C_DATA_PXAPIV1_DATA_QUERY = 5;
         internal const int C_DATA_PXAPIV1_DATA_PIVOT = 6;
 
+        internal const int C_DATA_RESTFUL_MATRIX = 1;
+        internal const int C_DATA_RESTFUL_FORMAT_TYPE = 2;
+        internal const int C_DATA_RESTFUL_FORMAT_VERSION = 3;
+        internal const int C_DATA_RESTFUL_LANGUAGE = 4;
+        internal const int C_DATA_RESTFUL_PIVOT = 5;
 
         /// <summary>
         /// List of user authentication types

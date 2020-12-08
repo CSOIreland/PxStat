@@ -102,19 +102,15 @@ namespace PxStat.Data
 
             DateTime minDateItem = default;
 
+            Release_ADO rAdo = new Release_ADO(theAdo);
 
-            dynamic minimum = null;
+            dynamic dateQuery = rAdo.ReadNextReleaseDate();
+            if (dateQuery != null)
+                minDateItem = dateQuery.RlsDatetimeNext.Equals(DBNull.Value) ? default(DateTime) : dateQuery.RlsDatetimeNext;
+            else
+                minDateItem = default;
 
-            if (dbData != null)
-            {
-                minimum = dbData.Where(x => x.RlsLiveDatetimeFrom > DateTime.Now).Min(x => x.RlsLiveDatetimeFrom);
-                minDateItem = minimum ?? default(DateTime);
-            }
 
-            if (minDateItem < DateTime.Now)
-            {
-                minDateItem = default(DateTime);
-            }
 
             var result = new JRaw(Serialize.ToJson(theJsonStatCollection));
 
@@ -495,6 +491,31 @@ namespace PxStat.Data
             }
             */
         }
+
+        /// <summary>
+        /// Sort a Json object
+        /// </summary>
+        /// <param name="jObj"></param>
+        /// <returns></returns>
+        internal JObject Sort(JObject jObj)
+        {
+            var props = jObj.Properties().ToList();
+            foreach (var prop in props)
+            {
+                prop.Remove();
+            }
+
+            foreach (var prop in props.OrderBy(p => p.Name))
+            {
+                jObj.Add(prop);
+                if (prop.Value is JObject)
+                    Sort((JObject)prop.Value);
+            }
+            return jObj;
+
+        }
+
+
 
         public void Dispose()
         {

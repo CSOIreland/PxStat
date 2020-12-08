@@ -1,5 +1,6 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
+using PxStat.JsonQuery;
 using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Settings;
@@ -81,6 +82,86 @@ namespace PxStat.Data
 
 
         }
+
+
+
+        internal JsonStatQuery SortJsonStatQuery(JsonStatQuery jsQuery)
+        {
+
+            JsonStatQuery jsSorted = new JsonStatQuery();
+            jsSorted.Class = jsQuery.Class;
+            jsSorted.Id = jsQuery.Id;
+            jsSorted.Id.Sort();
+            jsSorted.Dimensions = new Dictionary<string, JsonQuery.Dimension>();
+            List<string> klist = jsQuery.Dimensions.Keys.ToList();
+            klist.Sort();
+            foreach (string k in klist)
+            {
+                jsSorted.Dimensions.Add(k, jsQuery.Dimensions[k]);
+            }
+            foreach (var dim in jsSorted.Dimensions)
+            {
+                dim.Value.Category.Index.Sort();
+            }
+            jsSorted.Extension = new Dictionary<string, object>();
+            jsSorted.Extension.Add("pivot", jsQuery.Extension.ContainsKey("pivot") ? jsQuery.Extension["pivot"] : null);
+            jsSorted.Extension.Add("codes", jsQuery.Extension.ContainsKey("codes") ? jsQuery.Extension["codes"] : null);
+            jsSorted.Extension.Add("language", jsQuery.Extension["language"]);
+
+            JObject jobj = (JObject)jsSorted.Extension["language"];
+            if (!jobj.ContainsKey("culture"))
+            {
+                jobj.Add("culture", null);
+            }
+
+            jsSorted.Extension.Add("format", jsQuery.Extension["format"]);
+
+            jsSorted.Version = jsQuery.Version;
+
+            return jsSorted;
+
+        }
+
+        private void Sort(JObject jObj)
+        {
+            var props = jObj.Properties().ToList();
+            foreach (var prop in props)
+            {
+                prop.Remove();
+            }
+
+            foreach (var prop in props.OrderBy(p => p.Name))
+            {
+                jObj.Add(prop);
+                if (prop.Value is JObject)
+                    Sort((JObject)prop.Value);
+            }
+        }
+
+        internal JsonStatQuery ReadMetadata_MapParametersToQuery(dynamic restfulParameters)
+        {
+            var parameters = ((List<string>)restfulParameters).Where(x => !string.IsNullOrWhiteSpace(x));
+            int pcount = parameters.Count() - 1;
+            JsonStatQuery jsQuery = new JsonStatQuery();
+            jsQuery.Class = Constants.C_JSON_STAT_QUERY_CLASS;
+            jsQuery.Id = new List<string>();
+            jsQuery.Dimensions = new Dictionary<string, JsonQuery.Dimension>();
+            jsQuery.Extension = new Dictionary<string, object>();
+
+            jsQuery.Extension.Add("matrix", restfulParameters[Constants.C_DATA_RESTFUL_MATRIX]); //1
+            jsQuery.Extension.Add("language", new Language() { Code = restfulParameters[Constants.C_DATA_RESTFUL_LANGUAGE], Culture = null }); //4
+            jsQuery.Extension.Add("codes", false);
+            jsQuery.Extension.Add("format", new JsonQuery.Format() { Type = restfulParameters[Constants.C_DATA_RESTFUL_FORMAT_TYPE], Version = restfulParameters[Constants.C_DATA_RESTFUL_FORMAT_VERSION] }); //2,3
+            if (pcount >= Constants.C_DATA_RESTFUL_PIVOT)
+            {
+                jsQuery.Extension.Add("pivot", restfulParameters[Constants.C_DATA_RESTFUL_PIVOT]); //5
+            }
+            jsQuery.Version = Constants.C_JSON_STAT_QUERY_VERSION;
+
+
+            return jsQuery;
+        }
+
         /// <summary>
         /// Map RESTful parameters to JsonRpc parameters 
         /// </summary>
@@ -96,7 +177,7 @@ namespace PxStat.Data
             dynamic extension = new ExpandoObject();
             dynamic dimension = new ExpandoObject();
 
-
+            extension.codes = false;
 
             extension.matrix = restfulParameters[1];
 
@@ -104,10 +185,13 @@ namespace PxStat.Data
 
             if (((string)extension.language.code).Length == 0) extension.language = new { code = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") };
 
+
             extension.format = new { type = restfulParameters[2], version = restfulParameters[3] };
 
             if (restfulParameters.Count >= 6)
                 extension.pivot = restfulParameters[5];
+            else
+                extension.pivot = null;
 
             jsonStatParameters.extension = extension;
             jsonStatParameters.dimension = dimension;

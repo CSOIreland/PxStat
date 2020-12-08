@@ -207,6 +207,24 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        /// Get the next scheduled release date
+        /// </summary>
+        /// <returns></returns>
+        internal dynamic ReadNextReleaseDate()
+        {
+            var inputParams = new List<ADO_inputParams>();
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_ReadNextReleaseDate", inputParams);
+            if (reader.hasData)
+            {
+                return reader.data[0];
+
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Read any pending live release for a matrix code
         /// </summary>
         /// <param name="dto"></param>

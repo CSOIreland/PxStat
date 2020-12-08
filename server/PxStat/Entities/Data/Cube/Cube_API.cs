@@ -4,7 +4,6 @@ using FluentValidation.Results;
 using Newtonsoft.Json.Linq;
 using PxStat.JsonQuery;
 using PxStat.Resources;
-using PxStat.Security;
 using PxStat.System.Navigation;
 using PxStat.System.Settings;
 using System;
@@ -244,9 +243,7 @@ namespace PxStat.Data
 
                             Format_DTO_Read format = new Format_DTO_Read(pxapiQuery.Response.Format);
 
-                            Analytic_BSO_Create.Create(HttpContext.Current.Request, "PxStat.Data.PxAPIv1", HttpContext.Current.Request.UserAgent,
-                              restfulRequest.ipAddress, parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY), false, format);
-
+                            
                             JsonStatQuery jsQuery = new JsonStatQuery();
                             jsQuery.Class = Constants.C_JSON_STAT_QUERY_CLASS;
                             jsQuery.Id = new List<string>();
@@ -257,8 +254,10 @@ namespace PxStat.Data
                                 jsQuery.Dimensions.Add(q.Code, new JsonQuery.Dimension() { Category = new JsonQuery.Category() { Index = q.Selection.Values.ToList<string>() } });
                             }
                             jsQuery.Extension = new Dictionary<string, object>();
+
                             jsQuery.Extension.Add("matrix", parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY));
-                            jsQuery.Extension.Add("language", new Language() { Code = parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY) });
+                            jsQuery.Extension.Add("language", new Language() { Code = parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), Culture = null });
+                            jsQuery.Extension.Add("codes", false);
                             jsQuery.Extension.Add("format", new JsonQuery.Format() { Type = format.FrmType, Version = format.FrmVersion });
                             if (pcount >= Constants.C_DATA_PXAPIV1_DATA_QUERY)
                             {
@@ -267,11 +266,10 @@ namespace PxStat.Data
                             jsQuery.Version = Constants.C_JSON_STAT_QUERY_VERSION;
 
 
-
-
                             JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
 
                             jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jsQuery);
+
                             //Run the request as a Json Rpc call
                             JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest, true).Read().Response;
                             // Convert the JsonRpc output to RESTful output
@@ -344,7 +342,13 @@ namespace PxStat.Data
 
             //Map the parameters - this is specific to the function
             Cube_MAP map = new Cube_MAP();
-            jsonRpcRequest.parameters = map.ReadDataset_MapParameters(jsonRpcRequest.parameters);
+            //jsonRpcRequest.parameters = map.ReadDataset_MapParameters(jsonRpcRequest.parameters);
+
+            JsonStatQuery jq = map.ReadMetadata_MapParametersToQuery(restfulRequest.parameters);
+
+
+            jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jq);
+
 
             //Run the request as a Json Rpc call
             JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;

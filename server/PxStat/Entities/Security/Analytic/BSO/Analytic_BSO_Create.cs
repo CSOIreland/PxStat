@@ -39,7 +39,8 @@ namespace PxStat.Security
             if (hRequest.UserLanguages != null)
             {
                 if (hRequest.UserLanguages.Count() > 0)
-                    aDto.EnvironmentLngIsoCode = hRequest.UserLanguages[0].Substring(0, 2);
+                    if (hRequest.UserLanguages[0].Length >= 2)
+                        aDto.EnvironmentLngIsoCode = hRequest.UserLanguages[0].Substring(0, 2);
             }
 
             //Get a masked version of the ip address
