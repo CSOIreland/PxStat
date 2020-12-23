@@ -36,7 +36,6 @@ app.copyright.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.copyright.drawCallback = function () {
-  $('[data-toggle="tooltip"]').tooltip();
 
   // Display Update Modal
   $("#copyright-read-container table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
@@ -44,6 +43,11 @@ app.copyright.drawCallback = function () {
     var idn = $(this).attr("idn");
     app.copyright.modal.update(idn);
   });
+  //initiate all copy to clipboard 
+  new ClipboardJS("#copyright-read-container [name=copyright-url-copy-icon]");
+  $('[data-toggle="tooltip"]').tooltip();
+  // Translate labels language (Last to run)
+  app.library.html.parseStaticLabel();
 
   // Click event "internalLink"
   $("#copyright-read-container table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
@@ -164,7 +168,25 @@ app.copyright.drawDatatable = function (data) {
           data: null,
           render: function (data, type, row) {
             return app.library.html.link.external({}, row.CprUrl);
-          }
+          },
+          "width": "1%"
+        },
+        {
+          data: null,
+          render: function (_data, _type, row) {
+            return app.library.html.link.external({ name: "copyright-url-" + row.CprCode }, app.config.url.application + C_COOKIE_LINK_COPYRIGHT + "/" + row.CprCode) + $("<i>", {
+              "class": "far fa-copy fa-lg ml-2",
+              "name": "copyright-url-copy-icon",
+              "data-toggle": "tooltip",
+              "data-clipboard-target": "#copyright-read-container [name=copyright-url-" + row.CprCode + "]",
+              "data-placement": "right",
+              "title": "",
+              "style": "cursor: grab",
+              "data-clipboard-action": "copy",
+              "label-tooltip": "copy-to-clipboard"
+            }).get(0).outerHTML;
+          },
+          "width": "1%"
         },
         {
           data: null,

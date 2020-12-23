@@ -1,5 +1,4 @@
 ﻿using API;
-using DocumentFormat.OpenXml.Spreadsheet;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using PxParser.Resources.Parser;
@@ -10,6 +9,7 @@ using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
@@ -1896,10 +1896,10 @@ namespace PxStat.Data
         {
 
             Xlsx xl = new Xlsx();
-            if (pivot == null)
-                return xl.GetXlsx(this, GetMatrixSheet(lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), lngIsoCode, ci);
-            else
-                return xl.GetXlsx(this, GetMatrixSheetPivoted(pivot, lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), lngIsoCode, ci);
+            // if (pivot == null) 
+            return xl.GetXlsx(this, lngIsoCode, ci, pivot, viewCodes);
+            //else
+            //    return xl.GetXlsx(this, GetMatrixSheetPivoted(pivot, lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), lngIsoCode, ci, pivot);
 
         }
 
@@ -1983,7 +1983,7 @@ namespace PxStat.Data
 
                 string emptyValue = indicateBlankSymbols ? confidential : "";
 
-                rowlist.Add(new XlsxValue() { Value = dto.dataValue == confidential ? emptyValue : dto.dataValue, DataType = CellValues.Number });
+                rowlist.Add(new XlsxValue() { Value = dto.dataValue == confidential ? emptyValue : dto.dataValue });
 
                 rowLists.Add(rowlist);
             }
@@ -2142,7 +2142,7 @@ namespace PxStat.Data
                     rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
                 }
                 counter++;
-                if (counter == matrixItems.Count - 1) readList.Add(rowList);
+                if (counter == matrixItems.Count) readList.Add(rowList);
             }
             return readList;
         }
@@ -2235,7 +2235,7 @@ namespace PxStat.Data
                     rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
                 }
                 counter++;
-                if (counter == matrixItems.Count - 1) readList.Add(rowList);
+                if (counter == matrixItems.Count) readList.Add(rowList);
             }
             return readList;
         }
@@ -2329,10 +2329,96 @@ namespace PxStat.Data
                     rowList.Add(new XlsxValue { Value = dto.dataValue == nullValue ? "" : dto.dataValue });
                 }
                 counter++;
-                if (counter == matrixItems.Count - 1) readList.Add(rowList);
+                if (counter == matrixItems.Count) readList.Add(rowList);
             }
             return readList;
         }
+
+        internal DataTable GetMatrixDataTable(string lngIsoCode = null, bool indicateBlankSymbols = false, int headerStyle = 0, bool viewCodes = true)
+        {
+            DataTable dt = new DataTable();
+
+            lngIsoCode = lngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : lngIsoCode;
+
+            Specification theSpec;
+            if (lngIsoCode != null)
+            {
+                theSpec = this.GetSpecFromLanguage(lngIsoCode);
+                if (theSpec == null) theSpec = this.MainSpec;
+                theSpec.Frequency = MainSpec.Frequency;
+            }
+            else
+                theSpec = this.MainSpec;
+
+            string columnName = Utility.GetCustomConfig("APP_CSV_STATISTIC");
+            if (viewCodes)
+            {
+
+                dt.Columns.Add(columnName.ToUpper().Equals(Utility.GetCustomConfig("APP_CSV_STATISTIC").ToUpper()) ? columnName + Label.Get("default.csv.code", lngIsoCode) : columnName);
+            }
+            dt.Columns.Add(columnName);
+
+
+            if (viewCodes)
+                dt.Columns.Add(theSpec.Frequency.Code.Equals(theSpec.Frequency.Value) ? theSpec.Frequency.Code + Label.Get("default.csv.code", lngIsoCode) : theSpec.Frequency.Code);
+            dt.Columns.Add(theSpec.Frequency.Value);
+
+            foreach (var cls in theSpec.Classification)
+            {
+                if (viewCodes)
+                    dt.Columns.Add(cls.Code.Equals(cls.Value) ? cls.Code + Label.Get("default.csv.code", lngIsoCode) : cls.Code);
+                dt.Columns.Add(cls.Value);
+            }
+
+            dt.Columns.Add(Label.Get("xlsx.unit", lngIsoCode));
+            dt.Columns.Add(Label.Get("xlsx.value", lngIsoCode));
+
+            IEnumerable<ValueElement> cells;
+            int cellCounter = 0;
+
+            cells = Cells.Select(c => (ValueElement)c.TdtValue);
+
+
+
+            if (cells.Count() > 0)
+
+            {
+                Build_BSO bBso = new Build_BSO();
+                List<DataItem_DTO> matrixItems = bBso.GetMatrixDataItems(this, lngIsoCode, null, false, true);
+                string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
+                foreach (var dto in matrixItems)
+                {
+                    int col = -1;
+                    DataRow dr = dt.NewRow();
+
+                    if (viewCodes) dr[++col] = dto.statistic.Code;
+                    dr[++col] = dto.statistic.Value;
+                    if (viewCodes) dr[++col] = dto.period.Code;
+                    dr[++col] = dto.period.Value;
+
+                    foreach (var cls in dto.classifications)
+                    {
+                        if (viewCodes) dr[++col] = cls.Variable[0].Code;
+                        dr[++col] = cls.Variable[0].Value;
+                    }
+                    dr[++col] = dto.statistic.Unit;
+                    dynamic cell = Cells[cellCounter];
+                    string emptyValue = indicateBlankSymbols ? confidential : "";
+
+                    string val = cell.TdtValue.ToString();
+                    if (!DataAdaptor.IsNumeric(val)) { val = confidential; }
+
+                    dr[++col] = val == confidential ? DBNull.Value : cell.TdtValue.ToString();
+
+                    cellCounter++;
+
+                    dt.Rows.Add(dr);
+                }
+            }
+
+            return dt;
+        }
+
         /// <summary>
         /// Gets the dataset expressed as an xlsx/csv matrix
         /// </summary>
@@ -2429,7 +2515,7 @@ namespace PxStat.Data
                     rowlist.Add(new XlsxValue() { Value = dto.statistic.Unit });
                     dynamic cell = Cells[cellCounter];
                     string emptyValue = indicateBlankSymbols ? confidential : "";
-                    rowlist.Add(new XlsxValue() { Value = cell.TdtValue.ToString() == confidential ? emptyValue : cell.TdtValue.ToString(), DataType = CellValues.Number });
+                    rowlist.Add(new XlsxValue() { Value = cell.TdtValue.ToString() == confidential ? emptyValue : cell.TdtValue.ToString() });
 
                     cellCounter++;
                     rowLists.Add(rowlist);

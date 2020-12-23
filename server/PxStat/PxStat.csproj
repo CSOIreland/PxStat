@@ -76,6 +76,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\API.Library.4.3.1\API.Library.dll</HintPath>
     </Reference>
+    <Reference Include="ClosedXML, Version=0.95.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClosedXML.0.95.4\lib\net46\ClosedXML.dll</HintPath>
+    </Reference>
     <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CodeKicker.BBCode.5.0.0.0\lib\net35\CodeKicker.BBCode.dll</HintPath>
       <Private>True</Private>
@@ -83,12 +86,15 @@
     <Reference Include="DeviceDetector.NET, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DeviceDetector.NET.4.2.0\lib\netstandard2.0\DeviceDetector.NET.dll</HintPath>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.10.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentFormat.OpenXml.2.10.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.7.2.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.7.2\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="Enyim.Caching, Version=2.16.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
       <HintPath>..\packages\EnyimMemcached.2.16.0\lib\net35\Enyim.Caching.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.0.10.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExcelNumberFormat.1.0.10\lib\net20\ExcelNumberFormat.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentValidation.8.4.0\lib\net45\FluentValidation.dll</HintPath>
@@ -215,6 +221,7 @@
     <Content Include="Resources\Internationalisation\keyword\keyword_ga.json" />
     <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\Live.pubxml" />
     <Content Include="Resources\Config\config.global.json" />
@@ -619,8 +626,8 @@
     <Compile Include="Resources\Sanitizer.cs" />
     <Compile Include="Resources\Error.cs" />
     <Compile Include="Resources\Xlsx.cs" />
+    <Compile Include="Resources\XlsxClosedXL.cs" />
     <Compile Include="Resources\XlsxHelper\Spreadsheet.cs" />
-    <Compile Include="Resources\XlsxHelper\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

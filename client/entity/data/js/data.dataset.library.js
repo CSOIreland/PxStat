@@ -211,7 +211,7 @@ app.data.dataset.callback.drawDatasetHeading = function () {
         matrixSelectionHeading.find("[name=map-header]").removeClass("d-none");
     }
     //official flag
-    if (!data.extension.official) {
+    if (data.extension.official) {
         matrixSelectionHeading.find("[name=official-flag]").removeClass("d-none");
     }
     //analytical flag

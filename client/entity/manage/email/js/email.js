@@ -10,7 +10,7 @@ $(document).ready(function () {
     app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["email"]);
 
     // Initiate all text areas as tinyMCE
-    app.library.utility.initTinyMce();
+    app.plugin.tinyMce.initiate();
 
     // Populate the Group dropdown
     app.email.ajax.selectGroup();

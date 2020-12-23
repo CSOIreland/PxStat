@@ -895,7 +895,7 @@ app.build.update.upload.drawProperties = function () {
     });
 
     // Initiate all text areas as tinyMCE
-    app.library.utility.initTinyMce(true);
+    app.plugin.tinyMce.initiate(true);
 };
 
 /**  

@@ -52,7 +52,7 @@ namespace PxStat.Resources
 
 
 
-        internal const string C_PXAPIV1_PX = "PX";
+        internal const string C_PXAPIV1_PX = "px";
         internal const string C_PXAPIV1_JSON_STAT_1X = "json-stat";
         internal const string C_PXAPIV1_JSON_STAT_2X = "json-stat2";
         internal const string C_PXAPIV1_CSV = "csv";

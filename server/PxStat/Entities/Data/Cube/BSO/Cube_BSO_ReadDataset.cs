@@ -122,7 +122,7 @@ namespace PxStat.Data
             else
                 readCulture = CultureInfo.CreateSpecificCulture(culture); ;
 
-            if (theDto.jStatQueryExtension.extension.Pivot == null && defaultPivot)
+            if (theDto.jStatQueryExtension.extension.Pivot == null && defaultPivot && theDto.jStatQueryExtension.extension.Format.Type == DatasetFormat.Csv)
             {
                 theDto.jStatQueryExtension.extension.Pivot = matrix.MainSpec.Frequency.Code;
             }

@@ -95,7 +95,9 @@
     "unit": "UNIT",
     "value": "VALUE",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "pivoted": "Pivoted",
+    "unpivoted": "Unpivoted"
   },
   "default": {
     "classification": "State",

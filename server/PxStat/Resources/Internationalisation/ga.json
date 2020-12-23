@@ -94,7 +94,9 @@
     "unit": "Aonad",
     "value": "Luach",
     "yes": "Is ea",
-    "no": "Ní hea"
+    "no": "Ní hea",
+    "pivoted": "Pivoted",
+    "unpivoted": "Unpivoted"
   },
   "default": {
     "classification": "Stát",

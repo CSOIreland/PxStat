@@ -16,7 +16,7 @@ $(document).ready(function () {
   app.reason.ajax.read();
 
   // Initiate all text areas as tinyMCE
-  app.library.utility.initTinyMce();
+  app.plugin.tinyMce.initiate();
 
   // Parse warning
   $("#reason-table-read-container [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));

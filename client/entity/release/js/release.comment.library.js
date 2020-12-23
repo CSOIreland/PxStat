@@ -30,29 +30,19 @@ app.release.comment.render = function (data) {
 
     // Update
     if (data.CmmValue) {
-        app.release.comment.validation.update();
         $("#release-comment [name=create]").hide();
         $("#release-comment [name=update]").show();
-
         $("#release-comment [name=delete]").prop("disabled", app.release.isHistorical ? true : false);
-
         $("#release-comment [name=cmm-value]").empty().html(app.library.html.parseBbCode(data.CmmValue)).show();
-
         $("#release-comment").find("[name=update]").once("click", function () {
             app.release.comment.update(data.CmmValue)
         });
     }
     // Create
     else {
-        app.release.comment.validation.create();
         $("#release-comment [name=create]").show();
         $("#release-comment [name=update]").hide();
-
         $("#release-comment [name=delete]").prop("disabled", true);
-
-        var tinyMceId = $("#release-comment-modal-create [name=cmm-value]").attr("id");
-        tinymce.get(tinyMceId).setContent("");
-
         $("#release-comment [name=cmm-value]").empty().hide();
     }
 
@@ -65,12 +55,13 @@ app.release.comment.render = function (data) {
 * 
 */
 app.release.comment.create = function () {
-    $("#release-comment-modal-create").modal("show");
+    app.release.comment.validation.create();
 
-    $("#release-comment-modal-create").on("hide.bs.modal", function () {
-        var tinyMceId = $("#release-comment-modal-create").find("[name=cmm-value]").attr("id");
-        tinymce.get(tinyMceId).setContent("");
-    });
+    // Blank any comment
+    var tinyMceId = $("#release-comment-modal-create [name=cmm-value]").attr("id");
+    tinymce.get(tinyMceId).setContent("");
+
+    $("#release-comment-modal-create").modal("show");
 };
 
 /**
@@ -136,8 +127,12 @@ app.release.comment.callback.create = function (data) {
 * 
 */
 app.release.comment.update = function (cmmValue) {
+    app.release.comment.validation.update();
+
+    // Set the comment
     var tinyMceId = $("#release-comment-modal-update [name=cmm-value]").attr("id");
     tinymce.get(tinyMceId).setContent(cmmValue);
+
     $("#release-comment-modal-update").modal("show");
 };
 

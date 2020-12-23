@@ -149,6 +149,11 @@ app.product.drawCallbackProduct = function () {
     var PrcCode = $(this).attr("idn"); //PrcCode
     app.product.modal.update(PrcCode);
   });
+  //initiate all copy to clipboard 
+  new ClipboardJS("#product-card-read [name=product-url-copy-icon]");
+  $('[data-toggle="tooltip"]').tooltip();
+  // Translate labels language (Last to run)
+  app.library.html.parseStaticLabel();
   // Click event "internalLink"
   $("#product-card-read table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
     e.preventDefault();
@@ -197,6 +202,22 @@ app.product.drawDataTableProduct = function (data) {
         },
         {
           data: "PrcValue",
+        },
+        {
+          data: null,
+          render: function (_data, _type, row) {
+            return app.library.html.link.external({ name: "product-url-" + row.PrcCode }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + row.PrcCode) + $("<i>", {
+              "class": "far fa-copy fa-lg ml-2",
+              "name": "product-url-copy-icon",
+              "data-toggle": "tooltip",
+              "data-clipboard-target": "#product-card-read [name=product-url-" + row.PrcCode + "]",
+              "data-placement": "right",
+              "title": "",
+              "style": "cursor: grab",
+              "data-clipboard-action": "copy",
+              "label-tooltip": "copy-to-clipboard"
+            }).get(0).outerHTML;
+          }
         },
         {
           data: null,

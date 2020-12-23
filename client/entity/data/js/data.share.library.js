@@ -11,7 +11,7 @@ app.data = app.data || {};
 app.data.share = function (MtrCode, PrdCode) {
     MtrCode = MtrCode || null;
     PrdCode = PrdCode || null;
-
+    $("#data-share-table-link").remove();
     var share = $("#data-share-row").find("[name=share-template]").clone();
     share.attr("id", "data-share");
     share.find("[name=link]").attr("id", "data-share-table-link");

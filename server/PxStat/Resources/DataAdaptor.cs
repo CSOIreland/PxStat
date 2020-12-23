@@ -25,6 +25,8 @@ namespace PxStat.Resources
         }
     }
 
+
+
     /// <summary>
     /// Propery validator
     /// </summary>
@@ -126,6 +128,18 @@ namespace PxStat.Resources
         static public DateTime ConvertToDate(string aDateTime)
         {
             return DateTime.ParseExact(aDateTime, Utility.GetCustomConfig("APP_DEFAULT_DATETIME_FORMAT"), CultureInfo.InvariantCulture);
+
+        }
+
+        /// <summary>
+        /// Test is numeric
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static bool IsNumeric(string value)
+        {
+            double test;
+            return Double.TryParse(value, out test);
 
         }
     }

@@ -161,18 +161,6 @@ $.extend(true, jQuery.validator.messages, {
 });
 
 /*******************************************************************************
-Application - Plugin - load tinyMce library with key https://www.tiny.cloud/
-*******************************************************************************/
-
-//Load dynamically the source of TinyMce by using the API Key
-loadTinyMce();
-function loadTinyMce() {
-  var tinyMce = document.createElement('script');
-  tinyMce.src = app.config.plugin.tinymce.apiURL.sprintf([app.config.plugin.tinymce.apiKey]);
-  document.head.appendChild(tinyMce);
-}
-
-/*******************************************************************************
 Application - Plugin - load ShareThis library with key https://sharethis.com/
 *******************************************************************************/
 app.plugin.sharethis = {};
@@ -422,3 +410,99 @@ app.plugin.pxWidget.load = function () {
     });
   }
 }
+
+/*******************************************************************************
+Application - Plugin - Tiny MCE
+*******************************************************************************/
+
+app.plugin.tinyMce = {};
+
+/**
+ * Configure tinyMce once
+ */
+$(document).ready(function () {
+  if (tinymce) {
+    $(document).once('focusin', function (e) {
+      //fix for link field not editable in bootstrap modal
+      //see https://stackoverflow.com/questions/18111582/tinymce-4-links-plugin-modal-in-not-editable
+      if ($(e.target).closest(".tox-dialog").length) {
+        e.stopImmediatePropagation();
+      }
+    });
+
+    // Add language
+    tinymce.addI18n(app.label.language.iso.code, app.label.plugin.tinyMCE);
+  }
+});
+
+/**
+ * Initiate tinyMce on demand
+ */
+app.plugin.tinyMce.initiate = function (stripDoubleQuotes) {
+  stripDoubleQuotes = stripDoubleQuotes || false;
+  //if any editor exists destroy before init new text area
+  if (tinymce.editors.length) {
+    tinymce.remove();
+  }
+
+  return tinymce.init({
+    //https://www.tiny.cloud/docs-3x/reference/configuration/Configuration3x@force_br_newlines/
+    force_br_newlines: true,
+    force_p_newlines: false,
+    forced_root_block: false,
+
+    selector: 'textarea',
+    paste_as_text: true,
+    menubar: false,
+    plugins: 'bbcode autolink link paste',
+    toolbar: 'bold italic underline | link',
+    browser_spellcheck: true,
+    link_title: false,
+    target_list: false,
+    default_link_target: "_blank",
+    language: app.label.language.iso.code,
+    entity_encoding: "raw",
+    setup: function (editor) {
+      // Trigger save on focus out so that cursor focus doesn't move
+      // Do NOT use the "change" event because it is indirectly called by tinyMce to parse HTML characters 
+      editor.on('focusout', function () {
+        var isSanitised = false;
+
+        var content = tinymce.get(this.id).getContent();
+        if (C_APP_REGEX_BBCODE_NOT_ALLOWED.test(content)) {
+          isSanitised = true;
+          tinymce.get(this.id).setContent(content.sanitise(null, C_APP_REGEX_BBCODE_NOT_ALLOWED, true));
+        };
+
+        var content = tinymce.get(this.id).getContent();
+        if (stripDoubleQuotes && C_APP_REGEX_NODOUBLEQUOTE.test(content)) {
+          isSanitised = true;
+          tinymce.get(this.id).setContent(content.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true));
+        }
+
+        // Save all (anyway)
+        tinymce.triggerSave();
+        // Get sanitised content
+        content = tinymce.get(this.id).getContent();
+
+        // Format the structured information message
+        if (isSanitised) {
+          contentPreview = $("<p>", {
+            class: "bg-default p-2 my-2",
+            html: app.library.html.parseBbCode(content)
+          }).get(0).outerHTML;
+
+          api.modal.information(app.library.html.parseDynamicLabel("disallowed-tinymce-characters", [contentPreview]));
+
+          // Refresh Prism highlight
+          Prism.highlightAll();
+        }
+      });
+
+      // Do nothing when submitting the form
+      editor.on('submit', function (e) {
+        return false;
+      });
+    },
+  });
+};

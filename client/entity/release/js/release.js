@@ -47,7 +47,8 @@ $(document).ready(function () {
   api.content.load("#panel", "entity/release/index.panel.html");
 
   //initiate all text areas as tinyMCE
-  app.library.utility.initTinyMce();
+  app.plugin.tinyMce.initiate();
+
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 });

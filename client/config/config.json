@@ -107,10 +107,6 @@
 			"apiURL": "https://platform-api.sharethis.com/js/sharethis.js#property={0}&product=inline-share-buttons",
 			"apiKey": ""
 		},
-		"tinymce": {
-			"apiURL": "https://cdn.tiny.cloud/1/{0}/tinymce/5.1.6-68/tinymce.min.js",
-			"apiKey": ""
-		},
 		"jscookie": {
 			"path": "/",
 			"secure": "true",

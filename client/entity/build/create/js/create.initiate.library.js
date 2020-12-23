@@ -384,7 +384,7 @@ app.build.create.initiate.setUpDimensions = function () {
     });
 
     //Initialize TinyMce after tabs re drawn.
-    app.library.utility.initTinyMce(true);
+    app.plugin.tinyMce.initiate(true);
 
     $('html, body').animate({ scrollTop: $('#build-create-dimensions').offset().top }, 1000);
 };

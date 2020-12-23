@@ -243,7 +243,7 @@ namespace PxStat.Data
 
                             Format_DTO_Read format = new Format_DTO_Read(pxapiQuery.Response.Format);
 
-                            
+
                             JsonStatQuery jsQuery = new JsonStatQuery();
                             jsQuery.Class = Constants.C_JSON_STAT_QUERY_CLASS;
                             jsQuery.Id = new List<string>();
@@ -282,7 +282,7 @@ namespace PxStat.Data
                             };
 
 
-                            response.fileName = parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY) + suffix;
+                            response.fileName = parameters.ElementAt(Constants.C_DATA_PXAPIV1_METADATA_QUERY) + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + suffix;
                             return response;
 
                         }
@@ -353,11 +353,26 @@ namespace PxStat.Data
             //Run the request as a Json Rpc call
             JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;
 
-            //Convert the JsonRpc output to RESTful output
-            var response = Map.JSONRPC2RESTful_Output(rsp, map.MimeType, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.NoContent);
+            Format_DTO_Read format = new Format_DTO_Read() { FrmType = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_TYPE], FrmVersion = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_VERSION] };
 
-            response.fileName = map.FileName;
+            string mtype = null;
+            using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+            {
+                mtype = fbso.GetMimetypeForFormat(format);
+            };
+            //Convert the JsonRpc output to RESTful output
+            var response = Map.JSONRPC2RESTful_Output(rsp, mtype, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.NoContent);
+
+            string suffix;
+            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
+            {
+                suffix = bso.GetFileSuffixForFormat(format);
+            };
+
+
+            response.fileName = restfulRequest.parameters[Constants.C_DATA_RESTFUL_MATRIX] + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + suffix;
             return response;
+
 
         }
 

@@ -2,7 +2,6 @@
 using DeviceDetectorNET;
 using DeviceDetectorNET.Cache;
 using PxStat.Resources;
-using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +49,7 @@ namespace PxStat.Security
             if (MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension")) aDto.matrix = requestDTO.jStatQueryExtension.extension.Matrix;
 
             // Get the Referer
-            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
+            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? null : hRequest.UrlReferrer.Host;
 
             //The m2m parameter will not be translated into a DTO property so we just read it from the request parameters if it exists
             if (MethodReader.DynamicHasProperty(requestDTO, "m2m"))
@@ -111,65 +110,6 @@ namespace PxStat.Security
             return;
         }
 
-        internal static void Create(HttpRequest hRequest, string method, string userAgent, string ipaddress, string matrixCode, bool m2m, Format_DTO_Read format, string lngIsoCode = null)
-        {
-            ADO Ado = new ADO("defaultConnection");
-            try
-            {
-
-                Analytic_DTO aDto = new Analytic_DTO() { NltMaskedIp = ipaddress, matrix = matrixCode, NltM2m = m2m, NltDate = DateTime.Now, FrmType = format.FrmType, FrmVersion = format.FrmVersion, EnvironmentLngIsoCode = lngIsoCode };
-
-
-                // Get the Referer
-                aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.referrer-not-applicable") : hRequest.UrlReferrer.Host;
-
-
-                //Get the device detector and populate the dto attributes
-                DeviceDetector deviceDetector = GetDeviceDetector(hRequest.UserAgent);
-
-                aDto.NltBotFlag = deviceDetector.IsBot();
-
-                if (deviceDetector.GetBrowserClient().Match != null)
-                {
-                    aDto.NltBrowser = deviceDetector.GetBrowserClient().Match.Name;
-                }
-
-                if (deviceDetector.GetOs().Match != null)
-                    aDto.NltOs = deviceDetector.GetOs().Match.Name;
-
-
-                var valids = new Analytic_VLD().Validate(aDto);
-
-                //validate whatever has been returned
-                if (!valids.IsValid)
-                {
-                    foreach (var fail in valids.Errors)
-                    {
-                        Log.Instance.Debug("Analytic method failed validation:" + method + " :" + fail.ErrorMessage);
-                    }
-                    return;
-                }
-
-                //Create the analytic entry
-                Analytic_ADO ado = new Analytic_ADO(Ado);
-
-                if (ado.Create(aDto) == 0)
-                {
-                    Log.Instance.Debug("Failed to create Analytic:" + method);
-                    return;
-                }
-
-                return;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                Ado.Dispose();
-            }
-        }
 
         /// <summary>
         /// Setup and return the device detector

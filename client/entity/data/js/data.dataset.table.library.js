@@ -951,6 +951,8 @@ app.data.dataset.table.pivot.compute = function (arrobjTable) {
     var reducedTable = $.extend(true, {}, arrobjTable);
     var pivotedTable = $.extend(true, {}, arrobjTable);
 
+    var spliceOffset = 0;
+
     $.each(arrobjTable.data, function (indexData, rowData) {
         // Get all values to pivot
         if ($.inArray(rowData[app.data.dataset.table.pivot.dimensionCode], app.data.dataset.table.pivot.variableCodes) == -1) {
@@ -959,8 +961,9 @@ app.data.dataset.table.pivot.compute = function (arrobjTable) {
 
         // Reduce the data by the pivot size
         if (rowData[app.data.dataset.table.pivot.dimensionCode] != app.data.dataset.table.pivot.variableCodes[0]) {
-            reducedTable.data.splice(indexData, 1);
-            pivotedTable.data.splice(indexData, 1);
+            reducedTable.data.splice(indexData - spliceOffset, 1);
+            pivotedTable.data.splice(indexData - spliceOffset, 1);
+            spliceOffset++;
         }
     });
 

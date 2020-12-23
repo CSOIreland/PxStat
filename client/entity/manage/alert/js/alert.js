@@ -17,7 +17,7 @@ $(document).ready(function () {
     // Parse warning
     $("#alert-container [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
     // Initiate all text areas as tinyMCE
-    app.library.utility.initTinyMce();
+    app.plugin.tinyMce.initiate();
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)

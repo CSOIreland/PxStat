@@ -706,7 +706,7 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
         //Matrix details
         resultItem.find("[name=mtr-code]").text(entry.MtrCode);
 
-        if (!entry.MtrOfficialFlag) {
+        if (entry.MtrOfficialFlag) {
             resultItem.find("[name=official-flag]").removeClass("d-none");
         }
 
