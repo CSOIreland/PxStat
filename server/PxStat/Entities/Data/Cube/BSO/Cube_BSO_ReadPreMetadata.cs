@@ -47,7 +47,7 @@ namespace PxStat.Data
             }
 
             DTO.language = item.LngIsoCode;
-            return Cube_BSO_ReadMetadata.ExecuteReadMetadata(Ado, DTO, result, Response);
+            return Cube_BSO_ReadMetadata.ExecuteReadMetadata(Ado, DTO, result, Response, false);
         }
     }
 }

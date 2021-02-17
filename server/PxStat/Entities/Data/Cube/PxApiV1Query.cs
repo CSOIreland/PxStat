@@ -35,6 +35,9 @@ namespace PxStat.Data
     {
         [JsonProperty("format", Required = Required.Always)]
         public string Format { get; set; }
+
+        [JsonProperty("pivot", Required = Required.Default)]
+        public string Pivot { get; set; }
     }
 
     public class PxApiV1Json

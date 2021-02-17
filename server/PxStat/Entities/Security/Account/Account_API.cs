@@ -35,9 +35,14 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
-        public static dynamic ReadCurrentAccess(JSONRPC_API requestApi)
+        public static dynamic ReadCurrentWindowsAccess(JSONRPC_API requestApi)
         {
-            return new Account_BSO_ReadCurrentAccess(requestApi).Read().Response;
+            return new Account_BSO_ReadCurrentAccess(requestApi, AuthenticationType.windows).Read().Response;
+        }
+
+        public static dynamic ReadCurrentLoginAccess(JSONRPC_API requestApi)
+        {
+            return new Account_BSO_ReadCurrentAccess(requestApi, AuthenticationType.local).Read().Response;
         }
 
         /// <summary>
@@ -45,9 +50,19 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
-        public static dynamic Create(JSONRPC_API requestApi)
+        public static dynamic CreateAD(JSONRPC_API requestApi)
         {
-            return new Account_BSO_Create(requestApi).Create().Response;
+            return new Account_BSO_CreateAD(requestApi).Create().Response;
+        }
+
+        /// <summary>
+        /// Entry point to the API method - Creates a local only Account
+        /// </summary>
+        /// <param name="requestApi"></param>
+        /// <returns></returns>
+        public static dynamic CreateLocal(JSONRPC_API requestApi)
+        {
+            return new Account_BSO_CreateLocal(requestApi).Create().Response;
         }
         /// <summary>
         /// Entry point to the API method - Deletes an Account
@@ -68,6 +83,7 @@ namespace PxStat.Security
         {
             return new Account_BSO_Update(requestApi).Update().Response;
         }
+
 
         //
         public static dynamic UpdateCurrent(JSONRPC_API requestApi)

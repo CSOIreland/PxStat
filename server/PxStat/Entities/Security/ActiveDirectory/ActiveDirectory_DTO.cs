@@ -14,7 +14,7 @@
         /// <summary>
         /// Account user's name
         /// </summary>
-        public string CcnName { get; set; }
+        public string CcnDisplayName { get; set; }
 
         /// <summary>
         /// Account email address

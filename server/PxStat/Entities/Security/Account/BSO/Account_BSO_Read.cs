@@ -87,7 +87,7 @@ namespace PxStat.Security
         /// <returns></returns>
         internal static bool IsAdministrator(ADO ado, string ccnUsername)
         {
-
+            if (ccnUsername == null) return false;
             Account_ADO accountAdo = new Account_ADO();
             Account_DTO_Read dto = new Account_DTO_Read();
             dto.CcnUsername = ccnUsername;
@@ -147,4 +147,3 @@ namespace PxStat.Security
         }
     }
 }
-

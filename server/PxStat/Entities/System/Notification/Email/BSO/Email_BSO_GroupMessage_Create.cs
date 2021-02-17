@@ -96,12 +96,19 @@ namespace PxStat.System.Notification
             List<string> grpCodes = new List<string>();
             grpCodes = DTO.GroupCodes.Select(s => (string)s.GrpCode).ToList();
 
+            string grouplist = grpCodes.Any() ? String.Join(", ", grpCodes) : Label.Get("static.all-groups");
+
             listToParse.Add(new eMail_KeyValuePair() { key = "{title}", value = title });
             listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{grouplist}", value = grpCodes.Any() ? String.Join(", ", grpCodes) : Label.Get("static.all-groups") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{received-by}", value = string.Format(Label.Get("label.timezone", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")), grouplist) });
             listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "title") });
             listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+
 
             email.Subject = subject;
             email.Body = email.ParseTemplate(Properties.Resources.template_GroupMessage, listToParse);

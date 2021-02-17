@@ -2,6 +2,7 @@
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace PxStat.System.Navigation
 {
@@ -62,27 +63,33 @@ namespace PxStat.System.Navigation
 
 
 
-        internal dynamic Search(Navigation_DTO_Search dto, int searchTermCount)
+
+
+        internal dynamic Search(Navigation_DTO_Search dto)
         {
             //The ExecuteReaderProcedure method requires that the parameters be contained in a List<ADO_inputParams>
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode },
-                new ADO_inputParams() { name = "@ReleaseWordMultiplier", value = Configuration_BSO.GetCustomConfig(ConfigType.server,"search.release_word_multiplier") },
-                new ADO_inputParams() { name = "@ProductWordMultiplier", value = Configuration_BSO.GetCustomConfig(ConfigType.server,"search.product_word_multiplier") },
-                new ADO_inputParams() { name = "@SubjectWordMultiplier", value = Configuration_BSO.GetCustomConfig(ConfigType.server,"search.subject_word_multiplier") }
-
+                new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode }
             };
 
             ADO_inputParams param = new ADO_inputParams() { name = "@Search", value = dto.SearchTerms };
 
-
-
-
             param.typeName = "KeyValueVarcharAttribute";
             paramList.Add(param);
             //We need a count of search terms (ignoring duplicates caused by singularisation)
-            paramList.Add(new ADO_inputParams() { name = "@SearchTermCount", value = searchTermCount });
+
+
+            //Call the stored procedure
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_Search", paramList);
+
+            return output.data;
+        }
+
+        internal dynamic EntitySearch(Navigation_DTO_Search dto)
+        {
+
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>();
 
             if (dto.MtrCode != null)
                 paramList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
@@ -106,10 +113,33 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@RlsAnalyticalFlag", value = dto.RlsAnalyticalFlag });
 
 
+
+
+
             //Call the stored procedure
-            ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_Search", paramList);
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_EntitySearch", paramList);
 
             return output.data;
         }
+
+        internal dynamic ReadSearchResults(DataTable dtMatrixResults, string lngIsoCode)
+        {
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() { name = "@LngIsoCode", value = lngIsoCode },
+                new ADO_inputParams() { name = "@DefaultLngIsoCode", value = Configuration_BSO.GetCustomConfig( ConfigType.global,"language.iso.code") }
+            };
+
+            ADO_inputParams param = new ADO_inputParams() { name = "@Result", value = dtMatrixResults };
+
+            param.typeName = "KeyValueVarcharAttribute";
+            paramList.Add(param);
+
+            //Call the stored procedure
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_Search_Read", paramList);
+
+            return output.data;
+        }
+
     }
 }

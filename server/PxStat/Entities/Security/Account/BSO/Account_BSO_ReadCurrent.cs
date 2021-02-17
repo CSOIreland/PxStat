@@ -49,7 +49,7 @@ namespace PxStat.Security
                     adAdo.MergeGroupsToUsers(Ado, ref result);
                 }
 
-                Response.data = result.data;
+                Response.data = result.data[0];
                 return true;
             }
 

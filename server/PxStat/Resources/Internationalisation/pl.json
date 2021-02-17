@@ -23,6 +23,9 @@
       "expected": "Wartość Oczekiwana: {0}",
       "eof": "Kod końca dokumentu (EOF)",
       "unmatched-parameters": "Nie udało się uzgodnić parametrów żądania z dostępnymi danymi"
+    },
+    "account": {
+      "locked": "Account is locked"
     }
   },
   "authentication": {
@@ -112,14 +115,36 @@
       "response-approve": "Nowe żądanie typu [b]{0}[/b] zostało zatwierdzone przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b] i oczekuje na podpis.\n Wyświetlić ten przepływ pracy w {4}.",
       "response-reject": "Wniosek o zatwierdzenie typu [b]{0}[/b] został odrzucony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
       "signoff-approve": "Wniosek o podpisanie się typu [b]{0}[/b] został zatwierdzony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
-      "signoff-reject": "Wniosek o podpisanie się typu [b]{0}[/b] został odrzucony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}."
+      "signoff-reject": "Wniosek o podpisanie się typu [b]{0}[/b] został odrzucony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
+      "header": {
+        "anchor-text": "here",
+        "setup-1fa": "{0}: You are invited to setup your access to the {1} application.",
+        "setup-2fa": "{0}: You are invited to setup your 2FA (Two-Factor Authentication) the {1} application.",
+        "update-1fa": "{0}: A request has been made to reset your password for the {1} application.",
+        "update-2fa": "{0}: A request has been made to reset your 2FA (Two-Factor Authentication) for the {1} application. "
+      },
+      "sub-header": {
+        "setup-1fa": "Please click {0} or copy and paste the link below into a browser to begin setting up your password.",
+        "setup-2fa": "Please click {0} or copy and paste the link below into a browser to begin setting up your 2FA.",
+        "update-1fa": "Please click {0} or copy and paste the link below into a browser to begin resetting your password.",
+        "update-2fa": "Please click {0} or copy and paste the link below into a browser to begin resetting your 2FA.",
+        "list-2fa": "Ensure the following to reset your 2FA:~Have your smart device available (e.g. smartphone or tablet)~ Have an Authenticator App installed on your device (e.g. Microsoft Authenticator or Google Authenticator) which is free to use~Ensure your privacy is adequate"
+
+      },
+      "footer": "Please ignore this email if you are not {0} or if you think that you may have received this email in error."
     },
     "subject": {
       "request-create": "{0} {1}.{2}: Oczekuje Na Zatwierdzenie",
       "response-approve": "{0} {1}.{2}: Oczekiwanie Na Podpis",
       "response-reject": "{0} {1}.{2}: Zatwierdzenie Odrzucone",
       "signoff-approve": "{0} {1}.{2}: Podpis Zatwierdzony",
-      "signoff-reject": "{0} {1}.{2}: Podpis Odrzucony"
+      "signoff-reject": "{0} {1}.{2}: Podpis Odrzucony",
+      "account-invitation": "Activate your new PxStat account",
+      "account-invitation-complete": "Complete your PxStat account activation",
+      "setup-1fa": "Setup access for {0}",
+      "update-1fa": "Reset password for {0}",
+      "update-2fa": "Reset 2FA for {0}",
+      "setup-2fa": "Setup 2FA for {0}"
     }
   },
   "workflow": {
@@ -130,12 +155,21 @@
       "update-properties": "Update Properties",
       "auto-approve-comment": "Automatic Response",
       "autoSignoff-comment": "Automatic Signoff"
-    }
+    },
+    "reason": "You received this email because you are part of this Workflow."
   },
   "analytic": {
     "others": "Inni",
     "unknown": "Nieznany",
     "date": "data",
     "total": "całkowity"
+  },
+  "label": {
+    "date-time": "Date/Time",
+    "date-format": "24h",
+    "timezone": "Local Time"
+  },
+  "group_message": {
+    "received-by": "Received by: {0} and Power Users"
   }
 }

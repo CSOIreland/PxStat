@@ -28,7 +28,7 @@ namespace PxStat.Template
         /// <summary>
         /// Account username
         /// </summary>
-        protected string SamAccountName { get; }
+        protected string SamAccountName { get; set; }
 
         /// <summary>
         /// Request passed into the API
@@ -54,6 +54,8 @@ namespace PxStat.Template
         /// Validation result
         /// </summary>
         protected ValidationResult DTOValidationResult { get; set; }
+
+        protected AuthenticationType AuthenticationType { get; set; }
 
         #endregion 
 
@@ -190,6 +192,7 @@ namespace PxStat.Template
                 if (parameters != null)
                 {
                     return (T)Activator.CreateInstance(typeof(T), parameters);
+
                 }
                 else return (T)Activator.CreateInstance(typeof(T), Request.parameters);
             }
@@ -283,11 +286,66 @@ namespace PxStat.Template
         /// <returns></returns>
         virtual protected bool IsUserAuthenticated()
         {
-            if (!ActiveDirectory.IsAuthenticated(Request.userPrincipal))
+            if (Request.userPrincipal != null)
             {
+                if (!ActiveDirectory.IsAuthenticated(Request.userPrincipal))
+                {
 
-                OnAuthenticationFailed();
-                return false;
+                    OnAuthenticationFailed();
+                    return false;
+                }
+
+                //check in case the account is locked
+                Account_ADO aAdo = new Account_ADO();
+
+                ADO_readerOutput response = aAdo.Read(Ado, new Account_DTO_Read() { CcnUsername = Request.userPrincipal.SamAccountName });
+                if (!response.hasData)
+                {
+                    OnAuthenticationFailed();
+                    return false;
+                }
+                if (response.data[0].CcnLockedFlag)
+                {
+                    OnAuthenticationFailed();
+                    return false;
+                }
+                AuthenticationType = AuthenticationType.windows;
+            }
+            else
+            {
+                //This may be application authenticated, let's check..
+
+                Response.error = null;
+
+                if (Request.sessionCookie != null)
+                {
+
+
+                    //Does the cookie correspond with a live token for a user? If so then return the user.
+
+
+                    ADO_readerOutput user;
+                    using (Login_BSO lBso = new Login_BSO())
+                    {
+                        user = lBso.ReadBySession(Request.sessionCookie.Value);
+                        if (!user.hasData)
+                        {
+
+                            Response.error = Label.Get("error.authentication"); ;
+                            return false;
+                        }
+                        else
+                        {
+                            SamAccountName = user.data[0].CcnUsername;
+                            if (!HasUserPrivilege()) return false;
+                        }
+                    }
+
+
+
+                    AuthenticationType = AuthenticationType.local;
+                }
+
             }
 
             OnAuthenticationSuccessful();

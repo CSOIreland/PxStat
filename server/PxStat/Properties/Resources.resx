@@ -142,6 +142,12 @@
   <data name="template_NotifyWorkflow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\email\template_notifyworkflow.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="template_Login" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\email\template_Login.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="template_LoginBulletPoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\email\template_LoginBulletPoint.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="dictionary_ga" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Internationalisation\keyword\dictionary_ga.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

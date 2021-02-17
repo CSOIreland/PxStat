@@ -242,6 +242,7 @@ namespace PxStat.Data
 
 
                             Format_DTO_Read format = new Format_DTO_Read(pxapiQuery.Response.Format);
+                            string pivot = pxapiQuery.Response.Pivot;
 
 
                             JsonStatQuery jsQuery = new JsonStatQuery();
@@ -259,9 +260,9 @@ namespace PxStat.Data
                             jsQuery.Extension.Add("language", new Language() { Code = parameters.ElementAt(Constants.C_DATA_PXAPIV1_SUBJECT_QUERY), Culture = null });
                             jsQuery.Extension.Add("codes", false);
                             jsQuery.Extension.Add("format", new JsonQuery.Format() { Type = format.FrmType, Version = format.FrmVersion });
-                            if (pcount >= Constants.C_DATA_PXAPIV1_DATA_QUERY)
+                            if (pivot != null)
                             {
-                                jsQuery.Extension.Add("pivot", parameters.ElementAt(Constants.C_DATA_PXAPIV1_DATA_QUERY));
+                                jsQuery.Extension.Add("pivot", pivot);
                             }
                             jsQuery.Version = Constants.C_JSON_STAT_QUERY_VERSION;
 
@@ -346,6 +347,7 @@ namespace PxStat.Data
 
             JsonStatQuery jq = map.ReadMetadata_MapParametersToQuery(restfulRequest.parameters);
 
+            jq.Extension["codes"] = true;
 
             jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jq);
 

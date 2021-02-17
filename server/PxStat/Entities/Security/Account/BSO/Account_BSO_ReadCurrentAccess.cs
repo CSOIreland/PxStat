@@ -8,12 +8,14 @@ namespace PxStat.Security
     /// </summary>
     internal class Account_BSO_ReadCurrentAccess : BaseTemplate_Read<Account_DTO_Read, Account_VLD_ReadCurrent>
     {
+        AuthenticationType authenticationType;
         /// <summary>
         /// This method reads only the current logged in user without the Group data
         /// </summary>
         /// <param name="request"></param>
-        internal Account_BSO_ReadCurrentAccess(JSONRPC_API request) : base(request, new Account_VLD_ReadCurrent())
+        internal Account_BSO_ReadCurrentAccess(JSONRPC_API request, AuthenticationType authType) : base(request, new Account_VLD_ReadCurrent())
         {
+            authenticationType = authType;
         }
 
         /// <summary>
@@ -49,29 +51,37 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
+
+            if (IsUserAuthenticated())
+            {
+                if (AuthenticationType != authenticationType)
+                {
+                    return false;
+                }
+            }
+
+
             DTO.CcnUsername = SamAccountName;
-            if (!IsUserAuthenticated())
+
+            Log.Instance.Debug("ReadCurrentAccess SamAccountName:" + DTO.CcnUsername);
+
+            if (DTO.CcnUsername == null)
             {
-                return true;
-            }
-            JSONRPC_Output response = new JSONRPC_Output();
-            //The cache key is created to be unique to a given CcnUsername.
-            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", DTO.CcnUsername);
-            if (cache.hasData)
-            {
-                Response.data = cache.data;
+                Response.data = null;
                 return true;
             }
 
 
-            Account_BSO bso = new Account_BSO();
+
+            Account_BSO bso = new Account_BSO(Ado);
             ADO_readerOutput output = bso.ReadCurrentAccess(Ado, DTO.CcnUsername);
             if (!output.hasData)
             {
                 Log.Instance.Debug("No Account data found");
                 return false;
             }
-            Response.data = output.data;
+
+            Response.data = output.data[0];
             return true;
         }
 

@@ -101,15 +101,15 @@ namespace PxStat.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;static&quot;: {
-        ///    &quot;release&quot;: &quot;Scaoileadh &quot;,
+        ///    &quot;release&quot;: &quot;Eisiúint &quot;,
         ///    &quot;all-groups&quot;: &quot;Gach grúpa&quot;
         ///  },
         ///  &quot;error&quot;: {
-        ///    &quot;authentication&quot;: &quot;Fíordheimhniú neamhbhailí. Ní cheadaítear rochtain&quot;,
-        ///    &quot;create&quot;: &quot;Níor cruthaíodh aon taifead. Déan athbhreithniú ar d’ionchur le do thoil.&quot;,
-        ///    &quot;delete&quot;: &quot;Níor scriosadh aon taifead. Déan athbhreithniú ar do rogha le do thoil.&quot;,
-        ///    &quot;duplicate&quot;: &quot;Níor cruthaíodh aon taifead. Tá taifead dúblach ann cheana féin. Déan athbhreithniú ar d’ionchur le do thoil.&quot;,
-        ///    &quot;exception&quot;: &quot;Tha [rest of string was truncated]&quot;;.
+        ///    &quot;authentication&quot;: &quot;Fíordheimhniú neamhbhailí. Níl cead isteach.&quot;,
+        ///    &quot;create&quot;: &quot;Níor cruthaíodh taifead. Athbhreithnigh an méid a chuir tú isteach.&quot;,
+        ///    &quot;delete&quot;: &quot;Níor scriosadh taifead. Athbhreithnigh an rogha a rinne tú.&quot;,
+        ///    &quot;duplicate&quot;: &quot;Níor cruthaíodh taifead. Tá taifead dúblach ann cheana. Athbhreithnigh an méid a chuir tú isteach.&quot;,
+        ///    &quot;exception&quot;: &quot;Tharla earráid neamhthuartha. Iarr tacaí [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ga {
             get {
@@ -225,6 +225,55 @@ namespace PxStat.Properties {
         internal static string template_GroupMessage {
             get {
                 return ResourceManager.GetString("template_GroupMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
+        ///
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-16&quot;&gt;
+        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        ///&lt;/head&gt;
+        ///
+        ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
+        ///
+        ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
+        ///
+        ///        &lt;h2&gt;{subject}&lt;/h2&gt;
+        ///        &lt;hr&gt;
+        ///
+        ///        &lt;p&gt;{header}&lt;/p&gt;
+        ///
+        ///
+        ///        &lt;p&gt;{content}&lt;/p&gt;
+        ///
+        ///        &lt;p&gt;{footer}&lt;/p&gt;
+        ///
+        ///        &lt;p style=&quot;font [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string template_Login {
+            get {
+                return ResourceManager.GetString("template_Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;&lt;/title&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string template_LoginBulletPoint {
+            get {
+                return ResourceManager.GetString("template_LoginBulletPoint", resourceCulture);
             }
         }
         

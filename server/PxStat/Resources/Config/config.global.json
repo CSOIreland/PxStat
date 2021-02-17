@@ -21,8 +21,9 @@
     "phone": {
       "pattern": "^(\\(\\+\\d{1,3}\\) \\d+ \\d+ \\d+)$",
       "placeholder": "(+353) 21 452 2253"
-    }
 
+    },
+    "password": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\\W]).{8,}$"
   },
   "workflow": {
     "embargo": {
@@ -57,5 +58,11 @@
     "import": {
       "moderator": true
     }
+  },
+  "session": {
+    "length": 600
+  },
+  "search": {
+    "maximum-results": 100
   }
 }

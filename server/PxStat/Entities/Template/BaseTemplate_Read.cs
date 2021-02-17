@@ -1,6 +1,7 @@
 ﻿using API;
 using FluentValidation;
 using PxStat.Resources;
+using PxStat.Security;
 using System;
 using System.Web;
 
@@ -57,8 +58,29 @@ namespace PxStat.Template
                         return this;
                     }
                 }
+                //if we didn't attempt to authenticate and it's an external call then we still need to the the SamAccountName
+                if (SamAccountName == null && Request.sessionCookie != null)
+                {
+                    Log.Instance.Debug("Session cookie: " + Request.sessionCookie.Value);
+
+                    //Does the cookie correspond with a live token for a user? 
+                    //Login_BSO lBso = new Login_BSO();
+                    ADO_readerOutput user;
+                    using (Login_BSO lBso = new Login_BSO())
+                    {
+                        user = lBso.ReadBySession(Request.sessionCookie.Value);
+                        if (user.hasData)
+                        {
+
+                            SamAccountName = user.data[0].CcnUsername;
+                        }
+                    }
+
+                }
+
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams = Cleanser.Cleanse(Request.parameters);
+
 
                 try
                 {
@@ -121,7 +143,6 @@ namespace PxStat.Template
             }
             catch (Exception ex)
             {
-
                 //An error has been caught,  log the error and return a message to the caller
                 Log.Instance.Error(ex);
                 Response.error = Label.Get("error.exception");
@@ -130,6 +151,11 @@ namespace PxStat.Template
             }
             finally
             {
+                Login_BSO lBso = new Login_BSO(Ado);
+
+                if (SamAccountName != null && (AuthenticationType == AuthenticationType.local || AuthenticationType == AuthenticationType.none))
+                    lBso.ExtendSession(SamAccountName);
+
                 Dispose();
             }
         }

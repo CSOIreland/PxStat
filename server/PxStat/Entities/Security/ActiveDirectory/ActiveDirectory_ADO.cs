@@ -1,6 +1,9 @@
 ﻿using API;
+using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PxStat.Security
 {
@@ -36,7 +39,7 @@ namespace PxStat.Security
                 ActiveDirectory_DTO dto = new ActiveDirectory_DTO();
                 dto.CcnUsername = readAD.SamAccountName;
                 dto.CcnEmail = readAD.EmailAddress;
-                dto.CcnName = readAD.GivenName + " " + readAD.Surname;
+                dto.CcnDisplayName = readAD.GivenName + " " + readAD.Surname;
                 readList.Add(dto);
                 return readList;
             }
@@ -49,7 +52,7 @@ namespace PxStat.Security
                 ActiveDirectory_DTO dto = new ActiveDirectory_DTO(parameters);
                 dto.CcnUsername = pair.Value.SamAccountName;
                 dto.CcnEmail = pair.Value.EmailAddress;
-                dto.CcnName = pair.Value.GivenName + " " + pair.Value.Surname;
+                dto.CcnDisplayName = pair.Value.GivenName + " " + pair.Value.Surname;
 
                 readList.Add(dto);
             }
@@ -110,6 +113,38 @@ namespace PxStat.Security
         }
 
         /// <summary>
+        /// From an email address, get the rest of the information for a user from AD
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        internal dynamic GetAdSpecificDataForEmail(string email)
+        {
+
+            // Get Active Directory
+            IDictionary<string, dynamic> adDirectory;
+
+            // List all users
+            adDirectory = ActiveDirectory.List();
+
+
+            dynamic result = new ExpandoObject();
+            var foundUser = adDirectory.Where(x => x.Value.EmailAddress == email);
+            if (foundUser == null) return null;
+
+            var key = foundUser.FirstOrDefault().Key;
+            if (key == null) return null;
+
+            result.CcnEmail = adDirectory[key].EmailAddress;
+            result.CcnDisplayName = adDirectory[key].GivenName + " " + adDirectory[key].Surname;
+            result.CcnUsername = key;
+
+
+            return result;
+
+
+        }
+
+        /// <summary>
         /// Adds the retrieved Active Directory information to the list of users
         /// </summary>
         /// <param name="result"></param>
@@ -124,15 +159,21 @@ namespace PxStat.Security
 
             foreach (var user in result.data)
             {
+
                 if (adDirectory.ContainsKey(user.CcnUsername))
                 {
                     user.CcnEmail = adDirectory[user.CcnUsername].EmailAddress;
-                    user.CcnName = adDirectory[user.CcnUsername].GivenName + " " + adDirectory[user.CcnUsername].Surname;
+                    user.CcnDisplayName = adDirectory[user.CcnUsername].GivenName + " " + adDirectory[user.CcnUsername].Surname;
                 }
                 else
                 {
-                    user.CcnName = null;
-                    user.CcnEmail = null;
+                    if (!((IDictionary<string, Object>)user).ContainsKey("CcnDisplayName"))
+
+                        user.CcnDisplayName = null;
+                    if (user.CcnUsername != null && Regex.IsMatch(user.CcnUsername, Utility.GetCustomConfig("APP_REGEX_EMAIL")))
+                        user.CcnEmail = user.CcnUsername;
+                    else
+                        user.CcnEmail = null;
                 }
 
             }

@@ -22,7 +22,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="account"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Account_DTO_Read account)
+        internal ADO_readerOutput Read(ADO ado, Account_DTO_Read account, bool adOnly = false, string ccnEmail = null)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>();
             if (!string.IsNullOrEmpty(account.CcnUsername))
@@ -36,12 +36,23 @@ namespace PxStat.Security
                 paramList.Add(new ADO_inputParams() { name = "@PrvCode", value = account.PrvCode });
 
             }
+            if (adOnly)
+            {
+                paramList.Add(new ADO_inputParams() { name = "@AdFlag", value = true });
+            }
+
+            if (ccnEmail != null)
+            {
+                paramList.Add(new ADO_inputParams() { name = "@CcnEmail", value = ccnEmail });
+            }
 
 
             ADO_readerOutput output = ado.ExecuteReaderProcedure("Security_Account_Read", paramList);
 
             return output;
         }
+
+
 
         /// <summary>
         /// Reads account based on account name
@@ -78,6 +89,7 @@ namespace PxStat.Security
                 account.CcnUsername = ReadString(item.CcnUsername);
                 account.PrvCode = ReadString(item.PrvCode);
                 account.CcnNotificationFlag = ReadBool(item.CcnNotificationFlag);
+                account.CcnLockedFlag = ReadBool(item.CcnLockedFlag);
                 accounts.Add(account);
             }
             return accounts;
@@ -163,6 +175,7 @@ namespace PxStat.Security
             return output;
         }
 
+
         /// <summary>
         /// Creates a new account in the account table
         /// </summary>
@@ -170,17 +183,23 @@ namespace PxStat.Security
         /// <param name="account"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, Account_DTO_Create account, string ccnUsername)
+        internal int Create(ADO ado, Account_DTO_Create account, string ccnUsername, bool ccnAdFlag, bool locked = false)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@CcnUsernameCreator",value=ccnUsername},
                 new ADO_inputParams() {name= "@CcnUsernameNewAccount",value=account.CcnUsername},
                 new ADO_inputParams() {name= "@PrvCode",value=account.PrvCode},
-                new ADO_inputParams() {name="@CcnNotificationFlag",value=account.CcnNotificationFlag  }
+                new ADO_inputParams() {name="@CcnNotificationFlag",value=account.CcnNotificationFlag  },
+                new ADO_inputParams() {name="@CcnLockedFlag",value=locked  },
+                new ADO_inputParams() {name="@CcnADFlag",value=ccnAdFlag  },
             };
 
+            if (account.CcnDisplayName != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@CcnDisplayName", value = account.CcnDisplayName });
 
+            if (account.CcnEmail != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@CcnEmail", value = account.CcnEmail });
 
             // A return parameter is required for the operation
             ADO_returnParam retParam = new ADO_returnParam();
@@ -213,6 +232,10 @@ namespace PxStat.Security
             };
 
 
+            if (account.CcnLockedFlag != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@CcnLockedFlag", value = account.CcnLockedFlag });
+
+
             // A return parameter is required for the operation
             ADO_returnParam retParam = new ADO_returnParam();
             retParam.name = "return";
@@ -226,6 +249,7 @@ namespace PxStat.Security
             //Assign the returned value for checking and output
             return retParam.value;
         }
+
 
 
         /// <summary>
@@ -276,7 +300,17 @@ namespace PxStat.Security
             else return false;
         }
 
+        internal bool ExistsByEmail(ADO ado, string ccnEmail)
+        {
+            Account_DTO_Read dto = new Security.Account_DTO_Read();
 
+            ADO_readerOutput output = this.Read(ado, dto, false, ccnEmail);
+            if (output.hasData)
+            {
+                return true;
+            }
+            else return false;
+        }
 
         /// <summary>
         /// Checks for a given Privilege Code if there are at least one account with that privilege

@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-16">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="background-color: #fff; font-family: 'Roboto Sans', sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;">
+
+    <div class="container" style="margin: 0px auto;  width: 75%;">
+        <img src={image_source} />
+        <h2>{subject}</h2>
+        <hr>
+
+        <p>{header}</p>
+
+        <p>{list_header}</p>
+
+        <ul style="list-style-type:square;">
+            <li>{item1}</li>
+            <li>{item2}</li>
+            <li>{item3}</li>
+        </ul>
+
+        <p>{sub_header}</p>
+
+        <p>{content}</p>
+
+        <p>{footer}</p>
+
+
+        <p style="font-size: smaller;">
+            <b>{datetime_label}:</b> {datetime} <span style="font-size:x-small; color:gray;">({date_format}, {timezone})</span>
+        </p>
+
+    </div>
+
+</body>
+
+</html>

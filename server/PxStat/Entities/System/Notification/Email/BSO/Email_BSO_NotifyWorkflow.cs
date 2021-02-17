@@ -16,13 +16,13 @@ namespace PxStat.System.Notification
         /// </summary>
         /// <param name="requestDTO"></param>
         /// <param name="releaseDTO"></param>
-        internal void EmailRequest(WorkflowRequest_DTO requestDTO, Release_DTO releaseDTO)
+        internal void EmailRequest(WorkflowRequest_DTO requestDTO, Release_DTO releaseDTO, ADO ado)
         {
             eMail email = new eMail();
 
             var v = getReleaseUrl(releaseDTO);
 
-            Account_BSO aBso = new Account_BSO();
+            Account_BSO aBso = new Account_BSO(ado);
             ADO_readerOutput approvers = aBso.getReleaseUsers(releaseDTO.RlsCode, true);
 
             if (!approvers.hasData) return;
@@ -41,7 +41,7 @@ namespace PxStat.System.Notification
 
             string releaseUrl = getReleaseUrl(releaseDTO);
             String subject = string.Format(Label.Get("email.subject.request-create"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-            String body = string.Format(Label.Get("email.body.request-create"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, requestDTO.RequestAccount.CcnEmail, requestDTO.RequestAccount.CcnUsername, requestDTO.RequestAccount.CcnName);
+            String body = string.Format(Label.Get("email.body.request-create"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, requestDTO.RequestAccount.CcnEmail, requestDTO.RequestAccount.CcnUsername, requestDTO.RequestAccount.CcnDisplayName);
 
             sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), subject, body);
 
@@ -75,7 +75,7 @@ namespace PxStat.System.Notification
                     recipients = aBso.getUsersOfPrivilege(Resources.Constants.C_SECURITY_PRIVILEGE_POWER_USER);
 
                     subject = string.Format(Label.Get("email.subject.response-approve"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.response-approve"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, rspDTO.ResponseAccount.CcnEmail, rspDTO.ResponseAccount.CcnUsername, rspDTO.ResponseAccount.CcnName);
+                    body = string.Format(Label.Get("email.body.response-approve"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, rspDTO.ResponseAccount.CcnEmail, rspDTO.ResponseAccount.CcnUsername, rspDTO.ResponseAccount.CcnDisplayName);
 
                     break;
 
@@ -85,7 +85,7 @@ namespace PxStat.System.Notification
                     recipients = aBso.getReleaseUsers(releaseDTO.RlsCode, false);
 
                     subject = string.Format(Label.Get("email.subject.response-reject"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.response-reject"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, rspDTO.ResponseAccount.CcnEmail, rspDTO.ResponseAccount.CcnUsername, rspDTO.ResponseAccount.CcnName);
+                    body = string.Format(Label.Get("email.body.response-reject"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, rspDTO.ResponseAccount.CcnEmail, rspDTO.ResponseAccount.CcnUsername, rspDTO.ResponseAccount.CcnDisplayName);
 
                     break;
             }
@@ -137,7 +137,7 @@ namespace PxStat.System.Notification
             {
                 case Constants.C_WORKFLOW_STATUS_APPROVE:
                     subject = string.Format(Label.Get("email.subject.signoff-approve"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.signoff-approve"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, sgnDTO.SignoffAccount.CcnEmail, sgnDTO.SignoffAccount.CcnUsername, sgnDTO.SignoffAccount.CcnName);
+                    body = string.Format(Label.Get("email.body.signoff-approve"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, sgnDTO.SignoffAccount.CcnEmail, sgnDTO.SignoffAccount.CcnUsername, sgnDTO.SignoffAccount.CcnDisplayName);
 
 
                     break;
@@ -145,7 +145,7 @@ namespace PxStat.System.Notification
                 case Constants.C_WORKFLOW_STATUS_REJECT:
 
                     subject = string.Format(Label.Get("email.subject.signoff-reject"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
-                    body = string.Format(Label.Get("email.body.signoff-reject"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, sgnDTO.SignoffAccount.CcnEmail, sgnDTO.SignoffAccount.CcnUsername, sgnDTO.SignoffAccount.CcnName);
+                    body = string.Format(Label.Get("email.body.signoff-reject"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, sgnDTO.SignoffAccount.CcnEmail, sgnDTO.SignoffAccount.CcnUsername, sgnDTO.SignoffAccount.CcnDisplayName);
 
 
 
@@ -173,6 +173,11 @@ namespace PxStat.System.Notification
             listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "title") });
             listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{reason}", value = Label.Get("workflow.reason", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
 
             email.Subject = subject;
             email.Body = email.ParseTemplate(Properties.Resources.template_NotifyWorkflow, listToParse);

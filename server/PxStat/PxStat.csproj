@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.3.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.3.1\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.4.0\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="ClosedXML, Version=0.95.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ClosedXML.0.95.4\lib\net46\ClosedXML.dll</HintPath>
@@ -192,6 +192,8 @@
     </Content>
     <Content Include="Resources\eMail\template_GroupMessage.html" />
     <EmbeddedResource Include="Resources\image.png" />
+    <Content Include="Resources\eMail\template_Login.html" />
+    <Content Include="Resources\eMail\template_LoginBulletPoint.html" />
     <Content Include="Resources\regexes\bots.yml" />
     <Content Include="Resources\regexes\client\browsers.yml" />
     <Content Include="Resources\regexes\client\browser_engine.yml" />
@@ -332,6 +334,9 @@
     <Compile Include="Entities\Data\Release\BSO\Release_BSO_UpdateProduct.cs" />
     <Compile Include="Entities\Data\Release\Release_ADO _Workflow.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_CreateAD.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_CreateLocal.cs" />
+    <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadByToken.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadCurrentAccess.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadIsApprover.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_UpdateCurrent.cs" />
@@ -359,6 +364,26 @@
     <Compile Include="Entities\Security\Logging\Logging_API.cs" />
     <Compile Include="Entities\Security\Logging\Logging_DTO.cs" />
     <Compile Include="Entities\Security\Logging\Logging_VLD.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_Create1FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_Create2FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_InitiateForgotten1FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_InitiateForgotten2FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_Login.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_Logout.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_ReadByToken.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_ReadOpen1FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_ReadOpen2FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_InitiateUpdate1FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_InitiateUpdate1FA_Current.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_InitiateUpdate2FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_InitiateUpdate2FA_Current.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_Update1FA.cs" />
+    <Compile Include="Entities\Security\Login\BSO\Login_BSO_Update2FA.cs" />
+    <Compile Include="Entities\Security\Login\Login_ADO.cs" />
+    <Compile Include="Entities\Security\Login\Login_API.cs" />
+    <Compile Include="Entities\Security\Login\Login_DTO.cs" />
+    <Compile Include="Entities\Security\Login\Login_VLD.cs" />
     <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_ReadPrfMemoryAvailable.cs" />
     <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_ReadPrfProcessorPercentage.cs" />
     <Compile Include="Entities\Security\Performance\BSO\Performance_BSO_ReadPrfRequestPerSecond.cs" />
@@ -385,6 +410,8 @@
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ReadSynonym.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ResourceFactory.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_API.cs" />
+    <Compile Include="Entities\System\Navigation\Navigation\BSO\Navigation_BSO.cs" />
+    <Compile Include="Entities\System\Notification\Email\BSO\Email_BSO.cs" />
     <Compile Include="Entities\System\Settings\Format\BSO\Format_BSO.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workdflow_BSO_ReadPendingLive.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO.cs" />
@@ -513,7 +540,6 @@
     <Compile Include="Entities\Security\Account\Account_ADO.cs" />
     <Compile Include="Entities\Security\Account\Account_DTO.cs" />
     <Compile Include="Entities\Security\Account\Account_VLD.cs" />
-    <Compile Include="Entities\Security\Account\BSO\Account_BSO_Create.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_ReadCurrent.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_Update.cs" />
     <Compile Include="Entities\Security\Account\BSO\Account_BSO_Delete.cs" />

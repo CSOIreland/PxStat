@@ -80,7 +80,7 @@ namespace PxStat.Data
         /// <param name="theReleaseDto"></param>
         /// <param name="theResponse"></param>
         /// <returns></returns>
-        static internal bool ExecuteReadMetadata(ADO theAdo, Cube_DTO_Read theCubeDTO, Release_DTO theReleaseDto, JSONRPC_Output theResponse)
+        static internal bool ExecuteReadMetadata(ADO theAdo, Cube_DTO_Read theCubeDTO, Release_DTO theReleaseDto, JSONRPC_Output theResponse, bool isLive = true)
         {
             var ado = new Cube_ADO(theAdo);
 
@@ -96,6 +96,11 @@ namespace PxStat.Data
 
             var jsonStat = theMatrix.GetJsonStatObject();
             theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
+            if (!isLive)
+            {
+                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theMatrix.Code);
+                return true;
+            }
 
             if (theReleaseDto.RlsLiveDatetimeTo != null)
                 MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + theMatrix.Code);

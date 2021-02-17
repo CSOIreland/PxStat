@@ -236,7 +236,6 @@ namespace PxStat.Build
         /// </summary>
         /// 
         [NoTrim]
-        [NoHtmlStrip]
         public string MtrInput { get; internal set; }
 
 

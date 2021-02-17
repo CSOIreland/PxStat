@@ -34,7 +34,7 @@ namespace PxStat.Workflow
         protected override bool Execute()
         {
             Workflow_BSO bso = new Workflow_BSO();
-            Account_BSO aBso = new Account_BSO();
+            Account_BSO aBso = new Account_BSO(Ado);
 
             Response = bso.WorkflowResponseCreate(DTO, Ado, SamAccountName);
             if (Response.error != null)

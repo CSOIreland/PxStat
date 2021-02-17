@@ -148,7 +148,7 @@ namespace PxStat.Workflow
                 Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
                 try
                 {
-                    notify.EmailRequest(dtoWrqList[0], releaseDTO);
+                    notify.EmailRequest(dtoWrqList[0], releaseDTO, Ado);
                 }
                 catch { }
             }
@@ -167,7 +167,7 @@ namespace PxStat.Workflow
         /// <returns></returns>
         internal bool HasFastrackPermission(ADO ado, string ccnUsername, int RlsCode, string workflowStage)
         {
-            ADO_readerOutput result = new Account_BSO().ReadCurrentAccess(ado, ccnUsername);
+            ADO_readerOutput result = new Account_BSO(ado).ReadCurrentAccess(ado, ccnUsername);
             if (!result.hasData) return false;
             if (result.data == null) return false;
             if (result.data.Count == 0) return false;
@@ -402,7 +402,7 @@ namespace PxStat.Workflow
                 return response;
             }
 
-            Account_BSO aBso = new Account_BSO();
+            Account_BSO aBso = new Account_BSO(Ado);
 
             moderators = aBso.getReleaseUsers(DTO.RlsCode, null);
             powerUsers = aBso.getUsersOfPrivilege(Constants.C_SECURITY_PRIVILEGE_POWER_USER);

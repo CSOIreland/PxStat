@@ -36,6 +36,51 @@
 
     }
 
+    public class Account_DTO_Lock
+    {
+        public string CcnUsername { get; set; }
+        public bool CcnLockedFlag { get; set; }
+
+        public Account_DTO_Lock(dynamic parameters)
+        {
+            if (parameters.CcnUsername != null)
+                CcnUsername = parameters.CcnUsername;
+            if (parameters.CcnLockedFlag != null)
+                CcnLockedFlag = parameters.CcnLockedFlag;
+        }
+    }
+
+    internal class Account_DTO_CreateLocal
+    {
+        public string CcnEmail { get; set; }
+        public string CcnDisplayName { get; set; }
+        public string PrvCode { get; set; }
+        public bool CcnNotificationFlag { get; set; }
+        public string LngIsoCode { get; set; }
+        public string CcnUsername { get; set; }
+
+        public Account_DTO_CreateLocal(dynamic parameters)
+        {
+            if (parameters.CcnEmail != null)
+            {
+                this.CcnEmail = parameters.CcnEmail;
+                this.CcnUsername = parameters.CcnEmail;
+            }
+            if (parameters.CcnDisplayName != null)
+                this.CcnDisplayName = parameters.CcnDisplayName;
+            if (parameters.PrvCode != null)
+                this.PrvCode = parameters.PrvCode;
+            if (parameters.CcnNotificationFlag != null)
+                this.CcnNotificationFlag = parameters.CcnNotificationFlag;
+            else
+                this.CcnNotificationFlag = true;
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+        }
+    }
+
     /// <summary>
     /// DTO for Account Create
     /// </summary>
@@ -57,6 +102,12 @@
         public bool CcnNotificationFlag { get; set; }
         #endregion
 
+        public string LngIsoCode { get; set; }
+
+        public string CcnDisplayName { get; set; }
+
+        public string CcnEmail { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -71,6 +122,15 @@
                 this.CcnNotificationFlag = parameters.CcnNotificationFlag;
             else
                 this.CcnNotificationFlag = true;
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+
+        }
+
+        public Account_DTO_Create()
+        {
         }
     }
 
@@ -112,7 +172,7 @@
         /// </summary>
         public bool CcnNotificationFlag { get; set; }
 
-
+        public bool? CcnLockedFlag { get; set; }
 
         /// <summary>
         /// Constructor
@@ -128,6 +188,8 @@
                 this.CcnNotificationFlag = parameters.CcnNotificationFlag;
             else
                 this.CcnNotificationFlag = true;
+            if (parameters.CcnLockedFlag != null)
+                CcnLockedFlag = parameters.CcnLockedFlag;
         }
 
         public Account_DTO_Update()
@@ -161,6 +223,33 @@
                 CcnUsername = parameters.CcnUsername;
             if (parameters.RlsCode != null)
                 RlsCode = parameters.RlsCode;
+        }
+    }
+
+    public class Account_DTO_Confirm
+    {
+        public string Email { get; set; }
+        public string InvitationToken { get; set; }
+
+        public Account_DTO_Confirm(dynamic parameters)
+        {
+            if (parameters.Email != null)
+                this.Email = parameters.Email;
+            if (parameters.Token != null)
+                this.InvitationToken = parameters.Token;
+        }
+    }
+
+    public class Account_DTO_Login
+    {
+        public string Email { get; set; }
+        public string TwofactorCode { get; set; }
+        public string Password { get; internal set; }
+
+
+        public Account_DTO_Login()
+        {
+
         }
     }
 }

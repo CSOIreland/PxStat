@@ -3,9 +3,23 @@ using System;
 
 namespace PxStat.Security
 {
-    internal class Account_BSO
+    internal enum AuthenticationType { none, local, windows }
+    internal class Account_BSO : IDisposable
     {
+        ADO ado;
 
+        public void Dispose()
+        {
+            if (ado != null)
+                ado.Dispose();
+        }
+        internal Account_BSO(ADO aDO)
+        {
+            ado = aDO;
+        }
+
+        internal Account_BSO()
+        { }
         /// <summary>
         /// Get a list of users connected to this release with a number of filter options
         /// </summary>
@@ -15,10 +29,9 @@ namespace PxStat.Security
         /// <returns></returns>
         internal ADO_readerOutput getReleaseUsers(int rlsCode, bool? isApprover, string prvCode = null)
         {
-            ADO ado = new ADO("defaultConnection");
+            ado = new ADO("defaultConnection");
             try
             {
-
                 Account_ADO aAdo = new Account_ADO();
                 var result = aAdo.ReadReleaseUsers(ado, rlsCode, isApprover, prvCode);
                 return result;
@@ -33,6 +46,7 @@ namespace PxStat.Security
             }
         }
 
+
         /// <summary>
         /// Get all users of a given privilege
         /// </summary>
@@ -40,7 +54,7 @@ namespace PxStat.Security
         /// <returns></returns>
         internal ADO_readerOutput getUsersOfPrivilege(string prvCode)
         {
-            ADO ado = new ADO("defaultConnection");
+            ado = new ADO("defaultConnection");
             try
             {
 
@@ -57,6 +71,8 @@ namespace PxStat.Security
                 ado.Dispose();
             }
         }
+
+
 
         internal ADO_readerOutput ReadCurrentAccess(ADO Ado, string ccnUsername)
         {

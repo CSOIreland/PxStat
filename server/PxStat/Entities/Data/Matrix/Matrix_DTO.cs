@@ -692,7 +692,7 @@ namespace PxStat.Data
                 }
 
                 //Get rid of multiple spaces
-                NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
+                NotesAsString = Regex.Replace(NotesAsString, @"/\s\s+/g", " ");
                 if (notex != null)
                     NotesAsString = NotesAsString + " " + string.Join("", notex.Select(e => e.ToString()));
 
@@ -815,7 +815,7 @@ namespace PxStat.Data
                 }
 
                 //Get rid of multiple spaces
-                NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
+                //NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
 
 
 
@@ -3033,7 +3033,7 @@ namespace PxStat.Data
                 jsStat.Note = new List<string>();
                 if (!string.IsNullOrEmpty(spec.NotesAsString))
                 {
-                    jsStat.Note.Add(new BBCode().Transform(spec.NotesAsString));
+                    jsStat.Note.Add(spec.NotesAsString);
                 }
             }
 
@@ -3046,7 +3046,7 @@ namespace PxStat.Data
             jsStat.Note = new List<string>();
             if (!string.IsNullOrEmpty(spec.NotesAsString))
             {
-                jsStat.Note.Add(new BBCode().Transform(spec.NotesAsString));
+                jsStat.Note.Add(spec.NotesAsString);
             }
 
             // the release note is now appended to the other notes from the px file
@@ -4068,7 +4068,6 @@ namespace PxStat.Data
     public class PxUpload_DTO
     {
         [NoTrim]
-        [NoHtmlStrip]
         public string MtrInput { get; set; }
         public bool Overwrite { get; set; }
         public string GrpCode { get; set; }

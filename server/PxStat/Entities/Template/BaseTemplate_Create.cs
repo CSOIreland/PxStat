@@ -1,6 +1,7 @@
 ﻿using API;
 using FluentValidation;
 using PxStat.Resources;
+using PxStat.Security;
 using System;
 using System.Data;
 
@@ -59,7 +60,21 @@ namespace PxStat.Template
                         return this;
                     }
                 }
+                //if we didn't attempt to authenticate and it's an external call then we still need to the the SamAccountName
+                if (SamAccountName == null && Request.sessionCookie != null)
+                {
+                    using (var lBso = new Login_BSO())
+                    {
+                        //Does the cookie correspond with a live token for a user? 
 
+                        var user = lBso.ReadBySession(Request.sessionCookie.Value);
+                        if (user.hasData)
+                        {
+
+                            SamAccountName = user.data[0].CcnUsername;
+                        }
+                    }
+                }
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams = Cleanser.Cleanse(Request.parameters);
                 try
@@ -122,6 +137,11 @@ namespace PxStat.Template
             }
             finally
             {
+                Login_BSO lBso = new Login_BSO(Ado);
+
+                if (SamAccountName != null && AuthenticationType == AuthenticationType.local)
+                    lBso.ExtendSession(SamAccountName);
+
                 Dispose();
             }
         }

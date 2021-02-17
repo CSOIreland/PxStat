@@ -1,9 +1,9 @@
 ﻿
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
 
 namespace PxStat.Resources
 {
@@ -73,6 +73,7 @@ namespace PxStat.Resources
         /// <returns></returns>
         private static string CleanValue(PropertyInfo propertyInfo, string pvalue)
         {
+            var t = propertyInfo.CustomAttributes;
             var attrNoHtmlStrip = propertyInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == "NoHtmlStrip").FirstOrDefault();
             var attrNoTrim = propertyInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == "NoTrim").FirstOrDefault();
             var attrLowerCase = propertyInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == "LowerCase").FirstOrDefault();

@@ -35,7 +35,7 @@ namespace PxStat.Workflow
         {
 
             Workflow_BSO bso = new Workflow_BSO();
-            Account_BSO aBso = new Account_BSO();
+            Account_BSO aBso = new Account_BSO(Ado);
             bool responseComplete = false;
 
             //Create the workflow request
