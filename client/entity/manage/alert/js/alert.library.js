@@ -223,7 +223,7 @@ app.alert.callback.createOnSuccess = function (data) {
     //Close modal
     $("#alert-modal-create").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -343,7 +343,7 @@ app.alert.callback.updateOnSuccess = function (data) {
     api.content.load("#alert", "entity/manage/alert/index.notice.html");
     $("#alert-modal-update").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -401,7 +401,7 @@ app.alert.callback.deleteOnSuccess = function (data) {
     app.alert.ajax.read();
     api.content.load("#alert", "entity/manage/alert/index.notice.html");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [""]));
     }

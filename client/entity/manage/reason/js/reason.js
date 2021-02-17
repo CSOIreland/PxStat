@@ -10,7 +10,7 @@ $(document).ready(function () {
   app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["reasons"]);
 
   // Load Modal 
-  api.content.load("#overlay", "entity/manage/reason/index.modal.html");
+  api.content.load("#modal-entity", "entity/manage/reason/index.modal.html");
 
   //Get data from API and Draw the Data Table for Reason
   app.reason.ajax.read();

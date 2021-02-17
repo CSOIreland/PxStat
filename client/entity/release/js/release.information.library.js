@@ -150,7 +150,7 @@ app.release.information.ajax.updateAnalyticalFlag = function () {
 * @param {*} data
 */
 app.release.information.callback.updateAnalyticalFlag = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);

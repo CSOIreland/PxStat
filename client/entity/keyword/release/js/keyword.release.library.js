@@ -117,7 +117,7 @@ app.keyword.release.callback.createOnSuccess = function (data, callbackParam) {
     $("#keyword-release-modal-create").modal("hide");
     app.keyword.release.ajax.read();
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.KrlValue]));
     } else {
@@ -609,7 +609,7 @@ app.keyword.release.callback.deleteOnSuccess = function (data, callbackParam) {
     //Redraw Data Table keyword.release with fresh data.
     app.keyword.release.ajax.read();
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.KrlValue]));
     }
@@ -741,7 +741,7 @@ app.keyword.release.callback.updateOnSuccess = function (data, callbackParam) {
     app.keyword.release.ajax.read();
     $("#keyword-release-modal-update").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.KrlValue]));
     } else {

@@ -327,7 +327,7 @@ app.keyword.subject.callback.updateOnSuccess = function (data, callbackParam) {
   var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
   app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.KsbValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -451,7 +451,7 @@ app.keyword.subject.callback.deleteOnSuccess = function (data, deletedKeyword) {
   var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
   app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [deletedKeyword.KsbValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
@@ -595,7 +595,7 @@ app.keyword.subject.callback.createOnSuccess = function (data, callbackParam) {
   var selectedSubject = $("#keyword-subject-container").find("select[name=select-main-subject-search]").select2('data')[0];
   app.keyword.subject.ajax.read(selectedSubject.SbjCode);
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.KsbValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };

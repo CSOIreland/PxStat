@@ -333,7 +333,7 @@ app.build.import.ajax.create = function (overwrite) {
  * @param {*} data
  */
 app.build.import.callback.createOnSuccess = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         app.build.import.reset();
         // No Duplicate found, upload completed
         api.modal.success(app.library.html.parseDynamicLabel("success-file-imported", [""]));

@@ -18,14 +18,14 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- Favicons - https://realfavicongenerator.net -->
-    <link rel="apple-touch-icon" sizes="180x180" href="image/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon/favicon-16x16.png">
-    <link rel="manifest" href="image/favicon/site.webmanifest">
-    <link rel="mask-icon" href="image/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="image/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn.cso.ie/static/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.cso.ie/static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.cso.ie/static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="https://cdn.cso.ie/static/favicon/site.webmanifest">
+    <link rel="mask-icon" href="https://cdn.cso.ie/static/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="https://cdn.cso.ie/static/favicon/favicon.ico">
     <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="msapplication-config" content="image/favicon/browserconfig.xml">
+    <meta name="msapplication-config" content="https://cdn.cso.ie/static/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
     <meta name="description" content="">
 
@@ -52,21 +52,21 @@
     <!-- **************************************************************************** -->
 
     <!-- API Constant -->
-    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.0/src/js/api.constant.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.0/src/js/api.constant.min.js"></script>
 
     <!-- API Configuration -->
-    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.0/src/js/api.config.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.0/src/js/api.config.min.js"></script>
 
     <!-- API Library -->
-    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.0/src/js/api.library.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.0/src/js/api.library.min.js"></script>
 
     <!-- API Plugin -->
-    <link href="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.0/src/css/api.plugin.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.0/src/js/api.plugin.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.0/src/css/api.plugin.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.0/src/js/api.plugin.min.js"></script>
 
     <!-- API Plugin - Drag n Drop -->
-    <link href="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.0/src/css/api.plugin.dragndrop.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.0/src/js/api.plugin.dragndrop.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.0/src/css/api.plugin.dragndrop.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.0/src/js/api.plugin.dragndrop.min.js"></script>
 
     <!-- **************************************************************************** -->
     <!-- Resurces - App - Dependency -->
@@ -102,6 +102,9 @@
     <!-- JQuery Validate - https://github.com/jquery-validation/jquery-validation/ -->
     <script src="https://cdn.jsdelivr.net/gh/jquery-validation/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/jquery-validation/jquery-validation@1.19.1/dist/additional-methods.min.js"></script>
+
+    <!-- JQuery QRcode - https://github.com/jeromeetienne/jquery-qrcode/ -->
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/jquery-qrcode@1.0/jquery.qrcode.min.js"></script>
 
     <!-- JSON-Stat - https://github.com/badosa/JSON-stat/ -->
     <script src="https://cdn.jsdelivr.net/gh/badosa/JSON-stat@v0.13.3/json-stat.min.js"></script>
@@ -151,7 +154,7 @@
     <!-- TinyMCE - https://www.tiny.cloud/get-tiny/self-hosted/ -->
     <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.1.2/src/js/tinymce/tinymce.min.js"></script>
 
-    <!-- bootstrap-breakpoints - https://github.com/Johann-S/bs-breakpoints-->
+    <!-- Bootstrap Breakpoints - https://github.com/Johann-S/bs-breakpoints-->
     <script src="https://cdn.jsdelivr.net/gh/Johann-S/bs-breakpoints@v1.0/dist/bs-breakpoints.min.js"></script>
 
     <!-- **************************************************************************** -->
@@ -185,38 +188,41 @@
 <!-- **************************************************************************** -->
 
 <body>
-    <!-- API - Plugin - Return To Top -->
-    <a href="#" id="return-to-top">
-        <i class="fa fa-chevron-up" aria-hidden="true"></i>
-    </a>
+    <div class="position-relative min-vh-100">
+        <!-- API - Plugin - Return To Top -->
+        <a href="#" id="return-to-top">
+            <i class="fa fa-chevron-up" aria-hidden="true"></i>
+        </a>
+        <div id="cookie"></div>
+        <div id="alert"></div>
+        <div id="header"></div>
+        <div id="navigation"></div>
 
-    <div id="alert"></div>
-    <div id="header"></div>
-    <div id="navigation"></div>
+        <div id="content" class="container-fluid">
+            <div class="row">
+                <div id="body" class="col-xl-9 col-lg-8 col-md-12 col-sm-12 p-0"></div>
+                <div id="sidebar" class="col-xl-3 col-lg-4 col-md-12 col-sm-12 p-0">
+                    <div id="data-search-row-responsive" class="col-sm-12 my-2"></div>
+                    <div id="data-navigation"></div>
+                    <div id="data-filter-toggle" class="col mb-2" style="display: none;">
+                        <button type="button" class="btn btn-info text-left w-100 text-light"><i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="filter"></span></button>
+                    </div>
+                    <div id="data-filter"></div>
+                    <div id="panel-toggle" class="col" style="display: none;">
+                        <button type="button" class="btn btn-info text-left w-100 text-light"><i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="more-information"></span></button>
+                    </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div id="body" class="col-xl-9 col-lg-8 col-md-12 col-sm-12 p-0"></div>
-            <div id="sidebar" class="col-xl-3 col-lg-4 col-md-12 col-sm-12 p-0">
-                <div id="data-search-row-responsive" class="col-sm-12 my-2"></div>
-                <div id="data-navigation"></div>
-                <div id="data-filter-toggle" class="col mb-2" style="display: none;">
-                    <button type="button" class="btn btn-info text-left w-100 text-light"><i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="filter"></span></button>
+                    <div id="panel"></div>
                 </div>
-                <div id="data-filter"></div>
-                <div id="panel-toggle" class="col" style="display: none;">
-                    <button type="button" class="btn btn-info text-left w-100 text-light"><i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="more-information"></span></button>
-                </div>
-
-                <div id="panel"></div>
             </div>
         </div>
-    </div>
 
-    <div id="footer"></div>
-    <div id="overlay"></div>
-    <div id="modal"></div>
-    <div id="spinner"></div>
+        <div id="footer"></div>
+        <div id="modal-entity"></div>
+        <div id="modal-openaccess"></div>
+        <div id="modal"></div>
+        <div id="spinner"></div>
+    </div>
 
     <!-- JS file for Index page-->
     <script src="index.js"></script>

@@ -24,7 +24,7 @@ app.user.MapData = function (dataAPI) {
   $.each(dataAPI, function (i, item) {
     // Add ID and NAME to the list
     dataAPI[i].id = item.CcnUsername;
-    dataAPI[i].text = item.CcnUsername + " (" + $.trim(item.CcnName) + ")";
+    dataAPI[i].text = item.CcnUsername + " (" + $.trim(item.CcnDisplayName) + ")";
   });
   return dataAPI;
 };
@@ -39,19 +39,19 @@ app.user.UpdateFields = function (activeUserRecord) {
   var activeUserRecord = activeUserRecord || null;
   if (activeUserRecord == null) {
     //Do not delete required for Member search functionality (select2)
-    $("#user-modal-create").find("[name=ccn-user-name-create]").text("");
-    $("#user-modal-create").find("[name=ccn-name-create]").text("");
-    $("#user-modal-create").find("[name=ccn-email-create]").text("");
+    $("#user-modal-create-ad-user").find("[name=ccn-user-name-create]").text("");
+    $("#user-modal-create-ad-user").find("[name=ccn-name-create]").text("");
+    $("#user-modal-create-ad-user").find("[name=ccn-email-create]").text("");
     $(".serverValidationError .error").empty();
-    $("#user-modal-create").find("[name=user-select-create-search-error]").empty();
+    $("#user-modal-create-ad-user").find("[name=user-select-create-search-error]").empty();
   }
   else {
     //Do not delete required for Member search functionality (select2)
-    $("#user-modal-create").find("[name=ccn-user-name-create]").text(activeUserRecord.CcnUsername);
-    $("#user-modal-create").find("[name=ccn-name-create]").text(activeUserRecord.CcnName);
-    $("#user-modal-create").find("[name=ccn-email-create]").text(activeUserRecord.CcnEmail);
+    $("#user-modal-create-ad-user").find("[name=ccn-user-name-create]").text(activeUserRecord.CcnUsername);
+    $("#user-modal-create-ad-user").find("[name=ccn-name-create]").text(activeUserRecord.CcnDisplayName);
+    $("#user-modal-create-ad-user").find("[name=ccn-email-create]").text(activeUserRecord.CcnEmail);
     $(".serverValidationError .error").empty();
-    $("#user-modal-create").find("[name=user-select-create-search-error]").empty();
+    $("#user-modal-create-ad-user").find("[name=user-select-create-search-error]").empty();
   }
 };
 //#endregion utility function
@@ -64,11 +64,11 @@ app.user.UpdateFields = function (activeUserRecord) {
   */
 app.user.callback.searchUser = function (data) {
   // Show modal
-  $("#user-modal-create").modal("show");
+  $("#user-modal-create-ad-user").modal("show");
 
   // Load select2
-  $("#user-modal-create").find("[name=user-select-create-search]").empty().append($("<option>")).select2({
-    dropdownParent: $('#user-modal-create'),
+  $("#user-modal-create-ad-user").find("[name=user-select-create-search]").empty().append($("<option>")).select2({
+    dropdownParent: $('#user-modal-create-ad-user'),
     minimumInputLength: 0,
     allowClear: true,
     width: '100%',
@@ -77,14 +77,14 @@ app.user.callback.searchUser = function (data) {
   });
 
   // Enable and Focus Search input
-  $("#user-modal-create").find("[name=user-select-create-search]").prop('disabled', false).focus();
+  $("#user-modal-create-ad-user").find("[name=user-select-create-search]").prop('disabled', false).focus();
 
   //Update User Search functionality
-  $("#user-modal-create").find("[name=user-select-create-search]").on('select2:select', function (e) {
+  $("#user-modal-create-ad-user").find("[name=user-select-create-search]").on('select2:select', function (e) {
     var selectedObject = e.params.data;
     if (selectedObject) {
       // Some item from your model is active!
-      if (selectedObject.id.toLowerCase() == $("#user-modal-create").find("[name=user-select-create-search]").val().toLowerCase()) {
+      if (selectedObject.id.toLowerCase() == $("#user-modal-create-ad-user").find("[name=user-select-create-search]").val().toLowerCase()) {
         // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
         app.user.UpdateFields(selectedObject);
       }
@@ -115,7 +115,7 @@ app.user.ajax.read = function () {
   */
 app.user.callback.read = function (data) {
   app.user.drawUserDataTable(data);
-  $("#user-modal-create").modal("hide");
+  $("#user-modal-create-ad-user").modal("hide");
 };
 
 /**
@@ -146,6 +146,11 @@ app.user.drawUserDataTable = function (data) {
 
     var localOptions = {
       data: data,
+      createdRow: function (row, data, dataIndex) {
+        if (!data.CcnDisplayName) {
+          $(row).addClass('table-danger');
+        }
+      },
       columns: [
         {
           data: null,
@@ -153,11 +158,31 @@ app.user.drawUserDataTable = function (data) {
             return app.library.html.link.edit({ idn: row.CcnUsername }, row.CcnUsername);
           }
         },
-        { data: "CcnName" },
+        {
+
+          data: null,
+          render: function (data, type, row) {
+            return row.CcnDisplayName || $("<i>", {
+              "class": "fas fa-user-slash",
+              "data-original-title": app.label.static["missing"],
+              "data-toggle": "tooltip"
+            }).get(0).outerHTML;
+          }
+        },
         {
           data: null,
           render: function (data, type, row) {
-            return app.library.html.email(row.CcnEmail);
+            return row.CcnEmail ? app.library.html.email(row.CcnEmail) : row.CcnDisplayName || $("<i>", {
+              "class": "fas fa-user-slash",
+              "data-original-title": app.label.static["missing"],
+              "data-toggle": "tooltip"
+            }).get(0).outerHTML;
+          }
+        },
+        {
+          data: null,
+          render: function (data, type, row) {
+            return row.CcnAdFlag ? app.library.html.parseStaticLabel("ad") : app.library.html.parseStaticLabel("local");
           }
         },
         {
@@ -169,16 +194,15 @@ app.user.drawUserDataTable = function (data) {
         },
         {
           data: null,
+          type: "natural",
           render: function (data, type, row) {
-            return app.label.datamodel.privilege[row.PrvValue];
+            return app.library.html.boolean(!row.CcnLockedFlag, true, true);
           }
         },
         {
           data: null,
-          type: "natural",
           render: function (data, type, row) {
-            var valid = !row.CcnEmail || !row.CcnName ? false : true
-            return app.library.html.boolean(valid, true, true);
+            return app.label.datamodel.privilege[row.PrvValue];
           }
         },
         {
@@ -209,8 +233,15 @@ app.user.drawUserDataTable = function (data) {
 
 
     //Add User button click event
-    $("#user-read-container").find("[name=button-create]").once("click", function () {
-      app.user.modal.create();
+    $("#user-read-container").find("[name=create-ad-user]").once("click", function (e) {
+      e.preventDefault();
+      app.user.modal.createActiveDirectory();
+    });
+
+    //Add User button click event
+    $("#user-read-container").find("[name=create-local-user]").once("click", function (e) {
+      e.preventDefault();
+      app.user.modal.createLocal();
     });
   }
 };
@@ -233,20 +264,21 @@ app.user.ajax.getActiveDirectoryUser = function () {
 /**
  * Get role types fom api to populate role type drop down
  */
-app.user.ajax.createRoleType = function () {
+app.user.ajax.createRoleType = function (selector) {
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.Security.Privilege_API.Read",
     null,
-    "app.user.callback.createRoleType");
+    "app.user.callback.createRoleType",
+    selector);
 };
 
 /**
  * Fill dropdown for privilege types
  * @param {*} data  
  */
-app.user.callback.createRoleType = function (data) {
-  $("#user-modal-create").find("[name=user-select-create-type]").empty().append($('<option>', {
+app.user.callback.createRoleType = function (data, selector) {
+  $(selector).find("[name=user-select-create-type]").empty().append($('<option>', {
     disabled: "disabled",
     selected: "selected",
     value: "",
@@ -254,21 +286,21 @@ app.user.callback.createRoleType = function (data) {
   }));
   //Fill rest of select with role types
   $.each(data, function (_key, entry) {
-    $("#user-modal-create").find("[name=user-select-create-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
+    $(selector).find("[name=user-select-create-type]").append(new Option(app.label.datamodel.privilege[this.PrvValue], this.PrvCode));
   });
 };
 
 /**
  * Show modal to Create User
  */
-app.user.modal.create = function () {
-  app.user.validation.create();
-  //Flush the Modal user-modal-create. Do not delete. Required for User Select2 functionality.
-  $("#user-modal-create").find("[name=ccn-user-name-create]").empty();
-  $("#user-modal-create").find("[name=ccn-name-create]").empty();
-  $("#user-modal-create").find("[name=ccn-email-create]").empty();
+app.user.modal.createActiveDirectory = function () {
+  app.user.validation.createActiveDirectory();
+  //Flush the Modal user-modal-create-ad-user. Do not delete. Required for User Select2 functionality.
+  $("#user-modal-create-ad-user").find("[name=ccn-user-name-create]").empty();
+  $("#user-modal-create-ad-user").find("[name=ccn-name-create]").empty();
+  $("#user-modal-create-ad-user").find("[name=ccn-email-create]").empty();
   //initiate toggle buttons
-  $("#user-modal-create").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
+  $("#user-modal-create-ad-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
     on: app.label.static["true"],
     off: app.label.static["false"],
     onstyle: "success",
@@ -277,7 +309,7 @@ app.user.modal.create = function () {
   });
 
   //Create User Role Type
-  app.user.ajax.createRoleType();
+  app.user.ajax.createRoleType("#user-modal-create-ad-user");
   // Call the API to get AD user names  
   app.user.ajax.getActiveDirectoryUser();
 };
@@ -285,8 +317,8 @@ app.user.modal.create = function () {
 /**
  *  Validation function for Create User
  */
-app.user.validation.create = function () {
-  $("#user-modal-create form").trigger("reset").validate({
+app.user.validation.createActiveDirectory = function () {
+  $("#user-modal-create-ad-user form").trigger("reset").validate({
     rules: {
       "ccn-user-name-create":
       {
@@ -312,11 +344,11 @@ app.user.validation.create = function () {
       }
     },
     errorPlacement: function (error, element) {
-      $("#user-modal-create [name=" + element[0].name + "-error-holder]").append(error[0]);
+      $("#user-modal-create-ad-user [name=" + element[0].name + "-error-holder]").append(error[0]);
     },
     submitHandler: function (form) {
       $(form).sanitiseForm();
-      app.user.ajax.create();
+      app.user.ajax.createActiveDirectory();
     }
   }).resetForm();
 };
@@ -325,33 +357,19 @@ app.user.validation.create = function () {
  * Create User Ajax call
  *
  */
-app.user.ajax.create = function () {
-  var ccnUsername = $("#user-modal-create").find("[name=ccn-user-name-create]").text();
-  var ccnName = $("#user-modal-create").find("[name=ccn-name-create]").text();
-  var ccnEmail = $("#user-modal-create").find("[name=ccn-email-create]").text();
-  var userTypeText = $("#user-modal-create").find("[name=user-select-create-type] option:selected").text();
-  var userTypeVal = $("#user-modal-create").find("[name=user-select-create-type] option:selected").val();
-  var usernamecreate = $("#user-modal-create").find("[name=user-select-create-search] option:selected").val();
-  var notifFlag = $("#user-modal-create").find("[name=notification]").prop('checked');
-  var apiParams = {
-    CcnUsername: ccnUsername,
-    CcnName: ccnName,
-    CcnEmail: ccnEmail,
-    PrvValue: userTypeText,
-    PrvCode: userTypeVal,
-    CcnNotificationFlag: notifFlag
-  };
-  var callbackParam = {
-    CcnUsername: usernamecreate,
-  };
+app.user.ajax.createActiveDirectory = function () {
   // CAll Ajax to Create User. Do Redraw Data Table for Create User.
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
-    "PxStat.Security.Account_API.Create",
-    apiParams,
-    "app.user.callback.createOnSuccess",
-    callbackParam,
-    "app.user.callback.createOnError",
+    "PxStat.Security.Account_API.CreateAD",
+    {
+      "CcnUsername": $("#user-modal-create-ad-user").find("[name=ccn-user-name-create]").text(),
+      "PrvCode": $("#user-modal-create-ad-user").find("[name=user-select-create-type] option:selected").val(),
+      "CcnNotificationFlag": $("#user-modal-create-ad-user").find("[name=notification]").prop('checked')
+    },
+    "app.user.callback.createActiveDirectoryOnSuccess",
+    $("#user-modal-create-ad-user").find("[name=user-select-create-search] option:selected").val(),
+    "app.user.callback.createActiveDirectoryOnError",
     null,
     { async: false }
   );
@@ -362,14 +380,14 @@ app.user.ajax.create = function () {
  * @param  {} data
  * @param  {} callbackParam
   */
-app.user.callback.createOnSuccess = function (data, callbackParam) {
+app.user.callback.createActiveDirectoryOnSuccess = function (data, username) {
   //Redraw Data Table for Create User
   app.user.ajax.read();
   //Close modal
-  $("#user-modal-create").modal("hide");
+  $("#user-modal-create-ad-user").modal("hide");
 
-  if (data == C_APP_API_SUCCESS) {
-    api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.CcnUsername]));
+  if (data == C_API_AJAX_SUCCESS) {
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [username]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
@@ -379,14 +397,164 @@ app.user.callback.createOnSuccess = function (data, callbackParam) {
  * Create User to Table after Ajax success call
  * @param  {} error
   */
-app.user.callback.createOnError = function (error) {
+app.user.callback.createActiveDirectoryOnError = function (error) {
   //Redraw Data Table for Create User
   app.user.ajax.read();
   //Close modal
-  $("#user-modal-create").modal("hide");
+  $("#user-modal-create-ad-user").modal("hide");
 };
 
-//#endregion
+
+//#region set up local user
+
+/**
+ * Show modal to Create User
+ */
+app.user.modal.createLocal = function () {
+  app.user.validation.createLocal();
+  $("#user-modal-create-local-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
+    on: app.label.static["true"],
+    off: app.label.static["false"],
+    onstyle: "success",
+    offstyle: "warning",
+    width: C_APP_TOGGLE_LENGTH //Depend on language translation.
+  });
+
+  //Create User Role Type
+  app.user.ajax.createRoleType("#user-modal-create-local-user");
+
+  $("#user-modal-create-local-user").modal("show");
+
+};
+
+/**
+ *  Validation function for Create User
+ */
+app.user.validation.createLocal = function () {
+  $("#user-modal-create-local-user form").trigger("reset").validate({
+    rules: {
+      "ccn-name-create":
+      {
+        required: true,
+      },
+      "ccn-email-create":
+      {
+        required: true,
+        validEmailAddress: true
+      },
+      "user-select-create-type":
+      {
+        required: true,
+        notEqualTo: ""
+      }
+    },
+    errorPlacement: function (error, element) {
+      $("#user-modal-create-local-user [name=" + element[0].name + "-error-holder]").append(error[0]);
+    },
+    submitHandler: function (form) {
+      $(form).sanitiseForm();
+      app.user.ajax.createLocal();
+    }
+  }).resetForm();
+};
+
+/**
+ * Create User Ajax call
+ *
+ */
+app.user.ajax.createLocal = function () {
+  // CAll Ajax to Create User. Do Redraw Data Table for Create User.
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Security.Account_API.CreateLocal",
+    {
+      "CcnEmail": $("#user-modal-create-local-user").find("[name=ccn-email-create]").val(),
+      "CcnDisplayName": $("#user-modal-create-local-user").find("[name=ccn-name-create]").val(),
+      "PrvCode": $("#user-modal-create-local-user").find("[name=user-select-create-type] option:selected").val(),
+      "CcnNotificationFlag": $("#user-modal-create-local-user").find("[name=notification]").prop('checked')
+    },
+    "app.user.callback.createLocalOnSuccess",
+    $("#user-modal-create-local-user").find("[name=ccn-email-create]").val(),
+    "app.user.callback.createLocalOnError",
+    null,
+    { async: false }
+  );
+};
+
+/**
+ * Create User to Table after Ajax success call
+ * @param  {} data
+ * @param  {} callbackParam
+  */
+app.user.callback.createLocalOnSuccess = function (data, username) {
+  //Redraw Data Table for Create User
+  app.user.ajax.read();
+  //Close modal
+  $("#user-modal-create-local-user").modal("hide");
+
+  if (data == C_API_AJAX_SUCCESS) {
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [username]));
+  } else {
+    api.modal.exception(app.label.static["api-ajax-exception"]);
+  }
+};
+
+/**
+ * Create User to Table after Ajax success call
+ * @param  {} error
+  */
+app.user.callback.createLocalOnError = function (error) {
+  //Redraw Data Table for Create User
+  app.user.ajax.read();
+  //Close modal
+  $("#user-modal-create-ad-user").modal("hide");
+};
+
+//#endregionset up local user
+
+
+//#region reset 1fa and 2fa
+app.user.ajax.initiateUpdate1FA = function (email) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Security.Login_API.InitiateUpdate1FA",
+    {
+      "CcnEmail": email
+    },
+    "app.user.callback.initiateUpdate1FA",
+    email);
+}
+
+app.user.callback.initiateUpdate1FA = function (data, email) {
+  if (data == C_API_AJAX_SUCCESS) {
+    api.modal.success(app.library.html.parseDynamicLabel("open-access-initiate-password-set", [email]));
+    $("#user-modal-update").modal("hide");
+  } else {
+    api.modal.exception(app.label.static["api-ajax-exception"]);
+  }
+}
+
+app.user.ajax.initiateUpdate2FA = function (email) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Security.Login_API.InitiateUpdate2FA",
+    {
+      "CcnEmail": email
+    },
+    "app.user.callback.initiateUpdate2FA",
+    email);
+}
+
+app.user.callback.initiateUpdate2FA = function (data, email) {
+  if (data == C_API_AJAX_SUCCESS) {
+    api.modal.success(app.library.html.parseDynamicLabel("open-access-initiate-2fa-set", [email]))
+    $("#user-modal-update").modal("hide");
+  } else {
+    api.modal.exception(app.label.static["api-ajax-exception"]);
+  }
+}
+
+//#endregion reset 1fa and 2fa
 
 //#region Update User
 
@@ -423,6 +591,13 @@ app.user.callback.updateRoleType = function (data, selectedPrvCode) {
  * @param  {*} userRecord 
  */
 app.user.modal.update = function (userRecord) {
+  if (!userRecord.CcnAdFlag) {
+    $("#user-modal-update").find("[name=update-1fa-row]").show();
+  }
+  else {
+    $("#user-modal-update").find("[name=update-1fa-row").hide();
+  }
+
   //Flush the modal. Do not delete required for Member search functionality (select2)
   $("#user-modal-update").find("[name=ccn-user-name-update]").empty();
   $("#user-modal-update").find("[name=ccn-name-update]").empty();
@@ -435,11 +610,20 @@ app.user.modal.update = function (userRecord) {
     offstyle: "warning",
     width: C_APP_TOGGLE_LENGTH //Depend on language translation.
   });
+
+  $("#user-modal-update").find("[name=locked]").bootstrapToggle("destroy").bootstrapToggle({
+    on: app.label.static["true"],
+    off: app.label.static["false"],
+    onstyle: "success",
+    offstyle: "warning",
+    width: C_APP_TOGGLE_LENGTH //Depend on language translation.
+  });
   // Add validation for Update User
   app.user.validation.update();
   $(".list-group").empty(); //empty group list from previous user viewed. DO not delete.
   $("#user-modal-update").find("[name=ccn-user-name-update]").text(userRecord.CcnUsername);
-  $("#user-modal-update").find("[name=ccn-name-update]").text(userRecord.CcnName);
+  $("#user-modal-update").find("[name=type]").text(userRecord.CcnAdFlag ? app.label.static["ad"] : app.label.static["local"]);
+  $("#user-modal-update").find("[name=ccn-name-update]").text(userRecord.CcnDisplayName);
   var emailLink = app.library.html.email(userRecord.CcnEmail);
   $("#user-modal-update").find("[name=ccn-email-update]").html(emailLink);
 
@@ -451,6 +635,20 @@ app.user.modal.update = function (userRecord) {
   else {
 
     $("#user-modal-update").find("[name=notification]").bootstrapToggle('off');
+  }
+
+  //Set state of bootstrapToggle button.
+  if (userRecord.CcnLockedFlag == true) {
+
+    $("#user-modal-update").find("[name=locked]").bootstrapToggle('off');
+    $("#user-modal-update").find("[name=update-1fa]").prop("disabled", true);
+    $("#user-modal-update").find("[name=update-2fa]").prop("disabled", true);
+  }
+  else {
+
+    $("#user-modal-update").find("[name=locked]").bootstrapToggle('on');
+    $("#user-modal-update").find("[name=update-1fa]").prop("disabled", false);
+    $("#user-modal-update").find("[name=update-2fa]").prop("disabled", false);
   }
 
 
@@ -466,7 +664,22 @@ app.user.modal.update = function (userRecord) {
   }
 
   $("#user-modal-update").modal("show");
+
+  $("#user-modal-update").find("[name=update-1fa]").once("click", function (e) {
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-password-reset", [userRecord.CcnEmail]), function () {
+      app.user.ajax.initiateUpdate1FA(userRecord.CcnEmail);
+    });
+  });
+
+  $("#user-modal-update").find("[name=update-2fa]").once("click", function (e) {
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-2fa-reset", [userRecord.CcnEmail]), function () {
+      app.user.ajax.initiateUpdate2FA(userRecord.CcnEmail);
+    });
+  })
 };
+
+
+
 
 /**
 * 
@@ -590,23 +803,17 @@ app.user.validation.update = function () {
  */
 app.user.ajax.update = function () {
   //Get fields values at user-modal-update Modal
-  var ccnUsername = $("#user-modal-update").find("[name=ccn-user-name-update]").text();
-  var userType = $("#user-modal-update").find("[name=user-select-update-type] option:selected").val();
-  var notifFlag = $("#user-modal-update").find("[name=notification]").prop('checked');
-  var apiParams = {
-    CcnUsername: ccnUsername,
-    PrvCode: userType,
-    CcnNotificationFlag: notifFlag
-  };
-  var callbackParam = {
-    CcnUsername: ccnUsername,
-  };
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.Update",
-    apiParams,
+    {
+      "CcnUsername": $("#user-modal-update").find("[name=ccn-user-name-update]").text(),
+      "PrvCode": $("#user-modal-update").find("[name=user-select-update-type] option:selected").val(),
+      "CcnNotificationFlag": $("#user-modal-update").find("[name=notification]").prop('checked'),
+      "CcnLockedFlag": !$("#user-modal-update").find("[name=locked]").prop('checked')
+    },
     "app.user.callback.updateOnSuccess",
-    callbackParam,
+    $("#user-modal-update").find("[name=ccn-user-name-update]").text(),
     "app.user.callback.updateOnError",
     null,
     { async: false }
@@ -619,19 +826,19 @@ app.user.ajax.update = function () {
  * @param {*} data 
  * @param {*} callbackParam
  */
-app.user.callback.updateOnSuccess = function (data, callbackParam) {
+app.user.callback.updateOnSuccess = function (data, username) {
   $("#user-modal-update").modal("hide");
   // Force reload
   app.user.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     //Clear fields at user-modal-update Modal. Do not delete. Required for User Select2 functionality.
     $("#user-modal-update").find("[name=ccn-user-name-update]").text("");
     $("#user-modal-update").find("[name=ccn-name-update]").text("");
     $("#user-modal-update").find("[name=ccn-email-update]").text("");
     $("#user-modal-update").find("[name=user-select-update-type] option:selected").text("");
     $("#user-modal-update").find("[name=user-select-update-type] option:selected").val("");
-    api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.CcnUsername]));
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [username]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
@@ -688,7 +895,7 @@ app.user.callback.deleteOnSuccess = function (data, idn) {
   //Redraw Data Table User with fresh data.
   app.user.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
   }

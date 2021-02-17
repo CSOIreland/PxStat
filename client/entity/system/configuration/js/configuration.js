@@ -24,7 +24,7 @@ $(document).ready(function () {
   $("#configuration-read-container").find("[name='search-file']").once("click", app.configuration.modal.search);
 
   //Load Modal 
-  api.content.load("#overlay", "entity/system/configuration/index.modal.html");
+  api.content.load("#modal-entity", "entity/system/configuration/index.modal.html");
   app.configuration.ajax.getFiles();
 
   $("#configuration-modal-search").on('hide.bs.modal', function (e) {

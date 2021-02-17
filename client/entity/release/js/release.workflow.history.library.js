@@ -369,7 +369,7 @@ app.release.workflow.history.callback.deleteOnSuccess = function (data) {
     //Redraw Data Table Workflow History with fresh data.
     app.release.workflow.history.read();
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         var goToParams = {
             "RlsCode": app.release.RlsCode,
             "MtrCode": app.release.MtrCode

@@ -111,7 +111,7 @@ app.release.comment.ajax.create = function () {
 * @param {*} data
 */
 app.release.comment.callback.create = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [""]));
         $("#release-comment-modal-create").modal("hide");
         app.release.load();
@@ -183,7 +183,7 @@ app.release.comment.ajax.update = function () {
 * @param {*} data
 */
 app.release.comment.callback.update = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
         $("#release-comment-modal-update").modal("hide");
         app.release.load();
@@ -222,7 +222,7 @@ app.release.comment.ajax.delete = function () {
 * @param {*} data
 */
 app.release.comment.callback.delete = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [""]));
         app.release.load();
     }

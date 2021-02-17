@@ -357,7 +357,7 @@ app.product.callback.createOnSuccess = function (data, callbackParam) {
   // Refresh list of products
   app.product.load();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.PrcValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
@@ -535,7 +535,7 @@ app.product.callback.updateOnSuccess = function (data, callbackParam) {
   // Refresh list of products
   app.product.load();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.PrcValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -592,7 +592,7 @@ app.product.callback.deleteOnSuccess = function (data, productToDelete) {
   // Refresh list of products
   app.product.load();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [productToDelete.PrcValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };

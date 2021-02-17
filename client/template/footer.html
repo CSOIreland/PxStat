@@ -1,22 +1,52 @@
-<div class="container-fluid fixed-bottom">
-    <div name="cookie-banner" style="display: none;">
-        <div class="row d-flex justify-content-between bg-tertiary p-4">
-            <div class="col-8 text-light text-left lead pt-2">
-                <span label="cookie-message"></span> <a href="#" name="cookie-manage" class="text-warning" label="manage-cookies"></a>
+<div class="footer container-fluid bg-navbar border-top p-2 mt-3 mb-0" style="display: none;">
+    <div class="container-md text-light">
+        <div class="row pt-3 px-2">
+            <div class="col-sm-12 col-md-4">
+                <h5 class="text-neutral" label="contact-us"></h5>
+                <address></address>
+                <p>
+                    <b label="tel"></b>
+                    <a href="" target="_blank" class="text-light" name="phone"></a>
+                </p>
+                <p>
+                    <b label="email"></b>
+                    <a href="" target="_blank" class="text-light" name="email"></a>
+                </p>
             </div>
-            <div class="col-4 text-right">
-                <button type="button" name="cookie-allow" class="btn btn-info btn-lg" label="allow"></button>
+            <div class="col-sm-12 col-md-3 pb-2">
+                <h5 class="text-neutral" label="links"></h5>
+                <ul class="list-unstyled pb-0 mb-0" name="footer-links">
+                </ul>
+                <span name="version" class="pt-0 mt-0"></span>
+            </div>
+            <div class="col-sm-12 col-md-5">
+                <h5 class="text-neutral" label="follow-us"></h5>
+                <div class="row">
+                    <div class="col" name="footer-social">
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <a name="logo-link" href="" target="_blank">
+                            <img name="logo" alt="" class="img-fluid" src="">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row" style="display: none;">
+            <div class="col text-center bg-info text-light">
+                Breakpoint: <span class="font-weight-bold" name="bs-breakpoint"></span>
             </div>
         </div>
     </div>
-    <div class="bg-default row d-flex justify-content-between border-top p-2">
-        <div name="links" class="col text-muted text-left"></div>
-        <div name="bs-breakpoint" class="col text-center text-danger" style="display: none;"></div>
-        <div name="version" class="col text-muted text-right"></div>
-    </div>
+
 </div>
+
 
 <!-- CSS file for Footer page-->
 <link rel="stylesheet" href="template/css/footer.css">
 <!-- JS file for Footer page-->
+<script src="template/js/footer.library.js"></script>
 <script src="template/js/footer.js"></script>

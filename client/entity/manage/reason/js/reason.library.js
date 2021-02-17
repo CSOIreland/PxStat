@@ -216,7 +216,7 @@ app.reason.callback.deleteOnSuccess = function (data, idn) {
     //Redraw Data Table Reason with fresh data.
     app.reason.ajax.read();
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
     }
@@ -287,7 +287,7 @@ app.reason.callback.createOnSuccess = function (data, callbackParam) {
     app.reason.ajax.read();
     $("#reason-modal-create").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         //Close modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.RsnCode]));
     } else
@@ -402,7 +402,7 @@ app.reason.callback.updateOnSuccess = function (data, callbackParam) {
     app.reason.ajax.read();
     $("#reason-modal-update").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.RsnCode]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);

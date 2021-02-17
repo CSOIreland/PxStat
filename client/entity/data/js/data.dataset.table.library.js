@@ -13,6 +13,8 @@ app.data.dataset.table.callback = {};
 app.data.dataset.table.selectionCount = null;
 app.data.dataset.table.totalCount = null;
 app.data.dataset.table.apiParamsData = {}
+app.data.dataset.table.order = null;
+app.data.dataset.table.search = null;
 app.data.dataset.table.pivot = {};
 app.data.dataset.table.pivot.dimensionCode = null;
 app.data.dataset.table.pivot.isMetric = false;
@@ -38,6 +40,10 @@ app.data.dataset.table.snippet.template = {
     },
     "options": {
         "language": app.label.plugin.datatable,
+        "search": {
+            "search": null
+        },
+        "order": null,
         "dom": "Bfltip",
         "buttons": [
             {
@@ -61,7 +67,7 @@ app.data.dataset.table.drawDimensions = function () {
     $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").empty();
     $("#data-dataset-table-accordion-snippet-code").empty();
     $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").show();
-    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title]").bootstrapToggle('disable');
+    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination]").bootstrapToggle('disable');
 
 
     //check for WIP
@@ -292,7 +298,7 @@ app.data.dataset.table.drawDimensions = function () {
     //reset api params
     app.data.dataset.table.buildApiParams();
 
-    $("#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title]").once("change", function () {
+    $("#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination]").once("change", function () {
         app.data.dataset.table.callback.drawSnippetCode(true);
     });
 
@@ -300,6 +306,11 @@ app.data.dataset.table.drawDimensions = function () {
         $("#data-dataset-table-accordion-collapse-widget [name=invalid-json-object]").hide();
         $("#data-dataset-table-accordion-collapse-widget [name=valid-json-object]").hide();
         app.data.dataset.table.callback.drawSnippetCode(true)
+    });
+
+    $("#data-dataset-table-accordion-collapse-widget [name=download-snippet]").once("click", function () {
+        // Download the snippet file
+        app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-dataset-table-accordion-snippet-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML);
     });
 
 };
@@ -435,8 +446,8 @@ app.data.dataset.table.buildApiParams = function () {
     var pxapiv1Query = {
         "query": [],
         "response": {
-            "format": null
-
+            "format": null,
+            "pivot": $("#data-dataset-table-nav-content select[name=pivot] option:selected").attr("value") || null,
         }
     };
 
@@ -469,9 +480,6 @@ app.data.dataset.table.buildApiParams = function () {
         });
     });
 
-    var pivotCodeToInclude = $("#data-dataset-table-nav-content select[name=pivot] option:selected").attr("value")
-        ? "/" + $("#data-dataset-table-nav-content select[name=pivot] option:selected").attr("value")
-        : "";
 
     $("#data-dataset-table-api-pxapiv1-get-url").empty().text(encodeURI(app.config.url.api.restful.public
         + "/PxStat.Data.Cube_API.PxAPIv1"
@@ -479,7 +487,6 @@ app.data.dataset.table.buildApiParams = function () {
         + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.product.code
         + "/" + app.data.MtrCode
-        + pivotCodeToInclude
         + "?query=" + JSON.stringify(pxapiv1Query))).fadeIn();
 
     $("#data-dataset-table-api-pxapiv1-post-url").empty().text(app.config.url.api.restful.public
@@ -487,8 +494,7 @@ app.data.dataset.table.buildApiParams = function () {
         + "/" + JsonQuery.params.extension.language.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.product.code
-        + "/" + app.data.MtrCode
-        + pivotCodeToInclude).fadeIn();
+        + "/" + app.data.MtrCode).fadeIn();
 
     $("#data-dataset-table-api-pxapiv1-post-body").empty().text(JSON.stringify(pxapiv1Query, null, "\t")).fadeIn();
 
@@ -632,6 +638,8 @@ app.data.dataset.table.callback.data = function (response) {
         app.data.dataset.table.response = response;
         app.data.dataset.table.jsonStat = response ? JSONstat(response) : null;
         if (app.data.dataset.table.jsonStat && app.data.dataset.table.jsonStat.length) {
+            app.data.dataset.table.order = null;
+            app.data.dataset.table.search = null;
             app.data.dataset.table.callback.drawDatatable();
             app.data.dataset.table.callback.drawSnippetCode(true);
         }
@@ -649,9 +657,9 @@ app.data.dataset.table.callback.data = function (response) {
 app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //change to snippet
     if (widgetEnabled) {
         $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").hide();
-        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title]").bootstrapToggle('enable');
+        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination]").bootstrapToggle('enable');
         $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").prop("disabled", false);
-        $("#data-dataset-table-accordion-collapse-widget [name=add-custom-configuration]").prop("disabled", false);
+        $("#data-dataset-table-accordion-collapse-widget [name=add-custom-configuration], #data-dataset-table-accordion-collapse-widget [name=download-snippet]").prop("disabled", false);
         //check for WIP
         if (!app.data.RlsCode) {
             $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('enable');
@@ -669,7 +677,13 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         app.data.dataset.table.snippet.configuration.title = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-title]").is(':checked');
         app.data.dataset.table.snippet.configuration.link = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
         app.data.dataset.table.snippet.configuration.pivot = app.data.dataset.table.pivot.dimensionCode;
+        app.data.dataset.table.snippet.configuration.options.search.search = app.data.dataset.table.search || "";
+        app.data.dataset.table.snippet.configuration.options.order = app.data.dataset.table.order || [[0, "asc"]];
 
+        if (!$("#data-dataset-table-accordion-collapse-widget").find("[name=include-pagination]").is(':checked')) {
+            app.data.dataset.table.snippet.configuration.options.paging = false;
+            app.data.dataset.table.snippet.configuration.options.dom = "Bft";
+        }
 
         if ($("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {
             var JsonQuery = {
@@ -903,8 +917,18 @@ app.data.dataset.table.callback.drawDatatable = function () {
     };
 
     // Initiate DataTable
-    $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+    $("#data-dataset-table-nav-content").find("[name=datatable]").off().DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
         app.data.dataset.table.drawCallbackDrawDataTable();
+    });
+
+    $("#data-dataset-table-nav-content").find("[name=datatable]").on('order.dt', function () {
+        app.data.dataset.table.order = $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().order();
+        app.data.dataset.table.callback.drawSnippetCode(true);
+    });
+
+    $("#data-dataset-table-nav-content").find("[name=datatable]").on('search.dt', function () {
+        app.data.dataset.table.search = $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().search();
+        app.data.dataset.table.callback.drawSnippetCode(true);
     });
 
     $('[data-toggle="tooltip"]').tooltip();

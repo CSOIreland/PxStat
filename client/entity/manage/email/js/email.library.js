@@ -126,7 +126,7 @@ app.email.ajax.create = function () {
  * 
   */
 app.email.callback.create = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         //Close modal
         api.modal.success(app.label.static["email-sent"]);
         //Reset screen

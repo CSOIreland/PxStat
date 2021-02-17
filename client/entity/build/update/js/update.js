@@ -10,9 +10,9 @@ $(document).ready(function () {
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["update"]);
 
-    $("#overlay").empty();
-    api.content.load("#overlay", "entity/build/update/index.modal.html", null, true);
-    api.content.load("#overlay", "entity/build/map/index.html", null, true);
+    $("#modal-entity").empty();
+    api.content.load("#modal-entity", "entity/build/update/index.modal.html", null, true);
+    api.content.load("#modal-entity", "entity/build/map/index.html", null, true);
 
     // Set the max file-size in the Upload box
     $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB").show();

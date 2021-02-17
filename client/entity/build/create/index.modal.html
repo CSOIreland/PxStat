@@ -85,7 +85,7 @@
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 text-left my-2">
-                                        <a class="btn btn-primary" href="entity/build/create/csv/template-statistics.csv"><i class="fas fa-file-download"></i>
+                                        <a class="btn btn-primary" href="entity/build/create/csv/template-statistics.csv" download><i class="fas fa-file-download"></i>
                                             <span label="download-csv-template"></span>
                                         </a>
                                     </div>
@@ -265,7 +265,7 @@
                                 <div class="card-footer">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-4 text-left my-2">
-                                            <a class="btn btn-primary" href="entity/build/create/csv/template-classification-variables.csv"><i class="fas fa-file-download"></i>
+                                            <a class="btn btn-primary" href="entity/build/create/csv/template-classification-variables.csv" download><i class="fas fa-file-download"></i>
                                                 <span label="download-csv-template"></span>
                                             </a>
                                         </div>
@@ -498,11 +498,18 @@
                                 <div class="border row mx-0">
                                     <span class="serverValidationError text-danger" name="upload-error-holder"></span>
                                 </div>
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
+                                    <div class="card-header bg-danger text-light" label="errors"></div>
+                                    <div class="card-body">
+                                        <ul name="errors" class="list-group mt-2">
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-footer">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 text-left my-2">
-                                        <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv"><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
+                                        <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv" download><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
                                         </a>
                                     </div>
                                     <div class="col-xs-12 col-sm-8 text-right my-2">

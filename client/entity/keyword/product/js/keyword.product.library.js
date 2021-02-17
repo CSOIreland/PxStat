@@ -411,7 +411,7 @@ app.keyword.product.callback.createOnSuccess = function (data, callbackParam) {
   // Hide modal
   $("#keyword-product-modal-create").modal("hide");
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.KprValue]));
   } else {
@@ -572,7 +572,7 @@ app.keyword.product.callback.updateOnSuccess = function (data, callbackParam) {
   //Hide modal #keyword-product-modal-update
   $("#keyword-product-modal-update").modal("hide");
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.KprValue]));
   } else {
@@ -641,7 +641,7 @@ app.keyword.product.callback.deleteOnSuccess = function (data, deletetedKeyword)
   var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
   app.keyword.product.ajax.read(SbjCode, PrcCode);
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     // Display Success Modal
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [deletetedKeyword.KprValue]));
   } else {

@@ -250,7 +250,7 @@ app.release.workflow.modal.signoff.ajax.create = function () {
  * @param {*} data
  */
 app.release.workflow.modal.signoff.callback.create = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         switch (app.release.workflow.modal.signoff.RqsCode) {
             case C_APP_TS_REQUEST_DELETE:
             case C_APP_TS_REQUEST_ROLLBACK:

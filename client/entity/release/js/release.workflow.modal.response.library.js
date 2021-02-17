@@ -18,13 +18,13 @@ app.release.workflow.modal.response.fastrackSignoff = false;
 
 //#region Request
 
-app.release.workflow.modal.response.ajax.ReadCurrentAccess = function () {
+app.release.workflow.modal.response.ajax.ReadCurrent = function () {
     //Check the privilege of the user 
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
-        "PxStat.Security.Account_API.ReadCurrentAccess",
+        "PxStat.Security.Account_API.ReadCurrent",
         { CcnUsername: null },
-        "app.release.workflow.modal.response.callback.ReadCurrentAccess",
+        "app.release.workflow.modal.response.callback.ReadCurrent",
         null,
         null,
         null,
@@ -32,10 +32,10 @@ app.release.workflow.modal.response.ajax.ReadCurrentAccess = function () {
     );
 };
 
-app.release.workflow.modal.response.callback.ReadCurrentAccess = function (data) {
+app.release.workflow.modal.response.callback.ReadCurrent = function (data) {
     //set to safest workflow
     app.release.workflow.modal.response.fastrackSignoff = false;
-    switch (data[0].PrvCode) {
+    switch (data.PrvCode) {
         case C_APP_PRIVILEGE_MODERATOR:
             //do nothing, moderator cannot fastrackSignoff
             break;
@@ -310,7 +310,7 @@ app.release.workflow.modal.response.ajax.create = function () {
  * @param {*} data
  */
 app.release.workflow.modal.response.callback.create = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         var goToParams = {
             "RlsCode": app.release.RlsCode,
             "MtrCode": app.release.MtrCode

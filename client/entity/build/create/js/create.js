@@ -12,7 +12,7 @@ $(document).ready(function () {
     api.content.load("#build-create-initiate", "entity/build/create/index.initiate.html");
     api.content.load("#build-create-dimensions", "entity/build/create/index.dimension.html");
     api.content.load("#build-create-map", "entity/build/map/index.html");
-    api.content.load("#overlay", "entity/build/create/index.modal.html");
+    api.content.load("#modal-entity", "entity/build/create/index.modal.html");
     var uploadThreshold = app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB";
     // Set the max file-size in the Upload box
     $("#build-create-upload-si").find("[name=upload-file-max-size]").html(uploadThreshold);

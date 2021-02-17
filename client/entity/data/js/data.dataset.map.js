@@ -48,6 +48,11 @@ $(document).ready(function () {
         app.library.utility.download(filename, url_base64jp, "png", "image/png", true);
     });
 
+    $("#data-dataset-map-accordion [name=download-snippet]").once("click", function () {
+        // Download the snippet file
+        app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-dataset-map-accordion-snippet-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML);
+    });
+
     //format advanced options
     $("#data-dataset-map-accordion [name=add-custom-configuration]").once("click", function () {
         app.data.dataset.map.formatJson();

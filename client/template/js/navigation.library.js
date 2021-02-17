@@ -12,10 +12,12 @@ app.navigation.access.ajax = {};
 app.navigation.access.callback = {};
 
 app.navigation.user = {};
+app.navigation.user.prvCode = null;
+app.navigation.user.isWindowsAccess = false;
+app.navigation.user.isLoginAccess = false;
 app.navigation.user.ajax = {};
 app.navigation.user.callback = {};
-app.navigation.user.CcnUsername = null;
-app.navigation.user.CcnName = null;
+app.navigation.user.validation = {};
 
 app.navigation.language = {};
 app.navigation.language.ajax = {};
@@ -24,42 +26,105 @@ app.navigation.language.callback = {};
 //#endregion
 
 //#region Access
-/**
- * Set access against current user
- */
-app.navigation.access.ajax.set = function () {
+app.navigation.access.ajax.ReadCurrentWindowsAccess = function () {
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
-    "PxStat.Security.Account_API.ReadCurrentAccess",
-    { CcnUsername: null },
-    "app.navigation.access.callback.set",
+    "PxStat.Security.Account_API.ReadCurrentWindowsAccess",
     null,
-    "app.navigation.access.render",
+    "app.navigation.access.callback.ReadCurrentWindowsAccess_OnSuccess",
+    null,
+    "app.navigation.access.callback.ReadCurrentWindowsAccess_OnError",
     null,
     { async: false }
   );
 };
 
 /**
- * Set the navigation
+ * 
  * @param {*} data 
  */
-app.navigation.access.callback.set = function (data) {
-  if (data && Array.isArray(data) && data.length) {
-    data = data[0];
-    // Render the Navigation
-    app.navigation.access.render(data.PrvCode)
+app.navigation.access.callback.ReadCurrentWindowsAccess_OnSuccess = function (data) {
+  if (data) {
+    //Registered windows user within the network
+    app.navigation.user.prvCode = data.PrvCode;
+    app.navigation.user.isWindowsAccess = true;
   }
-  else
-    // Anonymous or Not Registered user
-    app.navigation.user.remove();
+  else {
+    //Un-registered windows user within the network
+    app.navigation.user.isWindowsAccess = false;
+  }
+  app.navigation.access.callback.ReadCurrent();
 };
+
+app.navigation.access.callback.ReadCurrentWindowsAccess_OnError = function () {
+  //check for logged in user
+  app.navigation.access.ajax.ReadCurrentLoginAccess();
+}
+
+app.navigation.access.ajax.ReadCurrentLoginAccess = function () {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.public,
+    "PxStat.Security.Account_API.ReadCurrentLoginAccess",
+    null,
+    "app.navigation.access.callback.ReadCurrentLoginAccess_OnSuccess",
+    null,
+    "app.navigation.access.callback.ReadCurrentLoginAccess_OnError",
+    null,
+    { async: false }
+  );
+};
+
+app.navigation.access.callback.ReadCurrentLoginAccess_OnSuccess = function (data) {
+  if (data) {
+    //logged in user
+    app.navigation.user.prvCode = data.PrvCode;
+    app.navigation.user.isLoginAccess = true;
+  }
+  else {
+    //not logged in user
+    app.navigation.user.isLoginAccess = false;
+  }
+  app.navigation.access.callback.ReadCurrent();
+}
+
+app.navigation.access.callback.ReadCurrentLoginAccess_OnError = function () {
+  //attempted login from invalid logged in user
+  //clean up session by logging out
+  $('#modal-error').on('hide.bs.modal', function (event) {
+    app.plugin.backbutton.check = false;
+    api.cookie.session.end(app.config.url.api.jsonrpc.public, "PxStat.Security.Login_API.Logout");
+  })
+}
+
+app.navigation.access.callback.ReadCurrent = function () {
+  if (app.navigation.user.isWindowsAccess) {
+    $("#nav-user").show();
+    $("#nav-user-login").remove();
+    $("#nav-user-logout").remove();
+  }
+  else if (app.navigation.user.isLoginAccess) {
+    $("#nav-user").show();
+    $("#nav-user-login").remove();
+    $("#nav-user-logout").show();
+    //overwrite private endpoint
+    app.config.url.api.jsonrpc.private = app.config.url.api.jsonrpc.public;
+    // Create the session cookie
+    api.cookie.session.start(app.config.session.length, app.config.url.api.jsonrpc.public, "PxStat.Security.Login_API.Logout");
+  }
+  else {
+    $("#nav-user").remove();
+    $("#nav-user-login").show();
+    $("#nav-user-logout").remove();
+  }
+
+  app.navigation.access.renderMenu(app.navigation.user.prvCode);
+}
 
 /**
  * Render the navigation
  * @param {*} data 
  */
-app.navigation.access.render = function (PrvCode) {
+app.navigation.access.renderMenu = function (PrvCode) {
   PrvCode = PrvCode || null;
 
   // Show menu items according to user's privilege
@@ -139,9 +204,6 @@ app.navigation.access.render = function (PrvCode) {
       $("#nav-link-system").parent().remove();
       break;
     default:
-      // Anonymous or Not Registered user
-      app.navigation.user.remove();
-
       //Dashboard
       $("#nav-link-dashboard").parent().remove();
       // Releases
@@ -172,7 +234,7 @@ app.navigation.setLayout = function (isDataEntity) {
   $("#data-navigation").empty();
   $("#data-filter").empty();
   $("#panel").empty();
-  $("#overlay").empty();
+  $("#modal-entity").empty();
   $("#sidebar").removeClass("bg-sidebar").removeClass("col-sm-3").addClass("col-sm-4");
   $("#body").removeClass("col-sm-9").addClass("col-sm-8");
 
@@ -268,7 +330,7 @@ app.navigation.access.check = function (PrvCodeList) {
   PrvCodeList = PrvCodeList || [];
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
-    "PxStat.Security.Account_API.ReadCurrentAccess",
+    "PxStat.Security.Account_API.ReadCurrent",
     null,
     "app.navigation.access.callback.check",
     PrvCodeList
@@ -286,9 +348,7 @@ app.navigation.access.callback.check = function (data, PrvCodeList) {
   if ($.inArray(C_APP_PRIVILEGE_ADMINISTRATOR, PrvCodeList) == -1)
     PrvCodeList.push(C_APP_PRIVILEGE_ADMINISTRATOR);
 
-  if (data && Array.isArray(data) && data.length) {
-    data = data[0];
-
+  if (data) {
     // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
     if ($.inArray(data.PrvCode, PrvCodeList) == -1) {
       // Prevent backbutton check
@@ -306,13 +366,6 @@ app.navigation.access.callback.check = function (data, PrvCodeList) {
 //#endregion
 
 //#region User 
-
-/**
- * Remove User data from Navigation Bar
- */
-app.navigation.user.remove = function () {
-  $("#nav-user").remove();
-};
 
 /**
  * Read User data to Navigation Bar
@@ -336,23 +389,26 @@ app.navigation.user.ajax.read = function () {
  * @param {*} data 
  */
 app.navigation.user.callback.read = function (data) {
-  if (data && Array.isArray(data) && data.length) {
-    data = data[0];
-
+  if (data) {
     // Store for later user
     app.library.user.data.CcnUsername = data.CcnUsername;
-    app.library.user.data.CcnName = data.CcnName;
+    app.library.user.data.CcnDisplayName = data.CcnDisplayName;
     app.library.user.data.CcnPrvCode = data.PrvCode;
     // Set name on screen
-    $("#nav-user").find("[name=name]").text(data.CcnName);
+    $("#nav-user").show();
+    $("#nav-user").find("[name=name]").text(data.CcnDisplayName);
 
     // Show user details on click
-    $("#nav-user").on("click", function (event) {
+    $("#nav-user").once("click", function (event) {
       app.library.user.modal.readCurrent();
     });
-  } else
-    app.navigation.user.remove();
+  } else {
+    $("#nav-user").hide();
+  }
+
 };
+
+
 
 //#endregion
 
@@ -408,7 +464,7 @@ app.navigation.language.callback.read = function (data) {
     // Update Document Language
     $("html").attr("lang", app.label.language.iso.code);
 
-    Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie);
+    Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie.persistent);
 
     // Prevent backbutton check
     app.plugin.backbutton.check = false;
@@ -418,3 +474,4 @@ app.navigation.language.callback.read = function (data) {
 };
 
 //#endregion
+

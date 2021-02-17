@@ -552,6 +552,15 @@ app.build.create.dimension.submitUploadStatistic = function () {
         skipEmptyLines: true
     });
 
+    if (app.build.create.file.statistic.content.data.JSON.errors.length) {
+        $("#build-create-upload-si").find("[name=errors-card]").show();
+        $('#build-create-upload-si').find("[name=errors]").append($("<li>", {
+            "class": "list-group-item",
+            "html": app.label.static["invalid-csv-format"]
+        }));
+        return;
+    }
+
     //check that all inputs of the statistics are valid first
     if (app.build.create.dimension.uploadStatistIsInvalid()) {
         return;
@@ -664,56 +673,65 @@ app.build.create.dimension.callback.hasDuplicateStatistic = function (codes, val
  */
 app.build.create.dimension.uploadStatistIsInvalid = function () {
     var errors = [];
-    $(app.build.create.file.statistic.content.data.JSON.data).each(function (key, value) {
-        //validate code
-        if (value[C_APP_CSV_CODE].trim().length == 0) {
-            errors.push(app.library.html.parseDynamicLabel("code-mandatory", [key + 2]));
+    //check that each rows has correct data
+    $.each(app.build.create.file.statistic.content.data.JSON.data, function (index, value) {
+        if (!value[C_APP_CSV_CODE] || !value[C_APP_CSV_VALUE] || !value[C_APP_CSV_UNIT] || !value[C_APP_CSV_DECIMAL]) {
+            errors.push(app.label.static["invalid-csv-format"]);
         }
-        if (value[C_APP_CSV_CODE].trim().length > 256) {
-            errors.push(app.library.html.parseDynamicLabel("code-between", [key + 2]));
-        }
-        if (C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_CODE])) {
-            errors.push(app.library.html.parseDynamicLabel("code-double-quote", [key + 2]));
-        }
-        //validate value
-        if (value[C_APP_CSV_VALUE].trim().length == 0) {
-            errors.push(app.library.html.parseDynamicLabel("value-mandatory", [key + 2]));
-        }
-        if (value[C_APP_CSV_VALUE].trim().length > 256) {
-            errors.push(app.library.html.parseDynamicLabel("value-between", [key + 2]));
-        }
-        if (C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_VALUE])) {
-            errors.push(app.library.html.parseDynamicLabel("value-double-quote", [key + 2]));
-        }
-        //validate unit
-        if (value[C_APP_CSV_UNIT].trim().length == 0) {
-            errors.push(app.library.html.parseDynamicLabel("unit-mandatory", [key + 2]));
-        }
-        if (value[C_APP_CSV_UNIT].trim().length > 256) {
-            errors.push(app.library.html.parseDynamicLabel("unit-between", [key + 2]));
-        }
-        if (C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_UNIT])) {
-            errors.push(app.library.html.parseDynamicLabel("unit-double-quote", [key + 2]));
-        }
-        //validate decimal
-        var decimal = Number(value[C_APP_CSV_DECIMAL].trim());
-        if (!value[C_APP_CSV_DECIMAL].length) {
-            errors.push(app.library.html.parseDynamicLabel("decimal-mandatory", [key + 2]));
-        }
-        else if ($.isNumeric(decimal)) {
-            if (Number.isInteger(decimal)) {
-                if (decimal < 0 || decimal > 6) {
-                    errors.push(app.library.html.parseDynamicLabel("decimal-between", [key + 2]));
+    });
+    if (!errors.length) {
+        $(app.build.create.file.statistic.content.data.JSON.data).each(function (key, value) {
+            //validate code
+            if (value[C_APP_CSV_CODE].trim().length == 0) {
+                errors.push(app.library.html.parseDynamicLabel("code-mandatory", [key + 2]));
+            }
+            if (value[C_APP_CSV_CODE].trim().length > 256) {
+                errors.push(app.library.html.parseDynamicLabel("code-between", [key + 2]));
+            }
+            if (C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_CODE])) {
+                errors.push(app.library.html.parseDynamicLabel("code-double-quote", [key + 2]));
+            }
+            //validate value
+            if (value[C_APP_CSV_VALUE].trim().length == 0) {
+                errors.push(app.library.html.parseDynamicLabel("value-mandatory", [key + 2]));
+            }
+            if (value[C_APP_CSV_VALUE].trim().length > 256) {
+                errors.push(app.library.html.parseDynamicLabel("value-between", [key + 2]));
+            }
+            if (C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_VALUE])) {
+                errors.push(app.library.html.parseDynamicLabel("value-double-quote", [key + 2]));
+            }
+            //validate unit
+            if (value[C_APP_CSV_UNIT].trim().length == 0) {
+                errors.push(app.library.html.parseDynamicLabel("unit-mandatory", [key + 2]));
+            }
+            if (value[C_APP_CSV_UNIT].trim().length > 256) {
+                errors.push(app.library.html.parseDynamicLabel("unit-between", [key + 2]));
+            }
+            if (C_APP_REGEX_NODOUBLEQUOTE.test(value[C_APP_CSV_UNIT])) {
+                errors.push(app.library.html.parseDynamicLabel("unit-double-quote", [key + 2]));
+            }
+            //validate decimal
+            var decimal = Number(value[C_APP_CSV_DECIMAL].trim());
+            if (!value[C_APP_CSV_DECIMAL].length) {
+                errors.push(app.library.html.parseDynamicLabel("decimal-mandatory", [key + 2]));
+            }
+            else if ($.isNumeric(decimal)) {
+                if (Number.isInteger(decimal)) {
+                    if (decimal < 0 || decimal > 6) {
+                        errors.push(app.library.html.parseDynamicLabel("decimal-between", [key + 2]));
+                    }
+                }
+                else {
+                    errors.push(app.library.html.parseDynamicLabel("decimal-integer", [key + 2]));
                 }
             }
             else {
                 errors.push(app.library.html.parseDynamicLabel("decimal-integer", [key + 2]));
             }
-        }
-        else {
-            errors.push(app.library.html.parseDynamicLabel("decimal-integer", [key + 2]));
-        }
-    });
+        });
+    }
+
 
     if (errors.length) {
         $('#build-create-upload-si').find("[name=errors-card]").show()
@@ -1253,6 +1271,15 @@ app.build.create.dimension.callback.buildUploadClassification = function () {
         skipEmptyLines: true
     });
 
+    if (app.build.create.file.classification.content.data.JSON.errors.length) {
+        $("#build-create-upload-classification").find("[name=errors-card]").show();
+        $('#build-create-upload-classification').find("[name=errors]").append($("<li>", {
+            "class": "list-group-item",
+            "html": app.label.static["invalid-csv-format"]
+        }));
+        return;
+    }
+
     var csvHeaders = app.build.create.file.classification.content.data.JSON.meta.fields;
 
     //check that csv has 2 headers
@@ -1276,7 +1303,6 @@ app.build.create.dimension.callback.buildUploadClassification = function () {
         return;
     };
 
-
     //check that csv has data
     if (!app.build.create.file.classification.content.data.JSON.data.length) {
         $("#build-create-upload-classification").find("[name=errors-card]").show();
@@ -1286,6 +1312,18 @@ app.build.create.dimension.callback.buildUploadClassification = function () {
         }));
         return;
     };
+
+    //check that each rows has correct data
+    $.each(app.build.create.file.classification.content.data.JSON.data, function (index, value) {
+        if (!value[C_APP_CSV_CODE] || !value[C_APP_CSV_VALUE]) {
+            $("#build-create-upload-classification").find("[name=errors-card]").show();
+            $('#build-create-upload-classification').find("[name=errors]").append($("<li>", {
+                "class": "list-group-item",
+                "html": app.label.static["invalid-csv-format"]
+            }));
+            return;
+        }
+    });
 
     var code = $("#build-create-upload-classification").find("[name=cls-code]").val();
     var value = $("#build-create-upload-classification").find("[name=cls-value]").val();
@@ -1639,6 +1677,14 @@ app.build.create.dimension.addPeriodsUpload = function () {
         skipEmptyLines: true
     });
 
+    if (app.build.create.file.period.content.data.JSON.errors.length) {
+        $("#build-create-upload-periods").find("[name=errors-card]").show();
+        $('#build-create-upload-periods').find("[name=errors]").append($("<li>", {
+            "class": "list-group-item",
+            "html": app.label.static["invalid-csv-format"]
+        }));
+        return;
+    }
     if (app.build.create.dimension.uploadPeriodsInvalid()) {
         return;
     };
@@ -1712,7 +1758,6 @@ app.build.create.dimension.manualPeriodsInvalid = function () {
 };
 
 app.build.create.dimension.uploadPeriodsInvalid = function () {
-
     if (app.build.create.file.period.content.data.JSON.errors.length) {
         $('#build-create-upload-periods').find("[name=errors-card]").show()
         $('#build-create-upload-periods').find("[name=errors]").append($("<li>", {
@@ -1735,6 +1780,13 @@ app.build.create.dimension.uploadPeriodsInvalid = function () {
     if (jQuery.inArray(C_APP_CSV_CODE, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
         errors.push(app.label.static["invalid-csv-format"]);
     };
+
+    //check that each rows has correct data
+    $.each(app.build.create.file.period.content.data.JSON.data, function (index, value) {
+        if (!value[C_APP_CSV_CODE] || !value[C_APP_CSV_VALUE]) {
+            errors.push(app.label.static["invalid-csv-format"]);
+        }
+    });
 
     //trim and sanitise
     $(app.build.create.file.period.content.data.JSON.data).each(function (key, value) {
@@ -1908,9 +1960,15 @@ app.build.create.dimension.callback.downloadPeriods = function () {
         }
     });
     var fileData = [];
-    $.each(periods, function (i, row) {
-        fileData.push({ [C_APP_CSV_CODE]: row.PrdCode, [C_APP_CSV_VALUE]: row.PrdValue });
-    });
+
+    if (periods.length) {
+        $.each(periods, function (i, row) {
+            fileData.push({ [C_APP_CSV_CODE]: row.PrdCode, [C_APP_CSV_VALUE]: row.PrdValue });
+        });
+    }
+    else {
+        fileData.push({ [C_APP_CSV_CODE]: "", [C_APP_CSV_VALUE]: "" });
+    }
 
     // Download the file
     app.library.utility.download(app.build.create.initiate.data.FrqCode, Papa.unparse(fileData), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);

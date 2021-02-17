@@ -22,6 +22,11 @@ $(document).ready(function () {
     //format advanced options
     $("#data-dataset-chart-snippet-code [name=format-json]").once("click", app.data.dataset.chart.formatJson);
 
+    $("#data-dataset-chart-snippet-code [name=download-snippet]").once("click", function () {
+        // Download the snippet file
+        app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-pxwidget-snippet-chart-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML);
+    });
+
     $("#data-dataset-chart-snippet-code [name=custom-config]").val(JSON.stringify({ "options": {} }));
     app.data.dataset.chart.formatJson();
     $("#data-dataset-chart-snippet-code [name=valid-json-object]").hide();

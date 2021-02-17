@@ -112,6 +112,7 @@ app.data.searchResult.ajax.readNavigationResults = function (apiParams) {
 */
 app.data.searchResult.ajax.readSearch = function (search) {
     app.data.isSearch = true;
+    app.data.PrdCode = null;
     $("#data-search-result-pagination").show();
     $('#data-search-result-pagination-toggle').bootstrapToggle("off");
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
@@ -200,12 +201,16 @@ app.data.searchResult.callback.readResults = function (data, params) {
             value: C_APP_SORT_OLDEST,
             text: app.label.static["oldest-first"]
         }));
-
+        $("#data-search-row-desktop [name=search-results]").find("[name=refine-search]").hide();
         if (!app.data.isSearch) {
             searchResultsSort.find("option[value=" + C_APP_SORT_NEWEST + "]").prop("selected", true);
         }
         else {
             searchResultsSort.find("option[value=" + C_APP_SORT_RELEVANCE + "]").prop("selected", true);
+            if (app.data.searchResult.result.length >= app.config.search.maximum) {
+                //results truncated by server due to broad search term
+                $("#data-search-row-desktop [name=search-results]").find("[name=refine-search]").show().html(app.library.html.parseDynamicLabel("refine-search", [app.config.search.maximum - results]));
+            }
         }
         var productShare = $("#data-search-result-templates").find("[name=share]").clone();
         $("#data-filter").append(productShare);

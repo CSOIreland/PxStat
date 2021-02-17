@@ -13,7 +13,7 @@ $(document).ready(function () {
   app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["copyrights"]);
 
   // Load Modal 
-  api.content.load("#overlay", "entity/manage/copyright/index.modal.html");
+  api.content.load("#modal-entity", "entity/manage/copyright/index.modal.html");
 
   // Bind add button for add modal
   $("#copyright-read-container").find("[name='button-create']").once("click", function () {

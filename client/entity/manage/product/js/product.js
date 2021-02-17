@@ -13,7 +13,7 @@ $(document).ready(function () {
   var sbjCode = api.content.getParam("SbjCode");
 
   // Load Modal - must be after GoTo
-  api.content.load("#overlay", "entity/manage/product/index.modal.html");
+  api.content.load("#modal-entity", "entity/manage/product/index.modal.html");
 
   //Hide table when no subject selected
   $("#product-container").find("[name=select-main-subject-search]").on('select2:clear', function (e) {

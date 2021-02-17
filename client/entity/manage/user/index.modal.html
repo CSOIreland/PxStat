@@ -1,5 +1,5 @@
-<!-- Modal - Create User (Add User)-->
-<div id="user-modal-create" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- Modal - Create User (Add AD User)-->
+<div id="user-modal-create-ad-user" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-primary">
@@ -9,11 +9,17 @@
       <form>
         <div class="modal-body">
           <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="type"></label></div>
+            <div class="col-8 p-2" label="ad"></div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
-              <label class="mandatory" for="user-select-create-search" label="search"></label></div>
+              <label class="mandatory" for="user-select-create-search" label="search"></label>
+            </div>
             <div class="col-8 p-2">
               <select class="form-control" name="user-select-create-search" disabled></select>
-              <span class="serverValidationError text-danger" name="user-select-create-search-error-holder"></span></div>
+              <span class="serverValidationError text-danger" name="user-select-create-search-error-holder"></span>
+            </div>
           </div>
           <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="ccn-user-name-create" label="user-name"></label></div>
@@ -25,12 +31,14 @@
           <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="ccn-name-create" label="name"></label></div>
             <div class="col-8 p-2"><span type="text" name="ccn-name-create" class="" contenteditable="false"></span>
-              <span class="serverValidationError text-danger" name="ccn-name-create-error-holder"></span></div>
+              <span class="serverValidationError text-danger" name="ccn-name-create-error-holder"></span>
+            </div>
           </div>
           <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="ccn-email-create" label="email"></label></div>
             <div class="col-8 p-2"><span type="text" name="ccn-email-create" class="" contenteditable="false"></span>
-              <span class="serverValidationError text-danger" name="ccn-email-create-error-holder"></span></div>
+              <span class="serverValidationError text-danger" name="ccn-email-create-error-holder"></span>
+            </div>
           </div>
           <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="notification" label="notifications"></label></div>
@@ -43,7 +51,71 @@
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"> <label class="mandatory" for="user-select-create-type" label="role"></label></div>
             <div class="col-8 p-2"><select class="form-control" name="user-select-create-type">
               </select>
-              <span class="serverValidationError text-danger" name="user-select-create-type-error-holder"></span></div>
+              <span class="serverValidationError text-danger" name="user-select-create-type-error-holder"></span>
+            </div>
+          </div>
+          <div class="border-bottom row mx-0 mb-3"></div>
+        </div>
+        <div class="modal-footer">
+          <div class="container-fluid">
+            <div class="text-right">
+              <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+              </button>
+              <button class="btn btn-primary text-light" type="submit">
+                <i class="fas fa-plus-circle"></i> <span label="add"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal - Create User (Add local User)-->
+<div id="user-modal-create-local-user" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title text-light" label="add-user"></h5>
+        <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="type"></label></div>
+            <div class="col-8 p-2" label="local"></div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="ccn-name-create" label="name"></label></div>
+            <div class="col-8 p-2">
+              <input type="text" class="form-control" name="ccn-name-create" maxlength="256"></input>
+              <span class="serverValidationError text-danger" name="ccn-name-create-error-holder"></span>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+              <label class="mandatory" for="ccn-email-create" label="email"></label>
+            </div>
+            <div class="col-8 p-2">
+              <input class="form-control" type="text" name="ccn-email-create"></input>
+              <span class="serverValidationError text-danger" name="ccn-email-create-error-holder"></span>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="notification" label="notifications"></label></div>
+            <div class="col-8 p-2">
+              <input name="notification" class="bootstrap-toggle" type="checkbox" data-toggle="toggle" checked>
+              <span class="serverValidationError text-danger" name="notification-error-holder"></span>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"> <label class="mandatory" for="user-select-create-type" label="role"></label></div>
+            <div class="col-8 p-2"><select class="form-control" name="user-select-create-type">
+              </select>
+              <span class="serverValidationError text-danger" name="user-select-create-type-error-holder"></span>
+            </div>
           </div>
           <div class="border-bottom row mx-0 mb-3"></div>
         </div>
@@ -75,6 +147,12 @@
       <form>
         <div class="modal-body">
           <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="type"></label></div>
+            <div class="col-8 p-2" name="type">
+
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="ccn-user-name-update" label="user-name"></label></div>
             <div class="col-8 p-2">
               <span type="text" class="" name="ccn-user-name-update" contenteditable="false" maxlength="256"></span>
@@ -84,7 +162,8 @@
           <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="ccn-name-update" label="name"></label></div>
             <div class="col-8 p-2"><span type="text" name="ccn-name-update" class="" contenteditable="false"></span>
-              <span class="serverValidationError text-danger" name="ccn-name-update-error-holder"></span></div>
+              <span class="serverValidationError text-danger" name="ccn-name-update-error-holder"></span>
+            </div>
           </div>
           <div class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="ccn-email-update" label="email"></label></div>
@@ -107,7 +186,30 @@
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="user-select-update-type" label="role"></label></div>
             <div class="col-8 p-2">
               <select class="form-control" name="user-select-update-type"></select>
-              <span class="serverValidationError text-danger" name="user-select-update-type-error-holder"></span></div>
+              <span class="serverValidationError text-danger" name="user-select-update-type-error-holder"></span>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0" name="update-1fa-row">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="password"></label></div>
+            <div class="col-8 p-2">
+              <button class="btn btn-warning text-dark" type="button" name="update-1fa">
+                <i class="fas fa-undo"></i> <span label="reset"></span>
+              </button>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="2fa"></label></div>
+            <div class="col-8 p-2">
+              <button class="btn btn-warning text-dark" type="button" name="update-2fa">
+                <i class="fas fa-undo"></i> <span label="reset"></span>
+              </button>
+            </div>
+          </div>
+          <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="locked" label="enabled"></label></div>
+            <div class="col-8 p-2">
+              <input name="locked" class="bootstrap-toggle" type="checkbox" data-toggle="toggle">
+            </div>
           </div>
           <div name="container-list" class="border-top border-right border-left row mx-0">
             <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="member-of" label="groups"></label></div>

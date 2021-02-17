@@ -134,7 +134,7 @@ app.cache.ajax.flushCache = function () {
     );
 };
 app.cache.callback.flushCache = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         $("#modal-success").on('hide.bs.modal', function (e) {
             app.plugin.backbutton.check = false;
             window.location.href = window.location.pathname;

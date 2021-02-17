@@ -145,13 +145,13 @@ app.release.workflow.modal.request.create = function () {
     }
 };
 
-app.release.workflow.modal.request.ajax.ReadCurrentAccess = function () {
+app.release.workflow.modal.request.ajax.ReadCurrent = function () {
     //Check the privilege of the user 
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
-        "PxStat.Security.Account_API.ReadCurrentAccess",
+        "PxStat.Security.Account_API.ReadCurrent",
         { CcnUsername: null },
-        "app.release.workflow.modal.request.callback.ReadCurrentAccess",
+        "app.release.workflow.modal.request.callback.ReadCurrent",
         null,
         null,
         null,
@@ -159,11 +159,11 @@ app.release.workflow.modal.request.ajax.ReadCurrentAccess = function () {
     );
 };
 
-app.release.workflow.modal.request.callback.ReadCurrentAccess = function (data) {
+app.release.workflow.modal.request.callback.ReadCurrent = function (data) {
     //set to safest workflow
     app.release.workflow.modal.request.fastrackResponse = false;
     app.release.workflow.modal.request.fastrackSignoff = false;
-    switch (data[0].PrvCode) {
+    switch (data.PrvCode) {
         case C_APP_PRIVILEGE_MODERATOR:
             //if moderator initiates request and has approval rights, then allow auto response
             if (app.release.isApprover && app.config.workflow.fastrack.response.approver) {
@@ -354,7 +354,7 @@ app.release.workflow.modal.request.ajax.create = function (RqsCode) {
  * @param {*} data
  */
 app.release.workflow.modal.request.callback.create = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         var goToParams = {
             "RlsCode": app.release.RlsCode,
             "MtrCode": app.release.MtrCode

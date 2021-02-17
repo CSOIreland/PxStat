@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "3.2.0";
+const C_APP_VERSION = "3.4.0";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -22,7 +22,6 @@ const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWid
 const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@1.1.0/snippet.html";
 
 // Public API
-const C_APP_API_SUCCESS = "success";
 const C_APP_API_JSONRPC_VERSION = "2.0";
 const C_APP_API_GET_PARAMATER_IDENTIFIER = "?data=";
 const C_APP_API_RESTFUL_READ_DATASET_URL = "{0}PxStat.Data.Cube_API.ReadDataset/{1}/{2}/{3}/{4}";
@@ -108,12 +107,14 @@ const C_APP_FORMAT_VERSION_DEFAULT = C_APP_TS_FORMAT_VERSION_JSONSTAT_2X;
 const C_APP_EXTENSION_PX = "px";
 const C_APP_EXTENSION_JSON = "json";
 const C_APP_EXTENSION_CSV = "csv";
+const C_APP_EXTENSION_HTML = "html";
 const C_APP_EXTENSION_XLSX = "xlsx";
 
 // File Mimetype
 const C_APP_MIMETYPE_PX = "text/plain";
 const C_APP_MIMETYPE_JSON = "application/json";
 const C_APP_MIMETYPE_CSV = "text/csv";
+const C_APP_MIMETYPE_HTML = "text/html";
 const C_APP_MIMETYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 // Datatable

@@ -11,7 +11,7 @@ $(document).ready(function () {
   app.navigation.setTitle(app.label.static["keywords"] + " - " + app.label.static["subjects"]);
 
   // Load Modal
-  api.content.load("#overlay", "entity/keyword/subject/index.modal.html");
+  api.content.load("#modal-entity", "entity/keyword/subject/index.modal.html");
 
   // Load the side panel
   api.content.load("#panel", "entity/keyword/search/index.html");

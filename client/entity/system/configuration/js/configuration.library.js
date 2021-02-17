@@ -168,7 +168,7 @@ app.configuration.ajax.reload = function () {
     );
 };
 app.configuration.callback.reload = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         //Reload application on close Successful Config Reload modal
         $("#modal-success").on('hide.bs.modal', function (e) {
             app.plugin.backbutton = false;

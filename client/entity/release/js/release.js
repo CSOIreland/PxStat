@@ -16,31 +16,31 @@ $(document).ready(function () {
   app.release.goTo.RlsCode = api.content.getParam("RlsCode");
 
   // Clear Overlay and load dependencies (loading order relevant) - must be after GoTo
-  $("#overlay").empty();
+  $("#modal-entity").empty();
   // Search
   api.content.load("#release-container-search", "entity/release/index.search.html");
   // Information
   api.content.load("#release-container-information", "entity/release/index.information.html");
   // Navigation
-  api.content.load("#overlay", "entity/release/index.navigation.modal.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.navigation.modal.html", null, true);
   // Property
   api.content.load("#release-container-property", "entity/release/index.property.html");
   // Source
-  api.content.load("#overlay", "entity/release/index.source.modal.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.source.modal.html", null, true);
   api.content.load("#release-container-source", "entity/release/index.source.html");
   // Comparison
-  api.content.load("#overlay", "entity/release/index.comparison.modal.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.comparison.modal.html", null, true);
   // Reason
-  api.content.load("#overlay", "entity/release/index.reason.modal.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.reason.modal.html", null, true);
   api.content.load("#release-container-reason", "entity/release/index.reason.html");
   // Comment
-  api.content.load("#overlay", "entity/release/index.comment.modal.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.comment.modal.html", null, true);
   api.content.load("#release-container-comment", "entity/release/index.comment.html");
   // Workflow
   api.content.load("#release-container-workflow", "entity/release/index.workflow.html");
-  api.content.load("#overlay", "entity/release/index.workflow.modal.request.html", null, true);
-  api.content.load("#overlay", "entity/release/index.workflow.modal.response.html", null, true);
-  api.content.load("#overlay", "entity/release/index.workflow.modal.signoff.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.workflow.modal.request.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.workflow.modal.response.html", null, true);
+  api.content.load("#modal-entity", "entity/release/index.workflow.modal.signoff.html", null, true);
   api.content.load("#release-container-workflow-history", "entity/release/index.workflow.history.html");
 
   // Load the side panel

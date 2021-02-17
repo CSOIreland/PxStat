@@ -10,7 +10,7 @@ $(document).ready(function () {
     $("#release-source").find("[name=view-data]").once("click", app.release.data.view);
 
     // Load HTML for Data Set Modal 
-    api.content.load("#overlay", "entity/data/index.modal.html", null, true);
+    api.content.load("#modal-entity", "entity/data/index.modal.html", null, true);
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
 
     app.library.html.parseStaticLabel();

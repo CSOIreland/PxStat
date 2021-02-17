@@ -8,7 +8,7 @@ $(document).ready(function () {
   app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["import"]);
 
   // Load Modal
-  api.content.load("#overlay", "entity/build/import/index.modal.html");
+  api.content.load("#modal-entity", "entity/build/import/index.modal.html");
 
   // Load the side panel
   api.content.load("#panel", "entity/build/import/index.panel.html");

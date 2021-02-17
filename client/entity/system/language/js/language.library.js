@@ -315,7 +315,7 @@ app.language.callback.updateOnSuccess = function (data, callbackParam) {
   // Reload the data
   app.language.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.LngIsoCode]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -410,7 +410,7 @@ app.language.ajax.create = function () {
 app.language.callback.createOnSuccess = function (data, callbackParam) {
   app.language.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     $("#language-modal-create").modal("hide");
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.LngIsoCode]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -453,7 +453,7 @@ app.language.ajax.delete = function (idn) {
 app.language.callback.deleteOnSuccess = function (data, idn) {
   app.language.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };

@@ -14,7 +14,7 @@ $(document).ready(function () {
     app.data.goTo.MtrCode = api.content.getParam("MtrCode");
 
     // Load Modal - must be after GoTo
-    api.content.load("#overlay", "entity/data/index.modal.html");
+    api.content.load("#modal-entity", "entity/data/index.modal.html");
     api.content.load("#data-share-row", "entity/data/index.share.html");
     api.content.load("#data-search-row-desktop", "entity/data/index.search.html");
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");

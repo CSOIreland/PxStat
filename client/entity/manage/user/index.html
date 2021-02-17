@@ -7,19 +7,25 @@
           <th label="user-name"></th>
           <th label="name"></th>
           <th label="email"></th>
+          <th label="type"></th>
           <th label="notifications"></th>
+          <th label="enabled"></th>
           <th label="role"></th>
-          <th label="valid"></th>
           <th></th>
         </tr>
       </thead>
     </table>
   </div>
-  <!-- Button trigger modal Create User (Add User)-->
   <div class="card-footer text-right">
-    <button name="button-create" class="btn btn-primary text-light">
-      <i class="fas fa-plus-circle"></i> <span label="add-user"></span>
-    </button>
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-plus-circle"></i> <span label="add-user"></span>
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" name="create-ad-user" href="#"><span label="ad-user"></span></a>
+        <a class="dropdown-item" name="create-local-user" href="#"><span label="local-user"></span></a>
+      </div>
+    </div>
   </div>
 </div>
 

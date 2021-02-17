@@ -20,7 +20,7 @@ app.label.init = function () {
         targetLanguage = Cookies.getJSON(C_COOKIE_LANGUAGE);
     }
     // Reset Cookie language in case the target language fails
-    Cookies.set(C_COOKIE_LANGUAGE, app.config.language, app.config.plugin.jscookie);
+    Cookies.set(C_COOKIE_LANGUAGE, app.config.language, app.config.plugin.jscookie.persistent);
     // Store the reset language for later use
     app.label.language = app.config.language;
 
@@ -35,7 +35,7 @@ app.label.init = function () {
             // Extend lable sourced form target language
             $.extend(true, app.label, label);
             // Set the target language in the cookie
-            Cookies.set(C_COOKIE_LANGUAGE, targetLanguage, app.config.plugin.jscookie);
+            Cookies.set(C_COOKIE_LANGUAGE, targetLanguage, app.config.plugin.jscookie.persistent);
             // Store for later use
             app.label.language = targetLanguage;
         });

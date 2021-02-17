@@ -8,7 +8,7 @@ $(document).ready(function () {
     app.navigation.setTitle(app.label.static["dashboard"]);
 
     // Load Analytics Modal 
-    api.content.load("#overlay", "entity/analytic/index.modal.html");
+    api.content.load("#modal-entity", "entity/analytic/index.modal.html");
 
     //Load requests Data Table data
     app.dashboard.workInProgress.ajax.read();
@@ -27,7 +27,7 @@ $(document).ready(function () {
     });
 
     // Check access to open relevant Accordion
-    app.dashboard.ajax.ReadCurrentAccess();
+    app.dashboard.ajax.ReadCurrent();
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     //Translate labels language (Last to run)

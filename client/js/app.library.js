@@ -69,35 +69,43 @@ app.library.datatable.showExtraInfo = function (datatableSelector, callbackFunct
 /**
  * Parse the Static Labels into the HTML context
  */
-app.library.html.parseStaticLabel = function () {
+app.library.html.parseStaticLabel = function (keyword) {
+  keyword = keyword || null;
 
-  // Parse all Labels in the DOM
-  $("[label]").each(function (index) {
-    // Get the keyword from the attribute value
-    var keyword = $(this).attr("label");
+  if (keyword) {
+    // If the Keyword exists in the Dictionary, then return it
+    return app.label.static[keyword] ? app.label.static[keyword] : "[" + keyword + "]";
+  }
+  else {
+    // Parse all Labels in the DOM
+    $("[label]").each(function (index) {
+      // Get the keyword from the attribute value
+      var keyword = $(this).attr("label");
 
-    // If the Keyword exists in the Dictionary, then set it
-    $(this).html(app.label.static[keyword] ? app.label.static[keyword] : "[" + keyword + "]");
+      // If the Keyword exists in the Dictionary, then set it
+      $(this).html(app.label.static[keyword] ? app.label.static[keyword] : "[" + keyword + "]");
 
-    // Remove the attribute to avoid double-parsing
-    $(this).removeAttr("label");
-  });
+      // Remove the attribute to avoid double-parsing
+      $(this).removeAttr("label");
+    });
 
-  // Parse all Label Tooltips in the DOM
-  $("[label-tooltip]").each(function (index) {
-    // Get the keyword from the attribute value
-    var keyword = $(this).attr("label-tooltip");
+    // Parse all Label Tooltips in the DOM
+    $("[label-tooltip]").each(function (index) {
+      // Get the keyword from the attribute value
+      var keyword = $(this).attr("label-tooltip");
 
-    // If the Keyword exists in the Dictionary
-    if (app.label.static[keyword]) {
-      // If the data-original-title attribute exists
-      $(this).attr("data-original-title", app.label.static[keyword]);
-    } else {
-      $(this).attr("data-original-title", keyword);
-    }
+      // If the Keyword exists in the Dictionary
+      if (app.label.static[keyword]) {
+        // If the data-original-title attribute exists
+        $(this).attr("data-original-title", app.label.static[keyword]);
+      } else {
+        $(this).attr("data-original-title", keyword);
+      }
 
-    $(this).removeAttr();
-  });
+      $(this).removeAttr();
+    });
+  }
+
 };
 /**
  * Parse the Static Labels into the HTML context
@@ -588,7 +596,7 @@ app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_S
     goToParams[goTo] = Cookies.get(cookie);
 
     // Remove the Cookie
-    Cookies.remove(cookie, app.config.plugin.jscookie);
+    Cookies.remove(cookie, app.config.plugin.jscookie.persistent);
 
     // Loading the required entity
     api.content.goTo(relativeURL, nav_link_SelectorToHighlight, nav_menu_SelectorToHighlight, goToParams);
@@ -601,14 +609,15 @@ app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_S
  */
 app.library.utility.arrayHasDuplicate = function (items) {
   //normalise items
+  var itemsLowerCase = [];
   $.each(items, function (index, value) {
-    value = value.trim().toLowerCase();
+    itemsLowerCase.push(value.trim().toLowerCase())
   });
 
   var counts = [];
-  for (var i = 0; i <= items.length; i++) {
-    if (counts[items[i]] === undefined) {
-      counts[items[i]] = 1;
+  for (var i = 0; i <= itemsLowerCase.length; i++) {
+    if (counts[itemsLowerCase[i]] === undefined) {
+      counts[itemsLowerCase[i]] = 1;
     } else {
       return true;
     }

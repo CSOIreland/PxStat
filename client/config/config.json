@@ -1,5 +1,4 @@
 {
-	"organisation": "ORGANISATION NAME",
 	"url": {
 		"configuration": {
 			"global": "https://ws.domain.extension/public/Resources/Config/config.global.json",
@@ -12,14 +11,59 @@
 			},
 			"restful": {
 				"public": "https://ws.domain.extension/public/api.restful"
+		}
+	},
+	"template": {
+		"footer": {
+			"contact": {
+				"address": "ORGANISATION ADDRESS",
+				"phone": "ORGANISATION PHONE",
+				"email": "ORGANISATION EMAIL"
+			},
+			"social": [
+				{
+					"label": "youtube",
+					"icon": "fab fa-youtube",
+					"url": "https://www.youtube.com/user/ORGANISATION"
+				},
+				{
+					"label": "twitter",
+					"icon": "fab fa-twitter",
+					"url": "https://twitter.com/ORGANISATION"
+				},
+				{
+					"label": "facebook",
+					"icon": "fab fa-facebook",
+					"url": "https://www.facebook.com/ORGANISATION"
+				},
+				{
+					"label": "instagram",
+					"icon": "fab fa-instagram",
+					"url": "https://www.instagram.com/ORGANISATION"
+				},
+				{
+					"label": "linkedin",
+					"icon": "fab fa-linkedin-in",
+					"url": "https://ie.linkedin.com/company/ORGANISATION"
+				},
+				{
+					"label": "github",
+					"icon": "fab fa-github",
+					"url": "https://github.com/ORGANISATION"
+				}
+			],
+			"links": [
+				{
+					"text": "domain.extension",
+					"url": "https://domain.extension"
+				}
+			],
+			"watermark": {
+				"src": "ORGANISATION WATERMARK LOGO URL",
+				"alt": "domain.extension",
+				"url": "https://domain.extension"
 			}
-		},
-		"footer": [
-			{
-				"text": "WEBSITE NAME",
-				"href": "https://www.domain.extension/"
-			}
-		]
+		}
 	},
 	"mask": {
 		"datetime": {
@@ -74,9 +118,9 @@
 			},
 			"snippet": null,
 			"properties": {
-				"archive": "https://www.domain.extension/path",
-				"underReservation": "https://www.domain.extension/path",
-				"experimental": "https://www.domain.extension/path"
+				"archive": "https://domain.extension/path",
+				"underReservation": "https://domain.extension/path",
+				"experimental": "https://domain.extension/path"
 			}
 		},
 		"build": {
@@ -88,6 +132,12 @@
 				"enabled": false,
 				"href": "https://geojson.doamin.extension/"
 			}
+		},
+		"openAccess": {
+			"recaptcha": {
+				"siteKey": ""
+			},
+			"authenticator": "domain.extension"
 		},
 		"release": {
 			"comparison": {
@@ -108,9 +158,15 @@
 			"apiKey": ""
 		},
 		"jscookie": {
-			"path": "/",
-			"secure": "true",
-			"expires": 365
+			"session": {
+				"path": "/",
+				"secure": "true"
+			},
+			"persistent": {
+				"path": "/",
+				"secure": "true",
+				"expires": 365
+			}
 		},
 		"datatable": {
 			"lengthMenu": [

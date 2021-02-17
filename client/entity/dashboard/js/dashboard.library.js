@@ -32,13 +32,13 @@ app.dashboard.render = {};
 //#endregion
 
 
-app.dashboard.ajax.ReadCurrentAccess = function () {
+app.dashboard.ajax.ReadCurrent = function () {
     //Check the privilege of the user 
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
-        "PxStat.Security.Account_API.ReadCurrentAccess",
+        "PxStat.Security.Account_API.ReadCurrent",
         { CcnUsername: null },
-        "app.dashboard.callback.ReadCurrentAccess",
+        "app.dashboard.callback.ReadCurrent",
         null,
         null,
         null,
@@ -46,8 +46,8 @@ app.dashboard.ajax.ReadCurrentAccess = function () {
     );
 };
 
-app.dashboard.callback.ReadCurrentAccess = function (data) {
-    switch (data[0].PrvCode) {
+app.dashboard.callback.ReadCurrent = function (data) {
+    switch (data.PrvCode) {
         case C_APP_PRIVILEGE_MODERATOR:
             $("#collapse-work-in-progress").collapse('show');
             $("#dashboard-accordion").on('show.bs.collapse', function (e) {

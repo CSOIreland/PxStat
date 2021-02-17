@@ -212,8 +212,15 @@ $(document).ready(function () {
   );
   //#endregion
 
-  // Set current user's access
-  app.navigation.access.ajax.set();
+  $("#nav-user-login").once("click", app.openAccess.modal.login);
+
+  $("#nav-user-logout").once("click", function () {
+    api.modal.confirm(app.label.static["open-access-logout-confirm"], app.openAccess.modal.logout)
+  });
+
+
+  // First check for windows/network user
+  app.navigation.access.ajax.ReadCurrentWindowsAccess();
 
   // Set language dropdown
   app.navigation.language.ajax.read();

@@ -1047,7 +1047,8 @@ app.data.dataset.chart.resetAll = function () {
     $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").empty();
     $("#data-dataset-chart-accordion-series-collapse").find("[name=series-tabs]").empty();
     $("#data-dataset-chart-accordion-series-collapse").find("[name=series-content]").empty();
-    $("#data-dataset-chart-snippet-code [name=custom-config]").val("");
+    $("#data-dataset-chart-snippet-code [name=custom-config]").val(JSON.stringify({ "options": {} }));
+    app.data.dataset.chart.formatJson();
 
     //disable add series accordion and view button
     $("#data-dataset-chart-accordion-series-heading button").prop("disabled", true);

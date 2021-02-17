@@ -14,7 +14,7 @@ $(document).ready(function () {
     var GroupCode = api.content.getParam("GrpCode");
 
     // Load Modal - must be after GoTo
-    api.content.load("#overlay", "entity/manage/group/index.modal.html");
+    api.content.load("#modal-entity", "entity/manage/group/index.modal.html");
 
     // Get data from API for Group DataTable
     app.group.ajax.read();

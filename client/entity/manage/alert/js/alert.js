@@ -10,7 +10,7 @@ $(document).ready(function () {
     app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["alerts"]);
 
     // Load Modal
-    api.content.load("#overlay", "entity/manage/alert/index.modal.html");
+    api.content.load("#modal-entity", "entity/manage/alert/index.modal.html");
 
     app.alert.ajax.read();
 

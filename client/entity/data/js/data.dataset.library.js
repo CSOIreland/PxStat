@@ -525,6 +525,10 @@ app.data.dataset.callback.back = function () {
         $("#breadcrumb-nav").find(".breadcrumb-item").last().remove();
         $("#breadcrumb-nav").find(".breadcrumb-item").last().remove();
     }
+
+    if (app.data.PrdCode) {
+        app.data.share(null, app.data.PrdCode);
+    }
     //first check if we have search results to display
     var numSearchResults = $("#data-search-row-desktop [name=search-results] [name=search-result-item]").length;
     if (numSearchResults > 0) {

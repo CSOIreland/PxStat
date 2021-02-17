@@ -205,7 +205,7 @@ app.subject.callback.createOnSuccess = function (data, callbackParam) {
   //Refresh the table
   app.subject.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.SbjValue]));
   }
   // Handle Exception
@@ -329,7 +329,7 @@ app.subject.callback.updateOnSuccess = function (data, callbackParam) {
   //Refresh the table
   app.subject.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.SbjValue]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -396,7 +396,7 @@ app.subject.callback.deleteOnSuccess = function (data, callbackParam) {
   //Refresh the table
   app.subject.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.SbjValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };

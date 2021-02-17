@@ -1,8 +1,14 @@
 /*******************************************************************************
-Footer - Bootstrap - Sticky Footer
+Footer - https://www.freecodecamp.org/news/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/
 *******************************************************************************/
 
-body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
+#content {
+    /* Footer height + 2rem */
+    padding-bottom: 15rem;
+}
+
+#footer .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;    
 }

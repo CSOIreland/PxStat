@@ -304,7 +304,7 @@ app.copyright.ajax.create = function () {
 app.copyright.callback.createOnSuccess = function (data, callbackParam) {
   app.copyright.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     $("#copyright-modal-create").modal("hide");
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.CprValue]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -446,7 +446,7 @@ app.copyright.callback.updateOnSuccess = function (data, callbackParam) {
   app.copyright.ajax.read();
   $("#copyright-modal-update").modal("hide");
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.CprCodeOld]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -507,7 +507,7 @@ app.copyright.ajax.delete = function (idn) {
 app.copyright.callback.deleteOnSuccess = function (data, idn) {
   app.copyright.ajax.read();
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [idn]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };

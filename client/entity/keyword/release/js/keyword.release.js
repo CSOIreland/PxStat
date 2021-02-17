@@ -14,10 +14,10 @@ $(document).ready(function () {
 
 
     // Load Modal
-    api.content.load("#overlay", "entity/keyword/release/index.modal.html");
+    api.content.load("#modal-entity", "entity/keyword/release/index.modal.html");
 
     // Load HTML for Data Set Modal 
-    api.content.load("#overlay", "entity/data/index.modal.html", null, true);
+    api.content.load("#modal-entity", "entity/data/index.modal.html", null, true);
     api.content.load("#data-dataset-row", "entity/data/index.dataset.html");
 
     // Load the side panel

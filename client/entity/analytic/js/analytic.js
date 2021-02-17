@@ -11,7 +11,7 @@ $(document).ready(function () {
 
 
     // Load Modal 
-    api.content.load("#overlay", "entity/analytic/index.modal.html");
+    api.content.load("#modal-entity", "entity/analytic/index.modal.html");
 
     app.analytic.setDatePicker();
     app.analytic.ajax.readSubject();

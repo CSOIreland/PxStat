@@ -182,7 +182,7 @@ app.release.navigation.ajax.update = function (PrcCode) {
  * @param {*} data
  */
 app.release.navigation.callback.update = function (data) {
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
         app.release.information.read();
     }

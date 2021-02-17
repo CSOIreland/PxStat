@@ -118,6 +118,21 @@ jQuery.validator.addMethod("validPhoneNumber", function (value, element) {
   return this.optional(element) || pattern.test(value);
 }, app.label.dynamic["invalid-format"].sprintf([app.config.regex.phone.placeholder]));
 
+/**
+ * Validation password
+ */
+jQuery.validator.addMethod("validPassword", function (value, element) {
+  var pattern = new RegExp(app.config.regex.password);
+  var result = this.optional(element) || pattern.test(value);
+  if (!result) {
+    $("a[name=password-requirements]").popover('show');
+  }
+  else {
+    $("a[name=password-requirements]").popover('hide');
+  }
+  return result
+}, app.label.static["invalid-password"]);
+
 
 /**
  * Validation ip Mask
@@ -219,11 +234,8 @@ $(document).ready(function () {
       parentIds.push(value.id);
     });
 
-    //only if the modal is in the overlay do we change the print screen
-    //api modals are ignored and page is printed as normal
-    if (jQuery.inArray("overlay", parentIds) != -1) {
-      $('#alert, #header, #navigation, #body, #sidebar, #panel, #footer, #modal, #spinner').addClass('d-print-none');
-    }
+    //update non modal divs to no print css
+    $('#cookie, #alert, #header, #navigation, #content, #footer, #spinner').addClass('d-print-none');
   });
 
   $('body').on('hide.bs.modal', function (e) {
@@ -232,11 +244,9 @@ $(document).ready(function () {
     $.each(parents, function (key, value) {
       parentIds.push(value.id);
     });
-    //only if the modal is in the overlay do we change the print screen
-    //api modals are ignored and page is printed as normal
-    if (jQuery.inArray("overlay", parentIds) != -1) {
-      $('#alert, #header, #navigation, #body, #sidebar, #panel, #footer, #modal, #spinner').removeClass('d-print-none');
-    }
+
+    //update non modal divs to print css
+    $('#cookie, #alert, #header, #navigation, #content, #footer, #spinner').removeClass('d-print-none');
   });
 });
 
@@ -371,17 +381,17 @@ app.plugin.cookiconsent.false = "false";
 app.plugin.cookiconsent.allow = function (drawShareThis) {
   drawShareThis = drawShareThis || false;
   // Set to TRUE the Cookie Consent
-  Cookies.set(C_COOKIE_CONSENT, app.plugin.cookiconsent.true, app.config.plugin.jscookie);
+  Cookies.set(C_COOKIE_CONSENT, app.plugin.cookiconsent.true, app.config.plugin.jscookie.persistent);
   // Load ShareThis following Cookie Consent
   app.plugin.sharethis.load(drawShareThis);
   // Hide the banner
-  $("#footer").find("[name=cookie-banner]").fadeOut();
+  $("#cookie").find("[name=cookie-banner]").fadeOut();
 };
 
 app.plugin.cookiconsent.deny = function (reload) {
   reload = reload || false;
   // Set to FALSE the Cookie Consent
-  Cookies.set(C_COOKIE_CONSENT, app.plugin.cookiconsent.false, app.config.plugin.jscookie);
+  Cookies.set(C_COOKIE_CONSENT, app.plugin.cookiconsent.false, app.config.plugin.jscookie.persistent);
 
   if (reload) {
     // Prevent back-button check
@@ -389,7 +399,7 @@ app.plugin.cookiconsent.deny = function (reload) {
     // Force page reload in order to unload (not set at all) cookies from different domains (i.e. sharethis)
     window.location.href = window.location.pathname;
   } else {
-    $("#footer").find("[name=cookie-banner]").fadeOut();
+    $("#cookie").find("[name=cookie-banner]").fadeOut();
   }
 };
 

@@ -342,7 +342,7 @@ app.release.reason.ajax.update = function () {
  * @param {*} RsnCode
  */
 app.release.reason.callback.update = function (data, RsnCode) {
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [RsnCode]));
     app.release.reason.ajax.readList();
   } else {
@@ -373,7 +373,7 @@ app.release.reason.ajax.delete = function (RsnCode) {
  * @param {*} params
  */
 app.release.reason.callback.delete = function (data, params) {
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     // Refresh datatable
     app.release.reason.ajax.readList();
     api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [params.RsnCode]));
@@ -441,7 +441,7 @@ app.release.reason.ajax.create = function () {
 app.release.reason.callback.createOnSuccess = function (data, RsnCode) {
   $("#release-reason-modal-create").modal("hide");
 
-  if (data == C_APP_API_SUCCESS) {
+  if (data == C_API_AJAX_SUCCESS) {
     app.release.reason.ajax.readList();
     api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [RsnCode]));
   } else {

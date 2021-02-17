@@ -57,7 +57,7 @@ app.group.MapData = function (dataAPI) {
     $.each(dataAPI, function (i, item) {
         // Add ID and NAME to the list
         dataAPI[i].id = item.CcnUsername;
-        dataAPI[i].text = $.trim(item.CcnUsername) + " (" + $.trim(item.CcnName) + ")";
+        dataAPI[i].text = $.trim(item.CcnUsername) + " (" + $.trim(item.CcnDisplayName) + ")";
     });
     return dataAPI;
 };
@@ -80,7 +80,7 @@ app.group.UpdateFields = function (activeMemberRecord) {
     else {
         //Selected Member (group-input-add-member-search select2)
         $("#group-modal-add-member").find("[name=group-input-add-member-username]").text(activeMemberRecord.CcnUsername);
-        $("#group-modal-add-member").find("[name=group-input-add-member-name]").text(activeMemberRecord.CcnName);
+        $("#group-modal-add-member").find("[name=group-input-add-member-name]").text(activeMemberRecord.CcnDisplayName);
         $(".serverValidationError .error").empty();
         $("#group-modal-add-member").find("[name=group-input-add-member-search-error-holder]").empty();
     }
@@ -408,7 +408,7 @@ app.group.callback.createOnSuccess = function (data, callbackParam) {
     //Close modal
     $("#group-modal-create-group").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.GrpCode]));
     } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
@@ -475,7 +475,7 @@ app.group.callback.deleteOnSuccess = function (data, callbackParam) {
     // Hide the group in case it was open
     $("#accordion-group").hide();
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.GrpCode]));
     }
     // Handle Exception
@@ -561,7 +561,7 @@ app.group.drawDataTableMembersGroup = function (data, groupCode) {
                         return app.library.html.link.edit({ idn: row.CcnUsername, "grp-code": row.GrpCode }, row.CcnUsername);
                     }
                 },
-                { data: "CcnName" },
+                { data: "CcnDisplayName" },
                 {
                     data: null,
                     render: function (data, type, row) {
@@ -760,7 +760,7 @@ app.group.callback.updateOnSuccess = function (data, callbackParam) {
     //hide the accordion
     $("#accordion-group").hide();
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.GrpCodeOld]));
     } else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -831,7 +831,7 @@ app.group.membergroup.callback.deleteOnSuccess = function (data, callbackParam) 
     app.group.ajax.read(); //Number of member change for Group.    //Redraw Data Table Members of Group with fresh data.
     app.group.membergroup.ajax.read(callbackParam.GrpCode);
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         // Display Success Modal
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.CcnUsername]));
     }
@@ -898,7 +898,7 @@ app.group.membergroup.modal.update = function (userRecord) {
     // Populate data to the modal "group-modal-update-group-member"
     $("#group-modal-update-group-member").find("[name=grp-code]").val(userRecord.GrpCode);
     $("#group-modal-update-group-member").find("[name=ccn-user-name]").text(userRecord.CcnUsername);
-    $("#group-modal-update-group-member").find("[name=ccn-name]").text(userRecord.CcnName);
+    $("#group-modal-update-group-member").find("[name=ccn-name]").text(userRecord.CcnDisplayName);
     $("#group-modal-update-group-member").find("[name=ccn-email]").html(app.library.html.email(userRecord.CcnEmail));
 
     //Set state of bootstrapToggle button.
@@ -965,7 +965,7 @@ app.group.membergroup.callback.updateOnSuccess = function (data, callbackParam) 
     //Modal hide
     $("#group-modal-update-group-member").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         //Clear fields at modal-update-user Modal
         $("#group-modal-update-group-member").find("[name=ccn-user-name]").text("");
         $("#group-modal-update-group-member").find("[name=grp-name]").text("");
@@ -1001,7 +1001,7 @@ app.group.membergroup.modal.create = function () {
     var currentGroup = $("#group-members-read").find("[name=button-create]").attr("current-group");
     $("#group-modal-add-member").find("[name=group-input-add-member-username]").empty(); //CcnUsername:
     $("#group-modal-add-member").find("[name=group-input-add-member-name]").empty(); //name:
-    $("#group-modal-add-member").find("[name=namecreate]").empty(); // CcnName:
+    $("#group-modal-add-member").find("[name=namecreate]").empty(); // CcnDisplayName:
     //Set member approve flag  to default value.
     $("#group-modal-add-member").find("[name=group-input-add-member-approve-flag]").bootstrapToggle('off');
     //Flush error labels - do not delete required for Member search functionality (select2)
@@ -1131,7 +1131,7 @@ app.group.membergroup.callback.createOnSuccess = function (data, callbackParam) 
 
     $("#group-modal-add-member").modal("hide");
 
-    if (data == C_APP_API_SUCCESS) {
+    if (data == C_API_AJAX_SUCCESS) {
         //clear fields at Modal group-modal-add-member
         $("#group-modal-add-member").find("[name=group-input-add-member-username]").text("");
         $("#group-modal-add-member").find("[name=group-input-add-member-name]").text("");

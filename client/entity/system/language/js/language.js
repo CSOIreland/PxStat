@@ -14,7 +14,7 @@ $(document).ready(function () {
 
 
   // Load Modal 
-  api.content.load("#overlay", "entity/system/language/index.modal.html");
+  api.content.load("#modal-entity", "entity/system/language/index.modal.html");
 
   // Draw the Datatable on load
   app.language.ajax.read();
