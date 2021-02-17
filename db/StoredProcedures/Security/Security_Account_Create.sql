@@ -16,6 +16,10 @@ ALTER PROCEDURE Security_Account_Create @CcnUsernameCreator NVARCHAR(256)
 	,@CcnUsernameNewAccount NVARCHAR(256)
 	,@PrvCode NVARCHAR(32)
 	,@CcnNotificationFlag BIT =null
+	,@CcnLockedFlag BIT
+	,@CcnADFlag BIT
+	,@CcnDisplayName NVARCHAR(256)=NULL
+	,@CcnEmail NVARCHAR(256)=NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -46,7 +50,7 @@ BEGIN
 			FROM TS_PRIVILEGE
 			WHERE PRV_CODE = @PrvCode
 			)
-
+			 
 	IF @PrivilegeID IS NULL
 	BEGIN
 		SET @errorMessage = 'No Privilege entry found for Privilege code: ' + cast(isnull(@PrvCode, 0) AS VARCHAR)
@@ -71,6 +75,10 @@ BEGIN
 		,CCN_NOTIFICATION_FLAG 
 		,CCN_DTG_ID
 		,CCN_DELETE_FLAG
+		,CCN_LOCKED_FLAG
+		,CCN_AD_FLAG 
+		,CCN_DISPLAYNAME
+		,CCN_EMAIL 
 		)
 	VALUES (
 		@CcnUsernameNewAccount
@@ -78,9 +86,14 @@ BEGIN
 		,@CcnNotificationFlag
 		,@DtgID
 		,0
+		,@CcnLockedFlag
+		,@CcnADFlag
+		,@CcnDisplayName 
+		,@CcnEmail
 		)
 
-	RETURN @@IDENTITY
+
+	return @@IDENTITY
 END
 GO
 

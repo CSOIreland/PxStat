@@ -42,7 +42,7 @@ BEGIN
 				AND LNG_DELETE_FLAG = 0
 			)
 
-	SELECT DISTINCT RLS_CODE RlsCode
+	SELECT  RLS_CODE RlsCode
 		,mtr.MTR_CODE MtrCode
 		,GRP_CODE GrpCode
 		,GRP_NAME GrpName
@@ -54,7 +54,7 @@ BEGIN
 		,MTR_OFFICIAL_FLAG MtrOfficialFlag
 		,RLS_LIVE_DATETIME_FROM RlsLiveDatimeFrom
 		,WRQ_DATETIME WrqDatetime
-		,DHT_DATETIME DhtDatetime
+		,max(DHT_DATETIME) DhtDatetime
 		,coalesce(mtrLng.MTR_TITLE, mtr.MTR_TITLE) MtrTitle
 	FROM TD_MATRIX mtr
 	LEFT JOIN (
@@ -106,6 +106,20 @@ BEGIN
 			,@LngDefaultId
 			)
 		AND WRQ_DATETIME > getdate()
+	group by RLS_CODE 
+		,mtr.MTR_CODE 
+		,GRP_CODE 
+		,GRP_NAME 
+		,RQS_CODE 
+		,RQS_VALUE 
+		,CCN_USERNAME 
+		,RLS_RESERVATION_FLAG 
+		,RLS_ARCHIVE_FLAG 
+		,MTR_OFFICIAL_FLAG 
+		,RLS_LIVE_DATETIME_FROM 
+		,WRQ_DATETIME 
+		,mtrLng.MTR_TITLE
+		,mtr.MTR_TITLE 
 	ORDER BY mtr.MTR_CODE
 END
 GO

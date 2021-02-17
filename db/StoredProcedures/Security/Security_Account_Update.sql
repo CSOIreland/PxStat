@@ -16,6 +16,7 @@ ALTER PROCEDURE Security_Account_Update @CcnUsernameUpdater NVARCHAR(256)
 	,@UpdatedCcnUsername NVARCHAR(256)
 	,@PrvCode NVARCHAR(32)
 	,@CcnNotificationFlag BIT = NULL
+	,@CcnLockedFlag BIT = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -58,12 +59,27 @@ BEGIN
 	END
 
 	UPDATE TD_ACCOUNT
-	SET CCN_PRV_ID = @PrvID,
-	CCN_NOTIFICATION_FLAG=@CcnNotificationFlag 
+	SET CCN_PRV_ID = @PrvID
+		,CCN_NOTIFICATION_FLAG = Coalesce(@CcnNotificationFlag, CCN_NOTIFICATION_FLAG)
+		,CCN_LOCKED_FLAG = Coalesce(@CcnLockedFlag, CCN_LOCKED_FLAG)
 	WHERE CCN_USERNAME = @UpdatedCcnUsername
 		AND CCN_DELETE_FLAG = 0
 
 	SET @updateCount = @@ROWCOUNT
+
+	IF @CcnLockedFlag = 1
+	BEGIN
+		UPDATE TD_LOGIN
+		SET LGN_SESSION = NULL
+			,LGN_SESSION_EXPIRY = NULL
+			,LGN_TOKEN_1FA = NULL
+			,LGN_TOKEN_2FA = NULL
+		FROM TD_LOGIN
+		INNER JOIN TD_ACCOUNT
+			ON LGN_CCN_ID = CCN_ID
+				AND CCN_USERNAME = @UpdatedCcnUsername
+				AND CCN_DELETE_FLAG = 0
+	END
 
 	IF @updateCount > 0
 	BEGIN

@@ -34,7 +34,7 @@ $password =[Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropSe
 # Initiate log
 # ********************************************************************************
 
-"********************************************************************************" | out-file $scriptDir\deploy.log -Append
+"********************************************************************************" | out-file $scriptDir\install.log -Append
 
 # ********************************************************************************
 # Create Database
@@ -49,7 +49,7 @@ $DbData = Read-host
 DO {
 	#Declare DB_RECOVERY
 	Write-Host "" 
-	Write-Host "Choose the Database recovery model between SIMPLE, BULK_LOGGED, FULL"  
+	Write-Host "Choose the Database recovery model between SIMPLE (recommended), BULK_LOGGED, FULL"  
 	Write-Host "See Microsoft Documentation at https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server"  
 
 	$DbRecovery = Read-host 
@@ -62,6 +62,7 @@ Write-Host "Choose the folder where to store the Database file (.mdf):"
 Write-Host "(eg. E:\sqldata\data)"  
 
 $DbDataPath = Read-host 
+if ([string]::IsNullOrWhiteSpace($DbDataPath)) { $DbDataPath  = 'E:\sqldata\data' }
 
 #Declare DB_LOG
 $DbLog = "$($DbData)_log"
@@ -72,6 +73,7 @@ Write-Host "Choose the folder where to store the Log file (.ldf):"
 Write-Host "(eg. E:\sqldata\log)"  
 
 $DbLogPath = Read-host 
+if ([string]::IsNullOrWhiteSpace($DbLogPath)) { $DbLogPath  = 'E:\sqldata\log' }
 
 #Extract the databse.sql file into an object
 $files = Get-ChildItem -recurse $scriptDir\database.sql
@@ -88,16 +90,14 @@ ForEach ($file in $files)
         try
         {
             Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -Variable $("DB_DATA=$DbData", "DB_RECOVERY=$DbRecovery", "DB_DATA_PATH=$DbDataPath", "DB_LOG=$DbLog", "DB_LOG_PATH=$DbLogPath") -serverinstance $server -ErrorAction Stop
-            "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+            "SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
             $successCount = $successCount + 1
         }
         catch
         {
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-            "" | out-file $scriptDir\deploy.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
@@ -116,8 +116,8 @@ Write-Host ""
 #Declare PxStat Login
 DO {
 	Write-Host "" 
-	Write-Host "Do you want to create the 'pxstat' login in the 'master' database?" 
-	Write-Host "This will create the the default Username with a random Password, used by the application in the Database Connection String." 
+	Write-Host "Do you want to create the 'pxstat' SQL Server Login?" 
+	Write-Host "This will create the SQL Server Login with a random Password, used by the application in the Database Connection String." 
 	Write-Host "Please change the Password in SSMS (SQL Server Management Studio) and update the Database Connection String in the Web.config of the Application."
 	Write-Host "N.B. This is required ONLY for the first time this script runs." 
 	Write-Host "(Press 'y' for yes or 'n' for no)"   
@@ -144,16 +144,14 @@ if ("y" -contains $addLoginConfirm)
 			try
 			{
 				Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -serverinstance $server -ErrorAction Stop
-				"SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+				"SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
 				$successCount = $successCount + 1
 			}
 			catch
 			{
 				$ErrorMessage = $_.Exception.Message
 				Write-Host "ERROR $file - $ErrorMessage"
-				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-				"" | out-file $scriptDir\deploy.log -Append
-				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
 				$errorCount = $errorCount + 1
 				Continue
 			}
@@ -176,16 +174,14 @@ if ("y" -contains $addLoginConfirm)
 			try
 			{
 				Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -serverinstance $server -ErrorAction Stop
-				"SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+				"SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
 				$successCount = $successCount + 1
 			}
 			catch
 			{
 				$ErrorMessage = $_.Exception.Message
 				Write-Host "ERROR $file - $ErrorMessage"
-				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-				"" | out-file $scriptDir\deploy.log -Append
-				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+				"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
 				$errorCount = $errorCount + 1
 				Continue
 			}
@@ -203,12 +199,49 @@ if ("y" -contains $addLoginConfirm)
 # ********************************************************************************
 
 #Declare Application Administrator
-Write-Host "" 
-Write-Host "Please provide the Username of the first Application Administrator in order to bootup the system." 
-Write-Host "N.B. This Username must match the value of the unique identifier of the Application Administrator in AD (Active Directory)."
-Write-Host "Usually this is under the AD property 'SamAccountName' (Security Account Manager)." 
 
-$Administrator = Read-host 
+
+DO {
+Write-Host "" 
+Write-Host "Do you want to use an Active Directory or Local account to access the application for the first time?" 
+Write-Host "(Type 'ad' for Active Directory or 'local' for Local)"   
+
+	$accountType = Read-host 
+}
+while ("ad", "local" -notcontains $accountType)
+
+switch ( $accountType )
+    {
+        "ad" 
+            { 
+            $ccnAdFlag = 1
+
+            Write-Host "" 
+            Write-Host "Please provide the 'SamAccountName' (Security Account Manager) of the Active Directory account".
+            Write-Host "N.B. This account will be able to access the application with Single Sign-On and Administrator rights."
+
+            $ccnUsername = Read-host 
+            $ccnEmail = "*********" #SQL placeholder for NULL
+            $ccnDisplayName = "*********" #SQL placeholder for NULL
+            }
+        "local" 
+            { 
+            $ccnAdFlag = 0
+            
+            Write-Host "" 
+            Write-Host "Please provide the email address for the Local account."
+            Write-Host "The Password can be set using the 'Forgotten Password' link available in the Login interface."
+            Write-Host "The 2FA (Two-Factor Authentication) can be set using the 'Reset 2FA' link in the Login interface."
+
+            $ccnEmail = Read-host 
+            $ccnUsername = $ccnEmail
+
+            Write-Host "" 
+            Write-Host "Please provide the full name (eg. John Murphy) for the Local account".
+            
+            $ccnDisplayName = Read-host 
+            }
+    }
 
 #Extract the datamodel.sql file into an object
 $files = Get-ChildItem -recurse $scriptDir\datamodel.sql
@@ -224,17 +257,15 @@ ForEach ($file in $files)
     {
         try
         {
-            Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -Variable @("CCN_USERNAME=$Administrator") -serverinstance $server -database $DbData -ErrorAction Stop
-            "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+            Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -Variable @("CCN_USERNAME=$ccnUsername", "CCN_DISPLAYNAME=$ccnDisplayName", "CCN_EMAIL=$ccnEmail", "CCN_AD_FLAG=$ccnAdFlag") -serverinstance $server -database $DbData -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
             $successCount = $successCount + 1
         }
         catch
         {
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-            "" | out-file $scriptDir\deploy.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
@@ -262,16 +293,14 @@ ForEach ($file in $files)
         try
         {
             Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
-            "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+            "SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
             $successCount = $successCount + 1
         }
         catch
         {
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-            "" | out-file $scriptDir\deploy.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
@@ -299,16 +328,14 @@ ForEach ($file in $files)
         try
         {
             Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
-            "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+            "SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
             $successCount = $successCount + 1
         }
         catch
         {
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-            "" | out-file $scriptDir\deploy.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
@@ -336,16 +363,14 @@ ForEach ($file in $files)
         try
         {
             Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
-            "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+            "SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
             $successCount = $successCount + 1
         }
         catch
         {
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-            "" | out-file $scriptDir\deploy.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
@@ -372,16 +397,14 @@ ForEach ($file in $files)
         try
         {
             Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -Variable @("DB_DATA=$DbData") -serverinstance $server -ErrorAction Stop
-            "SUCCESS $date : $file" | out-file $scriptDir\deploy.log -Append
+            "SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
             $successCount = $successCount + 1
         }
         catch
         {
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
-            "" | out-file $scriptDir\deploy.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\deploy.log -Append
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
             $errorCount = $errorCount + 1
             Continue
         }

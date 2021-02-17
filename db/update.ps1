@@ -56,7 +56,101 @@ $DbVersion = Read-host
 Write-Host ""
 Write-Host "Please wait..."
 Write-Host ""
-	
+
+# ********************************************************************************
+# Drop Stored Procedures
+# ********************************************************************************
+
+#Extract the file into an object
+$files = Get-ChildItem -recurse $scriptDir\Drop\drop_stored_procedures.sql
+  
+ForEach ($file in $files)
+    {
+        try
+        {
+            Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Stored Procedures - Success"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+        }
+        catch
+        {
+            $ErrorMessage = $_.Exception.Message
+            Write-Host "ERROR $file - $ErrorMessage"
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Stored Procedures - Fail"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+            Continue
+        }
+    }
+
+
+# ********************************************************************************
+# Drop Views
+# ********************************************************************************
+
+#Extract the file into an object
+$files = Get-ChildItem -recurse $scriptDir\Drop\drop_views.sql
+
+ForEach ($file in $files)
+    {
+        try
+        {
+            Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Views - Success"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+        }
+        catch
+        {
+            $ErrorMessage = $_.Exception.Message
+            Write-Host "ERROR $file - $ErrorMessage"
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Views - Fail"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+            Continue
+        }
+    }
+
+# ********************************************************************************
+# Drop Types
+# ********************************************************************************
+
+#Extract the file into an object
+$files = Get-ChildItem -recurse $scriptDir\Drop\drop_types.sql
+
+ForEach ($file in $files)
+    {
+        try
+        {
+            Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName -serverinstance $server -database $DbData -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Types - Success"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+        }
+        catch
+        {
+            $ErrorMessage = $_.Exception.Message
+            Write-Host "ERROR $file - $ErrorMessage"
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Types - Fail"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+            Continue
+        }
+    }
+
 # ********************************************************************************
 # Run the Script
 # ********************************************************************************
@@ -85,8 +179,6 @@ if($DbVersion.length -gt 0) {
 					$ErrorMessage = $_.Exception.Message
 					Write-Host "ERROR $file - $ErrorMessage"
 					"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-					"" | out-file $scriptDir\update.log -Append
-					"ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
 					$errorCount = $errorCount + 1
 					Continue
 				}
@@ -94,8 +186,8 @@ if($DbVersion.length -gt 0) {
 		}
 
 	Write-Host ""
-	Write-Host "Script - Errors: $errorCount"
-	Write-Host "Script - Success: $successCount"
+	Write-Host "Run Scripts - Errors: $errorCount"
+	Write-Host "Run Scripts - Success: $successCount"
 	Write-Host "********************************************************************************"
 	Write-Host ""
 }
@@ -124,15 +216,13 @@ ForEach ($file in $files)
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
             "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-            "" | out-file $scriptDir\update.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
     }
 Write-Host ""
-Write-Host "Types - Errors: $errorCount"
-Write-Host "Types - Success: $successCount"
+Write-Host "Create Types - Errors: $errorCount"
+Write-Host "Create Types - Success: $successCount"
 Write-Host "********************************************************************************"
 Write-Host ""
 
@@ -161,15 +251,13 @@ ForEach ($file in $files)
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
             "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-            "" | out-file $scriptDir\update.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
     }
 Write-Host ""
-Write-Host "Views - Errors: $errorCount"
-Write-Host "Views - Success: $successCount"
+Write-Host "Create Views - Errors: $errorCount"
+Write-Host "Create Views - Success: $successCount"
 Write-Host "********************************************************************************"
 Write-Host ""
 
@@ -198,15 +286,13 @@ ForEach ($file in $files)
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
             "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-            "" | out-file $scriptDir\update.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
     }
 Write-Host ""
-Write-Host "Stored Procedures - Errors: $errorCount"
-Write-Host "Stored Procedures - Success: $successCount"
+Write-Host "Create Stored Procedures - Errors: $errorCount"
+Write-Host "Create Stored Procedures - Success: $successCount"
 Write-Host "********************************************************************************"
 Write-Host ""
 
@@ -234,15 +320,13 @@ ForEach ($file in $files)
             $ErrorMessage = $_.Exception.Message
             Write-Host "ERROR $file - $ErrorMessage"
             "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-            "" | out-file $scriptDir\update.log -Append
-            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
             $errorCount = $errorCount + 1
             Continue
         }
     }
 Write-Host ""
-Write-Host "Jobs - Errors: $errorCount"
-Write-Host "Jobs - Success: $successCount"
+Write-Host "Create Jobs - Errors: $errorCount"
+Write-Host "Create Jobs - Success: $successCount"
 Write-Host "********************************************************************************"
 Write-Host ""
 
