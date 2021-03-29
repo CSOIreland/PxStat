@@ -41,10 +41,6 @@ namespace PxStat.Build
         /// <returns></returns>
         /// 
 
-        /*WARNING - Work in progress
-         Currently only reliably queries SPC sorted matrixes 
-         Queries limited  Period queries
-         */
         internal Matrix Query(Matrix dataMatrix, Matrix queryMatrix)
         {
             if (queryMatrix.MainSpec.GetDataSize() == dataMatrix.Cells.Count) return dataMatrix;
@@ -1335,7 +1331,7 @@ namespace PxStat.Build
             List<PeriodRecordDTO_Create> Periods = new List<PeriodRecordDTO_Create>();
 
 
-            Log.Instance.Debug("*Diagnostic* Matrix created: " + sw.ElapsedMilliseconds); //141942
+            Log.Instance.Debug("*Diagnostic* Matrix created: " + sw.ElapsedMilliseconds);
 
 
 

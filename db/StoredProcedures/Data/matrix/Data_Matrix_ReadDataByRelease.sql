@@ -24,9 +24,7 @@ BEGIN
 			INNER JOIN TS_LANGUAGE
 				ON MTR_LNG_ID = LNG_ID
 					AND LNG_DELETE_FLAG = 0
-					AND (
-						MTR_DATA_FLAG=1
-						)
+					AND (MTR_DATA_FLAG = 1)
 			WHERE RLS_CODE = @RlsCode
 				AND MTR_DELETE_FLAG = 0
 			);
@@ -146,7 +144,8 @@ BEGIN
 		,TDT_STT_ID
 		,TDT_PRD_ID
 		,TDT_VALUE
-	HAVING count(tdt_id) = @cCount;
+	HAVING count(tdt_id) = @cCount
+	OPTION (USE HINT('ENABLE_PARALLEL_PLAN_PREFERENCE'));
 END
 GO
 

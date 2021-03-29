@@ -101,12 +101,13 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadOs(Analytic_DTO_Read dto)
+        internal ADO_readerOutput ReadOs(Analytic_DTO_Read dto, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
             };
 
             if (dto.NltInternalNetworkMask != null)
@@ -128,12 +129,13 @@ namespace PxStat.Security
 
         }
 
-        internal ADO_readerOutput ReadEnvironmentLanguage(Analytic_DTO_Read dto)
+        internal ADO_readerOutput ReadEnvironmentLanguage(Analytic_DTO_Read dto,string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+               new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
             };
 
             if (dto.NltInternalNetworkMask != null)
@@ -156,12 +158,13 @@ namespace PxStat.Security
         }
 
         //Security_Analytic_ReadFormat
-        internal ADO_readerOutput ReadFormat(Analytic_DTO_Read dto)
+        internal ADO_readerOutput ReadFormat(Analytic_DTO_Read dto,string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
             };
 
             if (dto.NltInternalNetworkMask != null)
@@ -190,12 +193,13 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadBrowser(Analytic_DTO_Read dto)
+        internal ADO_readerOutput ReadBrowser(Analytic_DTO_Read dto, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+               new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
             };
 
             if (dto.NltInternalNetworkMask != null)
@@ -223,12 +227,13 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadTimeline(Analytic_DTO_Read dto)
+        internal ADO_readerOutput ReadTimeline(Analytic_DTO_Read dto, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
             };
 
             if (dto.NltInternalNetworkMask != null)
@@ -257,12 +262,13 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadReferrer(Analytic_DTO_Read dto)
+        internal ADO_readerOutput ReadReferrer(Analytic_DTO_Read dto, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
             };
 
             if (dto.NltInternalNetworkMask != null)
@@ -290,12 +296,13 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadLanguage(Analytic_DTO_Read dto)
+        internal ADO_readerOutput ReadLanguage(Analytic_DTO_Read dto,string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
             };
 
             if (dto.NltInternalNetworkMask != null)

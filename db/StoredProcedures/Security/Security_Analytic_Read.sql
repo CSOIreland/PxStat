@@ -12,10 +12,14 @@ ALTER PROCEDURE Security_Analytic_Read @DateFrom DATE
 	,@SbjCode INT = NULL
 	,@PrcCode NVARCHAR(32) = NULL
 	,@NltInternalNetworkMask VARCHAR(12) = NULL
+
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
+
+
+
 
 	SELECT MTR_CODE AS MtrCode
 		,MTR_TITLE AS MtrTitle
@@ -47,6 +51,7 @@ BEGIN
 		INNER JOIN TD_RELEASE
 			ON RLS_ID = MTR_RLS_ID
 				AND TD_RELEASE.RLS_DELETE_FLAG = 0
+ 
 		LEFT JOIN TD_PRODUCT
 			ON RLS_PRC_ID = PRC_ID
 				AND PRC_DELETE_FLAG = 0

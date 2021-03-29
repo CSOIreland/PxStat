@@ -1,5 +1,6 @@
 ﻿using API;
 using System;
+using System.Linq;
 
 namespace PxStat.Security
 {
@@ -95,6 +96,77 @@ namespace PxStat.Security
             return result;
         }
 
+        internal bool IsModerator(ADO ado, string ccnUsername)
+        {
+            Account_ADO accountAdo = new Account_ADO();
+            Account_DTO_Read dto = new Account_DTO_Read();
+            dto.CcnUsername = ccnUsername;
+            ADO_readerOutput output = accountAdo.Read(ado, dto);
 
+
+            if (!output.hasData) return false;
+            else
+            {
+                dynamic account = output.data.First();
+                return (account.PrvCode.Equals(Resources.Constants.C_SECURITY_PRIVILEGE_MODERATOR));
+            }
+        }
+
+        internal bool IsAdministrator(ADO ado, string ccnUsername)
+        {
+            if (ccnUsername == null) return false;
+            Account_ADO accountAdo = new Account_ADO();
+            Account_DTO_Read dto = new Account_DTO_Read();
+            dto.CcnUsername = ccnUsername;
+            ADO_readerOutput output = accountAdo.Read(ado, dto);
+
+
+            if (!output.hasData)
+                return false;
+            else
+            {
+                dynamic account = output.data.First();
+                return (account.PrvCode.Equals(Resources.Constants.C_SECURITY_PRIVILEGE_ADMINISTRATOR));
+            }
+        }
+
+        /// <summary>
+        /// Checks if the user is registered on the system
+        /// </summary>
+        /// <param name="ado"></param>
+        /// <param name="ccnUsername"></param>
+        /// <returns></returns>
+
+
+        internal bool IsRegistered(ADO ado, string ccnUsername)
+        {
+            Account_ADO accountAdo = new Account_ADO();
+            Account_DTO_Read dto = new Account_DTO_Read();
+            dto.CcnUsername = ccnUsername;
+            ADO_readerOutput output = accountAdo.Read(ado, dto);
+            return output.hasData;
+        }
+
+        /// <summary>
+        /// Checks if the user is a power user - based on the username parameter
+        /// </summary>
+        /// <param name="ado"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        internal bool IsPowerUser(ADO ado, string ccnUsername)
+        {
+            Account_ADO accountAdo = new Account_ADO();
+            Account_DTO_Read dto = new Account_DTO_Read();
+            dto.CcnUsername = ccnUsername;
+            ADO_readerOutput output = accountAdo.Read(ado, dto);
+
+
+            if (!output.hasData) return false;
+            else
+            {
+                dynamic account = output.data.First();
+                return (account.PrvCode.Equals(Resources.Constants.C_SECURITY_PRIVILEGE_POWER_USER));
+            }
+        }
     }
 }

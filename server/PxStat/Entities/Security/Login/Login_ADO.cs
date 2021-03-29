@@ -217,7 +217,6 @@ namespace PxStat.Security
 
         internal bool ExtendSession(string CcnUsername, DateTime LgnSessionExpiry)
         {
-            //Security_Login_ExtendSession
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@CcnUsername",value=CcnUsername},

@@ -33,13 +33,13 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
-
+            Account_BSO acBso = new Account_BSO();
             if (string.IsNullOrEmpty(DTO.CcnUsername))
             {
-                Response.data = Account_BSO_Read.IsPowerUser(Ado, SamAccountName);
+                Response.data = acBso.IsPowerUser(Ado, SamAccountName);
             }
             else
-                Response.data = Account_BSO_Read.IsPowerUser(Ado, DTO.CcnUsername);
+                Response.data = acBso.IsPowerUser(Ado, DTO.CcnUsername);
 
 
             return Response.data != null;

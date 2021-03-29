@@ -15,3 +15,5 @@
 /server/.vs
 /db/Thumbs.db
 /server/PxStat/Properties/PublishProfiles/Dev.pubxml.user
+/server/PxStat/bin
+/server/PxStat/obj

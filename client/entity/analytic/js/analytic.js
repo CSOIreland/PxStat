@@ -3,7 +3,7 @@ Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
     // Entity with restricted access
-    app.navigation.access.check([C_APP_PRIVILEGE_MODERATOR, C_APP_PRIVILEGE_POWER_USER]);
+    app.navigation.access.check([C_APP_PRIVILEGE_POWER_USER]);
     app.navigation.setLayout(false);
     app.navigation.setBreadcrumb([[app.label.static["analytics"]]]);
     app.navigation.setMetaDescription();

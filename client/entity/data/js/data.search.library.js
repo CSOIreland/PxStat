@@ -140,7 +140,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
     params = params || {};
     $("#data-filter, #data-search-row-desktop [name=search-results-non-archived], #data-search-row-desktop [name=search-results-archived]").empty();
     if (data && Array.isArray(data) && data.length) {
-
+        $("#data-search-row-desktop [name=search-results]").show();
         $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").hide();
         $("#data-dataset-selected-table [name=card-header], #panel, #data-view-container").empty();
         $("#data-dataset-row").hide();

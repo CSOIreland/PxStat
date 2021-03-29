@@ -58,6 +58,37 @@ Write-Host "Please wait..."
 Write-Host ""
 
 # ********************************************************************************
+# Drop Jobs
+# ********************************************************************************
+
+#Extract the file into an object
+$files = Get-ChildItem -recurse $scriptDir\Drop\drop_jobs.sql
+  
+ForEach ($file in $files)
+    {
+        try
+        {
+            Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName  -Variable @("DB_DATA=$DbData") -serverinstance $server -database $DbData -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Jobs - Success"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+        }
+        catch
+        {
+            $ErrorMessage = $_.Exception.Message
+            Write-Host "ERROR $file - $ErrorMessage"
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Jobs - Fail"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+            Continue
+        }
+    }
+
+# ********************************************************************************
 # Drop Stored Procedures
 # ********************************************************************************
 

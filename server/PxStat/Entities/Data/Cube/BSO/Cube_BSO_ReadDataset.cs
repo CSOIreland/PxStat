@@ -48,9 +48,6 @@ namespace PxStat.Data
         protected override bool Execute()
         {
 
-
-
-
             if (DTO.jStatQueryExtension.extension.Pivot != null)
             {
                 if (DTO.jStatQueryExtension.extension.Format.Type != "CSV" && DTO.jStatQueryExtension.extension.Format.Type != "XLSX")
@@ -95,12 +92,24 @@ namespace PxStat.Data
                 return true;
             }
 
+            if (theDto.jStatQueryExtension.extension.Format.Type.Equals(Resources.Constants.C_SYSTEM_XLSX_NAME))
+            {
+                int dataSize = theMatrix.MainSpec.GetDataSize();
+                int maxSize = Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_ROWS_LIMIT"));
+                if (dataSize > maxSize)
+                {
+                    theResponse.error = String.Format(Label.Get("xlsx.row-limit-exceeded", requestLanguage), dataSize, maxSize);
+                    return false;
+                }
+            }
+
             var matrix = new Cube_ADO(theAdo).ReadCubeData(theMatrix);
             if (matrix == null)
             {
                 theResponse.data = null;
                 return true;
             }
+
 
             if (!string.IsNullOrEmpty(theDto.jStatQueryExtension.extension.Pivot))
             {

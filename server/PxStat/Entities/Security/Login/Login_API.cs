@@ -1,4 +1,5 @@
 ﻿using API;
+using System.Diagnostics;
 
 namespace PxStat.Security
 {
@@ -24,7 +25,12 @@ namespace PxStat.Security
 
         public static dynamic Login(JSONRPC_API requestApi)
         {
-            return new Login_BSO_Login(requestApi).Read().Response;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            var v = new Login_BSO_Login(requestApi).Read().Response;
+            sw.Stop();
+            Log.Instance.Debug("Login elapsed milliseconds: " + sw.ElapsedMilliseconds);
+            return v;
         }
 
         public static dynamic ReadOpen1FA(JSONRPC_API requestApi)

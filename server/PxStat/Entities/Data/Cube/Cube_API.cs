@@ -273,6 +273,11 @@ namespace PxStat.Data
 
                             //Run the request as a Json Rpc call
                             JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest, true).Read().Response;
+
+                            if (rsp.error != null)
+                            {
+                                return Map.JSONRPC2RESTful_Output(rsp, null, HttpStatusCode.Forbidden);
+                            }
                             // Convert the JsonRpc output to RESTful output
                             var response = Map.JSONRPC2RESTful_Output(rsp, format.FrmMimetype, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
 
@@ -354,6 +359,12 @@ namespace PxStat.Data
 
             //Run the request as a Json Rpc call
             JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;
+
+            if (rsp.error != null)
+            {
+
+                return Map.JSONRPC2RESTful_Output(rsp, null, HttpStatusCode.Forbidden);
+            }
 
             Format_DTO_Read format = new Format_DTO_Read() { FrmType = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_TYPE], FrmVersion = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_VERSION] };
 

@@ -613,16 +613,7 @@ app.library.utility.arrayHasDuplicate = function (items) {
   $.each(items, function (index, value) {
     itemsLowerCase.push(value.trim().toLowerCase())
   });
-
-  var counts = [];
-  for (var i = 0; i <= itemsLowerCase.length; i++) {
-    if (counts[itemsLowerCase[i]] === undefined) {
-      counts[itemsLowerCase[i]] = 1;
-    } else {
-      return true;
-    }
-  }
-  return false;
+  return (new Set(itemsLowerCase)).size !== itemsLowerCase.length;
 };
 
 /**

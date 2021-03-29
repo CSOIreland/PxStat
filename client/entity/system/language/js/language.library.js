@@ -161,7 +161,7 @@ app.language.drawDatatable = function (data) {
   if ($.fn.dataTable.isDataTable("#language-read-container table")) {
     app.library.datatable.reDraw("#language-read-container table", data);
   } else {
-
+    debugger
     var localOptions = {
       data: data,
       columns: [

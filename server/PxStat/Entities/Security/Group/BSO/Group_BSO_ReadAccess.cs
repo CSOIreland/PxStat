@@ -40,8 +40,9 @@ namespace PxStat.Security
             if (string.IsNullOrEmpty(DTO.CcnUsername))
                 DTO.CcnUsername = SamAccountName;
 
+            Account_BSO acBso = new Account_BSO();
             //If this is a Power user or admin, we just return everything
-            if (Account_BSO_Read.IsPowerUser(Ado, DTO.CcnUsername) || Account_BSO_Read.IsAdministrator(Ado, DTO.CcnUsername))
+            if (acBso.IsPowerUser(Ado, DTO.CcnUsername) || acBso.IsAdministrator(Ado, DTO.CcnUsername))
             {
                 DTO.GrpCode = null;
                 result = adoGroup.Read(Ado, DTO);

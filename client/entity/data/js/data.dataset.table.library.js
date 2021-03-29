@@ -45,6 +45,8 @@ app.data.dataset.table.snippet.template = {
         },
         "order": null,
         "dom": "Bfltip",
+        "scrollX": false,
+        "responsive": false,
         "buttons": [
             {
                 "extend": 'csv',
@@ -67,7 +69,7 @@ app.data.dataset.table.drawDimensions = function () {
     $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").empty();
     $("#data-dataset-table-accordion-snippet-code").empty();
     $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").show();
-    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination]").bootstrapToggle('disable');
+    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('disable');
 
 
     //check for WIP
@@ -111,7 +113,7 @@ app.data.dataset.table.drawDimensions = function () {
                 "value": variable,
                 "code-true": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "") + " (" + variable + ")",
                 "code-false": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
-                "title": value.Category(variableIndex).label,
+                "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
                 "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
             });
 
@@ -298,7 +300,7 @@ app.data.dataset.table.drawDimensions = function () {
     //reset api params
     app.data.dataset.table.buildApiParams();
 
-    $("#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination]").once("change", function () {
+    $("#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").once("change", function () {
         app.data.dataset.table.callback.drawSnippetCode(true);
     });
 
@@ -657,7 +659,7 @@ app.data.dataset.table.callback.data = function (response) {
 app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //change to snippet
     if (widgetEnabled) {
         $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").hide();
-        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination]").bootstrapToggle('enable');
+        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('enable');
         $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").prop("disabled", false);
         $("#data-dataset-table-accordion-collapse-widget [name=add-custom-configuration], #data-dataset-table-accordion-collapse-widget [name=download-snippet]").prop("disabled", false);
         //check for WIP
@@ -683,6 +685,15 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         if (!$("#data-dataset-table-accordion-collapse-widget").find("[name=include-pagination]").is(':checked')) {
             app.data.dataset.table.snippet.configuration.options.paging = false;
             app.data.dataset.table.snippet.configuration.options.dom = "Bft";
+        }
+
+        if ($("#data-dataset-table-accordion-collapse-widget").find("[name=include-responsive]").is(':checked')) {
+            app.data.dataset.table.snippet.configuration.options.scrollX = false;
+            app.data.dataset.table.snippet.configuration.options.responsive = true;
+        }
+        else {
+            app.data.dataset.table.snippet.configuration.options.scrollX = true;
+            app.data.dataset.table.snippet.configuration.options.responsive = false;
         }
 
         if ($("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {

@@ -78,6 +78,8 @@ namespace PxStat.Security
             Login_BSO lBso = new Login_BSO(Ado);
             lBso.CreateLogin(new Login_DTO_Create() { CcnUsername = DTO.CcnUsername }, SamAccountName, null);
 
+            lBso.UpdateInvitationToken2Fa(DTO.CcnUsername, token);
+
             SendEmail(new Login_DTO_Create() { CcnDisplayname = adDto.CcnDisplayName, CcnEmail = adDto.CcnEmail, CcnUsername = DTO.CcnUsername, LngIsoCode = DTO.LngIsoCode }, token, "PxStat.Security.Login_API.Create2FA");
             Response.data = JSONRPC.success;
             return true;

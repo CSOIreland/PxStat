@@ -1,0 +1,36 @@
+<div id="database-read-container" class="container-fluid">
+    <div class="card border-primary m-3">
+        <div class="card-header bg-primary text-light" label="database"></div>
+        <div class="card-body">
+            <table class="table table-striped hover display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th label="table"></th>
+                        <th label="index"></th>
+                        <th label="type"></th>
+                        <th label="rows"></th>
+                        <th label="bytes"></th>
+                        <th label="fragmentation"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <button class="btn text-dark btn-warning float-left" name="reload-index">
+                <i class="fas fa-redo"></i> <span label="reload"></span>
+            </button>
+
+            <button class="btn text-light btn-danger float-right" name="reorganise-index">
+                <i class="fas fa-recycle"></i> <span label="reorganise"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/system/database/css/database.css">
+<!-- Page specific JS -->
+<script src="entity/system/database/js/database.library.js"></script>
+<script src="entity/system/database/js/database.js"></script>

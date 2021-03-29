@@ -119,18 +119,15 @@ namespace PxStat.Security
         /// <returns></returns>
         internal dynamic GetAdSpecificDataForEmail(string email)
         {
-
             // Get Active Directory
             IDictionary<string, dynamic> adDirectory;
 
             // List all users
             adDirectory = ActiveDirectory.List();
 
-
             dynamic result = new ExpandoObject();
-            var foundUser = adDirectory.Where(x => x.Value.EmailAddress == email);
+            var foundUser = adDirectory.Where(x => String.Equals(x.Value.EmailAddress.ToString(), email, StringComparison.CurrentCultureIgnoreCase));
             if (foundUser == null) return null;
-
             var key = foundUser.FirstOrDefault().Key;
             if (key == null) return null;
 

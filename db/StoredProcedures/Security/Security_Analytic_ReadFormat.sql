@@ -15,6 +15,7 @@ CREATE
 
 ALTER PROCEDURE Security_Analytic_ReadFormat  @DateFrom DATE
 	,@DateTo DATE
+	,@CcnUsername NVARCHAR(256)
 	,@NltInternalNetworkMask VARCHAR(12) = NULL
 	,@MtrCode NVARCHAR(20) = NULL
 	,@SbjCode INT = NULL
@@ -23,6 +24,11 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
+
+	DECLARE @GroupUserHasAccess TABLE (GRP_ID INT NOT NULL);
+
+	INSERT INTO @GroupUserHasAccess
+	EXEC Security_Group_AccessList @CcnUsername
 
 	SELECT  FRM_TYPE + ' ' + FRM_VERSION as FrmTypeVersion
 		,nltCount AS NltCount
@@ -39,6 +45,8 @@ BEGIN
 				AND TD_RELEASE.RLS_DELETE_FLAG = 0
 		INNER JOIN TS_FORMAT 
 		ON NLT_FRM_ID=FRM_ID
+		INNER JOIN @GroupUserHasAccess 
+		ON GRP_ID=RLS_GRP_ID 
 		LEFT JOIN TD_PRODUCT
 			ON RLS_PRC_ID = PRC_ID
 				AND PRC_DELETE_FLAG = 0

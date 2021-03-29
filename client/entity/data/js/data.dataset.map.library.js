@@ -38,7 +38,7 @@ app.data.dataset.map.template.wrapper = {
             },
         ],
     },
-    "options": app.config.plugin.chartJs.options.map
+    "options": app.config.plugin.chartJs.map.options
 };
 //#endregion
 
@@ -60,6 +60,7 @@ app.data.dataset.map.drawDimensions = function () {
                 dimensionContainer.find("select").append($("<option>",
                     {
                         "value": variable,
+                        "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
                         "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
                     }
                 ));

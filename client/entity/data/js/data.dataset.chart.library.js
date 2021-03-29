@@ -26,7 +26,7 @@ app.data.dataset.chart.template.wrapper = {
         "datasets": [],
         "null": app.config.entity.data.datatable.null
     },
-    "options": app.config.plugin.chartJs.options.chart
+    "options": app.config.plugin.chartJs.chart.options
 };
 
 app.data.dataset.chart.template.metadata = {
@@ -201,7 +201,7 @@ app.data.dataset.chart.setLegendPosition = function () {
         "text": app.label.static["none"]
     }))
     $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").prop("disabled", false);
-    $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").val(app.config.plugin.chartJs.options.chart.legend.position);
+    $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").val(app.config.plugin.chartJs.chart.options.legend.position);
 
     $("#data-dataset-chart-accordion-options-collapse [name=legend-position]").once('change', function () {
         app.data.dataset.chart.resetChart();
@@ -230,7 +230,7 @@ app.data.dataset.chart.buildXAxisSelect = function () {
         $.each(value.id, function (variableIndex, variable) {
             var option = $('<option>', {
                 "value": variable,
-                "title": value.Category(variableIndex).label,
+                "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
                 "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
             });
 
@@ -812,6 +812,15 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
             app.data.dataset.chart.configuration.metadata.xAxis[xAxisDimensionCode].push(this.value);
         });
     };
+
+    if (numVariablesSelected == 1) {
+        // disable autoscale as it cannot work with one item on the x-axis
+        $("#data-dataset-chart-accordion-options-collapse").find("[name=auto-scale]").bootstrapToggle('off').bootstrapToggle('disable');
+
+    }
+    else {
+        $("#data-dataset-chart-accordion-options-collapse").find("[name=auto-scale]").bootstrapToggle('enable');
+    }
 
     $("#data-dataset-chart-accordion-series-collapse [name=tab-content]").each(function () {
         var thisDataset = {};

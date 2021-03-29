@@ -86,7 +86,16 @@ namespace PxStat.Template
         /// </summary>
         protected void Dispose()
         {
+            // Extend the Session of a Local Account if any
+            if (SamAccountName != null && AuthenticationType == AuthenticationType.local)
+            {
+                Login_BSO.ExtendSession(Ado, SamAccountName);
+            }
+
+            // Dispose the ADO
             Ado.Dispose();
+
+            // To be reviewed... 
             PxStat.RequestLanguage.LngIsoCode = null;
         }
 
@@ -96,8 +105,8 @@ namespace PxStat.Template
         /// <returns></returns>
         protected bool IsModerator()
         {
-
-            return Account_BSO_Read.IsModerator(Ado, SamAccountName);
+            Account_BSO acBso = new Account_BSO();
+            return acBso.IsModerator(Ado, SamAccountName);
         }
 
         /// <summary>
@@ -107,8 +116,8 @@ namespace PxStat.Template
         /// <returns></returns>
         protected bool IsModerator(string ccnUsername)
         {
-
-            return Account_BSO_Read.IsModerator(Ado, ccnUsername);
+            Account_BSO acBso = new Account_BSO();
+            return acBso.IsModerator(Ado, ccnUsername);
         }
 
         /// <summary>
@@ -117,7 +126,8 @@ namespace PxStat.Template
         /// <returns></returns>
         protected bool IsPowerUser()
         {
-            return Account_BSO_Read.IsPowerUser(Ado, SamAccountName);
+            Account_BSO acBso = new Account_BSO();
+            return acBso.IsPowerUser(Ado, SamAccountName);
         }
 
         /// <summary>
@@ -127,7 +137,8 @@ namespace PxStat.Template
         /// <returns></returns>
         protected bool IsPowerUser(string ccnUsername)
         {
-            return Account_BSO_Read.IsPowerUser(Ado, ccnUsername);
+            Account_BSO acBso = new Account_BSO();
+            return acBso.IsPowerUser(Ado, ccnUsername);
         }
 
         /// <summary>
@@ -136,8 +147,8 @@ namespace PxStat.Template
         /// <returns></returns>
         protected bool IsAdministrator()
         {
-
-            return Account_BSO_Read.IsAdministrator(Ado, SamAccountName);
+            Account_BSO acBso = new Account_BSO();
+            return acBso.IsAdministrator(Ado, SamAccountName);
         }
 
         /// <summary>
@@ -147,7 +158,8 @@ namespace PxStat.Template
         /// <returns></returns>
         protected bool IsAdministrator(string ccnUsername)
         {
-            return Account_BSO_Read.IsAdministrator(Ado, ccnUsername);
+            Account_BSO acBso = new Account_BSO();
+            return acBso.IsAdministrator(Ado, ccnUsername);
         }
 
         /// <summary>

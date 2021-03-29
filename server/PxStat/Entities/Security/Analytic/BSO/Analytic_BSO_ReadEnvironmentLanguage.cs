@@ -33,7 +33,7 @@ namespace PxStat.Security
         {
 
             Analytic_ADO ado = new Analytic_ADO(Ado);
-            ADO_readerOutput outputSummary = ado.ReadEnvironmentLanguage(DTO);
+            ADO_readerOutput outputSummary = ado.ReadEnvironmentLanguage(DTO,SamAccountName );
             if (outputSummary.hasData)
             {
                 Response.data = FormatData(outputSummary.data);

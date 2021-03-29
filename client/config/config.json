@@ -112,9 +112,13 @@
 				"defaultPageLength": 10,
 				"defaultNumDaysFrom": 6
 			},
-			"chart": {
-				"enabled": true,
-				"legendPosition": "bottom"
+			"chartJs": {
+				"chart": {
+					"enabled": true
+				},
+				"map": {
+					"enabled": true
+				}
 			},
 			"snippet": null,
 			"properties": {
@@ -191,8 +195,8 @@
 			"deferRender": true
 		},
 		"chartJs": {
-			"options": {
-				"map": {
+			"map": {
+				"options": {
 					"featureIdentifier": "AREA_ID",
 					"showOutline": false,
 					"showGraticule": false,
@@ -219,8 +223,10 @@
 							"scheme": null
 						}
 					}
-				},
-				"chart": {
+				}
+			},
+			"chart": {
+				"options": {
 					"responsive": true,
 					"maintainAspectRatio": false,
 					"title": {

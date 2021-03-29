@@ -73,6 +73,8 @@ namespace PxStat.Security
             {
                 DTO.LgnToken1Fa = newToken;
 
+                lBso.UpdateInvitationToken2Fa(DTO.CcnUsername, newToken);
+
                 if (sendMail)
                 {
                     SendEmail(new Login_DTO_Create() { CcnUsername = DTO.CcnUsername, LngIsoCode = DTO.LngIsoCode, CcnEmail = DTO.CcnEmail, CcnDisplayname = userdata.data[0].CcnDisplayName }, newToken, "PxStat.Security.Login_API.Create2FA");

@@ -184,6 +184,13 @@ $(document).ready(function () {
   );
 
   api.content.navigate(
+    "#nav-link-database",
+    "entity/system/database/",
+    "#nav-link-database",
+    "#nav-link-system"
+  );
+
+  api.content.navigate(
     "#nav-link-format",
     "entity/system/format/",
     "#nav-link-format",

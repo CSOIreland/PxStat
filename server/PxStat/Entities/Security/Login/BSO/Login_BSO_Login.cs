@@ -91,12 +91,14 @@ namespace PxStat.Security
             if (response.data[0].Lgn2Fa.Equals(DBNull.Value))
             {
                 Response.error = Label.Get("error.authentication");
+
                 return false;
             }
 
             if (response.data[0].CcnLockedFlag)
             {
                 Response.error = Label.Get("error.authentication");
+
                 return false;
             }
 
@@ -106,6 +108,7 @@ namespace PxStat.Security
             if (!API.TwoFA.Validate2fa(DTO.Totp, login2Fa))
             {
                 Response.error = Label.Get("error.authentication");
+
                 return false;
             }
 
@@ -114,13 +117,13 @@ namespace PxStat.Security
             if (!response.hasData)
             {
                 //No validation available via the Login table, try Active Directory
-
+                long lValidatePassword = sw.ElapsedMilliseconds;
                 if (!ActiveDirectory.IsPasswordValid(user, DTO.Lgn1Fa))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
                 }
-
+                Log.Instance.Debug("Elaspsed time ValidatePassword: " + (sw.ElapsedMilliseconds - lValidatePassword));
 
                 Log.Instance.Debug("AD validation time ms: " + sw.ElapsedMilliseconds);
                 //Get the remaining details from the database

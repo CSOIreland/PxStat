@@ -175,8 +175,6 @@ app.navigation.access.renderMenu = function (PrvCode) {
       $("#nav-link-dashboard").parent().show();
       // Releases
       $("#nav-link-release").parent().show();
-      // Analytics
-      $("#nav-link-analytic").parent().show();
       // Build
       if (app.config.build.create.moderator
         || app.config.build.update.moderator

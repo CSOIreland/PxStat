@@ -20,7 +20,7 @@ $(document).ready(function () {
         width: C_APP_TOGGLE_LENGTH
     });
 
-    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination]').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -77,7 +77,4 @@ $(document).ready(function () {
     new ClipboardJS("#data-dataset-table-accordion [name=copy-api-info], #data-dataset-table-accordion [name=copy-api-object], #data-dataset-table-accordion [name=copy-snippet-code]");
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
-
-    // DO NOT load run async Ajax in this sub-entity to avoid race-condition with the pxWidget ISOGRAM
-    app.plugin.pxWidget.load();
 });

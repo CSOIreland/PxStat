@@ -99,7 +99,8 @@
     "yes": "Is ea",
     "no": "Ní hea",
     "pivoted": "Pivoted",
-    "unpivoted": "Unpivoted"
+    "unpivoted": "Unpivoted",
+    "row-limit-exceeded": "The number of data rows requested, {0}, exceeds the maximum allowed value for an XLSX file, {1}. You must either refine you search to return fewer rows or select a format other than XLSX"
   },
   "default": {
     "classification": "Stát",

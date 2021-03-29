@@ -33,7 +33,7 @@ namespace PxStat.Security
         protected override bool Execute()
         {
             Analytic_ADO ado = new Analytic_ADO(Ado);
-            ADO_readerOutput outputSummary = ado.ReadTimeline(DTO);
+            ADO_readerOutput outputSummary = ado.ReadTimeline(DTO,SamAccountName );
             if (outputSummary.hasData)
             {
                 List<dynamic> displayData = new List<dynamic>();

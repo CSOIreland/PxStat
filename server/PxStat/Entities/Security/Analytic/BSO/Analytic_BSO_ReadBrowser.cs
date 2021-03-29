@@ -33,7 +33,7 @@ namespace PxStat.Security
         protected override bool Execute()
         {
             Analytic_ADO ado = new Analytic_ADO(Ado);
-            ADO_readerOutput outputSummary = ado.ReadBrowser(DTO);
+            ADO_readerOutput outputSummary = ado.ReadBrowser(DTO,SamAccountName );
             if (outputSummary.hasData)
             {
                 Response.data = FormatData(outputSummary.data);

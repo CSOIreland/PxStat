@@ -232,7 +232,9 @@ namespace PxStat.Workflow
             var adoWorkflowResponse = new WorkflowResponse_ADO();
 
             //If this is a Moderator, we need to check if the user is in the same group as the release and has approve rights
-            if (Account_BSO_Read.IsModerator(Ado, SamAccountName))
+
+            Account_BSO acBso = new Account_BSO();
+            if (acBso.IsModerator(Ado, SamAccountName))
             {
                 var approveRlsList = adoWorkflowResponse.GetApproverAccess(Ado, SamAccountName, true, DTO.RlsCode);
                 if (approveRlsList.data.Count == 0)
@@ -312,8 +314,9 @@ namespace PxStat.Workflow
 
         internal bool IsModeratorApprover(ADO Ado, string CcnUsername, int RlsCode)
         {
+            Account_BSO acBso = new Account_BSO();
             var adoWorkflowResponse = new WorkflowResponse_ADO();
-            if (Account_BSO_Read.IsModerator(Ado, CcnUsername))
+            if (acBso.IsModerator(Ado, CcnUsername))
             {
                 var approveRlsList = adoWorkflowResponse.GetApproverAccess(Ado, CcnUsername, true, RlsCode);
                 return approveRlsList.data.Count > 0;

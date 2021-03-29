@@ -222,12 +222,32 @@ app.analytic.drawCallback = function () {
  * @param  {} data
  */
 app.analytic.callback.readAnalytics = function (data) {
+    var datePicker = $("#analytic-date-range").data('daterangepicker');
+    var startDate = datePicker.startDate ? moment(datePicker.startDate).format(app.config.mask.datetime.file) : "";
+    var endDate = datePicker.endDate ? moment(datePicker.endDate).format(app.config.mask.datetime.file) : "";
+    var exportFileName = 'analytic'
+        + "_" + startDate
+        + "_" + endDate
+        + "." + moment().format(app.config.mask.datetime.file);
+
     if ($.fn.dataTable.isDataTable("#analytic-data table")) {
         app.library.datatable.reDraw("#analytic-data table", data);
     } else {
 
         var localOptions = {
             data: data,
+            buttons: [{
+                extend: 'csv',
+                title: exportFileName,
+                exportOptions: {
+                    format: {
+                        body: function (data, row, column, node) {
+                            // Strip HTML
+                            return data.toString().replace(C_APP_REGEX_NOHTML, "");
+                        }
+                    }
+                }
+            }],
             columns: [
                 {
                     data: null,
@@ -264,6 +284,12 @@ app.analytic.callback.readAnalytics = function (data) {
         };
         $("#analytic-data table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.analytic.drawCallback();
+        });
+
+        // Invoke DataTables CSV export
+        // https://stackoverflow.com/questions/45515559/how-to-call-datatable-csv-button-from-custom-button
+        $("#analytic-data").find("[name=csv]").once("click", function () {
+            $("#analytic-data table").DataTable().button('.buttons-csv').trigger();
         });
     }
     var totalBot = 0;
@@ -380,8 +406,7 @@ app.analytic.callback.readBrowser = function (data, selector) {
         localConfig.data.datasets[0].data.push(el);
         localConfig.data.labels.push(key);
     });
-    var config = {};
-    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
+    var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=browser-pie-chart-canvas]"), config);
 };
@@ -480,8 +505,7 @@ app.analytic.callback.readOs = function (data, selector) {
         localConfig.data.labels.push(key);
     });
 
-    var config = {};
-    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
+    var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=operating-system-pie-chart-canvas]"), config);
 };
@@ -570,8 +594,8 @@ app.analytic.callback.readReferrer = function (data, selector) {
         localConfig.data.datasets[0].data.push(el);
     });
 
-    var config = {};
-    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
+    var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
+    config.options.scales.yAxes[0].type = "logarithmic";
     new Chart($(selector).find("[name=referrer-column-chart-canvas]"), config);
 
 };
@@ -662,8 +686,8 @@ app.analytic.callback.readUserLanguage = function (data, selector) {
         localConfig.data.datasets[0].data.push(el);
     });
 
-    var config = {};
-    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
+    var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
+    config.options.scales.yAxes[0].type = "logarithmic";
     new Chart($(selector).find("[name=user-language-column-chart-canvas]"), config);
 };
 
@@ -759,8 +783,7 @@ app.analytic.callback.readLanguage = function (data, selector) {
         localConfig.data.labels.push(key);
     });
 
-    var config = {};
-    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
+    var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=language-pie-chart-canvas]"), config);
 };
@@ -871,8 +894,7 @@ app.analytic.callback.readTimeline = function (data, selector) {
     });
     localConfig.data.datasets = [bots, M2M, users, total];
 
-    var config = {};
-    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
+    var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
     new Chart($(selector).find("[name=dates-line-chart-canvas]"), config);
 };
 
@@ -992,8 +1014,7 @@ app.analytic.callback.readFromat = function (data, selector) {
         localConfig.data.labels.push(key);
     });
 
-    var config = {};
-    $.extend(true, config, app.config.plugin.chartJs.options.chart, localConfig);
+    var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
     delete config.options.scales
     new Chart($(selector).find("[name=format-pie-chart-canvas]"), config);
 };

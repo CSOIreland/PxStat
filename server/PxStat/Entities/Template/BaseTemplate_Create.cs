@@ -137,11 +137,6 @@ namespace PxStat.Template
             }
             finally
             {
-                Login_BSO lBso = new Login_BSO(Ado);
-
-                if (SamAccountName != null && AuthenticationType == AuthenticationType.local)
-                    lBso.ExtendSession(SamAccountName);
-
                 Dispose();
             }
         }

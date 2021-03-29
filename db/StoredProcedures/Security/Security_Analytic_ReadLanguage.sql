@@ -15,6 +15,7 @@ CREATE
 
 ALTER PROCEDURE Security_Analytic_ReadLanguage @DateFrom DATE
 	,@DateTo DATE
+	,@CcnUsername NVARCHAR(256)
 	,@NltInternalNetworkMask VARCHAR(12) = NULL
 	,@MtrCode NVARCHAR(20) = NULL
 	,@SbjCode INT = NULL
@@ -25,6 +26,11 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
+
+	DECLARE @GroupUserHasAccess TABLE (GRP_ID INT NOT NULL);
+
+	INSERT INTO @GroupUserHasAccess
+	EXEC Security_Group_AccessList @CcnUsername
 
 	SELECT LNG_ISO_NAME AS LngIsoName
 		,count(*) AS lngCount
@@ -39,6 +45,8 @@ BEGIN
 	INNER JOIN TD_RELEASE
 		ON RLS_ID = MTR_RLS_ID
 			AND TD_RELEASE.RLS_DELETE_FLAG = 0
+	INNER JOIN @GroupUserHasAccess 
+		ON GRP_ID=RLS_GRP_ID 
 	LEFT JOIN TD_PRODUCT
 		ON RLS_PRC_ID = PRC_ID
 			AND PRC_DELETE_FLAG = 0

@@ -191,7 +191,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Resources\eMail\template_GroupMessage.html" />
-    <EmbeddedResource Include="Resources\image.png" />
     <Content Include="Resources\eMail\template_Login.html" />
     <Content Include="Resources\eMail\template_LoginBulletPoint.html" />
     <Content Include="Resources\regexes\bots.yml" />
@@ -359,6 +358,12 @@
     <Compile Include="Entities\Security\Cache\Cache_DTO.cs" />
     <Compile Include="Entities\Security\Cache\Cache_VLD.cs" />
     <Compile Include="Entities\Security\Configuration\BSO\Configuration_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Database\BSO\Database_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Database\BSO\Database_BSO_Update.cs" />
+    <Compile Include="Entities\Security\Database\Database_ADO.cs" />
+    <Compile Include="Entities\Security\Database\Database_API.cs" />
+    <Compile Include="Entities\Security\Database\Database_DTO.cs" />
+    <Compile Include="Entities\Security\Database\Database_VLD.cs" />
     <Compile Include="Entities\Security\Logging\BSO\Logging_BSO_Read.cs" />
     <Compile Include="Entities\Security\Logging\Logging_ADO.cs" />
     <Compile Include="Entities\Security\Logging\Logging_API.cs" />

@@ -1,5 +1,6 @@
 ﻿using API;
 using System;
+using System.Data;
 
 namespace PxStat.Security
 {
@@ -136,13 +137,23 @@ namespace PxStat.Security
             return lAdo.CreateSession(LgnSession, expiry, CcnUsername); ;
         }
 
-
-
-        internal bool ExtendSession(string CcnUsername)
+        internal static void ExtendSession(ADO Ado, string CcnUsername)
         {
             DateTime expiry = DateTime.Now.AddSeconds(Configuration_BSO.GetCustomConfig(ConfigType.global, "session.length"));
-            Login_ADO lAdo = new Login_ADO(ado);
-            return lAdo.ExtendSession(CcnUsername, expiry);
+
+            // Enforce a Snapshot Transaction for every type of Base Template
+            Ado.StartTransaction(IsolationLevel.Snapshot);
+
+            Login_ADO lAdo = new Login_ADO(Ado);
+
+            if (lAdo.ExtendSession(CcnUsername, expiry))
+            {
+                Ado.CommitTransaction();
+            }
+            else
+            {
+                Ado.RollbackTransaction();
+            }
         }
     }
 }

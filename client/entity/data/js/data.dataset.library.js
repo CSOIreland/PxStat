@@ -137,7 +137,7 @@ app.data.dataset.callback.readMetadata = function (response) {
         api.content.load("#data-dataset-table-nav-content", "entity/data/index.dataset.table.html");
 
         //chart tab
-        if (app.config.entity.data.chart.enabled) {
+        if (app.config.entity.data.chartJs.chart.enabled) {
             $("#data-dataset-chart-nav-tab").show();
 
             $('#data-dataset-chart-nav-tab').on('show.bs.tab', function (e) {
@@ -151,7 +151,7 @@ app.data.dataset.callback.readMetadata = function (response) {
             $("#data-dataset-chart-nav-content").empty()
         }
         //map tab
-        if (app.data.dataset.metadata.jsonStat.role.geo) {
+        if (app.data.dataset.metadata.jsonStat.role.geo && app.config.entity.data.chartJs.map.enabled) {
             $("#data-dataset-map-nav-tab").show();
 
             $('#data-dataset-map-nav-tab').on('show.bs.tab', function (e) {

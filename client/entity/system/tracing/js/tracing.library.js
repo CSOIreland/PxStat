@@ -114,11 +114,13 @@ app.tracing.drawDataTable = function (data) {
     //Initialize ClipboardJS
     new ClipboardJS('.cpy-btn');
     var datePicker = $("#tracing-input").find("[name=input-date-range]").data('daterangepicker');
+    var startDate = datePicker.startDate ? moment(datePicker.startDate).format(app.config.mask.datetime.file) : "";
+    var endDate = datePicker.endDate ? moment(datePicker.endDate).format(app.config.mask.datetime.file) : "";
     var exportFileName = 'tracing'
-        + "_" + datePicker.startDate ? moment(datePicker.startDate).format(app.config.mask.datetime.file) : ""
-            + "_" + datePicker.endDate ? moment(datePicker.endDate).format(app.config.mask.datetime.file) : ""
-            + "_" + $("#tracing-input").find("[name=select-authentication-type]").val()
-            + "." + moment().format(app.config.mask.datetime.file);
+        + "_" + startDate
+        + "_" + endDate
+        + "_" + $("#tracing-input").find("[name=select-authentication-type]").val()
+        + "." + moment().format(app.config.mask.datetime.file);
     if ($.fn.dataTable.isDataTable("#tracing-result table")) {
         app.library.datatable.reDraw("#tracing-result table", data);
     } else {

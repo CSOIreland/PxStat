@@ -184,10 +184,11 @@ app.plugin.sharethis = {};
 app.plugin.sharethis.load = function (drawShareThis) {
   drawShareThis = drawShareThis || false;
   if (!window.__sharethis__ && app.config.plugin.sharethis.enabled) {
-    //Load dynamically the ISOGRAM
+    //Load dynamically ShareThis
     jQuery.ajax({
       "url": app.config.plugin.sharethis.apiURL.sprintf([app.config.plugin.sharethis.apiKey]),
       "dataType": "script",
+      "async": false,
       "success": function () {
         if (app.data && app.data.MtrCode && $("#data-dataset-selected-table").is(":visible")) { //in dataset view
           app.data.share(app.data.MtrCode, null);
@@ -296,7 +297,7 @@ $(document).ready(function () {
         $("#data-navigation").find(".navbar-collapse").collapse('hide');
 
         //if search results on page
-        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && !$("#data-search-row-desktop").find("[name=search-results-non-archived]").is(":empty") && !$("#data-search-row-desktop").find("[name=search-results-archived]").is(":empty")) {
+        if ($("#data-search-row-desktop").find("[name=search-results][name=search-results]").is(":visible")) {
           $("#data-filter-toggle").show();
           $("#data-filter").hide();
           $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
@@ -406,19 +407,16 @@ app.plugin.cookiconsent.deny = function (reload) {
 /*******************************************************************************
 Application - Plugin - PxWidget
 *******************************************************************************/
-app.plugin.pxWidget = {};
-
-app.plugin.pxWidget.load = function () {
-  if (typeof pxWidget === "undefined") {
+if (typeof pxWidget === "undefined") {
     //Load dynamically the ISOGRAM
-    jQuery.ajax({
-      "url": C_APP_URL_PXWIDGET_ISOGRAM,
-      "dataType": "script",
-      "error": function (jqXHR, textStatus, errorThrown) {
-        api.modal.exception(app.label.static["api-ajax-exception"]);
-      }
-    });
-  }
+  jQuery.ajax({
+    "url": C_APP_URL_PXWIDGET_ISOGRAM,
+    "dataType": "script",
+    "async": false,
+    "error": function (jqXHR, textStatus, errorThrown) {
+      api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+  });
 }
 
 /*******************************************************************************
