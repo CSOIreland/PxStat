@@ -319,7 +319,7 @@ app.build.create.dimension.clearTabs = function () {
         });
         app.build.create.dimension.drawStatistics(value.LngIsoCode);
         app.build.create.dimension.drawClassifications(value.LngIsoCode);
-        app.build.create.dimension.drawPeriods(value.coLngIsoCodede);
+        app.build.create.dimension.drawPeriods(value.LngIsoCode);
         //set default language as active tab
         if (value.LngIsoCode == app.config.language.iso.code) {
             $("#build-create-dimension-nav-" + value.LngIsoCode + "-tab").addClass("active show");
@@ -333,6 +333,9 @@ app.build.create.dimension.clearTabs = function () {
         $("#build-create-dimension-accordion-collapse-classifications-" + value.LngIsoCode + "").removeClass("show");
         $("#build-create-dimension-accordion-collapse-periods-" + value.LngIsoCode + "").removeClass("show");
     });
+    //clear the elimination variables
+    app.build.create.initiate.data.Elimination = {};
+    app.build.create.dimension.drawElimination();
 };
 
 //#endregion
@@ -675,8 +678,18 @@ app.build.create.dimension.uploadStatistIsInvalid = function () {
     var errors = [];
     //check that each rows has correct data
     $.each(app.build.create.file.statistic.content.data.JSON.data, function (index, value) {
-        if (!value[C_APP_CSV_CODE] || !value[C_APP_CSV_VALUE] || !value[C_APP_CSV_UNIT] || !value[C_APP_CSV_DECIMAL]) {
-            errors.push(app.label.static["invalid-csv-format"]);
+        var rowNum = index + 2;
+        if (!value[C_APP_CSV_CODE]) {
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_CODE, rowNum]));
+        }
+        if (!value[C_APP_CSV_VALUE]) {
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_VALUE, rowNum]));
+        }
+        if (!value[C_APP_CSV_UNIT]) {
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_UNIT, rowNum]));
+        }
+        if (!value[C_APP_CSV_DECIMAL]) {
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_DECIMAL, rowNum]));
         }
     });
     if (!errors.length) {
@@ -1037,6 +1050,10 @@ app.build.create.dimension.deleteClassification = function (params) {
             dimension.Classification = $.grep(dimension.Classification, function (value, index) {
                 return value.ClsCode == params.ClsCode ? false : true;
             });
+            if (params.LngIsoCode == app.config.language.iso.code) {
+                delete app.build.create.initiate.data.Elimination[params.ClsCode];
+                app.build.create.dimension.drawElimination();
+            }
         }
     });
     app.build.create.dimension.drawClassifications(params.LngIsoCode);
@@ -1053,6 +1070,10 @@ app.build.create.dimension.deleteAllClassifications = function () {
         if (dimension.LngIsoCode == lngIsoCode) { //find the data based on the LngIsoCode
             dimension.Classification = [];
         }
+        if (dimension.LngIsoCode == app.config.language.iso.code) {
+            app.build.create.initiate.data.Elimination = {};
+            app.build.create.dimension.drawElimination();
+        };
     });
     app.build.create.dimension.drawClassifications(lngIsoCode);
 };
@@ -1247,6 +1268,10 @@ app.build.create.dimension.callback.buildManualClassification = function () {
     $.each(app.build.create.initiate.data.Dimension, function (index, dimension) { //find the classification you need based on the LngIsoCode and insert new statistics
         if (dimension.LngIsoCode == lngIsoCode) {
             dimension.Classification.push(classification);
+            if (dimension.LngIsoCode == app.config.language.iso.code) {
+                app.build.create.initiate.data.Elimination[classification.ClsCode] = null;
+                app.build.create.dimension.drawElimination();
+            }
         }
     });
     $("#build-create-manual-classification").find("[name=errors]").empty();
@@ -1363,6 +1388,10 @@ app.build.create.dimension.callback.buildUploadClassification = function () {
     $.each(app.build.create.initiate.data.Dimension, function (index, dimension) { //find the classification you need based on the LngIsoCode and insert new statistics
         if (dimension.LngIsoCode == lngIsoCode) {
             dimension.Classification.push(classification);
+            if (dimension.LngIsoCode == app.config.language.iso.code) {
+                app.build.create.initiate.data.Elimination[classification.ClsCode] = null;
+                app.build.create.dimension.drawElimination();
+            }
         }
     });
 
@@ -1465,6 +1494,10 @@ app.build.create.dimension.callback.classificationHasInvalidVariables = function
  */
 app.build.create.dimension.callback.readClassification = function (data) {
     app.build.create.dimension.callback.drawClassification(data);
+
+    $('#build-create-search-classiication').animate({
+        scrollTop: '+=' + $('#build-create-search-classiication [name=read-classification-table]')[0].getBoundingClientRect().top
+    }, 1000);
 };
 
 
@@ -1494,6 +1527,13 @@ app.build.create.dimension.callback.drawClassification = function (classificatio
             columns: [
                 { data: "VrbCode" },
                 { data: "VrbValue" },
+                {
+                    data: null,
+                    type: "natural",
+                    render: function (data, type, row) {
+                        return app.library.html.boolean(row.VrbEliminationFlag, true);
+                    }
+                }
             ],
             drawCallback: function (settings) {
                 // Responsive             
@@ -1530,6 +1570,14 @@ app.build.create.dimension.callback.drawClassification = function (classificatio
  * @param {*} variables
  */
 app.build.create.dimension.callback.useClassification = function (variables) {
+    var eliminationVariable = null;
+    $.each(variables, function (index, value) {
+        if (value.VrbEliminationFlag) {
+            eliminationVariable = value.VrbCode;
+            return
+        }
+    });
+
     var lngIsoCode = $("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-code");
     var classification = {
         "ClsCode": null,
@@ -1579,6 +1627,10 @@ app.build.create.dimension.callback.useClassification = function (variables) {
         api.modal.error(app.label.static["create-duplicate-classification"]);
     }
     app.build.create.dimension.drawClassifications(lngIsoCode);
+
+    //elimination
+    app.build.create.initiate.data.Elimination[variables[0].ClsCode] = eliminationVariable;
+    app.build.create.dimension.drawElimination();
 };
 
 /**
@@ -1778,13 +1830,18 @@ app.build.create.dimension.uploadPeriodsInvalid = function () {
 
     //check that csv headers contain C_APP_CSV_CODE and C_APP_CSV_VALUE, both case sensitive
     if (jQuery.inArray(C_APP_CSV_CODE, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
-        errors.push(app.label.static["invalid-csv-format"]);
+        app.library.html.parseDynamicLabel("invalid-csv-format-code-value", [C_APP_CSV_CODE, C_APP_CSV_VALUE]);
     };
 
     //check that each rows has correct data
     $.each(app.build.create.file.period.content.data.JSON.data, function (index, value) {
-        if (!value[C_APP_CSV_CODE] || !value[C_APP_CSV_VALUE]) {
-            errors.push(app.label.static["invalid-csv-format"]);
+        var rowNum = index + 2;
+        if (!value[C_APP_CSV_CODE]) {
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_CODE, rowNum]));
+        }
+
+        if (!value[C_APP_CSV_VALUE]) {
+            errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_VALUE, rowNum]));
         }
     });
 
@@ -1868,15 +1925,18 @@ app.build.create.dimension.drawCallbackDrawPeriods = function (table, lngIsoCode
  * @param {*} data
  */
 app.build.create.dimension.drawPeriods = function (lngIsoCode) {
-    var data = null;
+    var data = [];
     $(app.build.create.initiate.data.Dimension).each(function (index, dimension) {
         if (lngIsoCode == dimension.LngIsoCode) {
-            data = dimension.Frequency.Period;
+            data = $.extend(true, [], dimension.Frequency.Period);
         }
+    });
+    //sort descending 
+    data.sort(function (a, b) {
+        return b.PrdCode - a.PrdCode
     });
 
     var table = $("#build-create-dimension-accordion-" + lngIsoCode).find("[name=periods-added-table]");
-
     if ($.fn.DataTable.isDataTable(table)) {
         app.library.datatable.reDraw(table, data);
     } else {
@@ -2218,8 +2278,8 @@ app.build.create.dimension.buildDataObject = function () {
 
         var numCells = numClassificationVariables * dimension.Statistic.length * dimension.Frequency.Period.length;
 
-        if (numCells > app.config.entity.build.threshold.hard) {
-            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.hard)]));
+        if (numCells > C_APP_CREATE_UPDATE_HARD_THRESHOLD) {
+            errors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(C_APP_CREATE_UPDATE_HARD_THRESHOLD)]));
         }
 
 
@@ -2448,3 +2508,178 @@ app.build.create.dimension.validation.uploadClassification = function () {
 };
 
 //#endregion
+//#region elimination variables
+app.build.create.dimension.drawElimination = function () {
+    var defaultDimension = $.grep(app.build.create.initiate.data.Dimension, function (n, i) { // just use arr
+        return n.LngIsoCode == app.config.language.iso.code;
+    });
+    var data = [];
+
+    $.each(app.build.create.initiate.data.Elimination, function (key, value) {
+        var classification = $.grep(defaultDimension[0].Classification, function (n, i) { // just use arr
+            return n.ClsCode == key;
+        });
+        if (classification[0]) {
+            var eliminationVariable = $.grep(classification[0].Variable, function (n, i) { // just use arr
+                return n.VrbCode == value;
+            });
+
+            data.push({
+                "ClsCode": classification[0].ClsCode,
+                "ClsValue": classification[0].ClsValue,
+                "VrbEliminationCode": eliminationVariable.length ? eliminationVariable[0].VrbCode : null,
+                "VrbEliminationValue": eliminationVariable.length ? eliminationVariable[0].VrbValue : null,
+            });
+        }
+
+    });
+
+    var table = $("#build-create-matrix-dimensions").find("[name=classification-elimination-variables]");
+    if ($.fn.DataTable.isDataTable(table)) {
+        app.library.datatable.reDraw(table, data);
+    } else {
+        var localOptions = {
+            // Add Row Index to feed the ExtraInfo modal 
+            createdRow: function (row, dataRow, dataIndex) {
+                $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+            },
+            data: data,
+            ordering: false,
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.library.html.link.edit({ "cls-code": row.ClsCode, "cls-value": row.ClsValue, "vrb-elimination-code": row.VrbEliminationCode }, row.ClsCode);
+                    }
+                },
+                {
+                    data: "ClsValue"
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.VrbEliminationCode || ""
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.VrbEliminationValue || ""
+                    }
+                },
+                {
+                    data: null,
+                    sorting: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return app.library.html.deleteButton({ "idn": row.ClsCode, "cls-value": row.ClsValue }, row.VrbEliminationCode ? false : true);
+                    },
+                    "width": "1%"
+                },
+            ],
+            drawCallback: function (settings) {
+                app.build.create.dimension.drawCallbackElimination(table);
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.build.create.dimension.drawCallbackElimination(table);
+        });
+    }
+
+}
+
+app.build.create.dimension.drawCallbackElimination = function (table) {
+    $('[data-toggle="tooltip"]').tooltip();
+    $(table).find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
+        e.preventDefault();
+        app.build.create.dimension.modal.updateElimination($(this).attr("cls-value"), $(this).attr("cls-code"), $(this).attr("vrb-elimination-code"))
+    });
+
+    $(table).find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", function () {
+        api.modal.confirm(
+            app.library.html.parseDynamicLabel("build-delete-elimination", [$(this).attr("cls-value")]),
+            app.build.create.dimension.deleteElimination,
+            $(this).attr("idn")
+        );
+    });
+}
+
+
+
+app.build.create.dimension.validation.elimination = function () {
+    $("#build-create-modal-elimination form").trigger("reset").validate({
+        rules: {
+            "variable":
+            {
+                required: true,
+            }
+        },
+        errorPlacement: function (error, element) {
+            $("#build-create-modal-elimination [name=" + element[0].name + "-error-holder]").append(error[0]);
+        },
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
+            app.build.create.dimension.modal.saveElimination()
+        }
+    }).resetForm();
+};
+
+app.build.create.dimension.modal.updateElimination = function (clsValue, clsCode, vrbEliminationCode) {
+    app.build.create.dimension.validation.elimination();
+    vrbEliminationCode = vrbEliminationCode || null;
+    $("#build-create-modal-elimination").find("[name=cls-value]").text(app.label.static["classification"] + " : " + clsValue);
+    //get classification details
+    $("#build-create-modal-elimination").find("[name=cls-code]").val(clsCode);
+    var defaultDimension = $.grep(app.build.create.initiate.data.Dimension, function (n, i) { // just use arr
+        return n.LngIsoCode == app.config.language.iso.code;
+    });
+
+    var classification = $.grep(defaultDimension[0].Classification, function (n, i) { // just use arr
+        return n.ClsCode == clsCode;
+    });
+    var data = [];
+
+    $.each(classification[0].Variable, function (index, value) {
+        data.push({
+            "id": value.VrbCode,
+            "text": value.VrbValue
+        })
+    });
+
+    $("#build-create-modal-elimination").find("[name=variable]").empty().append($("<option>")).select2({
+        dropdownParent: $('#build-create-modal-elimination'),
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: data
+    });
+
+    // Enable and Focus Search input
+    $("#build-create-modal-elimination").find("[name=variable]").prop('disabled', false).focus();
+
+    $("#build-create-modal-elimination").find("[name=variable]").val(vrbEliminationCode).trigger("change").trigger({
+        type: 'select2:select',
+        params: {
+            data: $("#build-create-modal-elimination").find("[name=variable]").select2('data')[0]
+        }
+    });
+
+    $("#build-create-modal-elimination").modal("show");
+
+}
+
+app.build.create.dimension.modal.saveElimination = function () {
+    app.build.create.initiate.data.Elimination[$("#build-create-modal-elimination").find("[name=cls-code]").val()] = $("#build-create-modal-elimination").find("[name=variable]").val();
+    app.build.create.dimension.drawElimination();
+    $("#build-create-modal-elimination").modal("hide");
+}
+
+app.build.create.dimension.deleteElimination = function (clsCode) {
+    app.build.create.initiate.data.Elimination[clsCode] = null;
+    app.build.create.dimension.drawElimination();
+}
+
+//#endregion elimination variables

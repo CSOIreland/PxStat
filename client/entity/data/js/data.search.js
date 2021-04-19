@@ -3,9 +3,10 @@ Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
     //insert navigation in navigation div
-    var navigation = $("#data-search-templates").find("[name=navigation]").clone();;
+    var navigation = $("#data-search-templates").find("[name=navigation]").clone();
     navigation.find("[data-toggle=collapse]").attr("data-target", "#data-browse-collapse");
     navigation.find(".collapse").attr("id", "data-browse-collapse");
+    navigation.find(".accordion").attr("id", "data-browse-collapse-accordion");
 
     $('#data-search-result-pagination-toggle').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],

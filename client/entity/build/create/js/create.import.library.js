@@ -120,6 +120,9 @@ app.build.create.import.callback.read = function (data) {
         app.build.create.file.import.content.JsonStat = [];
         //parse each JSON-stat data and push to namespace variable
         $.each(data, function (index, data) {
+            //temp
+            //  data.extension.elimination = { "C02779V03348": null, "C02712V03280": "-" };
+
             var jsonStat = data ? JSONstat(data) : null;
             if (jsonStat && jsonStat.length) {
                 app.build.create.file.import.content.JsonStat.push(jsonStat);

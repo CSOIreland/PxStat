@@ -111,8 +111,8 @@ app.data.dataset.table.drawDimensions = function () {
         $.each(value.id, function (variableIndex, variable) {
             var option = $('<option>', {
                 "value": variable,
-                "code-true": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "") + " (" + variable + ")",
-                "code-false": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                "data-code-true": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "") + " (" + variable + ")",
+                "data-code-false": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
                 "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
                 "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
             });
@@ -159,8 +159,8 @@ app.data.dataset.table.drawDimensions = function () {
                     var textWithoutCode = thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "");
                     select.append($('<option>', {
                         "value": key,
-                        "code-true": textWithCode,
-                        "code-false": textWithoutCode,
+                        "data-code-true": textWithCode,
+                        "data-code-false": textWithoutCode,
                         "title": value,
                         "text": !$('#data-dataset-table-code-toggle').is(':checked') ? textWithCode : textWithoutCode
                     }));
@@ -216,7 +216,7 @@ app.data.dataset.table.drawDimensions = function () {
     //toggle select all depending on  number of options selected
     $("#data-dataset-table-nav-content").find("select[name=dimension-select]").once('change', function () {
         var selectedDimensionId = $(this).attr("idn");
-        var selectedOptions = $(this).find("option:selected").length;
+        var selectedOptions = $(this).val().length;
         var totalOptions = app.data.dataset.metadata.jsonStat.Dimension(selectedDimensionId).Category().length;
         if (selectedOptions == totalOptions) {
             $("#data-dataset-table-nav-content").find("[name=select-all][idn='" + selectedDimensionId + "']").prop('checked', true);
@@ -256,7 +256,7 @@ app.data.dataset.table.drawDimensions = function () {
             });
 
             $("#data-dataset-table-nav-content").find("option").each(function () {
-                var codeTrue = $(this).attr("code-true");
+                var codeTrue = $(this).data("code-true");
                 $(this).text(codeTrue);
                 $(this).attr("title", codeTrue);
 
@@ -270,7 +270,7 @@ app.data.dataset.table.drawDimensions = function () {
             });
 
             $("#data-dataset-table-nav-content").find("option").each(function () {
-                var codeFalse = $(this).attr("code-false");
+                var codeFalse = $(this).data("code-false");
                 $(this).text(codeFalse);
                 $(this).attr("title", codeFalse);
 
@@ -381,7 +381,7 @@ app.data.dataset.table.buildApiParams = function () {
         "id": [],
         "dimension": {},
         "extension": {
-            "pivot": $("#data-dataset-table-nav-content select[name=pivot] option:selected").attr("value") || null,
+            "pivot": app.data.dataset.table.pivot.dimensionCode || null,
             "codes": !$('#data-dataset-table-code-toggle').is(':checked'),
             "language": {
                 "code": app.data.LngIsoCode
@@ -404,18 +404,14 @@ app.data.dataset.table.buildApiParams = function () {
 
     $("#data-dataset-table-nav-content").find("[name=dimension-containers]").find("select").each(function (index) {
         var numVariables = app.data.dataset.metadata.jsonStat.Dimension($(this).attr("idn")).Category().length;
-        var dimension = {
-            "category": {
-                "index": []
-            }
-        };
-        $(this).find('option:selected').each(function () {
-            dimension.category.index.push(this.value);
-        });
-        if (dimension.category.index.length != numVariables && dimension.category.index.length > 0) { //only include dimension if not all variables selected
+        if ($(this).val().length && $(this).val().length < numVariables) {
             localParams.id.push($(this).attr("idn"));
-            localParams.dimension[$(this).attr("idn")] = dimension;
-        }
+            localParams.dimension[$(this).attr("idn")] = {
+                "category": {
+                    "index": $(this).val()
+                }
+            };
+        };
     });
 
     //new query, empty old api params
@@ -424,12 +420,12 @@ app.data.dataset.table.buildApiParams = function () {
     $.extend(true, app.data.dataset.table.apiParamsData, localParams);
 
     $("#data-dataset-table-api-jsonrpc-post-url").text(app.data.isLive ? app.config.url.api.jsonrpc.public : app.config.url.api.jsonrpc.private);
-    $("#data-dataset-table-api-restful-url").hide().text(
+    $("#data-dataset-table-api-restful-url").text(
         C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.restful,
         encodeURI(app.data.MtrCode),
-        $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type"),
-        $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version"),
-        $("#data-dataset-table-nav-content select[name=pivot] option:selected").attr("value") ? app.data.LngIsoCode + "/" + $("#data-dataset-table-nav-content select[name=pivot] option:selected").attr("value") : app.data.LngIsoCode])).fadeIn();
+        $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type') || C_APP_FORMAT_TYPE_DEFAULT,
+        $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-version') || C_APP_FORMAT_VERSION_DEFAULT,
+        app.data.dataset.table.pivot.dimensionCode ? app.data.LngIsoCode + "/" + app.data.dataset.table.pivot.dimensionCode : app.data.LngIsoCode])).fadeIn();
 
     var JsonQuery = {
         "jsonrpc": C_APP_API_JSONRPC_VERSION,
@@ -439,23 +435,23 @@ app.data.dataset.table.buildApiParams = function () {
     var apiParams = $.extend(true, {}, app.data.dataset.table.apiParamsData);
     delete apiParams.m2m;
     JsonQuery.params = apiParams;
-    JsonQuery.params.extension.format.type = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type");
-    JsonQuery.params.extension.format.version = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version");
+    JsonQuery.params.extension.format.type = $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type') || C_APP_FORMAT_TYPE_DEFAULT;
+    JsonQuery.params.extension.format.version = $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-version') || C_APP_FORMAT_VERSION_DEFAULT;
     var jsonrpcGetUrl = app.data.isLive ? app.config.url.api.jsonrpc.public : app.config.url.api.jsonrpc.private;
-    $("#data-dataset-table-api-jsonrpc-get-url").empty().text(encodeURI(jsonrpcGetUrl + C_APP_API_GET_PARAMATER_IDENTIFIER + JSON.stringify(JsonQuery))).fadeIn();
+    $("#data-dataset-table-api-jsonrpc-get-url").hide().text(encodeURI(jsonrpcGetUrl + C_APP_API_GET_PARAMATER_IDENTIFIER + JSON.stringify(JsonQuery))).fadeIn();
     $("#data-dataset-table-api-jsonrpc-post-body").hide().text(JSON.stringify(JsonQuery, null, "\t")).fadeIn();
     //pxapiv1
     var pxapiv1Query = {
         "query": [],
         "response": {
             "format": null,
-            "pivot": $("#data-dataset-table-nav-content select[name=pivot] option:selected").attr("value") || null,
+            "pivot": app.data.dataset.table.pivot.dimensionCode || null,
         }
     };
 
-    switch ($("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type")) {
+    switch ($("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type')) {
         case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-            switch ($("#data-dataset-table-accordion [name=format] option:selected").attr("frm-version")) {
+            switch ($("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-version')) {
                 case C_APP_TS_FORMAT_VERSION_JSONSTAT_2X:
                     pxapiv1Query.response.format = C_APP_PXAPIV1_JSONSTAT_2X;
                     break;
@@ -468,7 +464,7 @@ app.data.dataset.table.buildApiParams = function () {
             }
             break;
         default:
-            pxapiv1Query.response.format = $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type") ? $("#data-dataset-table-accordion [name=format] option:selected").attr("frm-type").toLowerCase() : "";
+            pxapiv1Query.response.format = $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type') ? $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type').toLowerCase() : C_APP_PXAPIV1_JSONSTAT_2X;
             break;
     }
 
@@ -483,7 +479,7 @@ app.data.dataset.table.buildApiParams = function () {
     });
 
 
-    $("#data-dataset-table-api-pxapiv1-get-url").empty().text(encodeURI(app.config.url.api.restful.public
+    $("#data-dataset-table-api-pxapiv1-get-url").hide().text(encodeURI(app.config.url.api.restful.public
         + "/PxStat.Data.Cube_API.PxAPIv1"
         + "/" + JsonQuery.params.extension.language.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
@@ -491,14 +487,14 @@ app.data.dataset.table.buildApiParams = function () {
         + "/" + app.data.MtrCode
         + "?query=" + JSON.stringify(pxapiv1Query))).fadeIn();
 
-    $("#data-dataset-table-api-pxapiv1-post-url").empty().text(app.config.url.api.restful.public
+    $("#data-dataset-table-api-pxapiv1-post-url").hide().text(app.config.url.api.restful.public
         + "/PxStat.Data.Cube_API.PxAPIv1"
         + "/" + JsonQuery.params.extension.language.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.product.code
         + "/" + app.data.MtrCode).fadeIn();
 
-    $("#data-dataset-table-api-pxapiv1-post-body").empty().text(JSON.stringify(pxapiv1Query, null, "\t")).fadeIn();
+    $("#data-dataset-table-api-pxapiv1-post-body").hide().text(JSON.stringify(pxapiv1Query, null, "\t")).fadeIn();
 
 
     // Refresh the Prism highlight
@@ -520,8 +516,8 @@ app.data.dataset.table.drawFormat = function () {
 
         //populate api accordion formats
         var option = $("<option>", {
-            "frm-type": format.FrmType,
-            "frm-version": format.FrmVersion,
+            "data-frm-type": format.FrmType,
+            "data-frm-version": format.FrmVersion,
             "text": format.FrmType + " (" + format.FrmVersion + ")",
             "value": format.FrmType
         })
@@ -530,7 +526,6 @@ app.data.dataset.table.drawFormat = function () {
     $("#data-dataset-table-accordion [name=format]").val(C_APP_FORMAT_TYPE_DEFAULT);
 
     $("#data-dataset-table-accordion [name=format]").once("change", app.data.dataset.table.buildApiParams);
-    app.data.dataset.table.buildApiParams();
 
     $("#data-dataset-table-confirm-soft [name=download-dataset-format], #data-dataset-table-confirm-hard [name=download-dataset-format]").once("click", function (e) {
         e.preventDefault();
@@ -547,32 +542,80 @@ app.data.dataset.table.drawFormat = function () {
 app.data.dataset.table.drawPivotDropdown = function () {
     // Local alias
     var data = app.data.dataset.metadata.jsonStat;
-    $("#data-dataset-table-nav-content select[name=pivot]").empty();
-    $("#data-dataset-table-nav-content select[name=pivot]").append(
-        $('<option>', {
-            "title": app.label.static["none"],
+    $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").empty();
+    $("#data-dataset-table-nav-content").find("[name=selected-pivot]").text(app.label.static["none"]);
+    $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").append(
+        $("<a>", {
+            "name": "pivot-option",
+            "class": "dropdown-item font-weight-bold",
+            "href": "#",
             "text": app.label.static["none"]
-        }
-        ));
+        })
+    );
+
     $.each(data.id, function (index, value) {
-        $("#data-dataset-table-nav-content select[name=pivot]").append(
-            $('<option>', {
-                "value": value,
-                "title": data.Dimension(value).label,
+
+        $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").append(
+            $("<a>", {
+                "name": "pivot-option",
+                "class": "dropdown-item",
+                "href": "#",
+                "data-dimension-code": value,
                 "text": data.Dimension(value).label
-            }
-            ));
+            })
+        );
     });
 
-    $("#data-dataset-table-nav-content select[name=pivot]").once("change", function () {
-        $("#data-dataset-table-result").hide();
-        app.data.dataset.table.pivot.dimensionCode = $(this).find("option:selected").attr("value") || null;
+    $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").append(
+        $("<div>", {
+            "class": "dropdown-divider border-info"
+        })
+    );
+
+    $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").append(
+        $("<a>", {
+            "name": "pivot-advanced-option",
+            "class": "dropdown-item",
+            "href": "#",
+            "html": $("<i>", {
+                class: "fas fa-info-circle mr-2"
+            }).get(0).outerHTML + app.label.static["advanced"]
+        })
+    );
+
+    $("#data-dataset-table-nav-content").find("[name=pivot-option]").once("click", function (e) {
+        e.preventDefault();
+        $("#data-dataset-table-nav-content").find("[name=selected-pivot]").text($(this).text());
+        app.data.dataset.table.pivot.dimensionCode = $(this).data("dimension-code") || null;
+        $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option]").removeClass("font-weight-bold");
+        if (!app.data.dataset.table.pivot.dimensionCode) {
+            $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option]").first().addClass("font-weight-bold");
+        }
+        else {
+            $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option][data-dimension-code='" + app.data.dataset.table.pivot.dimensionCode + "']").addClass("font-weight-bold");
+        }
         app.data.dataset.table.buildApiParams();
         if (app.data.dataset.table.jsonStat) {
             app.data.dataset.table.callback.drawDatatable();
             app.data.dataset.table.callback.drawSnippetCode(true);
         }
+    });
 
+    $("#data-dataset-table-nav-content").find("[name=pivot-advanced-option]").once("click", function (e) {
+        e.preventDefault();
+        $("#data-dataset-table-advanced-pivot").find("[name=explanation]").html(
+            app.library.html.parseDynamicLabel("pivoting-end-user-guide-github", [$("<a>", {
+                "href": C_APP_URL_GITHUB_EUG_DATA_PIVOT,
+                "text": app.label.static["click-here"],
+                "target": "_blank"
+            }).get(0).outerHTML])
+        );
+        $("#data-dataset-table-advanced-pivot").modal("show");
+    });
+
+    $("#data-dataset-table-advanced-pivot").find("[name=download]").once("click", function (e) {
+        e.preventDefault();
+        app.data.dataset.table.resultsDownload(C_APP_TS_FORMAT_TYPE_XLSX, C_APP_TS_FORMAT_VERSION_XLSX);
     });
 
 }
@@ -914,7 +957,6 @@ app.data.dataset.table.callback.drawDatatable = function () {
         $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=header-row]").append(valueHeading);
     }
 
-    // $("#data-dataset-table-nav-content [name=result-table]").html(dataContainer.get(0).outerHTML);
     //Draw DataTable with Data Set data
     var localOptions = {
         iDisplayLength: app.config.entity.data.datatable.length,
@@ -1050,14 +1092,11 @@ app.data.dataset.table.drawCallbackDrawDataTable = function () {
 
     $("#data-dataset-table-result").fadeIn();
 
-}
-
+};
 
 app.data.dataset.table.resultsDownload = function (format, version) {
     var apiParams = $.extend(true, {}, app.data.dataset.table.apiParamsData);
     apiParams.extension.format.type = format;
     apiParams.extension.format.version = version;
-    app.data.dataset.ajax.downloadDataset(apiParams);
-}
-
-
+    app.data.dataset.ajax.downloadDataset(apiParams, app.data.dataset.table.selectionCount);
+};

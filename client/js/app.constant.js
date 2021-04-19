@@ -4,13 +4,14 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "3.5.1";
+const C_APP_VERSION = "3.6.0";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
 
 // URLs GitHub
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
+const C_APP_URL_GITHUB_EUG_DATA_PIVOT = "https://github.com/CSOIreland/PxStat/wiki/EUG-Data#pivoting";
 const C_APP_URL_GITHUB_RELEASE_TAG = "https://github.com/CSOIreland/PxStat/releases/tag/{0}";
 const C_APP_URL_GITHUB_REPORT_ISSUE = "https://github.com/CSOIreland/PxStat/issues/new/choose";
 const C_APP_URL_GITHUB_API_CUBE_JSONRPC = "https://github.com/CSOIreland/PxStat/wiki/API-Cube";
@@ -18,8 +19,8 @@ const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/
 const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.0/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.0/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.1/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.1/snippet.html";
 
 // Public API
 const C_APP_API_JSONRPC_VERSION = "2.0";
@@ -94,6 +95,7 @@ const C_APP_TS_FORMAT_TYPE_XLSX = "XLSX";
 //Formats (FRM_VERSION)
 const C_APP_TS_FORMAT_VERSION_JSONSTAT_1X = "1.0";
 const C_APP_TS_FORMAT_VERSION_JSONSTAT_2X = "2.0";
+const C_APP_TS_FORMAT_VERSION_XLSX = "2007";
 
 //Formats (FRM_DIRECTION)
 const C_APP_TS_FORMAT_DIRECTION_UPLOAD = "UPLOAD";
@@ -145,6 +147,9 @@ const C_APP_UPDATEDATA_SOURCE_FILE_ALLOWED_TYPE = ['', 'text/x-pcaxis', 'text/pl
 // Build Update Data Upload
 const C_APP_UPDATE_PERIOD_FILE_ALLOWED_EXTENSION = ['.csv'];
 const C_APP_UPDATE_PERIOD_FILE_ALLOWED_TYPE = ['', 'text/csv', 'text/plain', "application/vnd.ms-excel"]; // CSV a registered MIME Type
+
+//Build Threshold
+const C_APP_CREATE_UPDATE_HARD_THRESHOLD = 10000000;
 
 //CSV structure
 const C_APP_CSV_STATISTIC = "STATISTIC";

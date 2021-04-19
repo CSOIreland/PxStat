@@ -43,25 +43,42 @@ app.data.search.ajax.readNav = function (lngIsoCode) {
 * @param {*} data
 */
 app.data.search.callback.readNav = function (data) {
-    $("#data-navigation").find("[name=browse-subjects]").empty();
-    $.each(data, function (key, sbjValue) {
-        var subject = $("#data-search-templates").find("[name=navigation-subject-list]").clone();
-        subject.find("[name=navigation-subject-link]").html($("<span>", {
-            html: $("<i>", {
-                class: "far fa-folder mr-2"
-            }).get(0).outerHTML + sbjValue.SbjValue
-        })
+    $.each(data, function (index1, valueTheme) {
+        var theme = $("#data-search-templates").find("[name=navigation-theme]").clone();
+        theme.find(".card-header").attr("id", "navigation-theme-heading-" + index1);
+        theme.find("[data-toggle=collapse]").attr("data-target", "#navigation-theme-collapse-" + index1).html(
+            $("<span>", {
+                "style": "white-space: normal",
+                "text": valueTheme.ThmValue
+            }).get(0).outerHTML
         );
-        $.each(sbjValue.product, function (key, prcValue) {
-            var product = $("#data-search-templates").find("[name=navigation-product-item]").clone();
-            product.attr("href", app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + prcValue.PrcCode);
-            product.attr("prc-code", prcValue.PrcCode);
-            product.attr("lng-iso-code", app.label.language.iso.code);
-            product.find("[name=product-name]").text(prcValue.PrcValue);
-            product.find("[name=product-release-count]").text(prcValue.PrcReleaseCount);
-            subject.find("[name=navigation-product-list]").append(product);
+        theme.find(".collapse").attr("id", "navigation-theme-collapse-" + index1).attr("data-parent", "#data-browse-collapse-accordion").attr("aria-labelledby", "navigation-theme-heading-" + index1);
+        $("#data-browse-collapse-accordion").append(theme);
+
+        $.each(valueTheme.subject, function (index2, valueSubject) {
+            var subjectDropdownLink = $("#data-search-templates").find("[name=subject-dropdown-link]").clone();
+            subjectDropdownLink.attr("href", "#navigation-subject-collapse-" + index1 + "-" + index2).attr("aria-controls", "navigation-subject-collapse-" + index1 + "-" + index2);
+            subjectDropdownLink.find("[name=subject-name]").text(valueSubject.SbjValue);
+            $("#navigation-theme-collapse-" + index1).find("[name=navigation-theme-card-body]").append(subjectDropdownLink);
+
+            var subjectDropdown = $("#data-search-templates").find("[name=subject-dropdown]").clone();
+            subjectDropdown.attr("id", "navigation-subject-collapse-" + index1 + "-" + index2);
+            $("#navigation-theme-collapse-" + index1).find("[name=navigation-theme-card-body]").append(subjectDropdown);
+
+            $.each(valueSubject.product, function (index3, valueProduct) {
+                var product = $("#data-search-templates").find("[name=navigation-product-item]").clone();
+                product.attr("href", app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + valueProduct.PrcCode);
+                product.attr("prc-code", valueProduct.PrcCode);
+                product.attr("lng-iso-code", app.label.language.iso.code);
+                product.find("[name=product-name]").text(valueProduct.PrcValue);
+                product.find("[name=product-release-count]").text(valueProduct.PrcReleaseCount);
+                $("#navigation-subject-collapse-" + index1 + "-" + index2).find("[name=product-list-card-body]").append(product);
+            });
         });
-        $("#data-navigation").find("[name=browse-subjects]").append(subject);
+    });
+
+    $('#data-browse-collapse-accordion').on('hidden.bs.collapse', function (e) {
+        $("#" + e.target.id).find(".card-body .collapse").collapse('hide')
     });
     //EVENT ASSIGN
     // Add Click even for selecting Subject-Product at Browse Subjects menu.

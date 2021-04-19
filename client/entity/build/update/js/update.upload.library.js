@@ -150,16 +150,19 @@ app.build.update.upload.validate.periodFile = function () {
  * Custom validation for Files
  */
 app.build.update.upload.validate.dataFile = function () {
-    var isValid = true;
-
+    var errors = [];
     if (!app.build.update.upload.file.content.data.JSON) {
-        isValid = false;
+        errors.push(app.label.static["csv-no-data"]);
     }
 
     //check for errors in csv
     if (app.build.update.upload.file.content.data.JSON.errors.length) {
-        isValid = false;
-    }
+        var parseErrors = "";
+        $(app.build.update.upload.file.content.data.JSON.errors).each(function (index, value) {
+            parseErrors += value.message + " at row " + value.row + "\n";
+        });
+        errors.push(app.library.html.parseDynamicLabel("invalid-data-csv", [parseErrors]));
+    };
 
 
     //get default language JsonStat
@@ -183,12 +186,12 @@ app.build.update.upload.validate.dataFile = function () {
     //check that dimension codes are in csv header codes
     $(dimensionCodes).each(function (key, code) {
         if (jQuery.inArray(code, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
-            isValid = false;
+            errors.push(app.label.static["invalid-data-csv-headers"]);
             return false;
         };
     });
 
-    return isValid;
+    return errors;
 };
 
 
@@ -405,15 +408,25 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
             readerUTF8.addEventListener("abort", function (e) { api.spinner.stop(); });
             readerUTF8.addEventListener("loadend", function (e) {
                 // Validate the file
-                if (app.build.update.upload.validate.dataFile()) {
+                var dataFileErrors = app.build.update.upload.validate.dataFile();
+                if (!dataFileErrors.length) {
                     $("#build-update-dimensions").find("[name=update]").prop("disabled", false);
                     $("#build-update-matrix-data").find("[name=preview-data]").prop("disabled", false);
                 } else {
-                    // Something went wrong
-                    api.modal.error(app.label.static["invalid-csv-format"]);
+                    //show errors to user
+                    var errorOutput = $("<ul>", {
+                        class: "list-group"
+                    });
+                    $.each(dataFileErrors, function (_index, value) {
+                        var error = $("<li>", {
+                            class: "list-group-item",
+                            html: value
+                        });
+                        errorOutput.append(error);
+                    });
+                    api.modal.error(errorOutput);
                     $("#build-update-dimensions").find("[name=update]").prop("disabled", true);
                 }
-
                 api.spinner.stop();
             });
             break;
@@ -652,11 +665,13 @@ app.build.update.upload.drawProperties = function () {
             }
         });
 
-        // Set properties from the Default language
+        // Set properties and elimination from the Default language
         if (lngIsoCode == app.config.language.iso.code) {
             //set matrix properties from default language JSON-stat
             $("#build-update-properties [name=mtr-value]").val(jsonStat.extension.matrix);
 
+            //set elimination - must do deep copy in case user resets so we know what original elimination was
+            app.build.update.data.Elimination = $.extend(true, {}, jsonStat.extension.elimination);
             //set frequency code to value from px file
             $("#build-update-properties [name=frequency-code] > option").each(function () {
                 if (this.value == jsonStat.role.time[0]) {
@@ -814,6 +829,8 @@ app.build.update.upload.drawProperties = function () {
         app.build.update.dimension.drawExistingPeriod(lngIsoCode, periodsDataExisting);
         app.build.update.dimension.drawNewPeriod(lngIsoCode);
 
+
+
         $("#build-update-dimension-nav-" + lngIsoCode).on('hide.bs.collapse show.bs.collapse', function (e) {
             $("#build-update-dimension-nav-" + lngIsoCode).find("[type=submit]").trigger("click");
             if (!app.build.update.validate.isDimensionPropertyValid) {
@@ -872,6 +889,8 @@ app.build.update.upload.drawProperties = function () {
 
         });
     });
+
+    app.build.update.dimension.drawElimination();
 
     //if any matrix properties change trigger submit button to run validation
     $("#build-update-properties [name=mtr-value],#build-update-properties [name=frequency-code], #build-update-properties [name=copyright-code]").once('change', function () {

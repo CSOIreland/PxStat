@@ -34,7 +34,7 @@ $(document).ready(function () {
 
     //reset
     $("#data-dataset-table-nav-content").find("[name=reset]").once("click", function () {
-        $("#data-dataset-table-nav-content select[name=pivot]").val($("#data-dataset-table-nav-content select[name=pivot] option:first").val());
+        app.data.dataset.table.drawPivotDropdown();
         app.data.dataset.table.drawDimensions();
     });
 

@@ -35,10 +35,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-xs-12 col-sm-4 text-left my-2">
-                            <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-download"></i> <span label="download-results"></span>
-                            </button>
-                            <div name="download-select-dataset" class="dropdown-menu" aria-labelledby="data-download-results"></div>
+                            <div class="btn-group">
+                                <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-download"></i> <span label="download-results"></span>
+                                </button>
+                                <div name="download-select-dataset" class="dropdown-menu" aria-labelledby="data-download-results"></div>
+                            </div>
+
                         </div>
                         <div class="col-xs-12 col-sm-8 text-right my-2">
                             <button name="cancel" type="button" class="btn btn-neutral">
@@ -80,6 +83,41 @@
                                 <i class="far fa-times-circle"></i> <span label="cancel"></span>
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal - Advanced Pivoting-->
+<div id="data-dataset-table-advanced-pivot" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-light" label="advanced-pivoting"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-header bg-neutral rounded-0">
+                <p class="mb-0" name="explanation"></p>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item bg-default" label="advanced-pivoting-1"></li>
+                    <li class="list-group-item bg-default" label="advanced-pivoting-2"></li>
+                    <li class="list-group-item bg-default" label="advanced-pivoting-3"></li>
+                    <li class="list-group-item bg-default" label="advanced-pivoting-4"></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                            <i class="far fa-times-circle"></i> <span label="close"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary" name="download">
+                            <i class="fas fa-download"></i> <span label="download-xlsx"></span>
+                        </button>
                     </div>
                 </div>
             </div>

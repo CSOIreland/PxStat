@@ -142,6 +142,13 @@ $(document).ready(function () {
         width: C_APP_TOGGLE_LENGTH
     });
 
+    $("#build-update-matrix-dimensions").find("[name=elimination-popover]").popover({
+        "content": app.label.static["elimination-explanation"],
+        "html": true
+    });
+
+    //
+
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
     // Translate labels language (Last to run)

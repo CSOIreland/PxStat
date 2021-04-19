@@ -309,7 +309,8 @@ app.build.import.ajax.create = function (overwrite) {
         "FrqValueTimeval": app.build.import.FrqValue,
         "FrqCodeTimeval": app.build.import.FrqCode,
         "Signature": app.build.import.file.signature,
-        "Overwrite": overwrite
+        "Overwrite": overwrite,
+        "LngIsoCode": app.label.language.iso.code
     };
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,

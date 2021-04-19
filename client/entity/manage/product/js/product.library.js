@@ -62,7 +62,7 @@ app.product.ajax.readSubject = function (SbjCode) {
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
-      LngIsoCode: app.label.language.iso.code
+      "LngIsoCode": app.label.language.iso.code
     },
     "app.product.callback.readSubject",
     SbjCode
@@ -125,8 +125,8 @@ app.product.ajax.read = function (subject) {
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Read",
     {
-      SbjCode: subject.SbjCode,
-      LngIsoCode: app.label.language.iso.code
+      "SbjCode": subject.SbjCode,
+      "LngIsoCode": app.label.language.iso.code
     },
     "app.product.callback.read");
 };
@@ -282,8 +282,8 @@ app.product.ajax.readSubjectCreate = function (idn) {
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
-      SbjCode: idn,
-      LngIsoCode: app.label.language.iso.code
+      "SbjCode": idn,
+      "LngIsoCode": app.label.language.iso.code
     },
     "app.product.callback.readSubjectCreate");
 };
@@ -321,24 +321,17 @@ app.product.modal.create = function (data) {
  * Ajax call to create new product
  */
 app.product.ajax.create = function () {
-  var prcCode = $("#product-modal-create").find("[name=prc-code]").val();
-  var prcValue = $("#product-modal-create").find("[name=prc-value]").val();
-  var sbjCode = $("#product-modal-create").find("[name='idn']").val();
-  var apiParam = {
-    PrcCode: prcCode,
-    PrcValue: prcValue,
-    SbjCode: sbjCode
-  };
-  var callbackParam = {
-    PrcValue: prcValue
-  };
   // A Product is created always against the default Language
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Create",
-    apiParam,
+    {
+      "PrcCode": $("#product-modal-create").find("[name=prc-code]").val(),
+      "PrcValue": $("#product-modal-create").find("[name=prc-value]").val(),
+      "SbjCode": $("#product-modal-create").find("[name='idn']").val()
+    },
     "app.product.callback.createOnSuccess",
-    callbackParam,
+    $("#product-modal-create").find("[name=prc-value]").val(),
     "app.product.callback.createOnError",
     null,
     { async: false }
@@ -358,7 +351,7 @@ app.product.callback.createOnSuccess = function (data, callbackParam) {
   app.product.load();
 
   if (data == C_API_AJAX_SUCCESS) {
-    api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.PrcValue]));
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 
@@ -396,8 +389,8 @@ app.product.ajax.readSubjectUpdate = function () {
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Subject_API.Read",
     {
-      SbjCode: null,
-      LngIsoCode: app.label.language.iso.code
+      "SbjCode": null,
+      "LngIsoCode": app.label.language.iso.code
     },
     "app.product.callback.readSubjectUpdate");
 };
@@ -452,8 +445,8 @@ app.product.ajax.readUpdate = function (PrcCode) {
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Read",
     {
-      PrcCode: PrcCode,
-      LngIsoCode: app.label.language.iso.code
+      "PrcCode": PrcCode,
+      "LngIsoCode": app.label.language.iso.code
     },
     "app.product.callback.readUpdate");
 };
@@ -496,27 +489,19 @@ app.product.modal.readUpdate = function (productRecord) {
  * Ajax to update product
  */
 app.product.ajax.update = function () {
-  var sbjCode = $("#product-modal-update").find("[name=select-update-subject-search]").val(); // User selected drop down 
-  var prcCode = $("#product-modal-update").find("[name=idn]").val();
-  var prcCodeNew = $("#product-modal-update").find("[name=prc-code]").val();
-  var prcValue = $("#product-modal-update").find("[name=prc-value]").val();
   // Change app.config.language.iso.code to the selected one
-  var apiParams = {
-    SbjCode: sbjCode,
-    PrcCode: prcCode,
-    PrcValue: prcValue,
-    PrcCodeNew: prcCodeNew,
-    LngIsoCode: app.label.language.iso.code
-  };
-  var callbackParam = {
-    PrcValue: prcValue
-  };
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Update",
-    apiParams,
+    {
+      "SbjCode": $("#product-modal-update").find("[name=select-update-subject-search]").val(),
+      "PrcCode": $("#product-modal-update").find("[name=idn]").val(),
+      "PrcValue": $("#product-modal-update").find("[name=prc-value]").val(),
+      "PrcCodeNew": $("#product-modal-update").find("[name=prc-code]").val(),
+      "LngIsoCode": app.label.language.iso.code
+    },
     "app.product.callback.updateOnSuccess",
-    callbackParam,
+    $("#product-modal-update").find("[name=prc-value]").val(),
     "app.product.callback.updateOnError",
     null,
     { async: false }
@@ -536,7 +521,7 @@ app.product.callback.updateOnSuccess = function (data, callbackParam) {
   app.product.load();
 
   if (data == C_API_AJAX_SUCCESS) {
-    api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.PrcValue]));
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam]));
   } else {
     api.modal.exception(app.label.static["api-ajax-exception"]);
   }
@@ -574,7 +559,9 @@ app.product.ajax.delete = function (productToDelete) {
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Navigation.Product_API.Delete",
-    { PrcCode: productToDelete.idn },
+    {
+      "PrcCode": productToDelete.idn
+    },
     "app.product.callback.deleteOnSuccess",
     productToDelete,
     "app.product.callback.deleteOnError",
@@ -618,8 +605,8 @@ app.product.ajax.readMatrixByProduct = function (callbackParam) {
     app.config.url.api.jsonrpc.private,
     "PxStat.Data.Matrix_API.ReadByProduct",
     {
-      PrcCode: callbackParam.idn,
-      LngIsoCode: app.label.language.iso.code
+      "PrcCode": callbackParam.idn,
+      "LngIsoCode": app.label.language.iso.code
     },
     "app.product.callback.readMatrixByProduct",
     callbackParam);

@@ -467,7 +467,7 @@ app.data.dataset.chart.addSeries = function () {
     tabContent.find("[name=delete-series]").attr("series", "series-" + app.data.dataset.chart.seriesId);
 
     var dimensions = app.data.dataset.metadata.jsonStat.Dimension();
-    var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("select:enabled").attr("idn");
+    var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").find("select:enabled").attr("idn");
 
     $.each(dimensions, function (index, value) {
         if (app.data.dataset.metadata.jsonStat.id[index] != xAxisDimensionCode) {
@@ -799,7 +799,8 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
     app.data.dataset.chart.configuration.metadata.api.query.data.params.language = app.data.LngIsoCode;
 
-    var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("select:enabled").attr("idn");
+    var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").find("select:enabled").attr("idn");
+
     var errors = [];
     app.data.dataset.chart.configuration.metadata.xAxis = {};
     app.data.dataset.chart.configuration.metadata.xAxis[xAxisDimensionCode] = [];

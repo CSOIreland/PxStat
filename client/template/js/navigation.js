@@ -142,6 +142,12 @@ $(document).ready(function () {
 
   //#region Keyword
   api.content.navigate(
+    "#nav-link-theme",
+    "entity/manage/theme/",
+    "#nav-link-theme",
+    "#nav-link-manage"
+  );
+  api.content.navigate(
     "#nav-link-subject",
     "entity/manage/subject/",
     "#nav-link-subject",

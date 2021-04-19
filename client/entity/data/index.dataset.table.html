@@ -8,9 +8,6 @@
             <div class="col-xs-12 col-sm-6 text-left my-2">
                 <span label="codes" class="text-right font-weight-bold"></span>
                 <span><input checked type="checkbox" id="data-dataset-table-code-toggle"></span>
-                <span class="text-nowrap"><label label="pivot" class="m-2 font-weight-bold"></label>
-                    <select name="pivot" class="form-control d-inline w-auto">
-                    </select></span>
             </div>
             <div class="col-xs-12 col-sm-6 text-right my-2">
                 <span label="data-selected" class="font-weight-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
@@ -27,10 +24,22 @@
             </div>
 
             <div class="col-xs-12 col-sm-6 text-right my-2">
-                <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-download"></i> <span label="download"></span>
-                </button>
-                <div name="download-select-dropdown" class="dropdown-menu" aria-labelledby="data-download-results"></div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-random"></i> <span label="pivot"></span> - <span name="selected-pivot"></span>
+                    </button>
+                    <div name="pivot-dimension-options" class="dropdown-menu"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-download"></i> <span label="download"></span>
+                    </button>
+                    <div name="download-select-dropdown" class="dropdown-menu" aria-labelledby="data-download-results"></div>
+                </div>
+
+
                 <button name="show-data" class="btn btn-primary" type="submit">
                     <i class="fas fa-search"></i> <span name="button-show-data-text" label="view"></span>
                 </button>

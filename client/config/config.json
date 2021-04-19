@@ -1,4 +1,5 @@
 {
+	"organisation": "ORGANIISATION NAME",
 	"url": {
 		"configuration": {
 			"global": "https://ws.domain.extension/public/Resources/Config/config.global.json",
@@ -85,7 +86,7 @@
 		"timeout": 3600000,
 		"threshold": {
 			"soft": 1048576,
-			"hard": 104857600
+			"hard": 1073741824
 		},
 		"unitsPerSecond": {
 			"PxStat.Build.Build_API.Validate": 250000,
@@ -129,7 +130,6 @@
 		},
 		"build": {
 			"threshold": {
-				"hard": 10000000,
 				"soft": 1000000
 			},
 			"geoJsonLookup": {

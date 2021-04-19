@@ -125,39 +125,42 @@
                 <span label="browse"></span>
             </a>
             <div class="collapse navbar-collapse show" id="">
-                <ul name="browse-subjects" class="navbar-nav mr-auto p-2 border rounded">
-                    <!-- Append => Template: search-results-item-->
-                </ul>
+                <div class="accordion" id="">
+                </div>
             </div>
         </nav>
     </div>
+    <div name="navigation-theme" class="card rounded-0">
+        <div class="card-header p-1" id="">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+
+                </button>
+            </h2>
+        </div>
+
+        <div id="" class="collapse px-2" aria-labelledby="" data-parent="">
+            <div name="navigation-theme-card-body" class="card-body p-1">
+            </div>
+        </div>
+    </div>
+    <a name="subject-dropdown-link" class="nav-link text-muted d-flex justify-content-between align-items-center dropdown-toggle text-wrap px-0" href="" data-toggle="collapse" role="button" aria-expanded="false" aria-controls=""><span><i class="far fa-folder mr-2"></i><span name="subject-name"></span></a>
+    <div name="subject-dropdown" class="collapse" id="">
+        <div name="product-list-card-body" class="card card-body p-1">
+
+        </div>
+    </div>
+
+    <a name="navigation-product-item" class="dropdown-item d-flex justify-content-between align-items-center text-wrap px-2" href="" prc-code="" lng-iso-code="">
+        <span name="product-name"></span>
+        <span name="product-release-count" class="badge badge-primary badge-pill"></span>
+    </a>
+
     <!-- Template: data-filter-template-->
     <div class="col">
         <div name="data-metadata-search-result-filter-sort-select"></div>
         <div name="data-metadata-search-result-filter-list-group"></div>
     </div>
-
-    <!-- Template: search-results-subjects-navigation-->
-
-
-    <!-- Template: search-results-item-->
-    <li name="navigation-subject-list" class="nav-item dropdown">
-
-        <a name="navigation-subject-link" class="nav-link text-muted d-flex justify-content-between align-items-center dropdown-toggle text-wrap" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-        </a>
-        <div name="navigation-product-list" class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <!-- Append => Template: search-results-item-select-data -->
-
-        </div>
-    </li>
-
-    <!-- Template: search-results-item-select-->
-    <a name="navigation-product-item" class="dropdown-item d-flex justify-content-between align-items-center text-wrap" href="#">
-        <span name="product-name"></span>
-        <span name="product-release-count" class="badge badge-primary badge-pill"></span>
-    </a>
-
 </div>
 
 <!-- Page specific JS -->

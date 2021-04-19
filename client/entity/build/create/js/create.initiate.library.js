@@ -15,7 +15,12 @@ app.build.create.initiate.data = {
     "CprCode": null,
     "FrmType": null,
     "FrmVersion": null,
-    "Dimension": []
+    "Dimension": [],
+    "Elimination": {
+        "c01464564654": null,
+        "c01464564456": "v0124",
+        "c014645446": null
+    }
 };
 
 //#region Matrix Lookup
@@ -279,7 +284,6 @@ app.build.create.initiate.setUpDimensions = function () {
     });
 
     app.build.create.dimension.drawTabs();
-
     $("#build-create-dimensions").show();
 
     //get properties from imported source
@@ -294,6 +298,9 @@ app.build.create.initiate.setUpDimensions = function () {
                 if (data.extension.language.code == item.value) {
                     importedSource = data;
                 };
+                if (data.extension.language.code == app.config.language.iso.code) {
+                    app.build.create.initiate.data.Elimination = data.extension.elimination;
+                }
             });
 
             //we have imported data for this language
@@ -369,6 +376,7 @@ app.build.create.initiate.setUpDimensions = function () {
                             if (dimension.LngIsoCode == item.value) {
                                 this.Classification.push(classification);
                             }
+
                         });
 
                     }
@@ -425,6 +433,9 @@ app.build.create.initiate.validation.setup = function () {
             app.build.create.initiate.data.CprCode = $("#build-create-initiate-setup").find("[name=copyright-code]").val();
             app.build.create.initiate.data.MtrOfficialFlag = $("#build-create-initiate-setup").find("[name=official-flag]").prop('checked');
             app.build.create.initiate.setUpDimensions();
+            app.build.create.dimension.drawElimination();
+            //disable build dimension button to avoid duplicate dimensions
+            $("#build-create-initiate-setup").find("[name=button-generate]").prop("disabled", true);
         }
     }).resetForm();
 };

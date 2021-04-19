@@ -340,13 +340,13 @@ Application - Plugin - Datatable data sorting
 *******************************************************************************/
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
   "data-asc": function (a, b) {
-    a = a.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
-    b = b.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
+    a = a.toString().replace(app.config.entity.data.datatable.null, -9999999999).replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
+    b = b.toString().replace(app.config.entity.data.datatable.null, -9999999999).replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
     return jQuery.fn.dataTableExt.oSort["natural-nohtml-asc"](a, b);
   },
   "data-desc": function (a, b) {
-    a = a.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
-    b = b.toString().replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
+    a = a.toString().replace(app.config.entity.data.datatable.null, -9999999999).replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
+    b = b.toString().replace(app.config.entity.data.datatable.null, -9999999999).replace(new RegExp(app.library.utility.thousandSeparator(), 'g'), "");
     return jQuery.fn.dataTableExt.oSort["natural-nohtml-desc"](a, b);
   }
 });
@@ -408,7 +408,7 @@ app.plugin.cookiconsent.deny = function (reload) {
 Application - Plugin - PxWidget
 *******************************************************************************/
 if (typeof pxWidget === "undefined") {
-    //Load dynamically the ISOGRAM
+  //Load dynamically the ISOGRAM
   jQuery.ajax({
     "url": C_APP_URL_PXWIDGET_ISOGRAM,
     "dataType": "script",

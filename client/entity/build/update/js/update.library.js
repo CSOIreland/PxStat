@@ -594,16 +594,6 @@ app.build.update.updateOutput = function () {
     }
 
     if (!validationErrors.length) {
-        //check data template is valid if we have data
-
-        if (app.build.update.upload.file.content.data.JSON != null) {
-            if (!app.build.update.upload.validate.dataFile()) {
-                validationErrors.push(app.label.static["invalid-csv-data-format"]);
-            };
-        }
-
-    }
-    if (!validationErrors.length) {
         var numCells = 1;
         var dimension = null;
         $.each(app.build.update.data.Dimension, function (index, value) {
@@ -630,8 +620,8 @@ app.build.update.updateOutput = function () {
         numPeriods = numPeriods + dimension.Frequency.Period.length;
 
         var numCells = numClassificationVariables * numStatistics * numPeriods;
-        if (numCells > app.config.entity.build.threshold.hard) {
-            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(app.config.entity.build.threshold.hard)]));
+        if (numCells > C_APP_CREATE_UPDATE_HARD_THRESHOLD) {
+            validationErrors.push(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numCells), app.library.utility.formatNumber(C_APP_CREATE_UPDATE_HARD_THRESHOLD)]));
         }
 
         if (!validationErrors.length) {
@@ -1164,8 +1154,8 @@ app.build.update.downloadCsv = function () {
                 }
             })
             numDatapoints = numDatapoints * $("#build-update-download-csv-file select").find('option:selected').length
-            if (numDatapoints > app.config.entity.build.threshold.hard) {
-                api.modal.error(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numDatapoints), app.library.utility.formatNumber(app.config.entity.build.threshold.hard)]));
+            if (numDatapoints > C_APP_CREATE_UPDATE_HARD_THRESHOLD) {
+                api.modal.error(app.library.html.parseDynamicLabel("build-threshold-exceeded", [app.library.utility.formatNumber(numDatapoints), app.library.utility.formatNumber(C_APP_CREATE_UPDATE_HARD_THRESHOLD)]));
             }
 
             else if (numDatapoints > app.config.entity.build.threshold.soft) {

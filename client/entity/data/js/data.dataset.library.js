@@ -451,10 +451,26 @@ app.data.dataset.callback.fullDownload = function (format, version) {
         "m2m": false
     };
 
-    app.data.dataset.ajax.downloadDataset(apiParams);
+    app.data.dataset.ajax.downloadDataset(apiParams, app.data.dataset.table.totalCount);
 }
 
-app.data.dataset.ajax.downloadDataset = function (apiParams) {
+app.data.dataset.ajax.downloadDataset = function (apiParams, dataCellCount) {
+    switch (apiParams.extension.format.type) {
+        case C_APP_TS_FORMAT_TYPE_CSV:
+            if (dataCellCount > app.config.dataset.download.threshold.csv) {
+                api.modal.information(app.library.html.parseDynamicLabel("download-threshold-exceeded", [app.library.utility.formatNumber(dataCellCount), apiParams.extension.format.type, app.library.utility.formatNumber(app.config.dataset.download.threshold.csv)]));
+                return
+            }
+            break;
+        case C_APP_TS_FORMAT_TYPE_XLSX:
+            if (dataCellCount > app.config.dataset.download.threshold.xlsx) {
+                api.modal.information(app.library.html.parseDynamicLabel("download-threshold-exceeded", [app.library.utility.formatNumber(dataCellCount), apiParams.extension.format.type, app.library.utility.formatNumber(app.config.dataset.download.threshold.xlsx)]));
+                return
+            }
+            break;
+        default:
+            break;
+    }
     if (app.data.isLive) {
         api.ajax.jsonrpc.request(
             app.config.url.api.jsonrpc.public,

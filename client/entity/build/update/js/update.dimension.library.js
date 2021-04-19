@@ -7,6 +7,7 @@ app.build.update = app.build.update || {};
 
 app.build.update.dimension = {};
 app.build.update.dimension.modal = {};
+app.build.update.dimension.validation = {};
 app.build.update.dimension.callback = {};
 
 //#endregion
@@ -175,11 +176,15 @@ app.build.update.dimension.callback.drawExistingPeriod = function () {
  * @param {*} data
  */
 app.build.update.dimension.drawExistingPeriod = function (lngIsoCode, data) {
-
+    //sort descending 
+    var datatableData = $.extend(true, [], data);
+    datatableData.sort(function (a, b) {
+        return b.PrdCode - a.PrdCode
+    });
     var table = $("#build-update-dimension-nav-" + lngIsoCode).find("[name=periods-existing]");
 
     if ($.fn.DataTable.isDataTable(table)) {
-        app.library.datatable.reDraw(table, data);
+        app.library.datatable.reDraw(table, datatableData);
     } else {
 
         var localOptions = {
@@ -187,7 +192,7 @@ app.build.update.dimension.drawExistingPeriod = function (lngIsoCode, data) {
             createdRow: function (row, dataRow, dataIndex) {
                 $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
             },
-            data: data,
+            data: datatableData,
             ordering: false,
             columns: [
                 {
@@ -237,10 +242,13 @@ app.build.update.dimension.drawNewPeriod = function (lngIsoCode) {
     var data = null;
     $(app.build.update.data.Dimension).each(function (index, dimension) {
         if (lngIsoCode == dimension.LngIsoCode) {
-            data = dimension.Frequency.Period;
+            data = $.extend(true, [], dimension.Frequency.Period);
         }
     });
-
+    //sort descending 
+    data.sort(function (a, b) {
+        return b.PrdCode - a.PrdCode
+    });
     //enable disable download csv data depending on new periods added 
     if (!data.length) {
         $("#build-update-matrix-data").find("[name=download-data-file-new], [name=download-data-file-all]").addClass("disabled");
@@ -351,3 +359,169 @@ app.build.update.dimension.modal.editClassification = function (classification) 
     }
     $("#build-update-edit-classification").modal("show");
 };
+
+//#region elimination
+app.build.update.dimension.drawElimination = function () {
+    //get default language jsonStat
+    var defaultJSONstat = $.grep(app.build.update.ajax.jsonStat, function (n, i) { // just use arr
+        return n.extension.language.code == app.config.language.iso.code;
+    });
+
+    var data = [];
+    $.each(app.build.update.data.Elimination, function (key, value) {
+        var classification = defaultJSONstat[0].Dimension(key);
+        data.push({
+            "ClsCode": key,
+            "ClsValue": classification.label,
+            "VrbEliminationCode": value || null,
+            "VrbEliminationValue": value ? classification.Category(value).label : null,
+        });
+
+    });
+
+    var table = $("#build-update-dimensions").find("[name=classification-elimination-variables]");
+    if ($.fn.DataTable.isDataTable(table)) {
+        app.library.datatable.reDraw(table, data);
+    } else {
+        var localOptions = {
+            // Add Row Index to feed the ExtraInfo modal 
+            createdRow: function (row, dataRow, dataIndex) {
+                $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+            },
+            data: data,
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.library.html.link.edit({ "cls-code": row.ClsCode, "cls-value": row.ClsValue, "vrb-elimination-code": row.VrbEliminationCode }, row.ClsCode);
+                    }
+                },
+                {
+                    data: "ClsValue"
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.VrbEliminationCode || ""
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.VrbEliminationValue || ""
+                    }
+                },
+                {
+                    data: null,
+                    sorting: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return app.library.html.deleteButton({ "idn": row.ClsCode, "cls-value": row.ClsValue }, row.VrbEliminationCode ? false : true);
+                    },
+                    "width": "1%"
+                },
+            ],
+            drawCallback: function (settings) {
+                app.build.update.dimension.drawEliminationCallback(table);
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.build.update.dimension.drawEliminationCallback(table);
+        });
+    }
+}
+
+app.build.update.dimension.drawEliminationCallback = function (table) {
+    $('[data-toggle="tooltip"]').tooltip();
+    $(table).find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
+        e.preventDefault();
+        app.build.update.dimension.modal.updateElimination($(this).attr("cls-value"), $(this).attr("cls-code"), $(this).attr("vrb-elimination-code"))
+    });
+
+    $(table).find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", function () {
+        api.modal.confirm(
+            app.library.html.parseDynamicLabel("build-delete-elimination", [$(this).attr("cls-value")]),
+            app.build.update.dimension.deleteElimination,
+            $(this).attr("idn")
+        );
+    });
+}
+
+app.build.update.dimension.validation.updateElimination = function () {
+    $("#build-update-modal-elimination form").trigger("reset").validate({
+        rules: {
+            "variable":
+            {
+                required: true,
+            }
+        },
+        errorPlacement: function (error, element) {
+            $("#build-update-modal-elimination [name=" + element[0].name + "-error-holder]").append(error[0]);
+        },
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
+            app.build.update.dimension.modal.saveElimination()
+        }
+    }).resetForm();
+};
+
+app.build.update.dimension.modal.updateElimination = function (clsValue, clsCode, clsEliminationCode) {
+    app.build.update.dimension.validation.updateElimination();
+    clsEliminationCode = clsEliminationCode || null;
+    $("#build-update-modal-elimination").find("[name=cls-value]").text(app.label.static["classification"] + " : " + clsValue);
+
+    //get default language jsonStat
+    var defaultJSONstat = $.grep(app.build.update.ajax.jsonStat, function (n, i) { // just use arr
+        return n.extension.language.code == app.config.language.iso.code;
+    });
+
+
+    $("#build-update-modal-elimination").find("[name=cls-code]").val(clsCode);
+    //get classification details
+    var classification = defaultJSONstat[0].Dimension(clsCode);
+
+    var data = [];
+
+    $.each(classification.id, function (index, value) {
+        data.push({
+            "id": value,
+            "text": classification.Category(value).label
+        })
+    });
+
+    $("#build-update-modal-elimination").find("[name=variable]").empty().append($("<option>")).select2({
+        dropdownParent: $('#build-update-modal-elimination'),
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: data
+    });
+
+    // Enable and Focus Search input
+    $("#build-update-modal-elimination").find("[name=variable]").prop('disabled', false).focus();
+
+    $("#build-update-modal-elimination").find("[name=variable]").val(clsEliminationCode).trigger("change").trigger({
+        type: 'select2:select',
+        params: {
+            data: $("#build-update-modal-elimination").find("[name=variable]").select2('data')[0]
+        }
+    });
+
+    $("#build-update-modal-elimination").modal("show");
+
+}
+
+app.build.update.dimension.modal.saveElimination = function () {
+    app.build.update.data.Elimination[$("#build-update-modal-elimination").find("[name=cls-code]").val()] = $("#build-update-modal-elimination").find("[name=variable]").val();
+    app.build.update.dimension.drawElimination();
+    $("#build-update-modal-elimination").modal("hide");
+}
+
+app.build.update.dimension.deleteElimination = function (clsCode) {
+    app.build.update.data.Elimination[clsCode] = null;
+    app.build.update.dimension.drawElimination();
+}
+//#endregion elimination
