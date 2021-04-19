@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 02/01/2020
 -- Description:	Reads current releases, referencing metadata
--- exec Data_Release_ReadCollectionLight 'en','ga','2020-09-02','C2016P3'
+-- exec Data_Release_ReadCollection 'en','ga','2019-01-21','ELEC'
 -- =============================================
 CREATE
 	OR
@@ -74,6 +74,10 @@ BEGIN
 			,CPR_VALUE AS CprValue
 			,CPR_URL AS CprUrl
 			,CPR_CODE AS CprCode
+			,TD_CLASSIFICATION.CLS_CODE AS ClsCode
+			,coalesce(lngMTR.CLS_VALUE, TD_CLASSIFICATION.CLS_VALUE) AS ClsValue
+			,FRQ_CODE AS FrqCode
+			,coalesce(lngMTR.FRQ_VALUE, TD_FREQUENCY.FRQ_VALUE) AS FrqValue
 		FROM TD_RELEASE rls
 		INNER JOIN VW_RELEASE_LIVE_NOW
 			ON VRN_RLS_ID = RLS_ID
@@ -96,6 +100,10 @@ BEGIN
 		INNER JOIN TS_LANGUAGE
 			ON LNG_ID = MTR_LNG_ID
 				AND LNG_DELETE_FLAG = 0
+		INNER JOIN TD_CLASSIFICATION
+		ON MTR_ID = CLS_MTR_ID
+		INNER JOIN TD_FREQUENCY
+			ON FRQ_MTR_ID = MTR_ID
 		LEFT JOIN (
 			SELECT MTR_CODE
 				,MTR_ID
@@ -103,19 +111,35 @@ BEGIN
 				,MTR_RLS_ID
 				,LNG_ISO_CODE
 				,LNG_ISO_NAME
+				,CLS_VALUE
+				,CLS_CODE
+				,FRQ_VALUE 
 			FROM TD_MATRIX
 			INNER JOIN TS_LANGUAGE
 				ON MTR_LNG_ID = LNG_ID
 					AND LNG_DELETE_FLAG = 0
+			INNER JOIN TD_CLASSIFICATION
+			ON MTR_ID=CLS_MTR_ID 
+			INNER JOIN TD_FREQUENCY 
+			ON FRQ_MTR_ID=MTR_ID 
+
+			INNER JOIN TD_RELEASE ON MTR_RLS_ID = RLS_ID
+			INNER JOIN VW_RELEASE_LIVE_NOW ON VRN_RLS_ID = RLS_ID
+				AND VRN_MTR_ID = MTR_ID
+
 			WHERE Mtr_Lng_ID = @LngIdRead
 				AND MTR_DELETE_FLAG = 0
+			
+
 			) lngMtr
 			ON lngMtr.MTR_CODE = mtr.MTR_CODE
+			and lngMtr.CLS_CODE=TD_CLASSIFICATION.CLS_CODE
 		WHERE (
 				@PrcID IS NULL
 				OR @PrcID = RLS_PRC_ID
 				)
 		) q
+		
 END
 GO
 

@@ -24,6 +24,7 @@ BEGIN
 		,VRB_CODE AS VrbCode
 		,VRB_VALUE AS VrbValue
 		,MTR_CODE AS MtrCode
+		,VRB_ELIMINATION_FLAG AS VrbEliminationFlag
 		,CASE 
 			WHEN rcount IS NULL
 				THEN 0

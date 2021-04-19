@@ -5,17 +5,16 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:		Paulo Patricio
--- Create date: 11 Oct 2018
--- Description:	Inserts a new record into the TD_Subject table
+-- Author:		Neil O'Keeffe
+-- Create date: 24/03/2021
+-- Description:	Inserts a new record into the TD_THEME table
 -- =============================================
 CREATE
 	OR
 
-ALTER PROCEDURE System_Navigation_Subject_Create @SbjValue NVARCHAR(256)
+ALTER PROCEDURE System_Navigation_Theme_Create @ThmValue NVARCHAR(256)
 	,@userName NVARCHAR(256)
 	,@LngIsoCode CHAR(2)
-	,@ThmCode INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -23,7 +22,6 @@ BEGIN
 	DECLARE @DtgId INT = NULL
 	DECLARE @lngID INT = NULL
 	DECLARE @errorMessage VARCHAR(256)
-	DECLARE @ThmId INT = NULL
 
 	EXEC @DtgId = Security_Auditing_Create @userName;
 
@@ -59,36 +57,19 @@ BEGIN
 		RETURN 0
 	END
 
-	set @ThmId=(SELECT THM_ID FROM TD_THEME WHERE THM_CODE=@ThmCode AND THM_DELETE_FLAG=0)
-
-	IF @ThmId IS NULL
-	BEGIN
-		SET @errorMessage = 'SP: ' + OBJECT_NAME(@@PROCID) + ' - theme not found: ' + cast(isnull(@ThmCode, 0) AS VARCHAR)
-
-		RAISERROR (
-				@errorMessage
-				,16
-				,1
-				);
-
-		RETURN 0
-	END
-
-	INSERT INTO [dbo].[TD_SUBJECT] (
-		[SBJ_CODE]
-		,[SBJ_VALUE]
-		,[SBJ_LNG_ID]
-		,[SBJ_DTG_ID]
-		,[SBJ_DELETE_FLAG]
-		,[SBJ_THM_ID] 
+	INSERT INTO TD_THEME (
+		THM_CODE
+		,THM_VALUE
+		,THM_LNG_ID
+		,THM_DTG_ID
+		,THM_DELETE_FLAG
 		)
 	VALUES (
 		DEFAULT
-		,@SbjValue
+		,@ThmValue
 		,@lngID
 		,@DtgId
 		,0
-		,@ThmId
 		)
 
 	RETURN @@identity

@@ -5,18 +5,17 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- =============================================
--- Author:		Paulo Patricio
--- Update date: 15 Oct 2018
--- Description:	Updates record(s) from the TD_Subject table
+-- Author:		Neil O'Keeffe
+-- Create date: 24/03/2021
+-- Description:	Updates record(s) from the TD_THEME table
 -- =============================================
 CREATE
 	OR
 
-ALTER PROCEDURE System_Navigation_Subject_Update @SbjCode INT
-	,@SbjValue NVARCHAR(256)
+ALTER PROCEDURE System_Navigation_Theme_Update @ThmCode INT
+	,@ThmValue NVARCHAR(256)
 	,@userName NVARCHAR(256)
-	,@ThmCode INT
-	,@SbjId INT OUT
+	,@ThmId INT OUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,25 +23,13 @@ BEGIN
 	DECLARE @eMessage VARCHAR(256)
 	DECLARE @updateCount INT
 	DECLARE @DtgID INT = NULL
-	DECLARE @ThmID INT = NULL
 
 	--check if record exists
-	SELECT @SbjID = SBJ_ID
-		,@DtgID = SBJ_DTG_ID
-	FROM TD_Subject
-	WHERE SBJ_CODE = @SbjCode
-		AND SBJ_Delete_FLAG = 0
-
-	IF @SbjID IS NULL
-		OR @SbjID = 0
-	BEGIN
-		RETURN 0
-	END
-
-	SELECT @ThmID =THM_ID
+	SELECT @ThmID = THM_ID
+		,@DtgID = THM_DTG_ID
 	FROM TD_THEME
-	WHERE THM_CODE=@ThmCode 
-	AND THM_DELETE_FLAG=0
+	WHERE THM_CODE = @ThmCode 
+		AND THM_DELETE_FLAG  = 0
 
 	IF @ThmID IS NULL
 		OR @ThmID = 0
@@ -50,11 +37,12 @@ BEGIN
 		RETURN 0
 	END
 
-	UPDATE TD_Subject
-	SET SBJ_VALUE = @SbjValue,
-	SBJ_THM_ID=@ThmID 
-	WHERE SBJ_ID = @SbjID
-		AND SBJ_Delete_FLAG = 0
+
+
+	UPDATE TD_THEME
+	SET THM_VALUE = @ThmValue
+	WHERE THM_ID = @ThmID
+		AND THM_DELETE_FLAG = 0
 
 	SET @updateCount = @@ROWCOUNT
 
@@ -70,7 +58,7 @@ BEGIN
 		-- check the previous stored procedure for error
 		IF @AuditUpdateCount = 0
 		BEGIN
-			SET @eMessage = 'Error creating entry in TD_AUDITING for Subject Update with code ' + cast(isnull(@SbjCode, 0) AS VARCHAR)
+			SET @eMessage = 'Error creating entry in TD_AUDITING for THEME Update with code ' + cast(isnull(@ThmCode, 0) AS VARCHAR)
 
 			RAISERROR (
 					@eMessage

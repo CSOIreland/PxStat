@@ -20,39 +20,11 @@ BEGIN
 	SET IMPLICIT_TRANSACTIONS OFF;
 
 	DECLARE @MatrixIds TABLE (MtrId INT)
-	DECLARE @rowcount INT
 
 	INSERT INTO @MatrixIds
 	SELECT MTR_Id
 	FROM TD_MATRIX
 	WHERE MTR_DELETE_FLAG = 1
-
-	SET @rowcount = (
-			SELECT count(*)
-			FROM @matrixIds
-			)
-
-	IF @rowcount = 0
-	BEGIN
-		INSERT INTO TD_LOGGING (
-			LGG_DATETIME
-			,LGG_THREAD
-			,LGG_LEVEL
-			,LGG_CLASS
-			,LGG_METHOD
-			,LGG_MESSAGE
-			)
-		VALUES (
-			getdate()
-			,'0'
-			,'INFO'
-			,'SQL SERVER AGENT'
-			,'Data_Matrix_DeleteEntities'
-			,'No Matrix data to delete'
-			)
-
-		RETURN 0
-	END
 
 	DELETE TM_DATA_CELL
 	FROM TM_DATA_CELL
@@ -98,7 +70,7 @@ BEGIN
 		,'INFO'
 		,'SQL SERVER AGENT'
 		,'Data_Matrix_DeleteEntities'
-		,'Data for ' + convert(varchar(256),@rowcount) + ' Matrixes deleted'
+		,'Unused Matrix entities deleted'
 		)
 		
 	RETURN 0
