@@ -57,7 +57,7 @@ namespace PxStat.Data
     /// </summary>
     public partial class Item
     {
-        [JsonProperty("category", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("category", Required = Required.AllowNull, NullValueHandling = NullValueHandling.Ignore)]
         public Category Category { get; set; }
 
         [JsonProperty("class", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]

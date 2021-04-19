@@ -91,7 +91,10 @@ namespace PxStat.Data
                 }
                 else
                 {
-                    theJsonStatCollection.Link.Item.Add(GetJsonStatReleaseLight(thisReleaseMetadata, formats));
+                    List<dynamic> classifications = getClassificationsNoVrbCount(thisReleaseMetadata);
+                    theJsonStatCollection.Link.Item.Add(GetJsonStatReleaseNoCollections(thisReleaseMetadata, formats, classifications));
+
+
                 }
 
 
@@ -113,6 +116,7 @@ namespace PxStat.Data
 
 
             var result = new JRaw(Serialize.ToJson(theJsonStatCollection));
+
 
             MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO, result, minDateItem, Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
 
@@ -171,15 +175,36 @@ namespace PxStat.Data
                          group c by new
                          {
                              c.ClsCode,
-                             c.ClsValue,
-                             c.VrbCount
+                             c.ClsValue
                          }
                        into cls
                          select new
                          {
                              cls.Key.ClsCode,
-                             cls.Key.ClsValue,
-                             cls.Key.VrbCount
+                             cls.Key.ClsValue
+                         }
+                       ).ToList<dynamic>();
+            return stats;
+        }
+
+        /// <summary>
+        /// Get a list of classifications based on the collections database read
+        /// </summary>
+        /// <param name="releaseItems"></param>
+        /// <returns></returns>
+        private List<dynamic> getClassificationsNoVrbCount(List<dynamic> releaseItems)
+        {
+            var stats = (from c in releaseItems
+                         group c by new
+                         {
+                             c.ClsCode,
+                             c.ClsValue
+                         }
+                       into cls
+                         select new
+                         {
+                             cls.Key.ClsCode,
+                             cls.Key.ClsValue
                          }
                        ).ToList<dynamic>();
             return stats;
@@ -308,7 +333,6 @@ namespace PxStat.Data
             // jsStat.Class = Class.Dataset;
             //jsStat.Version = Version.The20;
             jsStat.Id = new List<string>();
-            jsStat.Size = new List<long>();
 
             var thisItem = collection.FirstOrDefault();
 
@@ -347,22 +371,27 @@ namespace PxStat.Data
 
             formats.Add(fDtoMain);
 
+
+
             var statDimension = new Dimension()
             {
 
                 Label = Utility.GetCustomConfig("APP_CSV_STATISTIC"),
-
+                Id = Utility.GetCustomConfig("APP_CSV_STATISTIC"),
                 Category = new Category()
                 {
+
                 }
 
             };
 
-            jsStat.Size.Add(statistics.Count);
+
+
 
             jsStat.Dimension.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"), statDimension);
 
             jsStat.Id.Add(Frequency.code);
+            jsStat.Id.Add(statDimension.Id);
 
             List<PeriodRecordDTO_Create> plist = new List<PeriodRecordDTO_Create>();
             foreach (var per in periods)
@@ -385,12 +414,14 @@ namespace PxStat.Data
             };
 
             jsStat.Dimension.Add(Frequency.code, timeDimension);
-            jsStat.Size.Add(periods.Count);
+
 
             foreach (var s in classifications)
             {
                 Dictionary<string, string> dict = new Dictionary<string, string>();
                 dict.Add(s.ClsCode, s.ClsValue);
+
+
                 var clsDimension = new Dimension()
                 {
 
@@ -403,7 +434,8 @@ namespace PxStat.Data
                 };
 
                 jsStat.Dimension.Add(s.ClsCode, clsDimension);
-                jsStat.Size.Add(s.VrbCount);
+
+                jsStat.Id.Add(s.ClsCode);
             }
 
 
@@ -427,12 +459,15 @@ namespace PxStat.Data
         /// <param name="statistics"></param>
         /// <param name="classifications"></param>
         /// <returns></returns>
-        private Item GetJsonStatReleaseLight(List<dynamic> collection, List<Format_DTO_Read> formats)
+        private Item GetJsonStatReleaseNoCollections(List<dynamic> collection, List<Format_DTO_Read> formats, List<dynamic> classifications)
         {
 
             var jsStat = new Item();
             // jsStat.Class = Class.Dataset;
             //jsStat.Version = Version.The20;
+
+            // jsStat.Dimension = new Dictionary<string, Dimension>();
+            jsStat.Id = new List<string>();
 
             var thisItem = collection.FirstOrDefault();
 
@@ -465,6 +500,41 @@ namespace PxStat.Data
             }
             jsStat.Link = link;
 
+            var Frequency = new { name = thisItem.FrqValue, code = thisItem.FrqCode };
+
+            var statDimension = new Dimension()
+            {
+
+                Label = Utility.GetCustomConfig("APP_CSV_STATISTIC")
+
+            };
+
+            //jsStat.Dimension.Add(statDimension.Label, statDimension);
+
+            var timeDimension = new Dimension()
+            {
+
+                Label = Frequency.name
+            };
+
+            // jsStat.Dimension.Add(Frequency.code, timeDimension);
+
+            jsStat.Id.Add(Frequency.code);
+            jsStat.Id.Add(Utility.GetCustomConfig("APP_CSV_STATISTIC"));
+
+            foreach (var s in classifications)
+            {
+                //Dictionary<string, string> dict = new Dictionary<string, string>();
+                //dict.Add(s.ClsCode, s.ClsValue);
+                //var clsDimension = new Dimension()
+                //{
+
+                //    Label = s.ClsValue
+                //};
+
+
+                jsStat.Id.Add(s.ClsCode);
+            }
 
             return jsStat;
         }

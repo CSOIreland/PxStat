@@ -135,7 +135,15 @@ namespace PxStat.Data
                 return false;
             }
 
-            // MatrixData.Sort();
+            //Final check of all dimensions
+            Matrix_VLD mval = new Matrix_VLD();
+            ValidationResult vr = mval.Validate(MatrixData);
+
+            if (!vr.IsValid)
+            {
+                Response.error = Error.GetValidationFailure(vr.Errors);
+                return false;
+            }
 
             sw.Stop();
             Log.Instance.Debug(string.Format("Matrix validated in {0} ms", Math.Round((double)sw.ElapsedMilliseconds)));

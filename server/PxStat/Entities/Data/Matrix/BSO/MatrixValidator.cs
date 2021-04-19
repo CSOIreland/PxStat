@@ -25,6 +25,19 @@ namespace PxStat.Data
                 return false;
             if (!PxIntegrityIsValid(theMatrix))
                 return false;
+            if (theMatrix.MainSpec != null)
+            {
+                if (!new PxIntegrityValidator(theMatrix.MainSpec).Validate(theMatrix).IsValid)
+                    return false;
+            }
+            if (theMatrix.OtherLanguageSpec != null)
+            {
+                foreach (Matrix.Specification spec in theMatrix.OtherLanguageSpec)
+                {
+                    if (!new PxIntegrityValidator(spec).Validate(theMatrix).IsValid)
+                        return false;
+                }
+            }
 
             return true;
 

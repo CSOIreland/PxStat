@@ -324,7 +324,8 @@ namespace PxStat.Data
                 {
                     new SqlBulkCopyColumnMapping("VRB_CODE", "VRB_CODE"),
                     new SqlBulkCopyColumnMapping("VRB_VALUE", "VRB_VALUE"),
-                    new SqlBulkCopyColumnMapping("VRB_CLS_ID", "VRB_CLS_ID")
+                    new SqlBulkCopyColumnMapping("VRB_CLS_ID", "VRB_CLS_ID"),
+                    new SqlBulkCopyColumnMapping("VRB_ELIMINATION_FLAG", "VRB_ELIMINATION_FLAG")
                 };
 
             ado.ExecuteBulkCopy("TD_VARIABLE", maps, dt, true);
@@ -745,6 +746,7 @@ namespace PxStat.Data
             var reader = ado.ExecuteReaderProcedure("Data_Matrix_ReadDataByRelease", inputParams);
 
             sw.Stop();
+            long l = sw.ElapsedMilliseconds;
             Log.Instance.Info(string.Format("Data read from DB in {0} ms", Math.Round((double)sw.ElapsedMilliseconds)));
 
             if (reader.hasData)
@@ -756,9 +758,8 @@ namespace PxStat.Data
                         v.TdtValue = (DBNull)v.TdtValue;
                     }
                 }
+                return reader.data.OrderBy(x => x.SttId).ThenBy(x => x.PrdId).ThenBy(x => x.TdtId).ToList();
 
-                var returnVal = reader.data.OrderBy(x => x.SttId).ThenBy(x => x.PrdId).ThenBy(x => x.TdtId).ToList();
-                return returnVal;
             }
 
             return new List<dynamic>();

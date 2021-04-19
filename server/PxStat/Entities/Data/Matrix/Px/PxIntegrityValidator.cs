@@ -222,7 +222,7 @@ namespace PxStat.Data
     {
         public PxIntegrityValidator(Matrix.Specification spec, string lngIsoCode = null)
         {
-            long threshold = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.threshold"); ;
+            long threshold = Convert.ToInt32(Utility.GetCustomConfig("APP_PX_DATAPOINT_THRESHOLD"));
             RuleFor(x => x).Must(PxStat.Build.CustomValidations.BelowLimitDatapoints).WithMessage(lngIsoCode == null ? String.Format(Label.Get("integrity.cell-count"), spec.GetRequiredDatapointCount(), threshold.ToString()) : String.Format(Label.Get("integrity.cell-count", lngIsoCode), spec.GetRequiredDatapointCount(), threshold.ToString()));
             RuleFor(x => x.MainSpec).HaveFactsAndDimensionsMatching().WithMessage(Label.Get("integrity.size"));
             RuleFor(x => x.OtherLanguageSpec).HaveFactsAndDimensionsMatching().When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage(Label.Get("integrity.size"));

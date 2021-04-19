@@ -1,8 +1,74 @@
 ﻿
 using FluentValidation;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PxStat.Data
 {
+    internal class Matrix_VLD : AbstractValidator<Matrix>
+    {
+        internal Matrix_VLD()
+        {
+            RuleFor(x => x).Must(ValidateCurrentDimensions).WithMessage("Dimension names or codes are invalid");
+        }
+
+        /// <summary>
+        /// Check that there are no duplicate dimension codes or names in the Matrix
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        internal bool ValidateCurrentDimensions(Matrix m)
+        {
+            bool isValid = ValidateSpec(m.MainSpec);
+            if (!isValid) return false;
+            if (m.OtherLanguageSpec != null)
+            {
+                foreach (Matrix.Specification spec in m.OtherLanguageSpec)
+                {
+                    if (!ValidateSpec(spec)) return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Check that there are no duplicate dimension codes or names in the Specification
+        /// </summary>
+        /// <param name="spec"></param>
+        /// <returns></returns>
+        private bool ValidateSpec(Matrix.Specification spec)
+        {
+            List<string> comparisons = new List<string>();
+            comparisons.Add(spec.ContentVariable.ToUpper());
+            comparisons.Add(spec.Frequency.Code.ToUpper());
+            foreach (var cls in spec.Classification)
+            {
+                comparisons.Add(cls.Code.ToUpper());
+            }
+
+            if (hasDupes(comparisons)) return false;
+
+            comparisons = new List<string>();
+            comparisons.Add(spec.ContentVariable.ToUpper());
+            comparisons.Add(spec.Frequency.Value.ToUpper());
+            foreach (var cls in spec.Classification)
+            {
+                comparisons.Add(cls.Value.ToUpper());
+            }
+
+            return !hasDupes(comparisons);
+
+        }
+
+        private bool hasDupes(IEnumerable<string> list)
+        {
+            List<string> dupes = list.GroupBy(x => x)
+              .Where(g => g.Count() > 1)
+              .Select(y => y.Key)
+              .ToList();
+            return dupes.Count > 0;
+        }
+    }
     /// <summary>
     /// 
     /// </summary>

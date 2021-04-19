@@ -83,6 +83,22 @@ namespace PxStat.Build
 
             theMatrixData = bBso.UpdateMatrixFromBuild(theMatrixData, DTO, Ado);
 
+            theMatrixData.MainSpec.SetEliminationsByCode(ref theMatrixData.MainSpec.Classification, DTO.Elimination);
+            if (theMatrixData.OtherLanguageSpec != null)
+            {
+                foreach (Specification spec in theMatrixData.OtherLanguageSpec)
+                {
+                    spec.SetEliminationsByCode(ref spec.Classification, DTO.Elimination);
+                }
+            }
+
+            //We should be able to validate the newly updated matrix now...
+            MatrixValidator mValidator = new MatrixValidator();
+            if (!mValidator.Validate(theMatrixData))
+            {
+                Response.error = Label.Get("error.validation");
+                return false;
+            }
 
 
             Log.Instance.Debug("Object updated - " + theMatrixData.Cells.Count + " rows in " + sw.ElapsedMilliseconds + " milliseconds");

@@ -4,7 +4,6 @@ using FluentValidation;
 using PxStat.Data;
 using PxStat.Entities.BuildData;
 using PxStat.Resources;
-using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
@@ -108,11 +107,11 @@ namespace PxStat.Build
             RuleFor(f => f.FrqCode).NotEmpty().Length(1, 256);
             RuleFor(f => f.FrqCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
-
+            RuleFor(f => f.Elimination).NotEmpty().WithMessage("Elimination object not supplied in request");
             RuleFor(f => f.DimensionList).Must(CustomValidations.DimensionsValid).WithMessage("Invalid Dimensions");
             RuleFor(f => f.DimensionList).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.MainLanguageRepresented).WithMessage("Main language not contained in any dimension");
-            RuleForEach(f => f.DimensionList).SetValidator(new Dimension_VLD());
+            RuleForEach(f => f.DimensionList).SetValidator(x => new Dimension_VLD(x.Elimination ?? new Dictionary<string, string>()));
             RuleFor(f => f.Format.FrmType).NotEmpty().Length(1, 32);
             RuleFor(f => f.Format.FrmVersion).NotEmpty().Length(1, 32);
             RuleFor(f => f.Format).Must(CustomValidations.FormatExists).WithMessage("Requested format/version/direction not found in the system");
@@ -194,7 +193,7 @@ namespace PxStat.Build
         /// <summary>
         /// 
         /// </summary>
-        internal Dimension_VLD()
+        internal Dimension_VLD(Dictionary<string, string> elimination)
         {
             RuleFor(f => f.CprValue).NotEmpty().Length(1, 256);
 
@@ -214,6 +213,7 @@ namespace PxStat.Build
             RuleFor(f => f.Classifications.Count).GreaterThan(0).WithMessage("You must have at least one classification");
             RuleFor(f => f.Frequency.Period.Count).GreaterThan(0).WithMessage("You must have at least one period");
             RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD());
+            RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD_CodeOnly(elimination));
             RuleForEach(f => f.Statistics).SetValidator(new Statistic_VLD());
             RuleFor(f => f.Frequency).SetValidator(new Frequency_VLD());
 
@@ -225,6 +225,8 @@ namespace PxStat.Build
             RuleFor(f => f.StatisticLabel).Matches(fchars);
             RuleFor(f => f.FrqValue).Matches(fchars);
         }
+
+
     }
 
     //FrequencyRecordDTO_Create
@@ -311,6 +313,11 @@ namespace PxStat.Build
             //Does not contain inverted commas
             RuleFor(f => f.Code).Matches(fchars);
 
+        }
+
+        internal Classification_VLD_CodeOnly(Dictionary<string, string> elimination)
+        {
+            RuleFor(x => x).Must(x => elimination.ContainsKey(x.Code)).WithMessage("Classification not found in Elimination");
         }
 
     }
@@ -458,7 +465,7 @@ namespace PxStat.Build
             RuleFor(f => f.Dimension).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.FormatExists).WithMessage("Requested format/version not found in the system");
             RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
-
+            RuleFor(f => f.Elimination).NotEmpty().WithMessage("Elimination object not supplied in request");
             RuleFor(f => f.Format.FrmType).NotEmpty();
             RuleFor(f => f.Format.FrmVersion).NotEmpty();
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatExists);
@@ -466,8 +473,10 @@ namespace PxStat.Build
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatForBuildUpdate);
 
             RuleForEach(f => f.Dimension).SetValidator(new Build_VLD_BuildUpdateDimension());
+            RuleForEach(f => f.Dimension).SetValidator(x => new Build_VLD_BuildUpdateDimension(x.Elimination ?? new Dictionary<string, string>()));
 
         }
+
     }
 
 
@@ -490,6 +499,12 @@ namespace PxStat.Build
             RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD_CodeOnly());
 
         }
+
+        internal Build_VLD_BuildUpdateDimension(Dictionary<string, string> elimination)
+        {
+            RuleForEach(f => f.Classifications).SetValidator(new Classification_VLD_CodeOnly(elimination));
+        }
+
     }
 
 
@@ -603,7 +618,7 @@ namespace PxStat.Build
                 points *= cls.Variable.Count;
             }
 
-            return points <= Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.threshold");
+            return points <= Convert.ToInt32(Utility.GetCustomConfig("APP_PX_DATAPOINT_THRESHOLD"));
         }
 
         internal static bool ValidateIgnoreEscapeChars(string readString)

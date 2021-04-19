@@ -3,6 +3,7 @@ using PxStat.Template;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -100,37 +101,48 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         private List<dynamic> formatOutput(List<dynamic> rawList)
         {
-            Subject_ADO sAdo = new Subject_ADO(Ado);
-
-            Subject_DTO sDto = new Subject_DTO();
-            sDto.LngIsoCode = DTO.LngIsoCode;
-
-            List<dynamic> subjectsReadList = sAdo.Read(sDto);
+            Theme_ADO tAdo = new Theme_ADO(Ado);
+            List<dynamic> themeReadList = tAdo.Read(new Theme_DTO_Read() { LngIsoCode = DTO.LngIsoCode });
             List<dynamic> outList = new List<dynamic>();
 
-            foreach (var subject in subjectsReadList)
+            foreach (var theme in themeReadList)
             {
-                dynamic dSubject = new ExpandoObject();
-                dSubject.SbjCode = subject.SbjCode;
-                dSubject.SbjValue = subject.SbjValue;
-                dSubject.product = new List<dynamic>();
-                foreach (var product in rawList)
+                dynamic dTheme = new ExpandoObject();
+                dTheme.ThmCode = theme.ThmCode;
+                dTheme.ThmValue = theme.ThmValue;
+                dTheme.subject = new List<dynamic>();
+                var subjectList = new List<dynamic>();
+                foreach (var subject in rawList)
                 {
-                    if (product.SbjCode == dSubject.SbjCode)
+                    if (subject.ThmCode == dTheme.ThmCode && subjectList.Where(x => x.SbjCode == subject.SbjCode).Count() == 0)
                     {
-                        dynamic dProduct = new ExpandoObject();
-                        dProduct.PrcCode = product.PrcCode;
-                        dProduct.PrcValue = product.PrcValue;
-                        dProduct.PrcReleaseCount = product.PrcReleaseCount;
+                        dynamic dSubject = new ExpandoObject();
+                        dSubject.SbjCode = subject.SbjCode;
+                        dSubject.SbjValue = subject.SbjValue;
+                        dSubject.product = new List<dynamic>();
+                        foreach (var product in rawList)
+                        {
+                            if (product.SbjCode == dSubject.SbjCode)
+                            {
+                                dynamic dProduct = new ExpandoObject();
+                                dProduct.PrcCode = product.PrcCode;
+                                dProduct.PrcValue = product.PrcValue;
+                                dProduct.PrcReleaseCount = product.PrcReleaseCount;
 
-                        dSubject.product.Add(dProduct);
+                                dSubject.product.Add(dProduct);
+                            }
+                        }
+                        subjectList.Add(dSubject);
+
                     }
+
                 }
-
-                if (dSubject.product.Count > 0)
-                    outList.Add(dSubject);
-
+                dTheme.subject = subjectList;
+                if (dTheme.subject.Count > 0)
+                    outList.Add(dTheme);
             }
+
+
 
             return outList;
         }

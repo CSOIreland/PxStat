@@ -1,6 +1,7 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
 using PxStat.JsonStatSchema;
+using PxStat.Security;
 using PxStat.Template;
 using System;
 using System.Globalization;
@@ -95,13 +96,24 @@ namespace PxStat.Data
             if (theDto.jStatQueryExtension.extension.Format.Type.Equals(Resources.Constants.C_SYSTEM_XLSX_NAME))
             {
                 int dataSize = theMatrix.MainSpec.GetDataSize();
-                int maxSize = Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_ROWS_LIMIT"));
+                int maxSize = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.download.threshold.xlsx");
                 if (dataSize > maxSize)
                 {
-                    theResponse.error = String.Format(Label.Get("xlsx.row-limit-exceeded", requestLanguage), dataSize, maxSize);
+                    theResponse.error = String.Format(Label.Get("error.dataset.limit", requestLanguage), dataSize, Resources.Constants.C_SYSTEM_XLSX_NAME, maxSize);
                     return false;
                 }
             }
+            else if (theDto.jStatQueryExtension.extension.Format.Type.Equals(Resources.Constants.C_SYSTEM_CSV_NAME))
+            {
+                int dataSize = theMatrix.MainSpec.GetDataSize();
+                int maxSize = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.download.threshold.csv");
+                if (dataSize > maxSize)
+                {
+                    theResponse.error = String.Format(Label.Get("error.dataset.limit", requestLanguage), dataSize, Resources.Constants.C_SYSTEM_CSV_NAME, maxSize);
+                    return false;
+                }
+            }
+
 
             var matrix = new Cube_ADO(theAdo).ReadCubeData(theMatrix);
             if (matrix == null)

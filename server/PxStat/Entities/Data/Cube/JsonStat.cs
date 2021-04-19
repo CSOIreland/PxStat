@@ -18,7 +18,7 @@ namespace PxStat.Data
         [JsonProperty("class", Required = Required.Always)]
         public Class Class { get; set; }
 
-        [JsonProperty("dimension", Required = Required.Always)]
+        [JsonProperty("dimension", Required = Required.AllowNull)]
         public Dictionary<string, Dimension> Dimension { get; set; }
 
         [JsonProperty("error", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -176,7 +176,7 @@ namespace PxStat.Data
     /// </summary>
     public partial class Dimension
     {
-        [JsonProperty("category", Required = Required.Always)]
+        [JsonProperty("category", Required = Required.AllowNull, NullValueHandling = NullValueHandling.Ignore)]
         public Category Category { get; set; }
 
         [JsonProperty("extension", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]

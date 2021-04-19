@@ -41,6 +41,8 @@ namespace PxStat.Resources
         {
             Specification theSpec = theMatrix.GetSpecFromLanguage(lngIsoCode);
 
+            if (theSpec == null) theSpec = theMatrix.MainSpec;
+
             string noteString = "";
             if (theSpec.NotesAsString != null)
             {

@@ -14,7 +14,12 @@
   },
   "dataset": {
     "officialStatistics": true,
-    "threshold": 10000000
+    "download": {
+      "threshold": {
+        "csv": 1048575,
+        "xlsx": 1048575
+      }
+    }
   },
 
   "regex": {

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
+using System.Collections.Generic;
 
 namespace PxStat.System.Navigation
 {
@@ -34,7 +34,8 @@ namespace PxStat.System.Navigation
                 {
                     new ADO_inputParams() {name ="@SbjValue",value= dto.SbjValue},
                      new ADO_inputParams() {name ="@userName",value= userName},
-                     new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode  }
+                     new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode  },
+                     new ADO_inputParams(){name="@ThmCode",value=dto.ThmCode }
                 };
 
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
@@ -113,6 +114,7 @@ namespace PxStat.System.Navigation
                     new ADO_inputParams() {name ="@SbjCode",value= dto.SbjCode},
                     new ADO_inputParams() {name ="@SbjValue",value= dto.SbjValue},
                      new ADO_inputParams() {name ="@userName",value= userName},
+                     new ADO_inputParams(){ name ="@ThmCode",value=dto.ThmCode }
                 };
 
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };

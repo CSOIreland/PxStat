@@ -247,6 +247,24 @@ namespace PxStat.Data
                 return size;
             }
 
+            internal Dictionary<string, string> GetEliminationObject()
+            {
+                Dictionary<string, string> elimList = new Dictionary<string, string>();
+                foreach (var cls in this.Classification)
+                {
+                    var vrbElim = cls.Variable.Where(x => x.EliminationFlag).FirstOrDefault();
+                    if (vrbElim != null)
+                    {
+                        elimList.Add(cls.Code, vrbElim.Code);
+                    }
+                    else
+                    {
+                        elimList.Add(cls.Code, null);
+                    }
+                }
+                return elimList;
+            }
+
             public Specification Clone(Specification original)
             {
                 Specification copy = new Specification();
@@ -392,6 +410,8 @@ namespace PxStat.Data
                 Statistic = dimension.Statistics;
                 Classification = dimension.Classifications;
 
+                SetEliminationsByCode(ref Classification, dto.Elimination);
+
                 NotesAsString = dimension.MtrNote;
 
                 Contents = dimension.Contents;
@@ -402,6 +422,59 @@ namespace PxStat.Data
 
 
             }
+
+            internal void SetEliminationsByCode(ref IList<ClassificationRecordDTO_Create> classification, Dictionary<string, string> eliminations)
+            {
+                //Update the variables with Elimination data
+                foreach (var elim in eliminations)
+                {
+                    var cls = classification.Where(x => x.Code == elim.Key).FirstOrDefault();
+                    if (cls != null)
+                    {
+                        if (eliminations[cls.Code] != null)
+                        {
+                            var vrb = cls.Variable.Where(x => x.Code == eliminations[cls.Code]).FirstOrDefault();
+                            if (vrb != null)
+                                vrb.EliminationFlag = true;
+
+                        }
+                        else
+                        {
+                            foreach (var v in cls.Variable)
+                                v.EliminationFlag = false;
+                        }
+
+                    }
+
+                }
+            }
+
+            internal void SetEliminationsByValue(ref IList<ClassificationRecordDTO_Create> classification, Dictionary<string, string> eliminations)
+            {
+                //Update the variables with Elimination data
+                foreach (var elim in eliminations)
+                {
+                    var cls = classification.Where(x => x.Value == elim.Key).FirstOrDefault();
+                    if (cls != null)
+                    {
+                        if (eliminations[cls.Value] != null)
+                        {
+                            var vrb = cls.Variable.Where(x => x.Value == eliminations[cls.Value]).FirstOrDefault();
+                            if (vrb != null)
+                                vrb.EliminationFlag = true;
+
+                        }
+                        else
+                        {
+                            foreach (var v in cls.Variable)
+                                v.EliminationFlag = false;
+                        }
+
+                    }
+
+                }
+            }
+
             //BuildUpdate_DTO
             /// <summary>
             /// cosntructor based on DTO input
@@ -513,6 +586,7 @@ namespace PxStat.Data
                             //GeoUrl
                             Code = var.VrbCode,
                             Value = var.VrbValue,
+                            EliminationFlag = var.VrbEliminationFlag
                         };
                         classification.Variable.Add(variable);
                     }
@@ -748,6 +822,13 @@ namespace PxStat.Data
 
                 Classification = GetClassification(domain, codes, stubs, headings, Contents, maps);
 
+                Dictionary<string, string> dictElim = new Dictionary<string, string>();
+                foreach (var elim in doc.GetManySingleValuesWithSubkeysOnlyIfLanguageMatches("ELIMINATION", language))
+                {
+                    dictElim.Add(elim.Key, elim.Value.ToPxValue());
+                }
+                SetEliminationsByValue(ref Classification, dictElim);
+
                 if (String.IsNullOrEmpty(ContentVariable))
                 {
                     //ContentVariable = Contents;
@@ -801,7 +882,6 @@ namespace PxStat.Data
                 Notes = doc.GetListOfStringValuesIfExist("NOTE", language);
 
 
-
                 // Concatenate notes into one string
                 if (Notes != null)
                 {
@@ -833,6 +913,7 @@ namespace PxStat.Data
                 ContentVariable = doc.GetStringValueIfExist("CONTVARIABLE", language);
                 var stubs = doc.GetListOfElementsIfExist("STUB", language);
                 var headings = doc.GetListOfElementsIfExist("HEADING", language);
+
 
 
                 // get the Statistical Products, Time and Dimensions
@@ -873,9 +954,15 @@ namespace PxStat.Data
 
                 Classification = GetClassification(domain, codes, stubs, headings, Contents, maps);
 
+                Dictionary<string, string> dictElim = new Dictionary<string, string>();
+                foreach (var elim in doc.GetManySingleValuesWithSubkeysOnlyIfLanguageMatches("ELIMINATION", language))
+                {
+                    dictElim.Add(elim.Key, elim.Value.ToPxValue());
+                }
+                SetEliminationsByValue(ref Classification, dictElim);
+
                 if (String.IsNullOrEmpty(ContentVariable))
                 {
-                    //ContentVariable = Contents;
                     ContentVariable = Label.Get("default.statistic");
                 }
             }
@@ -1583,6 +1670,8 @@ namespace PxStat.Data
 
             }
 
+
+
             //Domain
             foreach (var c in theSpec.Classification)
             {
@@ -1622,6 +1711,15 @@ namespace PxStat.Data
                 foreach (var stat in theSpec.Statistic)
                 {
                     keywordList.Add(CreatePxElement("BASEPERIOD" + lngTag, stat.Value, " ")); ////
+                }
+            }
+
+            foreach (var cls in theSpec.Classification)
+            {
+                var elimVrb = cls.Variable.Where(x => x.EliminationFlag).FirstOrDefault();
+                if (elimVrb != null)
+                {
+                    keywordList.Add(CreatePxElement("ELIMINATION" + lngTag, cls.Value, elimVrb.Value));
                 }
             }
 
@@ -3099,6 +3197,7 @@ namespace PxStat.Data
                         name = language.LngIsoName
                     }
                     );
+            jsStat.Extension.Add("elimination", spec.GetEliminationObject());
 
             if (this.Release != null)
             {
@@ -3147,6 +3246,7 @@ namespace PxStat.Data
                 jsStat.Extension.Add("archive", Release.RlsArchiveFlag);
                 jsStat.Extension.Add("experimental", Release.RlsExperimentalFlag);
                 jsStat.Extension.Add("analytical", Release.RlsAnalyticalFlag);
+
 
                 if (Release.RlsLiveDatetimeFrom != default)
                     jsStat.Updated = DataAdaptor.ConvertToString(Release.RlsLiveDatetimeFrom);
@@ -4077,7 +4177,6 @@ namespace PxStat.Data
         public string FrqCodeTimeval { get; set; }
         public string LngIsoCode { get; set; }
 
-        public JsonStat testItem { get; set; }
 
         internal Signature_DTO GetSignatureDTO()
         {
@@ -4135,12 +4234,7 @@ namespace PxStat.Data
             else
                 this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
-            if (parameters.testItem != null)
-            {
 
-                this.testItem = JsonConvert.DeserializeObject<JsonStat>(parameters.testItem.ToString(), Converter.Settings);
-
-            }
         }
     }
 
@@ -4482,6 +4576,8 @@ namespace PxStat.Data
         public int Id { get; set; }
 
         public long SortId { get; internal set; }
+
+        public bool EliminationFlag { get; internal set; }
 
 
         public VariableRecordDTO_Create() { }

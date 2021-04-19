@@ -23,6 +23,11 @@ namespace PxStat.System.Navigation
         public string LngIsoCode { get; set; }
 
         /// <summary>
+        /// Theme Code
+        /// </summary>
+        public int ThmCode { get; set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parameters"></param>
@@ -38,6 +43,8 @@ namespace PxStat.System.Navigation
                 this.LngIsoCode = parameters.LngIsoCode;
             else
                 this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            if (parameters.ThmCode != null)
+                this.ThmCode = parameters.ThmCode;
 
         }
         /// <summary>

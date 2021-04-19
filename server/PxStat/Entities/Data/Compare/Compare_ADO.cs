@@ -43,5 +43,27 @@ namespace PxStat.Data
             return 0;
         }
 
+        /// <summary>
+        /// Read the previous release if the user has rights
+        /// </summary>
+        /// <param name="releaseCode"></param>
+        /// <returns></returns>
+        internal int ReadPreviousReleaseForUser(int releaseCode, string ccnUsername)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@RlsCode", value = releaseCode },
+                new ADO_inputParams { name = "@CcnUsername", value = ccnUsername }
+            };
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_ReadPreviousForUser", inputParams);
+
+            if (reader.hasData)
+            {
+                return reader.data[0].RlsCode;
+            }
+
+            return 0;
+        }
+
     }
 }

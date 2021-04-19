@@ -338,53 +338,65 @@ namespace PxStat.Data
         [Analytic]
         public static dynamic ReadDataset(RESTful_API restfulRequest)
         {
-
-            //A pre-validation. If a validation problem is found then an output containing the error will be created and returned immediately
-            var vldOutput = ValidateRest<Cube_VLD_REST_ReadDataset>(restfulRequest, new Cube_VLD_REST_ReadDataset());
-            if (vldOutput != null) return vldOutput;
-
-            //Map the RESTful request to an equivalent Json Rpc request
-            JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
-
-            //Map the parameters - this is specific to the function
-            Cube_MAP map = new Cube_MAP();
-            //jsonRpcRequest.parameters = map.ReadDataset_MapParameters(jsonRpcRequest.parameters);
-
-            JsonStatQuery jq = map.ReadMetadata_MapParametersToQuery(restfulRequest.parameters);
-
-            jq.Extension["codes"] = true;
-
-            jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jq);
-
-
-            //Run the request as a Json Rpc call
-            JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;
-
-            if (rsp.error != null)
+            try
             {
+                //A pre-validation. If a validation problem is found then an output containing the error will be created and returned immediately
+                var vldOutput = ValidateRest<Cube_VLD_REST_ReadDataset>(restfulRequest, new Cube_VLD_REST_ReadDataset());
+                if (vldOutput != null) return vldOutput;
 
-                return Map.JSONRPC2RESTful_Output(rsp, null, HttpStatusCode.Forbidden);
+                //Map the RESTful request to an equivalent Json Rpc request
+                JSONRPC_API jsonRpcRequest = Map.RESTful2JSONRPC_API(restfulRequest);
+
+                //Map the parameters - this is specific to the function
+                Cube_MAP map = new Cube_MAP();
+                //jsonRpcRequest.parameters = map.ReadDataset_MapParameters(jsonRpcRequest.parameters);
+
+                JsonStatQuery jq = map.ReadMetadata_MapParametersToQuery(restfulRequest.parameters);
+
+                jq.Extension["codes"] = true;
+
+                jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jq);
+
+
+                //Run the request as a Json Rpc call
+                JSONRPC_Output rsp = new Cube_BSO_ReadDataset(jsonRpcRequest).Read().Response;
+
+                if (rsp.error != null)
+                {
+                    return Map.JSONRPC2RESTful_Output(rsp, null, HttpStatusCode.BadRequest);
+                }
+
+                Format_DTO_Read format = new Format_DTO_Read() { FrmType = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_TYPE], FrmVersion = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_VERSION] };
+
+                string mtype = null;
+                using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+                {
+                    mtype = fbso.GetMimetypeForFormat(format);
+                };
+                //Convert the JsonRpc output to RESTful output
+                var response = Map.JSONRPC2RESTful_Output(rsp, mtype, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.NoContent);
+
+                string suffix;
+                using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
+                {
+                    suffix = bso.GetFileSuffixForFormat(format);
+                };
+
+
+                response.fileName = restfulRequest.parameters[Constants.C_DATA_RESTFUL_MATRIX] + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + suffix;
+                return response;
             }
+            catch (Exception ex)
 
-            Format_DTO_Read format = new Format_DTO_Read() { FrmType = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_TYPE], FrmVersion = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_VERSION] };
-
-            string mtype = null;
-            using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
             {
-                mtype = fbso.GetMimetypeForFormat(format);
-            };
-            //Convert the JsonRpc output to RESTful output
-            var response = Map.JSONRPC2RESTful_Output(rsp, mtype, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.NoContent);
+                RESTful_Output error = new RESTful_Output
+                {
+                    statusCode = HttpStatusCode.InternalServerError
+                };
 
-            string suffix;
-            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
-            {
-                suffix = bso.GetFileSuffixForFormat(format);
-            };
-
-
-            response.fileName = restfulRequest.parameters[Constants.C_DATA_RESTFUL_MATRIX] + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + suffix;
-            return response;
+                Log.Instance.Debug(ex.Message);
+                return error;
+            }
 
 
         }
@@ -479,7 +491,7 @@ namespace PxStat.Data
         /// <returns></returns>
         public static dynamic ReadCollection(JSONRPC_API jsonrpcRequest)
         {
-            return new Cube_BSO_ReadCollection(jsonrpcRequest, false).Read().Response;
+            return new Cube_BSO_ReadCollection(jsonrpcRequest, true).Read().Response;
         }
 
         public static dynamic ReadMetaCollection(JSONRPC_API jsonrpcRequest)
@@ -506,7 +518,7 @@ namespace PxStat.Data
             jsonRpcRequest.parameters = map.ReadCollection_MapParameters(jsonRpcRequest.parameters);
 
             //Run the request as a Json Rpc call
-            JSONRPC_Output rsp = new Cube_BSO_ReadCollection(jsonRpcRequest, false).Read().Response;
+            JSONRPC_Output rsp = new Cube_BSO_ReadCollection(jsonRpcRequest, true).Read().Response;
 
             string mimeType;
             using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))

@@ -40,7 +40,7 @@ namespace PxStat.Data
                 return true;
             }
 
-            int previousReleaseId = new Compare_ADO(Ado).ReadPreviousRelease(DTO.RlsCode);
+            int previousReleaseId = new Compare_ADO(Ado).ReadPreviousReleaseForUser(DTO.RlsCode, SamAccountName);
             if (previousReleaseId == 0)
             {
                 Response.data = null;

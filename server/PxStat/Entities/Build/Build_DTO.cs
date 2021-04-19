@@ -1,4 +1,5 @@
 ﻿using API;
+using Newtonsoft.Json;
 using PxStat.Data;
 using PxStat.Security;
 using PxStat.System.Settings;
@@ -73,6 +74,8 @@ namespace PxStat.Build
 
         internal Format_DTO_Read Format { get; set; }
 
+        internal Dictionary<string, string> Elimination { get; set; }
+
 
         /// <summary>
         /// 
@@ -109,6 +112,10 @@ namespace PxStat.Build
                 };
             }
 
+            if (parameters.Elimination != null)
+            {
+                Elimination = JsonConvert.DeserializeObject<Dictionary<string, string>>(parameters.Elimination.ToString());
+            }
 
 
             if (parameters.Dimension != null)
@@ -481,6 +488,8 @@ namespace PxStat.Build
 
         public bool Labels { get; set; }
 
+        public Dictionary<string, string> Elimination { get; set; }
+
         internal Signature_DTO GetSignatureDTO()
         {
             return new Signature_DTO
@@ -542,6 +551,12 @@ namespace PxStat.Build
                 this.Labels = parameters.Labels;
             else
                 this.Labels = true;
+
+
+            if (parameters.Elimination != null)
+            {
+                Elimination = JsonConvert.DeserializeObject<Dictionary<string, string>>(parameters.Elimination.ToString());
+            }
 
             if (parameters.Dimension != null)
             {

@@ -42,7 +42,9 @@ namespace PxStat.Data
             dtoRight.LngIsoCode = DTO.LngIsoCode;
 
 
-            dtoLeft.RlsCode = new Compare_ADO(Ado).ReadPreviousRelease(DTO.RlsCode);
+            dtoLeft.RlsCode = new Compare_ADO(Ado).ReadPreviousReleaseForUser(DTO.RlsCode, SamAccountName);
+            if (dtoLeft.RlsCode == 0) return false;
+
             dtoLeft.LngIsoCode = DTO.LngIsoCode;
 
             var jsonStat = bso.CompareAddDelete(Ado, dtoRight, dtoLeft).GetJsonStatObject(true);

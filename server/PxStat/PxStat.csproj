@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.4.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.4.0\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.4.1\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="ClosedXML, Version=0.95.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ClosedXML.0.95.4\lib\net46\ClosedXML.dll</HintPath>
@@ -416,6 +416,17 @@
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ResourceFactory.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_API.cs" />
     <Compile Include="Entities\System\Navigation\Navigation\BSO\Navigation_BSO.cs" />
+    <Compile Include="Entities\System\Navigation\ThemeLanguage\ThemeLanguage_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\ThemeLanguage\ThemeLanguage_BSO.cs" />
+    <Compile Include="Entities\System\Navigation\ThemeLanguage\ThemeLanguage_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\BSO\Theme_BSO_Create.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\BSO\Theme_BSO_Delete.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\BSO\Theme_BSO_Read.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\BSO\Theme_BSO_Update.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\Theme_ADO.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\Theme_API.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\Theme_DTO.cs" />
+    <Compile Include="Entities\System\Navigation\Theme\Theme_VLD.cs" />
     <Compile Include="Entities\System\Notification\Email\BSO\Email_BSO.cs" />
     <Compile Include="Entities\System\Settings\Format\BSO\Format_BSO.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workdflow_BSO_ReadPendingLive.cs" />

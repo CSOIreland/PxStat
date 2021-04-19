@@ -345,13 +345,14 @@ namespace PxStat.Data
             variablesTable.Columns.Add("VRB_CODE");
             variablesTable.Columns.Add("VRB_VALUE");
             variablesTable.Columns.Add("VRB_CLS_ID");
+            variablesTable.Columns.Add("VRB_ELIMINATION_FLAG");
 
             foreach (var classification in classifications)
             {
                 classification.ClassificationId = matrixAdo.CreateClassificationRecord(classification, matrixId);
                 foreach (var v in classification.Variable)
                 {
-                    variablesTable.Rows.Add(new Object[] { v.Code, v.Value, classification.ClassificationId });
+                    variablesTable.Rows.Add(new Object[] { v.Code, v.Value, classification.ClassificationId, v.EliminationFlag });
                 }
             }
             matrixAdo.CreateVariableRecordBulk(variablesTable);

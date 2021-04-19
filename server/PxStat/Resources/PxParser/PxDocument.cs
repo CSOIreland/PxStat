@@ -324,6 +324,21 @@ namespace PxParser.Resources.Parser
             return r;
         }
 
+
+        public IList<KeyValuePair<string, IPxSingleElement>> GetManySingleValuesWithSubkeysOnlyIfLanguageMatches(string identifier, string language = null)
+        {
+            IList<KeyValuePair<string, IPxSingleElement>> r = new List<KeyValuePair<string, IPxSingleElement>>();
+
+            foreach (var k in GetAllKeywordElementsThatMatchTheIdentifierOptionally(this, identifier, language))
+            {
+
+                var kv = new KeyValuePair<string, IPxSingleElement>(k.Key.SubKey.Name, (IPxSingleElement)k.Element);
+                r.Add(kv);
+            }
+            return r;
+        }
+
+
         public IList<KeyValuePair<string, IList<IPxSingleElement>>> GetMultiValuesWithSubkeysOnlyIfLanguageIsEmpty(string identifier)
         {
             IList<KeyValuePair<string, IList<IPxSingleElement>>> r = new List<KeyValuePair<string, IList<IPxSingleElement>>>();
@@ -442,6 +457,18 @@ namespace PxParser.Resources.Parser
             if (!keys.Any())
             {
                 throw new Exception(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
+            }
+            return keys;
+        }
+
+        protected IEnumerable<IPxKeywordElement> GetAllKeywordElementsThatMatchTheIdentifierOptionally(PxDocument pxDoc, string keywordIdentifier, string language = null)
+        {
+            var keys = pxDoc.Keywords.Where(k => k.Key.Identifier == keywordIdentifier && ((String.IsNullOrEmpty(language) && String.IsNullOrEmpty(k.Key.Language)) || k.Key.Language == language));
+
+
+            if (!keys.Any())
+            {
+                return new List<PxKeywordElement>();
             }
             return keys;
         }

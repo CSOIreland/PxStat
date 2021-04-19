@@ -86,8 +86,13 @@ namespace PxStat.Resources
         internal string GetXlsx(Matrix theMatrix, string lngIsoCode = null, CultureInfo ci = null, string pivot = null, bool viewCodes = true)
         {
 
+
             Specification spec = theMatrix.GetSpecFromLanguage(lngIsoCode);
-            if (spec == null) spec = theMatrix.MainSpec;
+            if (spec == null)
+            {
+                spec = theMatrix.MainSpec;
+                lngIsoCode = spec.Language;
+            }
 
             XlsxClosedXL xcl = new XlsxClosedXL();
 
@@ -112,7 +117,7 @@ namespace PxStat.Resources
 
 
 
-            documentStream = xcl.InsertTableAndPivotSheet(theMatrix.GetMatrixDataTable(null, false, 1, viewCodes), Label.Get("xlsx.pivoted", lngIsoCode), pivot, Label.Get("xlsx.unpivoted", lngIsoCode), Label.Get("xlsx.value", lngIsoCode), Label.Get("xlsx.unit", lngIsoCode), spec);
+            documentStream = xcl.InsertTableAndPivotSheet(theMatrix.GetMatrixDataTable(lngIsoCode, false, 1, viewCodes), Label.Get("xlsx.pivoted", lngIsoCode), pivot, Label.Get("xlsx.unpivoted", lngIsoCode), Label.Get("xlsx.value", lngIsoCode), Label.Get("xlsx.unit", lngIsoCode), spec);
 
             //Test option...get a local version of the xlsx file
             //SaveToFile(@"C:\nok\Schemas\" + theMatrix.Code + ".xlsx", documentStream);

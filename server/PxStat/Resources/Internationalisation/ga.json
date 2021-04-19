@@ -26,7 +26,10 @@
 
     },
     "account": {
-      "locked": "Account is locked"
+      "locked": "Tá an cuntas faoi ghlas"
+    },
+    "dataset": {
+      "limit": "Tá tú ag iarraidh {0} cealla sonraí a íoslódáil i bhformáid {1}. Sáraíonn sé seo an t-uasmhéid de {2} cealla sonraí is féidir leat a íoslódáil i bhformáid {1}."
     }
   },
 

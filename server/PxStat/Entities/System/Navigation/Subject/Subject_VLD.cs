@@ -14,6 +14,8 @@ namespace PxStat.System.Navigation
             RuleFor(x => x.SbjValue).NotEmpty();
             //Optional - LngIsoCode
             RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode));
+            //Mandatory - ThmCode
+            RuleFor(x => x.ThmCode).NotEmpty();
         }
     }
 
@@ -30,6 +32,8 @@ namespace PxStat.System.Navigation
             RuleFor(x => x.SbjValue).NotEmpty();
             //Optional for API users but this field will be populated by the DTO in all cases - LngIsoCode
             RuleFor(f => f.LngIsoCode.Length).Equal(2).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
+            //Mandatory - ThmCode
+            RuleFor(x => x.ThmCode).NotEmpty();
         }
     }
 

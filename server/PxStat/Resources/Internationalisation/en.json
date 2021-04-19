@@ -26,6 +26,9 @@
     },
     "account": {
       "locked": "Account is locked"
+    },
+    "dataset": {
+      "limit": "You are attempting to download {0} data cells in {1}. This exceeds the maximum of {2} data cells you can download in {1}."
     }
   },
   "authentication": {

@@ -1351,7 +1351,8 @@ namespace PxStat.Build
             {
                 Periods.AddRange(DTO.Dimension.Where(x => x.LngIsoCode == DTO.LngIsoCode).FirstOrDefault().Frequency.Period.Except(theSpec.Frequency.Period));
             }
-
+            //New rule for 3.6.0 - Periods are sorted by period code #350
+            Periods = Periods.OrderBy(x => x.Code).ToList<PeriodRecordDTO_Create>();
             int counter = 1;
             foreach (var period in Periods)
             {
