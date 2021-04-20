@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "3.6.0";
+const C_APP_VERSION = "3.6.1";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -19,8 +19,8 @@ const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/
 const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.1/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.1/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.2/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.2/snippet.html";
 
 // Public API
 const C_APP_API_JSONRPC_VERSION = "2.0";
