@@ -93,3 +93,4 @@ BEGIN
 
 	RETURN @@identity;
 END
+GO

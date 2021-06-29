@@ -2,7 +2,7 @@
 -- Author:		Neil O'Keeffe
 -- Create date: 21/01/2019
 -- Description:	Reads a summary of analytic data
--- exec Security_Analytic_Read '2020-09-20T12:00:00','2020-12-02T12:00:00', 1, "1",""
+-- exec Security_Analytic_Read '2021-03-20T12:00:00','2021-12-02T12:00:00', 1, "1",""
 -- =============================================
 CREATE
 	OR
@@ -51,7 +51,6 @@ BEGIN
 		INNER JOIN TD_RELEASE
 			ON RLS_ID = MTR_RLS_ID
 				AND TD_RELEASE.RLS_DELETE_FLAG = 0
- 
 		LEFT JOIN TD_PRODUCT
 			ON RLS_PRC_ID = PRC_ID
 				AND PRC_DELETE_FLAG = 0
