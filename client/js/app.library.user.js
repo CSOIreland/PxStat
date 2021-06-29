@@ -75,6 +75,9 @@ app.library.user.modal.callback.displayUser = function (data) {
   }
   else {
     $("#modal-read-user").find("[name=reset-1fa-row]").hide();
+    if (!app.config.security.adOpenAccess) {
+      $("#modal-read-user").find("[name=reset-2fa-row]").hide();
+    }
   }
   $("#modal-read-user").find("[name=ccn-username]").text(data.CcnUsername || "");
   $("#modal-read-user").find("[name=ccn-name]").text(data.CcnDisplayName || "");

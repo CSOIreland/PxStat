@@ -291,7 +291,7 @@ app.data.callback.drawCollectionApiDetails = function () {
 
     $("#data-dataset-collection-api-jsonrpc-get-url").empty().text(encodeURI(app.config.url.api.jsonrpc.public + C_APP_API_GET_PARAMATER_IDENTIFIER + query)).fadeIn();
 
-    $("#data-dataset-collection-api-restful-url").hide().text(C_APP_API_RESTFUL_READ_COLLECTION_URL.sprintf([app.config.url.restful, app.data.collection.params.datefrom, app.data.LngIsoCode])).fadeIn();
+    $("#data-dataset-collection-api-restful-url").hide().text(C_APP_API_RESTFUL_READ_COLLECTION_URL.sprintf([app.config.url.api.restful + "/", app.data.collection.params.datefrom, app.data.LngIsoCode])).fadeIn();
 
     // Refresh the Prism highlight
     Prism.highlightAll();

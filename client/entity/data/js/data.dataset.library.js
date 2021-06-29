@@ -409,7 +409,7 @@ app.data.dataset.callback.format = function (data) {
                     "frm-version": format.FrmVersion
                 });
 
-            formatLink.attr("href", C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.restful,
+            formatLink.attr("href", C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.api.restful + "/",
             encodeURI(app.data.MtrCode),
             format.FrmType,
             format.FrmVersion,

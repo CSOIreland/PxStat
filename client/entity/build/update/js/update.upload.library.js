@@ -658,7 +658,6 @@ app.build.update.upload.drawProperties = function () {
             "MtrTitle": null,
             "MtrNote": null,
             "StatisticLabel": null,
-            "Classification": [],
             "Frequency": {
                 "FrqValue": null,
                 "Period": []
@@ -672,6 +671,15 @@ app.build.update.upload.drawProperties = function () {
 
             //set elimination - must do deep copy in case user resets so we know what original elimination was
             app.build.update.data.Elimination = $.extend(true, {}, jsonStat.extension.elimination);
+
+            //set map
+            //Loop through classifications
+            $.each(jsonStat.Dimension(), function (index, value) {
+                if (value.role != "time" && value.role != "metric") {
+                    app.build.update.data.Map[jsonStat.id[index]] = value.role == "geo" ? value.link.enclosure[0].href : null;
+                }
+            });
+
             //set frequency code to value from px file
             $("#build-update-properties [name=frequency-code] > option").each(function () {
                 if (this.value == jsonStat.role.time[0]) {
@@ -756,6 +764,7 @@ app.build.update.upload.drawProperties = function () {
 
         //set content of tab from JSON-stat
         var statisticsData = [];
+        var classificationData = [];
         var periodsDataExisting = [];
         $("#build-update-dimension-nav-collapse-properties-" + lngIsoCode + " [name=title-value]").val(jsonStat.label);
         for (i = 0; i < jsonStat.length; i++) {
@@ -790,33 +799,24 @@ app.build.update.upload.drawProperties = function () {
                 });
             }
             if (jsonStat.Dimension(i).role == "classification" || jsonStat.Dimension(i).role == "geo") {
-                var mapUrl = null;
-                if (jsonStat.Dimension(i).link) {
-                    mapUrl = jsonStat.Dimension(i).link.enclosure[0].href;
-                }
                 //classification datatable object read from app.build.update.data as we might be updating this object
-                $.each(app.build.update.data.Dimension, function (dimensionIndex, value) {
-                    if (value.LngIsoCode == lngIsoCode) {
-                        var classification = {
-                            "ClsCode": jsonStat.id[i],
-                            "ClsValue": jsonStat.Dimension(i).label,
-                            "ClsGeoUrl": mapUrl,
-                            "Variable": []
-                        };
 
+                var classification = {
+                    "ClsCode": jsonStat.id[i],
+                    "ClsValue": jsonStat.Dimension(i).label,
+                    "Variable": []
+                };
 
-                        $.each(jsonStat.Dimension(i).id, function (index, value) {
-                            classification.Variable.push(
-                                {
-                                    "VrbCode": value,
-                                    "VrbValue": jsonStat.Dimension(i).Category(index).label
-                                }
-                            );
-                        });
-
-                        this.Classification.push(classification);
-                    }
+                $.each(jsonStat.Dimension(i).id, function (index, value) {
+                    classification.Variable.push(
+                        {
+                            "VrbCode": value,
+                            "VrbValue": jsonStat.Dimension(i).Category(index).label
+                        }
+                    );
                 });
+
+                classificationData.push(classification);
             }
         };
 
@@ -825,7 +825,7 @@ app.build.update.upload.drawProperties = function () {
 
         //draw dimension datatables
         app.build.update.dimension.drawStatistic(lngIsoCode, statisticsData);
-        app.build.update.dimension.drawClassification(lngIsoCode);
+        app.build.update.dimension.drawClassification(lngIsoCode, classificationData);
         app.build.update.dimension.drawExistingPeriod(lngIsoCode, periodsDataExisting);
         app.build.update.dimension.drawNewPeriod(lngIsoCode);
 
@@ -891,7 +891,7 @@ app.build.update.upload.drawProperties = function () {
     });
 
     app.build.update.dimension.drawElimination();
-
+    app.build.update.dimension.drawMapTable(true);
     //if any matrix properties change trigger submit button to run validation
     $("#build-update-properties [name=mtr-value],#build-update-properties [name=frequency-code], #build-update-properties [name=copyright-code]").once('change', function () {
         $("#build-update-properties").find("[type=submit]").trigger("click");

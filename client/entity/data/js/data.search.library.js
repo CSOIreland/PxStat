@@ -224,9 +224,9 @@ app.data.searchResult.callback.readResults = function (data, params) {
         }
         else {
             searchResultsSort.find("option[value=" + C_APP_SORT_RELEVANCE + "]").prop("selected", true);
-            if (app.data.searchResult.result.length >= app.config.search.maximum) {
+            if (app.data.searchResult.result.length >= app.config.search.maximumResults) {
                 //results truncated by server due to broad search term
-                $("#data-search-row-desktop [name=search-results]").find("[name=refine-search]").show().html(app.library.html.parseDynamicLabel("refine-search", [app.config.search.maximum - results]));
+                $("#data-search-row-desktop [name=search-results]").find("[name=refine-search]").show().html(app.library.html.parseDynamicLabel("refine-search", [app.config.search.maximumResults - results]));
             }
         }
         var productShare = $("#data-search-result-templates").find("[name=share]").clone();

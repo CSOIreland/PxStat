@@ -1,0 +1,51 @@
+/*******************************************************************************
+Custom CSS application specific
+*******************************************************************************/
+
+.map-preview-popup {
+    font-size: 15px;
+}
+
+.map-preview-container {
+    height: 70vh;
+}
+
+/*If the device window is 575px or smaller*/
+
+@media (max-width: 575px) {
+    .map-preview-container {
+        height: 80vh;
+    }
+}
+
+/* Small devices (landscape phones, 576px and up)*/
+
+@media (min-width: 576px) {
+    .map-preview-container {
+        height: 80vh;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+
+@media (min-width: 768px) {
+    .map-preview-container {
+        height: 80vh;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+
+@media (min-width: 992px) {
+    .map-preview-container {
+        height: 60vh;
+    }
+}
+
+/* Extra Large devices (large desktops, 1200px and up) */
+
+@media (min-width: 1200px) {
+    .map-preview-container {
+        height: 70vh;
+    }
+}

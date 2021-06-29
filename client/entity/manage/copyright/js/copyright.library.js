@@ -199,11 +199,15 @@ app.copyright.drawDatatable = function (data) {
           sorting: false,
           searchable: false,
           render: function (data, type, row) {
-            return app.library.html.deleteButton({ idn: row.CprCode }, false);
+            if (row.MtrCount > 0) {
+              return app.library.html.deleteButton({ idn: row.CprCode }, true);
+            }
+            else {
+              return app.library.html.deleteButton({ idn: row.CprCode }, false);
+            }
           },
           "width": "1%"
-        }
-      ],
+        }],
       drawCallback: function (settings) {
         app.copyright.drawCallback();
       },

@@ -29,7 +29,9 @@ app.build.update.data = {
     "MtrOfficialFlag": null,
     "CprCode": null,
     "Dimension": [],
-    "Data": []
+    "Data": [],
+    "Elimination": {},
+    "Map": {}
 };
 //#endregion
 
@@ -259,35 +261,6 @@ app.build.update.cancelUpoadPeriod = function () {
 app.build.update.resetUpoadPeriod = function () {
     $("#build-update-upload-periods-file").val("");
     app.build.update.cancelUpoadPeriod();
-};
-
-/**
- * 
- */
-app.build.update.updateClassification = function () {
-    //Get updated classification details
-    var clsCode = $("#build-update-edit-classification [name=cls-code]").text();
-    var lngIsoCode = $("#build-update-edit-classification [name=update-classification]").attr("lng-iso-code");
-    var clsGeoUrl = $("#build-update-edit-classification [name=cls-geo-url]").val();
-
-    $.each(app.build.update.data.Dimension, function (index, dimension) {
-        if (lngIsoCode == dimension.LngIsoCode) {
-            $.each(dimension.Classification, function (index, classification) {
-                if (classification.ClsCode == clsCode) {
-                    if (clsGeoUrl) {
-                        classification.ClsGeoUrl = clsGeoUrl;
-                    }
-                    else {
-                        classification.ClsGeoUrl = null;
-                    }
-                }
-            });
-        }
-    });
-    //redraw classifications
-    app.build.update.dimension.drawClassification(lngIsoCode);
-    $("#build-update-edit-classification").modal("hide");
-
 };
 
 /**
@@ -591,7 +564,13 @@ app.build.update.updateOutput = function () {
         if (!app.build.update.isPeriodsDimensionsValid()) {
             validationErrors.push(app.label.static["build-update-period-error"]);
         }
-    }
+    };
+
+    if (!validationErrors.length) {
+        if (!app.build.update.dimension.mapsValid) {
+            validationErrors.push(app.label.static["build-update-map-error"]);
+        }
+    };
 
     if (!validationErrors.length) {
         var numCells = 1;
@@ -739,13 +718,6 @@ app.build.update.isPeriodsDimensionsValid = function () {
 app.build.update.ajax.updateOutput = function () {
     //clone data object to tidy up before sending to server
     var params = $.extend(true, {}, app.build.update.data);
-    //remove ClsValue and classification variables before sending to API 
-    $(params.Dimension).each(function (index, dimension) {
-        $(dimension.Classification).each(function (index, classification) {
-            delete classification.ClsValue;
-            delete classification.Variable;
-        });
-    });
 
     //remove data properties not need by api, value columns may be included in data csv template
     var dimensionCodes = [];
@@ -950,32 +922,6 @@ app.build.update.validate.dimensionProperty = function (LngIsoCode) {
         submitHandler: function (form) {
             $(form).sanitiseForm();
             app.build.update.validate.isDimensionPropertyValid = true;
-        }
-    }).resetForm();
-};
-
-/**
- *Validation for edit classification
- *
- */
-app.build.update.validate.classification = function () {
-    $("#build-update-edit-classification").find("form").trigger("reset").validate({
-        rules: {
-            "cls-geo-url": {
-                url: true,
-                normalizer: function (value) {
-                    value = value.sanitise(null, C_APP_REGEX_NODOUBLEQUOTE, true);
-                    $(this).val(value);
-                    return value;
-                }
-            }
-        },
-        errorPlacement: function (error, element) {
-            $("#build-update-edit-classification").find('[name=' + element[0].name + '-error-holder]').append(error[0]);
-        },
-        submitHandler: function (form) {
-            $(form).sanitiseForm();
-            app.build.update.updateClassification();
         }
     }).resetForm();
 };

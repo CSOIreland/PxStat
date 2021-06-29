@@ -16,11 +16,8 @@ app.build.create.initiate.data = {
     "FrmType": null,
     "FrmVersion": null,
     "Dimension": [],
-    "Elimination": {
-        "c01464564654": null,
-        "c01464564456": "v0124",
-        "c014645446": null
-    }
+    "Elimination": {},
+    "Map": {}
 };
 
 //#region Matrix Lookup
@@ -298,9 +295,6 @@ app.build.create.initiate.setUpDimensions = function () {
                 if (data.extension.language.code == item.value) {
                     importedSource = data;
                 };
-                if (data.extension.language.code == app.config.language.iso.code) {
-                    app.build.create.initiate.data.Elimination = data.extension.elimination;
-                }
             });
 
             //we have imported data for this language
@@ -353,7 +347,6 @@ app.build.create.initiate.setUpDimensions = function () {
                         var classification = {
                             "ClsCode": importedSource.id[i],
                             "ClsValue": importedSource.Dimension(i).label,
-                            "ClsGeoUrl": null,
                             "Variable": []
                         };
 
@@ -366,10 +359,6 @@ app.build.create.initiate.setUpDimensions = function () {
                                 }
                             );
                         });
-                        //add geo url if it exists
-                        if (importedSource.Dimension(i).link) {
-                            classification.ClsGeoUrl = importedSource.Dimension(i).link.enclosure[0].href;
-                        };
 
                         //put this statistic in the correct dimension
                         $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
@@ -379,6 +368,19 @@ app.build.create.initiate.setUpDimensions = function () {
 
                         });
 
+                    }
+
+                    if (importedSource.extension.language.code == app.config.language.iso.code) {
+                        //set elimination
+                        app.build.create.initiate.data.Elimination = importedSource.extension.elimination;
+
+                        //set map
+                        //Loop through classifications
+                        $.each(importedSource.Dimension(), function (index, value) {
+                            if (value.role != "time" && value.role != "metric") {
+                                app.build.create.initiate.data.Map[importedSource.id[index]] = value.role == "geo" ? value.link.enclosure[0].href : null;
+                            }
+                        });
                     }
                 };
 
@@ -434,6 +436,7 @@ app.build.create.initiate.validation.setup = function () {
             app.build.create.initiate.data.MtrOfficialFlag = $("#build-create-initiate-setup").find("[name=official-flag]").prop('checked');
             app.build.create.initiate.setUpDimensions();
             app.build.create.dimension.drawElimination();
+            app.build.create.dimension.drawMapTable(true);
             //disable build dimension button to avoid duplicate dimensions
             $("#build-create-initiate-setup").find("[name=button-generate]").prop("disabled", true);
         }

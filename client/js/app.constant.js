@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "3.6.1";
+const C_APP_VERSION = "3.7.0";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -19,8 +19,8 @@ const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/
 const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.2/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.0.2/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.1.0/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.1.0/snippet.html";
 
 // Public API
 const C_APP_API_JSONRPC_VERSION = "2.0";
@@ -127,6 +127,10 @@ const C_APP_DATATABLE_EXTRA_INFO_LINK = "extra-info-link";
 const C_APP_UPLOAD_FILE_ALLOWED_EXTENSION = ['.px'];
 const C_APP_UPLOAD_FILE_ALLOWED_TYPE = ['', 'text/x-pcaxis', 'text/plain']; // PX file HAS NOT (yet) a registered MIME Type
 
+//Importing maps
+const C_APP_UPLOAD_MAP_FILE_ALLOWED_EXTENSION = ['.json', '.geojson'];
+const C_APP_UPLOAD_MAP_FILE_ALLOWED_TYPE = ['', 'application/json', 'text/plain']; // PX file HAS NOT (yet) a registered MIME Type
+
 //Create Metadata
 const C_APP_CREATE_FILE_ALLOWED_EXTENSION = ['.csv'];
 const C_APP_CREATE_FILE_ALLOWED_TYPE = ['', 'text/csv', 'text/plain', "application/vnd.ms-excel"];
@@ -181,3 +185,6 @@ const C_APP_PXWIDGET_CHART_TYPES = ["line", "bar", "horizontalBar", "pie", "doug
 const C_APP_PXWIDGET_CHART_TYPES_MIXED = ["line", "bar"];
 const C_APP_PXWIDGET_CHART_TYPES_DUAL_POSITION = ["y-axis-1", "y-axis-2"];
 const C_APP_PXWIDGET_CHART_LEGEND_POSITION = ["top", "left", "bottom", "right"];
+
+//GeoJSON
+C_APP_GEOJSON_PROPERTIES_UNIQUE_IDENTIFIER = "code";

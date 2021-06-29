@@ -160,6 +160,12 @@ $(document).ready(function () {
     "#nav-link-manage"
   );
   api.content.navigate(
+    "#nav-link-map",
+    "entity/system/geomap/",
+    "#nav-link-map",
+    "#nav-link-system"
+  );
+  api.content.navigate(
     "#nav-link-keyword-release",
     "entity/keyword/release/",
     "#nav-link-keyword-release",

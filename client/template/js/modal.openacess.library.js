@@ -226,6 +226,11 @@ app.openAccess.modal.login = function () {
     app.openAccess.validation.login();
     $("#modal-open-access-user-login").find("[name=login]").show();
     $("#modal-open-access-user-login").find("[name=verify]").hide();
+    if (!app.config.security.adOpenAccess) {
+        $("#modal-open-access-user-login").find("[name=ad-user-disabled]").show().html(
+            app.library.html.parseDynamicLabel("open-access-ad-user-disabled", [app.config.organisation])
+        );
+    }
     //set timeout to close modal as per session config
     $("#modal-open-access-user-login").modal("show").on('hide.bs.modal', function (e) {
         $("#modal-open-access-user-login [name=login] form").trigger("reset");

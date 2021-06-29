@@ -14,24 +14,59 @@
 
             </div>
 
-            <div class="card mt-4">
-                <div class="card-header"><span label="elimination"></span> <i name="elimination-popover" class="fas fa-info-circle" data-toggle="popover" data-placement="left" tabindex="0" data-trigger="hover"></i></div>
-                <div class="card-body">
-                    <table name="classification-elimination-variables" class="table table-striped hover" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th label="classification-code"></th>
-                                <th label="classification-value"></th>
-                                <th label="elimination-code"></th>
-                                <th label="elimination-value"></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                    </table>
+            <div class="accordion mt-4" id="build-create-elimination-map">
+                <div class="card">
+                    <div class="card-header" id="build-create-elimination-map-heading-one">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#build-create-elimination-map-collapse-elimination" aria-expanded="true" aria-controls="build-create-elimination-map-collapse-elimination">
+                                <span label="elimination"></span> <i name="elimination-popover" class="fas fa-info-circle" data-toggle="popover" data-placement="right" tabindex="0" data-trigger="hover"></i>
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="build-create-elimination-map-collapse-elimination" class="collapse show pb-2" aria-labelledby="build-create-elimination-map-heading-one" data-parent="#build-create-elimination-map">
+                        <div class="card-body">
+
+                            <table name="classification-elimination-variables" class="table table-striped hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th label="classification-code"></th>
+                                        <th label="classification-value"></th>
+                                        <th label="elimination-code"></th>
+                                        <th label="elimination-value"></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="build-create-elimination-map-heading-two">
+                        <h2 class="mb-0">
+                            <button name="map-accordion-button" class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#build-create-elimination-map-collapse-map" aria-expanded="false" aria-controls="build-create-elimination-map-collapse-map">
+                                <span label="map"></span> <i name="map-popover" class="fas fa-info-circle" data-toggle="popover" data-placement="right" tabindex="0" data-trigger="hover"></i>
+                                <i name="warning-icon" data-toggle="tooltip" class="fas fa-exclamation-triangle text-danger" style="display: none;"></i>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="build-create-elimination-map-collapse-map" class="collapse pb-2" aria-labelledby="build-create-elimination-map-heading-two" data-parent="#build-create-elimination-map">
+                        <div class="card-body">
+                            <table name="classification-map" class="table table-striped hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th label="classification-code"></th>
+                                        <th label="classification-value"></th>
+                                        <th label="map"></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
         </div>
         <div class="card-footer text-right">
             <button class="btn btn-neutral text-dark" name="reset-dimensions" type="button">
@@ -176,7 +211,6 @@
                                             <tr>
                                                 <th label="code"></th>
                                                 <th label="value"></th>
-                                                <th label="geojson-url"></th>
                                                 <th label="variables-no"></th>
                                                 <th></th>
                                             </tr>

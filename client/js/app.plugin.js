@@ -206,17 +206,6 @@ app.plugin.sharethis.load = function (drawShareThis) {
 };
 
 /*******************************************************************************
-Application - Plugin - JQuery extensions
-*******************************************************************************/
-
-//Unbind all events prior to binding a new event using .on
-(function ($) {
-  $.fn.once = function () {
-    return this.off(arguments[0]).on(arguments[0], arguments[1]);
-  };
-})(jQuery);
-
-/*******************************************************************************
 Application - Plugin - Datatable
 *******************************************************************************/
 
@@ -460,6 +449,7 @@ app.plugin.tinyMce.initiate = function (stripDoubleQuotes) {
     forced_root_block: false,
 
     selector: 'textarea',
+    min_height: 100,
     paste_as_text: true,
     menubar: false,
     plugins: 'bbcode autolink link paste',

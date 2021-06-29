@@ -596,6 +596,9 @@ app.user.modal.update = function (userRecord) {
   }
   else {
     $("#user-modal-update").find("[name=update-1fa-row").hide();
+    if (!app.config.security.adOpenAccess) {
+      $("#user-modal-update").find("[name=update-2fa-row").hide();
+    }
   }
 
   //Flush the modal. Do not delete required for Member search functionality (select2)

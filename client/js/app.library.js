@@ -11,7 +11,6 @@ app.library.html.link = {};
 app.library.bootstrap = {};
 
 //#region DataTable
-
 /**
  * Re-draw an existing DataTable with (new) data
  * @param {*} selector
@@ -663,4 +662,13 @@ app.library.utility.isIE = function () {
     return true;
   }
 };
+
+/** 
+ * Simulate an async sleep. 
+ * The parent outer function must be async
+ * **/
+app.library.utility.sleep = function (ms) {
+  ms = ms || 400;
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 //#endregion

@@ -15,6 +15,7 @@ app.navigation.user = {};
 app.navigation.user.prvCode = null;
 app.navigation.user.isWindowsAccess = false;
 app.navigation.user.isLoginAccess = false;
+app.navigation.user.isLocked = true;
 app.navigation.user.ajax = {};
 app.navigation.user.callback = {};
 app.navigation.user.validation = {};
@@ -46,12 +47,14 @@ app.navigation.access.ajax.ReadCurrentWindowsAccess = function () {
 app.navigation.access.callback.ReadCurrentWindowsAccess_OnSuccess = function (data) {
   if (data) {
     //Registered windows user within the network
-    app.navigation.user.prvCode = data.PrvCode;
+    app.navigation.user.prvCode = data.CcnLockedFlag ? null : data.PrvCode;
     app.navigation.user.isWindowsAccess = true;
+    app.navigation.user.isLocked = data.CcnLockedFlag;
   }
   else {
     //Un-registered windows user within the network
     app.navigation.user.isWindowsAccess = false;
+    app.navigation.user.isLocked = false;
   }
   app.navigation.access.callback.ReadCurrent();
 };
@@ -77,12 +80,14 @@ app.navigation.access.ajax.ReadCurrentLoginAccess = function () {
 app.navigation.access.callback.ReadCurrentLoginAccess_OnSuccess = function (data) {
   if (data) {
     //logged in user
-    app.navigation.user.prvCode = data.PrvCode;
+    app.navigation.user.prvCode = data.CcnLockedFlag ? null : data.PrvCode;
     app.navigation.user.isLoginAccess = true;
+    app.navigation.user.isLocked = data.CcnLockedFlag;
   }
   else {
     //not logged in user
     app.navigation.user.isLoginAccess = false;
+    app.navigation.user.isLocked = false;
   }
   app.navigation.access.callback.ReadCurrent();
 }
@@ -97,15 +102,24 @@ app.navigation.access.callback.ReadCurrentLoginAccess_OnError = function () {
 }
 
 app.navigation.access.callback.ReadCurrent = function () {
-  if (app.navigation.user.isWindowsAccess) {
+  if (app.navigation.user.isLocked) {
+    $("#nav-user").remove();
+    $("#nav-user-login").remove();
+    $("#nav-user-logout").remove();
+    $("#nav-user-locked").show();
+  }
+
+  else if (app.navigation.user.isWindowsAccess) {
     $("#nav-user").show();
     $("#nav-user-login").remove();
     $("#nav-user-logout").remove();
+    $("#nav-user-locked").remove();
   }
   else if (app.navigation.user.isLoginAccess) {
     $("#nav-user").show();
     $("#nav-user-login").remove();
     $("#nav-user-logout").show();
+    $("#nav-user-locked").remove();
     //overwrite private endpoint
     app.config.url.api.jsonrpc.private = app.config.url.api.jsonrpc.public;
     // Create the session cookie
@@ -115,6 +129,7 @@ app.navigation.access.callback.ReadCurrent = function () {
     $("#nav-user").remove();
     $("#nav-user-login").show();
     $("#nav-user-logout").remove();
+    $("#nav-user-locked").remove();
   }
 
   app.navigation.access.renderMenu(app.navigation.user.prvCode);

@@ -165,6 +165,12 @@ app.release.reason.drawCallback = function () {
  * @param {*} data
  */
 app.release.reason.callback.readList = function (data) {
+  if (data) {
+    app.release.hasReason = true;
+  }
+  else {
+    app.release.hasReason = false;
+  }
   // Populate Release Reason
   $("#release-reason").hide().fadeIn();
 
@@ -277,8 +283,14 @@ app.release.reason.callback.read = function (data) {
     $("#release-reason-modal-update [name=rsn-value-external]").html(app.library.html.parseBbCode(data.RsnValueExternal));
 
     var tinyMceId = $("#release-reason-modal-update [name=cmm-value]").attr("id");
-    tinymce.get(tinyMceId).setContent(data.CmmValue);
+    if (app.release.isWorkInProgress && !app.release.isAwaitingResponse && !app.release.isAwaitingSignOff) {
+      tinymce.get(tinyMceId).mode.set("design");
+      tinymce.get(tinyMceId).setContent(data.CmmValue);
 
+    } else {
+      tinymce.get(tinyMceId).setContent(data.CmmValue);
+      tinymce.get(tinyMceId).mode.set("readonly");
+    }
     $("#release-reason-modal-update").modal("show");
   }
   // Handle no data

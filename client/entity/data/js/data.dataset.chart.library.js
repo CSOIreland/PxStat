@@ -154,6 +154,15 @@ app.data.dataset.chart.getChartTypes = function () {
 
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
+            case "area":
+                $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").show();
+                $("#data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").show();
+                $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").hide();
+                $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
+                $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
+
+                $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
+                break;
             case "bar":
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").show();
                 $("#data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").show();
@@ -769,10 +778,10 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
                 app.data.dataset.chart.configuration.options.scales.yAxes[1].scaleLabel.labelString = $("#data-dataset-chart-accordion-series-collapse").find("[name=right-yaxis-label]").val().trim() || null;
             }
             break;
-    }
-
+    };
 
     app.data.dataset.chart.configuration.options.plugins.stacked100.enable = isStackedPercentage;
+
     app.data.dataset.chart.configuration.options.legend.display = C_APP_PXWIDGET_CHART_LEGEND_POSITION.includes($("#data-dataset-chart-accordion-options-collapse [name=legend-position]").val());
 
     if (app.data.dataset.chart.configuration.options.legend.display) {
@@ -794,8 +803,18 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
         app.data.dataset.chart.configuration.metadata.api.query.data.method = "PxStat.Data.Cube_API.ReadPreMetadata";
         delete app.data.dataset.chart.configuration.metadata.api.query.data.params.matrix;
     }
-
-    app.data.dataset.chart.configuration.type = $("#data-dataset-chart-properties").find("[name=type]").val() == "mixed" ? "bar" : $("#data-dataset-chart-properties").find("[name=type]").val();
+    switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
+        case "mixed":
+            app.data.dataset.chart.configuration.type = "bar";
+            break;
+        case "area":
+            app.data.dataset.chart.configuration.type = "line";
+            break;
+        default:
+            app.data.dataset.chart.configuration.type = $("#data-dataset-chart-properties").find("[name=type]").val();
+            break;
+    }
+    //app.data.dataset.chart.configuration.type = $("#data-dataset-chart-properties").find("[name=type]").val() == "mixed" ? "bar" : $("#data-dataset-chart-properties").find("[name=type]").val();
 
     app.data.dataset.chart.configuration.metadata.api.query.data.params.language = app.data.LngIsoCode;
 
@@ -821,6 +840,23 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
     }
     else {
         $("#data-dataset-chart-accordion-options-collapse").find("[name=auto-scale]").bootstrapToggle('enable');
+    }
+
+    //area chart
+    switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
+        case "area":
+            app.data.dataset.chart.configuration.options.scales.yAxes[0].stacked = true;
+
+            if ($("#data-dataset-chart-accordion-series-collapse").find("[name=dual-axis]").is(":visible, :checked")) {
+                app.data.dataset.chart.configuration.options.scales.yAxes[1].stacked = true;
+            };
+            app.data.dataset.chart.configuration.options.plugins.stacked100.enable = false;
+
+            break;
+
+        default:
+
+            break;
     }
 
     $("#data-dataset-chart-accordion-series-collapse [name=tab-content]").each(function () {
@@ -884,6 +920,14 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
                     break;
             }
 
+        }
+
+        switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
+            case "area":
+                thisDataset.fill = true;
+                break;
+            default:
+                break;
         }
 
         if (!errors.length) {

@@ -9,9 +9,7 @@
 			"jsonrpc": {
 				"public": "https://ws.domain.extension/public/api.jsonrpc",
 				"private": "https://ws.domain.extension/private/api.jsonrpc"
-			},
-			"restful": {
-				"public": "https://ws.domain.extension/public/api.restful"
+			}
 		}
 	},
 	"template": {
@@ -95,7 +93,8 @@
 			"PxStat.Build.Build_API.ReadDataset": 250000,
 			"PxStat.Build.Build_API.Update": 40000,
 			"PxStat.Data.Matrix_API.Validate": 500000,
-			"PxStat.Data.Matrix_API.Create": 70000
+			"PxStat.Data.Matrix_API.Create": 70000,
+			"PxStat.Data.GeoMap_API.Validate": 500000
 		}
 	},
 	"entity": {
@@ -195,36 +194,6 @@
 			"deferRender": true
 		},
 		"chartJs": {
-			"map": {
-				"options": {
-					"featureIdentifier": "AREA_ID",
-					"showOutline": false,
-					"showGraticule": false,
-					"legend": {
-						"display": false
-					},
-					"tooltips": {
-						"mode": "index",
-						"callbacks": {
-							"label": null
-						}
-					},
-					"scale": {
-						"projection": "geoMercator"
-					},
-					"geo": {
-						"colorScale": {
-							"display": true,
-							"interpolate": "reds"
-						}
-					},
-					"plugins": {
-						"colorschemes": {
-							"scheme": null
-						}
-					}
-				}
-			},
 			"chart": {
 				"options": {
 					"responsive": true,

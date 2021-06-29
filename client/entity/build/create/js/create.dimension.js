@@ -113,6 +113,14 @@ $(document).ready(function () {
         "html": true
     });
 
+    $("#build-create-matrix-dimensions").find("[name=map-popover]").popover({
+        "content": app.label.static["map-explanation"],
+        "html": true
+    });
+
+    $("#build-create-matrix-dimensions").find("[name=warning-icon]").tooltip({
+        "title": app.label.static["invalid-geojson-in-px-file"],
+    })
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 

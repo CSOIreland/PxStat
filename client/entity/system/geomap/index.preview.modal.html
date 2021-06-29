@@ -1,0 +1,77 @@
+<!-- Modal - View Map-->
+<div id="map-modal-preview" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-light" name="map-name"></h5>
+                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" name="gmp-name">
+                <div class="card mb-4">
+                    <div class="card-header" label="description"></div>
+                    <div class="card-body" name="description">
+
+                    </div>
+
+                </div>
+
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="map-modal-preview-map-tab" data-toggle="tab" href="#map-modal-preview-map-content" role="tab" aria-controls="map-modal-preview-map-content" aria-selected="true" label="map"></a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="map-modal-preview-properties-tab" data-toggle="tab" href="#map-modal-preview-properties-content" role="tab" aria-controls="map-modal-preview-properties-content" aria-selected="false" label="properties"></a>
+                    </li>
+                </ul>
+                <div class="tab-content p-2">
+                    <div class="tab-pane fade show active" id="map-modal-preview-map-content" role="tabpanel" aria-labelledby="map-modal-preview-map-tab">
+                        <div name="map-modal-preview-wrapper"></div>
+                    </div>
+                    <div class="tab-pane fade" id="map-modal-preview-properties-content" role="tabpanel" aria-labelledby="map-modal-preview-properties-tab">
+                        <div class="card border-0">
+                            <div class="card-body p-0">
+                                <table name="datatable" class="table table-striped table-bordered" style="width:100%">
+                                    <thead>
+                                        <tr name="header-row"></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col text-right">
+                                <div class="btn-group">
+                                    <button name="download-classification" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-download"></i> <span label="download-classification"></span>
+                                    </button>
+                                    <div name="download-classification-selection" class="dropdown-menu" aria-labelledby="data-download-results"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="container-fluid">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                            <i class="far fa-times-circle"></i>
+                            <span label="close"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</div>
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/system/geomap/css/geomap.preview.css">
+<!-- Page specific JS -->
+<script src="entity/system/geomap/js/geomap.preview.library.js"></script>

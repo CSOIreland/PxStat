@@ -83,6 +83,7 @@ app.release.workflow.modal.request.create = function () {
                 $("#request-workflow-modal-request-publish [name=auto-signoff-warning]").hide();
                 $("#request-workflow-modal-request-publish [name=auto-response-warning]").hide();
                 $("#request-workflow-modal-request-publish [name=navigation-warning]").hide();
+                $("#request-workflow-modal-request-publish [name=reason-warning]").hide();
                 $("#request-workflow-modal-request-publish [type=submit]").prop('disabled', false);
 
             });
@@ -215,9 +216,15 @@ app.release.workflow.modal.request.validation.create = function (RqsCode) {
                     $("#request-workflow-modal-request-publish [name=" + element[0].name + "-error-holder]").append(error[0]);
                 },
                 submitHandler: function (form) {
-                    $(form).sanitiseForm();
-                    app.release.workflow.modal.request.ajax.create(RqsCode);
-                    $("#request-workflow-modal-request-publish").modal("hide");
+                    if (!app.release.hasReason && app.config.workflow.release.reasonRequired) {
+                        $("#request-workflow-modal-request-publish [name=reason-warning]").show();
+                    }
+                    else {
+                        $(form).sanitiseForm();
+                        app.release.workflow.modal.request.ajax.create(RqsCode);
+                        $("#request-workflow-modal-request-publish").modal("hide");
+                    }
+
                 }
             }).resetForm();
             break;

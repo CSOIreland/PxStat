@@ -23,6 +23,7 @@ app.release.isWorkInProgress = false;
 app.release.liveHasWorkInProgress = null;
 app.release.isAwaitingResponse = false;
 app.release.isAwaitingSignOff = false;
+app.release.hasReason = false;
 
 app.release.isWorkflowInProgress = false;
 

@@ -14,12 +14,16 @@ app.data.dataset.map.snippetConfig = {};
 app.data.dataset.map.configuration = {};
 app.data.dataset.map.template.wrapper = {
     "autoupdate": true,
+    "mapDimension": null,
     "copyright": false,
     "link": null,
     "title": null,
-    "type": 'choropleth',
+    "borders": true,
+    "fullScreen": {
+        "title": app.label.static["view-fullscreen"],
+        "titleCancel": app.label.static["exit-fullscreen"]
+    },
     "data": {
-        "labels": null,
         "datasets": [
             {
                 "api": {
@@ -32,28 +36,50 @@ app.data.dataset.map.template.wrapper = {
                         }
                     },
                     "response": {}
-                },
-                "outline": null,
-                "data": [],
+                }
             },
         ],
     },
-    "options": app.config.plugin.chartJs.map.options
+    "options": {}
 };
 //#endregion
 
-app.data.dataset.map.drawDimensions = function () {
-    var dimensions = app.data.dataset.metadata.jsonStat.Dimension();
+app.data.dataset.map.drawMapToDisplay = function () {
+    var geoDimensions = app.data.dataset.metadata.jsonStat.Dimension({ role: "geo" });
     $("#data-dataset-map-nav-content").find("[name=dimension-containers]").empty();
-    $.each(dimensions, function (index, value) {
-        if (value.role != "geo") {
+    var geoSelectContainer = $("#data-dataset-map-templates").find("[name=dimension-container-map]").clone();
+    geoSelectContainer.find("[name=dimension-label]").text(app.label.static["map"]);
+    geoSelectContainer.find("[name=dimension-count]").text(geoDimensions.length);
+    $.each(geoDimensions, function (index, value) {
+        geoSelectContainer.find("select").attr("name", "geo-select").append($("<option>",
+            {
+                "value": app.data.dataset.metadata.jsonStat.role.geo[index],
+                "title": value.label,
+                "text": value.label
+            }
+        ));
+
+    });
+
+    $("#data-dataset-map-nav-content").find("[name=geo-select-container]").append(geoSelectContainer.get(0).outerHTML);
+
+    $("#data-dataset-map-nav-content [name=geo-select-container] select").select2({
+        minimumInputLength: 0,
+        allowClear: false,
+        width: '100%',
+        placeholder: app.label.static["start-typing"]
+    }).on('select2:select', app.data.dataset.map.drawDimensions).prop("disabled", false);
+
+    app.data.dataset.map.drawDimensions();
+};
+
+app.data.dataset.map.drawDimensions = function () {
+    var mapToDisplayId = $("#data-dataset-map-nav-content [name=geo-select-container] select").val();
+    $("#data-dataset-map-nav-content").find("[name=dimension-containers]").empty();
+    $.each(app.data.dataset.metadata.jsonStat.Dimension(), function (index, value) {
+        if (app.data.dataset.metadata.jsonStat.id[index] != mapToDisplayId) {
             var dimensionContainer = $("#data-dataset-map-templates").find("[name=dimension-container]").clone();
-            var dimensionCode = $("<small>", {
-                "text": " - " + app.data.dataset.metadata.jsonStat.id[index],
-                "name": "dimension-code",
-                "class": "d-none"
-            }).get(0).outerHTML;
-            dimensionContainer.find("[name=dimension-label]").html(value.label + dimensionCode);
+            dimensionContainer.find("[name=dimension-label]").html(value.label);
             dimensionContainer.find("[name=dimension-count]").text(value.length);
             dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
             $.each(value.id, function (variableIndex, variable) {
@@ -72,25 +98,31 @@ app.data.dataset.map.drawDimensions = function () {
                 }));
             }
             $("#data-dataset-map-nav-content").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
-        }
+        };
     });
 
-    $("#data-dataset-map-nav-content").find("[name=dimension-containers] select").select2({
+    $("#data-dataset-map-nav-content [name=dimension-containers] select").select2({
         minimumInputLength: 0,
-        allowClear: true,
+        allowClear: false,
         width: '100%',
         placeholder: app.label.static["start-typing"]
     }).on('select2:select', app.data.dataset.map.buildMapConfig).on('select2:clear', function (e) {
-
     }).prop("disabled", false);
     app.data.dataset.map.buildMapConfig();
 };
 
 app.data.dataset.map.buildMapConfig = function () {
+
     app.data.dataset.map.configuration = {};
     $.extend(true, app.data.dataset.map.configuration, app.data.dataset.map.template.wrapper);
+
+
     app.data.dataset.map.buildApiParams();
+    // var test = app.data.dataset.map.apiParamsData;
+    // app.data.dataset.map.ajax.data();
+    //debugger
     app.data.dataset.map.configuration.data.datasets[0].api.query.data.params = app.data.dataset.map.apiParamsData;
+    app.data.dataset.map.configuration.mapDimension = $("#data-dataset-map-nav-content [name=geo-select-container] select").val();
 
 
     if (app.data.isLive) {
@@ -123,6 +155,8 @@ app.data.dataset.map.renderSnippet = function () {
     if ($("#data-dataset-map-accordion-collapse-widget").find("[name=include-title]").is(':checked')) {
         config.title = app.data.dataset.metadata.jsonStat.label.trim();
     }
+
+    config.borders = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-borders]").is(':checked');
 
     if ($("#data-dataset-map-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {
         $.each(config.data.datasets, function (key, value) {

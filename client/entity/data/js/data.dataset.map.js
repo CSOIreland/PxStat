@@ -2,7 +2,7 @@
 Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
-    app.data.dataset.map.drawDimensions();
+    app.data.dataset.map.drawMapToDisplay();
 
     if (app.data.isLive) {
         $("#data-dataset-map-nav-content").find("[name=confidential-data-warning]").hide();
@@ -12,7 +12,7 @@ $(document).ready(function () {
     }
 
     new ClipboardJS("#data-dataset-map-accordion-api [name=copy-api-info], #data-dataset-map-accordion-api [name=copy-api-object]");
-    $('#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title]').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -68,7 +68,7 @@ $(document).ready(function () {
             $("#data-dataset-map-accordion").find("[name=auto-update]").bootstrapToggle('disable');
         }
     }
-    $("#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link]").once("change", function () {
+    $("#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link]").once("change", function () {
         app.data.dataset.map.renderSnippet();
     });
 

@@ -421,7 +421,7 @@ app.data.dataset.table.buildApiParams = function () {
 
     $("#data-dataset-table-api-jsonrpc-post-url").text(app.data.isLive ? app.config.url.api.jsonrpc.public : app.config.url.api.jsonrpc.private);
     $("#data-dataset-table-api-restful-url").text(
-        C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.restful,
+        C_APP_API_RESTFUL_READ_DATASET_URL.sprintf([app.config.url.api.restful + "/",
         encodeURI(app.data.MtrCode),
         $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type') || C_APP_FORMAT_TYPE_DEFAULT,
         $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-version') || C_APP_FORMAT_VERSION_DEFAULT,
@@ -479,7 +479,7 @@ app.data.dataset.table.buildApiParams = function () {
     });
 
 
-    $("#data-dataset-table-api-pxapiv1-get-url").hide().text(encodeURI(app.config.url.api.restful.public
+    $("#data-dataset-table-api-pxapiv1-get-url").hide().text(encodeURI(app.config.url.api.restful
         + "/PxStat.Data.Cube_API.PxAPIv1"
         + "/" + JsonQuery.params.extension.language.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
@@ -487,7 +487,7 @@ app.data.dataset.table.buildApiParams = function () {
         + "/" + app.data.MtrCode
         + "?query=" + JSON.stringify(pxapiv1Query))).fadeIn();
 
-    $("#data-dataset-table-api-pxapiv1-post-url").hide().text(app.config.url.api.restful.public
+    $("#data-dataset-table-api-pxapiv1-post-url").hide().text(app.config.url.api.restful
         + "/PxStat.Data.Cube_API.PxAPIv1"
         + "/" + JsonQuery.params.extension.language.code
         + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
