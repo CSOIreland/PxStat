@@ -52,7 +52,7 @@ namespace PxStat.Data
 
 
 
-                        var responseSbj = Map.JSONRPC2RESTful_Output(rspSbj, null, rspSbj.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+                        var responseSbj = Map.JSONRPC2RESTful_Output(rspSbj, null, HttpStatusCode.NotFound, HttpStatusCode.InternalServerError);
 
                         return responseSbj;
 
@@ -81,7 +81,7 @@ namespace PxStat.Data
 
                         }
 
-                        var responsePrd = Map.JSONRPC2RESTful_Output(rspPrd, null, rspPrd.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+                        var responsePrd = Map.JSONRPC2RESTful_Output(rspPrd, null, HttpStatusCode.NotFound, HttpStatusCode.InternalServerError);
 
                         return responsePrd;
 
@@ -279,7 +279,7 @@ namespace PxStat.Data
                                 return Map.JSONRPC2RESTful_Output(rsp, null, HttpStatusCode.Forbidden);
                             }
                             // Convert the JsonRpc output to RESTful output
-                            var response = Map.JSONRPC2RESTful_Output(rsp, format.FrmMimetype, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+                            var response = Map.JSONRPC2RESTful_Output(rsp, format.FrmMimetype, HttpStatusCode.NotFound, HttpStatusCode.InternalServerError);
 
                             string suffix;
                             using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
@@ -363,7 +363,7 @@ namespace PxStat.Data
 
                 if (rsp.error != null)
                 {
-                    return Map.JSONRPC2RESTful_Output(rsp, null, HttpStatusCode.BadRequest);
+                    return Map.JSONRPC2RESTful_Output(rsp, null, HttpStatusCode.NoContent, HttpStatusCode.InternalServerError);
                 }
 
                 Format_DTO_Read format = new Format_DTO_Read() { FrmType = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_TYPE], FrmVersion = restfulRequest.parameters[Constants.C_DATA_RESTFUL_FORMAT_VERSION] };
@@ -458,7 +458,7 @@ namespace PxStat.Data
             JSONRPC_Output rsp = new Cube_BSO_ReadMetadata(jsonRpcRequest).Read().Response;
 
             //Convert the JsonRpc output to RESTful output
-            return Map.JSONRPC2RESTful_Output(rsp, map.MimeType, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.NoContent);
+            return Map.JSONRPC2RESTful_Output(rsp, map.MimeType, HttpStatusCode.NotFound, HttpStatusCode.InternalServerError);
         }
 
         /// <summary>

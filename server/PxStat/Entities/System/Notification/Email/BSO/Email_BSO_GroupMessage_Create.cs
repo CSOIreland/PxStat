@@ -4,6 +4,7 @@ using PxStat.Template;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PxStat.System.Notification
 {
@@ -29,7 +30,7 @@ namespace PxStat.System.Notification
         {
             //Translate from bbCode to html
             Resources.BBCode bbc = new Resources.BBCode();
-            DTO.Body = bbc.Transform(DTO.Body);
+            DTO.Body = bbc.Transform(DTO.Body, true);
 
             List<string> groupCodes = new List<string>();
 
@@ -61,15 +62,26 @@ namespace PxStat.System.Notification
                 Log.Instance.Debug("No email addresses found");
                 return true;
             }
+            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
 
             foreach (var user in readGroupAccounts.data)
             {
-                email.Bcc.Add(user.CcnEmail.ToString());
+                if (user.CcnEmail != null)
+                {
+                    string address = user.CcnEmail.ToString();
+                    if (Regex.IsMatch(address, emailRegex))
+                        email.Bcc.Add(address);
+                }
             }
 
             foreach (var user in readPowerUsers.data)
             {
-                email.Bcc.Add(user.CcnEmail.ToString());
+                if (user.CcnEmail != null)
+                {
+                    string address = user.CcnEmail.ToString();
+                    if (Regex.IsMatch(address, emailRegex))
+                        email.Bcc.Add(address);
+                }
             }
 
 

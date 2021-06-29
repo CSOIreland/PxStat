@@ -26,6 +26,19 @@
     },
     "account": {
       "locked": "Account is locked"
+    },
+    "dataset": {
+      "limit": "You are attempting to download {0} data cells in {1}. This exceeds the maximum of {2} data cells you can download in {1}."
+    },
+    "geomap": {
+      "json-parse": "Can't create GeoJson map",
+      "code-tag": "\"code\" tag not defined in GeoJson Features property",
+      "mapped-elimination": "Elimination variable is a feature on the map",
+      "unmapped-variable": "Variable {0} is not represented on the map",
+      "not-found": "Map not found",
+      "invalid-format": "Map url format is invalid",
+      "inconsistent-map-data": "Map data is inconsistent"
+
     }
   },
   "authentication": {
@@ -65,6 +78,10 @@
       "languages-invalid": "Ustawienie PX [LANGUAGE]: &quot;{Language}&quot; jest niepoprawna.",
       "source-invalid": "Ustawienie PX [SOURCE]: &quot;{PropertyValue}&quot; jest niepoprawna.",
       "sources-invalid": "Ustawienie PX [SOURCE]: &quot;{Source}&quot; jest niepoprawna."
+    },
+    "maps": {
+      "invalid-map-format": "The map url {0} is not in the correct format",
+      "map-not-found": "The map at {0} could not be found"
     }
   },
   "xlsx": {

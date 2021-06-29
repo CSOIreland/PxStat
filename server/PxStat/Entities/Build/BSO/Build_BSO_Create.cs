@@ -82,6 +82,25 @@ namespace PxStat.Build
                 return false;
             }
 
+            matrix.ValidateMyMaps();
+            if (matrix.MainSpec.ValidationErrors != null)
+            {
+                Response.error = Error.GetValidationFailure(matrix.MainSpec.ValidationErrors);
+                return false;
+            }
+
+            if (matrix.OtherLanguageSpec != null)
+            {
+                foreach (var spec in matrix.OtherLanguageSpec)
+                {
+                    if (spec.ValidationErrors != null)
+                    {
+                        Response.error = Error.GetValidationFailure(matrix.MainSpec.ValidationErrors);
+                        return false;
+                    }
+                }
+            }
+
             dynamic fileOutput = new ExpandoObject();
 
             switch (DTO.Format.FrmType)

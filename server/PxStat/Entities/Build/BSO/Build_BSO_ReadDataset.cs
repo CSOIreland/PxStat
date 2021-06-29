@@ -67,6 +67,7 @@ namespace PxStat.Build
             //bBso.Query needs to be in the same order as the periods in the matrix - why?
             theMatrixData = bBso.Query(theMatrixData, GetQueryMatrix(requestPeriods, theMatrixData));
 
+            theMatrixData.ValidateMyMaps(true);
 
             var dataList = bBso.GetMatrixDataItems(theMatrixData, DTO.LngIsoCode, theMatrixData.MainSpec, false);
 

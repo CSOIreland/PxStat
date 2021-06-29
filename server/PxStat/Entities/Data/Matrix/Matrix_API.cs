@@ -99,6 +99,11 @@ namespace PxStat.Data
             return new Matrix_BSO_ReadByProduct(jsonrpcRequest).Read().Response;
         }
 
+        public static dynamic ReadByGeoMap(JSONRPC_API jsonrpcRequest)
+        {
+            return new Matrix_BSO_ReadByGeoMap(jsonrpcRequest).Read().Response;
+        }
+
         /// <summary>
         /// Get a list of Matrix codes based on assignment of groups to tables
         /// </summary>

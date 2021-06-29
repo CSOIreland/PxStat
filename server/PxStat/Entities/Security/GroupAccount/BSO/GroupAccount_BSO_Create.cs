@@ -42,13 +42,19 @@ namespace PxStat.Security
                 return false;
             }
 
-            //Check if the user is in Active Directory
-            if (!ActiveDirectory_BSO_Read.IsInActiveDirectory(Ado, DTO.CcnUsername))
+
+
+            //Check if the user exists
+
+            var adoAccount = new Account_ADO();
+            var account = adoAccount.Read(Ado, DTO.CcnUsername);
+            if (!account.hasData)
             {
-                Log.Instance.Debug("User is not in Active Directory");
+                Log.Instance.Debug("User does not exist");
                 Response.error = Label.Get("error.create");
                 return false;
             }
+
 
             //First we must check if the GroupAccount exists already (we can't have duplicates)
             if (adoGroupAccount.Exists(Ado, DTO.CcnUsername, DTO.GrpCode))
@@ -73,4 +79,3 @@ namespace PxStat.Security
         }
     }
 }
-

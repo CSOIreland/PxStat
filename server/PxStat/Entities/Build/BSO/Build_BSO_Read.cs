@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 using PxParser.Resources.Parser;
 using PxStat.Data;
 using PxStat.Resources.PxParser;
-using PxStat.Security;
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -59,6 +58,14 @@ namespace PxStat.Build
             //Get this matrix from the px file , but we also need to pass in the Timeval stuff
             //The "" bit is temporary until we make the parameters optional (Currently this interferes with existing overloads)
             Matrix matrixPxFile = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
+
+
+            matrixPxFile.ValidateMyMaps(true);
+            if (matrixPxFile.MainSpec.ValidationErrors != null)
+            {
+                Response.error = Error.GetValidationFailure(matrixPxFile.MainSpec.ValidationErrors);
+                return false;
+            }
 
 
             List<dynamic> cells = new List<dynamic>();

@@ -72,6 +72,17 @@ namespace PxStat.Security
                 return false;
             }
 
+            //make sure this email isn't an AD email - they should not become local users
+            var aduser = adAdo.GetAdSpecificDataForEmail(DTO.CcnEmail);
+            if(aduser!=null)
+            {
+                //This Account exists in AD, we can't proceed
+                Log.Instance.Debug("Account exists in AD");
+                Response.error = Label.Get("error.create");
+                return false;
+            }
+
+
             //Create the Account - and retrieve the newly created Id
             int newId = adoAccount.Create(Ado, new Account_DTO_Create() { CcnUsername = DTO.CcnUsername, CcnNotificationFlag = DTO.CcnNotificationFlag, LngIsoCode = DTO.LngIsoCode, PrvCode = DTO.PrvCode, CcnDisplayName = DTO.CcnDisplayName, CcnEmail = DTO.CcnEmail }, SamAccountName, false);
             if (newId == 0)

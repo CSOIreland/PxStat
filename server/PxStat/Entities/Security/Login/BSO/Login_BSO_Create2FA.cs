@@ -45,7 +45,12 @@ namespace PxStat.Security
                     Response.error = Label.Get("error.authentication");
                     return false;
                 }
-
+                //Check if AD local access is allowed
+                if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess") && adResult != null)
+                {
+                    Response.error = Label.Get("error.authentication");
+                    return false;
+                }
 
                 DTO.CcnUsername = adResult.CcnUsername;
             }

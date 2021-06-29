@@ -46,7 +46,7 @@ namespace PxStat.Resources
             string noteString = "";
             if (theSpec.NotesAsString != null)
             {
-                noteString = new BBCode().Transform(theSpec.NotesAsString);
+                noteString = new BBCode().Transform(theSpec.NotesAsString, true);
 
                 //This Regex must be compatible with the output of the BBCode Transform
                 noteString = Regex.Replace(noteString, "<a\\shref=\"([^\"]*)\">([^<]*)<\\/a>", "$2 ($1)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
@@ -57,7 +57,7 @@ namespace PxStat.Resources
             {
                 if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
                 {
-                    string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") +
+                    string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") +
                         string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Constants.C_SYSTEM_XLSX_NAME, Constants.C_SYSTEM_XLSX_VERSION, theSpec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
                 }
 
@@ -103,7 +103,7 @@ namespace PxStat.Resources
             {
                 if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
                 {
-                    string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") +
+                    string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") +
                         string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Constants.C_SYSTEM_XLSX_NAME, Constants.C_SYSTEM_XLSX_VERSION, theSpec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
 
                     sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.url");

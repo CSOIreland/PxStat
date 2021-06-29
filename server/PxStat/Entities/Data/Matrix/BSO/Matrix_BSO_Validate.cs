@@ -123,6 +123,7 @@ namespace PxStat.Data
                 return false;
             }
 
+
             if (!PxSettingsAreValid(MatrixData))
             {
                 //We want the logged item to be in the default language irrespective of the requested language
@@ -135,6 +136,24 @@ namespace PxStat.Data
                 return false;
             }
 
+            if (MatrixData.MainSpec.ValidationErrors != null)
+            {
+                Response.error = Error.GetValidationFailure(MatrixData.MainSpec.ValidationErrors);
+                return false;
+            }
+
+            if (MatrixData.OtherLanguageSpec != null)
+            {
+                foreach (var spec in MatrixData.OtherLanguageSpec)
+                {
+                    if (spec.ValidationErrors != null)
+                    {
+                        Response.error = Error.GetValidationFailure(spec.ValidationErrors);
+                        return false;
+                    }
+                }
+            }
+
             //Final check of all dimensions
             Matrix_VLD mval = new Matrix_VLD();
             ValidationResult vr = mval.Validate(MatrixData);
@@ -143,6 +162,25 @@ namespace PxStat.Data
             {
                 Response.error = Error.GetValidationFailure(vr.Errors);
                 return false;
+            }
+
+            MatrixData.ValidateMyMaps();
+            if (MatrixData.MainSpec.ValidationErrors != null)
+            {
+                Response.error = Error.GetValidationFailure(MatrixData.MainSpec.ValidationErrors);
+                return false;
+            }
+
+            if (MatrixData.OtherLanguageSpec != null)
+            {
+                foreach (var spec in MatrixData.OtherLanguageSpec)
+                {
+                    if (spec.ValidationErrors != null)
+                    {
+                        Response.error = Error.GetValidationFailure(MatrixData.MainSpec.ValidationErrors);
+                        return false;
+                    }
+                }
             }
 
             sw.Stop();

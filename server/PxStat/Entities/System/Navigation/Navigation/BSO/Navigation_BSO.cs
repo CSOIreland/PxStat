@@ -99,7 +99,7 @@ namespace PxStat.System.Navigation
 
 
 
-            int maxResults = Configuration_BSO.GetCustomConfig(ConfigType.global, "search.maximum-results");
+            int maxResults = Configuration_BSO.GetCustomConfig(ConfigType.global, "search.maximumResults");
 
             //If there are dupes then only use the higher score
             var grouped = dt.AsEnumerable()

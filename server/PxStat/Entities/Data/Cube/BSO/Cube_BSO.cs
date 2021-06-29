@@ -349,7 +349,7 @@ namespace PxStat.Data
 
 
 
-            jsStat.Href = new Uri(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, fDtoMain.FrmType, fDtoMain.FrmVersion, thisItem.LngIsoCode));
+            jsStat.Href = new Uri(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, fDtoMain.FrmType, fDtoMain.FrmVersion, thisItem.LngIsoCode));
             jsStat.Label = thisItem.MtrTitle;
             jsStat.Updated = DataAdaptor.ConvertToString(thisItem.RlsLiveDatetimeFrom);
             jsStat.Dimension = new Dictionary<string, Dimension>();
@@ -364,7 +364,7 @@ namespace PxStat.Data
             foreach (var f in formats)
             {
 
-                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode), Type = f.FrmMimetype });
+                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode), Type = f.FrmMimetype });
             }
             jsStat.Link = link;
 
@@ -483,7 +483,7 @@ namespace PxStat.Data
 
 
 
-            jsStat.Href = new Uri(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, fDtoMain.FrmType, fDtoMain.FrmVersion, thisItem.LngIsoCode));
+            jsStat.Href = new Uri(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, fDtoMain.FrmType, fDtoMain.FrmVersion, thisItem.LngIsoCode));
             jsStat.Label = thisItem.MtrTitle;
             jsStat.Updated = DataAdaptor.ConvertToString(thisItem.RlsLiveDatetimeFrom);
 
@@ -496,7 +496,7 @@ namespace PxStat.Data
             foreach (var f in formats)
             {
                 if (f.FrmType != fDtoMain.FrmType || f.FrmVersion != fDtoMain.FrmVersion)
-                    link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode), Type = f.FrmMimetype });
+                    link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), thisItem.MtrCode, f.FrmType, f.FrmVersion, thisItem.LngIsoCode), Type = f.FrmMimetype });
             }
             jsStat.Link = link;
 

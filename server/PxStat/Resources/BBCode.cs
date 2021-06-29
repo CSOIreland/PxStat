@@ -1,6 +1,6 @@
 ﻿using CodeKicker.BBCode;
 using System;
-
+using System.Collections.Generic;
 
 namespace PxStat.Resources
 {
@@ -14,7 +14,7 @@ namespace PxStat.Resources
         /// </summary>
         /// <param name="inString"></param>
         /// <returns></returns>
-        internal string Transform(string inString)
+        internal string Transform(string inString, bool keepAllChars = false)
         {
             //Set the tags that we are interested in translating
             var parser = new BBCodeParser(new[]
@@ -29,6 +29,8 @@ namespace PxStat.Resources
             try
             {
                 inString = parser.ToHtml(inString);
+                if (inString.Contains("&#") && keepAllChars)
+                    inString = BBcodeClean(inString);
             }
             catch
             {
@@ -36,6 +38,32 @@ namespace PxStat.Resources
             }
             return inString;
         }
+
+
+        private string BBcodeClean(string inString)
+        {
+            List<int> startPostions = new List<int>();
+            List<int> utfValue = new List<int>();
+            int pos = inString.IndexOf("&#", 0);
+            while (pos > -1)
+            {
+                startPostions.Add(pos);
+                pos = inString.IndexOf("&#", pos + 1);
+            }
+            foreach (var item in startPostions)
+            {
+                int endPos = inString.IndexOf(";", item);
+                string midValue = inString.Substring(item + 2, endPos - (item + 2));
+                if (Int32.TryParse(midValue, out int result))
+                    utfValue.Add(Convert.ToInt32(midValue));
+            }
+            foreach (int i in utfValue)
+            {
+                inString = inString.Replace("&#" + i + ";", Convert.ToChar(i).ToString());
+            }
+            return inString;
+        }
+
     }
 
 }

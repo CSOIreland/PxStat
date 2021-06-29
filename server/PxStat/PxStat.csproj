@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.4.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.4.1\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.5.0\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="ClosedXML, Version=0.95.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ClosedXML.0.95.4\lib\net46\ClosedXML.dll</HintPath>
@@ -300,10 +300,32 @@
     <Compile Include="Entities\Data\Cube\PxApiMetadataJson.cs" />
     <Compile Include="Entities\Data\Cube\PxApiV1Query.cs" />
     <Compile Include="Entities\Data\Cube\Sdmx.cs" />
+    <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO.cs" />
+    <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO_Create.cs" />
+    <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO_Delete.cs" />
+    <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO_Read.cs" />
+    <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO_Update.cs" />
+    <Compile Include="Entities\Data\GeoLayer\GeoLayer_ADO.cs" />
+    <Compile Include="Entities\Data\GeoLayer\GeoLayer_API.cs" />
+    <Compile Include="Entities\Data\GeoLayer\GeoLayer_DTO.cs" />
+    <Compile Include="Entities\Data\GeoLayer\GeoLayer_VLD.cs" />
+    <Compile Include="Entities\Data\GeoMap\BSO\GeoMap_BSO.cs" />
+    <Compile Include="Entities\Data\GeoMap\BSO\GeoMap_BSO_Create.cs" />
+    <Compile Include="Entities\Data\GeoMap\BSO\GeoMap_BSO_Delete.cs" />
+    <Compile Include="Entities\Data\GeoMap\BSO\GeoMap_BSO_Read.cs" />
+    <Compile Include="Entities\Data\GeoMap\BSO\GeoMap_BSO_ReadCollection.cs" />
+    <Compile Include="Entities\Data\GeoMap\BSO\GeoMap_BSO_Update.cs" />
+    <Compile Include="Entities\Data\GeoMap\BSO\GeoMap_BSO_Validate.cs" />
+    <Compile Include="Entities\Data\GeoMap\GeoJson.cs" />
+    <Compile Include="Entities\Data\GeoMap\GeoMap_ADO.cs" />
+    <Compile Include="Entities\Data\GeoMap\GeoMap_API.cs" />
+    <Compile Include="Entities\Data\GeoMap\GeoMap_DTO.cs" />
+    <Compile Include="Entities\Data\GeoMap\GeoMap_VLD.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\MatrixValidator.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO.ReadByCopyright.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Create.cs" />
+    <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByGeoMap.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByGroup.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByLanguage.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadByProduct.cs" />

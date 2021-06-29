@@ -88,6 +88,8 @@ namespace PxStat.Data
         /// </summary>
         public Matrix() { }
 
+
+
         /// <summary>
         /// class
         /// </summary>
@@ -409,6 +411,21 @@ namespace PxStat.Data
 
                 Statistic = dimension.Statistics;
                 Classification = dimension.Classifications;
+                if (dto.Map != null)
+                {
+                    foreach (var map in dto.Map)
+                    {
+                        ClassificationRecordDTO_Create cls = Classification.Where(x => x.Code == map.Key).FirstOrDefault();
+                        if (cls != null)
+                        {
+                            if (map.Value != null)
+                            {
+                                cls.GeoFlag = true;
+                                cls.GeoUrl = map.Value;
+                            }
+                        }
+                    }
+                }
 
                 SetEliminationsByCode(ref Classification, dto.Elimination);
 
@@ -431,6 +448,8 @@ namespace PxStat.Data
                     var cls = classification.Where(x => x.Code == elim.Key).FirstOrDefault();
                     if (cls != null)
                     {
+                        foreach (var v in cls.Variable)
+                            v.EliminationFlag = false;
                         if (eliminations[cls.Code] != null)
                         {
                             var vrb = cls.Variable.Where(x => x.Code == eliminations[cls.Code]).FirstOrDefault();
@@ -438,11 +457,7 @@ namespace PxStat.Data
                                 vrb.EliminationFlag = true;
 
                         }
-                        else
-                        {
-                            foreach (var v in cls.Variable)
-                                v.EliminationFlag = false;
-                        }
+
 
                     }
 
@@ -665,6 +680,7 @@ namespace PxStat.Data
             /// </summary>
             public string Title { get; set; }
 
+            public List<ValidationFailure> ValidationErrors { get; set; }
 
             /// <summary>
             /// class property
@@ -774,6 +790,8 @@ namespace PxStat.Data
                     NotesAsString = NotesAsString.Trim() + " " + infofile;
 
                 var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
+                if (maps != null) ValidateMappingData(maps, language);
+
                 var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
                 var precisions = doc.GetSingleElementWithSubkeysIfExist("PRECISION", language);
                 var units = doc.GetSingleElementWithSubkeys("UNITS", language);
@@ -836,6 +854,51 @@ namespace PxStat.Data
                 }
             }
 
+            private void ValidateMappingData(IList<KeyValuePair<string, IList<IPxSingleElement>>> maps, string language)
+            {
+                if (language == null) language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                foreach (var map in maps)
+                {
+                    foreach (var val in map.Value)
+                    {
+                        SetMapErrors(val.ToString(), language);
+                    }
+                }
+                //Ensure the same classfication is not referenced for maps more than once in the px file
+                if (maps.Select(t => new { a = t.Key }).ToList().GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key).ToList().Count > 0)
+                {
+                    if (this.ValidationErrors == null)
+                        this.ValidationErrors = new List<ValidationFailure>();
+                    this.ValidationErrors.Add(new ValidationFailure("MapError", String.Format(Label.Get("error.geomap.inconsistent-map-data", language), "")));
+                }
+            }
+
+
+            private void SetMapErrors(string url, string language)
+            {
+                string code = "";
+                List<string> pList = url.Split('/').ToList<string>();
+                if (pList.Count > 0) code = pList.Last().Replace("\"", String.Empty);
+                else
+                {
+                    if (this.ValidationErrors == null)
+                        this.ValidationErrors = new List<ValidationFailure>();
+                    this.ValidationErrors.Add(new ValidationFailure("MapError", String.Format(Label.Get("px.maps.invalid-map-format", language), url)));
+
+                }
+                using (GeoMap_BSO gBso = new GeoMap_BSO())
+                {
+                    if (!gBso.Read(code).hasData)
+                    {
+                        if (this.ValidationErrors == null)
+                            this.ValidationErrors = new List<ValidationFailure>();
+                        this.ValidationErrors.Add(new ValidationFailure("MapError", String.Format(Label.Get("px.maps.map-not-found", language), url)));
+
+                    }
+
+                }
+
+            }
 
             /// <summary>
             /// Set properties for multiple languages
@@ -907,6 +970,7 @@ namespace PxStat.Data
 
 
                 var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
+                if (maps != null) ValidateMappingData(maps, language);
                 var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
                 var precisions = doc.GetSingleElementWithSubkeysIfExist("PRECISION", language);
                 var units = doc.GetSingleElementWithSubkeys("UNITS", language);
@@ -2916,6 +2980,102 @@ namespace PxStat.Data
             LoadMatrixPropertiesFromPx(doc, frqCodeTimeval, frqValueTimeval);
         }
 
+        public void ValidateMyMaps(bool formatValidationOnly = false)
+        {
+            ValidateSpecMap(this.MainSpec, formatValidationOnly);
+            if (this.OtherLanguageSpec != null)
+            {
+                foreach (var spec in this.OtherLanguageSpec)
+                {
+                    ValidateSpecMap(spec, formatValidationOnly);
+                }
+            }
+        }
+
+        private void ValidateSpecMap(Specification spec, bool formatValidationOnly = false)
+        {
+            foreach (ClassificationRecordDTO_Create cls in spec.Classification)
+            {
+                if (cls.GeoFlag)
+                {
+                    if (!Regex.IsMatch(cls.GeoUrl, Utility.GetCustomConfig("APP_REGEX_URL")))
+                    {
+                        if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                        spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.invalid-format", spec.Language)));
+                        return;
+                    }
+                    if (formatValidationOnly) return;
+                    GeoJson geoJson = new GeoJson();
+                    using (GeoMap_BSO gBso = new GeoMap_BSO(new ADO("defaultConnection")))
+                    {
+                        string geoCode = cls.GeoUrl;
+                        //Accept only the rightmost 32 characters
+                        if (cls.GeoUrl.Length > 32)
+                        {
+                            geoCode = cls.GeoUrl.Substring(cls.GeoUrl.Length - 32);
+                            string baseUrl = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.static") + "/PxStat.Data.GeoMap_API.Read/";
+                            if (!cls.GeoUrl.Substring(0, cls.GeoUrl.Length - 32).Equals(baseUrl))
+                            {
+                                if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                                spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", spec.Language)));
+                                return;
+
+                            }
+                        }
+                        var mapData = gBso.Read(geoCode);
+                        if (mapData != null)
+                        {
+                            try
+                            {
+                                geoJson = JsonConvert.DeserializeObject<GeoJson>(mapData.data[0].GmpGeoJson);
+                            }
+                            catch
+                            {
+                                if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                                spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.json-parse", spec.Language)));
+                                return;
+                            }
+                            foreach (var feature in geoJson.Features)
+                            {
+                                if (!feature.Properties.ContainsKey("code"))
+                                {
+                                    if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                                    spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.code-tag", spec.Language)));
+                                    return;
+                                }
+                            }
+                            foreach (var vrb in cls.Variable)
+                            {
+
+                                if (!vrb.EliminationFlag)
+
+                                {
+                                    if (geoJson.Features.Where(x => x.Properties["code"] == vrb.Code).Count() == 0)
+                                    {
+                                        if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                                        spec.ValidationErrors.Add(new ValidationFailure("GeoJson", String.Format(Label.Get("error.geomap.unmapped-variable", spec.Language), vrb.Code)));
+                                        return;
+
+                                    }
+                                }
+
+
+                            }
+                        }
+                        else
+                        {
+
+                            if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                            spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", spec.Language)));
+                            return;
+
+                        }
+                    }
+                }
+            }
+        }
+
+
 
         /// <summary>
         /// The matrix constructor will load all the metadata from the db when instances specification
@@ -3115,7 +3275,7 @@ namespace PxStat.Data
 
             jsStat.Version = Version.The20;
             jsStat.Class = Class.Dataset;
-            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
 
             if (this.Release != null)
             {
@@ -3155,7 +3315,7 @@ namespace PxStat.Data
                     jsStat.Note.Add(this.Release.CmmValue);
                 }
 
-                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
 
                 List<Format_DTO_Read> formats;
                 using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
@@ -3174,7 +3334,7 @@ namespace PxStat.Data
                         foreach (var f in formats)
                         {
                             if (f.FrmType != this.FormatType || f.FrmVersion != this.FormatVersion)
-                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
                         }
                         jsStat.Link = link;
                     }
@@ -3379,7 +3539,7 @@ namespace PxStat.Data
 
 
             jsStat.Class = Class.Dataset;
-            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
             if (this.Release != null)
             {
                 if (this.Release.RlsLiveFlag && this.Release.RlsLiveDatetimeFrom < DateTime.Now)
@@ -3394,7 +3554,7 @@ namespace PxStat.Data
                 jsStat.Note = new List<string>();
                 if (!string.IsNullOrEmpty(spec.NotesAsString))
                 {
-                    jsStat.Note.Add(new BBCode().Transform(spec.NotesAsString));
+                    jsStat.Note.Add(new BBCode().Transform(spec.NotesAsString, true));
                 }
             }
 
@@ -3418,7 +3578,7 @@ namespace PxStat.Data
                     jsStat.Note.Add(this.Release.CmmValue);
                 }
 
-                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
 
                 List<Format_DTO_Read> formats;
                 using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
@@ -3435,7 +3595,7 @@ namespace PxStat.Data
                         foreach (var f in formats)
                         {
                             if (f.FrmType != this.FormatType || f.FrmVersion != this.FormatVersion)
-                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
                         }
                         jsStat.Link = link;
                     }
@@ -3902,62 +4062,7 @@ namespace PxStat.Data
                 }
             }
 
-            /*If, at this time, we have a freuency defined for one language but not for the others,
-             it could be because the client responded to a time dimension request in only one language and that language was not the language of MainSpec. Therefore
-             we must now apply that decision to each of the other specs*/
-            //if (OtherLanguageSpec != null)
-            //{
-            //    List<Specification> specs = new List<Specification>
-            //    {
-            //        MainSpec
-            //    };
-            //    specs.AddRange(OtherLanguageSpec);
-            //    Specification goodSpec = specs.Where(x => x.Frequency != null).FirstOrDefault();
-            //    if (goodSpec != null && specs.Where(x => x.Frequency == null).Count() > 0)
-            //    {
-            //        //We have the Frequency information in one spec but not in all of them
 
-            //        //Get the index of where the frequency value is in VALUES. It will be the same in each spec
-            //        List<string> allKeys = (from kvp in goodSpec.Values select kvp.Key).Distinct().ToList();
-            //        int valueIndex = Array.IndexOf(allKeys.ToArray(), goodSpec.Frequency.Value);
-
-            //        if (MainSpec.Frequency == null)
-            //        {
-            //            MainSpec.Frequency = new FrequencyRecordDTO_Create();
-            //            MainSpec.Frequency.Code = goodSpec.Frequency.Code;
-            //            MainSpec.Frequency.Value = MainSpec.Values[valueIndex].Key;
-            //            MainSpec.Frequency.Period = new List<PeriodRecordDTO_Create>();
-            //            int periodCounter = 0;
-            //            foreach (var per in goodSpec.Frequency.Period)
-            //            {
-            //                MainSpec.Frequency.Period.Add(new PeriodRecordDTO_Create() { Code = per.Code, Value = MainSpec.Values[valueIndex].Value[periodCounter].ToPxValue() });
-            //                periodCounter++;
-            //            }
-
-            //            ClassificationRecordDTO_Create wrongClass = MainSpec.Classification.Where(x => x.Value == MainSpec.Frequency.Value).FirstOrDefault();
-            //            if (wrongClass != null) MainSpec.Classification.Remove(wrongClass);
-            //            MainSpec.requiresResponse = false;
-
-            //        }
-            //        foreach (var spec in OtherLanguageSpec.Where(x => x.Frequency == null))
-            //        {
-            //            spec.Frequency = new FrequencyRecordDTO_Create();
-            //            spec.Frequency.Code = goodSpec.Frequency.Code;
-            //            spec.Frequency.Value = spec.Values[valueIndex].Key;
-            //            spec.Frequency.Period = new List<PeriodRecordDTO_Create>();
-            //            int periodCounter = 0;
-            //            foreach (var per in goodSpec.Frequency.Period)
-            //            {
-            //                spec.Frequency.Period.Add(new PeriodRecordDTO_Create() { Code = per.Code, Value = spec.Values[valueIndex].Value[periodCounter].ToPxValue() });
-
-            //                periodCounter++;
-            //            }
-            //            ClassificationRecordDTO_Create wrongClass = spec.Classification.Where(x => x.Value == spec.Frequency.Value).FirstOrDefault();
-            //            if (wrongClass != null) spec.Classification.Remove(wrongClass);
-            //            spec.requiresResponse = false;
-            //        }
-            //    }
-            //}
         }
 
 
@@ -4263,6 +4368,26 @@ namespace PxStat.Data
             else
                 this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
+        }
+    }
+
+    internal class Marix_DTO_ReadByGeoMap
+    {
+        public string GmpCode { get; internal set; }
+        public string LngIsoCode { get; internal set; }
+
+
+
+        public Marix_DTO_ReadByGeoMap(dynamic parameters)
+        {
+
+
+            if (parameters.GmpCode != null)
+                GmpCode = parameters.GmpCode;
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -4717,9 +4842,4 @@ namespace PxStat.Data
                 LngIsoCode = parameters.LngIsoCode;
         }
     }
-
-
-
-
-
 }

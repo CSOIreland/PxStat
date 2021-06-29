@@ -4,7 +4,7 @@ using PxStat.Template;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// Read one or more subjects
+    /// Read one or more themes
     /// </summary>
     internal class Theme_BSO_Read : BaseTemplate_Read<Theme_DTO_Read, Theme_VLD_Read>
     {

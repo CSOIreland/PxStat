@@ -87,7 +87,7 @@ namespace PxStat.Security
 
 
                 Body = Body + Environment.NewLine + InvitationUrl;
-                Body = bbc.Transform(Body);
+                Body = bbc.Transform(Body, true);
 
                 email.Body = Body;
                 email.Subject = Subject;

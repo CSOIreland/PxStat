@@ -89,6 +89,15 @@ namespace PxStat.Data
         }
     }
 
+    internal class Matrix_VLD_ReadByGeoMap : AbstractValidator<Marix_DTO_ReadByGeoMap>
+    {
+        public Matrix_VLD_ReadByGeoMap()
+        {
+            RuleFor(x => x.GmpCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
     internal class Matrix_VLD_ReadByGroup : AbstractValidator<Matrix_DTO_ReadByGroup>
     {
         public Matrix_VLD_ReadByGroup()

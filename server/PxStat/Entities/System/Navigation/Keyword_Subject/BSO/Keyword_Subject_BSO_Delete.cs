@@ -34,7 +34,7 @@ namespace PxStat.System.Navigation
             var adoKeyword_Subject = new Keyword_Subject_ADO(Ado);
 
             //attempting to delete. The number of entities deleted are passed to the entitiesDeleted variable (this is 1 for a successful delete)
-            int nDeleted = adoKeyword_Subject.Delete(DTO);
+            int nDeleted = adoKeyword_Subject.Delete(DTO, false);
             Log.Instance.Debug("Delete operation finished in ADO");
 
             if (nDeleted == 0)
@@ -49,4 +49,3 @@ namespace PxStat.System.Navigation
         }
     }
 }
-

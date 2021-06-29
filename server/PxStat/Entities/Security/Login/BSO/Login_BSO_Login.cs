@@ -41,6 +41,15 @@ namespace PxStat.Security
                 Response.error = Label.Get("error.authentication");
                 return false;
             }
+            ActiveDirectory_ADO adAdo = new ActiveDirectory_ADO();
+            dynamic adUser = adAdo.GetAdSpecificDataForEmail(DTO.CcnEmail);
+
+            //Check if local access is available for AD users
+            if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess") && adUser != null)
+            {
+                Response.error = Label.Get("error.authentication");
+                return false;
+            }
 
             DTO.CcnUsername = DTO.CcnEmail;
             Login_BSO lBso = new Login_BSO(Ado);
@@ -54,7 +63,7 @@ namespace PxStat.Security
             if (!response.hasData)
             {
                 //Email address not in the login table, try to get the username from the email address via AD
-                ActiveDirectory_ADO adAdo = new ActiveDirectory_ADO();
+
 
                 var adResult = adAdo.GetAdSpecificDataForEmail(DTO.CcnEmail);
                 Log.Instance.Debug("AD user found from email - time ms: " + sw.ElapsedMilliseconds);

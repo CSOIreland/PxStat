@@ -35,7 +35,6 @@ namespace PxStat.Build
 
         internal Signature_DTO GetSignatureDTO()
         {
-            // PxUpdate_DTO dto = Utility.JsonDeserialize_IgnoreLoopingReference<PxUpdate_DTO>(Utility.JsonSerialize_IgnoreLoopingReference(this));
             return new Signature_DTO
             {
                 MtrInput = this.MtrInput,

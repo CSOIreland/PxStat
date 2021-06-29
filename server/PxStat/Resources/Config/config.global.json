@@ -7,9 +7,11 @@
     }
   },
   "url": {
+    "api": {
+      "restful": "https://webservice.domain.extension/public/api.restful",
+      "static": "https://webservice.domain.extension/public/api.static"
+    },
     "logo": "https://cdn.jsdelivr.net/gh/CSOIreland/PxStat/client/image/logo.png",
-    "jsonrpc": "https://webserice.domain.extension/public/api.jsonrpc",
-    "restful": "https://webserice.domain.extension/public/api.restful/",
     "application": "https://domain.extension/"
   },
   "dataset": {
@@ -51,6 +53,9 @@
         "poweruser": true,
         "administrator": false
       }
+    },
+    "release": {
+      "reasonRequired": true
     }
   },
   "build": {
@@ -67,7 +72,11 @@
   "session": {
     "length": 600
   },
+  "security": {
+    "adOpenAccess": true
+  },
   "search": {
-    "maximum-results": 100
+
+    "maximumResults": 100
   }
 }

@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using API;
+using FluentValidation;
+using PxStat.Data;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
@@ -39,6 +41,34 @@ namespace PxStat.Workflow
             RuleFor(f => f.WrqArchiveFlag).NotNull().When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH) || f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PROPERTY));
             //Mandatory - WrqArchiveFlag - Mandatory for Publish and Flag
             RuleFor(f => f.WrqExperimentalFlag).NotNull().When(f => f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PUBLISH) || f.RqsCode.Equals(Constants.C_WORKFLOW_REQUEST_PROPERTY));
+            RuleFor(f => f).Must(HasReasonToPublish).WithMessage("The workflow release must have a Reason");
+        }
+
+        private bool HasReasonToPublish(WorkflowRequest_DTO dto)
+        {
+            if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "workflow.release.reasonRequired")) return true;
+            if (dto.RqsCode != "PUBLISH") return true;
+
+            ReasonRelease_ADO rrAdo = new ReasonRelease_ADO();
+            ADO ado = new ADO("defaultConnection");
+            try
+            {
+                if (!rrAdo.Read(ado, new ReasonRelease_DTO_Read() { RlsCode = dto.RlsCode, LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") }).hasData)
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                ado.Dispose();
+            }
+
+
+            return true;
         }
     }
 

@@ -49,6 +49,13 @@ namespace PxStat.Security
                 ccnUsername = adDto.CcnUsername;
             }
 
+            //Check if local access is available for AD users
+            if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess") && ccnUsername != null)
+            {
+                Response.error = Label.Get("error.authentication");
+                return false;
+            }
+
             if (ccnUsername == null)
             {
                 if (Request.sessionCookie == null)

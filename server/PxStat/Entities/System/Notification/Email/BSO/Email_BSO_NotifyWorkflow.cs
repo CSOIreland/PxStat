@@ -165,7 +165,7 @@ namespace PxStat.System.Notification
         private void sendMail(eMail email, string title, string subject, string body)
         {
             BBCode bbc = new BBCode();
-            body = bbc.Transform(body);
+            body = bbc.Transform(body, true);
             var listToParse = new List<eMail_KeyValuePair>();
 
             listToParse.Add(new eMail_KeyValuePair() { key = "{title}", value = title });

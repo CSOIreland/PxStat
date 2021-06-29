@@ -30,6 +30,16 @@
     },
     "dataset": {
       "limit": "Tá tú ag iarraidh {0} cealla sonraí a íoslódáil i bhformáid {1}. Sáraíonn sé seo an t-uasmhéid de {2} cealla sonraí is féidir leat a íoslódáil i bhformáid {1}."
+    },
+    "geomap": {
+      "json-parse": "Can't create GeoJson map",
+      "code-tag": "\"code\" tag not defined in GeoJson Features property",
+      "mapped-elimination": "Elimination variable is a feature on the map",
+      "unmapped-variable": "Variable {0} is not represented on the map",
+      "not-found": "Map not found",
+      "invalid-format": "Map url format is invalid",
+      "inconsistent-map-data": "Map data is inconsistent"
+
     }
   },
 
@@ -73,6 +83,10 @@
       "languages-invalid": "Socrú PX [LANGUAGES]: tá &quot;{Language}&quot; neamhbhailí.",
       "source-invalid": "Socrú PX [SOURCE]: tá &quot;{PropertyValue}&quot; neamhbhailí.",
       "sources-invalid": "Socrú PX [SOURCE]: tá &quot;{Source}&quot; neamhbhailí."
+    },
+    "maps": {
+      "invalid-map-format": "The map url {0} is not in the correct format",
+      "map-not-found": "The map at {0} could not be found"
     }
   },
   "xlsx": {

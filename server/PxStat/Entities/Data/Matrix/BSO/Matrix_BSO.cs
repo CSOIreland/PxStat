@@ -124,6 +124,25 @@ namespace PxStat.Data
                 return false;
             }
 
+            MatrixData.ValidateMyMaps(true);
+            if (MatrixData.MainSpec.ValidationErrors != null)
+            {
+                ResponseError = Error.GetValidationFailure(MatrixData.MainSpec.ValidationErrors);
+                return false;
+            }
+
+            if (MatrixData.OtherLanguageSpec != null)
+            {
+                foreach (var spec in MatrixData.OtherLanguageSpec)
+                {
+                    if (spec.ValidationErrors != null)
+                    {
+                        ResponseError = Error.GetValidationFailure(MatrixData.MainSpec.ValidationErrors);
+                        return false;
+                    }
+                }
+            }
+
             ResponseData = API.JSONRPC.success;
             return true;
         }

@@ -1240,15 +1240,7 @@ namespace PxStat.Build
             spec.Frequency.Code = String.IsNullOrEmpty(DTO.FrqCodeTimeval) ? spec.Frequency.Code : DTO.FrqCodeTimeval;
             spec.Frequency.Value = String.IsNullOrEmpty(dim.Frequency.Value) ? spec.Frequency.Value : dim.Frequency.Value;
 
-            if (dim.Classifications != null)
-            {
-                foreach (var cls in spec.Classification)
-                {
-                    var dtoCls = dim.Classifications.Where(x => x.Code == cls.Code).FirstOrDefault();
-                    cls.GeoUrl = dtoCls.GeoUrl;
-                    cls.GeoFlag = dtoCls.GeoFlag;
-                }
-            }
+
 
             spec.Title = String.IsNullOrEmpty(dim.MtrTitle) ? spec.Title : dim.MtrTitle;
             spec.ContentVariable = String.IsNullOrEmpty(dim.StatisticLabel) ? spec.ContentVariable : dim.StatisticLabel;

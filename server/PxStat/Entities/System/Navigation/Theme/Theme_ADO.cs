@@ -64,7 +64,7 @@ namespace PxStat.System.Navigation
         }
 
         /// <summary>
-        /// Reads one or more subject
+        /// Reads one or more theme
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>

@@ -78,6 +78,21 @@ namespace PxStat.Build
 
             Matrix theMatrixData = new Matrix(PxDoc, DTO.FrqCodeTimeval ?? "", DTO.FrqValueTimeval ?? "");
 
+            UpdateMatrix(theMatrixData, DTO);
+
+
+
+            if (theMatrixData.OtherLanguageSpec != null)
+            {
+                foreach (var spec in theMatrixData.OtherLanguageSpec)
+                {
+                    if (spec.ValidationErrors != null)
+                    {
+                        Response.error = Label.Get("error.validation");
+                        return false;
+                    }
+                }
+            }
 
             Log.Instance.Debug("Object updated - " + theMatrixData.Cells.Count + " rows in " + sw.ElapsedMilliseconds + " milliseconds");
 
@@ -90,6 +105,13 @@ namespace PxStat.Build
                 {
                     spec.SetEliminationsByCode(ref spec.Classification, DTO.Elimination);
                 }
+            }
+            theMatrixData.ValidateMyMaps();
+
+            if (theMatrixData.MainSpec.ValidationErrors != null)
+            {
+                Response.error = Error.GetValidationFailure(theMatrixData.MainSpec.ValidationErrors);
+                return false;
             }
 
             //We should be able to validate the newly updated matrix now...
@@ -173,6 +195,35 @@ namespace PxStat.Build
         }
 
 
+        private void UpdateMatrix(Matrix theMatrix, BuildUpdate_DTO dto)
+        {
+            UpdateExistingSpec(theMatrix.MainSpec, dto);
+            if (theMatrix.OtherLanguageSpec != null)
+            {
+                foreach (var spec in theMatrix.OtherLanguageSpec)
+                {
+                    UpdateExistingSpec(spec, dto);
+                }
+            }
+        }
+
+        private void UpdateExistingSpec(Matrix.Specification theSpec, BuildUpdate_DTO dto)
+        {
+            if (dto.Map != null)
+            {
+                foreach (var map in dto.Map)
+                {
+                    ClassificationRecordDTO_Create cls = theSpec.Classification.Where(x => x.Code == map.Key).FirstOrDefault();
+                    if (cls != null)
+                    {
+
+                        cls.GeoFlag = map.Value != null;
+                        cls.GeoUrl = map.Value;
+
+                    }
+                }
+            }
+        }
 
         private Specification mergeSpecsMetadata(Specification existingSpec, Specification amendedSpec)
         {

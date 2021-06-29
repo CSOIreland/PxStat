@@ -76,6 +76,7 @@ namespace PxStat.Build
 
         internal Dictionary<string, string> Elimination { get; set; }
 
+        internal Dictionary<string, string> Map { get; set; }
 
         /// <summary>
         /// 
@@ -226,6 +227,11 @@ namespace PxStat.Build
                 }
 
             }
+
+            if (parameters.Map != null)
+            {
+                Map = JsonConvert.DeserializeObject<Dictionary<string, string>>(parameters.Map.ToString());
+            }
         }
 
     }
@@ -285,6 +291,8 @@ namespace PxStat.Build
         public Format_DTO_Read Format { get; set; }
 
         public string Signature { get; set; }
+
+
 
 
         internal Signature_DTO GetSignatureDTO()
@@ -403,6 +411,7 @@ namespace PxStat.Build
             }
 
 
+
         }
 
         public Build_DTO_BuildRead()
@@ -489,6 +498,8 @@ namespace PxStat.Build
         public bool Labels { get; set; }
 
         public Dictionary<string, string> Elimination { get; set; }
+
+        public Dictionary<string, string> Map { get; set; }
 
         internal Signature_DTO GetSignatureDTO()
         {
@@ -594,11 +605,7 @@ namespace PxStat.Build
                         {
                             ClassificationRecordDTO_Create classification = new ClassificationRecordDTO_Create();
                             if (cls.ClsCode != null) classification.Code = cls.ClsCode;
-                            if (cls.ClsGeoUrl != null)
-                            {
-                                classification.GeoUrl = cls.ClsGeoUrl;
-                                classification.GeoFlag = true;
-                            }
+
                             dimension.Classifications.Add(classification);
                         }
                     }
@@ -619,6 +626,10 @@ namespace PxStat.Build
                 }
             }
 
+            if (parameters.Map != null)
+            {
+                Map = JsonConvert.DeserializeObject<Dictionary<string, string>>(parameters.Map.ToString());
+            }
 
         }
 

@@ -133,6 +133,24 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        ///  Get a list of Matrix codes based on usage of maps
+        /// </summary>
+        /// <param name="prcCode"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput ReadByGeoMap(string gmpCode, string lngIsoCode)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@GmpCode", value = gmpCode },
+                new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") },
+                new ADO_inputParams() {name ="@UrlStub",value= Configuration_BSO.GetCustomConfig(ConfigType.global ,"url.api.static") + "/PxStat.Data.GeoMap_API.Read/"}
+
+            };
+
+            return ado.ExecuteReaderProcedure("Data_Matrix_ReadByGeoMap", inputParams);
+        }
+
+        /// <summary>
         /// Reads a Matrix
         /// </summary>
         /// <param name="releaseCode"></param>

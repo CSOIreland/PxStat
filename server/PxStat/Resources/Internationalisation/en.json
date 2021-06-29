@@ -29,6 +29,15 @@
     },
     "dataset": {
       "limit": "You are attempting to download {0} data cells in {1}. This exceeds the maximum of {2} data cells you can download in {1}."
+    },
+    "geomap": {
+      "json-parse": "Can't create GeoJson map",
+      "code-tag": "\"code\" tag not defined in GeoJson Features property",
+      "mapped-elimination": "Elimination variable is a feature on the map",
+      "unmapped-variable": "Variable {0} is not represented on the map",
+      "not-found": "Map not found",
+      "invalid-format": "Map url format is invalid",
+      "inconsistent-map-data": "Map data is inconsistent"
     }
   },
   "authentication": {
@@ -71,6 +80,10 @@
       "languages-invalid": "PX Setting [LANGUAGE] in languages: &quot;{Language}&quot; is invalid.",
       "source-invalid": "PX Setting [SOURCE]: &quot;{PropertyValue}&quot; is invalid.",
       "sources-invalid": "PX Setting [SOURCE]: &quot;{Source}&quot; is invalid."
+    },
+    "maps": {
+      "invalid-map-format": "The map url {0} is not in the correct format",
+      "map-not-found": "The map at {0} could not be found"
     }
 
 

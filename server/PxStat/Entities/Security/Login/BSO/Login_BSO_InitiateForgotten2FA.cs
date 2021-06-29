@@ -39,12 +39,17 @@ namespace PxStat.Security
             Login_BSO lBso = new Login_BSO(Ado);
 
             ActiveDirectory_ADO adAdo = new ActiveDirectory_ADO();
-            ActiveDirectory_DTO adDto = adAdo.GetUser(Ado, DTO);
 
             dynamic adUser = adAdo.GetAdSpecificDataForEmail(DTO.CcnEmail);
 
             if (adUser?.CcnEmail != null)
             {
+                //Check if local access is available for AD users
+                if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess"))
+                {
+                    Response.error = Label.Get("error.authentication");
+                    return false;
+                }
                 DTO.CcnEmail = adUser.CcnEmail;
                 DTO.CcnDisplayname = adUser.CcnDisplayName;
                 DTO.CcnUsername = adUser.CcnUsername;
