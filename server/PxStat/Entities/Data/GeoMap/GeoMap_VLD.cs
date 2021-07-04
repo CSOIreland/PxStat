@@ -32,7 +32,6 @@ namespace PxStat.Data
             RuleFor(x => x).Must(new CustomGeoValidations().ValidateFeatures).WithMessage("Invalid Features");
             RuleFor(x => x).Must(new CustomGeoValidations().ValidateGeometry).WithMessage("Invalid Geometry");
             RuleFor(x => x.GmpName).Length(0, 256).WithMessage("GmpName invalid length");
-            RuleFor(x => x.GmpDescription).Length(0, 512).WithMessage("GmpDescription invalid length");
         }
 
     }
@@ -136,7 +135,6 @@ namespace PxStat.Data
         internal GeoMap_VLD_Update()
         {
             RuleFor(x => x.GmpName).Length(0, 256).WithMessage("GmpName invalid length");
-            RuleFor(x => x.GmpDescription).Length(0, 512).WithMessage("GmpDescription invalid length");
             RuleFor(x => x.GmpCode).Length(0, 32).WithMessage("GmpCode invalid length");
         }
     }

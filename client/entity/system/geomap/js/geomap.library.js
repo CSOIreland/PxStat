@@ -372,26 +372,21 @@ app.geomap.ajax.readLayers = function () {
 };
 
 app.geomap.callback.readLayers = function (data) {
-    if (data && Array.isArray(data) && data.length) {
-        $("#map-modal-add").find("[name=glr-code]").empty();
+    $("#map-modal-add").find("[name=glr-code]").empty();
 
+    $("#map-modal-add").find("[name=glr-code]").append($("<option>", {
+        "text": app.label.static["select-uppercase"],
+        "disabled": "disabled",
+        "selected": "selected"
+    }));
+    $.each(data, function (key, value) {
         $("#map-modal-add").find("[name=glr-code]").append($("<option>", {
-            "text": app.label.static["select-uppercase"],
-            "disabled": "disabled",
-            "selected": "selected"
+            "value": value.GlrCode,
+            "text": value.GlrName
         }));
-        $.each(data, function (key, value) {
-            $("#map-modal-add").find("[name=glr-code]").append($("<option>", {
-                "value": value.GlrCode,
-                "text": value.GlrName
-            }));
-        });
+    });
 
-        $("#map-modal-add").find("[name=glr-code]").prop('disabled', false);
-
-    } else {
-        api.modal.information(app.label.static["api-ajax-nodata"]);
-    }
+    $("#map-modal-add").find("[name=glr-code]").prop('disabled', false);
 };
 
 app.geomap.setDetails = function () {

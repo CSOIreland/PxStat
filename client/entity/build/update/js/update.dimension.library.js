@@ -535,68 +535,61 @@ app.build.update.dimension.ajax.readMapCollection = function (params) {
 };
 
 app.build.update.dimension.callback.readMapCollection = function (data, params) {
-    if (data) {
-        $.each(params.mapDetails, function (index, value) {
-            if (value.gmpUrl) {
-                var mapUrlSplit = value.gmpUrl.split("/");
-                var gmpCode = mapUrlSplit[mapUrlSplit.length - 1];
-                var map = $.grep(data, function (n, i) {
-                    return n.GmpCode == gmpCode;
-                });
-                if (map.length) {
-                    value.gmpName = map[0].GmpName;
-                }
+    $.each(params.mapDetails, function (index, value) {
+        if (value.gmpUrl) {
+            var mapUrlSplit = value.gmpUrl.split("/");
+            var gmpCode = mapUrlSplit[mapUrlSplit.length - 1];
+            var map = $.grep(data, function (n, i) {
+                return n.GmpCode == gmpCode;
+            });
+            if (map.length) {
+                value.gmpName = map[0].GmpName;
             }
-        });
+        }
+    });
 
-        //if imported, validate variables
-        if (params.isSource) {
-            $.each(params.mapDetails, function (index, value) {
-                if (value.gmpName) {
-                    //if from source and has a confirmed name, we need to validate the variables against the classification
-                    $.ajax({
-                        url: value.gmpUrl,
-                        dataType: 'json',
-                        async: false,
-                        success: function (data) {
-                            var featureCodes = [];
-                            $.each(data.features, function (index, value) {
-                                featureCodes.push(value.properties[C_APP_GEOJSON_PROPERTIES_UNIQUE_IDENTIFIER])
-                            });
+    //if imported, validate variables
+    if (params.isSource) {
+        $.each(params.mapDetails, function (index, value) {
+            if (value.gmpName) {
+                //if from source and has a confirmed name, we need to validate the variables against the classification
+                $.ajax({
+                    url: value.gmpUrl,
+                    dataType: 'json',
+                    async: false,
+                    success: function (data) {
+                        var featureCodes = [];
+                        $.each(data.features, function (index, value) {
+                            featureCodes.push(value.properties[C_APP_GEOJSON_PROPERTIES_UNIQUE_IDENTIFIER])
+                        });
 
-                            //get classification variable codes
-                            var defaultJSONstat = $.grep(app.build.update.ajax.jsonStat, function (n, i) { // just use arr
-                                return n.extension.language.code == app.config.language.iso.code;
-                            });
-                            var classification = defaultJSONstat[0].Dimension(value.clsCode);
+                        //get classification variable codes
+                        var defaultJSONstat = $.grep(app.build.update.ajax.jsonStat, function (n, i) { // just use arr
+                            return n.extension.language.code == app.config.language.iso.code;
+                        });
+                        var classification = defaultJSONstat[0].Dimension(value.clsCode);
 
-                            var invalidClassificationCodes = [];
-                            $.each(classification.id, function (index, value) {
-                                if (value != app.build.update.data.Elimination[classification[0].ClsCode]) {//don't check elimination variable
-                                    if ($.inArray(value, featureCodes) == -1) {
-                                        invalidClassificationCodes.push(value);
-                                    }
+                        var invalidClassificationCodes = [];
+                        $.each(classification.id, function (index, value) {
+                            if (value != app.build.update.data.Elimination[classification[0].ClsCode]) {//don't check elimination variable
+                                if ($.inArray(value, featureCodes) == -1) {
+                                    invalidClassificationCodes.push(value);
                                 }
-                            });
-                            if (invalidClassificationCodes.length) {
-                                value.gmpName = null;
                             }
-                        },
-                        error: function (xhr) {
+                        });
+                        if (invalidClassificationCodes.length) {
                             value.gmpName = null;
                         }
-                    });
-                }
+                    },
+                    error: function (xhr) {
+                        value.gmpName = null;
+                    }
+                });
+            }
 
-            });
-        };
-
-
-
-
-        app.build.update.dimension.callback.drawMapTable(params.mapDetails);
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+        });
+    };
+    app.build.update.dimension.callback.drawMapTable(params.mapDetails);
 };
 
 app.build.update.dimension.callback.drawMapTable = function (data) {

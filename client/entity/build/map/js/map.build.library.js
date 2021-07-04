@@ -22,92 +22,88 @@ app.build.map.ajax.readMaps = function (params) {
 };
 
 app.build.map.callback.readMaps = function (data) {
-    if (data) {
-        $("#build-map-modal").find(".modal-header [name=cls-value]").empty().text(app.build.map.params.clsCode + ": " + app.build.map.params.clsValue);
-        if ($.fn.dataTable.isDataTable("#build-map-modal table")) {
-            app.library.datatable.reDraw("#build-map-modal table", data);
-        } else {
-            var localOptions = {
-                // Add Row Index to feed the ExtraInfo modal 
-                createdRow: function (row, dataRow, dataIndex) {
-                    $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+    $("#build-map-modal").find(".modal-header [name=cls-value]").empty().text(app.build.map.params.clsCode + ": " + app.build.map.params.clsValue);
+    if ($.fn.dataTable.isDataTable("#build-map-modal table")) {
+        app.library.datatable.reDraw("#build-map-modal table", data);
+    } else {
+        var localOptions = {
+            // Add Row Index to feed the ExtraInfo modal 
+            createdRow: function (row, dataRow, dataIndex) {
+                $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
+            },
+            data: data,
+            columns: [
+                {
+                    data: "GmpName"
                 },
-                data: data,
-                columns: [
-                    {
-                        data: "GmpName"
-                    },
-                    {
-                        data: "GmpFeatureCount"
-                    },
-                    {
-                        data: "GmpDescription",
-                        visible: false,
-                    },
-                    {
-                        data: "GlrName",
-                        visible: false,
-                    },
-                    {
-                        data: null,
-                        defaultContent: '',
-                        sorting: false,
-                        searchable: false,
-                        "render": function (data, type, row, meta) {
-                            return $("<a>", {
-                                href: "#",
-                                name: C_APP_DATATABLE_EXTRA_INFO_LINK,
-                                "idn": meta.row,
-                                html:
-                                    $("<i>", {
-                                        "class": "fas fa-info-circle text-info"
-                                    }).get(0).outerHTML +
-                                    " " + app.label.static["details"]
-                            }).get(0).outerHTML;
-                        }
-                    },
-                    {
-                        data: null,
-                        sorting: false,
-                        searchable: false,
-                        render: function (data, type, row) {
-                            return app.library.html.link.view({ "gmp-code": row.GmpCode }, null, app.label.static["view-map"]);
-                        },
-                        "width": "1%"
-                    },
-                    {
-                        data: null,
-                        sorting: false,
-                        searchable: false,
-                        render: function (data, type, row) {
-                            return $("<button>", {
-                                "class": "btn btn-outline-primary btn-sm",
-                                "name": "select",
-                                "idn": row.GmpCode,
-                                "html":
-                                    $("<i>", {
-                                        "class": "fas fa-check-circle"
-                                    }).get(0).outerHTML + " " + app.label.static["select"]
-                            }).get(0).outerHTML;
-                        },
-                        "width": "1%"
+                {
+                    data: "GmpFeatureCount"
+                },
+                {
+                    data: "GmpDescription",
+                    visible: false,
+                },
+                {
+                    data: "GlrName",
+                    visible: false,
+                },
+                {
+                    data: null,
+                    defaultContent: '',
+                    sorting: false,
+                    searchable: false,
+                    "render": function (data, type, row, meta) {
+                        return $("<a>", {
+                            href: "#",
+                            name: C_APP_DATATABLE_EXTRA_INFO_LINK,
+                            "idn": meta.row,
+                            html:
+                                $("<i>", {
+                                    "class": "fas fa-info-circle text-info"
+                                }).get(0).outerHTML +
+                                " " + app.label.static["details"]
+                        }).get(0).outerHTML;
                     }
-                ],
-                drawCallback: function (settings) {
-                    app.build.map.callback.drawCallbackReadMaps();
                 },
-                //Translate labels language
-                language: app.label.plugin.datatable
-            };
-
-            $("#build-map-modal table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+                {
+                    data: null,
+                    sorting: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return app.library.html.link.view({ "gmp-code": row.GmpCode }, null, app.label.static["view-map"]);
+                    },
+                    "width": "1%"
+                },
+                {
+                    data: null,
+                    sorting: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return $("<button>", {
+                            "class": "btn btn-outline-primary btn-sm",
+                            "name": "select",
+                            "idn": row.GmpCode,
+                            "html":
+                                $("<i>", {
+                                    "class": "fas fa-check-circle"
+                                }).get(0).outerHTML + " " + app.label.static["select"]
+                        }).get(0).outerHTML;
+                    },
+                    "width": "1%"
+                }
+            ],
+            drawCallback: function (settings) {
                 app.build.map.callback.drawCallbackReadMaps();
-            });
-        }
-        $("#build-map-modal").modal("show");
-    }
-    else api.modal.exception(app.label.static["api-ajax-exception"]);
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
 
+        $("#build-map-modal table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.build.map.callback.drawCallbackReadMaps();
+        });
+    }
+    $("#build-map-modal").modal("show");
 };
 
 app.build.map.callback.drawCallbackReadMaps = function () {

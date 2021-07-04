@@ -14,7 +14,7 @@ CREATE
 
 ALTER PROCEDURE Data_Geomap_Update @GmpCode NVARCHAR(32)
 	,@GmpName NVARCHAR(256)
-	,@GmpDescription NVARCHAR(512)
+	,@GmpDescription NVARCHAR(MAX)
 	,@CcnUsername NVARCHAR(256)
 AS
 BEGIN

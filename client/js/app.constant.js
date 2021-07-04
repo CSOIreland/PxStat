@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "3.7.0";
+const C_APP_VERSION = "3.7.1";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";

@@ -14,7 +14,7 @@ CREATE
 
 ALTER PROCEDURE Data_Geomap_Create @GmpCode NVARCHAR(32)
 	,@GmpName NVARCHAR(256)
-	,@GmpDescription NVARCHAR(512)
+	,@GmpDescription NVARCHAR(MAX)
 	,@GmpGeoJson NVARCHAR(MAX)
 	,@GlrCode NVARCHAR(256)
 	,@GmpFeatureCount INT
