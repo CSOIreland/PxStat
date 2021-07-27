@@ -3275,7 +3275,7 @@ namespace PxStat.Data
 
             jsStat.Version = Version.The20;
             jsStat.Class = Class.Dataset;
-            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
 
             if (this.Release != null)
             {
@@ -3315,7 +3315,7 @@ namespace PxStat.Data
                     jsStat.Note.Add(this.Release.CmmValue);
                 }
 
-                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
 
                 List<Format_DTO_Read> formats;
                 using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
@@ -3334,7 +3334,7 @@ namespace PxStat.Data
                         foreach (var f in formats)
                         {
                             if (f.FrmType != this.FormatType || f.FrmVersion != this.FormatVersion)
-                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
                         }
                         jsStat.Link = link;
                     }
@@ -3539,7 +3539,7 @@ namespace PxStat.Data
 
 
             jsStat.Class = Class.Dataset;
-            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
             if (this.Release != null)
             {
                 if (this.Release.RlsLiveFlag && this.Release.RlsLiveDatetimeFrom < DateTime.Now)
@@ -3578,7 +3578,7 @@ namespace PxStat.Data
                     jsStat.Note.Add(this.Release.CmmValue);
                 }
 
-                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
+                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, this.FormatType.ToString(), this.FormatVersion.ToString(), spec.Language);
 
                 List<Format_DTO_Read> formats;
                 using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
@@ -3595,7 +3595,7 @@ namespace PxStat.Data
                         foreach (var f in formats)
                         {
                             if (f.FrmType != this.FormatType || f.FrmVersion != this.FormatVersion)
-                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), this.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
                         }
                         jsStat.Link = link;
                     }
@@ -4463,25 +4463,36 @@ namespace PxStat.Data
     /// </summary>
     internal class Matrix_DTO
     {
-        public string MtrCode { get; set; }
-        public string MtrTitle { get; set; }
-        public string LngIsoCode { get; set; }
-        public string CprValue { get; set; }
+        private string _mtrCode;
+        private string _mtrTitle;
+        private string _lngIsoCode;
+        private string _cprValue;
+        private string _frqCode;
+        private string _frmVersion;
+        private string _frqValue;
+        private string _frmType;
+        private string _cprCode;
+        private string _cprUrl;
+
+        public string MtrCode { get { return Sanitizer.PrepareJsonValue(_mtrCode); } internal set { _mtrCode = Sanitizer.PrepareJsonValue(value); } }
+        public string MtrTitle { get { return Sanitizer.PrepareJsonValue(_mtrTitle); } internal set { _mtrTitle = Sanitizer.PrepareJsonValue(value); } }
+        public string LngIsoCode { get { return Sanitizer.PrepareJsonValue(_lngIsoCode); } internal set { _lngIsoCode = Sanitizer.PrepareJsonValue(value); } }
+        public string CprValue { get { return Sanitizer.PrepareJsonValue(_cprValue); } internal set { _cprValue = Sanitizer.PrepareJsonValue(value); } }
         public bool MtrOfficialFlag { get; set; }
-        public string FrmType { get; set; }
-        public string FrmVersion { get; set; }
+        public string FrmType { get { return Sanitizer.PrepareJsonValue(_frmType); } internal set { _frmType = Sanitizer.PrepareJsonValue(value); } }
+        public string FrmVersion { get { return Sanitizer.PrepareJsonValue(_frmVersion); } internal set { _frmVersion = Sanitizer.PrepareJsonValue(value); } }
         public string MtrNote { get; set; }
         public string MtrInput { get; internal set; }
-        public string FrqCode { get; internal set; }
-        public string FrqValue { get; internal set; }
-        public string CprCode { get; internal set; }
+        public string FrqCode { get { return Sanitizer.PrepareJsonValue(_frqCode); } internal set { _frqCode = Sanitizer.PrepareJsonValue(value); } }
+        public string FrqValue { get { return Sanitizer.PrepareJsonValue(_frqValue); } internal set { _frqValue = Sanitizer.PrepareJsonValue(value); } }
+        public string CprCode { get { return Sanitizer.PrepareJsonValue(_cprCode); } internal set { _cprCode = Sanitizer.PrepareJsonValue(value); } }
         public string LngIsoName { get; internal set; }
         public int RlsCode { get; internal set; }
         public DateTime DtgUpdateDatetime { get; internal set; }
         public string CcnUsernameUpdate { get; internal set; }
         public DateTime DtgCreateDatetime { get; internal set; }
         public string CcnUsername { get; internal set; }
-        public string CprUrl { get; internal set; }
+        public string CprUrl { get { return Sanitizer.PrepareJsonValue(_cprUrl); } internal set { _cprUrl = Sanitizer.PrepareJsonValue(value); } }
     }
 
 

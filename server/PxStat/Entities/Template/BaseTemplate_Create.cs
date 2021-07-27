@@ -3,7 +3,6 @@ using FluentValidation;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
-using System.Data;
 
 namespace PxStat.Template
 {
@@ -52,11 +51,14 @@ namespace PxStat.Template
         {
             try
             {
+
                 // first of all, we check if user has the right to perform this operation!
                 if (HasUserToBeAuthenticated())
                 {
                     if (!IsUserAuthenticated() || !HasUserPrivilege())
                     {
+
+                        OnAuthenticationFailed();
                         return this;
                     }
                 }
@@ -96,18 +98,24 @@ namespace PxStat.Template
                     return this;
                 }
 
-                Ado.StartTransaction(IsolationLevel.Snapshot);
+                Ado.StartTransaction();
 
                 // The Actual Creation should happen here by the specific class!
                 if (!Execute())
                 {
+
                     Ado.RollbackTransaction();
                     OnExecutionError();
-                    return this;
+                }
+                else
+                {
+
+                    Ado.CommitTransaction();
+                    OnExecutionSuccess();
                 }
 
-                Ado.CommitTransaction();
-                OnExecutionSuccess();
+
+
 
                 return this;
             }
@@ -137,6 +145,7 @@ namespace PxStat.Template
             }
             finally
             {
+
                 Dispose();
             }
         }

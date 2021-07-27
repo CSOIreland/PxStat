@@ -86,10 +86,13 @@ namespace PxStat.Template
         /// </summary>
         protected void Dispose()
         {
-            // Extend the Session of a Local Account if any
+
+
             if (SamAccountName != null && AuthenticationType == AuthenticationType.local)
             {
+
                 Login_BSO.ExtendSession(Ado, SamAccountName);
+
             }
 
             // Dispose the ADO
@@ -356,6 +359,10 @@ namespace PxStat.Template
 
 
                     AuthenticationType = AuthenticationType.local;
+                }
+                else
+                {
+                    return false;
                 }
 
             }

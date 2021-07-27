@@ -1,4 +1,5 @@
 ﻿
+using API;
 using FluentValidation;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,21 @@ namespace PxStat.Data
             {
                 comparisons.Add(cls.Value.ToUpper());
             }
+
+            //Frequency code must be one of the ones defined in STATIC
+            List<string> validCodes = new List<string>();
+            foreach (string str in Utility.GetCustomConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList<string>())
+            {
+                if (str != null)
+                {
+                    if (str.Contains('/'))
+                        validCodes.Add(str.Split('/')[0]);
+                }
+            }
+
+            if (spec.Frequency.Code == null) return false;
+
+            if (!validCodes.Contains(spec.Frequency.Code)) return false;
 
             return !hasDupes(comparisons);
 

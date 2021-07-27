@@ -199,6 +199,7 @@ app.geomap.panel.callback.updateLayer = function (data, glrName) {
 
     //Refresh the table
     app.geomap.panel.ajax.readLayers();
+    app.geomap.ajax.read();
 };
 
 app.geomap.panel.ajax.deleteLayer = function (params) {

@@ -432,7 +432,6 @@ namespace PxParser.Resources.Parser
         /// <returns>A <typeparamref name="IEnumerable"/> with all the matched <typeparamref name="IPxKeywordElement"/>elements</returns>
         protected IEnumerable<IPxKeywordElement> GetAllKeywordElementsThatMatchTheIdentifier(PxDocument pxDoc, string keywordIdentifier, string language = null)
         {
-            //var keys = pxDoc.Keywords.Where(k => k.Key.Identifier == keywordIdentifier && ((String.IsNullOrEmpty(language) && String.IsNullOrEmpty(k.Key.Language)) || k.Key.Language == language));
 
             var keys = pxDoc.Keywords.Where(k => k.Key.Identifier == keywordIdentifier && (String.IsNullOrEmpty(language) || k.Key.Language == language));
             if (!keys.Any())

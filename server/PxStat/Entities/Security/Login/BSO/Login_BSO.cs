@@ -1,6 +1,5 @@
 ﻿using API;
 using System;
-using System.Data;
 
 namespace PxStat.Security
 {
@@ -137,23 +136,26 @@ namespace PxStat.Security
             return lAdo.CreateSession(LgnSession, expiry, CcnUsername); ;
         }
 
-        internal static void ExtendSession(ADO Ado, string CcnUsername)
+        internal static void ExtendSession(ADO extendAdo ,string CcnUsername)
         {
-            DateTime expiry = DateTime.Now.AddSeconds(Configuration_BSO.GetCustomConfig(ConfigType.global, "session.length"));
-
-            // Enforce a Snapshot Transaction for every type of Base Template
-            Ado.StartTransaction(IsolationLevel.Snapshot);
-
-            Login_ADO lAdo = new Login_ADO(Ado);
-
-            if (lAdo.ExtendSession(CcnUsername, expiry))
+            
+            try
             {
-                Ado.CommitTransaction();
+
+                DateTime expiry = DateTime.Now.AddSeconds(Configuration_BSO.GetCustomConfig(ConfigType.global, "session.length"));
+
+                Login_ADO lAdo = new Login_ADO(extendAdo);
+
+                lAdo.ExtendSession(CcnUsername, expiry);
             }
-            else
+            catch (Exception ex)
             {
-                Ado.RollbackTransaction();
+                //Swallow the error but log the error message.
+                Log.Instance.Error("Failed to extend the user session - error message: " + ex.Message);
             }
+
+
+
         }
     }
 }

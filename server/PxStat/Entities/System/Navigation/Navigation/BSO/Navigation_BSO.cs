@@ -44,10 +44,10 @@ namespace PxStat.System.Navigation
             DataTable dt = GetResultDataTableWordSearch(exactMatches, lemmaMatches);
 
             //pass the datatable to the stored procedure to get the metadata associated with the matrix
-            dynamic dataV2 = adoNav.ReadSearchResults(dt, DTO.LngIsoCode);
+            dynamic dataPlusMetadata = adoNav.ReadSearchResults(dt, DTO.LngIsoCode);
 
             //Format the result as a json response
-            return FormatOutput(dataV2, DTO.LngIsoCode);
+            return FormatOutput(dataPlusMetadata, DTO.LngIsoCode);
 
         }
 

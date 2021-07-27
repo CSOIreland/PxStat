@@ -100,5 +100,12 @@ namespace PxStat.Resources
 
             return pvalue;
         }
+
+        internal static string PrepareJsonValue(string readString)
+        {
+            return Regex.Replace(readString, @"\t|\n|\r", ""); ;
+        }
     }
+
+
 }

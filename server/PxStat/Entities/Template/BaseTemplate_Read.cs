@@ -50,11 +50,14 @@ namespace PxStat.Template
         {
             try
             {
+
                 // first of all, we check if user has the right to perform this operation!
                 if (HasUserToBeAuthenticated())
                 {
                     if (!IsUserAuthenticated() || !HasUserPrivilege())
                     {
+
+                        OnAuthenticationFailed();
                         return this;
                     }
                 }
@@ -64,7 +67,6 @@ namespace PxStat.Template
                     Log.Instance.Debug("Session cookie: " + Request.sessionCookie.Value);
 
                     //Does the cookie correspond with a live token for a user? 
-                    //Login_BSO lBso = new Login_BSO();
                     ADO_readerOutput user;
                     using (Login_BSO lBso = new Login_BSO())
                     {
@@ -117,14 +119,21 @@ namespace PxStat.Template
                     }
                 }
 
+
+
                 // The Actual Read should happen here by the specific class!
                 if (!Execute())
                 {
                     OnExecutionError();
-                    return this;
+                }
+                else
+                {
+
+                    OnExecutionSuccess();
                 }
 
-                OnExecutionSuccess();
+
+
 
                 return this;
             }

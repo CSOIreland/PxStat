@@ -72,9 +72,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.5.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=4.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.5.0\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.4.6.0\API.Library.dll</HintPath>
     </Reference>
     <Reference Include="ClosedXML, Version=0.95.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ClosedXML.0.95.4\lib\net46\ClosedXML.dll</HintPath>
