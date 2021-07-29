@@ -388,12 +388,13 @@ namespace PxStat.Data
             internal Specification(string lngIsoCode, Build_DTO dto)
             {
                 Language = lngIsoCode;
-                Contents = dto.matrixDto.MtrTitle;
-                NotesAsString = dto.matrixDto.MtrNote;
-
 
                 //Get the dimension for this particular language
                 var dimension = (from dim in dto.DimensionList where dim.LngIsoCode == lngIsoCode select dim).FirstOrDefault();
+
+                Contents = dimension.MtrTitle;
+                NotesAsString = dimension.MtrNote;
+
 
                 if (dimension == null) return;
 
