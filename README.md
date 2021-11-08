@@ -1,5 +1,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Mentioned in Awesome Official Statistics ](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficialstatistics.org)
 
 # PxStat
 PxStat is a **Data Dissemination Management System** for publishing Statistics in **Open Data** formats. It's especially designed for National Statistical Institutes and Statistical Organisations, developed by the [CSO](https://www.cso.ie) (Central Statistics Office, Ireland) with the support of the **PC-Axis** Reference Group and the collaboration of the **Open Source** community.
