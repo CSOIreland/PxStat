@@ -17,6 +17,9 @@
     "release_word_multiplier": 1,
     "product_word_multiplier": 10,
     "subject_word_multiplier": 100
+  },
+  "release": {
+    "lockTimeMinutes": 60
   }
 
 

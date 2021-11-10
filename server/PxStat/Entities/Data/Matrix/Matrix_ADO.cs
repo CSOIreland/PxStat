@@ -782,5 +782,64 @@ namespace PxStat.Data
 
             return new List<dynamic>();
         }
+
+
+
+
+    }
+
+    internal class DatasetAdo : IDisposable
+    {
+        ADO _ado;
+        internal DatasetAdo(ADO ado)
+        {
+            _ado = ado;
+        }
+
+        /// <summary>
+        ///  Get the locked state of a dataset
+        /// </summary>
+        /// <param name="mtrCode"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput ReadDatasetLocked(string mtrCode)
+        {
+            var inputParams = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams { name = "@DttMtrCode", value = mtrCode }
+            };
+
+            return _ado.ExecuteReaderProcedure("Data_Dataset_Read", inputParams);
+        }
+
+        /// <summary>
+        /// Locks or unlocks the Dataset lock record
+        /// </summary>
+        /// <param name="mtrCode"></param>
+        /// <param name="datetimeLocked"></param>
+        /// <returns></returns>
+        internal bool DatasetLockUpdate(string mtrCode, DateTime datetimeLocked)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@DttMtrCode", value = mtrCode  },
+            };
+
+            if (datetimeLocked != default)
+            {
+                inputParams.Add(
+                    new ADO_inputParams { name = "@DttDatetimeLocked", value = datetimeLocked }
+                    );
+            }
+
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+
+            _ado.ExecuteNonQueryProcedure("Data_Dataset_Lock_Update", inputParams, ref returnParam);
+
+            return returnParam.value != 0;
+        }
+
+        public void Dispose()
+        {
+            _ado.Dispose();
+        }
     }
 }

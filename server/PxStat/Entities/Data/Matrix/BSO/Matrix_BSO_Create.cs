@@ -87,6 +87,8 @@ namespace PxStat.Data
 
             int releaseId;
 
+
+
             // Check if a WIP Release already exists for the Matrix to Upload
             var latestRelease = mBso.GetLatestRelease(theMatrixData);
             if (latestRelease != null && !DTO.Overwrite && releaseAdo.IsWip(latestRelease.RlsCode)) //
@@ -117,6 +119,23 @@ namespace PxStat.Data
                 return false;
             }
 
+            //Check if the matrix code is locked in the dataset table
+            using (DatasetAdo dAdo = new DatasetAdo(new ADO("defaultConnection")))
+            {
+                ADO_readerOutput dResult = dAdo.ReadDatasetLocked(theMatrixData.Code);
+                if (dResult.hasData)
+                {
+                    DateTime lockedTime = dResult.data[0].DttDatetimeLocked.Equals(DBNull.Value) ? default : (DateTime)dResult.data[0].DttDatetimeLocked;
+                    if (lockedTime.AddMinutes(Configuration_BSO.GetCustomConfig(ConfigType.server, "release.lockTimeMinutes")) > DateTime.Now)
+                    {
+                        Response.error = Label.Get("error.release.locked");
+                        return false;
+                    }
+
+                }
+
+                dAdo.DatasetLockUpdate(theMatrixData.Code, DateTime.Now);
+            }
 
             if (latestRelease != null)
             {
@@ -178,7 +197,10 @@ namespace PxStat.Data
             swLoad.Stop();
             Log.Instance.Info(string.Format("Matrix loaded in DB in {0} ms", Math.Round((double)swLoad.ElapsedMilliseconds)));
 
-
+            using (DatasetAdo dAdo = new DatasetAdo(new ADO("defaultConnection")))
+            {
+                dAdo.DatasetLockUpdate(theMatrixData.Code, default);
+            }
 
             Response.data = JSONRPC.success;
             return true;

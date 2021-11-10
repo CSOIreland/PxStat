@@ -91,7 +91,9 @@ app.data.dataset.ajax.readMetadata = function () {
 * @param {*} response
 */
 app.data.dataset.callback.readMetadata = function (response) {
-
+    //emergency fix for issue where map from previous table is displayed instead of the current table
+    //this issue is fixed by a different means in dev 4.0.0
+    $("#data-dataset-map-nav-content, #data-dataset-chart-nav-content").empty();
     app.data.dataset.metadata.response = response;
     app.data.dataset.metadata.jsonStat = response ? JSONstat(response) : null;
     if (app.data.dataset.metadata.jsonStat && app.data.dataset.metadata.jsonStat.length) {

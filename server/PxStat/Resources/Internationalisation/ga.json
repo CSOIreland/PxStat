@@ -40,6 +40,9 @@
       "invalid-format": "Map url format is invalid",
       "inconsistent-map-data": "Map data is inconsistent"
 
+    },
+    "release": {
+      "locked": "The release is currently in use and is locked"
     }
   },
 
