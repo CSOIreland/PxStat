@@ -49,7 +49,8 @@ BEGIN
 		WHERE CCN_USERNAME = @CcnUsername
 			AND CCN_DELETE_FLAG = 0
 
-		DECLARE @rnum INT = 1
+		DECLARE @rnum INT
+		set @rnum = 1
 		DECLARE @rcount INT = (
 				SELECT count(*)
 				FROM @MatrixIds

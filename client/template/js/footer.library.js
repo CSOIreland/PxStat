@@ -30,7 +30,7 @@ app.footer.render.links = function () {
 
   $("#footer [name=footer-links]").append($("<li>", {
     "html": $("<a>", {
-      "href": "#",
+      "href": "/?privacy",
       "text": app.label.static["privacy"],
       "name": "privacy",
       "class": "text-light"

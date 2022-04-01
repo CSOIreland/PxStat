@@ -107,17 +107,6 @@ $(document).ready(function () {
     //Bind the period upload reset button
     $("#build-create-upload-periods").find("[name=upload-reset]").once("click", app.build.create.dimension.resetPeriodUpload);
 
-
-    $("#build-create-matrix-dimensions").find("[name=elimination-popover]").popover({
-        "content": app.label.static["elimination-explanation"],
-        "html": true
-    });
-
-    $("#build-create-matrix-dimensions").find("[name=map-popover]").popover({
-        "content": app.label.static["map-explanation"],
-        "html": true
-    });
-
     $("#build-create-matrix-dimensions").find("[name=warning-icon]").tooltip({
         "title": app.label.static["invalid-geojson-in-px-file"],
     })

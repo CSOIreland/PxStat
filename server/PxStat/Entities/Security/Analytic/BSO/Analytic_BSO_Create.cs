@@ -55,11 +55,24 @@ namespace PxStat.Security
             if (MethodReader.DynamicHasProperty(requestDTO, "m2m"))
             {
                 aDto.NltM2m = requestDTO.m2m;
+
+
             }
             else aDto.NltM2m = true;
 
+            if (MethodReader.DynamicHasProperty(requestDTO, "widget"))
+            {
+                aDto.NltWidget = requestDTO.widget;
+            }
+
+            if (MethodReader.DynamicHasProperty(requestDTO, "user"))
+            {
+                aDto.NltUser = requestDTO.user;
+            }
+
             // Get the DateTime
             aDto.NltDate = DateTime.Now;
+
 
             //Get Format information
             if (MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension"))
@@ -76,6 +89,15 @@ namespace PxStat.Security
             DeviceDetector deviceDetector = GetDeviceDetector(request.userAgent);
 
             aDto.NltBotFlag = deviceDetector.IsBot();
+
+
+            //If it's a bot, then that overrules everything else
+            if (aDto.NltBotFlag)
+            {
+                aDto.NltM2m = false;
+                aDto.NltUser = false;
+                aDto.NltWidget = false;
+            }
 
             if (deviceDetector.GetBrowserClient().Match != null)
             {

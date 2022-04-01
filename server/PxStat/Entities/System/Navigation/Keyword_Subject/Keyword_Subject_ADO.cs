@@ -64,8 +64,10 @@ namespace PxStat.System.Navigation
                     new SqlBulkCopyColumnMapping("KSB_SBJ_ID", "KSB_SBJ_ID"),
                     new SqlBulkCopyColumnMapping("KSB_MANDATORY_FLAG", "KSB_MANDATORY_FLAG")
                 };
-
-            ado.ExecuteBulkCopy("TD_KEYWORD_SUBJECT", maps, dt, true);
+            using (ADO bulkAdo = new ADO("defaultConnection"))
+            {
+                bulkAdo.ExecuteBulkCopy("TD_KEYWORD_SUBJECT", maps, dt, false);
+            }
         }
 
         /// <summary>

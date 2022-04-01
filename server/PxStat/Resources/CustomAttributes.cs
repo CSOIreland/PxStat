@@ -23,6 +23,12 @@ namespace PxStat
     internal class UpperCase : Attribute { }
 
     /// <summary>
+    /// If this is asserted on an API, parameters will be cleansed on an individual basis
+    /// All parameters will be cleansed except those with NoHtmlStrip on the corresponding DTO attribute
+    /// </summary>
+    internal class IndividualCleanseNoHtml : Attribute { }
+
+    /// <summary>
     /// If this attribute is asserted on an API method then calls to that method will not be traced
     /// </summary>
     internal class NoTrace : Attribute { }
@@ -31,6 +37,11 @@ namespace PxStat
     /// If this attribute is asserted on an API method then calls to that method will be logged in the Analytic table
     /// </summary>
     internal class Analytic : Attribute { }
+
+    /// <summary>
+    /// If this attribute is asserted on an API method then the call is subject to throttling in case of usage limits being broken
+    /// </summary>
+    internal class Throttle : Attribute { }
 
     /// <summary>
     /// If this attribute is asserted then (a) the operation will search the cache before attempting a Read, and (b) any Read operation will be cached

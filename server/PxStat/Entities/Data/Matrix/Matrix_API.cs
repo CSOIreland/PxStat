@@ -20,10 +20,10 @@ namespace PxStat.Data
 
             var response = new Matrix_BSO_Create(jsonrpcRequest).Create().Response;
 
-            if (response.error == null)
-            {
-                runDeletes();
-            }
+            //if (response.error == null)
+            //{
+            //    runDeletes();
+            //}
 
             return response;
         }

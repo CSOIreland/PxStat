@@ -65,8 +65,10 @@ namespace PxStat.System.Navigation
                     new SqlBulkCopyColumnMapping("KPR_PRC_ID", "KPR_PRC_ID"),
                     new SqlBulkCopyColumnMapping("KPR_MANDATORY_FLAG", "KPR_MANDATORY_FLAG")
                 };
-
-            ado.ExecuteBulkCopy("TD_KEYWORD_PRODUCT", maps, dt, true);
+            using (ADO bulkAdo = new ADO("defaultConnection"))
+            {
+                bulkAdo.ExecuteBulkCopy("TD_KEYWORD_PRODUCT", maps, dt, false);
+            }
         }
 
         /// <summary>

@@ -40,6 +40,8 @@ namespace PxStat.Data
             //We can do this now because the MtrCode is available to us
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
             int updated = adoRelease.Update(dtoRelease, SamAccountName);
             if (updated == 0)
             {

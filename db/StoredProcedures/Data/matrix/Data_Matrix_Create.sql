@@ -31,7 +31,8 @@ BEGIN
 
 	-- Error Message
 	DECLARE @errorMessage VARCHAR(256)
-	DECLARE @spName VARCHAR(100) = 'Data_Stat_Matrix_Create'
+	DECLARE @spName VARCHAR(100)
+	set  @spName = 'Data_Stat_Matrix_Create'
 	-- language lookup fk
 	DECLARE @MtrLngId INT = NULL
 

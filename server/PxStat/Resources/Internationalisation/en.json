@@ -17,6 +17,8 @@
     "validation": "Validation failed. Please review your input.",
     "workflow": "The Table &quot;{0}&quot; has a workflow in progress. Please wait for the workflow to complete before uploading a new version.",
     "image": "An image could not be created from the resource at {0}",
+    "throttled": "The request has been refused because you have exceeded the fair usage policy.",
+    "notification": "The notification cannot be sent because the email address cannot be found.",
     "parsing": {
       "parse-error": "Parse Error",
       "unexpected": "Unexpected character {0} found at row {1}, column {2}",
@@ -41,6 +43,17 @@
     },
     "release": {
       "locked": "The release is currently in use and is locked"
+    },
+    "subscription": {
+      "query-threshold": "The maximum number of subscription snippet queries has been reached.",
+      "invalid-snippet-base64": "The Snippet Base64 string is invalid",
+      "duplicate-tagname": "Cannot create duplicate tag name for the query"
+    },
+    "firebase": {
+      "alreadySubscribed": "You are already a user of this application and you may not register again"
+    },
+    "settings": {
+      "language-json-invalid": "You must create a json file for this language in Resources"
     }
   },
   "authentication": {
@@ -136,12 +149,15 @@
     "variable": "State"
   },
   "email": {
+    "summary": "{0} emails sent",
+    "salutation-informal": "To {0}",
     "body": {
       "request-create": "A new request of type [b]{0}[/b] has been submitted by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3} [/b]and is awaiting approval.\n View this workflow at {4}.",
       "response-approve": "A new request of type [b]{0}[/b] has been approved by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b] and is awaiting sign-off.\nView this workflow at {4}.",
       "response-reject": "The request for approval of type [b]{0}[/b] has been rejected by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
       "signoff-approve": "The request for sign-off of type [b]{0}[/b] has been approved by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
       "signoff-reject": "The request for sign-off of type [b]{0}[/b] has been rejected by [url=mailto:{5}]{6} ({7})[/url] against the Table [b]{1}[/b] Version [b]{2}.{3}[/b].\n View this workflow at {4}.",
+
 
 
       "header": {
@@ -171,6 +187,12 @@
       "update-1fa": "Reset password for {0}",
       "update-2fa": "Reset 2FA for {0}",
       "setup-2fa": "Setup 2FA for {0}"
+    },
+    "subscription": {
+      "notification-body": "This is a placeholder for the subscription notification body",
+      "notification-title": "Notification for Channel {0}",
+      "notification-subject": "This is a placeholder for the subscription notification subject"
+
     }
 
   },

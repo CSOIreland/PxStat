@@ -14,9 +14,9 @@ $(document).ready(function () {
         onstyle: "success",
         offstyle: "warning",
         width: C_APP_TOGGLE_LENGTH
-    });
+    }).once("change", app.data.searchResult.callback.filterResults);
 
-    $("#data-navigation").html(navigation.get(0).outerHTML);
+    $("#data-navigation").find("[name=menu]").html(navigation.get(0).outerHTML);
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
 

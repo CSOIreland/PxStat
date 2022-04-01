@@ -35,8 +35,10 @@ namespace PxStat.Security
                 new ADO_inputParams() {name= "@NltMaskedIp",value=dto.NltMaskedIp},
                 new ADO_inputParams() {name= "@NltBotFlag",value=dto.NltBotFlag},
                 new ADO_inputParams() {name= "@NltM2m",value=dto.NltM2m},
+                new ADO_inputParams() {name= "@NltWidget",value=dto.NltWidget },
                 new ADO_inputParams() {name= "@NltDate",value=dto.NltDate},
-                new ADO_inputParams() {name= "@LngIsoCode",value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")}
+                new ADO_inputParams() {name= "@LngIsoCode",value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")},
+                new ADO_inputParams() {name="@NltUser",value=dto.NltUser}
             };
             if (dto.NltOs != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@NltOs", value = dto.NltOs });
@@ -129,7 +131,7 @@ namespace PxStat.Security
 
         }
 
-        internal ADO_readerOutput ReadEnvironmentLanguage(Analytic_DTO_Read dto,string ccnUsername)
+        internal ADO_readerOutput ReadEnvironmentLanguage(Analytic_DTO_Read dto, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -158,7 +160,7 @@ namespace PxStat.Security
         }
 
         //Security_Analytic_ReadFormat
-        internal ADO_readerOutput ReadFormat(Analytic_DTO_Read dto,string ccnUsername)
+        internal ADO_readerOutput ReadFormat(Analytic_DTO_Read dto, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -296,7 +298,7 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadLanguage(Analytic_DTO_Read dto,string ccnUsername)
+        internal ADO_readerOutput ReadLanguage(Analytic_DTO_Read dto, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {

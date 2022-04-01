@@ -1,6 +1,12 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
 using PxStat.Security;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 
 
 // Keep it under the PxStat namespace because it's globally used
@@ -15,18 +21,12 @@ namespace PxStat
     {
         // Mandatory language merged with the default one (fall back)
         internal static readonly dynamic mergedInstance;
-        internal static readonly dynamic gaMergedInstance;
-        internal static readonly dynamic plMergedInstance;
+
+        internal static readonly dynamic mergedInstances = new Dictionary<string, dynamic>();
 
         //The en (English) is the mandatory language, always existing
         internal static readonly dynamic mandatoryInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("en"));
-
         internal static readonly dynamic defaultInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")));
-
-        internal static readonly dynamic gaInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("ga"));
-        internal static readonly dynamic plInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString("pl"));
-
-
 
         /// <summary>
         /// Initiate Label, merge the default language with the mandatory English one which is always available (fall back)
@@ -44,21 +44,21 @@ namespace PxStat
                 MergeArrayHandling = MergeArrayHandling.Union
             });
 
-            gaMergedInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Utility.JsonSerialize_IgnoreLoopingReference(mandatoryInstance));
-            gaMergedInstance.Merge(gaInstance, new JsonMergeSettings
+            // Get language code resources and merge with mandatory one
+            LanguageUtility languageUtility = new LanguageUtility();
+            List<string> languageCodes = languageUtility.GetLanguageCodes();
+
+            foreach (string languageCode in languageCodes)
             {
-                // union array values together to avoid duplicates
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
-
-            plMergedInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Utility.JsonSerialize_IgnoreLoopingReference(mandatoryInstance));
-            plMergedInstance.Merge(plInstance, new JsonMergeSettings
-            {
-                // union array values together to avoid duplicates
-                MergeArrayHandling = MergeArrayHandling.Union
-            });
-
-
+                var instance = Utility.JsonDeserialize_IgnoreLoopingReference(Properties.Resources.ResourceManager.GetString(languageCode));
+                var newMergedInstance = Utility.JsonDeserialize_IgnoreLoopingReference(Utility.JsonSerialize_IgnoreLoopingReference(mandatoryInstance));
+                newMergedInstance.Merge(instance, new JsonMergeSettings
+                {
+                    // union array values together to avoid duplicates
+                    MergeArrayHandling = MergeArrayHandling.Union
+                });
+                mergedInstances[languageCode] = newMergedInstance;
+            }
         }
 
         static public string GetFromRequestLanguage(string label)
@@ -69,15 +69,15 @@ namespace PxStat
         static public string Get(string label, string lngIsoCode)
         {
             if (lngIsoCode.Equals(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")))
-                return Get(label);
-
-            switch (lngIsoCode)
             {
-                case "ga":
-                    return ProcessGet(label, gaMergedInstance);
-                case "pl":
-                    return ProcessGet(label, plMergedInstance);
-
+                return Get(label);
+            }
+            else
+            {
+                if (mergedInstances.ContainsKey(lngIsoCode))
+                {
+                    return ProcessGet(label, mergedInstances[lngIsoCode]);
+                }
             }
             return label;
         }
@@ -97,7 +97,7 @@ namespace PxStat
             try
             {
                 string[] properties = label.Split('.');
-                dynamic output = outputObject;// mergedInstance;
+                dynamic output = outputObject; // mergedInstance;
                 foreach (string property in properties)
                 {
                     if (output[property] != null)
@@ -113,6 +113,51 @@ namespace PxStat
             {
                 return label;
             }
+        }
+    }
+
+    public class LanguageUtility
+    {
+        private const string JSON_EXTENSION = ".json";
+
+        public LanguageUtility()
+        {
+        }
+
+        /// <summary>
+        /// Check if languageCode is a valid ISO 639-1 two letter language code
+        /// </summary>
+        /// <param name="languageCode"></param>
+        /// <returns></returns>
+        private bool isLanguageCodeValid(string languageCode)
+        {
+            return CultureInfo.GetCultures(CultureTypes.AllCultures)
+                    .Any(ci => ci.TwoLetterISOLanguageName == languageCode);
+        }
+
+        /// <summary>
+        /// Get the language codes from the resources directory
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetLanguageCodes()
+        {
+            List<string> languageCodes = new List<string>();
+            string resourceDirectory = ConfigurationManager.AppSettings["API_RESOURCE_I18N_DIRECTORY"];
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            DirectoryInfo directoryInfo = new DirectoryInfo(Path.GetFullPath(Path.Combine(baseDirectory + resourceDirectory)));
+            foreach (var file in directoryInfo.GetFiles("*" + JSON_EXTENSION))
+            {
+                var languageCode = Path.GetFileNameWithoutExtension(file.Name);
+                if (isLanguageCodeValid(languageCode))
+                {
+                    languageCodes.Add(languageCode);
+                }
+                else
+                {
+                    Log.Instance.Info($"Language code {languageCode} is not a valid ISO-639-1 language code");
+                }
+            }
+            return languageCodes;
         }
     }
 }

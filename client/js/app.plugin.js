@@ -237,6 +237,9 @@ $(document).ready(function () {
 
     //update non modal divs to print css
     $('#cookie, #alert, #header, #navigation, #content, #footer, #spinner').removeClass('d-print-none');
+
+    //catch all listener to reset password fields if they exist in the modal
+    $(this).find("[name=hide-password]").trigger("click");
   });
 });
 
@@ -283,7 +286,7 @@ $(document).ready(function () {
         }
 
         //Collapse data navigation always on small
-        $("#data-navigation").find(".navbar-collapse").collapse('hide');
+        $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
 
         //if search results on page
         if ($("#data-search-row-desktop").find("[name=search-results][name=search-results]").is(":visible")) {
@@ -317,7 +320,7 @@ $(document).ready(function () {
         //if search results on page
         if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && (!$("#data-search-row-desktop").find("[name=search-results-non-archived]").is(":empty") || !$("#data-search-row-desktop").find("[name=search-results-archived]").is(":empty"))) {
           $("#data-filter").show();
-          $("#data-navigation").find(".navbar-collapse").collapse('hide');
+          $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
         };
         break;
     }

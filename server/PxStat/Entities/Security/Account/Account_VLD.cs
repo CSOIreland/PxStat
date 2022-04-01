@@ -85,7 +85,9 @@ namespace PxStat.Security
             //Mandatory - CcnUsername
             RuleFor(f => f.CcnUsername).NotEmpty().Length(1, 256).WithMessage("Invalid Username").WithName("CcnUsernameValidation");
             //Mandatory - PrvCode
-            RuleFor(f => f.PrvCode).NotEmpty().Length(1, 32).WithMessage("Invalid PrvCode").WithName("AccountPrivilegeCodeValidation");
+            RuleFor(f => f.PrvCode).NotEmpty().Length(1, 32).When(f => !string.IsNullOrEmpty(f.PrvCode)).WithMessage("Invalid PrvCode").WithName("AccountPrivilegeCodeValidation");
+            //Optional but taken from the environmment when absent
+            RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode)).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
         }
     }
 

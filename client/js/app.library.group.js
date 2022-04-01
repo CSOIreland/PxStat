@@ -82,7 +82,7 @@ app.library.group.modal.callback.readAccountList = function (data) {
     }).get(0);
     linkUser.addEventListener("click", function (e) {
       e.preventDefault();
-      app.library.user.modal.read({ CcnUsername: row.CcnUsername });
+      app.library.user.modal.ajax.read({ CcnUsername: row.CcnUsername });
     });
     var li = $("<li>", {
       class: "list-group-item"

@@ -21,6 +21,14 @@ $(document).ready(function () {
   );
   //#endregion
 
+  //#region Subscriptions
+  api.content.navigate(
+    "#nav-link-saved-query",
+    "entity/subscription/savedquery/",
+    "#nav-link-saved-query"
+  );
+  //#endregion
+
   //#region Dashboard
   api.content.navigate(
     "#nav-link-dashboard",
@@ -130,8 +138,21 @@ $(document).ready(function () {
     "#nav-link-email",
     "#nav-link-manage"
   );
+  api.content.navigate(
+    "#nav-link-channel",
+    "entity/manage/channel/",
+    "#nav-link-channel",
+    "#nav-link-channel"
+  );
+  api.content.navigate(
+    "#nav-link-subscriber",
+    "entity/manage/subscriber/",
+    "#nav-link-subscriber",
+    "#nav-link-subscriber"
+  );
 
   //#endregion
+
 
   //#region Configuration
 
@@ -229,17 +250,40 @@ $(document).ready(function () {
     "#nav-link-language",
     "#nav-link-system"
   );
+
+  api.content.navigate(
+    "#nav-link-subscribed-tables",
+    "entity/userprofilemenu/subscription/",
+    "#nav-link-subscribed-tables",
+    "#nav-link-user-profile-dropdown"
+  );
+
+  api.content.navigate(
+    "#nav-link-saved-queries",
+    "entity/userprofilemenu/savedquery/",
+    "#nav-link-saved-queries",
+    "#nav-link-user-profile-dropdown"
+  );
+
+
   //#endregion
 
-  $("#nav-user-login").once("click", app.openAccess.modal.login);
+  $("#nav-user-login").once("click", function () {
+    $("#modal-subscriber-login").modal("show");
+  });
 
   $("#nav-user-logout").once("click", function () {
     api.modal.confirm(app.label.static["open-access-logout-confirm"], app.openAccess.modal.logout)
   });
 
-
-  // First check for windows/network user
-  app.navigation.access.ajax.ReadCurrentWindowsAccess();
+  $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-profile]").once("click", function (e) {
+    e.preventDefault();
+    if (!app.navigation.user.isSubscriberAccess) {
+      api.modal.error(app.label.static["subscriber-email-unverified"])
+      return;
+    }
+    app.library.subscriber.ajax.readCurrent();
+  });
 
   // Set language dropdown
   app.navigation.language.ajax.read();

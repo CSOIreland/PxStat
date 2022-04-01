@@ -1,0 +1,7 @@
+/*******************************************************************************
+Custom CSS application specific
+*******************************************************************************/
+
+#saved-query-widget-modal .dataTables_paginate {
+    float: none !important;
+}

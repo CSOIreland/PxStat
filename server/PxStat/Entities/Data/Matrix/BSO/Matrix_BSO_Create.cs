@@ -192,7 +192,7 @@ namespace PxStat.Data
 
             Keyword_Release_BSO_CreateMandatory krBSO = new Keyword_Release_BSO_CreateMandatory();
 
-            krBSO.Create(Ado, releaseId, SamAccountName);
+            krBSO.Create(Ado, releaseId, SamAccountName, theMatrixData);
 
             swLoad.Stop();
             Log.Instance.Info(string.Format("Matrix loaded in DB in {0} ms", Math.Round((double)swLoad.ElapsedMilliseconds)));

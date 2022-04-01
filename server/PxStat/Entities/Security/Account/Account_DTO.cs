@@ -100,14 +100,14 @@
         /// Notification flag (allows group communications from the application)
         /// </summary>
         public bool CcnNotificationFlag { get; set; }
-        #endregion
+
 
         public string LngIsoCode { get; set; }
 
         public string CcnDisplayName { get; set; }
 
         public string CcnEmail { get; set; }
-
+        #endregion
         /// <summary>
         /// Constructor
         /// </summary>
@@ -170,9 +170,11 @@
         /// <summary>
         /// Notification flag (allows group communications from the application)
         /// </summary>
-        public bool CcnNotificationFlag { get; set; }
+        public bool? CcnNotificationFlag { get; set; }
 
         public bool? CcnLockedFlag { get; set; }
+
+        public string LngIsoCode { get; set; }
 
         /// <summary>
         /// Constructor
@@ -190,6 +192,10 @@
                 this.CcnNotificationFlag = true;
             if (parameters.CcnLockedFlag != null)
                 CcnLockedFlag = parameters.CcnLockedFlag;
+            //Empty LngIsoCode means we don't want to update the LngIsoCode
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+
         }
 
         public Account_DTO_Update()

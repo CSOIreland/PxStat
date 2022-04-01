@@ -3,7 +3,7 @@ Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
     app.data.dataset.map.drawMapToDisplay();
-
+    app.data.dataset.map.getColourSchemes();
     if (app.data.isLive) {
         $("#data-dataset-map-nav-content").find("[name=confidential-data-warning]").hide();
     }
@@ -12,7 +12,7 @@ $(document).ready(function () {
     }
 
     new ClipboardJS("#data-dataset-map-accordion-api [name=copy-api-info], #data-dataset-map-accordion-api [name=copy-api-object]");
-    $('#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders]').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-map-accordion-collapse-widget [name=auto-update],#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -66,12 +66,35 @@ $(document).ready(function () {
         if (!app.data.isLive) {
             $("#data-dataset-map-accordion").find("[name=auto-update]").bootstrapToggle('off');
             $("#data-dataset-map-accordion").find("[name=auto-update]").bootstrapToggle('disable');
+            $("#data-dataset-map-accordion").find("[name=fluid-time]").bootstrapToggle('off');
+            $("#data-dataset-map-accordion").find("[name=fluid-time]").bootstrapToggle('disable');
         }
-    }
-    $("#data-dataset-map-accordion-collapse-widget [name=auto-update], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link]").once("change", function () {
+    };
+
+    $("#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=colour-scale]").once("change", function () {
         app.data.dataset.map.renderSnippet();
     });
 
+    $("#data-dataset-map-accordion-collapse-widget [name=auto-update]").once("change", function () {
+        app.data.dataset.map.renderSnippet();
+        if (!$(this).is(':checked')) {
+            $("#data-dataset-map-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('off');
+            $("#data-dataset-map-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('disable');
+        } else {
+            $("#data-dataset-map-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('enable');
+        }
+    });
+
+    $("#data-dataset-map-nav-content").find("[name=save-query]").once("click", function () {
+        //check that we have a user to save the table against
+        if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess || app.navigation.user.isSubscriberAccess) {
+            app.data.dataset.map.saveQuery.drawSaveQueryModal();
+        }
+        else {
+            $("#modal-subscriber-login").modal("show");
+        }
+
+    });
 
 
     new ClipboardJS("#data-dataset-map-accordion-collapse-widget [name=copy-snippet-code]");

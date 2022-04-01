@@ -20,7 +20,7 @@ $(document).ready(function () {
         width: C_APP_TOGGLE_LENGTH
     });
 
-    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time],#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -34,6 +34,7 @@ $(document).ready(function () {
 
     //reset
     $("#data-dataset-table-nav-content").find("[name=reset]").once("click", function () {
+        app.data.dataset.table.pivot.dimensionCode = null;
         app.data.dataset.table.drawPivotDropdown();
         app.data.dataset.table.drawDimensions();
     });
@@ -71,6 +72,17 @@ $(document).ready(function () {
                 scrollTop: $("#" + e.target.id).parent().find(".card-header").offset().top
             }, 1000);
         }
+    });
+
+    $("#data-dataset-table-result").find("[name=save-query]").once("click", function () {
+        //check that we have a user to save the table against
+        if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess || app.navigation.user.isSubscriberAccess) {
+            app.data.dataset.table.saveQuery.drawSaveQueryModal();
+        }
+        else {
+            $("#modal-subscriber-login").modal("show");
+        }
+
     });
 
     $('[data-toggle="tooltip"]').tooltip();

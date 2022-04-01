@@ -14,19 +14,25 @@ app.data.dataset.table.selectionCount = null;
 app.data.dataset.table.totalCount = null;
 app.data.dataset.table.apiParamsData = {}
 app.data.dataset.table.order = null;
-app.data.dataset.table.search = null;
+app.data.dataset.table.search = "";
 app.data.dataset.table.pivot = {};
 app.data.dataset.table.pivot.dimensionCode = null;
 app.data.dataset.table.pivot.isMetric = false;
 app.data.dataset.table.pivot.variableCodes = [];
 app.data.dataset.table.snippet = {};
 app.data.dataset.table.snippet.configuration = {};
+app.data.dataset.table.saveQuery = {};
+app.data.dataset.table.saveQuery.configuration = {};
+app.data.dataset.table.saveQuery.ajax = {};
+app.data.dataset.table.saveQuery.callback = {};
 app.data.dataset.table.snippet.template = {
     "autoupdate": true,
+    "fluidTime": [],
     "copyright": true,
     "title": null,
     "link": null,
     "pivot": null,
+    "removeRedundantColumns": false,
     "internationalisation": {
         "unit": app.label.static["unit"],
         "value": app.label.static["value"]
@@ -38,12 +44,32 @@ app.data.dataset.table.snippet.template = {
             "response": {}
         }
     },
+    "metadata": {
+        "api": {
+            "query": {
+                "url": null,
+                "data": {
+                    "jsonrpc": "2.0",
+                    "method": "PxStat.Data.Cube_API.ReadMetadata",
+                    "params": {
+                        "matrix": null,
+                        "language": app.data.LngIsoCode,
+                        "format": {
+                            "type": C_APP_FORMAT_TYPE_DEFAULT,
+                            "version": C_APP_FORMAT_VERSION_DEFAULT
+                        }
+                    },
+                    "version": "2.0"
+                }
+            },
+            "response": {}
+        }
+    },
     "options": {
         "language": app.label.plugin.datatable,
         "search": {
             "search": null
         },
-        "order": null,
         "dom": "Bfltip",
         "scrollX": false,
         "responsive": false,
@@ -57,7 +83,8 @@ app.data.dataset.table.snippet.template = {
             {
                 "extend": 'print',
                 "text": app.label.static["print"],
-                "className": "export-button"
+                "className": "export-button",
+                "title": ""
             }
         ]
     }
@@ -69,18 +96,21 @@ app.data.dataset.table.drawDimensions = function () {
     $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").empty();
     $("#data-dataset-table-accordion-snippet-code").empty();
     $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").show();
-    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('disable');
+    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]").bootstrapToggle('disable');
 
 
     //check for WIP
     if (app.data.RlsCode) {
         if (!app.data.isLive) { //is WIP
             $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('off');
+            $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('off');
         }
         $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('disable');
+        $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('disable');
     }
     else {
         $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('disable');
+        $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('disable');
     }
 
 
@@ -154,7 +184,7 @@ app.data.dataset.table.drawDimensions = function () {
 
             if ((value.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
                 //variable is valid, append to select if not already selected
-                if (!select.find("option[value='" + key + "]").is(':selected')) {
+                if (!select.find("option[value='" + key + "']").is(':selected')) {
                     var textWithCode = thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "") + " (" + key + ")";
                     var textWithoutCode = thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "");
                     select.append($('<option>', {
@@ -300,8 +330,20 @@ app.data.dataset.table.drawDimensions = function () {
     //reset api params
     app.data.dataset.table.buildApiParams();
 
-    $("#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").once("change", function () {
+    $("#data-dataset-table-accordion-collapse-widget [name=fluid-time], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]").once("change", function () {
         app.data.dataset.table.callback.drawSnippetCode(true);
+    });
+
+    $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").once("change", function () {
+        app.data.dataset.table.callback.drawSnippetCode(true);
+        if (!$(this).is(':checked')) {
+            $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('off');
+            $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('disable');
+        }
+        else {
+            $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('enable');
+        }
+
     });
 
     $("#data-dataset-table-accordion-collapse-widget [name=add-custom-configuration]").once("click", function () {
@@ -684,7 +726,7 @@ app.data.dataset.table.callback.data = function (response) {
         app.data.dataset.table.jsonStat = response ? JSONstat(response) : null;
         if (app.data.dataset.table.jsonStat && app.data.dataset.table.jsonStat.length) {
             app.data.dataset.table.order = null;
-            app.data.dataset.table.search = null;
+            app.data.dataset.table.search = "";
             app.data.dataset.table.callback.drawDatatable();
             app.data.dataset.table.callback.drawSnippetCode(true);
         }
@@ -702,28 +744,41 @@ app.data.dataset.table.callback.data = function (response) {
 app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //change to snippet
     if (widgetEnabled) {
         $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").hide();
-        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('enable');
+        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]").bootstrapToggle('enable');
         $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").prop("disabled", false);
         $("#data-dataset-table-accordion-collapse-widget [name=add-custom-configuration], #data-dataset-table-accordion-collapse-widget [name=download-snippet]").prop("disabled", false);
         //check for WIP
         if (!app.data.RlsCode) {
             $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('enable');
+            $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('enable');
         }
         else {
             if (app.data.isLive) {
                 $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").bootstrapToggle('enable');
+                $("#data-dataset-table-accordion-collapse-widget [name=fluid-time]").bootstrapToggle('enable');
             }
         }
 
         app.data.dataset.table.snippet.configuration = {};
+        app.data.dataset.table.saveQuery.configuration = {};
         $.extend(true, app.data.dataset.table.snippet.configuration, app.data.dataset.table.snippet.template);
+        //clone configuration to use in save query, we should always end up here the first time at least to 
+        $.extend(true, app.data.dataset.table.saveQuery.configuration, app.data.dataset.table.snippet.configuration);
+
         app.data.dataset.table.snippet.configuration.autoupdate = $("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").is(':checked');
         app.data.dataset.table.snippet.configuration.copyright = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-copyright]").is(':checked');
         app.data.dataset.table.snippet.configuration.title = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-title]").is(':checked');
         app.data.dataset.table.snippet.configuration.link = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
         app.data.dataset.table.snippet.configuration.pivot = app.data.dataset.table.pivot.dimensionCode;
-        app.data.dataset.table.snippet.configuration.options.search.search = app.data.dataset.table.search || "";
-        app.data.dataset.table.snippet.configuration.options.order = app.data.dataset.table.order || [[0, "asc"]];
+        app.data.dataset.table.saveQuery.configuration.pivot = app.data.dataset.table.pivot.dimensionCode;
+        app.data.dataset.table.snippet.configuration.options.search.search = app.data.dataset.table.search;
+        app.data.dataset.table.snippet.configuration.options.order = app.data.dataset.table.order || [];
+        app.data.dataset.table.saveQuery.configuration.options.order = app.data.dataset.table.order || [];
+
+        //always make save queries responsive
+
+        app.data.dataset.table.saveQuery.configuration.options.scrollX = false;
+        app.data.dataset.table.saveQuery.configuration.options.responsive = true;
 
         if (!$("#data-dataset-table-accordion-collapse-widget").find("[name=include-pagination]").is(':checked')) {
             app.data.dataset.table.snippet.configuration.options.paging = false;
@@ -739,41 +794,57 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
             app.data.dataset.table.snippet.configuration.options.responsive = false;
         }
 
+        app.data.dataset.table.snippet.configuration.removeRedundantColumns = !$("#data-dataset-table-accordion-collapse-widget").find("[name=remove-redundant-columns]").is(':checked');
+
+        //add query to save query config
+        var JsonQuery = {
+            "jsonrpc": C_APP_API_JSONRPC_VERSION,
+            "method": "PxStat.Data.Cube_API.ReadDataset",
+            "params": null
+        };
+
+        var widgetParams = $.extend(true, {}, app.data.dataset.table.apiParamsData);
+        JsonQuery.params = widgetParams;
+        JsonQuery.params.extension.format.type = C_APP_FORMAT_TYPE_DEFAULT;
+        JsonQuery.params.extension.format.version = C_APP_FORMAT_VERSION_DEFAULT;
+
+        if (app.data.isLive) {
+            JsonQuery.params.extension.matrix = app.data.MtrCode;
+            app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.public;
+            app.data.dataset.table.saveQuery.configuration.data.api.query.url = app.config.url.api.jsonrpc.public;
+            JsonQuery.method = "PxStat.Data.Cube_API.ReadDataset";
+            delete JsonQuery.params.extension.release;
+        }
+        else {
+            JsonQuery.params.extension.release = app.data.RlsCode;
+            app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.private;
+            JsonQuery.method = "PxStat.Data.Cube_API.ReadPreDataset";
+            delete JsonQuery.params.extension.matrix;
+        }
+
+        //add query to saved query object
+        app.data.dataset.table.saveQuery.configuration.data.api.query.data = JsonQuery;
+
+        //add query to widget snippet object if auto update
         if ($("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {
-            var JsonQuery = {
-                "jsonrpc": C_APP_API_JSONRPC_VERSION,
-                "method": "PxStat.Data.Cube_API.ReadDataset",
-                "params": null
-            };
-
-            var widgetParams = $.extend(true, {}, app.data.dataset.table.apiParamsData);
-            delete widgetParams.m2m;
-            JsonQuery.params = widgetParams;
-            JsonQuery.params.extension.format.type = C_APP_FORMAT_TYPE_DEFAULT;
-            JsonQuery.params.extension.format.version = C_APP_FORMAT_VERSION_DEFAULT;
-
-            if (app.data.isLive) {
-                JsonQuery.params.extension.matrix = app.data.MtrCode;
-                app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.public;
-                JsonQuery.method = "PxStat.Data.Cube_API.ReadDataset";
-                delete JsonQuery.params.extension.release;
-            }
-            else {
-                JsonQuery.params.extension.release = app.data.RlsCode;
-                app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.private;
-                JsonQuery.method = "PxStat.Data.Cube_API.ReadPreDataset";
-                delete JsonQuery.params.extension.matrix;
-
-            }
-
-
             //add query to snippet object
             app.data.dataset.table.snippet.configuration.data.api.query.data = JsonQuery;
+
+            if ($("#data-dataset-table-accordion-collapse-widget").find("[name=fluid-time]").is(':checked')) {
+                app.data.dataset.table.snippet.configuration = app.data.dataset.table.callback.setFluidTime(app.data.dataset.table.snippet.configuration);
+                app.data.dataset.table.snippet.configuration.metadata.api.query.data.params.matrix = app.data.MtrCode;
+                app.data.dataset.table.snippet.configuration.metadata.api.query.url = app.config.url.api.jsonrpc.public;
+            }
+            else {
+                app.data.dataset.table.snippet.configuration.metadata.api.query = {};
+            }
 
         }
         else {
             app.data.dataset.table.snippet.configuration.data.api.response = app.data.dataset.table.response;
+            app.data.dataset.table.snippet.configuration.metadata.api.query = {};
         }
+
     }
 
     else {
@@ -801,9 +872,30 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         snippet = snippet.sprintf([C_APP_URL_PXWIDGET_ISOGRAM, C_APP_PXWIDGET_TYPE_TABLE, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(app.data.dataset.table.snippet.configuration)]);
         $("#data-dataset-table-accordion-snippet-code").hide().text(snippet.trim()).fadeIn();
         Prism.highlightAll();
+    };
+};
+
+app.data.dataset.table.callback.setFluidTime = function (configuration) {
+    var timeValuesSelected = [];
+    var dimensionSize = app.data.dataset.metadata.jsonStat.Dimension(app.data.dataset.metadata.timeDimensionCode).id.length;
+    //check for time variables selected
+    if (configuration.data.api.query.data.params.dimension[app.data.dataset.metadata.timeDimensionCode]) {
+        timeValuesSelected = configuration.data.api.query.data.params.dimension[app.data.dataset.metadata.timeDimensionCode].category.index;
+        $.each(timeValuesSelected, function (index, value) {
+            //get position of variables selected releative to the end of the array as new time points are added to the end of the array
+            var actualPosition = $.inArray(value, app.data.dataset.metadata.jsonStat.Dimension(app.data.dataset.metadata.timeDimensionCode).id);
+            var relativePosition = (dimensionSize - actualPosition) - 1;
+            configuration.fluidTime.push(relativePosition);
+        });
     }
-
-
+    else {
+        //get positions of all variables as fluid is true and everything is selected
+        //get position of variables selected releative to the end of the array as new time points are added to the end of the array
+        $.each(app.data.dataset.metadata.jsonStat.Dimension(app.data.dataset.metadata.timeDimensionCode).id, function (index, value) {
+            configuration.fluidTime.push(index);
+        });
+    }
+    return configuration;
 };
 
 app.data.dataset.table.callback.formatJson = function () {
@@ -820,7 +912,7 @@ app.data.dataset.table.callback.formatJson = function () {
             $("#data-dataset-table-accordion-collapse-widget [name=invalid-json-object]").show();
         }
     }
-}
+};
 
 app.data.dataset.table.callback.drawDatatable = function () {
     api.spinner.start();
@@ -918,7 +1010,13 @@ app.data.dataset.table.callback.drawDatatable = function () {
                 "defaultContent": app.config.entity.data.datatable.null,
                 "render": function (cell, type, row, meta) {
                     // If pivoting by Statitic then the decimals may be different within the same row
-                    return app.library.utility.formatNumber(cell, (app.data.dataset.table.pivot.isMetric ? data.Dimension(app.data.dataset.table.pivot.dimensionCode).Category(value).unit.decimals : row.unit.decimals));
+                    //patch re https://github.com/CSOIreland/PxStat/issues/537
+                    if (app.data.dataset.table) {
+                        return app.library.utility.formatNumber(cell, (app.data.dataset.table.pivot.isMetric ? data.Dimension(app.data.dataset.table.pivot.dimensionCode).Category(value).unit.decimals : row.unit.decimals));
+                    }
+                    else {
+                        return null
+                    }
                 }
             });
             var codeSpan = $('<span>', {
@@ -960,6 +1058,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
     //Draw DataTable with Data Set data
     var localOptions = {
         iDisplayLength: app.config.entity.data.datatable.length,
+        order: [],
         data: jsonTable.data,
         columns: tableColumns,
         drawCallback: function (settings) {
@@ -974,7 +1073,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
         app.data.dataset.table.drawCallbackDrawDataTable();
     });
 
-    $("#data-dataset-table-nav-content").find("[name=datatable]").on('order.dt', function () {
+    $("#data-dataset-table-nav-content").find("[name=datatable]").on('order.dt', function (e) {
         app.data.dataset.table.order = $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().order();
         app.data.dataset.table.callback.drawSnippetCode(true);
     });
@@ -996,12 +1095,14 @@ app.data.dataset.table.callback.drawDatatable = function () {
     //scroll to top of datatable -- Data entity
 
     if (app.data.isModal) {
+        $("#data-dataset-table-result").find("[name=save-query-wrapper]").hide();
         $('#data-view-modal').animate({
             scrollTop: '+=' + $('#data-dataset-table-nav-content [name=result-table]')[0].getBoundingClientRect().top
         },
             1000);
     }
     else {
+        $("#data-dataset-table-result").find("[name=save-query-wrapper]").show();
         $('html, body').animate({
             scrollTop: $("#data-dataset-table-nav-content [name=result-table]").offset().top
         }, 1000);
@@ -1100,3 +1201,84 @@ app.data.dataset.table.resultsDownload = function (format, version) {
     apiParams.extension.format.version = version;
     app.data.dataset.ajax.downloadDataset(apiParams, app.data.dataset.table.selectionCount);
 };
+
+//#region save query
+app.data.dataset.table.saveQuery.drawSaveQueryModal = function () {
+    app.data.dataset.saveQuery.validation.drawSaveQuery();
+    $("#data-dataset-save-query").modal("show");
+};
+
+app.data.dataset.table.saveQuery.ajax.saveQuery = function () {
+
+    //now clone it into new variable for ajax which may or may not need fluid time
+    var saveQueryConfig = $.extend(true, {}, app.data.dataset.table.saveQuery.configuration);
+    if ($("#data-dataset-save-query").find("[name=fluid-time]").is(':checked')) {
+        saveQueryConfig = app.data.dataset.table.callback.setFluidTime(saveQueryConfig);
+        saveQueryConfig.metadata.api.query.data.params.matrix = app.data.MtrCode;
+        saveQueryConfig.metadata.api.query.url = app.config.url.api.jsonrpc.public;
+    }
+    else {
+        saveQueryConfig.metadata.api.query = {};
+        saveQueryConfig.fluidTime = [];
+    }
+
+    saveQueryConfig.options.search.search = $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().search();
+    saveQueryConfig.options.order = $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().order();
+    saveQueryConfig.title = true;
+
+    var tagName = $("#data-dataset-save-query").find("[name=name]").val().replace(C_APP_REGEX_NOHTML, "");
+    var base64snippet = nacl.util.encodeBase64(nacl.util.decodeUTF8(JSON.stringify(saveQueryConfig)));
+
+    if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
+        api.ajax.jsonrpc.request(
+            app.config.url.api.jsonrpc.private,
+            "PxStat.Subscription.Query_API.Create",
+            {
+                "TagName": tagName,
+                "Matrix": app.data.MtrCode,
+                "Snippet": {
+                    "Type": C_APP_PXWIDGET_TYPE_TABLE,
+                    "Query": base64snippet,
+                    "FluidTime": $("#data-dataset-save-query").find("[name=fluid-time]").is(':checked'),
+                    "Isogram": C_APP_URL_PXWIDGET_ISOGRAM
+                }
+            },
+            "app.data.dataset.table.saveQuery.callback.saveQuery",
+            tagName
+        );
+    }
+    else if (app.navigation.user.isSubscriberAccess) {
+        app.auth.firebase.user.details.getIdToken(true).then(function (accessToken) {
+            api.ajax.jsonrpc.request(
+                app.config.url.api.jsonrpc.private,
+                "PxStat.Subscription.Query_API.Create",
+                {
+                    "Uid": app.auth.firebase.user.details.uid,
+                    "AccessToken": accessToken,
+                    "TagName": tagName,
+                    "Matrix": app.data.MtrCode,
+                    "Snippet": {
+                        "Type": C_APP_PXWIDGET_TYPE_TABLE,
+                        "Query": base64snippet,
+                        "FluidTime": $("#data-dataset-save-query").find("[name=fluid-time]").is(':checked'),
+                        "Isogram": C_APP_URL_PXWIDGET_ISOGRAM
+                    }
+                },
+                "app.data.dataset.table.saveQuery.callback.saveQuery",
+                tagName
+            );
+        }).catch(tokenerror => {
+            api.modal.error(tokenerror);
+        });
+    }
+};
+
+app.data.dataset.table.saveQuery.callback.saveQuery = function (data, tagName) {
+    $("#data-dataset-save-query").modal("hide");
+    if (data == C_API_AJAX_SUCCESS) {
+        api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [tagName]));
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+};
+//#endregion

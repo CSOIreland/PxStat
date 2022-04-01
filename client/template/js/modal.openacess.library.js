@@ -351,6 +351,8 @@ app.openAccess.callback.loginCaptchaExpired = function () {
 
 //#region logout
 app.openAccess.modal.logout = function () {
+    //clean up language cookie. It will be reset again if the user logs in
+    Cookies.remove(C_COOKIE_LANGUAGE);
     app.plugin.backbutton.check = false;
     api.cookie.session.end();
 }

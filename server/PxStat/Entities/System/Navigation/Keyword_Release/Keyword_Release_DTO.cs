@@ -1,6 +1,4 @@
-﻿using PxStat.Security;
-
-namespace PxStat.System.Navigation
+﻿namespace PxStat.System.Navigation
 {
     /// <summary>
     /// DTO for Keyword Release
@@ -51,8 +49,7 @@ namespace PxStat.System.Navigation
                 this.KrlCode = parameters.KrlCode;
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
-            else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+
         }
 
         /// <summary>

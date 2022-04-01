@@ -1,8 +1,15 @@
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
 -- =============================================
 -- Author:		Neil O'Keeffe
 -- Create date: 21/01/2019
 -- Description:	Reads a summary of analytic data
--- exec Security_Analytic_Read '2021-03-20T12:00:00','2021-12-02T12:00:00', 1, "1",""
+-- exec Security_Analytic_Read '2021-03-20T12:00:00','2021-12-02T12:00:00'
 -- =============================================
 CREATE
 	OR
@@ -30,6 +37,7 @@ BEGIN
 		,SBJ_Value AS SbjValue
 		,Bots AS NltBot
 		,M2M AS NltM2m
+		,Widget As NltWidget
 		,NltUser
 		,Total
 	FROM (
@@ -42,6 +50,7 @@ BEGIN
 			,max(RLS_LIVE_DATETIME_FROM) as RLS_LIVE_DATETIME_FROM
 			,sum(cast(NLT_BOT_FLAG AS INT)) AS Bots
 			,sum(cast(NLT_M2M_FLAG AS INT)) AS M2M
+			,sum(cast(NLT_WIDGET AS INT)) AS Widget
 			,sum(cast(NLT_USER_FLAG AS INT)) AS NltUser
 			,count(*) AS Total
 		FROM TD_ANALYTIC
@@ -75,7 +84,6 @@ BEGIN
 			,MTR_TITLE
 			,SBJ_CODE
 			,SBJ_VALUE
-			--,RLS_LIVE_DATETIME_FROM
 			,PRC_CODE
 			,PRC_VALUE
 		) counts

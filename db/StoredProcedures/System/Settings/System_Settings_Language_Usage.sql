@@ -7,7 +7,7 @@ GO
 -- =============================================
 -- Author:		Neil O'Keeffe
 -- Create date: 28/09/2018
--- Description: To check whether or not a language has associated entries in the TD_MATRIX table
+-- Description: To check whether or not a language has associated entries in the TD_MATRIX or TD_USER table
 -- =============================================
 CREATE
 	OR
@@ -41,6 +41,19 @@ BEGIN
 							FROM TD_MATRIX
 							WHERE MTR_LNG_ID = @LngId
 								AND MTR_DELETE_FLAG = 0
+							)
+						OR EXISTS (
+							SELECT TOP 1 1
+							FROM TD_ACCOUNT
+							INNER JOIN TD_USER ON CCN_USR_ID = USR_ID
+								AND USR_LNG_ID =@LngId
+								AND CCN_DELETE_FLAG = 0
+							)
+						OR EXISTS (
+							SELECT TOP 1 1
+							FROM TD_SUBSCRIBER
+							INNER JOIN TD_USER ON SBR_USR_ID = USR_ID
+								AND USR_LNG_ID =@LngId
 							), 1, 0)
 					)
 			)

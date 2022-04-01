@@ -42,6 +42,17 @@
     },
     "release": {
       "locked": "The release is currently in use and is locked"
+    },
+    "subscription": {
+      "query-threshold": "The maximum number of subscription snippet queries has been reached.",
+      "invalid-snippet-base64": "The Snippet Base64 string is invalid",
+      "duplicate-tagname": "Cannot create duplicate tag name for the query"
+    },
+    "firebase": {
+      "alreadySubscribed": "You are already a user of this application and you may not register again"
+    },
+    "settings": {
+      "language-json-invalid": "You must create a json file for this language in Resources"
     }
   },
   "authentication": {
@@ -131,12 +142,15 @@
     "variable": "Stan"
   },
   "email": {
+    "summary": "{0} emails sent",
+    "salutation-informal": "To {0}",
     "body": {
       "request-create": "Nowe żądanie typu [b]{0}[/b] zostało przesłane przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3} [/b] i oczekuje na zatwierdzenie.\n Wyświetlić ten przepływ pracy w {4}.",
       "response-approve": "Nowe żądanie typu [b]{0}[/b] zostało zatwierdzone przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b] i oczekuje na podpis.\n Wyświetlić ten przepływ pracy w {4}.",
       "response-reject": "Wniosek o zatwierdzenie typu [b]{0}[/b] został odrzucony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
       "signoff-approve": "Wniosek o podpisanie się typu [b]{0}[/b] został zatwierdzony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
       "signoff-reject": "Wniosek o podpisanie się typu [b]{0}[/b] został odrzucony przez [url=mailto:{5}]{6} ({7})[/url] w odniesieniu do Tabeli [b]{1}[/b] Wersja [b]{2}.{3}[/b].\n Wyświetlić ten przepływ pracy w {4}.",
+
       "header": {
         "anchor-text": "here",
         "setup-1fa": "{0}: You are invited to setup your access to the {1} application.",
@@ -166,6 +180,11 @@
       "update-1fa": "Reset password for {0}",
       "update-2fa": "Reset 2FA for {0}",
       "setup-2fa": "Setup 2FA for {0}"
+    },
+    "subscription": {
+      "notification-body": "This is a placeholder for the subscription notification body",
+      "notification-title": "Notification for Channel {0}",
+      "notification-subject": "This is a placeholder for the subscription notification subject"
     }
   },
   "workflow": {

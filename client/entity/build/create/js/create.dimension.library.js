@@ -283,6 +283,8 @@ app.build.create.dimension.drawTabs = function () {
             );
         });
 
+        $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=download-statistic]").once("click", app.build.create.dimension.downloadStatistic);
+
         $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[name=delete-classifications]").once("click", function () {
             api.modal.confirm(
                 app.library.html.parseDynamicLabel("confirm-delete-classifications", [$("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-name")]),
@@ -1056,6 +1058,31 @@ app.build.create.dimension.deleteAllClassifications = function () {
         };
     });
     app.build.create.dimension.drawClassifications(lngIsoCode);
+};
+
+app.build.create.dimension.downloadStatistic = function () {
+    var statistic = null;
+    var lngIsoCode = $("#build-create-matrix-dimensions").find("[name=nav-lng-tab-item].active").attr("lng-iso-code");
+    $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
+        if (dimension.LngIsoCode == lngIsoCode) { //find the data based on the LngIsoCode
+            statistic = dimension.Statistic;
+            return;
+        };
+    });
+    var fileData = [];
+
+    if (statistic.length) {
+        $.each(statistic, function (index, value) {
+            fileData.push({ [C_APP_CSV_CODE]: value.SttCode, [C_APP_CSV_VALUE]: value.SttValue, [C_APP_CSV_UNIT]: value.SttUnit, [C_APP_CSV_DECIMAL]: value.SttDecimal });
+        });
+    }
+    else {
+        //create blank template for statistic
+        fileData.push({ [C_APP_CSV_CODE]: "", [C_APP_CSV_VALUE]: "", [C_APP_CSV_UNIT]: "", [C_APP_CSV_DECIMAL]: "" });
+    }
+    // Download the file
+    app.library.utility.download(app.build.create.initiate.data.MtrCode + "_" + C_APP_CSV_STATISTIC + "_" + lngIsoCode, Papa.unparse(fileData), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
+
 };
 
 //Add criteria to search for a classification.

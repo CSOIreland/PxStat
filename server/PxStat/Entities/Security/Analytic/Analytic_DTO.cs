@@ -42,7 +42,14 @@ namespace PxStat.Security
         /// <summary>
         /// Flag to indicate machine to machine request
         /// </summary>
-        public bool NltM2m { get; internal set; }
+        public bool? NltM2m { get; internal set; }
+
+        /// <summary>
+        /// Flag to indicate that this is a widget based call
+        /// </summary>
+        public bool NltWidget { get; internal set; }
+
+        public bool NltUser { get; internal set; }
 
         /// <summary>
         /// Date and time of the request

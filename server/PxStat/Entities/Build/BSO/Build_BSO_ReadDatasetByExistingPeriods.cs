@@ -64,17 +64,12 @@ namespace PxStat.Build
 
             //Sorting, in case the px file is not in SPC order
             Build_BSO pBso = new Build_BSO();
-            //List<DataItem_DTO> existingItems = pBso.GetExistingDataItems(matrixPxFile, matrixPxFile.MainSpec, true, false);
 
             Specification theSpec = matrixPxFile.GetSpecFromLanguage(DTO.LngIsoCode);
 
-            // pBso.SetMetadataSortIds(ref theSpec);
+
 
             List<DataItem_DTO> existingItems = pBso.GetMatrixDataItems(matrixPxFile, DTO.LngIsoCode, theSpec);
-
-            // pBso.SetDataSortIds(ref existingItems, theSpec);
-
-            //Log.Instance.Debug("*Diagnostic* GetExistingDataItems: " + sw.ElapsedMilliseconds);
 
 
 

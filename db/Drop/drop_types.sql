@@ -24,3 +24,4 @@ END
 CLOSE cur
 
 DEALLOCATE cur
+GO

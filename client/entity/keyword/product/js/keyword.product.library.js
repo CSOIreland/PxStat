@@ -431,6 +431,8 @@ app.keyword.product.callback.createOnError = function (error) {
   var SbjCode = $("#keyword-product-container").find("[name=select-main-subject-search]").val();
   var PrcCode = $("#keyword-product-container").find("[name=select-main-product-search]").val();
   app.keyword.product.ajax.read(SbjCode, PrcCode);
+  // Hide modal
+  $("#keyword-product-modal-create").modal("hide");
 };
 //#endregion
 

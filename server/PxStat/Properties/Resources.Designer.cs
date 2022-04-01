@@ -100,6 +100,19 @@ namespace PxStat.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
+        ///  &quot;type&quot;: &quot;service_account&quot;,
+        ///  &quot;project_id&quot;: &quot;dev-data-2beba&quot;,
+        ///  &quot;private_key_id&quot;: &quot;4b016e8509242142d8adf12946bafb347a27d104&quot;,
+        ///  &quot;private_key&quot;: &quot;-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDl5x5IB0+0MjJd\nc5qn6Ik+YCfCaOWiHkQzf+eVhQHsET1xHvdRvXV43hap9nsginGnIpH//cFD5zbn\n59Jk4S1VABiBtBsD9NyKkJy1UtOoHibV9tYUNfWRdt/8qCq5Y/kcv/z0/fgrZ2GB\npOjazdSteBfeo5cBHfKFcR2Prha0+KdoQfCoZ2Xt5vtuTbw+8zuLEEKmFhiwMcTC\npu1E/pFYDlgZbkHz37gaicGIn5/X1ouKoe2q8WAq3AxtLd3U22l+u+M5Qbcvv/rE\nag [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string FirebaseKey {
+            get {
+                return ResourceManager.GetString("FirebaseKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
         ///  &quot;static&quot;: {
         ///    &quot;release&quot;: &quot;Eisiúint &quot;,
         ///    &quot;all-groups&quot;: &quot;Gach grúpa&quot;
@@ -212,6 +225,7 @@ namespace PxStat.Properties {
         ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
         ///
         ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
+        ///        &lt;img src={image_source} /&gt;
         ///        &lt;h1&gt;{title}&lt;/h1&gt;
         ///        &lt;h2&gt;{subject}&lt;/h2&gt;
         ///        &lt;hr&gt;
@@ -219,8 +233,7 @@ namespace PxStat.Properties {
         ///        &lt;p&gt;{body}&lt;/p&gt;
         ///
         ///        &lt;hr&gt;
-        ///        &lt;p style=&quot;font-size: smaller;&quot;&gt;
-        ///   [rest of string was truncated]&quot;;.
+        ///        [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_GroupMessage {
             get {
@@ -240,40 +253,19 @@ namespace PxStat.Properties {
         ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
         ///
         ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
-        ///
+        ///        &lt;img src={image_source} /&gt;
         ///        &lt;h2&gt;{subject}&lt;/h2&gt;
         ///        &lt;hr&gt;
         ///
         ///        &lt;p&gt;{header}&lt;/p&gt;
         ///
+        ///        &lt;p&gt;{sub_header}&lt;/p&gt;
         ///
-        ///        &lt;p&gt;{content}&lt;/p&gt;
-        ///
-        ///        &lt;p&gt;{footer}&lt;/p&gt;
-        ///
-        ///        &lt;p style=&quot;font [rest of string was truncated]&quot;;.
+        ///        &lt;p&gt;{co [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_Login {
             get {
                 return ResourceManager.GetString("template_Login", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
-        ///&lt;html&gt;
-        ///&lt;head&gt;
-        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
-        ///    &lt;title&gt;&lt;/title&gt;
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
-        ///
-        ///&lt;/body&gt;
-        ///&lt;/html&gt;.
-        /// </summary>
-        internal static string template_LoginBulletPoint {
-            get {
-                return ResourceManager.GetString("template_LoginBulletPoint", resourceCulture);
             }
         }
         
@@ -289,6 +281,53 @@ namespace PxStat.Properties {
         ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
         ///
         ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
+        ///        &lt;img src={image_source} /&gt;
+        ///        &lt;h2&gt;{subject}&lt;/h2&gt;
+        ///        &lt;hr&gt;
+        ///
+        ///        &lt;p&gt;{header}&lt;/p&gt;
+        ///
+        ///        &lt;p&gt;{list_header}&lt;/p&gt;
+        ///
+        ///        &lt;ul s [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string template_LoginBulletPoint {
+            get {
+                return ResourceManager.GetString("template_LoginBulletPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
+        ///    &lt;title&gt;&lt;/title&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///
+        ///&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string template_NotifyChannelSubscription {
+            get {
+                return ResourceManager.GetString("template_NotifyChannelSubscription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
+        ///
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-16&quot;&gt;
+        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        ///&lt;/head&gt;
+        ///
+        ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
+        ///
+        ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
+        ///        &lt;img src={image_source} /&gt;
         ///        &lt;h1&gt;{title}&lt;/h1&gt;
         ///        &lt;h2&gt;{subject}&lt;/h2&gt;
         ///        &lt;hr&gt;
@@ -296,8 +335,7 @@ namespace PxStat.Properties {
         ///        &lt;p&gt;{body}&lt;/p&gt;
         ///
         ///        &lt;hr&gt;
-        ///        &lt;p style=&quot;font-size: smaller;&quot;&gt;
-        ///   [rest of string was truncated]&quot;;.
+        ///        [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_NotifyWorkflow {
             get {

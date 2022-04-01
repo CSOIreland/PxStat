@@ -28,6 +28,9 @@ $(document).ready(function () {
   // Get Modal Openaccess
   api.content.load("#modal-openaccess", "template/modal.openaccess.html");
 
+  // Get Modal Subscriber
+  api.content.load("#modal-subscriber", "template/modal.subscriberaccess.html");
+
   // Get Spinner
   api.content.load("#spinner", "template/spinner.html");
 
@@ -57,6 +60,30 @@ $(document).ready(function () {
     });
   });
 
+  //Changing minus to plus
+  $("#modal-read-subscriber-developer, #modal-read-subscriber-manage").on('hidden.bs.collapse', function (e) {
+    $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
+  });
+
+  //Changing plus to minus
+  $("#modal-read-subscriber-developer, #modal-read-subscriber-manage").on('shown.bs.collapse', function (e) {
+    $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
+  });
+
+  //show/hide password across application
+  $("[name=show-password]").once("click", function () {
+    $(this).parent().siblings("[type=password]").attr("type", "text");
+    $(this).hide();
+    $(this).siblings("[name=hide-password]").show();
+  });
+
+  $("[name=hide-password]").once("click", function () {
+    $(this).parent().siblings("[type=text]").attr("type", "password");
+    $(this).hide();
+    $(this).siblings("[name=show-password]").show();
+  });
+
+
   // Check and stop if IE browser detected
   if (app.library.utility.isIE()) {
     return;
@@ -74,7 +101,11 @@ $(document).ready(function () {
   } else if (Cookies.get(C_COOKIE_LINK_COPYRIGHT)) {
     app.library.utility.cookieLink(C_COOKIE_LINK_COPYRIGHT, "CprCode", "entity/data/", "#nav-link-data");
   } else if (Cookies.get(C_COOKIE_LINK_TABLE)) {
-    app.library.utility.cookieLink(C_COOKIE_LINK_TABLE, "MtrCode", "entity/data/", "#nav-link-data");
+    app.library.utility.cookieLink(C_COOKIE_LINK_TABLE, "MtrCode", "entity/data/", "#nav-link-data", null, { tab: 'data-dataset-table-nav-tab' });
+  } else if (Cookies.get(C_COOKIE_LINK_CHART)) {
+    app.library.utility.cookieLink(C_COOKIE_LINK_CHART, "MtrCode", "entity/data/", "#nav-link-data", null, { tab: 'data-dataset-chart-nav-tab' });
+  } else if (Cookies.get(C_COOKIE_LINK_MAP)) {
+    app.library.utility.cookieLink(C_COOKIE_LINK_MAP, "MtrCode", "entity/data/", "#nav-link-data", null, { tab: 'data-dataset-map-nav-tab' });
   } else if (Cookies.get(C_COOKIE_LINK_RELEASE)) {
     app.library.utility.cookieLink(C_COOKIE_LINK_RELEASE, "RlsCode", "entity/release/", "#nav-link-release");
   } else {
@@ -94,6 +125,7 @@ $(document).ready(function () {
         break;
       default:
         //redirect to home page
+        app.plugin.backbutton.check = false;
         window.location.href = window.location.pathname;
         break;
     }

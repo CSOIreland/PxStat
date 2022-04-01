@@ -118,7 +118,7 @@ app.dashboard.workInProgress.drawCallbackWorkInProgress = function () {
     //view user info
     $("#dashboard-panel-workinprogress table").find("[name=uploaded-by]").once("click", function (e) {
         e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: $(this).attr("idn") });
+        app.library.user.modal.ajax.read({ CcnUsername: $(this).attr("idn") });
     });
 }
 
@@ -249,7 +249,7 @@ app.dashboard.drawCallbackAwaitingResponse = function () {
     //view user info
     $("#dashboard-panel-awaitingresponse table").find("[name=requested-by]").once("click", function (e) {
         e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: $(this).attr("idn") });
+        app.library.user.modal.ajax.read({ CcnUsername: $(this).attr("idn") });
     });
 
 }
@@ -397,7 +397,7 @@ app.dashboard.drawCallbackAwaitingSignOff = function () {
     //view user info
     $("#dashboard-panel-awaitingsignoff table").find("[name=approved-by]").once("click", function (e) {
         e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: $(this).attr("idn") });
+        app.library.user.modal.ajax.read({ CcnUsername: $(this).attr("idn") });
     });
 }
 
@@ -546,7 +546,7 @@ app.dashboard.drawCallbackPendingLive = function () {
     //view user info
     $("#dashboard-panel-pendinglive table").find("[name=approved-by]").once("click", function (e) {
         e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: $(this).attr("idn") });
+        app.library.user.modal.ajax.read({ CcnUsername: $(this).attr("idn") });
     });
 }
 

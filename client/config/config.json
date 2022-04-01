@@ -127,6 +127,23 @@
 				"experimental": "https://domain.extension/path"
 			}
 		},
+		"map": {
+			"baseMap": {
+				"leaflet": [
+					{
+						"url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+						"options": {
+							"attribution": "&copy; <a target=\"_blank\" href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
+						}
+					}
+				],
+				"esri": [
+					{
+						"url": "https://tiles.arcgis.com/tiles/uWTLlTypaM5QTKd2/arcgis/rest/services/Basemap%20Public/MapServer"
+					}
+				]
+			}
+		},
 		"build": {
 			"threshold": {
 				"soft": 1000000
@@ -151,7 +168,7 @@
 			}
 		},
 		"analytic": {
-			"dateRangePicker": 29
+			"dateRangePicker": 7
 		}
 	},
 	"plugin": {
@@ -258,6 +275,49 @@
 					}
 				}
 			}
+		},
+		"firebase": {
+			"enabled": false,
+			"config": {
+                "apiKey": "",
+                "authDomain": "",
+                "projectId": "",
+                "storageBucket": "",
+                "messagingSenderId": "",
+                "appId": ""
+            },
+			"signInProvider": {
+				"providers": {
+					"google": true,
+					"facebook": true,
+					"gitHub": true,
+					"twitter": true
+				}
+			}
+		},
+		"leaflet": {
+			"colourScale": [
+				{
+					"value": "red",
+					"name": "red"
+				},
+				{
+					"value": "yellow",
+					"name": "yellow"
+				},
+				{
+					"value": "blue",
+					"name": "blue"
+				},
+				{
+					"value": "darkorange",
+					"name": "orange"
+				},
+				{
+					"value": "darkviolet",
+					"name": "violet"
+				}
+			]
 		}
 	}
 }

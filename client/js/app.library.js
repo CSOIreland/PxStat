@@ -9,6 +9,7 @@ app.library.datatable = {};
 app.library.html = {};
 app.library.html.link = {};
 app.library.bootstrap = {};
+app.library.utility.asyncControlCounter = {};
 
 //#region DataTable
 /**
@@ -102,6 +103,25 @@ app.library.html.parseStaticLabel = function (keyword) {
       }
 
       $(this).removeAttr();
+    });
+
+    // Parse all Label popover in the DOM
+    $("[label-popover]").each(function (index) {
+      // Get the keyword from the attribute value
+      var keyword = $(this).attr("label-popover");
+
+      // If the Keyword exists in the Dictionary
+      if (app.label.help[keyword]) {
+        // If the data-original-title attribute exists
+        $(this).attr("data-content", app.label.help[keyword]);
+      } else {
+        $(this).attr("data-content", keyword);
+      }
+
+      $(this).removeAttr("label-popover");
+      $(this).popover({
+        html: true
+      });
     });
   }
 
@@ -374,7 +394,7 @@ app.library.html.link.user = function (username) {
   }).get(0);
   userLink.addEventListener("click", function (e) {
     e.preventDefault();
-    app.library.user.modal.read({ CcnUsername: username });
+    app.library.user.modal.ajax.read({ CcnUsername: username });
   });
 
   return userLink;
@@ -583,9 +603,10 @@ app.library.utility.arraysEqual = function (array1, array2, order) {
 /**
  * Implement a cookieLink
  */
-app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_SelectorToHighlight, nav_menu_SelectorToHighlight) {
+app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_SelectorToHighlight, nav_menu_SelectorToHighlight, params) {
   nav_link_SelectorToHighlight = nav_link_SelectorToHighlight || null;
   nav_menu_SelectorToHighlight = nav_menu_SelectorToHighlight || null;
+  params = params || null;
 
   // Check a Cookie is set
   if (Cookies.get(cookie)) {
@@ -593,6 +614,7 @@ app.library.utility.cookieLink = function (cookie, goTo, relativeURL, nav_link_S
     // Map the goTo params
     var goToParams = {};
     goToParams[goTo] = Cookies.get(cookie);
+    goToParams[C_APP_GOTO_PARAMS] = params;
 
     // Remove the Cookie
     Cookies.remove(cookie, app.config.plugin.jscookie.persistent);
@@ -671,4 +693,28 @@ app.library.utility.sleep = function (ms) {
   ms = ms || 400;
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/** 
+ * asyncController to check for the existance of a controller before proceeding to callback 
+ * input control must be the string version of a variable
+ * after parse with eval to check it
+ * **/
+app.library.utility.asyncController = function (control, callbackFunction, callbackParams, id) {
+  callbackParams = callbackParams || null;
+  id = id || app.library.utility.randomGenerator();
+  app.library.utility.asyncControlCounter[id] = app.library.utility.asyncControlCounter[id] || Date.now();
+
+  if (app.library.utility.asyncControlCounter[id] < (Date.now() + 180000)) {
+    if (eval(control)) {
+      delete app.library.utility.asyncControlCounter[id];
+      callbackFunction(callbackParams);
+      return;
+    }
+    setTimeout(function () {
+      app.library.utility.asyncController(control, callbackFunction, callbackParams, id)
+    }, 100);
+  }
+
+};
+
 //#endregion

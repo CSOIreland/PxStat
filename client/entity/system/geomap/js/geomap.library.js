@@ -552,11 +552,18 @@ app.geomap.viewAddMap = async function (weight) {
     });
     $("#map-modal-add").find("[name=view-map-wrapper]").append(mapContainer);
 
-    var map = L.map('map-modal-view-map');
-    L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: 'Google Maps'
-    }).addTo(map);
+    var map = L.map('map-modal-view-map', {
+        maxBounds: app.geomap.getMaxBounds(app.geomap.import.file.content.geojsonSimplified)
+    });
+
+    //add baselayers
+    $.each(app.config.entity.map.baseMap.leaflet, function (index, value) {
+        L.tileLayer(value.url, value.options).addTo(map);
+    });
+
+    $.each(app.config.entity.map.baseMap.esri, function (index, value) {
+        L.esri.tiledMapLayer(value).addTo(map);
+    });
 
     var allFeatures = L.geoJson(app.geomap.import.file.content.geojsonSimplified, {
         style: {
@@ -565,24 +572,59 @@ app.geomap.viewAddMap = async function (weight) {
             fillOpacity: 0.1
         },
         onEachFeature: function (feature, layer) {
-            layer.bindPopup(function () {
-                var popupText = "<span class='map-preview-popup'>";
-                $.each(feature.properties, function (key, value) {
-                    popupText += "<b>" + key + "</b> : " + value;
-                    var isLastElement = key == feature.properties.length - 1;
-                    if (!isLastElement) {
-                        popupText += "<br>"
-                    }
-                    else {
-                        popupText += "</span>"
-                    }
+            if (feature.geometry.type != "Point") {
+                layer.on("mouseover", function (e) {
+                    var hoverText = "<span class='map-preview-popup'>";
+                    $.each(feature.properties, function (key, value) {
+                        hoverText += "<b>" + key + "</b> : " + value;
+
+                        var isLastElement = key == feature.properties.length - 1;
+                        if (!isLastElement) {
+                            hoverText += "<br>"
+                        }
+                        else {
+                            hoverText += "</span>"
+                        }
+
+                    });
+
+                    layer.bindTooltip(hoverText).openTooltip(e.latlng);
+                    layer.setStyle({
+                        'weight': 3
+                    });
                 });
-                return popupText
-            });
+                layer.on("mouseout", function (e) {
+                    layer.setStyle({
+                        'weight': .5
+                    });
+
+                    layer.closeTooltip();
+                });
+            }
+            else {
+                layer.on("click", function (e) {
+                    var hoverText = "<span class='map-preview-popup'>";
+                    $.each(feature.properties, function (key, value) {
+                        hoverText += "<b>" + key + "</b> : " + value;
+
+                        var isLastElement = key == feature.properties.length - 1;
+                        if (!isLastElement) {
+                            hoverText += "<br>"
+                        }
+                        else {
+                            hoverText += "</span>"
+                        }
+
+                    });
+
+                    layer.bindPopup(hoverText).openPopup(e.latlng);
+                })
+            }
         }
     }).addTo(map);
 
     map.fitBounds(allFeatures.getBounds());
+    map.setMinZoom(map.getZoom());
 
     $('#map-modal-add').find("[name=file-size]").text(app.library.utility.formatNumber(Math.ceil(JSON.stringify(app.geomap.import.file.content.geojsonSimplified).length / 1024)) + " KB");
 
@@ -591,6 +633,16 @@ app.geomap.viewAddMap = async function (weight) {
     }, 1000);
 
     api.spinner.stop();
+};
+
+app.geomap.getMaxBounds = function (geoJson) {
+    var enveloped = turf.envelope(geoJson);
+    var height = (enveloped.bbox[1] - enveloped.bbox[3]);
+    var width = (enveloped.bbox[0] - enveloped.bbox[2]);
+    return [
+        [enveloped.bbox[1] + (height / 2), enveloped.bbox[2] - (width / 2)],
+        [enveloped.bbox[3] - (height / 2), enveloped.bbox[0] + (width / 2)]
+    ];
 };
 
 app.geomap.renderMapProperties = function () {

@@ -4,6 +4,7 @@ Custom JS application specific
 //#region Namespaces definitions
 app.geomap = app.geomap || {};
 app.geomap.preview = {};
+app.geomap.preview.geoJson = {};
 app.geomap.preview.ajax = {};
 app.geomap.preview.callback = {};
 
@@ -27,7 +28,7 @@ app.geomap.preview.callback.readMap = function (data) {
         $("#map-modal-preview").find("[name=gmp-name]").val(data.GmpName);
         $("#map-modal-preview").find("[name=description]").html(app.library.html.parseBbCode(data.GmpDescription));
         $("#map-modal-preview").modal("show");
-        app.geomap.preview.ajax.getGeoJSON(data.GmpCode)
+        app.geomap.preview.ajax.getGeoJSON(data.GmpCode);
     }
     // Handle no data
     else {
@@ -41,6 +42,7 @@ app.geomap.preview.ajax.getGeoJSON = function (gmpCode) {
         url: app.config.url.api.static + "/PxStat.Data.GeoMap_API.Read/" + gmpCode,
         dataType: 'json',
         success: function (data) {
+            app.geomap.preview.geoJson = data;
             app.geomap.preview.callback.renderMap(data);
             app.geomap.preview.callback.renderProperties(data);
         },
@@ -49,7 +51,8 @@ app.geomap.preview.ajax.getGeoJSON = function (gmpCode) {
             api.modal.exception(app.label.static["api-ajax-exception"]);
         }
     });
-}
+};
+
 
 app.geomap.preview.callback.renderMap = async function (data) {
 
@@ -64,11 +67,18 @@ app.geomap.preview.callback.renderMap = async function (data) {
     });
     $("#map-modal-preview-map-content").find("[name=map-modal-preview-wrapper]").empty().append(mapContainer);
 
-    var map = L.map('map-modal-preview-container');
-    L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: 'Google Maps'
-    }).addTo(map);
+    var map = L.map('map-modal-preview-container', {
+        maxBounds: app.geomap.preview.getMaxBounds(app.geomap.preview.geoJson)
+    });
+
+    //add baselayers
+    $.each(app.config.entity.map.baseMap.leaflet, function (index, value) {
+        L.tileLayer(value.url, value.options).addTo(map);
+    });
+
+    $.each(app.config.entity.map.baseMap.esri, function (index, value) {
+        L.esri.tiledMapLayer(value).addTo(map);
+    });
 
     var allFeatures = L.geoJson(data, {
         style: {
@@ -77,27 +87,69 @@ app.geomap.preview.callback.renderMap = async function (data) {
             fillOpacity: 0.1
         },
         onEachFeature: function (feature, layer) {
-            layer.bindPopup(function () {
-                var popupText = "<span class='map-preview-popup'>";
-                $.each(feature.properties, function (key, value) {
-                    popupText += "<b>" + key + "</b> : " + value;
+            if (feature.geometry.type != "Point") {
+                layer.on("mouseover", function (e) {
+                    var hoverText = "<span class='map-preview-popup'>";
+                    $.each(feature.properties, function (key, value) {
+                        hoverText += "<b>" + key + "</b> : " + value;
 
-                    var isLastElement = key == feature.properties.length - 1;
-                    if (!isLastElement) {
-                        popupText += "<br>"
-                    }
-                    else {
-                        popupText += "</span>"
-                    }
+                        var isLastElement = key == feature.properties.length - 1;
+                        if (!isLastElement) {
+                            hoverText += "<br>"
+                        }
+                        else {
+                            hoverText += "</span>"
+                        }
 
+                    });
+
+                    layer.bindTooltip(hoverText).openTooltip(e.latlng);
+                    layer.setStyle({
+                        'weight': 3
+                    });
                 });
-                return popupText
-            });
+                layer.on("mouseout", function (e) {
+                    layer.setStyle({
+                        'weight': .5
+                    });
+
+                    layer.closeTooltip();
+                });
+            }
+            else {
+                layer.on("click", function (e) {
+                    var hoverText = "<span class='map-preview-popup'>";
+                    $.each(feature.properties, function (key, value) {
+                        hoverText += "<b>" + key + "</b> : " + value;
+
+                        var isLastElement = key == feature.properties.length - 1;
+                        if (!isLastElement) {
+                            hoverText += "<br>"
+                        }
+                        else {
+                            hoverText += "</span>"
+                        }
+
+                    });
+
+                    layer.bindPopup(hoverText).openPopup(e.latlng);
+                })
+            }
         }
     }).addTo(map);
     map.fitBounds(allFeatures.getBounds());
-
+    map.setMinZoom(map.getZoom());
     api.spinner.stop();
+};
+
+app.geomap.preview.getMaxBounds = function (geoJson) {
+    var enveloped = turf.envelope(geoJson);
+    var height = (enveloped.bbox[1] - enveloped.bbox[3]);
+    var width = (enveloped.bbox[0] - enveloped.bbox[2]);
+    return [
+        [enveloped.bbox[1] + (height / 2), enveloped.bbox[2] - (width / 2)],
+        [enveloped.bbox[3] - (height / 2), enveloped.bbox[0] + (width / 2)]
+    ];
 };
 
 app.geomap.preview.callback.renderProperties = function (data) {

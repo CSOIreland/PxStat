@@ -21,11 +21,13 @@ BEGIN
 
 	-- Error Message
 	DECLARE @errorMessage VARCHAR(256)
-	DECLARE @spName VARCHAR(100) = 'Data_Stat_Release_IncrementRevision'
+	DECLARE @spName VARCHAR(100) 
+	set @spName = 'Data_Stat_Release_IncrementRevision'
 	DECLARE @DtgId INT = NULL
 	-- Release lookup
 	DECLARE @RlsId INT = NULL
-	DECLARE @updateCount INT = 0
+	DECLARE @updateCount INT 
+	set @updateCount = 0
 	DECLARE @eMessage VARCHAR(256)
 
 	SELECT @RlsId = [RLS_ID]

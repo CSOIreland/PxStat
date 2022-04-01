@@ -346,7 +346,10 @@ namespace PxStat.Data
                     new SqlBulkCopyColumnMapping("VRB_ELIMINATION_FLAG", "VRB_ELIMINATION_FLAG")
                 };
 
-            ado.ExecuteBulkCopy("TD_VARIABLE", maps, dt, true);
+            using (ADO bulkAdo = new ADO("defaultConnection"))
+            {
+                bulkAdo.ExecuteBulkCopy("TD_VARIABLE", maps, dt, false);
+            }
         }
 
         /// <summary>
@@ -361,8 +364,10 @@ namespace PxStat.Data
                     new SqlBulkCopyColumnMapping("PRD_VALUE", "PRD_VALUE"),
                     new SqlBulkCopyColumnMapping("PRD_FRQ_ID", "PRD_FRQ_ID")
                 };
-
-            ado.ExecuteBulkCopy("TD_PERIOD", maps, dt, true);
+            using (ADO bulkAdo = new ADO("defaultConnection"))
+            {
+                bulkAdo.ExecuteBulkCopy("TD_PERIOD", maps, dt, false);
+            }
         }
 
         /// <summary>
@@ -427,7 +432,10 @@ namespace PxStat.Data
                     new SqlBulkCopyColumnMapping("TDT_MTR_ID", "TDT_MTR_ID")
                 };
 
-            ado.ExecuteBulkCopy("TD_DATA", mappings, dataTable, true);
+            using (ADO bulkAdo = new ADO("defaultConnection"))
+            {
+                bulkAdo.ExecuteBulkCopy("TD_DATA", mappings, dataTable, false);
+            }
 
             var mappingCells = new List<SqlBulkCopyColumnMapping>()
                 {
@@ -436,8 +444,10 @@ namespace PxStat.Data
                     new SqlBulkCopyColumnMapping("DTC_VRB_ID", "DTC_VRB_ID")
                 };
 
-
-            ado.ExecuteBulkCopy("TM_DATA_CELL", mappingCells, dataCellTable, true);
+            using (ADO bulkAdo = new ADO("defaultConnection"))
+            {
+                bulkAdo.ExecuteBulkCopy("TM_DATA_CELL", mappingCells, dataCellTable, false);
+            }
 
             dataTable = null;
             dataCellTable = null;

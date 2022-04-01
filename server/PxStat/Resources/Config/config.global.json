@@ -4,7 +4,8 @@
     "iso": {
       "code": "en",
       "name": "English"
-    }
+    },
+    "culture": "en-ie"
   },
   "url": {
     "api": {
@@ -30,7 +31,8 @@
       "placeholder": "(+353) 21 452 2253"
 
     },
-    "password": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\\W]).{8,}$"
+    "password": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\\W]).{8,}$",
+    "codes-values": "['\"]"
   },
   "workflow": {
     "embargo": {
@@ -78,5 +80,12 @@
   "search": {
 
     "maximumResults": 100
+  },
+  "throttle": {
+    "subscribedWindowSeconds": 60,
+    "subscribedCallLimit": 30,
+    "nonSubscribedWindowSeconds": 180,
+    "nonSubscribedCallLimit": 10
   }
+
 }

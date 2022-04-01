@@ -20,7 +20,11 @@
   },
   "release": {
     "lockTimeMinutes": 60
+  },
+  "subscription": {
+    "query-threshold": 1000
+  },
+  "maintenance": {
+    "post-import-delete": false
   }
-
-
 }

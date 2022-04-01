@@ -57,6 +57,7 @@ Write-Host ""
 Write-Host "Please wait..."
 Write-Host ""
 
+
 # ********************************************************************************
 # Drop Jobs
 # ********************************************************************************
@@ -87,6 +88,40 @@ ForEach ($file in $files)
             Continue
         }
     }
+
+
+# ********************************************************************************
+# Drop Schedules
+# ********************************************************************************
+
+#Extract the file into an object
+$files = Get-ChildItem -recurse $scriptDir\Drop\drop_schedules.sql
+  
+ForEach ($file in $files)
+    {
+        try
+        {
+            Invoke-SQLCMD -Username $username -Password $password -Inputfile $file.FullName  -Variable @("DB_DATA=$DbData") -serverinstance $server -database $DbData -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Schedules - Success"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+        }
+        catch
+        {
+            $ErrorMessage = $_.Exception.Message
+            Write-Host "ERROR $file - $ErrorMessage"
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+            Write-Host ""
+            Write-Host "Drop Schedules - Fail"
+            Write-Host "********************************************************************************"
+            Write-Host ""
+            Continue
+        }
+    }
+
+
 
 # ********************************************************************************
 # Drop Stored Procedures
@@ -358,6 +393,40 @@ ForEach ($file in $files)
 Write-Host ""
 Write-Host "Create Jobs - Errors: $errorCount"
 Write-Host "Create Jobs - Success: $successCount"
+Write-Host "********************************************************************************"
+Write-Host ""
+
+# ********************************************************************************
+# Create or Alter Schedules
+# ********************************************************************************
+
+#Extract all of the .sql files into an object
+$files = Get-ChildItem -recurse $scriptDir\Schedules\*.sql
+	
+$successCount = 0
+$errorCount = 0
+
+#Run each script
+ForEach ($file in $files)
+    {
+        try
+        {
+            Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -Variable @("DB_DATA=$DbData") -serverinstance $server -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\update.log -Append
+            $successCount = $successCount + 1
+        }
+        catch
+        {
+            $ErrorMessage = $_.Exception.Message
+            Write-Host "ERROR $file - $ErrorMessage"
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
+            $errorCount = $errorCount + 1
+            Continue
+        }
+    }
+Write-Host ""
+Write-Host "Create Schedules - Errors: $errorCount"
+Write-Host "Create Schedules - Success: $successCount"
 Write-Host "********************************************************************************"
 Write-Host ""
 

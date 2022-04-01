@@ -82,7 +82,7 @@ app.data.search.callback.readNav = function (data) {
     });
     //EVENT ASSIGN
     // Add Click even for selecting Subject-Product at Browse Subjects menu.
-    $("#data-navigation").find("[name=navigation-product-item]").once("click", function (e) {
+    $("#data-navigation").find("[name=menu]").find("[name=navigation-product-item]").once("click", function (e) {
         e.preventDefault();
         //clear search box input
         $("#data-search-row-desktop [name=search-input], #data-search-row-responsive [name=search-input]").val('');
@@ -98,7 +98,7 @@ app.data.search.callback.readNav = function (data) {
         app.data.PrdCode = $(this).attr("prc-code");
         app.data.searchResult.ajax.readNavigationResults(apiParams);
         //Collapse navigation
-        $("#data-navigation").find(".navbar-collapse").collapse('hide');
+        $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
 
         $("#data-dataset-row").hide();
 
@@ -131,7 +131,6 @@ app.data.searchResult.ajax.readSearch = function (search) {
     app.data.isSearch = true;
     app.data.PrdCode = null;
     $("#data-search-result-pagination").show();
-    $('#data-search-result-pagination-toggle').bootstrapToggle("off");
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
         "PxStat.System.Navigation.Navigation_API.Search",
         {
@@ -188,7 +187,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
             $("#data-latest-releases").remove();
             $("#data-accordion-collection-api").hide();
             //collapse navigation
-            $("#data-navigation").find(".navbar-collapse").collapse("hide");
+            $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse("hide");
 
             app.data.init(data[0].LngIsoCode, data[0].MtrCode, null, data[0].MtrCode, false, true);
             app.data.dataset.draw();
@@ -481,7 +480,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
     else {
         $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").show();
         $("#data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").hide();
-        $("#data-navigation").find(".navbar-collapse").collapse('show');
+        $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('show');
     }
 
     //run bootstrap toggle to show/hide toggle button
@@ -816,19 +815,9 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
         app.data.init($(this).attr("lng-iso-code"), $(this).attr("mtr-code"), null, $(this).attr("mtr-code"), false, true);
         $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").hide();
         $("#data-dataset-row").find("[name=back-to-select-results]").show();
-        $("#data-navigation").find(".navbar-collapse").collapse('hide');
+        $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
         app.data.dataset.draw();
     });
     $('[data-toggle="tooltip"]').tooltip();
-
-    //empty any previous datasets that were shown earlier
-    $("#data-dataset-table-nav-content, #data-dataset-chart-nav-content, #data-dataset-map-nav-content").empty();
-    $("#data-dataset-chart-nav-content, #data-dataset-map-nav-content").removeClass("show").removeClass("active");
-    $("#data-dataset-table-nav-content").addClass("show").addClass("active");
-    $("#data-dataset-chart-nav-tab, #data-dataset-map-nav-tab").removeClass("active");
-    $("#data-dataset-table-nav-tab").addClass("active");
-
-    $('#data-search-result-pagination-toggle').bootstrapToggle().once("change", app.data.searchResult.callback.filterResults);
-
 };
 //#endregion search results

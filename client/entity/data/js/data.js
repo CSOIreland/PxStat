@@ -12,6 +12,7 @@ $(document).ready(function () {
     app.data.goTo.PrcCode = api.content.getParam("PrcCode");
     app.data.goTo.CprCode = api.content.getParam("CprCode");
     app.data.goTo.MtrCode = api.content.getParam("MtrCode");
+    app.data.goTo[C_APP_GOTO_PARAMS] = api.content.getParam(C_APP_GOTO_PARAMS);
 
     // Load Modal - must be after GoTo
     api.content.load("#modal-entity", "entity/data/index.modal.html");

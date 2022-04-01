@@ -380,25 +380,25 @@ app.language.validation.create = function () {
  */
 app.language.ajax.create = function () {
   var lngIsoCode = $("#language-modal-create").find("[name=lng-iso-code]").val();
-  var lngIsoName = $("#language-modal-create").find("[name=lng-iso-name]").val();
-  var apiParams = {
-    LngIsoCode: lngIsoCode,
-    LngIsoName: lngIsoName
-  };
-  var callbackParam = {
-    LngIsoCode: lngIsoCode,
-    LngIsoName: lngIsoName
-  };
-  api.ajax.jsonrpc.request(
-    app.config.url.api.jsonrpc.private,
-    "PxStat.System.Settings.Language_API.Create",
-    apiParams,
-    "app.language.callback.createOnSuccess",
-    callbackParam,
-    "app.language.callback.createOnError",
-    null,
-    { async: false }
-  );
+  $.getJSON("internationalisation/label/" + lngIsoCode + ".json", function (result) {
+    //only add language if the dictionary can be found first
+    api.ajax.jsonrpc.request(
+      app.config.url.api.jsonrpc.private,
+      "PxStat.System.Settings.Language_API.Create",
+      {
+        LngIsoCode: lngIsoCode,
+        LngIsoName: $("#language-modal-create").find("[name=lng-iso-name]").val()
+      },
+      "app.language.callback.createOnSuccess",
+      lngIsoCode,
+      "app.language.callback.createOnError",
+      null,
+      { async: false }
+    );
+  }).fail(function () {
+    api.modal.error(app.library.html.parseDynamicLabel("language-dictionary-not-found", [lngIsoCode]))
+  });
+
 };
 
 /**
@@ -406,12 +406,12 @@ app.language.ajax.create = function () {
  * @param {*} data
  * @param {*} callbackParam
  */
-app.language.callback.createOnSuccess = function (data, callbackParam) {
+app.language.callback.createOnSuccess = function (data, lngIsoCode) {
   app.language.ajax.read();
 
   if (data == C_API_AJAX_SUCCESS) {
     $("#language-modal-create").modal("hide");
-    api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [callbackParam.LngIsoCode]));
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [lngIsoCode]));
   } else api.modal.exception(app.label.static["api-ajax-exception"]);
 };
 

@@ -57,6 +57,8 @@ namespace PxStat.Template
 
         protected AuthenticationType AuthenticationType { get; set; }
 
+        protected string UserIdentifier { get; set; }
+
         #endregion 
 
         /// <summary>
@@ -78,7 +80,6 @@ namespace PxStat.Template
             Response = new JSONRPC_Output();
             Validator = validator;
             Trace_BSO_Create.Execute(Ado, request);
-
         }
 
         /// <summary>
@@ -254,6 +255,15 @@ namespace PxStat.Template
             //parameter validation not ok - return an error and proceed no further
             Log.Instance.Debug("Validation failed: " + JsonConvert.SerializeObject(DTOValidationResult.Errors));
             Response.error = Label.Get("error.validation");
+        }
+
+        /// <summary>
+        /// The request has been throttled for usage reasons
+        /// </summary>
+        virtual protected void OnThrottle()
+        {
+            Log.Instance.Debug("Request throttled");
+            Response.error = Label.Get("error.throttled");
         }
 
         /// <summary>

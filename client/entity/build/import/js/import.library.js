@@ -546,7 +546,7 @@ app.build.import.drawCallbackimportHistory = function () {
     //view user info
     $("#build-import-history table").find("[name=user-name]").once("click", function (e) {
         e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: $(this).attr("idn") });
+        app.library.user.modal.ajax.read({ CcnUsername: $(this).attr("idn") });
     });
 
 }

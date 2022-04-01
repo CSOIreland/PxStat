@@ -19,11 +19,13 @@ ALTER PROCEDURE Security_Analytic_Create @matrix NVARCHAR(20)
 	,@NltBotFlag BIT
 	,@NltReferer NVARCHAR(256) = NULL
 	,@NltM2m BIT
+	,@NltWidget BIT=NULL
 	,@NltDate DATE
 	,@LngIsoCode CHAR(2)
 	,@FrmType NVARCHAR(32) = NULL
 	,@FrmVersion NVARCHAR(32) = NULL
 	,@EnvironmentLngIsoCode CHAR(2)=NULL
+	,@NltUser BIT=0
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -67,6 +69,7 @@ BEGIN
 		,NLT_BOT_FLAG
 		,NLT_REFERER
 		,NLT_M2M_FLAG
+		,NLT_WIDGET 
 		,NLT_DATE
 		,NLT_USER_FLAG
 		,NLT_FRM_ID
@@ -80,13 +83,9 @@ BEGIN
 		,@NltBotFlag
 		,@NltReferer
 		,@NltM2m
+		,coalesce(@NltWidget,0) 
 		,@NltDate
-		,CASE 
-			WHEN @NltM2m = 0
-				AND @NltBotFlag = 0
-				THEN 1
-			ELSE 0
-			END
+		,@NltUser 
 		,@FrmID
 		,@EnvironmentLngIsoCode
 		);

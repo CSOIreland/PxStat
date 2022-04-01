@@ -12,6 +12,9 @@
                     <a id="nav-link-data" class="nav-link text-light px-3" href="#" label="data"> </a>
                 </li>
                 <li class="nav-item pl-1" style="display: none;">
+                    <a id="nav-link-saved-query" class="nav-link text-light px-3" href="#" label="saved-queries"> </a>
+                </li>
+                <li class="nav-item pl-1" style="display: none;">
                     <a id="nav-link-dashboard" class="nav-link text-light px-3" href="#" label="dashboard"> </a>
                 </li>
                 <li class="nav-item pl-1" style="display: none;">
@@ -45,6 +48,8 @@
                         <a id="nav-link-reason" class="dropdown-item px-3" href="#" label="reasons"></a>
                         <a id="nav-link-alert" class="dropdown-item px-3" href="#" label="alerts"></a>
                         <a id="nav-link-email" class="dropdown-item px-3" href="#" label="email"></a>
+                        <a id="nav-link-channel" class="dropdown-item px-3" href="#" label="channel"></a>
+                        <a id="nav-link-subscriber" class="dropdown-item px-3" href="#" label="subscriber"></a>
                     </div>
                 </li>
                 <li class="nav-item pl-1 dropdown" style="display: none;">
@@ -90,6 +95,22 @@
                     <i class="fas fa-sign-in-alt mr-2"></i><span label="login"></span>
                 </button>
 
+                <button id="nav-subscriber-logout" type="button" class="btn btn-outline-warning btn-warning text-dark" style="display: none;">
+                    <i class="fas fa-sign-out-alt mr-2"></i><span label="logout"></span>
+                </button>
+
+                <!-- Example single danger button -->
+                <div name="nav-subscriber-details" class="btn-group" style="display: none;">
+                    <button type="button" class="rounded-left btn btn-outline-primary text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="" name="subscriber-icon"></i><span name="name"></span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" name="subscriber-profile" href="#"><i class="far fa-id-card"></i> <span label="my-profile"></span></a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" name="logout"><i class="fas fa-sign-out-alt mr-2"></i><span label="logout"></span></a>
+                    </div>
+                </div>
+
                 <button id="nav-user-logout" type="button" class="btn btn-outline-warning btn-warning text-dark" style="display: none;">
                     <i class="fas fa-sign-out-alt mr-2"></i><span label="logout"></span>
                 </button>
@@ -113,6 +134,31 @@
     <!-- <li name="home" class="breadcrumb-item"><a href="" label="home"></a></li> -->
     <li name="item" class="breadcrumb-item active" aria-current="page"></li>
     <!-- <li name="link" class="breadcrumb-item"></li> -->
+
+    <div class="card m-3 border-tertiary" name="favourite-tables-card" style="display: none;">
+        <div class="card-header bg-tertiary text-light">
+            <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
+                <i class="fas fa-plus-circle"></i> <span label="favourite-tables"></span>
+            </a>
+        </div>
+        <div id="" class="collapse card-body">
+            <table class="table table-striped hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th label="table"></th>
+                        <th></th>
+                        <th></th>
+                        <th label="last-updated"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
 </div>
 
 <!-- CSS file for Navigation page-->

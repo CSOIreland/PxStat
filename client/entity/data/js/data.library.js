@@ -28,6 +28,7 @@ app.data.goTo.Search = null;
 app.data.goTo.PrcCode = null;
 app.data.goTo.CprCode = null;
 app.data.goTo.MtrCode = null;
+app.data.goTo[C_APP_GOTO_PARAMS] = null;
 //#endregion
 
 
@@ -114,7 +115,7 @@ app.data.callback.drawCallbackDrawLatestReleases = function () {
         $("#data-latest-releases").remove();
         $("#data-accordion-collection-api").hide();
         //collapse navigation so filter abd sort visible at top of screen
-        $("#data-navigation").find(".navbar-collapse").collapse("hide");
+        $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse("hide");
         app.data.init($(this).attr("lng-iso-code"), $(this).attr("mtr-code"), null, $(this).attr("mtr-code"), false, true);
         app.data.dataset.draw();
     });

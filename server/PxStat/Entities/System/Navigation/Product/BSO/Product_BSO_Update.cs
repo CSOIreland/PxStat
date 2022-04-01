@@ -46,10 +46,19 @@ namespace PxStat.System.Navigation
             }
 
             //Duplicate product names aren't allowed, so we check first
-            if (adoProduct.Exists(DTO.PrcValue, DTO.SbjCode) || (adoProduct.ExistsCode(DTO.PrcCodeNew) && DTO.PrcCode != DTO.PrcCodeNew))
+            if (adoProduct.Exists(DTO.PrcValue, DTO.SbjCode)) //|| )
             {
                 Response.error = Label.Get("error.duplicate");
                 return false;
+            }
+
+            if (DTO.PrcCodeNew != null)
+            {
+                if (adoProduct.ExistsCode(DTO.PrcCodeNew) && DTO.PrcCode != DTO.PrcCodeNew)
+                {
+                    Response.error = Label.Get("error.duplicate");
+                    return false;
+                }
             }
 
             //We must  delete all of the mandatory product keywords for the product 
@@ -93,6 +102,33 @@ namespace PxStat.System.Navigation
 
             //Finally we must recreate the mandatory keywords in line with the updated product
             kpBso.Create(Ado, DTO, nUpdatedProductID);
+
+            //Flush the cache for search - it's now out of date
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
+
+            //Flush caches for each MtrCode affected by this change
+            var mtrResult = adoProduct.GetMtrCodeListForProduct(DTO);
+            if (mtrResult.hasData)
+            {
+                foreach (var mtrCode in mtrResult.data)
+                {
+                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + mtrCode.MtrCode);
+                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + mtrCode.MtrCode);
+                }
+            }
+
+            //Flush caches for each RlsCode affected by this change
+            var rlsResult = adoProduct.GetRlsCodeListForProduct(DTO);
+            if (rlsResult.hasData)
+
+            {
+                foreach (var rlsCode in rlsResult.data)
+                {
+                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + rlsCode.RlsCode);
+                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + rlsCode.RlsCode);
+                }
+            }
 
             Response.data = JSONRPC.success;
 

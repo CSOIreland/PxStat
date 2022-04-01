@@ -193,6 +193,7 @@ namespace PxStat.Security
                 new ADO_inputParams() {name="@CcnNotificationFlag",value=account.CcnNotificationFlag  },
                 new ADO_inputParams() {name="@CcnLockedFlag",value=locked  },
                 new ADO_inputParams() {name="@CcnADFlag",value=ccnAdFlag  },
+                new ADO_inputParams() { name ="@LngIsoCode", value=account.LngIsoCode }
             };
 
             if (account.CcnDisplayName != null)
@@ -226,11 +227,25 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@CcnUsernameUpdater",value=username},
-                new ADO_inputParams() {name= "@UpdatedCcnUsername",value=account.CcnUsername},
-                new ADO_inputParams() {name= "@PrvCode",value=account.PrvCode},
-                new ADO_inputParams() {name= "@CcnNotificationFlag",value=account.CcnNotificationFlag}
+                new ADO_inputParams() {name= "@UpdatedCcnUsername",value=account.CcnUsername}
+
             };
 
+            if (account.CcnNotificationFlag != null)
+            {
+                inputParamList.Add(new ADO_inputParams() { name = "@CcnNotificationFlag", value = account.CcnNotificationFlag });
+            }
+
+            if (account.PrvCode != null)
+            {
+
+                inputParamList.Add(new ADO_inputParams() { name = "@PrvCode", value = account.PrvCode });
+            }
+
+            if (account.LngIsoCode != null)
+            {
+                inputParamList.Add(new ADO_inputParams() { name = "@LngIsoCode", value = account.LngIsoCode });
+            }
 
             if (account.CcnLockedFlag != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@CcnLockedFlag", value = account.CcnLockedFlag });

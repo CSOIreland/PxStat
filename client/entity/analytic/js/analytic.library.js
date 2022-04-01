@@ -272,6 +272,7 @@ app.analytic.callback.readAnalytics = function (data) {
                 },
                 { data: "NltBot" },
                 { data: "NltM2m" },
+                { data: "NltWidget" },
                 { data: "NltUser" },
                 { data: "Total" }
             ],
@@ -293,6 +294,7 @@ app.analytic.callback.readAnalytics = function (data) {
         });
     }
     var totalBot = 0;
+    var totalWidgets = 0;
     var totalM2M = 0;
     var totalUsers = 0;
     $("#summary-card").find("[name=analytic-sum-bots]").text(function () {
@@ -300,6 +302,12 @@ app.analytic.callback.readAnalytics = function (data) {
             totalBot = totalBot + value.NltBot;
         });
         return app.library.utility.formatNumber(totalBot)
+    });
+    $("#summary-card").find("[name=analytic-sum-widgets]").text(function () {
+        $.each(data, function (index, value) {
+            totalWidgets = totalWidgets + value.NltWidget;
+        });
+        return app.library.utility.formatNumber(totalWidgets)
     });
     $("#summary-card").find("[name=analytic-sum-m2m]").text(function () {
         $.each(data, function (index, value) {
@@ -874,6 +882,11 @@ app.analytic.callback.readTimeline = function (data, selector) {
         data: [],
         fill: false
     };
+    var widgets = {
+        label: app.label.static["widgets"],
+        data: [],
+        fill: false
+    };
     var users = {
         label: app.label.static["users"],
         data: [],
@@ -888,12 +901,12 @@ app.analytic.callback.readTimeline = function (data, selector) {
     $.each(data, function (key, el) {
         bots.data.push(el.NltBot);
         M2M.data.push(el.NltM2m);
+        widgets.data.push(el.NltWidget);
         users.data.push(el.NltUser);
         total.data.push(el.Total);
         localConfig.data.labels.push(el.date ? moment(el.date).format(app.config.mask.date.display) : "");
     });
-    localConfig.data.datasets = [bots, M2M, users, total];
-
+    localConfig.data.datasets = [bots, M2M, widgets, users, total];
     var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
     new Chart($(selector).find("[name=dates-line-chart-canvas]"), config);
 };

@@ -19,8 +19,10 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @RlsID INT = 0
-	DECLARE @CmmID INT = 0
+	DECLARE @RlsID INT
+	set @RlsID = 0
+	DECLARE @CmmID INT 
+	set @CmmID = 0
 	DECLARE @errorMessage VARCHAR(256)
 	DECLARE @returnValue INT
 

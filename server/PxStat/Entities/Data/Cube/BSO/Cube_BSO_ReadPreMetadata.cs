@@ -38,6 +38,15 @@ namespace PxStat.Data
                 return false;
             }
 
+            ////See if this request has cached data
+            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", DTO);
+
+            if (cache.hasData)
+            {
+                Response.data = cache.data;
+                return true;
+            }
+
             var item = new Matrix_ADO(Ado).Read(DTO.release, DTO.language, SamAccountName);
             var result = Release_ADO.GetReleaseDTO(item);
             if (result == null)

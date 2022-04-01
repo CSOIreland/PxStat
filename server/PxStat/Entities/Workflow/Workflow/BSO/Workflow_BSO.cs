@@ -5,6 +5,7 @@ using PxStat.Security;
 using PxStat.System.Notification;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace PxStat.Workflow
 {
@@ -841,6 +842,18 @@ namespace PxStat.Workflow
             response.data = JSONRPC.success;
             Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
 
+            var sendMailThread = new Thread(() =>
+            {
+                //If an email error occurs, just ignore it and continue as before
+                try
+                {
+                    notify.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
+                }
+                catch { }
+            });
+
+            sendMailThread.Start();
+
             // Clean up caching
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + DTO.RlsCode);
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + DTO.RlsCode);
@@ -871,11 +884,7 @@ namespace PxStat.Workflow
 
             MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI);
 
-            try
-            {
-                notify.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
-            }
-            catch { }
+
 
 
 

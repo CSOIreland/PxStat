@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using API;
+﻿using API;
+using System.Collections.Generic;
 
 namespace PxStat.System.Navigation
 {
@@ -72,6 +72,37 @@ namespace PxStat.System.Navigation
             var reader = ado.ExecuteReaderProcedure("System_Navigation_Product_Read", inputParams);
 
             return reader.data;
+        }
+
+        /// <summary>
+        /// Get a list of RlsCodes used by this product
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput GetRlsCodeListForProduct(Product_DTO dto)
+        {
+            var inputParams = new List<ADO_inputParams>
+            {
+                new ADO_inputParams { name = "@PrcCode", value = dto.PrcCode }
+            };
+            return ado.ExecuteReaderProcedure("System_Navigation_GetRlsCodesForProduct", inputParams);
+
+        }
+
+        /// <summary>
+        /// Get a list of MtrCodes used by this product
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput GetMtrCodeListForProduct(Product_DTO dto)
+        {
+            var inputParams = new List<ADO_inputParams>
+            {
+                new ADO_inputParams { name = "@PrcCode", value = dto.PrcCode }
+            };
+            return ado.ExecuteReaderProcedure("System_Navigation_GetMtrCodesForProduct", inputParams);
+
+
         }
 
         /// <summary>
@@ -150,6 +181,8 @@ namespace PxStat.System.Navigation
 
             return (int)outputParam.value;
         }
+
+
 
         /// <summary>
         /// Deletes a product

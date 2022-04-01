@@ -3,8 +3,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PxStat.Data;
 using PxStat.JsonQuery;
+using PxStat.Security;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Web;
 
 namespace PxStat.JsonStatSchema
 {
@@ -19,7 +22,10 @@ namespace PxStat.JsonStatSchema
         public JsonStatQuery jStatQuery { get; set; }
         public JsonStatQueryExtension jStatQueryExtension { get; set; }
 
-        public bool m2m { get; set; }
+        public bool? m2m { get; set; }
+
+        public bool widget { get; set; }
+        public bool user { get; set; }
 
 
         public CubeQuery_DTO(dynamic parameters)
@@ -40,12 +46,39 @@ namespace PxStat.JsonStatSchema
 
             }
 
+            /*User : Person consuming from PxStat
+            m2m: false (existing behaviour) && referrer == global url application (additional requirement on server)
 
+            M2m : Anything consuming raw API’s
+            M2m missing or == true (existing behaviour) 
+
+            Widget: User consuming via snippet code
+            m2m: false (additional requirement) && referrer != global url application (additional requirement on server)*/
+
+            //Set some analytic properties if they exist
             var param = Utility.JsonDeserialize_IgnoreLoopingReference<dynamic>(parameters.ToString());
             if (param.m2m != null)
                 m2m = param.m2m;
             else
                 m2m = true;
+
+            var hRequest = HttpContext.Current.Request;
+            string rfr = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? null : hRequest.UrlReferrer.Host;
+            string urf = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application");
+
+            if (param.widget != null)
+            {
+
+                if (m2m == false && (rfr == urf || rfr == urf + '/'))
+                    user = true;
+                else if (m2m == false && rfr != urf && rfr != urf + '/')
+                    widget = true;
+
+
+            }
+            else
+                widget = false;
+
 
         }
 

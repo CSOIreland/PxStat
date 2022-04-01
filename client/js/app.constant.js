@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "3.8.2";
+const C_APP_VERSION = "4.0.1";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -19,8 +19,8 @@ const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/
 const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.1.2/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.1.2/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.4.1/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.4.1/snippet.html";
 
 // Public API
 const C_APP_API_JSONRPC_VERSION = "2.0";
@@ -65,12 +65,24 @@ const C_COOKIE_LINK_SEARCH = "search";
 const C_COOKIE_LINK_PRODUCT = "product";
 const C_COOKIE_LINK_COPYRIGHT = "copyright";
 const C_COOKIE_LINK_TABLE = "table";
+const C_COOKIE_LINK_CHART = "chart";
+const C_COOKIE_LINK_MAP = "map";
 const C_COOKIE_LINK_RELEASE = "release";
 
 //User Privileges (RQS_CODE)
 const C_APP_PRIVILEGE_ADMINISTRATOR = "ADMINISTRATOR";
 const C_APP_PRIVILEGE_POWER_USER = "POWER_USER";
 const C_APP_PRIVILEGE_MODERATOR = "MODERATOR";
+
+//Firebase auth provider id
+const C_APP_FIREBASE_ID_PASSWORD = "password";
+const C_APP_FIREBASE_ID_GOOGLE = "google.com";
+const C_APP_FIREBASE_ID_FACEBOOK = "facebook.com";
+const C_APP_FIREBASE_ID_TWITTER = "twitter.com";
+const C_APP_FIREBASE_ID_GITHUB = "github.com";
+
+//Firebase auth error codes
+const C_APP_FIREBASE_ERROR_ACCOUNT_EXISTS = "auth/account-exists-with-different-credential";
 
 //Workflow Request (RQS_CODE)
 const C_APP_TS_REQUEST_PUBLISH = "PUBLISH";
@@ -188,3 +200,6 @@ const C_APP_PXWIDGET_CHART_LEGEND_POSITION = ["top", "left", "bottom", "right"];
 
 //GeoJSON
 C_APP_GEOJSON_PROPERTIES_UNIQUE_IDENTIFIER = "code";
+
+//GoTo Params
+C_APP_GOTO_PARAMS = "params";

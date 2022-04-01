@@ -225,7 +225,7 @@ app.tracing.drawCallback = function () {
     // Click event viewLink
     $('#tracing-result table').find('.viewLink').once('click', function (e) {
         e.preventDefault();
-        app.library.user.modal.read({ CcnUsername: $(this).attr("idn") });
+        app.library.user.modal.ajax.read({ CcnUsername: $(this).attr("idn") });
     });
 }
 

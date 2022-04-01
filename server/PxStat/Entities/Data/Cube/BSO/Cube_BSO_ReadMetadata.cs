@@ -1,7 +1,9 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
+using PxStat.Security;
 using PxStat.Template;
 using System;
+using System.Web;
 using static PxStat.System.Settings.Format_DTO_Read;
 
 namespace PxStat.Data
@@ -49,7 +51,6 @@ namespace PxStat.Data
             {
                 return false;
             }
-
             ////See if this request has cached data
             MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", DTO);
             if (cache.hasData)
@@ -58,6 +59,12 @@ namespace PxStat.Data
                 return true;
             }
 
+
+            if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
+            {
+                Log.Instance.Debug("Request throttled");
+                Response.error = Label.Get("error.throttled");
+            }
 
             var items = new Release_ADO(Ado).ReadLiveNow(DTO.matrix, DTO.language);
 
@@ -96,17 +103,25 @@ namespace PxStat.Data
 
             var jsonStat = theMatrix.GetJsonStatObject();
             theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
-            if (!isLive)
+
+            if (isLive)
             {
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theMatrix.Code);
-                return true;
+                if (theReleaseDto.RlsLiveDatetimeTo != default)
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + theMatrix.Code);
+                else
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + theMatrix.Code);
             }
-
-            if (theReleaseDto.RlsLiveDatetimeTo != null)
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + theMatrix.Code);
             else
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + theMatrix.Code);
-
+            {
+                if (theReleaseDto.RlsLiveDatetimeFrom > DateTime.Now)
+                {
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeFrom, Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theReleaseDto.RlsCode);
+                }
+                else
+                {
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", theCubeDTO, theResponse.data, default(DateTime), Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theReleaseDto.RlsCode);
+                }
+            }
             return true;
         }
     }

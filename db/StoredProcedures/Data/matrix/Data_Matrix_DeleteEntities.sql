@@ -20,18 +20,31 @@ BEGIN
 	SET IMPLICIT_TRANSACTIONS OFF;
 
 	DECLARE @MatrixIds TABLE (MtrId INT)
+	DECLARE @StartTime DATETIME
+
+	SET @StartTime = GETDATE()
+
+	DECLARE @DLIMIT INT
 
 	INSERT INTO @MatrixIds
 	SELECT MTR_Id
 	FROM TD_MATRIX
 	WHERE MTR_DELETE_FLAG = 1
 
-	DELETE TM_DATA_CELL
-	FROM TM_DATA_CELL
+	--Count the rows to be deleted 
+	--This results in a better estimate of memory allocation in the execution plan
+	SET @DLIMIT = (
+			SELECT COUNT(*)
+			FROM TM_DATA_CELL WITH (READPAST)
+			INNER JOIN @MatrixIds ON MtrId = DTC_MTR_ID
+			)
+	--The READPAST hint means that we ignore locked rows and don't end up waiting for them
+	DELETE TOP (@DLIMIT) TM_DATA_CELL
+	FROM TM_DATA_CELL WITH (READPAST)
 	INNER JOIN @MatrixIds ON MtrId = DTC_MTR_ID
 
 	DELETE TD_DATA
-	FROM TD_DATA
+	FROM TD_DATA WITH (READPAST)
 	INNER JOIN @MatrixIds ON MtrId = TDT_MTR_ID
 
 	DELETE TD_VARIABLE
@@ -70,9 +83,9 @@ BEGIN
 		,'INFO'
 		,'SQL SERVER AGENT'
 		,'Data_Matrix_DeleteEntities'
-		,'Unused Matrix entities deleted'
+		,'Unused Matrix entities deleted - exec time ' + (CAST(DATEDIFF(millisecond, @StartTime, GETDATE()) AS VARCHAR(256))) + ' ms'
 		)
-		
+
 	RETURN 0
 END
 GO

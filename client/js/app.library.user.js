@@ -8,16 +8,18 @@ app.library.user = {};
 app.library.user.data = {};
 app.library.user.data.CcnUsername = null;
 app.library.user.data.CcnDisplayName = null;
+app.library.user.data.language = null;
 app.library.user.modal = {};
 app.library.user.modal.ajax = {};
 app.library.user.modal.callback = {};
+app.library.user.userchannels = [];
 
 //#region User
 /**
  * Get User data to read user details
  * @param {*} apiParam
  */
-app.library.user.modal.read = function (apiParams) {
+app.library.user.modal.ajax.read = function (apiParams) {
   // default params
   apiParams = apiParams || {};
   // Get data from API
@@ -46,7 +48,7 @@ app.library.user.modal.callback.read = function (data) {
 /**
  * Get User data to read current user details
  */
-app.library.user.modal.readCurrent = function () {
+app.library.user.modal.ajax.readCurrent = function () {
   // Get data from API
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
@@ -62,11 +64,26 @@ app.library.user.modal.readCurrent = function () {
  */
 app.library.user.modal.callback.readCurrent = function (data) {
   if (data) {
-    app.library.user.modal.callback.displayUser(data);
+    app.library.user.modal.ajax.readUserChannels(data);
   }
   // Handle no data
   else
     api.modal.information(app.label.static["api-ajax-nodata"]);
+};
+
+app.library.user.modal.ajax.readUserChannels = function (data) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Subscription.Subscription_API.ChannelSubscriptionReadCurrent",
+    {},
+    "app.library.user.modal.callback.readUserChannels",
+    data
+  );
+};
+
+app.library.user.modal.callback.readUserChannels = function (response, userdata) {
+  app.library.user.userchannels = response || [];
+  app.library.user.modal.callback.displayUser(userdata);
 };
 
 app.library.user.modal.callback.displayUser = function (data) {
@@ -96,7 +113,7 @@ app.library.user.modal.callback.displayUser = function (data) {
   // Unbind change event
   $("#modal-read-user").find("[name=notification]").off("change");
 
-  // If the user if the current one, then allow toggle notifications
+  // If the user if the current one, then allow toggle notifications and subscriptions
   if (data.CcnUsername == app.library.user.data.CcnUsername) {
     //initiate toggle buttons
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
@@ -115,6 +132,8 @@ app.library.user.modal.callback.displayUser = function (data) {
     $("#modal-read-user").find("[name=notification]").once("change", function () {
       app.library.user.modal.ajax.update();
     });
+    // Hide the subscriptions row
+    $("#modal-read-user").find("[name=subscription-row]").show();
   } else {
     //initiate toggle buttons
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
@@ -129,7 +148,96 @@ app.library.user.modal.callback.displayUser = function (data) {
     $("#modal-read-user").find("[name=notification]").bootstrapToggle(data.CcnNotificationFlag ? "on" : "off");
     // Disable the notification
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("disable");
+    // Hide the subscriptions row
+    $("#modal-read-user").find("[name=subscription-row]").hide();
   }
+
+  //subscriptions
+
+  $("#modal-read-user").find("[name=subscription-toggle-wrapper]").empty();
+
+  $.each(app.library.user.userchannels, function (index, value) {
+    //see if user is subscribed to this channel
+    var inputAttributes = {
+      "type": "checkbox",
+      "name": value.ChnCode,
+      "checked": value.ChnSubscribed
+    };
+
+
+    $("#modal-read-user").find("[name=subscription-toggle-wrapper]").append(
+      $("<div>", {
+        "class": "checkbox pl-4",
+        "html": $("<label>", {
+          "html": $("<input>", inputAttributes).get(0).outerHTML + " " + value.ChnName
+        }).get(0).outerHTML
+      }));
+
+
+
+    $("#modal-read-user").find("[name='" + value.ChnCode + "']").bootstrapToggle("destroy").bootstrapToggle({
+      on: app.label.static["on"],
+      off: app.label.static["off"],
+      onstyle: "success",
+      offstyle: "warning",
+      width: C_APP_TOGGLE_LENGTH //Depend on language translation.
+    }).once("change", function () {
+      if ($(this).is(':checked')) {
+        app.library.user.modal.ajax.channelSubscriptionCreate($(this).attr("name"));
+      }
+      else {
+        app.library.user.modal.ajax.channelSubscriptionDelete($(this).attr("name"));
+      }
+    });
+  });
+
+
+
+
+
+  app.library.user.modal.ajax.channelSubscriptionCreate = function (chnCode) {
+    api.ajax.jsonrpc.request(
+      app.config.url.api.jsonrpc.private,
+      "PxStat.Subscription.Subscription_API.ChannelSubscriptionCreate",
+      {
+        "ChnCode": chnCode
+      },
+      "app.library.user.modal.callback.channelSubscriptionCreate"
+    );
+
+  };
+
+  app.library.user.modal.callback.channelSubscriptionCreate = function (data) {
+    if (data == C_API_AJAX_SUCCESS) {
+      api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
+    }
+  };
+
+  app.library.user.modal.ajax.channelSubscriptionDelete = function (chnCode) {
+    api.ajax.jsonrpc.request(
+      app.config.url.api.jsonrpc.private,
+      "PxStat.Subscription.Subscription_API.ChannelSubscriptionDelete",
+      {
+        "ChnCode": chnCode
+      },
+      "app.library.user.modal.callback.channelSubscriptionDelete"
+    );
+  };
+
+  app.library.user.modal.callback.channelSubscriptionDelete = function (data) {
+    if (data == C_API_AJAX_SUCCESS) {
+      api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
+    }
+  };
+
+
+
+
+
+
+
+
+
 
   // Switch between the modals to avoid overlapping
   $("#modal-read-group").modal("hide");
@@ -231,7 +339,7 @@ app.library.user.modal.callback.updateOnError = function (error) {
   // Hide modal
   $("#modal-read-user").modal("hide");
   // Force reload
-  app.library.user.modal.readCurrent();
+  app.library.user.modal.ajax.readCurrent();
 };
 //#endregion
 

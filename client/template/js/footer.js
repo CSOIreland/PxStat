@@ -19,13 +19,22 @@ $(document).ready(function () {
         e.preventDefault();
         // Load the Privacy (language specific) into the Modal
         api.content.load("#modal-read-privacy .modal-body", "internationalisation/privacy/" + app.label.language.iso.code + ".html");
-        $("#modal-read-privacy").modal("show").on("shown.bs.modal", function () {
+        $("#modal-read-privacy").modal("show");
 
-            // Scroll to the top section
-            $("#modal-read-privacy").clearQueue().animate({
-                scrollTop: '+=' + $("#modal-read-privacy")[0].getBoundingClientRect().top
-            }, 1000);
-        });
+    });
+
+    $("#modal-read-privacy").once("shown.bs.modal", function () {
+        history.replaceState({}, '', window.location.origin + window.location.pathname + "?privacy");
+        // Scroll to the top section
+        $("#modal-read-privacy").clearQueue().animate({
+            scrollTop: '+=' + $("#modal-read-privacy")[0].getBoundingClientRect().top
+        }, 1000);
+    });
+
+    $("#modal-read-privacy").once("hide.bs.modal", function () {
+        if (api.uri.isParam("privacy")) {
+            history.replaceState({}, '', window.location.origin + window.location.pathname)
+        }
     });
 
 
@@ -42,6 +51,10 @@ $(document).ready(function () {
     $(window).on("resize", function () {
         $("#content").css("padding-bottom", $("#footer .footer").outerHeight(true) + "px")
     });
+
+    if (api.uri.isParam("privacy")) {
+        $("#footer").find("[name=privacy]").trigger("click");
+    }
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

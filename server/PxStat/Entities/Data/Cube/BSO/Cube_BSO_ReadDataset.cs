@@ -6,6 +6,7 @@ using PxStat.Template;
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Web;
 
 namespace PxStat.Data
 {
@@ -70,6 +71,12 @@ namespace PxStat.Data
                 return true;
             }
 
+
+            if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
+            {
+                Log.Instance.Debug("Request throttled");
+                Response.error = Label.Get("error.throttled");
+            }
 
             var result = Release_ADO.GetReleaseDTO(items);
             if (result == null)

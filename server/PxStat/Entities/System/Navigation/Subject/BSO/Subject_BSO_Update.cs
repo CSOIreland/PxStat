@@ -75,6 +75,10 @@ namespace PxStat.System.Navigation
             //We can now recreate the keywords for the subject
             kbBso.Create(Ado, DTO, nUpdatedSubjectId);
 
+            //Reset the relevant caches
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
+
             Response.data = JSONRPC.success;
 
             return true;

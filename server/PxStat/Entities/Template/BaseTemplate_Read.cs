@@ -27,6 +27,7 @@ namespace PxStat.Template
         /// </summary>
         protected override void OnExecutionSuccess()
         {
+
             Log.Instance.Debug("Record Read");
             //If a cache DTO exists, then we have been given a directive to store the results in the cache
             if (cDTO != null)
@@ -81,8 +82,19 @@ namespace PxStat.Template
                 }
 
                 //Run the parameters through the cleanse process
-                dynamic cleansedParams = Cleanser.Cleanse(Request.parameters);
+                dynamic cleansedParams;
 
+                //If the API has the IndividualCleanseNoHtml attribute then parameters are cleansed individually
+                //Any of these parameters whose corresponding DTO property contains the NoHtmlStrip attribute will not be cleansed of HTML tags
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                {
+                    dynamic dto = GetDTO(Request.parameters);
+                    cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                }
+                else
+                {
+                    cleansedParams = Cleanser.Cleanse(Request.parameters);
+                }
 
                 try
                 {
@@ -103,6 +115,13 @@ namespace PxStat.Template
 
                     return this;
                 }
+
+                ////Has the user hit a limit of how many queries are allowed?
+                //if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
+                //{
+                //    OnThrottle();
+                //    return this;
+                //}
 
                 //Create the analytic data if required
                 Security.Analytic_BSO_Create.Create(Ado, DTO, HttpContext.Current.Request, Request);

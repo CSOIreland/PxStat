@@ -32,6 +32,7 @@ BEGIN
 
 	SELECT counts.NLT_DATE AS [date]
 		,bots AS NltBot
+		,Widget As NltWidget
 		,USERS AS NltUser
 		,m2m AS NltM2m
 		,nltCount AS total
@@ -39,6 +40,7 @@ BEGIN
 		SELECT NLT_DATE
 			,sum(cast(NLT_BOT_FLAG AS INT)) AS Bots
 			,sum(cast(NLT_M2M_FLAG AS INT)) AS M2M
+			,sum(cast(NLT_WIDGET AS INT)) AS Widget
 			,sum(cast(NLT_USER_FLAG AS INT)) AS USERS
 			,count(NLT_ID) AS nltCount
 		FROM TD_ANALYTIC

@@ -15,17 +15,26 @@
             <div name="table-selection-card" class="card mb-4">
                 <div name="card-header"></div>
                 <div class="card-header">
-                    <nav>
-                        <div class="nav nav-tabs card-header-tabs" role="tablist">
-                            <a class="nav-item nav-link active" id="data-dataset-table-nav-tab" data-toggle="tab" href="#data-dataset-table-nav-content" role="tab" aria-controls="nav-home" aria-selected="true" label="table"></a>
-                            <a class="nav-item nav-link" id="data-dataset-chart-nav-tab" data-toggle="tab" href="#data-dataset-chart-nav-content" role="tab" aria-controls="nav-profile" aria-selected="false" label="chart" style="display: none;"></a>
-                            <a class="nav-item nav-link" id="data-dataset-map-nav-tab" data-toggle="tab" href="#data-dataset-map-nav-content" role="tab" aria-controls="nav-contact" aria-selected="false" label="map" style="display: none;"></a>
+                    <div class="row px-2">
+                        <div class="col-12 col-lg-8 col-md-8 col-sm-12 px-0 order-sm-2 order-2 order-md-1">
+                            <nav>
+                                <div class="nav nav-tabs card-header-tabs" role="tablist">
+                                    <a class="nav-item nav-link" id="data-dataset-table-nav-tab" data-toggle="tab" href="#data-dataset-table-nav-content" role="tab" aria-controls="nav-home" aria-selected="false" label="table"></a>
+                                    <a class="nav-item nav-link" id="data-dataset-chart-nav-tab" data-toggle="tab" href="#data-dataset-chart-nav-content" role="tab" aria-controls="nav-profile" aria-selected="false" label="chart" style="display: none;"></a>
+                                    <a class="nav-item nav-link" id="data-dataset-map-nav-tab" data-toggle="tab" href="#data-dataset-map-nav-content" role="tab" aria-controls="nav-contact" aria-selected="false" label="map" style="display: none;"></a>
+                                </div>
+                            </nav>
                         </div>
-                    </nav>
+                        <div class="col-12 col-lg-4 col-md-4 col-sm-12 text-md-right text-sm-left px-0 order-sm-1 order-1 order-md-2 mb-sm-2 mb-xs-2 mb-md-0">
+                            <button type="button" class="btn btn-outline-tertiary btn-sm" name="save-table" data-toggle="tooltip" data-placement="top" title="" label-tooltip="add-to-favourites"><i class="fas fa-plus-circle"></i> <span label="add-to-favourites"></span></button>
+                            <button type="button" class="btn btn-outline-danger  btn-sm" name="remove-table" data-toggle="tooltip" data-placement="top" title="" label-tooltip="remove-from-favourites" style="display: none;"><i class="fas fa-minus-circle" name="remove-table"></i> <span label="remove-from-favourites"></span></button>
+
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body p-2">
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="data-dataset-table-nav-content" role="tabpanel" aria-labelledby="data-dataset-table-nav-tab"></div>
+                        <div class="tab-pane fade" id="data-dataset-table-nav-content" role="tabpanel" aria-labelledby="data-dataset-table-nav-tab"></div>
                         <div class="tab-pane fade" id="data-dataset-chart-nav-content" role="tabpanel" aria-labelledby="data-dataset-chart-nav-tab"></div>
                         <div class="tab-pane fade" id="data-dataset-map-nav-content" role="tabpanel" aria-labelledby="data-dataset-map-nav-tab"></div>
                     </div>
@@ -43,6 +52,7 @@
     <div name="matrix-selection-header">
         <div class="card-header">
             <!-- Top aligned -->
+
             <div class="row px-2 order-1 order-lg-1 order-md-1 order-sm-1">
                 <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
                     <h6 class="mb-1">

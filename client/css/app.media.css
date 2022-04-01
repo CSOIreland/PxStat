@@ -23,4 +23,10 @@ Application - Media
         min-width: 100% !important;
         max-width: 100% !important;
     }
+    .modal-backdrop.show {
+        opacity: 0;
+    }
+    #return-to-top {
+        display: none;
+    }
 }

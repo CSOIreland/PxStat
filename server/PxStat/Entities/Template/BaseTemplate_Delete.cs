@@ -83,7 +83,19 @@ namespace PxStat.Template
 
                 }
                 //Run the parameters through the cleanse process
-                dynamic cleansedParams = Cleanser.Cleanse(Request.parameters);
+                dynamic cleansedParams;
+
+                //If the API has the IndividualCleanseNoHtml attribute then parameters are cleansed individually
+                //Any of these parameters whose corresponding DTO property contains the NoHtmlStrip attribute will not be cleansed of HTML tags
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                {
+                    dynamic dto = GetDTO(Request.parameters);
+                    cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                }
+                else
+                {
+                    cleansedParams = Cleanser.Cleanse(Request.parameters);
+                }
 
                 try
                 {

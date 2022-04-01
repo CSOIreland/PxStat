@@ -30,7 +30,7 @@ app.label.init = function () {
     });
 
     // Attempt to merge the target language if different from the master
-    if (targetLanguage != C_APP_MASTER_LANGUAGE) {
+    if (targetLanguage.iso.code != C_APP_MASTER_LANGUAGE) {
         api.ajax.config("internationalisation/label/" + targetLanguage.iso.code + ".json", function (label) {
             // Extend lable sourced form target language
             $.extend(true, app.label, label);

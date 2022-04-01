@@ -9,6 +9,12 @@
 
     <div class="col-sm-8">
         <div class="card">
+            <div name="save-query-wrapper" class="card-header text-right">
+                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
+                <button name="save-query" class="btn btn-tertiary" type="button">
+                    <i class="far fa-save"></i> <span label="save-query"></span>
+                </button>
+            </div>
             <div class="card-body p-0">
                 <div id="pxwidget-map" class="pxwidget">
                 </div>
@@ -37,7 +43,8 @@
             <div id="data-dataset-map-accordion-collapse-widget" class="collapse" aria-labelledby="data-dataset-map-accordion-heading-widget" data-parent="#data-dataset-map-accordion">
                 <div class="card-body">
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
                             <span label="auto-update"></span>
                         </div>
                         <div class="col-8 p-2">
@@ -45,7 +52,17 @@
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
+                            <span label="fluid-time"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
                             <span label="copyright"></span>
                         </div>
                         <div class="col-8 p-2">
@@ -54,7 +71,8 @@
                     </div>
 
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
                             <span label="link"></span>
                         </div>
                         <div class="col-8 p-2">
@@ -62,7 +80,8 @@
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
                             <span label="title"></span>
                         </div>
                         <div class="col-8 p-2">
@@ -70,11 +89,22 @@
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
-                            <span label="include-borders"></span>
+                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-map-borders" style="cursor: help;"></i>
+                            <span label="borders"></span>
                         </div>
                         <div class="col-8 p-2">
                             <input name="include-borders" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-map-colour-scale" style="cursor: help;"></i>
+                            <span label="colour-scale"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <select name="colour-scale" class="form-control">
+                            </select>
                         </div>
                     </div>
                     <div class="border-top border-right border-left row mx-0">

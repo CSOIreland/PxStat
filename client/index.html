@@ -134,10 +134,8 @@
     <!-- Datatables - Extension - Buttons - Print -->
     <script src="https://cdn.datatables.net/buttons/1.6.0/js/buttons.print.min.js"></script>
 
-    <!-- Datatables - Extension - Buttons - HTML (dependency on JSZip & PDFMake) -->
+    <!-- Datatables - Extension - Buttons - HTML (dependency on JSZip) -->
     <script src="https://cdn.jsdelivr.net/gh/Stuk/jszip@v3.2.2/dist/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/bpampuch/pdfmake@0.1.61/build/pdfmake.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/bpampuch/pdfmake@0.1.61/build/vfs_fonts.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.0/js/buttons.html5.min.js"></script>
 
     <!-- Datatables - Extension - Responsive -->
@@ -164,10 +162,22 @@
     <!--Leaflet Choropleth - https://github.com/timwis/leaflet-choropleth-->
     <script src="https://cdn.jsdelivr.net/gh/timwis/leaflet-choropleth@v1.1.2/dist/choropleth.min.js"></script>
 
+    <!-- Esri Leaflet https://github.com/Esri/esri-leaflet-->
+    <script src="https://cdn.jsdelivr.net/gh/Esri/esri-leaflet@v3.0.3/dist/esri-leaflet.min.js"></script>
+
+    <!-- Turf - https://turfjs.org/ -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.3.0/turf.min.js"></script>
+
+    <!-- tweetnacl-util-js - https://github.com/dchest/tweetnacl-util-js -->
+    <script src="https://cdn.jsdelivr.net/gh/dchest/tweetnacl-util-js@v0.15.1/nacl-util.min.js"></script>
+
     <script src="https://unpkg.com/topojson-client@3"></script>
     <script src="https://unpkg.com/topojson-simplify@3"></script>
     <script src="https://unpkg.com/topojson-server@3"></script>
 
+    <!-- Firebase - https://firebase.google.com/ -->
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.0/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.0/firebase-ui-auth.css" />
 
     <!-- **************************************************************************** -->
     <!-- Resurces - App -->
@@ -188,6 +198,7 @@
     <script src="js/app.plugin.js"></script>
     <script src="js/app.library.js"></script>
     <script src="js/app.library.user.js"></script>
+    <script src="js/app.library.subscriber.js"></script>
     <script src="js/app.library.group.js"></script>
 
     <!-- App - PrismJS - 1.17.1 - https://prismjs.com/download.html#themes=prism&languages=markup+http+json+pcaxis&plugins=line-numbers -->
@@ -215,7 +226,10 @@
                 <div id="body" class="col-xl-9 col-lg-8 col-md-12 col-sm-12 p-0"></div>
                 <div id="sidebar" class="col-xl-3 col-lg-4 col-md-12 col-sm-12 p-0">
                     <div id="data-search-row-responsive" class="col-sm-12 my-2"></div>
-                    <div id="data-navigation"></div>
+                    <div id="data-navigation">
+                        <div name="menu"></div>
+                        <div name="favourite-tables"></div>
+                    </div>
                     <div id="data-filter-toggle" class="col mb-2" style="display: none;">
                         <button type="button" class="btn btn-info text-left w-100 text-light"><i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="filter"></span></button>
                     </div>
@@ -232,6 +246,7 @@
         <div id="footer"></div>
         <div id="modal-entity"></div>
         <div id="modal-openaccess"></div>
+        <div id="modal-subscriber"></div>
         <div id="modal"></div>
         <div id="spinner"></div>
     </div>

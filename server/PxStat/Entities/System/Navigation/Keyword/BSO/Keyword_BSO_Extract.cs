@@ -92,10 +92,10 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="readString"></param>
         /// <returns></returns>
-        internal List<string> ExtractSplit(string readString)
+        internal List<string> ExtractSplit(string readString, bool sanitize = true)
         {
-
-            readString = extractor.Sanitize(readString);
+            if (sanitize)
+                readString = extractor.Sanitize(readString);
 
             // convert the sentence to a list of words
             List<string> wordListInput = readString.Split(' ').ToList<string>();

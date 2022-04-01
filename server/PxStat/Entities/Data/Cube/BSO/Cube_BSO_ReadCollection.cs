@@ -4,6 +4,7 @@ using PxStat.Security;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
+using System.Web;
 
 namespace PxStat.Data
 {
@@ -46,7 +47,6 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
-
             //so that caches don't get mixed up..
             DTO.meta = _meta;
 
@@ -61,6 +61,12 @@ namespace PxStat.Data
                 return true;
             }
 
+
+            if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
+            {
+                Log.Instance.Debug("Request throttled");
+                Response.error = Label.Get("error.throttled");
+            }
 
             Cube_BSO cBso = new Cube_BSO();
 

@@ -131,8 +131,10 @@ namespace PxStat.System.Navigation
                     new SqlBulkCopyColumnMapping("KRL_MANDATORY_FLAG", "KRL_MANDATORY_FLAG"),
                     new SqlBulkCopyColumnMapping("KRL_SINGULARISED_FLAG","KRL_SINGULARISED_FLAG")
                 };
-
-            Ado.ExecuteBulkCopy("TD_KEYWORD_RELEASE", maps, dt, true);
+            using (ADO bulkAdo = new ADO("defaultConnection"))
+            {
+                bulkAdo.ExecuteBulkCopy("TD_KEYWORD_RELEASE", maps, dt, false);
+            }
         }
     }
 }

@@ -96,7 +96,7 @@ namespace PxStat.Resources
 
             XlsxClosedXL xcl = new XlsxClosedXL();
 
-            MemoryStream documentStream = xcl.CreatAboutPage(theMatrix, "About", lngIsoCode);
+            MemoryStream documentStream = xcl.CreatAboutPage(theMatrix, "About", lngIsoCode, new CultureInfo(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.culture")));
 
 
             if (pivot != null)

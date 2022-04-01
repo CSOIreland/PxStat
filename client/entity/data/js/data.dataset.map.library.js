@@ -12,13 +12,18 @@ app.data.dataset.map.callback = {};
 app.data.dataset.map.apiParamsData = {}
 app.data.dataset.map.snippetConfig = {};
 app.data.dataset.map.configuration = {};
+app.data.dataset.map.saveQuery = {};
+app.data.dataset.map.saveQuery.configuration = {};
+app.data.dataset.map.saveQuery.ajax = {};
+app.data.dataset.map.saveQuery.callback = {};
 app.data.dataset.map.template.wrapper = {
     "autoupdate": true,
     "mapDimension": null,
-    "copyright": false,
+    "copyright": true,
     "link": null,
     "title": null,
     "borders": true,
+    "colorScale": "red",
     "fullScreen": {
         "title": app.label.static["view-fullscreen"],
         "titleCancel": app.label.static["exit-fullscreen"]
@@ -36,13 +41,44 @@ app.data.dataset.map.template.wrapper = {
                         }
                     },
                     "response": {}
+                },
+                "fluidTime": []
+            },
+        ]
+    },
+    "metadata": {
+        "api": {
+            "query": {
+                "url": null,
+                "data": {
+                    "jsonrpc": "2.0",
+                    "method": "PxStat.Data.Cube_API.ReadMetadata",
+                    "params": {
+                        "matrix": null,
+                        "language": app.data.LngIsoCode,
+                        "format": {
+                            "type": C_APP_FORMAT_TYPE_DEFAULT,
+                            "version": C_APP_FORMAT_VERSION_DEFAULT
+                        }
+                    },
+                    "version": "2.0"
                 }
             },
-        ],
+            "response": {}
+        }
     },
     "options": {}
 };
 //#endregion
+
+app.data.dataset.map.getColourSchemes = function () {
+    $.each(app.config.plugin.leaflet.colourScale, function (index, value) {
+        $("#data-dataset-map-accordion-collapse-widget").find("[name=colour-scale]").append($("<option>", {
+            "text": app.label.static[value.name],
+            "value": value.value
+        }));
+    });
+};
 
 app.data.dataset.map.drawMapToDisplay = function () {
     var geoDimensions = app.data.dataset.metadata.jsonStat.Dimension({ role: "geo" });
@@ -118,9 +154,6 @@ app.data.dataset.map.buildMapConfig = function () {
 
 
     app.data.dataset.map.buildApiParams();
-    // var test = app.data.dataset.map.apiParamsData;
-    // app.data.dataset.map.ajax.data();
-    //debugger
     app.data.dataset.map.configuration.data.datasets[0].api.query.data.params = app.data.dataset.map.apiParamsData;
     app.data.dataset.map.configuration.mapDimension = $("#data-dataset-map-nav-content [name=geo-select-container] select").val();
 
@@ -143,14 +176,35 @@ app.data.dataset.map.buildMapConfig = function () {
         $.extend(true, app.data.dataset.map.snippetConfig, pxWidget.draw.params["pxwidget-map"]);
         app.data.dataset.map.renderSnippet();
     });
+
+    if (app.data.isModal) {
+        $("#data-dataset-map-nav-content").find("[name=save-query-wrapper]").hide();
+    }
+    else {
+        $("#data-dataset-map-nav-content").find("[name=save-query-wrapper]").show();
+    }
 }
 
 app.data.dataset.map.renderSnippet = function () {
     var snippet = app.config.entity.data.snippet;
     var config = $.extend(true, {}, app.data.dataset.map.snippetConfig);
+    app.data.dataset.map.saveQuery.configuration = {};
+    $.extend(true, app.data.dataset.map.saveQuery.configuration, app.data.dataset.map.snippetConfig);
+
+    app.data.dataset.map.saveQuery.configuration.link = app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode;
+    app.data.dataset.map.saveQuery.configuration.copyright = true;
+
     config.autoupdate = $("#data-dataset-map-accordion-collapse-widget").find("[name=auto-update]").is(':checked');
     config.link = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
     config.copyright = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-copyright]").is(':checked');
+    config.colorScale = $("#data-dataset-map-accordion-collapse-widget").find("[name=colour-scale]").val();
+
+    if ($("#data-dataset-map-accordion-collapse-widget").find("[name=fluid-time]").is(':checked')) {
+        config = app.data.dataset.map.getFluidTime(config);
+    }
+    else {
+        config.metadata.api.query = {};
+    }
 
     if ($("#data-dataset-map-accordion-collapse-widget").find("[name=include-title]").is(':checked')) {
         config.title = app.data.dataset.metadata.jsonStat.label.trim();
@@ -182,6 +236,17 @@ app.data.dataset.map.renderSnippet = function () {
 
     $("#data-dataset-map-accordion-snippet-code").hide().text(snippet.trim()).fadeIn();
     Prism.highlightAll();
+};
+
+app.data.dataset.map.getFluidTime = function (config) {
+    config.metadata.api.query.data.params.matrix = app.data.MtrCode;
+    config.metadata.api.query.url = app.config.url.api.jsonrpc.public;
+    var dimensionSize = app.data.dataset.metadata.jsonStat.Dimension(app.data.dataset.metadata.timeDimensionCode).id.length;
+    var timePointSelected = config.data.datasets[0].api.query.data.params.dimension[app.data.dataset.metadata.timeDimensionCode].category.index[0];
+    var actualPosition = $.inArray(timePointSelected, app.data.dataset.metadata.jsonStat.Dimension(app.data.dataset.metadata.timeDimensionCode).id);
+    var relativePosition = (dimensionSize - actualPosition) - 1;
+    config.data.datasets[0].fluidTime = [relativePosition];
+    return config;
 };
 
 app.data.dataset.map.buildApiParams = function () {
@@ -241,3 +306,80 @@ app.data.dataset.map.formatJson = function () {
         }
     }
 }
+
+//#region save query
+app.data.dataset.map.saveQuery.drawSaveQueryModal = function () {
+    app.data.dataset.saveQuery.validation.drawSaveQuery();
+    $("#data-dataset-save-query").modal("show");
+};
+
+app.data.dataset.map.saveQuery.ajax.saveQuery = function () {
+
+    //now clone it into new variable for ajax which may or may not need fluid time
+    var saveQueryConfig = $.extend(true, {}, app.data.dataset.map.saveQuery.configuration);
+    if ($("#data-dataset-save-query").find("[name=fluid-time]").is(':checked')) {
+        saveQueryConfig = app.data.dataset.map.getFluidTime(saveQueryConfig);
+        saveQueryConfig.metadata.api.query.data.params.matrix = app.data.MtrCode;
+        saveQueryConfig.metadata.api.query.url = app.config.url.api.jsonrpc.public;
+    }
+    else {
+        saveQueryConfig.metadata.api.query = {};
+        saveQueryConfig.fluidTime = [];
+    }
+
+    var tagName = $("#data-dataset-save-query").find("[name=name]").val().replace(C_APP_REGEX_NOHTML, "");
+    var base64snippet = nacl.util.encodeBase64(nacl.util.decodeUTF8(JSON.stringify(saveQueryConfig)));
+    if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
+        api.ajax.jsonrpc.request(
+            app.config.url.api.jsonrpc.private,
+            "PxStat.Subscription.Query_API.Create",
+            {
+                "TagName": tagName,
+                "Matrix": app.data.MtrCode,
+                "Snippet": {
+                    "Type": C_APP_PXWIDGET_TYPE_MAP,
+                    "Query": base64snippet,
+                    "FluidTime": $("#data-dataset-save-query").find("[name=fluid-time]").is(':checked'),
+                    "Isogram": C_APP_URL_PXWIDGET_ISOGRAM
+                }
+            },
+            "app.data.dataset.map.saveQuery.callback.saveQuery",
+            tagName
+        );
+    }
+    else if (app.navigation.user.isSubscriberAccess) {
+        app.auth.firebase.user.details.getIdToken(true).then(function (accessToken) {
+            api.ajax.jsonrpc.request(
+                app.config.url.api.jsonrpc.private,
+                "PxStat.Subscription.Query_API.Create",
+                {
+                    "Uid": app.auth.firebase.user.details.uid,
+                    "AccessToken": accessToken,
+                    "TagName": tagName,
+                    "Matrix": app.data.MtrCode,
+
+                    "Snippet": {
+                        "Type": C_APP_PXWIDGET_TYPE_MAP,
+                        "Query": base64snippet,
+                        "FluidTime": $("#data-dataset-save-query").find("[name=fluid-time]").is(':checked'),
+                        "Isogram": C_APP_URL_PXWIDGET_ISOGRAM
+                    }
+                },
+                "app.data.dataset.map.saveQuery.callback.saveQuery",
+                tagName
+            );
+        }).catch(tokenerror => {
+            api.modal.error(tokenerror);
+        });
+    }
+};
+
+app.data.dataset.map.saveQuery.callback.saveQuery = function (data, tagName) {
+    $("#data-dataset-save-query").modal("hide");
+    if (data == C_API_AJAX_SUCCESS) {
+        api.modal.success(app.library.html.parseDynamicLabel("success-record-added", [tagName]));
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+};
+//#endregion

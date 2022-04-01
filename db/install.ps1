@@ -415,5 +415,39 @@ Write-Host "Jobs - Success: $successCount"
 Write-Host "********************************************************************************"
 Write-Host ""
 
+# ********************************************************************************
+# Create Schedules
+# ********************************************************************************
+
+#Extract all of the .sql files into an object
+$files = Get-ChildItem -recurse $scriptDir\Schedules\*.sql
+	
+$successCount = 0
+$errorCount = 0
+
+#Run each script
+ForEach ($file in $files)
+    {
+        try
+        {
+            Invoke-SQLCMD -Username $username -Password $password  -Inputfile $file.FullName -Variable @("DB_DATA=$DbData") -serverinstance $server -ErrorAction Stop
+            "SUCCESS $date : $file" | out-file $scriptDir\install.log -Append
+            $successCount = $successCount + 1
+        }
+        catch
+        {
+            $ErrorMessage = $_.Exception.Message
+            Write-Host "ERROR $file - $ErrorMessage"
+            "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\install.log -Append
+            $errorCount = $errorCount + 1
+            Continue
+        }
+    }
+Write-Host ""
+Write-Host "Schedules - Errors: $errorCount"
+Write-Host "Schedules - Success: $successCount"
+Write-Host "********************************************************************************"
+Write-Host ""
+
 Write-Host ""
 Write-Host "Script completed"

@@ -19,7 +19,8 @@
                     <div class="card-header" id="build-create-elimination-map-heading-one">
                         <h2 class="mb-0">
                             <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#build-create-elimination-map-collapse-elimination" aria-expanded="true" aria-controls="build-create-elimination-map-collapse-elimination">
-                                <span label="elimination"></span> <i name="elimination-popover" class="fas fa-info-circle" data-toggle="popover" data-placement="right" tabindex="0" data-trigger="hover"></i>
+                                <span label="elimination"></span>
+                                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="elimination-explanation" style="cursor: help;"></i>
                             </button>
                         </h2>
                     </div>
@@ -46,7 +47,8 @@
                     <div class="card-header" id="build-create-elimination-map-heading-two">
                         <h2 class="mb-0">
                             <button name="map-accordion-button" class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#build-create-elimination-map-collapse-map" aria-expanded="false" aria-controls="build-create-elimination-map-collapse-map">
-                                <span label="map"></span> <i name="map-popover" class="fas fa-info-circle" data-toggle="popover" data-placement="right" tabindex="0" data-trigger="hover"></i>
+                                <span label="map"></span>
+                                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="map-explanation" style="cursor: help;"></i>
                                 <i name="warning-icon" data-toggle="tooltip" class="fas fa-exclamation-triangle text-danger" style="display: none;"></i>
                             </button>
                         </h2>
@@ -178,6 +180,10 @@
                                             <button name="delete-statistics" class="btn btn-outline-danger">
                                                 <i class="fas fa-trash-alt"></i>
                                                 <span label="delete-statistics"></span>
+                                            </button>
+                                            <button name="download-statistic" class="btn btn-primary text-light">
+                                                <i class="fas fa-file-download"></i>
+                                                <span label="download-csv"></span>
                                             </button>
                                         </div>
                                         <div class="col-xs-12 col-sm-8 text-right my-2">

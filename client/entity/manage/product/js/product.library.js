@@ -376,14 +376,13 @@ app.product.callback.createOnError = function (error) {
  * @param  {} PrcCode
  */
 app.product.modal.update = function (PrcCode) {
-  app.product.ajax.readSubjectUpdate();
-  app.product.ajax.readUpdate(PrcCode);
+  app.product.ajax.readSubjectUpdate(PrcCode);
 };
 
 /**
  * Ajax read Subject for Update
  */
-app.product.ajax.readSubjectUpdate = function () {
+app.product.ajax.readSubjectUpdate = function (PrcCode) {
   // Change app.config.language.iso.code to the selected one
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
@@ -392,14 +391,15 @@ app.product.ajax.readSubjectUpdate = function () {
       "SbjCode": null,
       "LngIsoCode": app.label.language.iso.code
     },
-    "app.product.callback.readSubjectUpdate");
+    "app.product.callback.readSubjectUpdate",
+    PrcCode);
 };
 
 /**
  * Callback read Subject for Update 
  * @param  {} data
  */
-app.product.callback.readSubjectUpdate = function (data) {
+app.product.callback.readSubjectUpdate = function (data, PrcCode) {
   if (data && Array.isArray(data) && data.length) {
     // Product validation for update
     app.product.validation.update();
@@ -428,6 +428,7 @@ app.product.callback.readSubjectUpdate = function (data) {
         }
       }
     });
+    app.product.ajax.readUpdate(PrcCode);
   }
   // Handle no data
   else {

@@ -1,6 +1,4 @@
-﻿
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -23,9 +21,7 @@ namespace PxStat.Resources
             //For all non-null strings we apply some general sanitization rules
             var info = DTO.GetType().GetProperties();
 
-            var typ = DTO.GetType();
 
-            string so = JsonConvert.SerializeObject(DTO);
 
             foreach (PropertyInfo propertyInfo in info)
             {

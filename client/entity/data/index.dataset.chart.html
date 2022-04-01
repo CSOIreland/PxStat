@@ -124,6 +124,7 @@
                     <div class="border-top border-right border-left row mx-0">
                         <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                             <span label="stacked"></span>
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="stacked-chart" style="cursor: help;"></i>
                         </div>
                         <div class="col-8 p-2">
                             <input name="stacked" type="checkbox" class="bootstrap-toggle" data-toggle="toggle"></input>
@@ -132,6 +133,7 @@
                     <div class="border-top border-right border-left row mx-0">
                         <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                             <span label="stacked-percent"></span>
+                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="stacked-chart-percent" style="cursor: help;"></i>
                         </div>
                         <div class="col-8 p-2">
                             <input name="stacked-percent" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" disabled></input>
@@ -139,9 +141,20 @@
                     </div>
                 </div>
 
+                <div class="border-top border-right border-left row mx-0" name="sort-row">
+                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                        <span label="sort-by-value"></span>
+                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="sort-chart" style="cursor: help;"></i>
+                    </div>
+                    <div class="col-8 p-2">
+                        <input name="sort" type="checkbox" class="bootstrap-toggle" data-toggle="toggle"></input>
+                    </div>
+                </div>
+
                 <div class="border-top border-right border-left row mx-0" name="auto-scale-row">
                     <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="auto-scale"></span>
+                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="auto-scale-chart" style="cursor: help;"></i>
                     </div>
                     <div class="col-8 p-2">
                         <input name="auto-scale" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
@@ -151,6 +164,7 @@
                 <div class="border-top border-right border-left row mx-0" name="xaxis-max-steps-row">
                     <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="x-axis-max-steps"></span>
+                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="x-axis-max-steps-chart" style="cursor: help;"></i>
                     </div>
                     <div class="col-8 p-2">
                         <input type="text" class="form-control" name="xaxis-max-steps" autocomplete="off">
@@ -161,6 +175,7 @@
                 <div class="border-top border-right border-left row mx-0">
                     <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
                         <span label="legend"></span>
+                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="chart-legend-position" style="cursor: help;"></i>
                     </div>
                     <div class="col-8 p-2">
                         <select class="form-control" name="legend-position" disabled></select>
@@ -197,7 +212,16 @@
 
 <div id="data-dataset-chart-render" class="card mt-4" style="display: none;">
 
-    <div class="card-header" label="chart"></div>
+    <div class="card-header d-flex justify-content-between">
+        <h5 label="chart"></h5>
+        <span name="save-query-wrapper">
+            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
+            <button name="save-query" class="btn btn-tertiary" type="button">
+                <i class="far fa-save"></i> <span label="save-query"></span>
+            </button>
+        </span>
+
+    </div>
     <div class="card-body pb-0">
 
         <div id="pxwidget-chart" class="pxwidget mb-2">
@@ -214,7 +238,8 @@
     <div class="card-header" label="widget"></div>
     <div class="card-body">
         <div class="border-top border-right border-left row mx-0">
-            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+            <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
                 <span label="auto-update"></span>
             </div>
             <div class="col-8 p-2">
@@ -222,7 +247,17 @@
             </div>
         </div>
         <div class="border-top border-right border-left row mx-0">
-            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+            <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
+                <span label="fluid-time"></span>
+            </div>
+            <div class="col-8 p-2">
+                <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+            </div>
+        </div>
+        <div class="border-top border-right border-left row mx-0">
+            <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
                 <span label="title"></span>
             </div>
             <div class="col-8 p-2">
@@ -231,7 +266,8 @@
         </div>
 
         <div class="border-top border-right border-left row mx-0">
-            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+            <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
                 <span label="copyright"></span>
             </div>
             <div class="col-8 p-2">
@@ -240,7 +276,8 @@
         </div>
 
         <div class="border-top border-right border-left row mx-0">
-            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+            <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
+                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
                 <span label="link"></span>
             </div>
             <div class="col-8 p-2">

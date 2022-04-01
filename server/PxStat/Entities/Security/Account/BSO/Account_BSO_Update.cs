@@ -73,24 +73,27 @@ namespace PxStat.Security
                 return false;
             }
 
-            //An administrator or power user may not be a member of a group. Therefore we will remove any group memberships for the updated user
-            // We run the check based on the proposed PrvCode, not on the existing privilege
-            if (DTO.PrvCode.Equals(Resources.Constants.C_SECURITY_PRIVILEGE_ADMINISTRATOR) || DTO.PrvCode.Equals(Resources.Constants.C_SECURITY_PRIVILEGE_POWER_USER))
+            if (DTO.PrvCode != null)
             {
-                List<GroupAccount_DTO> groupAccountList = getGroupMembership(DTO.CcnUsername);
-
-                foreach (GroupAccount_DTO groupAccount in groupAccountList)
+                //An administrator or power user may not be a member of a group. Therefore we will remove any group memberships for the updated user
+                // We run the check based on the proposed PrvCode, not on the existing privilege
+                if (DTO.PrvCode.Equals(Resources.Constants.C_SECURITY_PRIVILEGE_ADMINISTRATOR) || DTO.PrvCode.Equals(Resources.Constants.C_SECURITY_PRIVILEGE_POWER_USER))
                 {
-                    GroupAccount_ADO gaAdo = new GroupAccount_ADO();
-                    GroupAccount_DTO_Delete gaDto = new GroupAccount_DTO_Delete();
-                    gaDto.CcnUsername = groupAccount.CcnUsername;
-                    gaDto.GrpCode = groupAccount.GrpCode;
-                    int deleted = gaAdo.Delete(Ado, gaDto, SamAccountName);
-                    if (deleted == 0)
+                    List<GroupAccount_DTO> groupAccountList = getGroupMembership(DTO.CcnUsername);
+
+                    foreach (GroupAccount_DTO groupAccount in groupAccountList)
                     {
-                        Log.Instance.Debug("Failed to delete account group membership");
-                        Response.error = Label.Get("error.update");
-                        return false;
+                        GroupAccount_ADO gaAdo = new GroupAccount_ADO();
+                        GroupAccount_DTO_Delete gaDto = new GroupAccount_DTO_Delete();
+                        gaDto.CcnUsername = groupAccount.CcnUsername;
+                        gaDto.GrpCode = groupAccount.GrpCode;
+                        int deleted = gaAdo.Delete(Ado, gaDto, SamAccountName);
+                        if (deleted == 0)
+                        {
+                            Log.Instance.Debug("Failed to delete account group membership");
+                            Response.error = Label.Get("error.update");
+                            return false;
+                        }
                     }
                 }
             }
@@ -123,4 +126,3 @@ namespace PxStat.Security
         }
     }
 }
-

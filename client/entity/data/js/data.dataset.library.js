@@ -13,9 +13,16 @@ app.data.dataset.format.response = {};
 app.data.dataset.metadata = {};
 app.data.dataset.metadata.response = null;
 app.data.dataset.metadata.jsonStat = null;
+app.data.dataset.metadata.timeDimensionCode = null;
+
+app.data.dataset.saveQuery = {};
+app.data.dataset.saveQuery.validation = {};
+app.data.dataset.saveQuery.ajax = {};
+app.data.dataset.saveQuery.callback = {};
 
 //#endregion
 app.data.dataset.draw = function () {
+    $("#navigation-favourite-tables").collapse("hide");
     app.data.dataset.ajax.readformat();
     app.data.dataset.ajax.readMetadata();
 }
@@ -96,6 +103,13 @@ app.data.dataset.callback.readMetadata = function (response) {
     $("#data-dataset-map-nav-content, #data-dataset-chart-nav-content").empty();
     app.data.dataset.metadata.response = response;
     app.data.dataset.metadata.jsonStat = response ? JSONstat(response) : null;
+    $.each(app.data.dataset.metadata.jsonStat.Dimension(), function (index, value) {
+        if (value.role == "time") {
+            app.data.dataset.metadata.timeDimensionCode = app.data.dataset.metadata.jsonStat.id[index];
+            return;
+        }
+    });
+
     if (app.data.dataset.metadata.jsonStat && app.data.dataset.metadata.jsonStat.length) {
         //put all dimension variables into object for future use
         app.data.dataset.variables = {};
@@ -108,72 +122,63 @@ app.data.dataset.callback.readMetadata = function (response) {
             });
         });
 
-        if (app.data.dataset.metadata.jsonStat && app.data.dataset.metadata.jsonStat.length) {
-            if (app.data.isLive) {
-                app.navigation.setBreadcrumb([
-                    [app.data.dataset.metadata.jsonStat.extension.subject.value],
-                    [app.data.dataset.metadata.jsonStat.extension.product.value, "entity/data/", "#nav-link-data", null, { "PrcCode": app.data.dataset.metadata.jsonStat.extension.product.code }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + app.data.dataset.metadata.jsonStat.extension.product.code],
-                    [app.data.dataset.metadata.jsonStat.extension.matrix + " - " + app.data.dataset.metadata.jsonStat.label, "entity/data/", "#nav-link-data", null, { "MtrCode": app.data.dataset.metadata.jsonStat.extension.matrix }, app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.dataset.metadata.jsonStat.extension.matrix]
-                ]);
-            };
-            app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-table",
-                [
-                    app.data.dataset.metadata.jsonStat.extension.matrix,
-                    app.data.dataset.metadata.jsonStat.label,
-                    app.data.dataset.metadata.jsonStat.extension.copyright.name,
-                    moment(app.data.dataset.metadata.jsonStat.updated).format(app.config.mask.datetime.display)
-                ]));
-            app.navigation.setTitle(app.data.dataset.metadata.jsonStat.extension.matrix + " - " + app.data.dataset.metadata.jsonStat.label);
-            app.data.dataset.callback.drawDatasetHeading();
+        if (app.data.isLive) {
+            app.navigation.setBreadcrumb([
+                [app.data.dataset.metadata.jsonStat.extension.subject.value],
+                [app.data.dataset.metadata.jsonStat.extension.product.value, "entity/data/", "#nav-link-data", null, { "PrcCode": app.data.dataset.metadata.jsonStat.extension.product.code }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + app.data.dataset.metadata.jsonStat.extension.product.code],
+                [app.data.dataset.metadata.jsonStat.extension.matrix + " - " + app.data.dataset.metadata.jsonStat.label, "entity/data/", "#nav-link-data", null, { "MtrCode": app.data.dataset.metadata.jsonStat.extension.matrix }, app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.dataset.metadata.jsonStat.extension.matrix]
+            ]);
+        };
+        app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-table",
+            [
+                app.data.dataset.metadata.jsonStat.extension.matrix,
+                app.data.dataset.metadata.jsonStat.label,
+                app.data.dataset.metadata.jsonStat.extension.copyright.name,
+                moment(app.data.dataset.metadata.jsonStat.updated).format(app.config.mask.datetime.display)
+            ]));
+        app.navigation.setTitle(app.data.dataset.metadata.jsonStat.extension.matrix + " - " + app.data.dataset.metadata.jsonStat.label);
+        app.data.dataset.callback.drawDatasetHeading();
 
-            if (app.data.isModal) {
-                $('#data-view-modal').modal('show');
-            } else {
-                app.data.dataset.callback.readMatrixNotes();
-            }
+        if (app.data.isModal) {
+            $("#data-dataset-selected-table").find("[name=save-table]").hide();
+            $("#data-dataset-selected-table").find("[name=remove-table]").hide();
+            $('#data-view-modal').modal('show');
+        } else {
+            app.data.dataset.callback.readMatrixNotes();
         }
-        // Handle Exception
-        else api.modal.exception(app.label.static["api-ajax-exception"]);
 
-        //table tab
-        api.content.load("#data-dataset-table-nav-content", "entity/data/index.dataset.table.html");
+        //empty any previous datasets that were shown earlier
+        $("#data-dataset-table-nav-content, #data-dataset-chart-nav-content, #data-dataset-map-nav-content").empty();
+        $("#data-dataset-table-nav-tab, #data-dataset-chart-nav-tab, #data-dataset-map-nav-tab").removeClass("show").removeClass("active");
+        $("#data-dataset-table-nav-content, #data-dataset-chart-nav-content, #data-dataset-map-nav-content").removeClass("show").removeClass("active");
 
         //chart tab
         if (app.config.entity.data.chartJs.chart.enabled) {
             $("#data-dataset-chart-nav-tab").show();
-
-            $('#data-dataset-chart-nav-tab').on('show.bs.tab', function (e) {
-                if (!$("#data-dataset-chart-nav-content").html()) {
-                    api.content.load("#data-dataset-chart-nav-content", "entity/data/index.dataset.chart.html");
-                }
-            });
         }
         else {
             $("#data-dataset-chart-nav-tab").hide();
             $("#data-dataset-chart-nav-content").empty()
         }
+
         //map tab
         if (app.data.dataset.metadata.jsonStat.role.geo && app.config.entity.data.chartJs.map.enabled) {
             $("#data-dataset-map-nav-tab").show();
-
-            $('#data-dataset-map-nav-tab').on('show.bs.tab', function (e) {
-                if (!$("#data-dataset-map-nav-content").html()) {
-                    api.content.load("#data-dataset-map-nav-content", "entity/data/index.dataset.map.html");
-                }
-            });
         }
         else {
             $("#data-dataset-map-nav-tab").hide();
             $("#data-dataset-map-nav-content").empty()
         }
 
-        //default to table tab
-        $("#data-dataset-selected-table nav .nav-item").removeClass("active");
-        $("#data-dataset-table-nav-tab").addClass("active");
+        // Set the Tab based on their visibility and GoTo
+        if (app.data.goTo[C_APP_GOTO_PARAMS] && app.data.goTo[C_APP_GOTO_PARAMS].tab && $("#" + app.data.goTo[C_APP_GOTO_PARAMS].tab).is(':visible')) {
+            $("#" + app.data.goTo[C_APP_GOTO_PARAMS].tab).tab('show');
+        } else {
 
-        $("#data-dataset-selected-table .tab-content").removeClass("show active");
-        $("#data-dataset-table-nav-content").addClass("show active");
-    } else {
+            $("#data-dataset-table-nav-tab").tab('show');
+        }
+    }
+    else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
 };
@@ -195,6 +200,9 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     var matrixSelectionHeading = $("#data-dataset-templates").find("[name=matrix-selection-header]").clone();
     matrixSelectionHeading.find("[name=mtr-title]").text(data.label);
     matrixSelectionHeading.find("[name=mtr-code]").text(data.extension.matrix);
+
+    app.library.utility.asyncController("app.navigation.user.savedTables", app.data.dataset.callback.drawFavouriteButtons, data)
+
     //update date
     if (!data.updated || data.updated == C_APP_DATETIME_DEFAULT) {
         matrixSelectionHeading.find("[name=updated-date-and-time]").addClass("d-none");
@@ -301,7 +309,37 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     $("#data-dataset-row").show();
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
-}
+
+    $("#data-dataset-selected-table").find("[name=save-table]").once("click", function () {
+        //check that we have a user to save the table against
+        if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess || app.navigation.user.isSubscriberAccess) {
+            app.data.dataset.ajax.saveTable(data.extension.matrix);
+        }
+        else {
+            $("#modal-subscriber-login").modal("show");
+        }
+
+    });
+
+    $("#data-dataset-selected-table").find("[name=remove-table]").once("click", function () {
+        app.data.dataset.ajax.deleteTable(data.extension.matrix);
+    });
+};
+
+app.data.dataset.callback.drawFavouriteButtons = function (data) {
+    //check if matrix is one of the users saved tables
+    var savedTable = $.grep(app.navigation.user.savedTables, function (value, index) {
+        return value.RsbTable == data.extension.matrix;
+    });
+
+    if (savedTable.length) {
+        $("#data-dataset-selected-table").find("[name=save-table]").hide();
+        $("#data-dataset-selected-table").find("[name=remove-table]").show();
+    }
+    else {
+        $("#data-dataset-selected-table").find("[name=remove-table]").hide();
+    }
+};
 
 /**
 * Callback Read Matrix Notes
@@ -567,4 +605,130 @@ app.data.dataset.callback.back = function () {
     $("#data-dataset-row").find("[name=back-to-select-results]").hide();
     $("#data-dataset-row").hide();
 
-}
+};
+
+//#region save a table
+app.data.dataset.ajax.saveTable = function (matrix) {
+    if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
+        api.ajax.jsonrpc.request(
+            app.config.url.api.jsonrpc.private,
+            "PxStat.Subscription.Subscription_API.TableSubscriptionCreate",
+            {
+                "TsbTable": matrix
+            },
+            "app.data.dataset.callback.saveTable",
+            matrix
+        );
+    }
+    else if (app.navigation.user.isSubscriberAccess) {
+        app.auth.firebase.user.details.getIdToken(true).then(function (accessToken) {
+            api.ajax.jsonrpc.request(
+                app.config.url.api.jsonrpc.private,
+                "PxStat.Subscription.Subscription_API.TableSubscriptionCreate",
+                {
+                    "TsbTable": matrix,
+                    "Uid": app.auth.firebase.user.details.uid,
+                    "AccessToken": accessToken
+                },
+                "app.data.dataset.callback.saveTable",
+                matrix
+            );
+        }).catch(tokenerror => {
+            api.modal.error(tokenerror);
+        });
+    }
+};
+
+app.data.dataset.callback.saveTable = function (data, matrix) {
+    if (data == C_API_AJAX_SUCCESS) {
+        $("#data-dataset-selected-table").find("[name=save-table]").hide();
+        $("#data-dataset-selected-table").find("[name=remove-table]").show();
+        app.navigation.user.ajax.getSavedTables();
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+};
+
+app.data.dataset.ajax.deleteTable = function (matrix) {
+    if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
+        api.ajax.jsonrpc.request(
+            app.config.url.api.jsonrpc.private,
+            "PxStat.Subscription.Subscription_API.TableSubscriptionDelete",
+            {
+                "TsbTable": matrix
+            },
+            "app.data.dataset.callback.deleteTable",
+            matrix
+        );
+    }
+    else if (app.navigation.user.isSubscriberAccess) {
+        app.auth.firebase.user.details.getIdToken(true).then(function (accessToken) {
+            api.ajax.jsonrpc.request(
+                app.config.url.api.jsonrpc.private,
+                "PxStat.Subscription.Subscription_API.TableSubscriptionDelete",
+                {
+                    "TsbTable": matrix,
+                    "Uid": app.auth.firebase.user.details.uid,
+                    "AccessToken": accessToken
+                },
+                "app.data.dataset.callback.deleteTable",
+                matrix
+            );
+        }).catch(tokenerror => {
+            api.modal.error(tokenerror);
+        });
+    }
+};
+
+app.data.dataset.callback.deleteTable = function (data, matrix) {
+    if (data == C_API_AJAX_SUCCESS) {
+        $("#data-dataset-selected-table").find("[name=save-table]").show();
+        $("#data-dataset-selected-table").find("[name=remove-table]").hide();
+        app.navigation.user.ajax.getSavedTables();
+    } else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+};
+//#endregion
+
+//#region save query
+app.data.dataset.saveQuery.validation.drawSaveQuery = function () {
+
+    $('#data-dataset-save-query [name=fluid-time]').bootstrapToggle("destroy").bootstrapToggle({
+        on: app.label.static["true"],
+        off: app.label.static["false"],
+        onstyle: "primary",
+        offstyle: "warning",
+        width: C_APP_TOGGLE_LENGTH
+    }).bootstrapToggle('on');
+
+    $("#data-dataset-save-query form").trigger("reset").validate({
+        rules: {
+            "name":
+            {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            $("#data-dataset-save-query [name=" + element[0].name + "-error-holder]").append(error[0]);
+        },
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
+            switch ($("#data-dataset-selected-table").find("[name=table-selection-card] .nav-tabs").find(".nav-item.active").attr("id")) {
+                case "data-dataset-table-nav-tab":
+                    app.data.dataset.table.saveQuery.ajax.saveQuery();
+                    break;
+                case "data-dataset-chart-nav-tab":
+                    app.data.dataset.chart.saveQuery.ajax.saveQuery();
+                    break;
+                case "data-dataset-map-nav-tab":
+                    app.data.dataset.map.saveQuery.ajax.saveQuery();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }).resetForm();
+
+};
+//#endregion
