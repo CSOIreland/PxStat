@@ -1,20 +1,15 @@
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
 -- =============================================
--- Author:		Neil O'Keeffe
--- Create date: 10/07/2019
--- Description:	Soft deletes all matrixes for a given Release Code
--- A separate sp will hard delete the data associated with this matrix
+-- Author:		Damian Chapman
+-- Create date: 12/04/2022
+-- Description:	Soft deletes the matrix and its 
+--              associated metaData tables.
 -- =============================================
-CREATE
-	OR
-
-ALTER PROCEDURE Data_Matrix_Delete @RlsCode INT
-	,@CcnUsername NVARCHAR(256)
+CREATE OR ALTER PROCEDURE [dbo].[Data_Matrix_Remove] @RlsCode INT
+	,@CcnUsername NVARCHAR(256), @MtrId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -92,7 +87,19 @@ BEGIN
 			SET @rnum = @rnum + 1
 		END
 	END
+
+	-- Remove metaData Tables
+	DELETE FROM TD_MATRIX_DATA
+	WHERE MTD_MTR_ID = @MtrId 
+
+	DELETE FROM TD_DIMENSION_ITEM
+	WHERE DMT_MDM_ID IN (SELECT DISTINCT MDM_ID FROM TD_MATRIX_DIMENSION
+	INNER JOIN TD_MATRIX
+	ON MDM_MTR_ID = @MtrId)
+
+    DELETE FROM TD_MATRIX_DIMENSION
+	WHERE MDM_ID IN (SELECT DISTINCT MDM_ID FROM TD_MATRIX_DIMENSION
+	INNER JOIN TD_MATRIX
+	ON MDM_MTR_ID = @MtrId)
 END
 GO
-
-

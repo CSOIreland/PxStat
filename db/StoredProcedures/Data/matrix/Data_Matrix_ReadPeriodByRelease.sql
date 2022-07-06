@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 12 Dec 2018
 -- Description:	Reads Period for a given matrix code and language (optional)
--- EXEC Data_Stat_Matrix_ReadPeriodByRelease 32, 'fi' , 'TLIST(M1)' 
+-- EXEC Data_Matrix_ReadPeriodByRelease 32 
 -- =============================================
 CREATE
 	OR
@@ -20,9 +20,9 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT FRQ_CODE FrqCode
-		,PRD_CODE PrdCode
-		,PRD_VALUE PrdValue
+	SELECT MDM_CODE FrqCode
+		,DMT_CODE PrdCode
+		,DMT_VALUE PrdValue
 		,LNG_ISO_CODE LngIsoCode
 		,LNG_ISO_NAME LngIsoName
 	FROM TD_RELEASE
@@ -36,18 +36,21 @@ BEGIN
 				@LngIsoCode IS NULL
 				OR @LngIsoCode = LNG_ISO_CODE
 				)
-	INNER JOIN TD_FREQUENCY
-		ON FRQ_MTR_ID = MTR_ID
-			AND (
-				@FrqCode IS NULL
-				OR @FrqCode = FRQ_CODE
-				)
-	INNER JOIN TD_PERIOD
-		ON PRD_FRQ_ID = FRQ_ID
+
+
+	INNER JOIN TD_MATRIX_DIMENSION 
+	ON MTR_ID=MDM_MTR_ID 
+	INNER JOIN TS_DIMENSION_ROLE 
+	ON MDM_DMR_ID=DMR_ID
+	AND DMR_CODE='TIME'
+	INNER JOIN TD_DIMENSION_ITEM 
+	ON DMT_MDM_ID =MDM_ID
+
+
 	WHERE RLS_CODE = @RlsCode
 		AND MTR_DELETE_FLAG = 0
-	ORDER BY FRQ_ID
-		,PRD_ID
+	ORDER BY MDM_ID
+		,DMT_ID
 END
 GO
 

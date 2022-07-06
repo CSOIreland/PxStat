@@ -53,6 +53,16 @@ Write-Host "(You can find this information at the bottom-right of the Applicatio
 
 $DbVersion = Read-host 
 
+#Get the ne DB version for the script with the latest version in the Scripts directory
+$DbNewVersion = ((Get-ChildItem $scriptDir\Scripts | sort-object name)[-1]).Basename
+
+if([System.Version]$DbVersion -lt "5.0.0" -and [System.Version]$DbNewVersion -gt "5.0.0") {
+    Write-Host ""
+    Write-Host "This update is from a version less than 5.0.0 i.e. $DbVersion, so you will need to migrate to 5.0.0 first and then run the update again(Please see Migration section at https://https://github.com/CSOIreland/PxStat/wiki/Update-Database)."
+    Write-Host ""
+    exit
+}
+
 Write-Host ""
 Write-Host "Please wait..."
 Write-Host ""

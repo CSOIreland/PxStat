@@ -14,10 +14,11 @@ $delim='"'
 #Script filename
 $outputScript="CloudScriptInstall.sql"
 
+
 #Delete the file if it already exists, otherwise we will end up appending to an existing file
-if([System.IO.File]::Exists($outputScript))
+if([System.IO.File]::Exists($scriptDir + '\' + $outputScript))
 {
-    Remove-Item $outputScript
+    Remove-Item $scriptDir\$outputScript
 }
 
 
@@ -261,7 +262,9 @@ $successCount = 0
 $errorCount = 0
 
 #Run each script
-ForEach ($file in $files)
+ForEach ($file in $files)#
+{
+	try
     {
 		
 		if($file.GetType().ToString()-eq "System.IO.FileInfo")

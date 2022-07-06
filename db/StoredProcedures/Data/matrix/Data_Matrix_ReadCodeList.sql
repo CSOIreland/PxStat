@@ -30,6 +30,7 @@ BEGIN
 	FROM (
 		SELECT mtr.MTR_CODE MtrCode
 			,mtr.MTR_LNG_ID
+			,mtrLng.MTR_TITLE MtrTitle
 			
 		FROM TD_MATRIX mtr
 		LEFT JOIN (

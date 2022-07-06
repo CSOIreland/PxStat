@@ -6,9 +6,9 @@ GO
 
 -- =============================================
 -- Author:		Neil O'Keeffe
--- Create date: 02/01/2020
+-- Create date: 02/01/2020fre
 -- Description:	Reads current releases, referencing metadata
--- exec Data_Release_ReadCollection 'en','ga','2019-01-21','ELEC'
+-- exec Data_Release_ReadCollection_NewStructure 'en','ga','2019-01-21','ELEC'
 -- =============================================
 CREATE
 	OR
@@ -24,6 +24,12 @@ BEGIN
 	DECLARE @LngIdDefault INT
 	DECLARE @LngIdRead INT
 	DECLARE @PrcID INT
+
+	DECLARE @ClsId INT
+	DECLARE @FrqId INT
+
+	SET @ClsId=(SELECT DMR_ID FROM TS_DIMENSION_ROLE WHERE DMR_CODE='CLASSIFICATION')
+	SET @FrqId=(SELECT DMR_ID FROM TS_DIMENSION_ROLE WHERE DMR_CODE='TIME')
 
 	SET @LngIdDefault = (
 			SELECT LNG_ID
@@ -74,10 +80,10 @@ BEGIN
 			,CPR_VALUE AS CprValue
 			,CPR_URL AS CprUrl
 			,CPR_CODE AS CprCode
-			,TD_CLASSIFICATION.CLS_CODE AS ClsCode
-			,coalesce(lngMTR.CLS_VALUE, TD_CLASSIFICATION.CLS_VALUE) AS ClsValue
-			,FRQ_CODE AS FrqCode
-			,coalesce(lngMTR.FRQ_VALUE, TD_FREQUENCY.FRQ_VALUE) AS FrqValue
+			,clsMDM.MDM_CODE  AS ClsCode
+			,coalesce(lngMTR.CLS_VALUE, clsMDM.MDM_VALUE) AS ClsValue
+			,frqMDM.MDM_CODE  AS FrqCode
+			,coalesce(lngMTR.FRQ_VALUE, frqMDM.MDM_VALUE) AS FrqValue
 		FROM TD_RELEASE rls
 		INNER JOIN VW_RELEASE_LIVE_NOW
 			ON VRN_RLS_ID = RLS_ID
@@ -100,10 +106,20 @@ BEGIN
 		INNER JOIN TS_LANGUAGE
 			ON LNG_ID = MTR_LNG_ID
 				AND LNG_DELETE_FLAG = 0
-		INNER JOIN TD_CLASSIFICATION
-		ON MTR_ID = CLS_MTR_ID
-		INNER JOIN TD_FREQUENCY
-			ON FRQ_MTR_ID = MTR_ID
+
+		INNER JOIN TD_MATRIX_DIMENSION clsMDM
+		ON clsMDM.MDM_MTR_ID=MTR_ID
+		INNER JOIN TS_DIMENSION_ROLE clsDmr
+		ON clsMDM.MDM_DMR_ID=clsDmr.DMR_ID 
+		AND clsDmr.DMR_CODE='CLASSIFICATION'
+
+
+		INNER JOIN TD_MATRIX_DIMENSION frqMDM
+		ON frqMDM.MDM_MTR_ID=MTR_ID
+		INNER JOIN TS_DIMENSION_ROLE frqDmr
+		ON frqMDM.MDM_DMR_ID=frqDmr.DMR_ID 
+		AND frqDmr.DMR_CODE='TIME'
+
 		LEFT JOIN (
 			SELECT MTR_CODE
 				,MTR_ID
@@ -111,17 +127,24 @@ BEGIN
 				,MTR_RLS_ID
 				,LNG_ISO_CODE
 				,LNG_ISO_NAME
-				,CLS_VALUE
-				,CLS_CODE
-				,FRQ_VALUE 
+				,mdCls.MDM_VALUE as CLS_VALUE
+				,mdCls.MDM_CODE as CLS_CODE
+				,mdFrq.MDM_VALUE as FRQ_VALUE
+
 			FROM TD_MATRIX
 			INNER JOIN TS_LANGUAGE
 				ON MTR_LNG_ID = LNG_ID
 					AND LNG_DELETE_FLAG = 0
-			INNER JOIN TD_CLASSIFICATION
-			ON MTR_ID=CLS_MTR_ID 
-			INNER JOIN TD_FREQUENCY 
-			ON FRQ_MTR_ID=MTR_ID 
+
+			INNER JOIN TD_MATRIX_DIMENSION mdCls
+			ON MTR_ID =mdCls.MDM_MTR_ID 
+			AND mdCls.MDM_DMR_ID=@ClsId
+
+			INNER JOIN TD_MATRIX_DIMENSION mdFrq
+			ON MTR_ID =mdFrq.MDM_MTR_ID 
+			AND mdFrq.MDM_DMR_ID=@ClsId
+
+
 
 			INNER JOIN TD_RELEASE ON MTR_RLS_ID = RLS_ID
 			INNER JOIN VW_RELEASE_LIVE_NOW ON VRN_RLS_ID = RLS_ID
@@ -133,7 +156,7 @@ BEGIN
 
 			) lngMtr
 			ON lngMtr.MTR_CODE = mtr.MTR_CODE
-			and lngMtr.CLS_CODE=TD_CLASSIFICATION.CLS_CODE
+			and lngMtr.CLS_CODE=clsMDM.MDM_CODE 
 		WHERE (
 				@PrcID IS NULL
 				OR @PrcID = RLS_PRC_ID

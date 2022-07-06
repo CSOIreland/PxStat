@@ -10,7 +10,7 @@ GO
 -- Description:	Lists all the live releases. The @LngIsoCodeDefault parameter is the default language for the system
 -- The optional parameter @LngIsoCodeRead is the preferred language for reading. If this is supplied it will return the matrix in the requested
 -- language if it exists. If the matrix doesn't exist in that language, then it returns the default language version of that matrix.
---EXEC Data_Release_ReadListLive 'en','ga','2019-12-01',4,'C2016P3'
+--EXEC Data_Release_ReadListLive 'en','en','2019-12-01',1,'AG3'
 --EXEC Data_Release_ReadListLive 'en','ga','2019-12-01','C2016P3'
 -- =============================================
 CREATE
@@ -85,8 +85,8 @@ BEGIN
 		,RLS_LIVE_DATETIME_FROM AS RlsLiveDatatimeFrom
 		,RLS_LIVE_DATETIME_TO AS RlsLiveDatatimeTo
 		,RLS_EXCEPTIONAL_FLAG AS ExceptionalFlag
-		,FRQ_CODE AS FrqCode
-		,FRQ_VALUE AS FrqValue
+		,MDM_CODE  AS FrqCode
+		,MDM_VALUE  AS FrqValue
 	FROM TD_RELEASE rls
 	INNER JOIN VW_RELEASE_LIVE_NOW
 		ON VRN_RLS_ID = RLS_ID
@@ -109,8 +109,13 @@ BEGIN
 	INNER JOIN TS_LANGUAGE
 		ON LNG_ID = MTR_LNG_ID
 			AND LNG_DELETE_FLAG = 0
-	INNER JOIN TD_FREQUENCY
-		ON FRQ_MTR_ID = MTR_ID
+	INNER JOIN TD_MATRIX_DIMENSION 
+	ON MDM_MTR_ID =MTR_ID
+	INNER JOIN TS_DIMENSION_ROLE 
+	ON MDM_DMR_ID=DMR_ID 
+	AND DMR_CODE='TIME'
+
+
 	INNER JOIN TD_PRODUCT
 		ON RLS_PRC_ID = PRC_ID
 			AND PRC_ID = @PrcId

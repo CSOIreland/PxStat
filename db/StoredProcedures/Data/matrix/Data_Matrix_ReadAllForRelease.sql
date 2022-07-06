@@ -8,6 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 30/11/2018
 -- Description:	Gets all matrices for a specific Release Code
+-- EXEC Data_Matrix_ReadAllForRelease 'okeeffene', 12
 -- =============================================
 CREATE
 	OR
@@ -29,8 +30,8 @@ BEGIN
 		,rls.RLS_ID AS RlsID
 		,cpr.CPR_CODE AS CprCode
 		,cpr.CPR_VALUE AS CprValue
-		,frq.FRQ_CODE AS FrqCode
-		,frq.FRQ_VALUE AS FrqValue
+		,MDM_CODE AS FrqCode
+		,MDM_VALUE AS FrqValue
 	FROM TD_MATRIX mtr
 	INNER JOIN TD_RELEASE rls
 		ON rls.RLS_ID = mtr.MTR_RLS_ID
@@ -45,8 +46,11 @@ BEGIN
 	INNER JOIN TS_COPYRIGHT cpr
 		ON cpr.CPR_ID = mtr.MTR_CPR_ID
 			AND cpr.CPR_DELETE_FLAG = 0
-	INNER JOIN TD_FREQUENCY frq
-		ON mtr.MTR_ID = frq.FRQ_MTR_ID
+	INNER JOIN TD_MATRIX_DIMENSION 
+		ON mtr.MTR_ID = MDM_MTR_ID 
+	INNER JOIN TS_DIMENSION_ROLE 
+	ON MDM_DMR_ID=DMR_ID 
+	AND DMR_CODE='TIME'
 	WHERE rls.RLS_CODE = @RlsCode
 END
 GO

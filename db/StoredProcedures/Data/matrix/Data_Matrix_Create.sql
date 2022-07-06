@@ -1,6 +1,6 @@
+/****** Object:  StoredProcedure [dbo].[Data_Matrix_Create]    Script Date: 07/04/2022 13:21:11 ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -9,10 +9,10 @@ GO
 -- Create date: 21 Sep 2018
 -- Description:	Inserts a new record into the TD_MATRIX table
 -- =============================================
-CREATE
-	OR
+CREATE OR ALTER
+	
 
-ALTER PROCEDURE Data_Matrix_Create @MtrCode NVARCHAR(256)
+ PROCEDURE [dbo].[Data_Matrix_Create] @MtrCode NVARCHAR(256)
 	,@MtrTitle NVARCHAR(256)
 	,@LngIsoCode CHAR(2)
 	,@CprValue NVARCHAR(256)
@@ -145,6 +145,3 @@ BEGIN
 
 	RETURN @@identity
 END
-GO
-
-

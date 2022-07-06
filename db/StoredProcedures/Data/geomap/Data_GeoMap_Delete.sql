@@ -50,15 +50,15 @@ BEGIN
 
 	DECLARE @Url NVARCHAR(2048)
 
-	--We can't delete where there are classifications associated with the map
+	--We can't delete where there are data dimensions (classifications) associated with the map
 	SET @Url = @UrlStub  + @GmpCode
 
 	IF (
 			SELECT COUNT(*)
-			FROM TD_CLASSIFICATION
-			INNER JOIN TD_MATRIX ON CLS_MTR_ID = MTR_ID
+			FROM TD_MATRIX_DIMENSION 
+			INNER JOIN TD_MATRIX ON MDM_MTR_ID = MTR_ID
 				AND MTR_DELETE_FLAG = 0
-				AND CLS_GEO_URL = @Url
+				AND MDM_GEO_URL = @Url
 			) > 0
 	BEGIN
 		RETURN 0
