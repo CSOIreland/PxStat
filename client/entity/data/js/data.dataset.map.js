@@ -11,6 +11,10 @@ $(document).ready(function () {
         $("#data-dataset-map-nav-content").find("[name=confidential-data-warning]").show();
     }
 
+    if (!app.config.plugin.subscriber.enabled) {
+        $("#data-dataset-map-nav-content").find("[name=save-query]").remove();
+    };
+
     new ClipboardJS("#data-dataset-map-accordion-api [name=copy-api-info], #data-dataset-map-accordion-api [name=copy-api-object]");
     $('#data-dataset-map-accordion-collapse-widget [name=auto-update],#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],

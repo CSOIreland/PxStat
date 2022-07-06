@@ -28,7 +28,12 @@ app.geomap.panel.callback.readLayers = function (data) {
                 {
                     data: null,
                     render: function (_data, _type, row) {
-                        return app.library.html.link.edit({ "idn": row.GlrCode, "glr-name": row.GlrName }, row.GlrName);
+                        if (app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+                            return row.GlrName;
+                        }
+                        else {
+                            return app.library.html.link.edit({ "idn": row.GlrCode, "glr-name": row.GlrName }, row.GlrName);
+                        }
                     }
                 },
                 { data: "GmpCount" },
@@ -36,6 +41,7 @@ app.geomap.panel.callback.readLayers = function (data) {
                     data: null,
                     sorting: false,
                     searchable: false,
+                    visible: app.navigation.user.prvCode == C_APP_PRIVILEGE_ADMINISTRATOR ? true : false,
                     render: function (data, type, row) {
                         var deleteButton = app.library.html.deleteButton({ "idn": row.GlrCode, "glr-name": row.GlrName }, false);
                         if (row.GmpCount > 0) {

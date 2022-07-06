@@ -244,16 +244,16 @@ app.data.dataset.chart.buildXAxisSelect = function () {
     $("#data-dataset-chart-accordion").show();
     $("#data-dataset-chart-accordion-xaxis-collapse").collapse('show');
 
-    var dimensions = app.data.dataset.metadata.jsonStat.Dimension();
     $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").empty();
-    $.each(dimensions, function (index, value) {
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "metric" }), function (index, value) {
         var dimensionContainer = $("#data-dataset-chart-templates").find("[name=dimension-container]").clone();
 
         dimensionContainer.find("[name=dimension-label]").html(value.label);
         dimensionContainer.find("[name=dimension-count]").text(value.length);
-        dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
-        dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
-        dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+        dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
+        dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
+        dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
 
         $.each(value.id, function (variableIndex, variable) {
             var option = $('<option>', {
@@ -264,17 +264,64 @@ app.data.dataset.chart.buildXAxisSelect = function () {
 
             dimensionContainer.find("select").append(option);
         });
-        dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
-
-        if (value.role == "time") {
-            //reverse select based on codes so most recent time first
-            dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
-                return $(x).val() < $(y).val() ? 1 : -1;
-            }));
-        }
+        dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]).attr("role", value.role);
 
         $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
 
+    });
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "time" }), function (index, value) {
+        var dimensionContainer = $("#data-dataset-chart-templates").find("[name=dimension-container]").clone();
+
+        dimensionContainer.find("[name=dimension-label]").html(value.label);
+        dimensionContainer.find("[name=dimension-count]").text(value.length);
+        dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
+        dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
+        dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
+
+        $.each(value.id, function (variableIndex, variable) {
+            var option = $('<option>', {
+                "value": variable,
+                "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+            });
+
+            dimensionContainer.find("select").append(option);
+        });
+        dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]).attr("role", value.role);
+
+        //reverse select based on codes so most recent time first
+        dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
+            return $(x).val() < $(y).val() ? 1 : -1;
+        }));
+
+        $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+
+    });
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension(), function (index, value) {
+        if (value.role != "metric" && value.role != "time") {
+            var dimensionContainer = $("#data-dataset-chart-templates").find("[name=dimension-container]").clone();
+
+            dimensionContainer.find("[name=dimension-label]").html(value.label);
+            dimensionContainer.find("[name=dimension-count]").text(value.length);
+            dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+            dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+            dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+
+            $.each(value.id, function (variableIndex, variable) {
+                var option = $('<option>', {
+                    "value": variable,
+                    "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                    "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+                });
+
+                dimensionContainer.find("select").append(option);
+            });
+            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
+
+            $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+        }
     });
     //unselect any options from another dimension
     $("#data-dataset-chart-accordion-xaxis-collapse").find("select").once('change', function () {
@@ -494,24 +541,57 @@ app.data.dataset.chart.addSeries = function () {
     tabContent.attr("id", contentId).attr("aria-labelledby", tabId).attr("series", "series-" + app.data.dataset.chart.seriesId);
     tabContent.find("[name=delete-series]").attr("series", "series-" + app.data.dataset.chart.seriesId);
 
-    var dimensions = app.data.dataset.metadata.jsonStat.Dimension();
     var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").find("select:enabled").attr("idn");
 
-    $.each(dimensions, function (index, value) {
-        if (app.data.dataset.metadata.jsonStat.id[index] != xAxisDimensionCode) {
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "metric" }), function (index, value) {
+
+        if (app.data.dataset.metadata.jsonStat.role.metric[index] != xAxisDimensionCode) {
             var dimensionContainer = $("#data-dataset-chart-templates").find("[name=dimension-container]").clone();
             dimensionContainer.find("select").removeAttr("multiple").attr("series", "series-" + app.data.dataset.chart.seriesId).attr("dimension-name", value.label);
             dimensionContainer.find("[name=select-all]").remove();
 
             dimensionContainer.find("[name=dimension-label]").html(value.label).addClass("mandatory");
             dimensionContainer.find("[name=dimension-count]").text(value.length);
-            dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
-            dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
-            dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+            dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+            dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+            dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
 
 
-            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
-            dimensionContainer.find("select").attr("name", "select-" + app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
+            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]).attr("role", value.role);
+            dimensionContainer.find("select").attr("name", "select-" + app.data.dataset.metadata.jsonStat.role.metric[index]).attr("role", value.role);
+
+            $.each(value.id, function (variableIndex, variable) {
+                var option = $('<option>', {
+                    "value": variable,
+                    "title": value.Category(variableIndex).label,
+                    "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+                });
+                if (value.id.length == 1) {
+                    option.attr("selected", "selected")
+                }
+                dimensionContainer.find("select").append(option);
+            });
+
+            tabContent.find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+        }
+    });
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "time" }), function (index, value) {
+
+        if (app.data.dataset.metadata.jsonStat.role.time[index] != xAxisDimensionCode) {
+            var dimensionContainer = $("#data-dataset-chart-templates").find("[name=dimension-container]").clone();
+            dimensionContainer.find("select").removeAttr("multiple").attr("series", "series-" + app.data.dataset.chart.seriesId).attr("dimension-name", value.label);
+            dimensionContainer.find("[name=select-all]").remove();
+
+            dimensionContainer.find("[name=dimension-label]").html(value.label).addClass("mandatory");
+            dimensionContainer.find("[name=dimension-count]").text(value.length);
+            dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+            dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+            dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+
+
+            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]).attr("role", value.role);
+            dimensionContainer.find("select").attr("name", "select-" + app.data.dataset.metadata.jsonStat.role.time[index]).attr("role", value.role);
 
             $.each(value.id, function (variableIndex, variable) {
                 var option = $('<option>', {
@@ -535,6 +615,52 @@ app.data.dataset.chart.addSeries = function () {
             tabContent.find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
         }
     });
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension(), function (index, value) {
+        if (value.role != "metric" && value.role != "time") {
+            if (app.data.dataset.metadata.jsonStat.id[index] != xAxisDimensionCode) {
+                var dimensionContainer = $("#data-dataset-chart-templates").find("[name=dimension-container]").clone();
+                dimensionContainer.find("select").removeAttr("multiple").attr("series", "series-" + app.data.dataset.chart.seriesId).attr("dimension-name", value.label);
+                dimensionContainer.find("[name=select-all]").remove();
+
+                dimensionContainer.find("[name=dimension-label]").html(value.label).addClass("mandatory");
+                dimensionContainer.find("[name=dimension-count]").text(value.length);
+                dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+                dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+                dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("series", "series-" + app.data.dataset.chart.seriesId);
+
+
+                dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
+                dimensionContainer.find("select").attr("name", "select-" + app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
+
+                $.each(value.id, function (variableIndex, variable) {
+                    var option = $('<option>', {
+                        "value": variable,
+                        "title": value.Category(variableIndex).label,
+                        "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+                    });
+                    if (value.id.length == 1) {
+                        option.attr("selected", "selected")
+                    }
+                    dimensionContainer.find("select").append(option);
+                });
+
+                if (value.role == "time") {
+                    //reverse select based on codes so most recent time first
+                    dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
+                        return $(x).val() < $(y).val() ? 1 : -1;
+                    }));
+                };
+
+                tabContent.find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+            }
+        };
+
+    });
+
+
+
+
     //Make this tab the active one
     $("#data-dataset-chart-accordion-series-collapse").find("[name=series-tab-link]").removeClass("active").attr("aria-selected", "false");
     $("#data-dataset-chart-accordion-series-collapse").find("[name=tab-content]").removeClass("show").removeClass("active");
@@ -1154,6 +1280,11 @@ app.data.dataset.chart.renderSnippet = function () {
             value.decimal = [];
         });
 
+    }
+
+    //remove date if not live, can be present if prending live
+    if (!app.data.isLive) {
+        delete config.metadata.api.response.updated;
     }
 
     //add custom JSON

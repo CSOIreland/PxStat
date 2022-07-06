@@ -19,6 +19,11 @@ $(document).ready(function () {
             $("#data-dataset-chart-accordion-options-collapse").find("[name=sort]").bootstrapToggle('off').bootstrapToggle('enable');
         }
     });
+
+    if (!app.config.plugin.subscriber.enabled) {
+        $("#data-dataset-chart-render").find("[name=save-query]").remove();
+    };
+
     //add series if none already
     $('#data-dataset-chart-accordion-series-collapse').on('shown.bs.collapse', function () {
         if (!$("#data-dataset-chart-accordion-series-collapse [name=series-tabs] li").length) {

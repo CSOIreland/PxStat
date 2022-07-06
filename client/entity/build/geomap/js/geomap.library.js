@@ -48,8 +48,15 @@ app.geomap.callback.read = function (data) {
                 {
                     data: null,
                     render: function (_data, _type, row) {
-                        var attributes = { idn: row.GmpCode }; //idn SbjCode
-                        return app.library.html.link.edit(attributes, row.GmpName);
+
+                        if (app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+                            return row.GmpName;
+                        }
+                        else {
+                            var attributes = { idn: row.GmpCode }; //idn SbjCode
+                            return app.library.html.link.edit(attributes, row.GmpName);
+                        }
+
                     }
                 },
                 {
@@ -97,13 +104,23 @@ app.geomap.callback.read = function (data) {
                 {
                     data: null,
                     render: function (_data, _type, row) {
-                        return app.library.html.link.internal({ idn: row.GmpCode, "gmp-name": row.GmpName }, String(row.TableCount));
+                        switch (app.navigation.user.prvCode) {
+                            case C_APP_PRIVILEGE_MODERATOR:
+                                return row.TableCount;
+                            case C_APP_PRIVILEGE_POWER_USER:
+                            case C_APP_PRIVILEGE_ADMINISTRATOR:
+                                return app.library.html.link.internal({ idn: row.GmpCode, "gmp-name": row.GmpName }, String(row.TableCount));
+                            default:
+                                return ""
+                        };
+
                     }
                 },
                 {
                     data: null,
                     sorting: false,
                     searchable: false,
+                    visible: app.navigation.user.prvCode == C_APP_PRIVILEGE_ADMINISTRATOR ? true : false,
                     render: function (data, type, row) {
                         var attributes = { idn: row.GmpCode, "gmp-name": row.GmpName }; //idn SbjCode
                         var deleteButton = app.library.html.deleteButton(attributes, false);

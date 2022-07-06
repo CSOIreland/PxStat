@@ -112,12 +112,13 @@ app.data.dataset.map.drawMapToDisplay = function () {
 app.data.dataset.map.drawDimensions = function () {
     var mapToDisplayId = $("#data-dataset-map-nav-content [name=geo-select-container] select").val();
     $("#data-dataset-map-nav-content").find("[name=dimension-containers]").empty();
-    $.each(app.data.dataset.metadata.jsonStat.Dimension(), function (index, value) {
-        if (app.data.dataset.metadata.jsonStat.id[index] != mapToDisplayId) {
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "metric" }), function (index, value) {
+        if (app.data.dataset.metadata.jsonStat.role.metric[index] != mapToDisplayId) {
             var dimensionContainer = $("#data-dataset-map-templates").find("[name=dimension-container]").clone();
             dimensionContainer.find("[name=dimension-label]").html(value.label);
             dimensionContainer.find("[name=dimension-count]").text(value.length);
-            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
+            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]).attr("role", value.role);
             $.each(value.id, function (variableIndex, variable) {
                 dimensionContainer.find("select").append($("<option>",
                     {
@@ -127,13 +128,53 @@ app.data.dataset.map.drawDimensions = function () {
                     }
                 ));
             });
-            if (value.role == "time") {
-                //reverse select based on codes so most recent time first
-                dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
-                    return $(x).val() < $(y).val() ? 1 : -1;
-                }));
-            }
+
             $("#data-dataset-map-nav-content").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+        }
+    });
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "time" }), function (index, value) {
+        if (app.data.dataset.metadata.jsonStat.role.time[index] != mapToDisplayId) {
+            var dimensionContainer = $("#data-dataset-map-templates").find("[name=dimension-container]").clone();
+            dimensionContainer.find("[name=dimension-label]").html(value.label);
+            dimensionContainer.find("[name=dimension-count]").text(value.length);
+            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]).attr("role", value.role);
+            $.each(value.id, function (variableIndex, variable) {
+                dimensionContainer.find("select").append($("<option>",
+                    {
+                        "value": variable,
+                        "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                        "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+                    }
+                ));
+            });
+            //reverse select based on codes so most recent time first
+            dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
+                return $(x).val() < $(y).val() ? 1 : -1;
+            }));
+            $("#data-dataset-map-nav-content").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+        };
+    });
+
+    $.each(app.data.dataset.metadata.jsonStat.Dimension(), function (index, value) {
+        if (app.data.dataset.metadata.jsonStat.id[index] != mapToDisplayId) {
+            if (value.role != "metric" && value.role != "time") {
+                var dimensionContainer = $("#data-dataset-map-templates").find("[name=dimension-container]").clone();
+                dimensionContainer.find("[name=dimension-label]").html(value.label);
+                dimensionContainer.find("[name=dimension-count]").text(value.length);
+                dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
+                $.each(value.id, function (variableIndex, variable) {
+                    dimensionContainer.find("select").append($("<option>",
+                        {
+                            "value": variable,
+                            "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                            "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+                        }
+                    ));
+                });
+
+                $("#data-dataset-map-nav-content").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+            }
         };
     });
 
@@ -221,6 +262,11 @@ app.data.dataset.map.renderSnippet = function () {
         $.each(config.data.datasets, function (key, value) {
             value.api.query = {};
         });
+    }
+
+    //remove date if not live, can be present if prending live
+    if (!app.data.isLive) {
+        delete config.data.datasets[0].api.response.updated;
     }
 
     //add custom JSON

@@ -20,6 +20,11 @@ $(document).ready(function () {
         width: C_APP_TOGGLE_LENGTH
     });
 
+
+    if (!app.config.plugin.subscriber.enabled) {
+        $("#data-dataset-table-result").find("[name=save-query]").remove()
+    };
+
     $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time],#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],

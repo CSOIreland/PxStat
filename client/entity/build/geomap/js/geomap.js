@@ -1,21 +1,28 @@
 $(document).ready(function () {
     // Entity with restricted access
-    app.navigation.access.check();
+    app.navigation.access.check([C_APP_PRIVILEGE_MODERATOR, C_APP_PRIVILEGE_POWER_USER]);
     app.navigation.setLayout(false);
-    app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["maps"]]]);
+    app.navigation.setBreadcrumb([[app.label.static["build"]], [app.label.static["maps"]]]);
     app.navigation.setMetaDescription();
-    app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["maps"]);
+    app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["maps"]);
 
     // Load Modal - must be after GoTo
-    api.content.load("#modal-entity", "entity/system/geomap/index.modal.html");
+    api.content.load("#modal-entity", "entity/build/geomap/index.modal.html");
 
+    //remove add button if not administrator
+    if (app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+        $("#map-read-container").find("[name=add-map-footer]").remove();
+    }
+    else {
+        $("#map-read-container").find("[name=add-map-footer]").show()
+    }
 
     $("#modal-entity").empty();
-    api.content.load("#modal-entity", "entity/system/geomap/index.modal.html", null, true);
-    api.content.load("#modal-entity", "entity/system/geomap/index.preview.modal.html", null, true);
+    api.content.load("#modal-entity", "entity/build/geomap/index.modal.html", null, true);
+    api.content.load("#modal-entity", "entity/build/geomap/index.preview.modal.html", null, true);
 
     // Load the side panel
-    api.content.load("#panel", "entity/system/geomap/index.panel.html");
+    api.content.load("#panel", "entity/build/geomap/index.panel.html");
 
     //display maps table
     app.geomap.ajax.read();

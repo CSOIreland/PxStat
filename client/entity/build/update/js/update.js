@@ -13,7 +13,7 @@ $(document).ready(function () {
     $("#modal-entity").empty();
     api.content.load("#modal-entity", "entity/build/update/index.modal.html", null, true);
     api.content.load("#modal-entity", "entity/build/map/index.modal.html", null, true);
-    api.content.load("#modal-entity", "entity/system/geomap/index.preview.modal.html", null, true);
+    api.content.load("#modal-entity", "entity/build/geomap/index.preview.modal.html", null, true);
 
     // Set the max file-size in the Upload box
     $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB").show();

@@ -377,7 +377,7 @@ import {
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Initialize Firebase
-app.auth.firebaseAuthApp = initializeApp(app.config.plugin.firebase.config);
+app.auth.firebaseAuthApp = initializeApp(app.config.plugin.subscriber.firebase.config);
 app.auth.getFirebaseAuthApp = getAuth(app.auth.firebaseAuthApp);
 app.auth.googleAuth = new GoogleAuthProvider();
 app.auth.FacebookAuth = new FacebookAuthProvider();
@@ -386,21 +386,32 @@ app.auth.GitHubAuth = new GithubAuthProvider();
 
 $(document).ready(function () {
     //remove any individual providers not enabled
-    if (!app.config.plugin.firebase.signInProvider.providers.google) {
-        $("#modal-subscriber-login").find("[name=sign-up-google]").remove();
+    if (!app.config.plugin.subscriber.firebase.providers.emailPassword) {
+        $("#modal-subscriber-login").find("[name=sign-up-email-row]").remove();
+    };
+    if (!app.config.plugin.subscriber.firebase.providers.google) {
+        $("#modal-subscriber-login").find("[name=sign-up-google-row]").remove();
     };
 
-    if (!app.config.plugin.firebase.signInProvider.providers.facebook) {
-        $("#modal-subscriber-login").find("[name=sign-up-facebook]").remove();
+    if (!app.config.plugin.subscriber.firebase.providers.facebook) {
+        $("#modal-subscriber-login").find("[name=sign-up-facebook-row]").remove();
     };
 
-    if (!app.config.plugin.firebase.signInProvider.providers.gitHub) {
-        $("#modal-subscriber-login").find("[name=sign-up-github]").remove();
+    if (!app.config.plugin.subscriber.firebase.providers.gitHub) {
+        $("#modal-subscriber-login").find("[name=sign-up-github-row]").remove();
     };
 
-    if (!app.config.plugin.firebase.signInProvider.providers.twitter) {
-        $("#modal-subscriber-login").find("[name=sign-up-twitter]").remove();
+    if (!app.config.plugin.subscriber.firebase.providers.twitter) {
+        $("#modal-subscriber-login").find("[name=sign-up-twitter-row]").remove();
     };
+
+    //if no 3rd party providers at all, remove stay logged in button
+    if (!app.config.plugin.subscriber.firebase.providers.google
+        && !app.config.plugin.subscriber.firebase.providers.facebook
+        && !app.config.plugin.subscriber.firebase.providers.gitHub
+        && !app.config.plugin.subscriber.firebase.providers.twitter) {
+        $("#modal-subscriber-login").find("[name=stay-logged-in]").remove();
+    }
 
 
     onAuthStateChanged(app.auth.getFirebaseAuthApp, (user) => {

@@ -12,6 +12,9 @@ app.release.comparison.previousReleaseData = null;
 app.release.comparison.previousMatrixData = null;
 app.release.comparison.currentReleaseData = null;
 app.release.comparison.currentMatrixData = null;
+
+app.release.comparison.previousReleaseMetaData = null;
+app.release.comparison.currentReleaseMetaData = null;
 //#endregion
 
 //#region render
@@ -30,7 +33,8 @@ app.release.comparison.render = function () {
     app.release.comparison.ajax.readCurrentMatrix();
     app.release.comparison.ajax.readAmendment();
     app.release.comparison.ajax.readReasonList();
-
+    app.release.comparison.ajax.readPreviousMetadata();
+    app.release.comparison.ajax.readCurrentMetadata();
 };
 //#endregion
 
@@ -759,5 +763,288 @@ app.release.comparison.drawExtraInformation = function (d) {
     requestGrid.find("[name=rsn-value-external]").empty().html(app.library.html.parseBbCode(d.RsnValueExternal));
     requestGrid.find("[name=cmm-value]").empty().html(app.library.html.parseBbCode(d.CmmValue));
     return requestGrid.show().get(0).outerHTML;
+};
+//#endregion
+
+//#region metadata
+app.release.comparison.ajax.readPreviousMetadata = function () {
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
+        "PxStat.Data.Cube_API.ReadPreMetadata",
+        {
+            "release": app.release.RlsCodePrevious,
+            "format": {
+                "type": C_APP_FORMAT_TYPE_DEFAULT,
+                "version": C_APP_FORMAT_VERSION_DEFAULT
+            },
+            "language": $("#release-source [name=lng-iso-code] option:selected").val(),
+            "m2m": false
+        },
+        "app.release.comparison.callback.readPreviousMetadata",
+        null,
+        null,
+        null,
+        { async: false });
+};
+
+app.release.comparison.callback.readPreviousMetadata = function (data) {
+    app.release.comparison.previousReleaseMetaData = data ? JSONstat(data) : null;
+    app.release.comparison.callback.compareMetadata();
+};
+
+app.release.comparison.ajax.readCurrentMetadata = function () {
+    api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
+        "PxStat.Data.Cube_API.ReadPreMetadata",
+        {
+            "release": app.release.RlsCode,
+            "format": {
+                "type": C_APP_FORMAT_TYPE_DEFAULT,
+                "version": C_APP_FORMAT_VERSION_DEFAULT
+            },
+            "language": $("#release-source [name=lng-iso-code] option:selected").val(),
+            "m2m": false
+        },
+        "app.release.comparison.callback.readCurrentMetadata",
+        null,
+        null,
+        null,
+        { async: false });
+};
+
+app.release.comparison.callback.readCurrentMetadata = function (data) {
+    app.release.comparison.currentReleaseMetaData = data ? JSONstat(data) : null;
+    app.release.comparison.callback.compareMetadata();
+};
+
+app.release.comparison.callback.compareMetadata = function () {
+    if (!app.release.comparison.previousReleaseMetaData || !app.release.comparison.currentReleaseMetaData) {
+        return;
+    }
+    var previousDimensions = [];
+    $.each(app.release.comparison.previousReleaseMetaData.id, function (i, v) {
+        var dimension = {
+            "code": v,
+            "variables": []
+        };
+        $.each(app.release.comparison.previousReleaseMetaData.Dimension(v).id, function (index, code) {
+            dimension.variables.push(code);
+        });
+        previousDimensions.push(dimension)
+    });
+    var currentDimensions = [];
+    $.each(app.release.comparison.currentReleaseMetaData.id, function (i, v) {
+        var dimension = {
+            "code": v,
+            "variables": []
+        };
+        $.each(app.release.comparison.currentReleaseMetaData.Dimension(v).id, function (index, code) {
+            dimension.variables.push(code);
+        });
+        currentDimensions.push(dimension)
+    });
+    //new combined array with deleted/additional dimension/variables
+    var dimensionsCompare = {};
+    $.each(previousDimensions, function (index, value) {
+        dimensionsCompare[value.code] = {
+            "previousVariables": [],
+            "currentVariables": [],
+            "deletedVariableCodes": [],
+            "deletedVariableLabels": [],
+            "additionalVariableCodes": [],
+            "additionalVariableLabels": []
+        };
+    });
+
+    $.each(currentDimensions, function (index, value) {
+        dimensionsCompare[value.code] = {
+            "previousVariables": [],
+            "currentVariables": [],
+            "deletedVariableCodes": [],
+            "deletedVariableLabels": [],
+            "additionalVariableCodes": [],
+            "additionalVariableLabels": []
+        };
+    });
+
+    //populate variables
+    $.each(dimensionsCompare, function (key, value) {
+        //find previous variables for this dimension
+        var previousDimension = $.grep(previousDimensions, function (n) {
+            return n.code == key;
+        });
+
+        if (previousDimension[0]) {
+            value.previousVariables = previousDimension[0].variables;
+        }
+
+        //find current variables for this dimension
+        var currentDimension = $.grep(currentDimensions, function (n) {
+            return n.code == key;
+        });
+
+        if (currentDimension[0]) {
+            value.currentVariables = currentDimension[0].variables;
+        }
+    });
+
+    $.each(dimensionsCompare, function (key, value) {
+        //check for deleted variables
+        //variables that are in previous release, but not in current
+        $.each(value.previousVariables, function (k, v) {
+            if ($.inArray(v, value.currentVariables) < 0) {
+                dimensionsCompare[key].deletedVariableCodes.push(v);
+                dimensionsCompare[key].deletedVariableLabels.push(app.release.comparison.previousReleaseMetaData.Dimension(key).Category(v).label);
+            }
+        });
+
+        //check for additional variables
+        //variables that are in current release, but not in previous
+        $.each(value.currentVariables, function (k, v) {
+            if ($.inArray(v, value.previousVariables) < 0) {
+                dimensionsCompare[key].additionalVariableCodes.push(v);
+                dimensionsCompare[key].additionalVariableLabels.push(app.release.comparison.currentReleaseMetaData.Dimension(key).Category(v).label);
+            }
+        });
+    });
+
+    var datatableData = [];
+
+    $.each(dimensionsCompare, function (key, value) {
+        datatableData.push({
+            "code": key,
+            "label": app.release.comparison.currentReleaseMetaData.Dimension(key)
+                ? app.release.comparison.currentReleaseMetaData.Dimension(key).label
+                : app.release.comparison.previousReleaseMetaData.Dimension(key).label,
+            "additions": value.additionalVariableCodes.length,
+            "deletions": value.deletedVariableCodes.length
+        });
+    });
+
+
+    var table = $("#release-comparison-metadata").find("[name=compare-metadata]");
+    if ($.fn.DataTable.isDataTable(table)) {
+        app.library.datatable.reDraw(table, datatableData);
+    } else {
+        var localOptions = {
+            data: datatableData,
+            columns: [
+                {
+                    data: "code"
+                },
+                {
+                    data: "label"
+                },
+                {
+                    data: null,
+                    createdCell: function (td, cellData, rowData, row, col) {
+                        if (cellData.deletions > 0) {
+                            $(td).addClass('table-danger')
+                        }
+                    },
+                    render: function (data, type, row) {
+                        return app.library.html.link.view({ "dimension-code": row.code, "action": "view-deletions" }, row.deletions.toString());
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return app.library.html.link.view({ "dimension-code": row.code, "action": "view-additions" }, row.additions.toString());
+                    }
+                },
+            ],
+            drawCallback: function (settings) {
+                app.release.comparison.callback.drawCallbackMetadata(table, dimensionsCompare);
+            },
+            //Translate labels language
+            language: app.label.plugin.datatable
+        };
+        $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
+            app.release.comparison.callback.drawCallbackMetadata(table, dimensionsCompare);
+        });
+    };
+
+};
+
+app.release.comparison.callback.drawCallbackMetadata = function (table, dimensionsCompare) {
+    $(table).find("[name=" + C_APP_NAME_LINK_VIEW + "][action='view-deletions']").once("click", function (e) {
+        e.preventDefault();
+        app.release.comparison.callback.viewDeletedVariables(dimensionsCompare, $(this).attr("dimension-code"));
+    });
+
+    $(table).find("[name=" + C_APP_NAME_LINK_VIEW + "][action='view-additions']").once("click", function (e) {
+        e.preventDefault();
+        app.release.comparison.callback.viewAddedVariables(dimensionsCompare, $(this).attr("dimension-code"));
+    });
+};
+
+app.release.comparison.callback.viewDeletedVariables = function (dimensionsCompare, dimension) {
+    $("#release-comparison-modal-view-delitions").find("[name=dimension-code]").html(dimension);
+    $("#release-comparison-modal-view-delitions").find("[name=dimension-value]").html(
+        app.release.comparison.previousReleaseMetaData.Dimension(dimension)
+            ? app.release.comparison.previousReleaseMetaData.Dimension(dimension).label
+            : app.release.comparison.currentReleaseMetaData.Dimension(dimension).label
+    );
+
+    var data = [];
+    $.each(dimensionsCompare[dimension].deletedVariableCodes, function (index, value) {
+        data.push(
+            {
+                "code": value,
+                "value": dimensionsCompare[dimension].deletedVariableLabels[index]
+            }
+        )
+    });
+
+
+    if ($.fn.dataTable.isDataTable("#release-comparison-modal-view-delitions table")) {
+        app.library.datatable.reDraw("#release-comparison-modal-view-delitions table", data);
+    } else {
+        var localOptions = {
+            data: data,
+            ordering: false,
+            columns: [
+                { data: "code" },
+                { data: "value" },
+            ]
+        };
+        //Initialize DataTable
+        $("#release-comparison-modal-view-delitions table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
+    };
+    $("#release-comparison-modal-view-delitions").modal("show");
+};
+
+app.release.comparison.callback.viewAddedVariables = function (dimensionsCompare, dimension) {
+    $("#release-comparison-modal-view-additions").find("[name=dimension-code]").html(dimension);
+    $("#release-comparison-modal-view-additions").find("[name=dimension-value]").html(
+        app.release.comparison.currentReleaseMetaData.Dimension(dimension)
+            ? app.release.comparison.currentReleaseMetaData.Dimension(dimension).label
+            : app.release.comparison.previousReleaseMetaData.Dimension(dimension).label
+    );
+
+    var data = [];
+    $.each(dimensionsCompare[dimension].additionalVariableCodes, function (index, value) {
+        data.push(
+            {
+                "code": value,
+                "value": dimensionsCompare[dimension].additionalVariableLabels[index]
+            }
+        )
+    });
+
+
+    if ($.fn.dataTable.isDataTable("#release-comparison-modal-view-additions table")) {
+        app.library.datatable.reDraw("#release-comparison-modal-view-additions table", data);
+    } else {
+        var localOptions = {
+            data: data,
+            ordering: false,
+            columns: [
+                { data: "code" },
+                { data: "value" },
+            ]
+        };
+        //Initialize DataTable
+        $("#release-comparison-modal-view-additions table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions));
+    };
+    $("#release-comparison-modal-view-additions").modal("show");
 };
 //#endregion

@@ -182,9 +182,9 @@ $(document).ready(function () {
   );
   api.content.navigate(
     "#nav-link-map",
-    "entity/system/geomap/",
+    "entity/build/geomap/",
     "#nav-link-map",
-    "#nav-link-system"
+    "#nav-link-build"
   );
   api.content.navigate(
     "#nav-link-keyword-release",
@@ -269,7 +269,13 @@ $(document).ready(function () {
   //#endregion
 
   $("#nav-user-login").once("click", function () {
-    $("#modal-subscriber-login").modal("show");
+    if (app.config.plugin.subscriber.enabled) {
+      $("#modal-subscriber-login").modal("show");
+    }
+    else {
+      $("#modal-open-access-user-login").modal("show");
+    }
+
   });
 
   $("#nav-user-logout").once("click", function () {

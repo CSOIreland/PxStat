@@ -71,7 +71,6 @@ app.data.dataset.table.snippet.template = {
             "search": null
         },
         "dom": "Bfltip",
-        "scrollX": false,
         "responsive": false,
         "buttons": [
             {
@@ -122,21 +121,22 @@ app.data.dataset.table.drawDimensions = function () {
     $("#data-dataset-table-code-toggle").bootstrapToggle('on');
     app.data.dataset.table.totalCount = 1;
     $("#data-dataset-table-nav-content").find("[name=dimension-containers]").empty();
-    var dimensions = app.data.dataset.metadata.jsonStat.Dimension();
-    $.each(dimensions, function (index, value) {
+
+    //render all statistic dimensions first
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "metric" }), function (index, value) {
         app.data.dataset.table.totalCount = app.data.dataset.table.selectionCount = app.data.dataset.table.totalCount * value.length;
 
         var dimensionContainer = $("#data-dataset-table-templates").find("[name=dimension-container]").clone();
         var dimensionCode = $("<small>", {
-            "text": " - " + app.data.dataset.metadata.jsonStat.id[index],
+            "text": " - " + app.data.dataset.metadata.jsonStat.role.metric[index],
             "name": "dimension-code",
             "class": "d-none"
         }).get(0).outerHTML;
         dimensionContainer.find("[name=dimension-label]").html(value.label + dimensionCode);
         dimensionContainer.find("[name=dimension-count]").text(value.length);
-        dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
-        dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
-        dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+        dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
+        dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
+        dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
 
         $.each(value.id, function (variableIndex, variable) {
             var option = $('<option>', {
@@ -149,17 +149,79 @@ app.data.dataset.table.drawDimensions = function () {
 
             dimensionContainer.find("select").append(option);
         });
-        dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
-
-        if (value.role == "time") {
-            //reverse select based on codes so most recent time first
-            dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
-                return $(x).val() < $(y).val() ? 1 : -1;
-            }));
-        }
+        dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]).attr("role", value.role);
 
         $("#data-dataset-table-nav-content").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+    });
 
+    //next render time dimensions
+    $.each(app.data.dataset.metadata.jsonStat.Dimension({ role: "time" }), function (index, value) {
+        app.data.dataset.table.totalCount = app.data.dataset.table.selectionCount = app.data.dataset.table.totalCount * value.length;
+
+        var dimensionContainer = $("#data-dataset-table-templates").find("[name=dimension-container]").clone();
+        var dimensionCode = $("<small>", {
+            "text": " - " + app.data.dataset.metadata.jsonStat.role.time[index],
+            "name": "dimension-code",
+            "class": "d-none"
+        }).get(0).outerHTML;
+        dimensionContainer.find("[name=dimension-label]").html(value.label + dimensionCode);
+        dimensionContainer.find("[name=dimension-count]").text(value.length);
+        dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
+        dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
+        dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
+
+        $.each(value.id, function (variableIndex, variable) {
+            var option = $('<option>', {
+                "value": variable,
+                "data-code-true": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "") + " (" + variable + ")",
+                "data-code-false": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+            });
+
+            dimensionContainer.find("select").append(option);
+        });
+        dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]).attr("role", value.role);
+
+        //reverse select based on codes so most recent time first
+        dimensionContainer.find("select").html(dimensionContainer.find('option').sort(function (x, y) {
+            return $(x).val() < $(y).val() ? 1 : -1;
+        }));
+        $("#data-dataset-table-nav-content").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+    });
+
+    //next render classifications
+    $.each(app.data.dataset.metadata.jsonStat.Dimension(), function (index, value) {
+        if (value.role != "metric" && value.role != "time") {
+            app.data.dataset.table.totalCount = app.data.dataset.table.selectionCount = app.data.dataset.table.totalCount * value.length;
+
+            var dimensionContainer = $("#data-dataset-table-templates").find("[name=dimension-container]").clone();
+            var dimensionCode = $("<small>", {
+                "text": " - " + app.data.dataset.metadata.jsonStat.id[index],
+                "name": "dimension-code",
+                "class": "d-none"
+            }).get(0).outerHTML;
+            dimensionContainer.find("[name=dimension-label]").html(value.label + dimensionCode);
+            dimensionContainer.find("[name=dimension-count]").text(value.length);
+            dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+            dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+            dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+
+            $.each(value.id, function (variableIndex, variable) {
+                var option = $('<option>', {
+                    "value": variable,
+                    "data-code-true": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "") + " (" + variable + ")",
+                    "data-code-false": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                    "title": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
+                    "text": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "")
+                });
+
+                dimensionContainer.find("select").append(option);
+            });
+            dimensionContainer.find("select").attr("idn", app.data.dataset.metadata.jsonStat.id[index]).attr("role", value.role);
+
+            $("#data-dataset-table-nav-content").find("[name=dimension-containers]").append(dimensionContainer.get(0).outerHTML);
+        };
     });
 
     $("#data-dataset-table-nav-content").find("[name=data-count-cells]").text(app.library.utility.formatNumber(app.data.dataset.table.totalCount));
@@ -777,7 +839,6 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
 
         //always make save queries responsive
 
-        app.data.dataset.table.saveQuery.configuration.options.scrollX = false;
         app.data.dataset.table.saveQuery.configuration.options.responsive = true;
 
         if (!$("#data-dataset-table-accordion-collapse-widget").find("[name=include-pagination]").is(':checked')) {
@@ -786,11 +847,9 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         }
 
         if ($("#data-dataset-table-accordion-collapse-widget").find("[name=include-responsive]").is(':checked')) {
-            app.data.dataset.table.snippet.configuration.options.scrollX = false;
             app.data.dataset.table.snippet.configuration.options.responsive = true;
         }
         else {
-            app.data.dataset.table.snippet.configuration.options.scrollX = true;
             app.data.dataset.table.snippet.configuration.options.responsive = false;
         }
 
@@ -851,12 +910,17 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").show();
     }
 
+    //remove date if not live, can be present if prending live
+    if (!app.data.isLive) {
+        delete app.data.dataset.table.snippet.configuration.data.api.response.updated;
+    }
+
     //add custom config if something there
     if ($("#data-dataset-table-accordion-collapse-widget [name=custom-config]").val().trim().length) {
         try {
             app.data.dataset.table.callback.formatJson();
             var customOptions = JSON.parse($("#data-dataset-table-accordion-collapse-widget [name=custom-config]").val().trim());
-            $.extend(true, app.data.dataset.table.snippet.configuration.options, customOptions);
+            $.extend(true, app.data.dataset.table.snippet.configuration, customOptions);
             $("#data-dataset-table-accordion-collapse-widget [name=invalid-json-object]").hide();
             $("#data-dataset-table-accordion-collapse-widget [name=valid-json-object]").show();
         } catch (err) {
@@ -1084,13 +1148,6 @@ app.data.dataset.table.callback.drawDatatable = function () {
     });
 
     $('[data-toggle="tooltip"]').tooltip();
-    $('#code-toggle').bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["false"],
-        off: app.label.static["true"],
-        onstyle: "tertiary",
-        offstyle: "neutral",
-        width: C_APP_TOGGLE_LENGTH
-    });
 
     //scroll to top of datatable -- Data entity
 
@@ -1181,11 +1238,11 @@ app.data.dataset.table.pivot.compute = function (arrobjTable) {
 
 app.data.dataset.table.drawCallbackDrawDataTable = function () {
     //check whether to show codes or not every time the table is drawn
-    if (!$('#code-toggle').prop('checked')) {
-        $("#data-view-container").find("[name=datatable]").find("[name=code]").removeClass("d-none");
+    if (!$('#data-dataset-table-code-toggle').prop('checked')) {
+        $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=code]").removeClass("d-none");
     }
     else {
-        $("#data-view-container").find("[name=datatable]").find("[name=code]").addClass("d-none");
+        $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=code]").addClass("d-none");
     }
 
 

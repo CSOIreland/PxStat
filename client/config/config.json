@@ -93,7 +93,7 @@
 			"PxStat.Build.Build_API.ReadDataset": 250000,
 			"PxStat.Build.Build_API.Update": 40000,
 			"PxStat.Data.Matrix_API.Validate": 500000,
-			"PxStat.Data.Matrix_API.Create": 70000,
+			"PxStat.Data.Matrix_API.Create": 700000,
 			"PxStat.Data.GeoMap_API.Validate": 500000
 		}
 	},
@@ -276,18 +276,19 @@
 				}
 			}
 		},
-		"firebase": {
-			"enabled": false,
-			"config": {
-                "apiKey": "",
-                "authDomain": "",
-                "projectId": "",
-                "storageBucket": "",
-                "messagingSenderId": "",
-                "appId": ""
-            },
-			"signInProvider": {
+		"subscriber": {
+			"enabled": true,
+			"firebase": {
+				"config": {
+					"apiKey": "",
+					"authDomain": "",
+					"projectId": "",
+					"storageBucket": "",
+					"messagingSenderId": "",
+					"appId": ""
+				},
 				"providers": {
+					"emailPassword": true,
 					"google": true,
 					"facebook": true,
 					"gitHub": true,

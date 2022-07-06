@@ -10,6 +10,10 @@ $(document).ready(function () {
         app.data.dataset.callback.back();
     });
 
+    if (!app.config.plugin.subscriber.enabled) {
+        $("#data-dataset-selected-table").find("[name=save-table]").remove()
+    };
+
     //cannot use default modal cancel button as this causes parent modal in releases view data to close behind also
     $("#data-dataset-table-confirm-soft").find("[name=cancel]").once("click", function () {
         $("#data-dataset-table-confirm-soft").modal("hide");

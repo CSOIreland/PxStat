@@ -624,10 +624,10 @@ app.build.create.dimension.submitUploadStatistic = function () {
         if (dimension.LngIsoCode == lngIsoCode) {
             $.each(codes, function (index, value) {
                 dimension.Statistic.push({
-                    "SttCode": value,
-                    "SttValue": values[index],
-                    "SttUnit": units[index],
-                    "SttDecimal": decimals[index]
+                    "SttCode": value.trim(),
+                    "SttValue": values[index].trim(),
+                    "SttUnit": units[index].trim(),
+                    "SttDecimal": decimals[index].trim()
                 });
             });
         }
@@ -1385,8 +1385,8 @@ app.build.create.dimension.callback.buildUploadClassification = function () {
 
     $.each(variableCodes, function (index, variable) {
         classification.Variable.push({
-            "VrbCode": variable,
-            "VrbValue": variableValues[index]
+            "VrbCode": variable.trim(),
+            "VrbValue": variableValues[index].trim()
         });
     });
 
@@ -1768,8 +1768,8 @@ app.build.create.dimension.addPeriodsUpload = function () {
         if (dimension.LngIsoCode == lngIsoCode) {
             $.each(app.build.create.file.period.content.data.JSON.data, function (index, variable) {
                 dimension.Frequency.Period.push({
-                    PrdCode: variable[C_APP_CSV_CODE],
-                    PrdValue: variable[C_APP_CSV_VALUE]
+                    PrdCode: variable[C_APP_CSV_CODE].trim(),
+                    PrdValue: variable[C_APP_CSV_VALUE].trim()
                 });
             });
         }

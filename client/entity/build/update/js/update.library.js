@@ -433,8 +433,8 @@ app.build.update.addUploadPeriod = function () {
             $.each(codes, function (index) {
                 dimension.Frequency.Period.push(
                     {
-                        "PrdCode": codes[index],
-                        "PrdValue": values[index]
+                        "PrdCode": codes[index].trim(),
+                        "PrdValue": values[index].trim()
                     }
                 );
             });

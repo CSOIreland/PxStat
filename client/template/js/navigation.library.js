@@ -214,7 +214,11 @@ app.navigation.access.callback.ReadCurrent = function () {
   }
   else {
     $("#nav-user").remove();
-    $("#nav-user-login").show();
+
+    if (app.config.plugin.subscriber.enabled || app.config.security.adOpenAccess) {
+      $("#nav-user-login").show();
+    };
+
     $("#nav-user-logout").remove();
     $("#nav-user-locked").remove();
   }
@@ -235,7 +239,9 @@ app.navigation.access.renderMenu = function (PrvCode) {
       // Display current user's information
       app.navigation.user.ajax.read();
       //save queries
-      $("#nav-link-saved-query").parent().show();
+      if (app.config.plugin.subscriber.enabled) {
+        $("#nav-link-saved-query").parent().show();
+      };
       //Dashboard
       $("#nav-link-dashboard").parent().show();
       // Releases
@@ -255,7 +261,9 @@ app.navigation.access.renderMenu = function (PrvCode) {
       // Display current user's information
       app.navigation.user.ajax.read();
       //save queries
-      $("#nav-link-saved-query").parent().show();
+      if (app.config.plugin.subscriber.enabled) {
+        $("#nav-link-saved-query").parent().show();
+      };
       //Dashboard
       $("#nav-link-dashboard").parent().show();
       // Releases
