@@ -17,3 +17,5 @@
 /server/PxStat/Properties/PublishProfiles/Dev.pubxml.user
 /server/PxStat/bin
 /server/PxStat/obj
+/server/PxStat.DataMatrix.Test
+/utilities/Px5Migrator/.vs
