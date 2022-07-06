@@ -792,10 +792,6 @@ namespace PxStat.Data
 
             return new List<dynamic>();
         }
-
-
-
-
     }
 
     internal class DatasetAdo : IDisposable

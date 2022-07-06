@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Data;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -13,6 +14,20 @@ namespace PxStat.System.Settings
         internal List<string> ReadAll()
         {
             List<string> configList = Utility.GetCustomConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList();
+            List<string> frqList = new List<string>();
+            foreach (var v in configList)
+            {
+                string[] item = v.Split('/');
+                if (item.Length < 2) return null;
+                frqList.Add(item[0]);
+            }
+
+            return frqList;
+        }
+
+        internal List<string> ReadAll(IMetaData metaData)
+        {
+            List<string> configList = metaData.GetFrequencyCodes().Split(',').ToList();
             List<string> frqList = new List<string>();
             foreach (var v in configList)
             {

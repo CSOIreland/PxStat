@@ -7,8 +7,8 @@ namespace PxStat.System.Settings
 {
     internal class Format_BSO : IDisposable
     {
-        readonly ADO ado;
-        internal Format_BSO(ADO Ado)
+        readonly IADO ado;
+        internal Format_BSO(IADO Ado)
         {
             ado = Ado;
         }

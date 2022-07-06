@@ -2,6 +2,7 @@
 
 namespace PxStat.Subscription
 {
+    [AllowAPICall]
     public class Subscription_API
     {
         public static dynamic TableSubscriptionCreate(JSONRPC_API requestApi)

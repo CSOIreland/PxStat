@@ -12,7 +12,7 @@ namespace PxStat.System.Navigation
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Subject_BSO_Read(JSONRPC_API request) : base(request, new Subject_VLD_Read())
+        internal Subject_BSO_Read(IRequest request) : base(request, new Subject_VLD_Read())
         {
         }
 
@@ -22,7 +22,7 @@ namespace PxStat.System.Navigation
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return true; 
+            return true;
         }
 
         protected override bool HasUserToBeAuthenticated()

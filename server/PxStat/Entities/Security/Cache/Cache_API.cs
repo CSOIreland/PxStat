@@ -1,7 +1,8 @@
 ﻿using API;
 namespace PxStat.Security
 {
-    internal class Cache_API
+    [AllowAPICall]
+    public class Cache_API
     {
 
         public static dynamic FlushAll(JSONRPC_API requestApi)

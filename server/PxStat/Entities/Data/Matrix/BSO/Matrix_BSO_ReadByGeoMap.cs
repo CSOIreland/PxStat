@@ -11,7 +11,7 @@ namespace PxStat.Data
         }
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            return IsPowerUser() || IsAdministrator();
         }
 
 

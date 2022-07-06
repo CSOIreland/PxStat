@@ -24,10 +24,6 @@ namespace PxStat.System.Navigation
 
             Navigation_ADO adoNav = new Navigation_ADO(Ado);
 
-
-
-
-
             //Search based on the supplied keywords
             dynamic data = adoNav.Search(DTO);
 

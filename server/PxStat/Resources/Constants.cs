@@ -78,6 +78,11 @@ namespace PxStat.Resources
         internal const int C_DATA_RESTFUL_LANGUAGE = 4;
         internal const int C_DATA_RESTFUL_PIVOT = 5;
 
+        internal const string C_DATA_DIMENSION_ROLE_STATISTIC = "STATISTIC";
+        internal const string C_DATA_DIMENSION_ROLE_TIME = "TIME";
+        internal const string C_DATA_DIMENSION_ROLE_CLASSIFICATION = "CLASSIFICATION";
+
+
         /// <summary>
         /// List of user authentication types
         /// </summary>

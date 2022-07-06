@@ -5,7 +5,8 @@ namespace PxStat.Security
 {    /// <summary>
      /// API for reading performance
      /// </summary>
-    internal class Performance_API
+    [AllowAPICall]
+    public class Performance_API
     {
 
         public static dynamic ReadPrfMemoryAvailable(JSONRPC_API jsonrpcRequest)

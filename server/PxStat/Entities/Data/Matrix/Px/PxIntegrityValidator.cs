@@ -171,7 +171,8 @@ namespace PxStat.Data
 
                 if (cubeSize != totalCells)
                 {
-                    //TODO: do we need translation here?
+                    //TODO: do we need translation here? nok - I think we're limited by Fluent Validation here. 
+                    //We should look at simplifying the message however.
                     messageFormatter.AppendArgument("Language", language);
                     messageFormatter.AppendArgument("Expected", cubeSize);
                     messageFormatter.AppendArgument("Found", totalCells);

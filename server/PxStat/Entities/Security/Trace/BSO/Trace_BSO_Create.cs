@@ -15,7 +15,7 @@ namespace PxStat.Security
         /// <param name="request"></param>
         /// <param name="inTransaction"></param>
         /// <returns></returns>
-        internal static int Execute(ADO ado, JSONRPC_API request)
+        internal static int Execute(ADO ado, IRequest request)
         {
             //Check in case the NoTrace attribute is set for the requested API method
             //If so, don't proceed with the trace.

@@ -16,7 +16,7 @@ namespace PxStat.Data
     /// <summary>
     /// Validator for Cube_DTO_Read
     /// </summary>
-    internal class Cube_VLD_Read : AbstractValidator<Cube_DTO_Read>
+    internal class Cube_VLD_Read : AbstractValidator<ICube_DTO_Read>
     {
         /// <summary>
         /// 
@@ -47,6 +47,13 @@ namespace PxStat.Data
         }
     }
 
+    internal class Cube_VLD_ReadMetadataHEAD : AbstractValidator<Cube_DTO_ReadMatrixMetadata>
+    {
+        public Cube_VLD_ReadMetadataHEAD()
+        {
+        }
+    }
+
     /// <summary>
     /// Validator for Cube_VLD_Read
     /// </summary>
@@ -55,6 +62,23 @@ namespace PxStat.Data
         public Cube_VLD_ReadDataset() : base()
         {
             RuleFor(dto => dto.Format).Must(CustomValidations.FormatForReadDataset).WithMessage("Invalid format parameters for ReadDataset");
+
+        }
+    }
+
+    internal class Cube_VLD_ReadMatrixMetadata : AbstractValidator<Cube_DTO_ReadMatrixMetadata>
+    {
+        public Cube_VLD_ReadMatrixMetadata()
+        {
+            RuleFor(dto => dto.language.Length)
+                .Equal(2)
+                .When(dto => !string.IsNullOrEmpty(dto.language))
+                .WithMessage("Invalid language code")
+                .WithName("languageValidation");
+
+            RuleFor(dto => dto.matrix)
+                .NotNull().NotEmpty()
+                .WithMessage("Invalid matrix code");
 
         }
     }
@@ -80,10 +104,32 @@ namespace PxStat.Data
         }
     }
 
+
+    /// <summary>
+    /// Validator for Cube_DTO_ReadCollection
+    /// </summary>
+    internal class Cube_VLD_ReadCollectionSummary : AbstractValidator<Cube_DTO_ReadCollectionSummary>
+    {
+        public Cube_VLD_ReadCollectionSummary()
+        {
+            //Optional
+            RuleFor(dto => dto.language.Length)
+                .Equal(2)
+                .When(dto => !string.IsNullOrEmpty(dto.language))
+                .WithMessage("Invalid language code")
+                .WithName("languageValidation");
+            RuleFor(dto => dto.product.Length)
+                .GreaterThan(0)
+                .When(dto => !string.IsNullOrEmpty(dto.product))
+                .WithMessage("Invalid product code")
+                .WithName("productValidation");
+        }
+    }
+
     /// <summary>
     /// Validator for Cube_DTO_Read
     /// </summary>
-    internal class Cube_VLD_ReadPre : AbstractValidator<Cube_DTO_Read>
+    internal class Cube_VLD_ReadPre : AbstractValidator<ICube_DTO_Read>
     {
         public Cube_VLD_ReadPre() : base()
         {
@@ -139,7 +185,7 @@ namespace PxStat.Data
         }
     }
 
-    internal class Cube_VLD_REST_ReadDataset : AbstractValidator<RESTful_API>
+    internal class Cube_VLD_REST_ReadDataset : AbstractValidator<IRequest>
     {
         internal Cube_VLD_REST_ReadDataset()
         {

@@ -2,6 +2,7 @@
 
 namespace PxStat.Data
 {
+    [AllowAPICall]
     public class GeoLayer_API
     {
         public static dynamic Create(JSONRPC_API jsonrpcRequest)

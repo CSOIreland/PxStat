@@ -7,7 +7,7 @@ namespace PxStat.Data
     /// <summary>
     /// Read the cube metadata for a pending release
     /// </summary>
-    internal class Cube_BSO_ReadPreMetadata : BaseTemplate_Read<Cube_DTO_Read, Cube_VLD_ReadPreDataset>
+    internal class Cube_BSO_ReadPreMetadata : BaseTemplate_Read<Cube_DTO_ReadMetadata, Cube_VLD_ReadPreDataset>
     {
         /// <summary>
         /// Constructor
@@ -56,7 +56,7 @@ namespace PxStat.Data
             }
 
             DTO.language = item.LngIsoCode;
-            return Cube_BSO_ReadMetadata.ExecuteReadMetadata(Ado, DTO, result, Response, false);
+            return Cube_BSO_ReadMetadata.ExecuteReadMetadata(Ado, DTO, result, Response, SamAccountName, false);
         }
     }
 }

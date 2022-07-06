@@ -27,7 +27,7 @@ namespace PxStat.Security
         /// <param name="requestDTO"></param>
         /// <param name="hRequest"></param>
         /// <param name="request"></param>
-        internal static void Create(ADO Ado, dynamic requestDTO, HttpRequest hRequest, JSONRPC_API request)
+        internal static void Create(ADO Ado, dynamic requestDTO, HttpRequest hRequest, IRequest request)
         {
             //If this method doesn't require analytic logging then exit the function here
             if (!MethodReader.MethodHasAttribute(request.method, "Analytic")) return;

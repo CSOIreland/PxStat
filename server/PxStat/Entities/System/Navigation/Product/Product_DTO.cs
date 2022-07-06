@@ -1,4 +1,8 @@
-﻿using PxStat.Security;
+﻿using PxStat.Resources;
+using PxStat.Security;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace PxStat.System.Navigation
 {
@@ -40,22 +44,58 @@ namespace PxStat.System.Navigation
         /// <param name="parameters"></param>
         public Product_DTO(dynamic parameters)
         {
-            if (parameters.PrcCode != null)
-                this.PrcCode = parameters.PrcCode;
+            //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
+            if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            {
+                if (parameters.PrcCode != null)
+                    this.PrcCode = parameters.PrcCode;
 
-            if (parameters.PrcCodeNew != null)
-                this.PrcCodeNew = parameters.PrcCodeNew;
+                if (parameters.PrcCodeNew != null)
+                    this.PrcCodeNew = parameters.PrcCodeNew;
 
-            if (parameters.SbjCode != null)
-                this.SbjCode = parameters.SbjCode;
+                if (parameters.SbjCode != null)
+                    this.SbjCode = parameters.SbjCode;
 
-            if (parameters.PrcValue != null)
-                this.PrcValue = parameters.PrcValue;
+                if (parameters.PrcValue != null)
+                    this.PrcValue = parameters.PrcValue;
 
-            if (parameters.LngIsoCode != null)
-                this.LngIsoCode = parameters.LngIsoCode;
+                if (parameters.LngIsoCode != null)
+                    this.LngIsoCode = parameters.LngIsoCode;
+                else
+                    this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            }
             else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            {
+                //parameters in a list
+
+                //map the list to the object properties
+                List<string> plist = new List<string>() { "", "LngIsoCode", "SbjCode", "PrcCode" };
+                for (int i = 1; i < parameters.Count; i++)
+                {
+                    dynamic value;
+                    Type type = this.GetType();
+
+                    PropertyInfo prop = type.GetProperty(plist[i]);
+                    var ptype = prop.PropertyType;
+                    switch (ptype.Name)
+                    {
+                        case ("Int32"):
+                            value = Convert.ToInt32(parameters[i]);
+                            break;
+                        case ("Boolean"):
+                            value = Convert.ToBoolean(parameters[i]);
+                            break;
+                        case ("DateTime"):
+                            value = Convert.ToDateTime(parameters[i]);
+                            break;
+                        default:
+                            value = parameters[i];
+                            break;
+                    }
+
+                    prop.SetValue(this, value, null);
+                }
+            }
         }
     }
 }

@@ -17,7 +17,7 @@
     <AssemblyName>PxStat</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>44305</IISExpressSSLPort>
+    <IISExpressSSLPort>44359</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
@@ -72,9 +72,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="API.Library, Version=4.7.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="API.Library, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\API.Library.4.7.0\API.Library.dll</HintPath>
+      <HintPath>..\packages\API.Library.5.0.0\API.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac, Version=6.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.6.3.0\lib\netstandard2.0\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="ClosedXML, Version=0.95.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ClosedXML.0.95.4\lib\net46\ClosedXML.dll</HintPath>
@@ -132,7 +135,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\Packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -177,8 +180,8 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity.Design" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Diagnostics.Tracing, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.Tracing.4.3.0\lib\net462\System.Diagnostics.Tracing.dll</HintPath>
@@ -413,6 +416,7 @@
     <Compile Include="Entities\Build\BSO\Build_BSO_ReadTemplate.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Update.cs" />
     <Compile Include="Entities\Build\BSO\Build_BSO_Validate.cs" />
+    <Compile Include="Entities\Build\Build_ADO.cs" />
     <Compile Include="Entities\Build\Build_API.cs" />
     <Compile Include="Entities\Build\Build_DTO.cs" />
     <Compile Include="Entities\Build\Build_DTO_Read.cs" />
@@ -424,19 +428,24 @@
     <Compile Include="Entities\Data\Classification\Classification_API.cs" />
     <Compile Include="Entities\Data\Classification\Classification_DTO.cs" />
     <Compile Include="Entities\Data\Classification\Classification_VLD.cs" />
-    <Compile Include="Entities\Data\Compare\BSO\Compare_BSO.cs" />
     <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadAddition.cs" />
     <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadPreviousRelease.cs" />
     <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadDeletion.cs" />
     <Compile Include="Entities\Data\Compare\BSO\Compare_BSO_ReadAmendment.cs" />
+    <Compile Include="Entities\Data\Compare\BSO\DCompare_BSO.cs" />
     <Compile Include="Entities\Data\Compare\Compare_API.cs" />
     <Compile Include="Entities\Data\Compare\Compare_DTO.cs" />
     <Compile Include="Entities\Data\Compare\Compare_VLD.cs" />
     <Compile Include="Entities\Data\Compare\Compare_ADO.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadCollection.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadCollectionSummary.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadDatasetHEAD.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadMetadataHEAD.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadMetadataMatrix.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreMetadata.cs" />
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPreDataset.cs" />
+    <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadPxApiV1.cs" />
     <Compile Include="Entities\Data\Cube\CubeQuery_DTO.cs" />
     <Compile Include="Entities\Data\Cube\Cube_ADO.cs" />
     <Compile Include="Entities\Data\Cube\Cube_API.cs" />
@@ -444,6 +453,7 @@
     <Compile Include="Entities\Data\Cube\BSO\Cube_BSO_ReadDataset.cs" />
     <Compile Include="Entities\Data\Cube\Cube_MAP.cs" />
     <Compile Include="Entities\Data\Cube\Cube_VLD.cs" />
+    <Compile Include="Entities\Data\Cube\ICube_DTO_Read.cs" />
     <Compile Include="Entities\Data\Cube\JsonStat.cs" />
     <Compile Include="Entities\Data\Cube\Cube_DTO.cs" />
     <Compile Include="Entities\Data\Cube\JsonStatCollection.cs" />
@@ -452,6 +462,39 @@
     <Compile Include="Entities\Data\Cube\PxApiMetadataJson.cs" />
     <Compile Include="Entities\Data\Cube\PxApiV1Query.cs" />
     <Compile Include="Entities\Data\Cube\Sdmx.cs" />
+    <Compile Include="Entities\Data\DataMatrix\ConvertFactory.cs" />
+    <Compile Include="Entities\Data\DataMatrix\Dcollection.cs" />
+    <Compile Include="Entities\Data\DataMatrix\DComparer.cs" />
+    <Compile Include="Entities\Data\DataMatrix\DimensionVariable.cs" />
+    <Compile Include="Entities\Data\DataMatrix\Dmatrix.cs" />
+    <Compile Include="Entities\Data\DataMatrix\DmatrixFactory.cs" />
+    <Compile Include="Entities\Data\DataMatrix\Dmatrix_Container.cs" />
+    <Compile Include="Entities\Data\DataMatrix\DMatrix_VLD.cs" />
+    <Compile Include="Entities\Data\DataMatrix\Dspec.cs" />
+    <Compile Include="Entities\Data\DataMatrix\DSpecFactory.cs" />
+    <Compile Include="Entities\Data\DataMatrix\FlatTableBuilder.cs" />
+    <Compile Include="Entities\Data\DataMatrix\IDimensionVariable.cs" />
+    <Compile Include="Entities\Data\DataMatrix\IDmatrix.cs" />
+    <Compile Include="Entities\Data\DataMatrix\IDocument.cs" />
+    <Compile Include="Entities\Data\DataMatrix\IDspec.cs" />
+    <Compile Include="Entities\Data\DataMatrix\IMetaData.cs" />
+    <Compile Include="Entities\Data\DataMatrix\IPxData.cs" />
+    <Compile Include="Entities\Data\DataMatrix\IStatDimension.cs" />
+    <Compile Include="Entities\Data\DataMatrix\JsonStatBuilder1_0.cs" />
+    <Compile Include="Entities\Data\DataMatrix\JsonStatBuilder1_1.cs" />
+    <Compile Include="Entities\Data\DataMatrix\JsonStatBuilder2_0.cs" />
+    <Compile Include="Entities\Data\DataMatrix\MetaData.cs" />
+    <Compile Include="Entities\Data\DataMatrix\PxData.cs" />
+    <Compile Include="Entities\Data\DataMatrix\PxFileBuilder.cs" />
+    <Compile Include="Entities\Data\DataMatrix\StatDimension.cs" />
+    <Compile Include="Entities\Data\DataStore\CollectionReader.cs" />
+    <Compile Include="Entities\Data\DataStore\DataReader.cs" />
+    <Compile Include="Entities\Data\DataStore\DataStore_ADO.cs" />
+    <Compile Include="Entities\Data\DataStore\DataWriter.cs" />
+    <Compile Include="Entities\Data\DataStore\ICollectionReader.cs" />
+    <Compile Include="Entities\Data\DataStore\IDataReader.cs" />
+    <Compile Include="Entities\Data\DataStore\IDataWriter.cs" />
+    <Compile Include="Entities\Data\DataStore\MatrixFactory.cs" />
     <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO.cs" />
     <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO_Create.cs" />
     <Compile Include="Entities\Data\GeoLayer\BSO\GeoLayer_BSO_Delete.cs" />
@@ -485,6 +528,8 @@
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Read.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_Validate.cs" />
     <Compile Include="Entities\Data\Matrix\BSO\Matrix_BSO_ReadCodeList.cs" />
+    <Compile Include="Entities\Data\Matrix\IUpload.cs" />
+    <Compile Include="Entities\Data\Matrix\Matrix_IADO.cs" />
     <Compile Include="Entities\Data\Matrix\Px\PxIntegrityValidator.cs" />
     <Compile Include="Entities\Data\ReasonRelease\BSO\ReasonRelease_BSO_Delete.cs" />
     <Compile Include="Entities\Data\ReasonRelease\BSO\ReasonRelease_BSO_Read.cs" />
@@ -531,7 +576,9 @@
     <Compile Include="Entities\Security\Cache\Cache_API.cs" />
     <Compile Include="Entities\Security\Cache\Cache_DTO.cs" />
     <Compile Include="Entities\Security\Cache\Cache_VLD.cs" />
+    <Compile Include="Entities\Security\Configuration\BSO\ServicePathProvider.cs" />
     <Compile Include="Entities\Security\Configuration\BSO\Configuration_BSO_Read.cs" />
+    <Compile Include="Entities\Security\Configuration\BSO\IPathProvider.cs" />
     <Compile Include="Entities\Security\Database\BSO\Database_BSO_Read.cs" />
     <Compile Include="Entities\Security\Database\BSO\Database_BSO_Update.cs" />
     <Compile Include="Entities\Security\Database\Database_ADO.cs" />
@@ -903,6 +950,9 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

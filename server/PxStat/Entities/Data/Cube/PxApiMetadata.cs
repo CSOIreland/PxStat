@@ -5,7 +5,7 @@ namespace PxStat.Data
 {
     internal class PxApiMetadata
     {
-        internal List<PxApiItem> ReadSubjectsAsObjectList(JSONRPC_Output result)
+        internal List<PxApiItem> ReadSubjectsAsObjectList(IResponseOutput result)
         {
             List<PxApiItem> pList = new List<PxApiItem>();
 
@@ -17,7 +17,7 @@ namespace PxStat.Data
             return pList;
         }
 
-        internal List<PxApiItem> ReadProductsAsObjectList(JSONRPC_Output result)
+        internal List<PxApiItem> ReadProductsAsObjectList(IResponseOutput result)
         {
             List<PxApiItem> pList = new List<PxApiItem>();
 
@@ -30,7 +30,7 @@ namespace PxStat.Data
             return pList;
         }
 
-        internal List<PxApiItem> ReadCollectionAsObjectList(JSONRPC_Output result)
+        internal List<PxApiItem> ReadCollectionAsObjectList(IResponseOutput result)
         {
             List<PxApiItem> pList = new List<PxApiItem>();
 

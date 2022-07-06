@@ -5,6 +5,7 @@ namespace PxStat.System.Settings
     /// <summary>
     /// APIs to control creating, deleting, updating and reading Reasons.
     /// </summary>
+    [AllowAPICall]
     public class Reason_API
     {
         /// <summary>

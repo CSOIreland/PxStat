@@ -82,7 +82,7 @@ namespace PxParser.Resources.Parser
 
         static readonly Parser<char, IPxSingleElement> PxConfidential = Confidential.Select<IPxSingleElement>(s => new PxDotValue());
 
-        static readonly Parser<char, IPxSingleElement> PxQuotedValue = QuotedValue.Select<IPxSingleElement>(s => new PxQuotedValue(s));
+        static readonly Parser<char, IPxSingleElement> PxQuotedValue = QuotedValue.Select<IPxSingleElement>(s => new PxQuotedValue(s, false));
 
 
         static readonly Parser<char, IPxSingleElement> PxQuotedValueMultiline = QuotedValueMultiline.Select<IPxSingleElement>(s => new PxQuotedValueMultiline(s));
@@ -272,6 +272,7 @@ namespace PxParser.Resources.Parser
             }
 
             builder.Append("\r\n");
+
             var parsedDocument = PxDocument.Parse(builder.ToString());
             if (!parsedDocument.Success)
             {

@@ -43,7 +43,7 @@ namespace PxStat.System.Navigation
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, Keyword_Release_DTO dto)
+        internal int Create(IADO ado, Keyword_Release_DTO dto)
         {
             var inputParams = new List<ADO_inputParams>()
                 {

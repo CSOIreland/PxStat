@@ -5,6 +5,7 @@ namespace PxStat.Data
     /// <summary>
     /// These APIs are concerned with reading and amending Releases.
     /// </summary>
+    [AllowAPICall]
     public class Release_API
     {
         /// <summary>

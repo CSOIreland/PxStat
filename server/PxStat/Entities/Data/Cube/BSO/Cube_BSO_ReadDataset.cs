@@ -1,11 +1,17 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
+using PxStat.DataStore;
 using PxStat.JsonStatSchema;
+using PxStat.Resources;
 using PxStat.Security;
+using PxStat.System.Settings;
 using PxStat.Template;
 using System;
+using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Web;
 
 namespace PxStat.Data
@@ -15,12 +21,13 @@ namespace PxStat.Data
     /// </summary>
     internal class Cube_BSO_ReadDataset : BaseTemplate_Read<CubeQuery_DTO, JsonStatQueryLive_VLD>
     {
+        static Stopwatch _sw;
         internal bool defaultPivot = false;
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Cube_BSO_ReadDataset(JSONRPC_API request, bool defaultRequestPivot = false) : base(request, new JsonStatQueryLive_VLD())
+        internal Cube_BSO_ReadDataset(IRequest request, bool defaultRequestPivot = false) : base(request, new JsonStatQueryLive_VLD())
         {
             defaultPivot = defaultRequestPivot;
         }
@@ -49,7 +56,8 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
-
+            _sw = new Stopwatch();
+            _sw.Start();
             if (DTO.jStatQueryExtension.extension.Pivot != null)
             {
                 if (DTO.jStatQueryExtension.extension.Format.Type != "CSV" && DTO.jStatQueryExtension.extension.Format.Type != "XLSX")
@@ -67,42 +75,130 @@ namespace PxStat.Data
 
             if (cache.hasData)
             {
+                //Modify mimetype etc
+                AddFormatAndMimeType();
                 Response.data = cache.data;
                 return true;
             }
 
+            // Get whitelist
+            string[] whitelist = Configuration_BSO.GetCustomConfig(ConfigType.server, "whitelist");
 
-            if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
+            // Get host 
+            var hRequest = HttpContext.Current.Request;
+            string host = hRequest.Url.Host;
+
+            // Check if host is not in the whitelist and the request is throttled
+            if (Throttle_BSO.IsNotInTheWhitelist(whitelist, host) && Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
             {
                 Log.Instance.Debug("Request throttled");
                 Response.error = Label.Get("error.throttled");
             }
 
-            var result = Release_ADO.GetReleaseDTO(items);
-            if (result == null)
-            {
-                Response.data = null;
-                return true;
-            }
 
-            var data = ExecuteReadDataset(Ado, DTO, result, Response, DTO.jStatQueryExtension.extension.Language.Code, DTO.jStatQueryExtension.extension.Language.Culture, defaultPivot);
-            return data;
+
+            var releaseDto = Release_ADO.GetReleaseDTO(items);
+            if (releaseDto == null)
+            {
+                Response.statusCode = HttpStatusCode.NotFound;
+                Response.data = null;
+                return false;
+            }
+            IMetaData metaData = new MetaData();
+            var hasRun = ExecuteReadDatasetDmatrix(Ado, metaData, DTO, releaseDto, Response, DTO.jStatQueryExtension.extension.Language.Code, DTO.jStatQueryExtension.extension.Language.Culture);
+
+            //Modify mimetype etc
+            AddFormatAndMimeType();
+
+            if (releaseDto.RlsLiveDatetimeTo != default(DateTime))
+                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO, Response.data, releaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.jStatQueryExtension.extension.Matrix);
+            else
+                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO, Response.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.jStatQueryExtension.extension.Matrix);
+
+            return hasRun;
 
         }
 
-        internal static bool ExecuteReadDataset(ADO theAdo, CubeQuery_DTO theDto, Release_DTO releaseDto, JSONRPC_Output theResponse, string requestLanguage, string culture = null, bool defaultPivot = false)
+
+
+
+        private void AddFormatAndMimeType()
+        {
+            Format_DTO_Read format = null;
+
+            if (DTO.jStatQueryExtension?.extension?.Format != null)
+            {
+                format = new Format_DTO_Read()
+                {
+                    FrmType = DTO.jStatQueryExtension.extension.Format.Type,
+                    FrmVersion = DTO.jStatQueryExtension.extension.Format.Version
+
+                };
+            }
+            else
+                format = new Format_DTO_Read() { FrmType = Request.parameters[Constants.C_DATA_RESTFUL_FORMAT_TYPE], FrmVersion = Request.parameters[Constants.C_DATA_RESTFUL_FORMAT_VERSION] };
+            string mtype = null;
+            using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+            {
+                mtype = fbso.GetMimetypeForFormat(format);
+            };
+
+            string suffix;
+            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
+            {
+                suffix = bso.GetFileSuffixForFormat(format);
+            };
+            Response.mimeType = mtype;
+            if (Request.GetType().Equals(typeof(JSONRPC_API)))
+                Response.fileName = Request.parameters.extension.matrix + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + suffix;
+            else
+                Response.fileName = Request.parameters[Constants.C_DATA_RESTFUL_MATRIX] + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + suffix;
+            Response.response = Response.data;
+        }
+
+        internal static bool ExecuteReadDatasetDmatrix(IADO theAdo, IMetaData metaData, CubeQuery_DTO theDto, Release_DTO releaseDto, IResponseOutput theResponse, string requestLanguage, string culture = null, bool defaultPivot = false, bool isLive = true)
         {
 
-            var theMatrix = new Matrix(theAdo, releaseDto, theDto.jStatQueryExtension.extension.Language.Code).ApplySearchCriteria(theDto);
-            if (theMatrix == null)
+
+            DataReader dr = new DataReader();
+
+            DataStore_ADO dAdo = new DataStore_ADO();
+
+            IDmatrix matrix = null;
+            if (isLive)
+                matrix = dr.GetLiveData(theAdo, metaData, theDto.jStatQueryExtension.extension.Matrix, requestLanguage, releaseDto);
+            else
+                matrix = dr.GetNonLiveData(theAdo, metaData, requestLanguage, releaseDto);
+
+            if (matrix == null)
             {
                 theResponse.data = null;
-                return true;
+                theResponse.statusCode = HttpStatusCode.NotFound;
+                return false;
             }
+
+
+
+            DMatrix_VLD vld = new DMatrix_VLD();
+            var validation = vld.Validate(matrix);
+
+            if (!validation.IsValid)
+            {
+                foreach (var error in validation.Errors)
+                {
+                    Log.Instance.Error(error.ErrorMessage);
+                    theResponse.error = Label.Get("error.validation", theDto.jStatQueryExtension.extension.Language.Code);
+                    return false;
+                }
+            }
+
+            //Validate the query against the matrix??
+
+            matrix = dr.QueryDataset(theDto, matrix);
 
             if (theDto.jStatQueryExtension.extension.Format.Type.Equals(Resources.Constants.C_SYSTEM_XLSX_NAME))
             {
-                int dataSize = theMatrix.MainSpec.GetDataSize();
+                int dataSize = matrix.Cells.Count;
                 int maxSize = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.download.threshold.xlsx");
                 if (dataSize > maxSize)
                 {
@@ -112,7 +208,7 @@ namespace PxStat.Data
             }
             else if (theDto.jStatQueryExtension.extension.Format.Type.Equals(Resources.Constants.C_SYSTEM_CSV_NAME))
             {
-                int dataSize = theMatrix.MainSpec.GetDataSize();
+                int dataSize = matrix.Cells.Count;
                 int maxSize = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.download.threshold.csv");
                 if (dataSize > maxSize)
                 {
@@ -121,20 +217,15 @@ namespace PxStat.Data
                 }
             }
 
-
-            var matrix = new Cube_ADO(theAdo).ReadCubeData(theMatrix);
-            if (matrix == null)
-            {
-                theResponse.data = null;
-                return true;
-            }
-
-
+            //Ensure the requested pivot actually exists among the dimensions
             if (!string.IsNullOrEmpty(theDto.jStatQueryExtension.extension.Pivot))
             {
-                if (theMatrix.MainSpec.Classification.Where(x => x.Code == theDto.jStatQueryExtension.extension.Pivot).Count() == 0
-                && Utility.GetCustomConfig("APP_CSV_STATISTIC") != theDto.jStatQueryExtension.extension.Pivot
-                    && theMatrix.MainSpec.Frequency.Code != theDto.jStatQueryExtension.extension.Pivot)
+                bool pivotOk = false;
+                foreach (var dim in matrix.Dspecs[matrix.Language].Dimensions)
+                {
+                    if (dim.Code.Equals(theDto.jStatQueryExtension.extension.Pivot)) pivotOk = true;
+                }
+                if (!pivotOk)
                 {
                     theResponse.error = Label.Get("error.validation", theDto.jStatQueryExtension.extension.Language.Code);
                     return false;
@@ -143,64 +234,76 @@ namespace PxStat.Data
             }
             else theDto.jStatQueryExtension.extension.Pivot = null;
 
+
+            //Set culture
             CultureInfo readCulture;
 
             if (culture == null)
                 readCulture = CultureInfo.CurrentCulture;
             else
-                readCulture = CultureInfo.CreateSpecificCulture(culture); ;
+                readCulture = CultureInfo.CreateSpecificCulture(culture);
 
+
+            //Set a default pivot of the time dimension if necessary
             if (theDto.jStatQueryExtension.extension.Pivot == null && defaultPivot && theDto.jStatQueryExtension.extension.Format.Type == DatasetFormat.Csv)
             {
-                theDto.jStatQueryExtension.extension.Pivot = matrix.MainSpec.Frequency.Code;
+                theDto.jStatQueryExtension.extension.Pivot = matrix.Dspecs[matrix.Language].Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_TIME).FirstOrDefault().Code;
             }
-
 
             switch (theDto.jStatQueryExtension.extension.Format.Type)
             {
                 case DatasetFormat.JsonStat:
-                    matrix.FormatType = theDto.jStatQueryExtension.extension.Format.Type;
-                    matrix.FormatVersion = theDto.jStatQueryExtension.extension.Format.Version;
 
                     if (theDto.jStatQueryExtension.extension.Format.Version == "1.0")
                     {
-                        var jsonStat = matrix.GetJsonStatV1Object(true, null);
+                        JsonStatBuilder1_0 jxb = new JsonStatBuilder1_0();
+                        var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(SerializeJsonStatV1.ToJson(jsonStat));
                     }
                     else if (theDto.jStatQueryExtension.extension.Format.Version == "1.1")
                     {
-                        var jsonStat = matrix.GetJsonStatV1_1Object(false, true, null, readCulture);
+                        JsonStatBuilder1_1 jxb = new JsonStatBuilder1_1();
+                        var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(SerializeJsonStatV1_1.ToJson(jsonStat));
-
                     }
                     else
                     {
-                        var jsonStat = matrix.GetJsonStatObject(false, true, null, readCulture);
+                        JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
+                        var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
                     }
                     break;
                 case DatasetFormat.Csv:
-                    theResponse.data = matrix.GetCsvObject(requestLanguage, false, readCulture, theDto.jStatQueryExtension.extension.Pivot, theDto.jStatQueryExtension.extension.Codes == null ? true : (bool)theDto.jStatQueryExtension.extension.Codes);
-                    break;
+                    {
+                        FlatTableBuilder ftb = new FlatTableBuilder();
+                        var pivot = theDto.jStatQueryExtension.extension.Pivot;
+                        DataTable dt;
+                        if (pivot == null)
+                            dt = ftb.GetMatrixDataTable(matrix, requestLanguage, false, 0, theDto.jStatQueryExtension.extension.Codes == null ? false : (bool)theDto.jStatQueryExtension.extension.Codes);
+                        else
+                            dt = ftb.GetMatrixDataTablePivot(matrix, requestLanguage, pivot, theDto.jStatQueryExtension.extension.Codes == null ? false : (bool)theDto.jStatQueryExtension.extension.Codes);
+
+                        theResponse.data = ftb.GetCsv(dt, "\"", readCulture);
+
+                        break;
+                    }
                 case DatasetFormat.Px:
-                    theResponse.data = matrix.GetPxObject();
+                    PxFileBuilder pxb = new PxFileBuilder();
+                    theResponse.data = pxb.Create(matrix, metaData, requestLanguage);
                     break;
                 case DatasetFormat.Xlsx:
-                    theResponse.data = matrix.GetXlsxObject(requestLanguage, CultureInfo.CurrentCulture, theDto.jStatQueryExtension.extension.Pivot, theDto.jStatQueryExtension.extension.Codes == null ? true : (bool)theDto.jStatQueryExtension.extension.Codes);
-                    break;
+                    {
+                        FlatTableBuilder ftb = new FlatTableBuilder();
+                        theResponse.data = ftb.GetXlsxObject(matrix, requestLanguage, CultureInfo.CurrentCulture, theDto.jStatQueryExtension.extension.Pivot, theDto.jStatQueryExtension.extension.Codes == null ? true : (bool)theDto.jStatQueryExtension.extension.Codes);
+                        break;
+                    }
 
-                case DatasetFormat.Sdmx:
-                    theResponse.data = matrix.GetSdmx(theDto.jStatQueryExtension.extension.Language.Code);
-                    break;
             }
 
-            if (releaseDto.RlsLiveDatetimeTo != default(DateTime))
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", theDto, theResponse.data, releaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.Code);
-            else
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", theDto, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.Code);
             return true;
-
         }
+
+
 
     }
 }

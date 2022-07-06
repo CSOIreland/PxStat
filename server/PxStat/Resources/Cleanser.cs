@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +28,28 @@ namespace PxStat.Resources
         public static JObject Cleanse(dynamic parameters)
         {
             return JObject.Parse(Cleanse(parameters.ToString()));
+        }
+
+        public static IList<string> Cleanse(IList<string> parameters)
+        {
+            List<string> cleanList = new List<string>();
+            foreach (string s in parameters)
+            {
+                cleanList.Add(Cleanse(s));
+            }
+            return cleanList;
+        }
+
+        public static bool TryParseJson<T>(this string @this, out T result)
+        {
+            bool success = true;
+            var settings = new JsonSerializerSettings
+            {
+                Error = (sender, args) => { success = false; args.ErrorContext.Handled = true; },
+                MissingMemberHandling = MissingMemberHandling.Error
+            };
+            result = JsonConvert.DeserializeObject<T>(@this, settings);
+            return success;
         }
 
         /// <summary>

@@ -51,6 +51,12 @@ namespace PxStat.Template
         {
             try
             {
+                //HEAD requests are not allowed on action queries
+                if (Request.GetType().Equals(typeof(Head_API)))
+                {
+                    OnAuthenticationFailed();
+                    return this;
+                }
 
                 // first of all, we check if user has the right to perform this operation!
                 if (HasUserToBeAuthenticated())

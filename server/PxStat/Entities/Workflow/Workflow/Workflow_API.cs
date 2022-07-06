@@ -5,6 +5,8 @@ namespace PxStat.Workflow
     /// <summary>
     /// These APIs control the overall access to the Workflow processes.
     /// </summary>
+	
+	[AllowAPICall]
     public class Workflow_API
     {
         /// <summary>

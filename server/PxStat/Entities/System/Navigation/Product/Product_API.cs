@@ -5,6 +5,7 @@ namespace PxStat.System.Navigation
     /// <summary>
     /// APIs to control creation, reading, updating and deleting of Products.
     /// </summary>
+    [AllowAPICall]
     public class Product_API
     {
         /// <summary>

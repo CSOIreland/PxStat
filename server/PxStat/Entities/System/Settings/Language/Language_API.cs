@@ -10,6 +10,7 @@ namespace PxStat.System.Settings
     /// APIs to control creating, deleting, updating and reading Languages.
     /// </summary>
     /// 
+    [AllowAPICall]
     public class Language_API
     {
         /// <summary>

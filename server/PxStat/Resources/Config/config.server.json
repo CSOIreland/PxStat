@@ -26,5 +26,14 @@
   },
   "maintenance": {
     "post-import-delete": false
-  }
+  },
+  "throttle": {
+    "subscribedWindowSeconds": 60,
+    "subscribedCallLimit": 30,
+    "nonSubscribedWindowSeconds": 180,
+    "nonSubscribedCallLimit": 10
+  },
+  "whitelist": [
+    "domain.extension"
+  ]
 }

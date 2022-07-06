@@ -5,6 +5,8 @@ namespace PxStat.Workflow
     /// <summary>
     /// These APIs control access to the Workflow-Signoff process (i.e. the final stage of a Workflow)
     /// </summary>
+	
+	[AllowAPICall]
     public class WorkflowSignoff_API
     {
 

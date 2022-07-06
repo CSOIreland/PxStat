@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Newtonsoft.Json;
+using PxStat.Data;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
@@ -33,12 +34,12 @@ namespace PxStat.Template
         /// <summary>
         /// Request passed into the API
         /// </summary>
-        protected JSONRPC_API Request { get; }
+        protected IRequest Request { get; }
 
         /// <summary>
         /// Response passed back by API
         /// </summary>
-        public JSONRPC_Output Response { get; set; }
+        public IResponseOutput Response { get; set; }
 
         /// <summary>
         /// DTO created from request parameters
@@ -66,8 +67,11 @@ namespace PxStat.Template
         /// </summary>
         /// <param name="request"></param>
         /// <param name="validator"></param>
-        protected BaseTemplate(JSONRPC_API request, IValidator<T> validator)
+        protected BaseTemplate(IRequest request, IValidator<T> validator)
         {
+            IMetaData metaData = new MetaData();
+            IPathProvider servicePathProvider = new ServerPathProvider();
+            Configuration_BSO.GetInstance(metaData, servicePathProvider);
             Configuration_BSO.SetConfigFromFiles();
             Ado = new ADO("defaultConnection");
 
@@ -77,7 +81,12 @@ namespace PxStat.Template
             }
 
             Request = request;
-            Response = new JSONRPC_Output();
+            if (Request.GetType().Equals(typeof(Head_API)))
+            {
+                Response = new Head_Output();
+            }
+            else
+                Response = new JSONRPC_Output();
             Validator = validator;
             Trace_BSO_Create.Execute(Ado, request);
         }
@@ -205,12 +214,19 @@ namespace PxStat.Template
         {
             try
             {
+                //if (Request.GetType().Equals(typeof(JSONRPC_API)))
+                //{
                 if (parameters != null)
                 {
                     return (T)Activator.CreateInstance(typeof(T), parameters);
 
                 }
                 else return (T)Activator.CreateInstance(typeof(T), Request.parameters);
+                //}
+                //else
+                //{
+                //    return (T)Activator.CreateInstance(typeof(T), Request);
+                //}
             }
             catch (Exception ex)
             {

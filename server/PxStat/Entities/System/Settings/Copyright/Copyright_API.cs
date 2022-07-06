@@ -5,6 +5,7 @@ namespace PxStat.System.Settings
     /// <summary>
     /// APIs to control creating, deleting, updating and reading Copyrights.
     /// </summary>
+    [AllowAPICall]
     public class Copyright_API
     {
         /// <summary>

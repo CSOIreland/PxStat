@@ -5,7 +5,8 @@ namespace PxStat.Security.Logging
     /// <summary>
     /// API for reading logs
     /// </summary>
-    internal class Logging_API
+    [AllowAPICall]
+    public class Logging_API
     {
         /// <summary>
         /// Read logs where logs have been sent to the database

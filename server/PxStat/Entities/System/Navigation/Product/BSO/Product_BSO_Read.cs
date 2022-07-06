@@ -13,7 +13,7 @@ namespace PxStat.System.Navigation
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Product_BSO_Read(JSONRPC_API request) : base(request, new Product_VLD_Read())
+        internal Product_BSO_Read(IRequest request) : base(request, new Product_VLD_Read())
         {
         }
 

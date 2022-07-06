@@ -5,7 +5,8 @@ namespace PxStat.Security
     /// <summary>
     /// Group Account APIs control user membership of Groups.
     /// </summary>
-    internal class GroupAccount_API
+    [AllowAPICall]
+    public class GroupAccount_API
     {
         /// <summary>
         /// Entry point to the API method - Reads Group Membership

@@ -7,6 +7,7 @@ namespace PxStat.System.Navigation
     /// These APIs control the creation and reading of Keyword Subjects.
     /// </summary>
     // should define interface to enforce correct method names and cases
+    [AllowAPICall]
     public class Keyword_Subject_API
     {
         /// <summary>

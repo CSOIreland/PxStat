@@ -31,6 +31,33 @@ namespace PxStat.JsonStatSchema
 
     }
 
+
+    internal class JsonStatQueryLiveHEAD_VLD : AbstractValidator<CubeQuery_DTO>
+    {
+        internal JsonStatQueryLiveHEAD_VLD()
+        {
+            string query = Constants.C_JSON_STAT_QUERY_CLASS;
+            string version = Constants.C_JSON_STAT_QUERY_VERSION;
+            string cultureRegex = Utility.GetCustomConfig("APP_LANGUAGE_CULTURE");
+            RuleFor(x => x.jStatQuery.Class.Equals(query));
+            RuleFor(x => x.jStatQuery.Version.Equals(version));
+
+            RuleFor(x => x.jStatQueryExtension.extension.Matrix).NotNull().Length(0, 20);
+            RuleFor(x => x.jStatQueryExtension.extension.Language.Code.Length.Equals(2));
+            RuleFor(x => x.jStatQueryExtension.extension.Language.Culture).Matches(cultureRegex).When(x => !string.IsNullOrEmpty(x.jStatQueryExtension.extension.Language.Culture));
+
+
+        }
+
+        private bool ValidateFormat(dynamic frm)
+        {
+
+            Format_DTO_Read format = new Format_DTO_Read() { FrmType = frm.Type, FrmVersion = frm.Version, FrmDirection = "DOWNLOAD" };
+            return Build.CustomValidations.FormatForReadDataset(format);
+        }
+
+    }
+
     internal class JsonStatPreQuery_VLD : AbstractValidator<CubeQuery_DTO>
     {
         internal JsonStatPreQuery_VLD()

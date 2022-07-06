@@ -6,6 +6,7 @@ namespace PxStat.Data
     /// <summary>
     /// These APIs are used for uploading, validating and reading px file data.
     /// </summary>
+    [AllowAPICall]
     public class Matrix_API
     {
         /// <summary>

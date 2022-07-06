@@ -2,8 +2,8 @@
 
 namespace PxStat.Workflow
 {
-
-    internal class WorkflowRequest_API
+	[AllowAPICall]
+    public class WorkflowRequest_API
     {
         /// <summary>
         /// Entry point to the API method - Creates a Workflow Request

@@ -15,7 +15,7 @@ namespace PxStat.System.Settings
         /// <param name="ado"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Format_DTO_Read format)
+        internal ADO_readerOutput Read(IADO ado, Format_DTO_Read format)
         {
             ADO_readerOutput output = new ADO_readerOutput();
             var paramList = new List<ADO_inputParams>();

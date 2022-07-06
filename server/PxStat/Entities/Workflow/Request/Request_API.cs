@@ -5,6 +5,8 @@ namespace PxStat.Workflow
     /// <summary>
     /// A Workflow Request is a user request to begin the workflow to create a live release. These APIs controls the Workflow Request process.
     /// </summary>
+	
+	[AllowAPICall]
     public class Request_API
     {
         /// <summary>

@@ -2,6 +2,7 @@
 using FluentValidation.Results;
 using PxParser.Resources.Parser;
 using PxStat.Data.Px;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -227,12 +228,13 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="theMatrix"></param>
         /// <returns></returns>
-        internal Release_DTO GetLatestRelease(Matrix theMatrix)
+        internal Release_DTO GetLatestRelease(IDmatrix theMatrix)
         {
             Release_ADO releaseAdo = new Release_ADO(Ado);
             var releaseDTORead = new Release_DTO_Read() { MtrCode = theMatrix.Code };
             return Release_ADO.GetReleaseDTO(releaseAdo.ReadLatest(releaseDTORead));
         }
+
         /// <summary>
         /// Clones a release
         /// </summary>
@@ -254,7 +256,7 @@ namespace PxStat.Data
         }
 
         /// <summary>
-        /// Create a new release
+        /// Create a new release for a Dmatrix
         /// </summary>
         /// <param name="theMatrix"></param>
         /// <param name="releaseVersion"></param>
@@ -262,7 +264,7 @@ namespace PxStat.Data
         /// <param name="grpCode"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        internal int CreateRelease(Matrix theMatrix, int releaseVersion, int releaseRevision, string grpCode, string username)
+        internal int CreateRelease(IDmatrix theMatrix, int releaseVersion, int releaseRevision, string grpCode, string username)
         {
             Release_ADO releaseAdo = new Release_ADO(Ado);
             Release_DTO releaseDto = new Release_DTO()
@@ -334,10 +336,7 @@ namespace PxStat.Data
             CreateStatisticalProducts(languageSpec.Statistic, languageSpec.MatrixId);
 
             CreateClassifications(languageSpec.Classification, languageSpec.MatrixId);
-
-
         }
-
 
         /// <summary>
         /// Deletes a release based on release code
@@ -463,8 +462,5 @@ namespace PxStat.Data
                 stat.StatisticalProductId = matrixAdo.CreateStatisticalRecord(stat, matrixId);
             }
         }
-
-
-
     }
 }

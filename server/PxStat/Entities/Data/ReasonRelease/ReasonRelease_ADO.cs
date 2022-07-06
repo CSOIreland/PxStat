@@ -37,6 +37,34 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        /// Reads a ReasonRelease entity
+        /// </summary>
+        /// <param name="ado"></param>
+        /// <param name="reasonRelease"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput Read(IADO ado, ReasonRelease_DTO_Read reasonRelease)
+        {
+            ADO_readerOutput output = new ADO_readerOutput();
+
+            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() {name= "@RlsCode",value=reasonRelease.RlsCode},
+                new ADO_inputParams() {name= "@LngIsoCode",value=reasonRelease.LngIsoCode}
+            };
+
+
+            if (reasonRelease.RsnCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@RsnCode", value = reasonRelease.RsnCode });
+
+            //Call the stored procedure
+            output = ado.ExecuteReaderProcedure("Data_Reason_Release_Read", inputParamList);
+
+            //return the list of entities that have been found
+            return output;
+        }
+
+
+        /// <summary>
         /// Creates a ReasonRelease entity
         /// </summary>
         /// <param name="ado"></param>

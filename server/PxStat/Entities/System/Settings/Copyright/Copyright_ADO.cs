@@ -33,6 +33,31 @@ namespace PxStat.System.Settings
         }
 
         /// <summary>
+        /// Reads a Copyright
+        /// </summary>
+        /// <param name="ado"></param>
+        /// <param name="copyright"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput Read(IADO ado, Copyright_DTO_Read copyright)
+        {
+            ADO_readerOutput output = new ADO_readerOutput();
+
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>();
+            if (!string.IsNullOrEmpty(copyright.CprCode))
+                paramList.Add(new ADO_inputParams() { name = "@CprCode", value = copyright.CprCode });
+
+            if (!string.IsNullOrEmpty(copyright.CprValue))
+                paramList.Add(new ADO_inputParams() { name = "@CprValue", value = copyright.CprValue });
+
+
+            //Call the stored procedure
+            output = ado.ExecuteReaderProcedure("System_Settings_Copyright_Read", paramList);
+
+            //return the list of entities that have been found
+            return output;
+        }
+
+        /// <summary>
         /// Creates a Copyright
         /// </summary>
         /// <param name="ado"></param>

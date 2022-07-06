@@ -592,7 +592,6 @@ namespace PxStat.Build
             }
         }
 
-
         /// <summary>
         /// Create data tables based on the Matrix data and metadata. Load the data to the database TD_DATA and TM_DATA_CELL tables
         /// </summary>

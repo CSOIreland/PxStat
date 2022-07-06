@@ -1,7 +1,7 @@
 ﻿using API;
 using PxParser.Resources.Parser;
 using PxStat.Build;
-using PxStat.Data.Px;
+using PxStat.DataStore;
 using PxStat.Security;
 using PxStat.System.Navigation;
 using PxStat.Template;
@@ -19,6 +19,7 @@ namespace PxStat.Data
         /// <summary>
         /// class variable
         /// </summary>
+        /// 
         Matrix_ADO matrixAdo;
 
         /// <summary>
@@ -74,33 +75,25 @@ namespace PxStat.Data
                 return false;
             }
 
-            Matrix theMatrixData;
-
-
-
-            PxDoc = PxStatEngine.ParsePxInput(DTO.MtrInput);
-            theMatrixData = new Matrix(PxDoc, DTO);
-
+            // Create the matrix from the Matrix Factory
+            DmatrixFactory dmatrixFactory = new DmatrixFactory(Ado); 
+            IMetaData metaData = new MetaData();    
+            IDmatrix matrix = dmatrixFactory.CreateDmatrix(DTO, metaData);
 
             Matrix_BSO mBso = new Matrix_BSO(Ado);
 
-
-            int releaseId;
-
-
-
             // Check if a WIP Release already exists for the Matrix to Upload
-            var latestRelease = mBso.GetLatestRelease(theMatrixData);
+            var latestRelease = mBso.GetLatestRelease(matrix);
             if (latestRelease != null && !DTO.Overwrite && releaseAdo.IsWip(latestRelease.RlsCode)) //
             {
                 Group_DTO_Create dtoGroup = this.GetGroup(DTO.GrpCode);
                 if (latestRelease.GrpCode != DTO.GrpCode)
                 {
-                    Response.data = String.Format(Label.Get("px.duplicate-different-group"), theMatrixData.Code, latestRelease.GrpName + " (" + latestRelease.GrpCode + ")", dtoGroup.GrpName + " (" + DTO.GrpCode + ")");
+                    Response.data = String.Format(Label.Get("px.duplicate-different-group"), matrix.Code, latestRelease.GrpName + " (" + latestRelease.GrpCode + ")", dtoGroup.GrpName + " (" + DTO.GrpCode + ")");
                 }
                 else
                 {
-                    Response.data = String.Format(Label.Get("px.duplicate"), theMatrixData.Code);
+                    Response.data = String.Format(Label.Get("px.duplicate"), matrix.Code);
                 }
                 return true;
             }
@@ -108,21 +101,21 @@ namespace PxStat.Data
             // Check if this Release already has a pending WorkflowRequest 
             if (latestRelease != null && new WorkflowRequest_ADO().IsCurrent(Ado, latestRelease.RlsCode))
             {
-                Response.error = String.Format(Label.Get("error.workflow"), theMatrixData.Code);
+                Response.error = String.Format(Label.Get("error.workflow"), matrix.Code);
                 return false;
             }
 
             // Check if this Release has another pending live release
             if (latestRelease != null && new Release_ADO(Ado).IsLiveNext(latestRelease.RlsCode))
             {
-                Response.error = String.Format(Label.Get("px.pendinglive"), theMatrixData.Code);
+                Response.error = String.Format(Label.Get("px.pendinglive"), matrix.Code);
                 return false;
             }
 
             //Check if the matrix code is locked in the dataset table
             using (DatasetAdo dAdo = new DatasetAdo(new ADO("defaultConnection")))
             {
-                ADO_readerOutput dResult = dAdo.ReadDatasetLocked(theMatrixData.Code);
+                ADO_readerOutput dResult = dAdo.ReadDatasetLocked(matrix.Code);
                 if (dResult.hasData)
                 {
                     DateTime lockedTime = dResult.data[0].DttDatetimeLocked.Equals(DBNull.Value) ? default : (DateTime)dResult.data[0].DttDatetimeLocked;
@@ -131,15 +124,13 @@ namespace PxStat.Data
                         Response.error = Label.Get("error.release.locked");
                         return false;
                     }
-
                 }
-
-                dAdo.DatasetLockUpdate(theMatrixData.Code, DateTime.Now);
+                dAdo.DatasetLockUpdate(matrix.Code, DateTime.Now);
             }
 
+            int releaseId;
             if (latestRelease != null)
             {
-
                 if (latestRelease.RlsLiveFlag)
                 {
                     releaseId = mBso.CloneRelease(latestRelease.RlsCode, DTO.GrpCode, SamAccountName);
@@ -155,52 +146,35 @@ namespace PxStat.Data
                     matrixAdo.Delete(latestRelease.RlsCode, SamAccountName);
                 }
 
-
-
-
                 // Clean up caching
                 MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + latestRelease.RlsCode);
                 MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + latestRelease.RlsCode);
                 MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + latestRelease.RlsCode);
-
                 MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + latestRelease.RlsCode);
                 MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + latestRelease.RlsCode);
             }
             else
             {
-                releaseId = mBso.CreateRelease(theMatrixData, 0, 1, DTO.GrpCode, SamAccountName);
+                releaseId = mBso.CreateRelease(matrix, 0, 1, DTO.GrpCode, SamAccountName);
             }
 
-            mBso.CreateMatrix(theMatrixData, releaseId, SamAccountName, DTO);
-
-
-            swMatrix.Stop();
-            Log.Instance.Info(string.Format("Matrix object created in {0} ms", Math.Round((double)swMatrix.ElapsedMilliseconds)));
+            // Update the lock on the matrix code in the dataset table
+            using (DatasetAdo dAdo = new DatasetAdo(new ADO("defaultConnection")))
+            {
+                dAdo.DatasetLockUpdate(matrix.Code, default);
+            }
 
             Stopwatch swLoad = new Stopwatch();
             swLoad.Start();
 
-            //Do a Cartesian join to correctly label each data point with its dimensions
-            //Create bulk tables from this and load them to the database
-
-            var asyncTask = buildBso.CreateAndLoadDataTables(Ado, theMatrixData, true);
-
-            //We must specifically retrieve any exceptions from the Task and then throw them. Otherwise they will be silent.
-            if (asyncTask.Exception != null) throw asyncTask.Exception;
-
-            matrixAdo.MarkMatrixAsContainingData(theMatrixData.MainSpec.MatrixId, true);
-
+            // Write matrix and associated metaData to the database
+            IDataWriter dataWriter = new DataWriter();
+            dataWriter.CreateAndLoadDataField(Ado, matrix, SamAccountName, releaseId);
+            dataWriter.CreateAndLoadMetadata(Ado, matrix);
             Keyword_Release_BSO_CreateMandatory krBSO = new Keyword_Release_BSO_CreateMandatory();
-
-            krBSO.Create(Ado, releaseId, SamAccountName, theMatrixData);
-
+            krBSO.Create(Ado, matrix, releaseId, SamAccountName);
             swLoad.Stop();
-            Log.Instance.Info(string.Format("Matrix loaded in DB in {0} ms", Math.Round((double)swLoad.ElapsedMilliseconds)));
-
-            using (DatasetAdo dAdo = new DatasetAdo(new ADO("defaultConnection")))
-            {
-                dAdo.DatasetLockUpdate(theMatrixData.Code, default);
-            }
+            Log.Instance.Info(string.Format("matrix loaded in db in {0} ms", Math.Round((double)swLoad.ElapsedMilliseconds)));
 
             Response.data = JSONRPC.success;
             return true;
@@ -224,8 +198,5 @@ namespace PxStat.Data
 
             return readGroup;
         }
-
-
-
     }
 }

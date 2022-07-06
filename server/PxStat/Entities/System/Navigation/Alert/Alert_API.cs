@@ -5,7 +5,8 @@ namespace PxStat.System.Navigation
     /// <summary>
     /// An Alert is a specific system message to be communicated to users. This API enables the creation and reading of Alerts.
     /// </summary>
-    internal class Alert_API
+    [AllowAPICall]
+    public class Alert_API
     {
         /// <summary>
         /// Reads one or more Alerts, including alerts set in the future

@@ -1,5 +1,6 @@
 ﻿using PxStat.Security;
 using System;
+using System.Collections.Generic;
 
 namespace PxStat.Data
 {
@@ -262,6 +263,9 @@ namespace PxStat.Data
         /// </summary>
         public string GrpContactEmail { get; internal set; }
 
+        public List<string> Reasons { get; internal set; }
+
+        public int MtrId { get; internal set; }
         #endregion
     }
 }

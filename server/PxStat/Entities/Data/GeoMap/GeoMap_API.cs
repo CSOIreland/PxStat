@@ -3,6 +3,7 @@ using System.Net;
 
 namespace PxStat.Data
 {
+    [AllowAPICall]
     public class GeoMap_API
     {
         public static dynamic Create(JSONRPC_API jsonrpcRequest)

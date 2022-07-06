@@ -44,6 +44,18 @@ namespace PxStat
     internal class Throttle : Attribute { }
 
     /// <summary>
+    ///This checks for the AllowAPICall attribute
+    ///Asserting this attribute means that a public method can be called by the API
+    /// </summary>
+    internal class AllowAPICall : Attribute { }
+
+    /// <summary>
+    /// Allows a HEAD http call
+    /// When this is asserted on a method, the method may be called with a HEAD. This assumes the pxstat method can handle the HEAD request.
+    /// </summary>
+    internal class AllowHEADrequest : Attribute { }
+
+    /// <summary>
     /// If this attribute is asserted then (a) the operation will search the cache before attempting a Read, and (b) any Read operation will be cached
     /// The CAS_REPOSITORY may need to be qualified by a DOMAIN. This is typically a DTO proprty. Include the proprty name if this needs to form part 
     /// of the name of the cas repository as well.

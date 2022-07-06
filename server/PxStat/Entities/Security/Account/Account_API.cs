@@ -7,6 +7,7 @@ namespace PxStat.Security
     /// <summary>
     /// The Account APIs control the access to the application.
     /// </summary>
+    [AllowAPICall]
     public static class Account_API
     {
         /// <summary>

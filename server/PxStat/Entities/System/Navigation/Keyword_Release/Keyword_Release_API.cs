@@ -6,7 +6,8 @@ namespace PxStat.System.Navigation
     /// A Keyword Release is a search keyword, related to an individual Release, that is used to enable searches. 
     /// These APIs control the creation and reading of Keyword Releases.
     /// </summary>
-    internal class Keyword_Release_API
+    [AllowAPICall]
+    public class Keyword_Release_API
     {
         /// <summary>
         /// Creates a non-mandatory Release Keyword

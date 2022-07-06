@@ -1,4 +1,8 @@
-﻿using PxStat.Security;
+﻿using PxStat.Resources;
+using PxStat.Security;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace PxStat.System.Navigation
 {
@@ -33,18 +37,38 @@ namespace PxStat.System.Navigation
         /// <param name="parameters"></param>
         public Subject_DTO(dynamic parameters)
         {
-            if (parameters.SbjValue != null)
-                this.SbjValue = parameters.SbjValue;
+            //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
+            if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            {
+                //Key value pairs
+                if (parameters.SbjValue != null)
+                    this.SbjValue = parameters.SbjValue;
 
-            if (parameters.SbjCode != null)
-                this.SbjCode = parameters.SbjCode;
+                if (parameters.SbjCode != null)
+                    this.SbjCode = parameters.SbjCode;
 
-            if (parameters.LngIsoCode != null)
-                this.LngIsoCode = parameters.LngIsoCode;
+                if (parameters.LngIsoCode != null)
+                    this.LngIsoCode = parameters.LngIsoCode;
+                else
+                    this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                if (parameters.ThmCode != null)
+                    this.ThmCode = parameters.ThmCode;
+            }
             else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
-            if (parameters.ThmCode != null)
-                this.ThmCode = parameters.ThmCode;
+            {
+                //parameters in a list
+
+                //map the list to the object properties
+                List<string> plist = new List<string>() { "LngIsoCode", "SbjCode" };
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    Type type = this.GetType();
+
+                    PropertyInfo prop = type.GetProperty(plist[i]);
+
+                    prop.SetValue(this, parameters[i], null);
+                }
+            }
 
         }
         /// <summary>

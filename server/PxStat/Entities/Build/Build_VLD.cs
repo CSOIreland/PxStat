@@ -577,22 +577,22 @@ namespace PxStat.Build
 
         }
 
-        internal static bool ReadDatasetHasEnoughParameters(RESTful_API api)
+        internal static bool ReadDatasetHasEnoughParameters(IRequest api)
         {
             return api.parameters.Count >= Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_DATASET_PARAMETER_COUNT"));
         }
 
-        internal static bool ReadMetadataHasEnoughParameters(RESTful_API api)
+        internal static bool ReadMetadataHasEnoughParameters(IRequest api)
         {
             return api.parameters.Count >= Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_METADATA_PARAMETER_COUNT"));
         }
 
-        internal static bool ReadCollectionHasEnoughParameters(RESTful_API api)
+        internal static bool ReadCollectionHasEnoughParameters(IRequest api)
         {
             return api.parameters.Count >= Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_COLLECTION_PARAMETER_COUNT"));
         }
 
-        internal static bool FormatExistsReadDataset(RESTful_API api)
+        internal static bool FormatExistsReadDataset(IRequest api)
         {
             if (api.parameters.Count < Convert.ToInt32(Utility.GetCustomConfig("APP_REST_READ_DATASET_PARAMETER_COUNT"))) return false;
             Format_DTO_Read dto = new Format_DTO_Read() { FrmType = api.parameters[2], FrmVersion = api.parameters[3] == "" ? "none" : api.parameters[3] };

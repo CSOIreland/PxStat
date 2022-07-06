@@ -35,7 +35,7 @@ namespace PxStat.Build
         /// <returns></returns>
         protected override bool Execute()
         {
-
+            
             Build_BSO pBso = new Build_BSO();
 
             if (!pBso.HasBuildPermission(Ado, SamAccountName, "create"))
@@ -135,7 +135,7 @@ namespace PxStat.Build
                     return false;
 
             }
-
+           
             return true;
         }
 

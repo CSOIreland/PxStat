@@ -16,7 +16,7 @@ namespace PxStat.Security
         //Should we allow FirebaseId to be set by a DTO parameter?  -would make things easier here....
         //or maybe better idea, set it at the template level
         //also, maybe see about reading subscriptions from the cache rather than from a db read request
-        internal static bool IsThrottled(ADO Ado, HttpRequest hRequest, JSONRPC_API request, string samAccountName = null)
+        internal static bool IsThrottled(ADO Ado, HttpRequest hRequest, IRequest  request, string samAccountName = null)
         {
 
             //We need MemcacheD to use this
@@ -64,14 +64,14 @@ namespace PxStat.Security
             //Different limits apply depending on whether the user is subscribed or not
             if (subscribed)
             {
-                window = Configuration_BSO.GetCustomConfig(ConfigType.global, "throttle.subscribedWindowSeconds");
-                cutoff = Configuration_BSO.GetCustomConfig(ConfigType.global, "throttle.subscribedCallLimit");
+                window = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.subscribedWindowSeconds");
+                cutoff = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.subscribedCallLimit");
 
             }
             else
             {
-                window = Configuration_BSO.GetCustomConfig(ConfigType.global, "throttle.nonSubscribedWindowSeconds");
-                cutoff = Configuration_BSO.GetCustomConfig(ConfigType.global, "throttle.nonSubscribedCallLimit");
+                window = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.nonSubscribedWindowSeconds");
+                cutoff = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.nonSubscribedCallLimit");
                 user = request.userAgent + request.ipAddress;
             }
 
@@ -100,7 +100,31 @@ namespace PxStat.Security
             return false;
         }
 
+        /// <summary>
+        /// Check if host is not in the whitelist
+        /// </summary>
+        /// <param name="whitelist"></param>
+        /// <param name="host"></param>
+        /// <returns></returns>
+        internal static bool IsNotInTheWhitelist(string[] whitelist, string host)
+        {
 
+            // If host is null or empty, it is not in the whitelist
+            if (String.IsNullOrEmpty(host))
+            {
+                return true;
+            }
+
+            foreach(string value in whitelist)
+            {
+                // If host contains a whitelist value
+                if (host.Contains(value))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
     }
 }

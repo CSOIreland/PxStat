@@ -4,6 +4,7 @@ namespace PxStat.System.Navigation
     /// <summary>
     /// Navigation is a set of links used to enhance user experience. These APIs control the reading and creation of Navigation items.
     /// </summary>
+    [AllowAPICall]
     public class Navigation_API
     {
 

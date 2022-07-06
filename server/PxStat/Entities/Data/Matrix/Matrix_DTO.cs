@@ -3297,7 +3297,7 @@ namespace PxStat.Data
             }
 
 
-            jsStat.Label = spec.Contents;
+            jsStat.Label = spec.Title;
 
 
 
@@ -3560,7 +3560,7 @@ namespace PxStat.Data
             }
 
 
-            jsStat.Label = spec.Contents;
+            jsStat.Label = spec.Title;
 
 
 
@@ -4271,7 +4271,7 @@ namespace PxStat.Data
     /// <summary>
     /// class
     /// </summary>
-    public class PxUpload_DTO
+    public class PxUpload_DTO : IUpload_DTO
     {
         [NoTrim]
         public string MtrInput { get; set; }
@@ -4494,8 +4494,8 @@ namespace PxStat.Data
         public DateTime DtgCreateDatetime { get; internal set; }
         public string CcnUsername { get; internal set; }
         public string CprUrl { get { return Sanitizer.PrepareJsonValue(_cprUrl); } internal set { _cprUrl = Sanitizer.PrepareJsonValue(value); } }
+        public int MtrId { get; set; }
     }
-
 
     /// <summary>
     /// class

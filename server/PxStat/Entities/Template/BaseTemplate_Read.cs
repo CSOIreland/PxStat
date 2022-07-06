@@ -3,6 +3,7 @@ using FluentValidation;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
+using System.Net;
 using System.Web;
 
 namespace PxStat.Template
@@ -18,7 +19,7 @@ namespace PxStat.Template
         /// </summary>
         /// <param name="request"></param>
         /// <param name="validator"></param>
-        protected BaseTemplate_Read(JSONRPC_API request, IValidator<T> validator) : base(request, validator)
+        protected BaseTemplate_Read(IRequest request, IValidator<T> validator) : base(request, validator)
         {
         }
 
@@ -43,6 +44,40 @@ namespace PxStat.Template
             Log.Instance.Debug("No record read");
         }
 
+        protected void FormatForRestful(IResponseOutput output)
+        {
+            if (Request.GetType().Equals(typeof(RESTful_API)))
+            {
+
+                if (Response.error != null)
+                {
+                    Response.data = RESTful.FormatRestfulError(Response, null, HttpStatusCode.NoContent, HttpStatusCode.InternalServerError);
+                }
+                else
+                    Response.statusCode = HttpStatusCode.OK;
+
+                //This is the default mimetype, may be amended before output by the calling BSO
+                if (Response.mimeType == null)
+                    Response.mimeType = Utility.GetCustomConfig("APP_JSON_MIMETYPE");
+
+                Response.response = Response.data;
+
+                //We need to change e.g. an Excel file to a byte array
+                string data = Response.data.ToString();
+                if (data.Contains(";base64,"))
+                {
+                    var base64Splits = data.Split(new[] { ";base64," }, StringSplitOptions.None);
+                    var dataSplits = base64Splits[0].Split(new[] { "data:" }, StringSplitOptions.None);
+
+                    // Override MimeType & Data
+                    Response.mimeType = dataSplits[1];
+                    Response.data = base64Splits[1];
+                    Response.response = Utility.DecodeBase64ToByteArray(Response.data);
+                }
+
+            }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -51,6 +86,15 @@ namespace PxStat.Template
         {
             try
             {
+                //HEAD requests are only allowed for methods with an attribute of [AllowHEADrequest]
+                if (Request.GetType().Equals(typeof(Head_API)))
+                {
+                    if (!Resources.MethodReader.MethodHasAttribute(Request.method, "AllowHEADrequest"))
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
 
                 // first of all, we check if user has the right to perform this operation!
                 if (HasUserToBeAuthenticated())
@@ -86,15 +130,27 @@ namespace PxStat.Template
 
                 //If the API has the IndividualCleanseNoHtml attribute then parameters are cleansed individually
                 //Any of these parameters whose corresponding DTO property contains the NoHtmlStrip attribute will not be cleansed of HTML tags
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
-                {
-                    dynamic dto = GetDTO(Request.parameters);
-                    cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
-                }
-                else
+
+                bool isKeyValueParameters = Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
+
+                if (!isKeyValueParameters)
                 {
                     cleansedParams = Cleanser.Cleanse(Request.parameters);
                 }
+                else
+                {
+                    if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                    {
+                        dynamic dto = GetDTO(Request.parameters);
+                        cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                    }
+                    else
+                    {
+                        cleansedParams = Cleanser.Cleanse(Request.parameters);
+                    }
+                }
+
+
 
                 try
                 {
@@ -147,7 +203,7 @@ namespace PxStat.Template
                 }
                 else
                 {
-
+                    FormatForRestful(Response);
                     OnExecutionSuccess();
                 }
 

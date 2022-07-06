@@ -5,6 +5,7 @@ namespace PxStat.System.Settings
     /// <summary>
     /// APIs to control  reading Formats.
     /// </summary>
+    [AllowAPICall]
     public class Format_API
     {
         /// <summary>

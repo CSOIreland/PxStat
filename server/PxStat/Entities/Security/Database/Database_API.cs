@@ -4,7 +4,8 @@ namespace PxStat.Security
 {    /// <summary>
      /// API for reading Database Fragmentation Statistics
      /// </summary>
-    internal class Database_API
+    [AllowAPICall]
+    public class Database_API
     {
         public static dynamic Read(JSONRPC_API jsonrpcRequest)
         {

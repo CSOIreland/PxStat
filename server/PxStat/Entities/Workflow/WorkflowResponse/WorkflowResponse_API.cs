@@ -5,7 +5,9 @@ namespace PxStat.Workflow
     /// <summary>
     /// These APIs control access to the approval process for Workflow requests.
     /// </summary>
-    internal class WorkflowResponse_API
+	
+	[AllowAPICall]
+    public class WorkflowResponse_API
     {
         /// <summary>
         /// Entry point to the API method - Creates a workflow response

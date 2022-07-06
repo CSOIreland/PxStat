@@ -97,7 +97,7 @@ namespace PxStat.Data.Px
             {
                 if (!Matrix.SourceIsSupported(ado, source))
                 {
-                    //TODO: do we need translation here?
+                    //TODO: do we need translation here? See line 174
                     messageFormatter.AppendArgument("Source", source);
                     return false;
                 }
@@ -164,7 +164,7 @@ namespace PxStat.Data.Px
             {
                 if (!Matrix.LanguageIsSupported(ado, language))
                 {
-                    //TODO: do we need translation here?
+                    //TODO: do we need translation here? See line 174
                     messageFormatter.AppendArgument("Language", language);
                     return false;
                 }

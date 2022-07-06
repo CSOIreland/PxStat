@@ -5,6 +5,7 @@ namespace PxStat.Data
     /// <summary>
     /// The Compare APIs allow similar releases to be compared and differences in the releases to be viewed.
     /// </summary>
+    [AllowAPICall]
     public class Compare_API
     {
         /// <summary>

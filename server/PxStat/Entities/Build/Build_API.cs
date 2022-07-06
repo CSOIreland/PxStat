@@ -6,6 +6,8 @@ namespace PxStat.Build
     /// <summary>
     /// PxFileBuild is a set of APIs for creating new data.
     /// </summary>
+    /// 
+    [AllowAPICall]
     public class Build_API
     {
         /// <summary>

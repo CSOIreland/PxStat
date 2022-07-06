@@ -6,6 +6,7 @@ namespace PxStat.Security
     /// <summary>
     /// API's to read analytics. Analytics provide data regarding web activity to the site.
     /// </summary>
+    [AllowAPICall]
     public class Analytic_API
     {
         /// <summary>

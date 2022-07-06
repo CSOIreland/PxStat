@@ -5,6 +5,7 @@ namespace PxStat.Security
     /// <summary>
     /// Group APIs enable control over application user groups.
     /// </summary>
+    [AllowAPICall]
     public class Group_API
     {
         /// <summary>

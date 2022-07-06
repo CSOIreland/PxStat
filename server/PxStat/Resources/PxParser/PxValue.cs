@@ -376,7 +376,12 @@ namespace PxParser.Resources.Parser
         {
             // Strip HTLML tags
             if (removeHtml)
-                QuotedValue = Regex.Replace(value, @"<.*?>", "");
+            {
+                if (value != null)
+                {
+                    QuotedValue = Regex.Replace(value, @"<.*?>", "");
+                }
+            }
             else
                 QuotedValue = value;
         }

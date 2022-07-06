@@ -140,6 +140,7 @@ namespace PxStat.Data
 
         internal JsonStatQuery ReadMetadata_MapParametersToQuery(dynamic restfulParameters)
         {
+
             var parameters = ((List<string>)restfulParameters).Where(x => !string.IsNullOrWhiteSpace(x));
             int pcount = parameters.Count() - 1;
             JsonStatQuery jsQuery = new JsonStatQuery();

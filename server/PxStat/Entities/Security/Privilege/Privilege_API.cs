@@ -6,6 +6,7 @@ namespace PxStat.Security
     /// <summary>
     /// The Privilege APIs control user rights.
     /// </summary>
+    [AllowAPICall]
     public class Privilege_API
     {
         /// <summary>

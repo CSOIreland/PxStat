@@ -5,6 +5,7 @@ namespace PxStat.System.Navigation
     /// <summary>
     /// APIs to control creation, reading, updating and deleting of Themes.
     /// </summary>
+    [AllowAPICall]
     public class Theme_API
     {
         /// <summary>

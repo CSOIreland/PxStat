@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace PxStat.Security
 {
+    [AllowAPICall]
     public class Login_API
     {
 

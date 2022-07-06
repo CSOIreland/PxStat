@@ -32,7 +32,7 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
-            Compare_BSO bso = new Compare_BSO();
+            DCompare_BSO bso = new DCompare_BSO();
             Compare_DTO_Read dtoRight = new Compare_DTO_Read();
 
 
@@ -46,7 +46,12 @@ namespace PxStat.Data
 
             dtoRight.LngIsoCode = DTO.LngIsoCode;
 
-            var jsonStat = bso.CompareAmendment(Ado, dtoLeft, dtoRight).GetJsonStatObject(true);
+            IMetaData metaData = new MetaData();
+            var comparisonMatrix = bso.CompareAmendment(Ado, metaData, dtoLeft, dtoRight);
+
+            JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
+            var jsonStat = jxb.Create(comparisonMatrix, comparisonMatrix.Language, true, true);
+
             Response.data = new JRaw(Serialize.ToJson(jsonStat));
 
             return true;

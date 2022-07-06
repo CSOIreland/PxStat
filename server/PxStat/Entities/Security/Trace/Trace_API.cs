@@ -5,6 +5,7 @@ namespace PxStat.Security
     /// <summary>
     /// The trace APIs are used to read user interactions with APIs.
     /// </summary>
+    [AllowAPICall]
     public class Trace_API
     {
         /// <summary>

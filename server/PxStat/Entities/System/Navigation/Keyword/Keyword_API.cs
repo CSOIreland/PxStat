@@ -2,7 +2,8 @@
 
 namespace PxStat.System.Navigation
 {
-    internal class Keyword_API
+    [AllowAPICall]
+    public class Keyword_API
     {
         public static dynamic ReadSynonym(JSONRPC_API jsonrpcRequest)
         {

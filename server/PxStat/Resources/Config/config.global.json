@@ -80,12 +80,5 @@
   "search": {
 
     "maximumResults": 100
-  },
-  "throttle": {
-    "subscribedWindowSeconds": 60,
-    "subscribedCallLimit": 30,
-    "nonSubscribedWindowSeconds": 180,
-    "nonSubscribedCallLimit": 10
   }
-
 }

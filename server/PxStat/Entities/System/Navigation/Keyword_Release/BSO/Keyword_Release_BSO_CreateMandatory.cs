@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Data;
+using PxStat.DataStore;
 using System.Collections.Generic;
 using System.Data;
 
@@ -215,6 +216,74 @@ namespace PxStat.System.Navigation
             //Final check to make sure there are no duplicates
             adoKeywordCreate.Create(Ado, distinctRows);
 
+
+        }
+
+
+        internal void Create(IADO ado, IDmatrix matrix, int releaseId, string userName)
+        {
+            Release_ADO rAdo = new Data.Release_ADO(ado);
+            DataStore_ADO dAdo = new DataStore_ADO();
+
+            var latestRelease = Release_ADO.GetReleaseDTO(rAdo.ReadID(releaseId, userName));
+
+            if (latestRelease == null) return;
+
+           // rAdo.DeleteKeywords(latestRelease.RlsCode, userName);
+
+            //Create the table that will be bulk inserted
+            DataTable dt = new DataTable();
+            dt.Columns.Add("KRL_VALUE", typeof(string));
+            dt.Columns.Add("KRL_RLS_ID", typeof(int));
+            dt.Columns.Add("KRL_MANDATORY_FLAG", typeof(bool));
+            dt.Columns.Add("KRL_SINGULARISED_FLAG", typeof(bool));
+
+            Keyword_Release_ADO adoKeywordCreate = new Keyword_Release_ADO();
+
+           
+            //Create the table rows
+            foreach (var item in matrix.Dspecs)
+            {
+
+                //Get a Keyword Extractor - the particular version returned will depend on the language
+                Keyword_BSO_Extract kbe = new Keyword_BSO_Extract(item.Value.Language);
+                // IKeywordExtractor ext = kbe.GetExtractor();
+
+                //Add the keywords and other data to the output table
+                AddToTable(ref dt, kbe.ExtractSplitSingular(item.Value.Title), releaseId);
+
+                //Add the MtrCode to the keyword list without any transformations
+                AddToTable(ref dt, new List<string>() { matrix.Code }, releaseId, false);
+
+                //Add the Copyright Code
+                AddToTable(ref dt, kbe.ExtractSplit(matrix.Copyright.CprCode, false), releaseId, false);
+
+                //Add the Copyright Value
+                AddToTable(ref dt, kbe.ExtractSplit(matrix.Copyright.CprValue), releaseId, false);
+
+
+
+                foreach (dynamic dim in matrix.Dspecs[matrix.Language].Dimensions)
+                {
+
+
+                    AddToTable(ref dt, kbe.ExtractSplit(dim.Code, false), releaseId, false);
+                    AddToTable(ref dt, kbe.ExtractSplitSingular(dim.Value), releaseId);
+
+
+                    foreach (dynamic variableItem in dim.Variables)
+                    {
+                        AddToTable(ref dt, kbe.ExtractSplit(variableItem.Code, false), releaseId, false);
+                        AddToTable(ref dt, kbe.ExtractSplitSingular(variableItem.Value), releaseId);
+
+                    }
+
+                }
+
+            }
+            DataTable distinctRows = dt.DefaultView.ToTable(true, new string[4] { "KRL_VALUE", "KRL_RLS_ID", "KRL_MANDATORY_FLAG", "KRL_SINGULARISED_FLAG" });
+            //Final check to make sure there are no duplicates
+            dAdo.CreateKeywordsFromTable(ado, distinctRows);
 
         }
 

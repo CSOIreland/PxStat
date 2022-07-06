@@ -28,7 +28,6 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
-
             if (Configuration_BSO.UpdateConfigFromFiles())
             {
                 Response.data = JSONRPC.success;

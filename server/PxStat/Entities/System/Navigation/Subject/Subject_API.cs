@@ -5,6 +5,7 @@ namespace PxStat.System.Navigation
     /// <summary>
     /// APIs to control creation, reading, updating and deleting of Subjects.
     /// </summary>
+    [AllowAPICall]
     public class Subject_API
     {
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using PxStat;
+using PxStat.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace PxParser.Resources.Parser
     /// The PxDocument is composed by a sequence of keyword objects (minimum of one)
     /// <PxDocument> ::= <PxKeywordElement> { <PxKeywordElement> }
     /// </summary>
-    public class PxDocument : IPx
+    public class PxDocument : IPx, IDocument
     {
         /// <summary>
         /// 
@@ -159,9 +160,7 @@ namespace PxParser.Resources.Parser
             IPxMultipleElements multipleElements = GetPxMultipleElements(keywordIdentifier, language);
 
             var enumerator = multipleElements.Values.Cast<string>();
-
-            IList<string> listOfStrings = enumerator.ToList<string>();
-
+            IList<string> listOfStrings = multipleElements.ToList();
             return listOfStrings;
         }
 

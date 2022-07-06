@@ -114,7 +114,7 @@ namespace PxStat.Data.Px
 
             Log.Instance.Debug("Parsing of all *.px files completed.");
 
-            //todo: check config first before generate dictionary information files!!!
+            //TODO: check config first before generate dictionary information files!!!
             PxKeywordDictionary.SaveToFile("AllTypes.txt", "AllExceptions.txt");
         }
 

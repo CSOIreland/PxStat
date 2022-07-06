@@ -19,7 +19,7 @@ namespace PxStat.Data
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsAdministrator();
+            return true;
         }
 
         /// <summary>

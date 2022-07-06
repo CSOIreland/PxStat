@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PxStat.Data;
 using PxStat.JsonQuery;
+using PxStat.Resources;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
@@ -27,9 +28,38 @@ namespace PxStat.JsonStatSchema
         public bool widget { get; set; }
         public bool user { get; set; }
 
+        public CubeQuery_DTO()
+        {
+        }
 
         public CubeQuery_DTO(dynamic parameters)
         {
+            Cube_MAP map = new Cube_MAP();
+
+            //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
+            if (!Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            {
+
+                if (parameters.Count <= Constants.C_DATA_RESTFUL_LANGUAGE)
+                {
+                    parameters.Add(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
+                }
+
+                //A trailing '/' where language should be may be picked up as a blank last parameter, so let's deal with that...
+                if (parameters.Count > Constants.C_DATA_RESTFUL_LANGUAGE)
+                {
+                    if (String.IsNullOrEmpty(parameters[Constants.C_DATA_RESTFUL_LANGUAGE]))
+                        parameters[Constants.C_DATA_RESTFUL_LANGUAGE] = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                }
+
+                JsonStatQuery jq = map.ReadMetadata_MapParametersToQuery(parameters);
+
+                jq.Extension["codes"] = true;
+
+                parameters = Utility.JsonSerialize_IgnoreLoopingReference(jq);
+            }
+
+
 
             Cube_BSO cBso = new Cube_BSO();
 
@@ -63,21 +93,16 @@ namespace PxStat.JsonStatSchema
                 m2m = true;
 
             var hRequest = HttpContext.Current.Request;
-            string rfr = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? null : hRequest.UrlReferrer.Host;
+            string rfr = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? null : hRequest.UrlReferrer.Scheme + "://" + hRequest.UrlReferrer.Host;
             string urf = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application");
 
-            if (param.widget != null)
-            {
 
-                if (m2m == false && (rfr == urf || rfr == urf + '/'))
-                    user = true;
-                else if (m2m == false && rfr != urf && rfr != urf + '/')
-                    widget = true;
+            if (m2m == false && (rfr == urf || rfr + '/' == urf))
+                user = true;
+            else if (m2m == false && rfr != urf && rfr + '/' != urf)
+                widget = true;
 
 
-            }
-            else
-                widget = false;
 
 
         }

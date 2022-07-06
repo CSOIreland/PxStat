@@ -15,13 +15,13 @@ namespace PxStat.Data
         /// <summary>
         /// class variable
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        public Release_ADO(ADO ado)
+        public Release_ADO(IADO ado)
         {
             this.ado = ado;
         }

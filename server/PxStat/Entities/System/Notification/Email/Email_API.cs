@@ -2,6 +2,7 @@
 
 namespace PxStat.System.Notification
 {
+    [AllowAPICall]
     public class Email_API
     {
         /// <summary>

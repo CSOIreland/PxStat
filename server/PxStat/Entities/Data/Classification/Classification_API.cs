@@ -6,7 +6,8 @@ namespace PxStat.Data
     /// <summary>
     /// These APIs are used for reading and search for Classifications.
     /// </summary>
-    internal class Classification_API
+    [AllowAPICall]
+    public class Classification_API
     {
         /// <summary>
         /// Read a Classification based on Classification ID

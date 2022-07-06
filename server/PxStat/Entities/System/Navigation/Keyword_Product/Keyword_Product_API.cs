@@ -6,6 +6,7 @@ namespace PxStat.System.Navigation
     /// A Keyword Product is a search keyword, related to an individual product, that is used to enable searches. 
     /// These APIs control the creation and reading of Keyword Products.
     /// </summary>
+    [AllowAPICall]
     public class Keyword_Product_API
     {
         /// <summary>

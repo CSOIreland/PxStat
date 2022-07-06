@@ -1,11 +1,11 @@
 ﻿using API;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Net;
 
 namespace PxStat.Security
 {
-    internal class Configuration_API
+    [AllowAPICall]
+    public class Configuration_API
     {
 
         public static dynamic Refresh(JSONRPC_API requestApi)
@@ -28,14 +28,16 @@ namespace PxStat.Security
             var dict = (IDictionary<string, object>)obj;
 
             jsonRpcRequest.parameters = Utility.JsonSerialize_IgnoreLoopingReference(dict);
-            JSONRPC_Output rsp = new Configuration_BSO_Read(jsonRpcRequest).Read().Response;
+            IResponseOutput rsp = new Configuration_BSO_Read(jsonRpcRequest).Read().Response;
 
 
-            RESTful_Output resp = Map.JSONRPC2RESTful_Output(rsp, null, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+            //RESTful_Output resp = Map.JSONRPC2RESTful_Output(rsp, null, rsp.data == null ? HttpStatusCode.NotFound : HttpStatusCode.OK);
 
-            resp.response = Utility.JsonSerialize_IgnoreLoopingReference(rsp.data);
+            //resp.response = Utility.JsonSerialize_IgnoreLoopingReference(rsp.data);
 
-            return resp;
+            //return resp;
+
+            return rsp;
         }
     }
 }

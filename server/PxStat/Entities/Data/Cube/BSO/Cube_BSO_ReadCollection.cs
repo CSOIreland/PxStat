@@ -1,10 +1,5 @@
 ﻿using API;
-using PxStat.Resources;
-using PxStat.Security;
 using PxStat.Template;
-using System;
-using System.Collections.Generic;
-using System.Web;
 
 namespace PxStat.Data
 {
@@ -18,7 +13,7 @@ namespace PxStat.Data
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Cube_BSO_ReadCollection(JSONRPC_API request, bool meta = true) : base(request, new Cube_VLD_ReadCollection())
+        internal Cube_BSO_ReadCollection(IRequest request, bool meta = true) : base(request, new Cube_VLD_ReadCollection())
         {
             _meta = meta;
         }
@@ -62,73 +57,18 @@ namespace PxStat.Data
             }
 
 
-            if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
-            {
-                Log.Instance.Debug("Request throttled");
-                Response.error = Label.Get("error.throttled");
-            }
-
             Cube_BSO cBso = new Cube_BSO();
 
             // cache store is done in the following function
-            Response.data = cBso.ExecuteReadCollection(Ado, DTO, _meta);
+            //Response.data = cBso.ExecuteReadCollection(Ado, DTO, _meta);
 
 
+            Dcollection dc = new Dcollection();
+
+            Response.data = dc.ReadCollection(Ado, DTO);
             return true;
         }
 
 
-
-
-
-
-        /// <summary>
-        /// Returns the dataset in JSON-stat format
-        /// </summary>
-        /// <param name="collection"></param>
-        /// <returns></returns>
-        private static JsonStatCollection GetJsonStatCollectionObject(List<dynamic> collection)
-        {
-            var theJsonStatCollection = new JsonStatCollection();
-            var theCollectionLink = new JsonStatCollectionLink() { Item = new List<Item>() };
-            theJsonStatCollection.Link = theCollectionLink;
-
-            if (collection == null)
-            {
-                return theJsonStatCollection;
-            }
-
-            if (collection.Count == 0)
-            {
-                return theJsonStatCollection;
-            }
-
-            foreach (var element in collection)
-            {
-
-                var aItem = new Item()
-                {
-                    Href = new Uri(string.Format("{0}/{1}/{2}", Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application"), Utility.GetCustomConfig("APP_COOKIELINK_TABLE"), element.MtrCode)),
-                    Class = ItemClass.Dataset,
-                    Label = element.MtrTitle,
-                    Updated = DataAdaptor.ConvertToString(element.RlsLiveDatetimeFrom),
-
-                    Extension = new Dictionary<string, object>()
-                };
-
-                var Frequency = new { name = element.FrqValue, code = element.FrqCode };
-
-                aItem.Extension.Add("copyright", new { name = element.CprValue, code = element.CprCode, href = element.CprUrl });
-                aItem.Extension.Add("exceptional", element.ExceptionalFlag);
-                aItem.Extension.Add("language", new { code = element.LngIsoCode, name = element.LngIsoName });
-                aItem.Extension.Add("matrix", element.MtrCode);
-                aItem.Extension.Add("frequency", Frequency);
-                theCollectionLink.Item.Add(aItem);
-            }
-
-
-
-            return theJsonStatCollection;
-        }
     }
 }

@@ -31,5 +31,29 @@ namespace PxStat.Security.Logging
             return reader;
 
         }
+
+        internal void Create(ADO ado, string lggThread, string lggLevel, string lggClass, string lggMethod, string lggLine, string lggMessage, string lggException = null)
+        {
+            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() {name= "@LggThread",value=lggThread},
+                new ADO_inputParams() {name= "@LggLevel",value=lggLevel},
+
+                new ADO_inputParams() {name= "@LggClass",value=lggClass},
+                new ADO_inputParams() {name= "@LggMethod",value=lggMethod},
+                new ADO_inputParams() {name= "@LggLine",value=lggLine},
+                new ADO_inputParams() {name= "@LggMessage",value=lggMessage}
+
+            };
+
+            if (lggException != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@LggException", value = lggException });
+
+            ADO_returnParam retParam = new ADO_returnParam();
+            retParam.name = "return";
+            retParam.value = 0;
+
+            ado.ExecuteNonQueryProcedure("Security_Logging_Create", inputParamList, ref retParam);
+        }
     }
 }

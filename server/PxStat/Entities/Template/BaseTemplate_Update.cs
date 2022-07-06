@@ -50,6 +50,13 @@ namespace PxStat.Template
         /// <returns></returns>
         public BaseTemplate_Update<T, V> Update()
         {
+            //HEAD requests are not allowed on action queries
+            if (Request.GetType().Equals(typeof(Head_API)))
+            {
+                OnAuthenticationFailed();
+                return this;
+            }
+
             try
             {
 

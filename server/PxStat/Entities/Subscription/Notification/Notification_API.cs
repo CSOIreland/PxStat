@@ -2,6 +2,7 @@
 
 namespace PxStat.Subscription
 {
+    [AllowAPICall]
     public class NotificationChannel_API
     {
         public static dynamic Send(JSONRPC_API requestApi)

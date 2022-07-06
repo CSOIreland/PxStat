@@ -1,8 +1,10 @@
 ﻿using API;
 using Newtonsoft.Json.Linq;
+using PxStat.DataStore;
 using PxStat.Security;
 using PxStat.Template;
 using System;
+using System.Net;
 using System.Web;
 using static PxStat.System.Settings.Format_DTO_Read;
 
@@ -11,13 +13,13 @@ namespace PxStat.Data
     /// <summary>
     /// Read the Cube metadata for a live release
     /// </summary>
-    internal class Cube_BSO_ReadMetadata : BaseTemplate_Read<Cube_DTO_Read, Cube_VLD_ReadMetadata>
+    internal class Cube_BSO_ReadMetadata : BaseTemplate_Read<Cube_DTO_ReadMetadata, Cube_VLD_ReadMetadata>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Cube_BSO_ReadMetadata(JSONRPC_API request) : base(request, new Cube_VLD_ReadMetadata())
+        internal Cube_BSO_ReadMetadata(IRequest request) : base(request, new Cube_VLD_ReadMetadata())
         {
 
         }
@@ -59,8 +61,15 @@ namespace PxStat.Data
                 return true;
             }
 
+            // Get whitelist
+            string[] whitelist = Configuration_BSO.GetCustomConfig(ConfigType.server, "whitelist");
 
-            if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
+            // Get host 
+            var hRequest = HttpContext.Current.Request;
+            string host = hRequest.Url.Host;
+
+            // Check if host is not in the whitelist and the request is throttled
+            if (Throttle_BSO.IsNotInTheWhitelist(whitelist, host) && Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
             {
                 Log.Instance.Debug("Request throttled");
                 Response.error = Label.Get("error.throttled");
@@ -71,12 +80,13 @@ namespace PxStat.Data
             var result = Release_ADO.GetReleaseDTO(items);
             if (result == null)
             {
+                Response.statusCode = HttpStatusCode.NotFound;
                 Response.data = null;
-                return true;
+                return false;
             }
             //The Language of the received data may be different from the request - so we make sure it corresponds to the language of the metadata
             DTO.language = items.LngIsoCode;
-            return ExecuteReadMetadata(Ado, DTO, result, Response);
+            return ExecuteReadMetadata(Ado, DTO, result, Response, SamAccountName);
         }
 
         /// <summary>
@@ -87,29 +97,41 @@ namespace PxStat.Data
         /// <param name="theReleaseDto"></param>
         /// <param name="theResponse"></param>
         /// <returns></returns>
-        static internal bool ExecuteReadMetadata(ADO theAdo, Cube_DTO_Read theCubeDTO, Release_DTO theReleaseDto, JSONRPC_Output theResponse, bool isLive = true)
+        static internal bool ExecuteReadMetadata(IADO theAdo, ICube_DTO_Read theCubeDTO, Release_DTO theReleaseDto, IResponseOutput theResponse, string ccnUsername, bool isLive = true)
         {
-            var ado = new Cube_ADO(theAdo);
-
             // The matrix constructor will load all the metadata from the db when instances specification
-            var theMatrix = new Matrix(theAdo, theReleaseDto, theCubeDTO.language).ApplySearchCriteria(theCubeDTO);
-            theMatrix.FormatType = theCubeDTO.Format.FrmType;
-            theMatrix.FormatVersion = theCubeDTO.Format.FrmVersion;
-            if (theMatrix == null)
+
+
+            DataReader dr = new DataReader();
+            IDmatrix matrix = null;
+            if (isLive)
+                matrix = dr.ReadLiveDataset(theCubeDTO.matrix, theCubeDTO.language, theReleaseDto, true);
+            else
+                matrix = dr.ReadNonLiveDataset(theCubeDTO.language, theReleaseDto, ccnUsername, true);
+
+
+            matrix.FormatType = theCubeDTO.Format.FrmType;
+            matrix.FormatVersion = theCubeDTO.Format.FrmVersion;
+            matrix.Language = theCubeDTO.language;
+
+            if (matrix == null)
             {
                 theResponse.data = null;
-                return true;
+                theResponse.statusCode = HttpStatusCode.NotFound;
+                return false;
             }
 
-            var jsonStat = theMatrix.GetJsonStatObject();
+
+            JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
+            var jsonStat = jxb.Create(matrix, matrix.Language, false);
             theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
 
             if (isLive)
             {
                 if (theReleaseDto.RlsLiveDatetimeTo != default)
-                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + theMatrix.Code);
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.Code);
                 else
-                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + theMatrix.Code);
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.Code);
             }
             else
             {

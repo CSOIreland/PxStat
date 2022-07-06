@@ -5,6 +5,7 @@ namespace PxStat.Security
     /// <summary>
     /// Active Directory APIs enable an interface to an Active Directory.
     /// </summary>
+    [AllowAPICall]
     public static class ActiveDirectory_API
     {
         /// <summary>

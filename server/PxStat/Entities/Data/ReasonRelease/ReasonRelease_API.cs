@@ -5,6 +5,7 @@ namespace PxStat.Data
     /// <summary>
     /// These APIs are used to Create, Read, Update and Delete the Reason data for a Release.
     /// </summary>
+    [AllowAPICall]
     public class ReasonRelease_API
     {
         /// <summary>
