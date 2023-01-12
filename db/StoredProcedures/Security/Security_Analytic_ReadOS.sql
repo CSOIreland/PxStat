@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 22/01/2019
 -- Description:	Reads counts of Operating Systems
--- exec Security_Analytic_ReadOS '2019-04-13','2019-05-15','3',null,4,4
+-- exec Security_Analytic_ReadOS '2019-04-13','2022-11-15','okeeffene'
 -- =============================================
 CREATE
 	OR
@@ -30,14 +30,13 @@ BEGIN
 	INSERT INTO @GroupUserHasAccess
 	EXEC Security_Group_AccessList @CcnUsername
 
-	SELECT CASE 
-			WHEN counts.NLT_OS IS NULL
+
+		SELECT CASE 
+			WHEN NLT_OS IS NULL
 				THEN '-'
-			ELSE counts.NLT_OS
-			END AS NltOs
-		,nltCount AS NltCount
-	FROM (
-		SELECT NLT_OS
+			ELSE NLT_OS
+			END AS NltOs,
+			GRP_ID AS GrpId
 			,count(*) AS nltCount
 		FROM TD_ANALYTIC
 		INNER JOIN TD_MATRIX
@@ -46,7 +45,7 @@ BEGIN
 		INNER JOIN TD_RELEASE
 			ON RLS_ID = MTR_RLS_ID
 				AND TD_RELEASE.RLS_DELETE_FLAG = 0
-		INNER JOIN @GroupUserHasAccess 
+		INNER JOIN TD_GROUP
 		ON GRP_ID=RLS_GRP_ID 
 		LEFT JOIN TD_PRODUCT
 			ON RLS_PRC_ID = PRC_ID
@@ -72,9 +71,11 @@ BEGIN
 				@PrcCode = PRC_CODE
 				OR @PrcCode IS NULL
 				)
-		GROUP BY NLT_OS
-		) counts
-	ORDER BY counts.nltCount DESC
+		GROUP BY NLT_OS,GRP_ID
+
+		SELECT GRP_ID AS GrpId
+	FROM @GroupUserHasAccess;
+
 END
 GO
 

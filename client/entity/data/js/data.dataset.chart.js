@@ -65,7 +65,7 @@ $(document).ready(function () {
         $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
     });
 
-    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update],#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle({
+    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update],#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale],#data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -93,8 +93,29 @@ $(document).ready(function () {
         app.data.dataset.chart.buildChartConfig(true);
     });
 
-    $("#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link]").once("change", function () {
+    $("#data-dataset-chart-snippet-code").find("[name=title-value]").val(app.data.dataset.metadata.jsonStat.label.trim());
+
+    $("#data-dataset-chart-snippet-code").find('input[name="title-value"]').once('keyup', function () {
+        if ($(this).val().trim().length) {
+            window.clearTimeout($(this).data('timer'));
+            $(this).data('timer', window.setTimeout(app.data.dataset.chart.renderSnippet, 400));
+        } else {
+            app.data.dataset.chart.renderSnippet() //maybe clear input
+            window.clearTimeout($(this).data('timer'));
+        }
+    });
+
+    $("#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link]").once("change", function () {
         app.data.dataset.chart.renderSnippet();
+    });
+
+    $("#data-dataset-chart-snippet-code [name=include-title]").once("change", function () {
+        app.data.dataset.chart.renderSnippet();
+        if ($(this).is(':checked')) {
+            $("#data-dataset-chart-snippet-code").find('input[name="title-value"]').show();
+        } else {
+            $("#data-dataset-chart-snippet-code").find('input[name="title-value"]').hide();
+        }
     });
 
     $("#data-dataset-chart-snippet-code [name=auto-update]").once("change", function () {
@@ -108,7 +129,7 @@ $(document).ready(function () {
     });
 
 
-    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=sort]").once("change", app.data.dataset.chart.resetChart);
+    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").once("change", app.data.dataset.chart.resetChart);
 
 
     $("#data-dataset-chart-render").find("[name=download-chart]").once("click", function (e) {

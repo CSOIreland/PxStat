@@ -115,6 +115,13 @@ $(document).ready(function () {
   );
 
   api.content.navigate(
+    "#nav-link-report-table-audit",
+    "entity/report/tableaudit/",
+    "#nav-link-report-table-audit",
+    "#nav-link-report"
+  );
+
+  api.content.navigate(
     "#nav-link-keyword-subject",
     "entity/keyword/subject/",
     "#nav-link-keyword-subject",

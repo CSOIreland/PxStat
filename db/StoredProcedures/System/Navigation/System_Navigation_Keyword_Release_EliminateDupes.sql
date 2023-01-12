@@ -23,7 +23,7 @@ BEGIN
 	FROM TD_KEYWORD_RELEASE
 	WHERE KRL_ID NOT IN (
 			SELECT max(krl_id) AS maxId
-			FROM [pxstat.dev].[dbo].[TD_KEYWORD_RELEASE]
+			FROM [TD_KEYWORD_RELEASE]
 			INNER JOIN td_release ON rls_id = KRL_RLS_ID
 				AND RLS_DELETE_FLAG = 0
 			INNER JOIN td_matrix ON MTR_RLS_ID = RLS_ID

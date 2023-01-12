@@ -123,6 +123,7 @@ app.build.map.callback.drawCallbackReadMaps = function () {
 
 app.build.map.drawExtraInfo = function (data) {
     var extraInfo = $("#build-map-modal-templates").find("[name=map-read-extra-info]").clone();
+    extraInfo.find("[name=name]").text(data.GmpName);
     extraInfo.find("[name=description]").html(app.library.html.parseBbCode(data.GmpDescription));
     extraInfo.find("[name=layer]").text(data.GlrName);
     return extraInfo.show().get(0).outerHTML;

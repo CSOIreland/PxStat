@@ -162,13 +162,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
         $("#data-dataset-row").hide();
         $("#data-accordion-api").hide();
         if (params.PrcCode) {
-            //update breadcrumb
-            app.navigation.setBreadcrumb([
-                [data[0].SbjValue],
-                [data[0].PrcValue, "entity/data/", "#nav-link-data", null, { "PrcCode": data[0].PrcCode }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + data[0].PrcCode]
-            ]);
-            app.navigation.setTitle(data[0].PrcValue);
-            app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-product", [data[0].PrcCode, data[0].PrcValue]));
+            app.data.searchResult.ajax.getBreadcrumb(params.PrcCode)
         }
 
         else if (params.CprCode) {
@@ -218,6 +212,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
             text: app.label.static["oldest-first"]
         }));
         $("#data-search-row-desktop [name=search-results]").find("[name=refine-search]").hide();
+        $("#data-search-row-desktop [name=search-results]").find("[name=search-results-total]").hide();
         if (!app.data.isSearch) {
             searchResultsSort.find("option[value=" + C_APP_SORT_NEWEST + "]").prop("selected", true);
         }
@@ -226,6 +221,10 @@ app.data.searchResult.callback.readResults = function (data, params) {
             if (app.data.searchResult.result.length >= app.config.search.maximumResults) {
                 //results truncated by server due to broad search term
                 $("#data-search-row-desktop [name=search-results]").find("[name=refine-search]").show().html(app.library.html.parseDynamicLabel("refine-search", [app.config.search.maximumResults]));
+            }
+            else {
+                $("#data-search-row-desktop [name=search-results]").find("[name=search-results-total]").show();
+                $("#data-search-row-desktop [name=search-results]").find("[name=search-results-total-value]").html(app.library.html.parseDynamicLabel("search-results-total", [app.data.searchResult.result.length]));
             }
         }
         var productShare = $("#data-search-result-templates").find("[name=share]").clone();
@@ -237,6 +236,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
         var copyrights = [];
         var languages = [];
         var archived = [];
+        var associated = [];
         var properties = [];
 
         $.each(app.data.searchResult.result, function (key, value) {
@@ -261,8 +261,12 @@ app.data.searchResult.callback.readResults = function (data, params) {
             archived.push({
                 RlsArchiveFlag: value.RlsArchiveFlag
             });
+            associated.push({
+                AssociatedFlag: value.AssociatedFlag
+            });
             properties.push({
                 RlsArchiveFlag: value.RlsArchiveFlag,
+                AssociatedFlag: value.AssociatedFlag,
                 RlsExperimentalFlag: value.RlsExperimentalFlag,
                 RlsReservationFlag: value.RlsReservationFlag
             })
@@ -385,12 +389,16 @@ app.data.searchResult.callback.readResults = function (data, params) {
         //if we have some true properties, draw properties filter
         //properties
         var numArchived = 0;
+        var numAssociated = 0;
         var numUnderReservation = 0;
         var numExperimental = 0;
 
         $.each(properties, function (key, value) {
             if (value.RlsArchiveFlag) {
                 numArchived++;
+            }
+            if (value.AssociatedFlag) {
+                numAssociated++;
             }
             if (value.RlsReservationFlag) {
                 numUnderReservation++;
@@ -400,7 +408,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
             }
         });
         var propertiesFilterList = null;
-        if (numArchived > 0 || numUnderReservation > 0 || numExperimental > 0) {
+        if (numArchived > 0 || numAssociated > 0 || numUnderReservation > 0 || numExperimental > 0) {
             propertiesFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
             propertiesFilterList.attr("filter-type", "properties");
             var propertiesFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
@@ -412,6 +420,16 @@ app.data.searchResult.callback.readResults = function (data, params) {
                 itemArchived.find("[name=filter-list-item-value]").text(app.label.static["archived"]);
                 itemArchived.find("[name=filter-list-item-count]").text(numArchived);
                 propertiesFilterList.append(itemArchived);
+            }
+            if (numAssociated > 0) {
+                if (!app.data.isSearch) {
+                    var itemAssociated = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                    itemAssociated.attr("associated", true);
+                    itemAssociated.attr("active", "false");
+                    itemAssociated.find("[name=filter-list-item-value]").text(app.label.static["associated"]);
+                    itemAssociated.find("[name=filter-list-item-count]").text(numAssociated);
+                    propertiesFilterList.append(itemAssociated);
+                }
             }
             if (numUnderReservation > 0) {
                 var itemUnderReservation = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
@@ -462,10 +480,12 @@ app.data.searchResult.callback.readResults = function (data, params) {
             e.preventDefault();
             if ($(this).attr("active") == "false") {
                 $(this).find("[name=filter-list-item-checkbox]").removeClass("far fa-square").addClass("far fa-check-square");
+                $(this).find("[name=filter-list-item-checkbox]").attr("aria-label", "checked");
                 $(this).attr("active", "true");
             }
             else {
                 $(this).find("[name=filter-list-item-checkbox]").removeClass("far fa-check-square").addClass("far fa-square");
+                $(this).find("[name=filter-list-item-checkbox]").attr("aria-label", "unchecked");
                 $(this).attr("active", "false");
             }
             app.data.searchResult.callback.filterResults();
@@ -478,6 +498,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
     }
     // Handle no data
     else {
+        $("#data-search-row-desktop [name=search-results]").find("[name=search-results-total]").hide();
         $("#data-search-row-desktop [name=no-search-results], #data-search-row-responsive [name=no-search-results]").show();
         $("#data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").hide();
         $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('show');
@@ -494,6 +515,27 @@ app.data.searchResult.callback.readResults = function (data, params) {
 
 };
 
+app.data.searchResult.ajax.getBreadcrumb = function () {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.public,
+        "PxStat.System.Navigation.Product_API.Read",
+        {
+            "LngIsoCode": app.label.language.iso.code,
+            "PrcCode": app.data.PrdCode
+        },
+        "app.data.searchResult.callback.getBreadcrumb");
+};
+
+app.data.searchResult.callback.getBreadcrumb = function (data) {
+    //update breadcrumb
+    app.navigation.setBreadcrumb([
+        [data[0].SbjValue],
+        [data[0].PrcValue, "entity/data/", "#nav-link-data", null, { "PrcCode": data[0].PrcCode }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + data[0].PrcCode]
+    ]);
+    app.navigation.setTitle(data[0].PrcValue);
+    app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-product", [data[0].PrcCode, data[0].PrcValue]));
+
+};
 
 /**
 * 
@@ -505,6 +547,7 @@ app.data.searchResult.callback.filterResults = function () {
     var copyrightsSelected = [];
     var languagesSelected = [];
     var archivedSelected = [];
+    var associatedSelected = [];
     var underReservationSelected = [];
     var experimentalSelected = [];
     //subjectsSelected
@@ -550,6 +593,19 @@ app.data.searchResult.callback.filterResults = function () {
             }
         }
 
+        if ($(this).attr("active") == "true" && $(this).attr("associated")) {
+            switch ($(this).attr("associated")) {
+                case "true":
+                    associatedSelected.push(true);
+                    break;
+                case "false":
+                    associatedSelected.push(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         if ($(this).attr("active") == "true" && $(this).attr("under-reservation")) {
             switch ($(this).attr("under-reservation")) {
                 case "true":
@@ -578,7 +634,7 @@ app.data.searchResult.callback.filterResults = function () {
     });
 
     var filteredResults = [];
-    if (subjectsSelected.length || productsSelected.length || copyrightsSelected.length || languagesSelected.length || archivedSelected.length || underReservationSelected.length || experimentalSelected.length) {
+    if (subjectsSelected.length || productsSelected.length || copyrightsSelected.length || languagesSelected.length || archivedSelected.length || associatedSelected.length || underReservationSelected.length || experimentalSelected.length) {
         $.each(app.data.searchResult.result, function (key, value) {
             var count = 0;
             if (jQuery.inArray(value.SbjCode, subjectsSelected) != -1) {
@@ -599,6 +655,10 @@ app.data.searchResult.callback.filterResults = function () {
             }
 
             if (jQuery.inArray(value.RlsArchiveFlag, archivedSelected) != -1) {
+                count++;
+            }
+
+            if (jQuery.inArray(value.AssociatedFlag, associatedSelected) != -1) {
                 count++;
             }
 
@@ -708,9 +768,9 @@ app.data.searchResult.callback.drawPagination = function (filteredResults) {
 */
 app.data.searchResult.callback.drawResults = function (paginatedResults) {
     $("#data-dataset-row").find("[name=back-to-select-results]").hide();
-    $("#data-search-row-desktop [name=archived-heading], #data-search-row-desktop [name=non-archived-heading]").hide();
+    $("#data-search-row-desktop [name=archived-heading], #data-search-row-desktop [name=associated-heading], #data-search-row-desktop [name=non-archived-heading]").hide();
     $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").show();
-    $("#data-search-row-desktop [name=search-results-non-archived], #data-search-row-desktop [name=search-results-archived]").empty();
+    $("#data-search-row-desktop [name=search-results-non-archived], #data-search-row-desktop [name=search-results-archived], #data-search-row-desktop [name=search-results-associated]").empty();
 
     $.each(paginatedResults, function (key, entry) {
         var resultItem = $("#data-search-result-templates").find("[name=search-result-item]").clone(); //a Result Item
@@ -797,10 +857,15 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
             $("#data-search-row-desktop").find("[name=search-results-non-archived]").append(resultItem);
         }
         else {
-            if (entry.RlsArchiveFlag) {
+            if (entry.AssociatedFlag) {
+                $("#data-search-row-desktop").find("[name=search-results-associated]").append(resultItem);
+                $("#data-search-row-desktop [name=associated-heading]").show();
+            }
+            else if (entry.RlsArchiveFlag) {
                 $("#data-search-row-desktop").find("[name=search-results-archived]").append(resultItem);
                 $("#data-search-row-desktop [name=archived-heading]").show();
             }
+
             else {
                 $("#data-search-row-desktop").find("[name=search-results-non-archived]").append(resultItem);
                 $("#data-search-row-desktop [name=non-archived-heading]").show();

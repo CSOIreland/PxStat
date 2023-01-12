@@ -124,6 +124,15 @@ app.release.information.render = function (data) {
 
         // Enable the ability to set the navigation
         $("#release-information [name=update-navigation]").attr("disabled", false);
+
+        // Enable the ability to set the association but only if core product is set
+        if (data.PrcCode) {
+            $("#release-information [name=update-association]").attr("disabled", false);
+        }
+        else {
+            $("#release-information [name=update-association]").attr("disabled", true);
+        }
+
     }
 
     // Enable tooltip

@@ -74,10 +74,11 @@ app.footer.render.social = function () {
     $("#footer [name=footer-social]").append($("<a>", {
       "href": value.url,
       "target": "_blank",
+      "aria-label": app.label.static[value.label],
       "rel": "noreferrer" // Best practice for cross-origin links
     }).append($("<i>", {
       "class": value.icon + " fa-3x mr-2 text-white",
-      "title": app.label.social[value.label],
+      "title": app.label.static[value.label],
       "data-toggle": "tooltip",
       "data-placement": "top"
     })).get(0).outerHTML);

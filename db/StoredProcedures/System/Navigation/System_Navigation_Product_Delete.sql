@@ -84,7 +84,26 @@ BEGIN
 			RETURN
 		END
 	END
+	
+	-- Remove all entries in the TM_RELEASE_PRODUCT table that contain a reference to the product code
+    DECLARE @auditId AS INT = NULL;
+    EXECUTE @auditId = Security_Auditing_Delete @DtgID, @userName;
+    IF @auditId IS NULL
+       OR @auditId = 0
+        BEGIN
+            RAISERROR ('SP: Security_Auditing_Delete has failed!', 16, 1);
+            RETURN 0;
+        END
 
+	UPDATE TM_RELEASE_PRODUCT
+    SET    RPR_DELETE_FLAG = 1,
+           RPR_DTG_ID      = @auditId
+           WHERE RPR_PRC_ID = (SELECT PRC_ID
+                             FROM   TD_PRODUCT
+                             WHERE  PRC_CODE = @PrcCode
+                                    AND PRC_DELETE_FLAG = 0)
+           AND RPR_DELETE_FLAG = 0;
+		   
 	-- Return the number of rows deleted
 	RETURN @updateCount
 END

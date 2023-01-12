@@ -214,11 +214,7 @@ app.navigation.access.callback.ReadCurrent = function () {
   }
   else {
     $("#nav-user").remove();
-
-    if (app.config.plugin.subscriber.enabled || app.config.security.adOpenAccess) {
-      $("#nav-user-login").show();
-    };
-
+    $("#nav-user-login").show();
     $("#nav-user-logout").remove();
     $("#nav-user-locked").remove();
   }
@@ -252,6 +248,8 @@ app.navigation.access.renderMenu = function (PrvCode) {
       $("#nav-link-build").parent().show();
       // Manage
       $("#nav-link-manage").parent().show();
+      // Report
+      $("#nav-link-report").parent().show();
       // Keywords
       $("#nav-link-keyword").parent().show();
       // System
@@ -274,6 +272,8 @@ app.navigation.access.renderMenu = function (PrvCode) {
       $("#nav-link-build").parent().show();
       // Manage
       $("#nav-link-manage").parent().show();
+      // Report
+      $("#nav-link-report").parent().show();
       // Keywords
       $("#nav-link-keyword").parent().show();
       // System
@@ -282,7 +282,10 @@ app.navigation.access.renderMenu = function (PrvCode) {
     case C_APP_PRIVILEGE_MODERATOR:
       // Display current user's information
       app.navigation.user.ajax.read();
-
+      //save queries
+      if (app.config.plugin.subscriber.enabled) {
+        $("#nav-link-saved-query").parent().show();
+      };
       //Dashboard
       $("#nav-link-dashboard").parent().show();
       // Releases
@@ -308,6 +311,8 @@ app.navigation.access.renderMenu = function (PrvCode) {
 
       // Manage
       $("#nav-link-manage").parent().remove();
+      // Report
+      $("#nav-link-report").parent().show();
       // Keywords
       $("#nav-link-keyword").parent().remove();
       // System
@@ -330,10 +335,12 @@ app.navigation.access.renderMenu = function (PrvCode) {
       $("#nav-link-build").parent().remove();
       // Manage
       $("#nav-link-manage").parent().remove();
+      // Report
+      $("#nav-link-report").parent().remove();
       // Keywords
       $("#nav-link-keyword").parent().remove();
       // Keywords
-      $("#nav-link-condfiguration").parent().remove();
+      $("#nav-link-configuration").parent().remove();
       // System
       $("#nav-link-system").parent().remove();
 
@@ -812,7 +819,8 @@ app.navigation.user.callback.drawSavedTables = function () {
         app.navigation.user.callback.drawCallbackSavedTables();
       },
       //Translate labels language
-      language: app.label.plugin.datatable
+      language: app.label.plugin.datatable,
+      "pagingType": "numbers"
     };
     $("#data-navigation [name=favourite-tables] table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
       app.navigation.user.callback.drawCallbackSavedTables();

@@ -135,11 +135,17 @@ app.dashboard.workInProgress.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -176,7 +182,7 @@ app.dashboard.workInProgress.drawDataTable = function (data) {
                 }
 
             ],
-            order: [3, 'desc'],
+            order: [4, 'desc'],
             drawCallback: function (settings) {
                 app.dashboard.workInProgress.drawCallbackWorkInProgress();
             },
@@ -266,11 +272,17 @@ app.dashboard.awaitingResponse.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -325,7 +337,7 @@ app.dashboard.awaitingResponse.drawDataTable = function (data) {
                 }
 
             ],
-            order: [4, 'asc'],
+            order: [5, 'asc'],
             drawCallback: function (settings) {
                 app.dashboard.drawCallbackAwaitingResponse();
 
@@ -415,11 +427,17 @@ app.dashboard.awaitingSignoff.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -476,7 +494,7 @@ app.dashboard.awaitingSignoff.drawDataTable = function (data) {
                 }
 
             ],
-            order: [4, 'asc'],
+            order: [5, 'asc'],
             drawCallback: function (settings) {
                 app.dashboard.drawCallbackAwaitingSignOff();
             },
@@ -564,11 +582,17 @@ app.dashboard.pendinglive.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -623,7 +647,7 @@ app.dashboard.pendinglive.drawDataTable = function (data) {
                 }
 
             ],
-            order: [4, 'asc'],
+            order: [5, 'asc'],
             drawCallback: function (settings) {
                 app.dashboard.drawCallbackPendingLive();
             },
@@ -720,11 +744,17 @@ app.dashboard.liveReleases.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { "rls-code": row.RlsCode, "mtr-code": row.MtrCode };
                         return app.library.html.link.internal(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -787,7 +817,7 @@ app.dashboard.liveReleases.drawDataTable = function (data) {
                 }
 
             ],
-            order: [2, 'desc'],
+            order: [3, 'desc'],
             drawCallback: function (settings) {
                 app.dashboard.drawCallbackliveReleases();
             },

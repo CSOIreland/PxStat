@@ -198,6 +198,7 @@ app.geomap.drawCallback = function () {
 
 app.geomap.drawExtraInfo = function (data) {
     var extraInfo = $("#map-templates").find("[name=map-read-extra-info]").clone();
+    extraInfo.find("[name=name]").text(data.GmpName);
     extraInfo.find("[name=description]").html(app.library.html.parseBbCode(data.GmpDescription));
     extraInfo.find("[name=restful-url]").html(
         function () {

@@ -75,6 +75,7 @@ BEGIN
 	END
 
 	SELECT RLS_CODE AS RlsCode
+	    ,mtr.MTR_ID AS MtrId
 		,mtr.MTR_CODE AS MtrCode
 		,coalesce(lngMTR.LNG_ISO_CODE, TS_LANGUAGE.LNG_ISO_CODE) AS LngIsoCode
 		,coalesce(lngMtr.LNG_ISO_NAME, TS_LANGUAGE.LNG_ISO_NAME) AS LngIsoName

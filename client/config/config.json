@@ -272,8 +272,14 @@
 					"legend": {
 						"display": true,
 						"position": "bottom"
+					},
+					"elements": {
+						"line": {
+							"tension": 0.4
+						}
 					}
-				}
+				},
+				"colours": []
 			}
 		},
 		"subscriber": {
@@ -318,7 +324,25 @@
 					"value": "darkviolet",
 					"name": "violet"
 				}
-			]
+			],
+			"mode": [
+				{
+					"value": "q",
+					"label": "quantile"
+				},
+				{
+					"value": "e",
+					"label": "equidistant"
+				},
+				{
+					"value": "k",
+					"label": "k-means"
+				}
+			],
+			"baseMap": {
+				"leaflet": [],
+				"esri": []
+			}
 		}
 	}
 }

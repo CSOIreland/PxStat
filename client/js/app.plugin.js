@@ -111,6 +111,13 @@ jQuery.validator.addMethod("validEmailAddress", function (value, element) {
 }, app.label.static["invalid-format"]);
 
 /**
+ * Validation validMatrix
+ */
+jQuery.validator.addMethod("validMatrix", function (value, element) {
+  return this.optional(element) || new RegExp(app.config.regex["matrix-name"]).test(value);
+}, app.label.static["invalid-format"]);
+
+/**
  * Validation validPhoneNumber
  */
 jQuery.validator.addMethod("validPhoneNumber", function (value, element) {

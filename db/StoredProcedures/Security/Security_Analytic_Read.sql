@@ -9,7 +9,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 21/01/2019
 -- Description:	Reads a summary of analytic data
--- exec Security_Analytic_Read '2021-03-20T12:00:00','2021-12-02T12:00:00'
+-- exec Security_Analytic_Read '2021-03-20T12:00:00','2022-11-21T12:00:00'
 -- =============================================
 CREATE
 	OR
@@ -26,31 +26,16 @@ BEGIN
 	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
 
 
-
-
-	SELECT MTR_CODE AS MtrCode
-		,MTR_TITLE AS MtrTitle
-		,RLS_LIVE_DATETIME_FROM AS PublishDate
-		,PRC_CODE AS PrcCode
-		,PRC_VALUE AS PrcValue
-		,SBJ_CODE AS SbjCode
-		,SBJ_Value AS SbjValue
-		,Bots AS NltBot
-		,M2M AS NltM2m
-		,Widget As NltWidget
-		,NltUser
-		,Total
-	FROM (
-		SELECT MTR_CODE
-			,MTR_TITLE
-			,PRC_CODE
-			,PRC_VALUE
-			,SBJ_CODE
-			,SBJ_VALUE
-			,max(RLS_LIVE_DATETIME_FROM) as RLS_LIVE_DATETIME_FROM
-			,sum(cast(NLT_BOT_FLAG AS INT)) AS Bots
-			,sum(cast(NLT_M2M_FLAG AS INT)) AS M2M
-			,sum(cast(NLT_WIDGET AS INT)) AS Widget
+		SELECT MTR_CODE AS MtrCode
+			,MTR_TITLE AS MtrTitle
+			,PRC_CODE AS PrcCode
+			,PRC_VALUE AS PrcValue
+			,SBJ_CODE AS SbjCode
+			,SBJ_VALUE AS SbjValue
+			,max(RLS_LIVE_DATETIME_FROM)  AS PublishDate
+			,sum(cast(NLT_BOT_FLAG AS INT)) AS NltBot
+			,sum(cast(NLT_M2M_FLAG AS INT)) AS NltM2m
+			,sum(cast(NLT_WIDGET AS INT)) AS NltWidget
 			,sum(cast(NLT_USER_FLAG AS INT)) AS NltUser
 			,count(*) AS Total
 		FROM TD_ANALYTIC
@@ -86,7 +71,7 @@ BEGIN
 			,SBJ_VALUE
 			,PRC_CODE
 			,PRC_VALUE
-		) counts
+	
 END
 GO
 

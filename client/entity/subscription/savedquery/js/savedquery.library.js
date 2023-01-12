@@ -217,6 +217,17 @@ app.savedquery.callback.savedQueryRead = function (response) {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
 
+    //draw snippet code
+    var snippet = app.config.entity.data.snippet;
+    snippet = snippet.sprintf([C_APP_URL_PXWIDGET_ISOGRAM, response[0].SnippetType, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(JSON.parse(nacl.util.encodeUTF8(nacl.util.decodeBase64(response[0].SnippetQueryBase64))))]);
+    $("#saved-query-widget-modal-snippet-code-copy").hide().text(snippet.trim()).fadeIn();
+    Prism.highlightAll();
+
+
+    $("#saved-query-widget-modal-snippet-code-download-button").once("click", function () {
+        // Download the snippet file
+        app.library.utility.download(response[0].Matrix + "_" + response[0].TagName.replace(/ /g, "_").toLowerCase() + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#saved-query-widget-modal-snippet-code-copy").text(), "html", "text/html");
+    });
 
 };
 

@@ -80,6 +80,19 @@ app.data.dataset.map.getColourSchemes = function () {
     });
 };
 
+app.data.dataset.map.getModes = function () {
+    $.each(app.config.plugin.leaflet.mode, function (index, value) {
+        $("#data-dataset-map-nav-content").find("[name=mode-select]").append($("<option>",
+            {
+                "value": value.value,
+                "text": app.label.static[value.label]
+            }
+        ));
+    });
+};
+
+
+
 app.data.dataset.map.drawMapToDisplay = function () {
     var geoDimensions = app.data.dataset.metadata.jsonStat.Dimension({ role: "geo" });
     $("#data-dataset-map-nav-content").find("[name=dimension-containers]").empty();
@@ -193,11 +206,11 @@ app.data.dataset.map.buildMapConfig = function () {
     app.data.dataset.map.configuration = {};
     $.extend(true, app.data.dataset.map.configuration, app.data.dataset.map.template.wrapper);
 
-
     app.data.dataset.map.buildApiParams();
     app.data.dataset.map.configuration.data.datasets[0].api.query.data.params = app.data.dataset.map.apiParamsData;
     app.data.dataset.map.configuration.mapDimension = $("#data-dataset-map-nav-content [name=geo-select-container] select").val();
-
+    app.data.dataset.map.configuration.options.mode = $("#data-dataset-map-nav-content").find("[name=mode-select]").val();
+    app.data.dataset.map.configuration.baseMap = app.config.plugin.leaflet.baseMap;
 
     if (app.data.isLive) {
         app.data.dataset.map.configuration.data.datasets[0].api.query.data.params.extension.matrix = app.data.MtrCode;
@@ -248,7 +261,7 @@ app.data.dataset.map.renderSnippet = function () {
     }
 
     if ($("#data-dataset-map-accordion-collapse-widget").find("[name=include-title]").is(':checked')) {
-        config.title = app.data.dataset.metadata.jsonStat.label.trim();
+        config.title = $("#data-dataset-map-accordion-collapse-widget").find("[name=title-value]").val().trim();
     }
 
     config.borders = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-borders]").is(':checked');

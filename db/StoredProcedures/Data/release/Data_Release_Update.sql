@@ -99,6 +99,43 @@ BEGIN
 		END
 	END
 
+		IF @PrcCode IS NOT NULL
+    BEGIN
+        DECLARE @ReleaseId AS INT;
+        DECLARE @ProductId AS INT;
+        DECLARE @Count AS INT;
+        SELECT @ReleaseId = RLS_ID
+        FROM   TD_RELEASE
+        WHERE  RLS_CODE = @RlsCode;
+
+        SELECT @ProductId = PRC_ID
+        FROM   TD_PRODUCT
+        WHERE  PRC_CODE = @PrcCode;
+
+        SELECT @Count = COUNT(*)
+        FROM   TM_RELEASE_PRODUCT
+        WHERE  RPR_RLS_ID = @ReleaseId
+                AND RPR_PRC_ID = @ProductId
+                AND RPR_DELETE_FLAG = 0;
+        IF @Count > 0
+            BEGIN
+                DECLARE @auditId AS INT = NULL;
+                EXECUTE @auditId = Security_Auditing_Create @CcnUsername;
+                IF @auditId IS NULL
+                    OR @auditId = 0
+                    BEGIN
+                        RAISERROR ('SP: Security_Auditing_Create has failed!', 16, 1);
+                        RETURN 0;
+                    END
+                UPDATE TM_RELEASE_PRODUCT
+                SET    RPR_DELETE_FLAG = 1,
+                        RPR_DTG_ID      = @auditId
+                WHERE  RPR_RLS_ID = @ReleaseId
+                        AND RPR_PRC_ID = @ProductId
+                        AND RPR_DELETE_FLAG = 0;
+            END
+    END
+
 	--Return the number of rows updated
 	RETURN @updateCount
 END

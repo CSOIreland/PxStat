@@ -84,11 +84,17 @@ app.release.panel.workInProgress.callback.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.edit(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -108,12 +114,13 @@ app.release.panel.workInProgress.callback.drawDataTable = function (data) {
                     }
                 }
             ],
-            order: [2, 'desc'],
+            order: [3, 'desc'],
             drawCallback: function (settings) {
                 app.release.panel.drawCallbackWorkInProgress();
             },
             //Translate labels language
-            language: app.label.plugin.datatable
+            language: app.label.plugin.datatable,
+            "pagingType": "numbers"
         };
         $("#release-panel-workinprogress table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.release.panel.drawCallbackWorkInProgress();
@@ -185,11 +192,17 @@ app.release.panel.awaitingResponse.callback.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.edit(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -214,7 +227,8 @@ app.release.panel.awaitingResponse.callback.drawDataTable = function (data) {
 
             },
             //Translate labels language
-            language: app.label.plugin.datatable
+            language: app.label.plugin.datatable,
+            "pagingType": "numbers"
         };
 
         $("#release-panel-awaitingresponse table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
@@ -287,11 +301,17 @@ app.release.panel.awaitingSignoff.callback.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.edit(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -315,7 +335,8 @@ app.release.panel.awaitingSignoff.callback.drawDataTable = function (data) {
                 app.release.panel.drawCallbackAwaitingSignOff();
             },
             //Translate labels language
-            language: app.label.plugin.datatable
+            language: app.label.plugin.datatable,
+            "pagingType": "numbers"
         };
         $("#release-panel-awaitingsignoff table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.release.panel.drawCallbackAwaitingSignOff();
@@ -387,11 +408,17 @@ app.release.panel.pendingLive.callback.drawDataTable = function (data) {
             data: data,
             columns: [
                 {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
+                {
                     data: null,
                     render: function (data, type, row) {
                         var attributes = { idn: row.RlsCode, MtrCode: row.MtrCode };
                         return app.library.html.link.edit(attributes, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 {
                     data: null,
@@ -415,7 +442,8 @@ app.release.panel.pendingLive.callback.drawDataTable = function (data) {
                 app.release.panel.drawCallbackPendingLive();
             },
             //Translate labels language
-            language: app.label.plugin.datatable
+            language: app.label.plugin.datatable,
+            "pagingType": "numbers"
         };
         $("#release-panel-pendinglive table").DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
             app.release.panel.drawCallbackPendingLive();

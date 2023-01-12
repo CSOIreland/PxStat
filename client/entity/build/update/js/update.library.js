@@ -746,6 +746,21 @@ app.build.update.ajax.updateOutput = function () {
         });
     });
 
+    //refactor data format to reduce payload
+    var dataTbl = [];
+    var dataTblHeaders = dimensionCodes;
+    dataTblHeaders.push(C_APP_CSV_VALUE);
+    dataTbl.push(dataTblHeaders);
+    $(params.Data).each(function (keyObject, dataObject) {
+        var tblRow = [];
+        $.each(dataTblHeaders, function (index, value) {
+            tblRow.push(dataObject[value])
+        });
+        dataTbl.push(tblRow);
+    });
+
+    //replace data with reduced structure
+    params.Data = dataTbl;
     // Merge Signature into Data
     params.Signature = app.build.update.upload.Signature;
     api.ajax.jsonrpc.request(
@@ -773,11 +788,11 @@ app.build.update.callback.updateOutput = function (data, frmType) {
 
         //If you try and update a px file with a data csv file that has no valid records, display an error modal instead of the report modal.
         if (!data.report.length && app.build.update.upload.file.content.data.JSON) {
-            api.modal.error(app.label.static["invalid-csv-data-file"]);
-            return
+            api.modal.information(app.label.static["invalid-csv-data-file"]);
+            app.build.update.callback.downloadFile(data.file, frmType);
         }
 
-        if (data.report && data.report.length) {
+        else if (data.report && data.report.length) {
             app.build.update.data.report.drawReport(data, frmType);
         }
         else {
@@ -826,8 +841,9 @@ app.build.update.validate.matrixProperty = function () {
         rules: {
             "mtr-value": {
                 required: true,
+                validMatrix: true,
                 normalizer: function (value) {
-                    value = value.sanitise(C_SANITISE_UPPERCASE, C_APP_REGEX_ALPHANUMERIC_DIACRITIC);
+                    value = value.sanitise(C_SANITISE_UPPERCASE);
                     $(this).val(value);
                     return value;
                 }
@@ -1076,10 +1092,10 @@ app.build.update.sortPeriods = function () {
         switch (status) {
             case "asc":
                 select.attr("sort", "desc");
-                return $(x).text() < $(y).text() ? 1 : -1;
+                return $(x).val() < $(y).val() ? 1 : -1;
             case "desc":
                 select.attr("sort", "asc");
-                return $(x).text() > $(y).text() ? 1 : -1;
+                return $(x).val() > $(y).val() ? 1 : -1;
             default:
                 break;
         }

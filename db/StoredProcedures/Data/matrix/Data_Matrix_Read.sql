@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
 -- Description:	Reads one record from the TD_MATRIX and TD_Release table for a given language
--- exec Data_Matrix_Read 3, 'en', 'okeeffene'
+-- exec Data_Matrix_Read 1074, 'ga', 'okeeffene'
 -- =============================================
 CREATE
 	OR
@@ -122,6 +122,7 @@ BEGIN
 		ON SBJ_ID = PRC_SBJ_ID
 			AND SBJ_DELETE_FLAG = 0
 	WHERE MTR_DELETE_FLAG = 0
+	AND LNG_ISO_CODE=@LngIsoCode
 END
 GO
 

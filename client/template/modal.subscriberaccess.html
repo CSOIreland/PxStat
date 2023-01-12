@@ -101,20 +101,25 @@
                     </div>
                 </div>
 
-                <div class="modal-footer d-flex justify-content-between">
-                    <button class="btn btn-primary text-light" type="button" name="sign-up">
-                        <i class="fas fa-user-plus"></i> <span label="sign-up"></span>
-                    </button>
-                    <span>
-                        <button type="button" class="btn btn-neutral" data-dismiss="modal">
-                            <i class="far fa-times-circle"></i> <span label="cancel"></span>
-                        </button>
-                        <button class="btn btn-primary text-light" type="submit" name="login">
-                            <i class="fas fa-sign-in-alt"></i> <span label="login"></span>
-                        </button>
-                    </span>
+                <div class="modal-footer">
+                    <div class="row w-100">
+                        <div class="col-lg-3 col-md-3 order-lg-3 order-md-3 order-sm-1 order-xs-1">
+                            <button class="btn btn-primary text-light m-1" type="submit" name="login">
+                                <i class="fas fa-sign-in-alt"></i> <span label="login"></span>
+                            </button>
+                        </div>
+                        <div class="text-left col-lg-6 col-md-6 order-lg-1 order-md-1 order-sm-2 order-xs-2">
+                            <button class="btn btn-primary text-light m-1" type="button" name="sign-up">
+                                <i class="fas fa-user-plus"></i> <span label="sign-up"></span>
+                            </button>
+                        </div>
+                        <div class="col-lg-3 col-md-3 order-lg-2 order-md-2 order-sm-3 order-xs-3">
+                            <button type="button" class="btn btn-neutral m-1" data-dismiss="modal">
+                                <i class="far fa-times-circle"></i> <span label="cancel"></span>
+                            </button>
+                        </div>
 
-
+                    </div>
                 </div>
             </form>
         </div>

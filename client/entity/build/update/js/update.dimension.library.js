@@ -735,9 +735,11 @@ app.build.update.dimension.validateMap = function (data, gmpCode, clsCode) {
     });
 
     if (!invalidClassificationCodes.length) {
-        app.build.update.data.Map[clsCode] = app.config.url.api.static + "/PxStat.Data.GeoMap_API.Read/" + gmpCode;
-        app.build.update.dimension.drawMapTable();
-        $("#build-map-modal").modal("hide");
+        var params = {
+            "clsCode": clsCode,
+            "gmpCode": gmpCode
+        };
+        app.build.update.dimension.addMap(params);
     }
     else {
         var errorsList = $("<ul>", {
@@ -751,14 +753,23 @@ app.build.update.dimension.validateMap = function (data, gmpCode, clsCode) {
                 })
             )
         });
-        var eliminationMessage = "";
-        if (invalidClassificationCodes.length == 1) {
-            eliminationMessage = app.label.static["invalid-geojson-variables-suggestion"]
-        };
-        api.modal.error(app.label.static["invalid-geojson-variables"]
-            + errorsList.get(0).outerHTML
-            + eliminationMessage)
+
+
+        api.modal.confirm(
+            app.label.static["invalid-geojson-variables-confirm"] + errorsList.get(0).outerHTML,
+            app.build.update.dimension.addMap,
+            {
+                "gmpCode": gmpCode,
+                "clsCode": clsCode
+            }
+        );
     }
+};
+
+app.build.update.dimension.addMap = function (params) {
+    app.build.update.data.Map[params.clsCode] = app.config.url.api.static + "/PxStat.Data.GeoMap_API.Read/" + params.gmpCode;
+    app.build.update.dimension.drawMapTable();
+    $("#build-map-modal").modal("hide");
 };
 
 app.build.update.dimension.deleteMap = function (clsCode) {

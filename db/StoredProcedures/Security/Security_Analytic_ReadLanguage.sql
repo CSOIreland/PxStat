@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 15/05/2019
 -- Description:	Returns a count of matrices queried per language
--- exec Security_Analytic_ReadLanguage '2020-08-01','2020-08-21',null,null,1,1
+-- exec Security_Analytic_ReadLanguage '2020-08-01','2022-11-21','okeeffene'
 -- =============================================
 CREATE
 	OR
@@ -33,6 +33,7 @@ BEGIN
 	EXEC Security_Group_AccessList @CcnUsername
 
 	SELECT LNG_ISO_NAME AS LngIsoName
+		,GRP_ID AS GrpId
 		,count(*) AS lngCount
 	FROM TD_ANALYTIC
 	INNER JOIN TD_MATRIX
@@ -45,7 +46,7 @@ BEGIN
 	INNER JOIN TD_RELEASE
 		ON RLS_ID = MTR_RLS_ID
 			AND TD_RELEASE.RLS_DELETE_FLAG = 0
-	INNER JOIN @GroupUserHasAccess 
+	INNER JOIN TD_GROUP 
 		ON GRP_ID=RLS_GRP_ID 
 	LEFT JOIN TD_PRODUCT
 		ON RLS_PRC_ID = PRC_ID
@@ -72,7 +73,10 @@ BEGIN
 			@PrcCode = PRC_CODE
 			OR @PrcCode IS NULL
 			)
-	GROUP BY LNG_ISO_NAME
+	GROUP BY LNG_ISO_NAME,GRP_ID
+
+	SELECT GRP_ID AS GrpId
+	FROM @GroupUserHasAccess;
 END
 GO
 

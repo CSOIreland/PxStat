@@ -15,7 +15,6 @@ $(document).ready(function () {
 
     app.analytic.setDatePicker();
     app.analytic.ajax.readSubject();
-    app.analytic.ajax.readAnalytics();
     app.analytic.validation.select();
     //cancel click
     $("#select-card").find("[name=button-cancel]").once("click", function (e) {
@@ -35,6 +34,7 @@ $(document).ready(function () {
         app.analytic.setDatePicker();
     });
 
+    $("#analytic-data").find("[name=csv]").once("click", app.analytic.callback.downloadResults);
 
     //run bootstrap toggle to show/hide toggle button
     bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());

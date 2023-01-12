@@ -144,6 +144,38 @@ app.auth.validation.signIn = function () {
     }).resetForm();
 };
 
+app.auth.ajax.signOut = function () {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.public,
+        "PxStat.Subscription.Subscriber_API.Logout",
+        {
+            "Uid": app.auth.firebase.user.details.uid,
+            "AccessToken": app.auth.firebase.user.details.accessToken
+        },
+        "app.auth.callback.signOut"
+    );
+
+};
+
+app.auth.callback.signOut = function (data) {
+    if (data == C_API_AJAX_SUCCESS) {
+        signOut(app.auth.getFirebaseAuthApp).then(() => {
+            //clean up language cookie. It will be reset again if the user logs in
+            Cookies.remove(C_COOKIE_LANGUAGE);
+            //reload application
+            app.plugin.backbutton = false;
+            window.location.href = window.location.pathname;
+
+        }).catch((error) => {
+            api.modal.error(app.label.static["firebase-authentication-error"]);
+            console.log("firebase authentication error : " + error.message);
+        });
+    }
+    else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+};
+
 app.auth.validation.revoverPassword = function () {
     $("#modal-subscriber-password-recovery form").trigger("reset").validate({
         rules: {
@@ -343,7 +375,6 @@ app.auth.subscriberEmailActions = function () {
             default:
                 break;
         }
-
     };
 };
 
@@ -445,7 +476,6 @@ $(document).ready(function () {
         setPersistence(app.auth.getFirebaseAuthApp, $("#modal-subscriber-provider-stay-logged-in").is(':checked') ? browserLocalPersistence : browserSessionPersistence);
         signInWithPopup(app.auth.getFirebaseAuthApp, app.auth.googleAuth)
             .then((result) => {
-
                 //user signed it, will be caught by onAuthStateChanged
 
             }).catch((error) => {
@@ -522,24 +552,12 @@ $(document).ready(function () {
     });
 
     $("#navigation").find("[name=nav-subscriber-details]").find("[name=logout]").once("click", function () {
-        signOut(app.auth.getFirebaseAuthApp);
-        //clean up language cookie. It will be reset again if the user logs in
-        Cookies.remove(C_COOKIE_LANGUAGE);
-        //reload application
-        app.plugin.backbutton = false;
-        window.location.href = window.location.pathname;
+        app.auth.ajax.signOut();
     });
 
     $("#modal-subscriber-login").on('hidden.bs.modal', function (event) {
         $("#modal-subscriber-provider-stay-logged-in").prop("checked", false)
     });
-
-    $("#modal-subscriber-login").on('show.bs.modal', function (event) {
-        if (!app.config.security.adOpenAccess) {
-            $("#modal-subscriber-login").find("[name=management-login]").remove();
-        }
-    });
-
 
     $("#modal-subscriber-password-reset").on('hide.bs.modal', function (event) {
         app.plugin.backbutton = false;

@@ -25,7 +25,7 @@ $(document).ready(function () {
         $("#data-dataset-table-result").find("[name=save-query]").remove()
     };
 
-    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time],#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time],#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -57,6 +57,23 @@ $(document).ready(function () {
             app.data.dataset.table.ajax.data();
         }
     });
+
+    $("#data-dataset-table-accordion-collapse-widget").find("[name=title-value]").val(app.data.dataset.metadata.jsonStat.label.trim());
+
+
+    $("#data-dataset-table-accordion-collapse-widget").find('input[name="title-value"]').once('keyup', function () {
+        if ($(this).val().trim().length) {
+            window.clearTimeout($(this).data('timer'));
+            $(this).data('timer', window.setTimeout(function () {
+                app.data.dataset.table.callback.drawSnippetCode(true)
+            }, 400));
+        } else {
+            app.data.dataset.table.callback.drawSnippetCode(true); //maybe clear input
+            window.clearTimeout($(this).data('timer'));
+        }
+    });
+
+
 
     $('#data-dataset-table-accordion').on('show.bs.collapse', function (e) {
         $("#" + e.target.id).parent().find(".card-header i[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");

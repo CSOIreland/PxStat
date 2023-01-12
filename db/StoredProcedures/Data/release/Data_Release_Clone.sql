@@ -112,16 +112,19 @@ BEGIN
 
 	SET @NewRlsId = @@identity
 
-	-- KEYWORD_RELEASE
-	INSERT INTO [TD_KEYWORD_RELEASE] (
-		[KRL_VALUE]
-		,[KRL_RLS_ID]
-		)
-	SELECT [KRL_VALUE]
-		,@NewRlsId
-	FROM [TD_KEYWORD_RELEASE]
-	WHERE KRL_MANDATORY_FLAG = 0
-		AND KRL_RLS_ID = @RlsId
+	-- Update TD_RELEASE_PRODUCT for cloned release
+	DECLARE @auditId AS INT = NULL;
+    EXECUTE @auditId = Security_Auditing_Create @userName;
+    IF @auditId IS NULL
+       OR @auditId = 0
+        BEGIN
+            RAISERROR ('SP: Security_Auditing_Create has failed!', 16, 1);
+            RETURN 0;
+        END
+	INSERT INTO TM_RELEASE_PRODUCT(RPR_RLS_ID, RPR_PRC_ID, RPR_DTG_ID, RPR_DELETE_FLAG)
+	SELECT @NewRlsId, RPR_PRC_ID, @auditId, 0 FROM TM_RELEASE_PRODUCT
+	WHERE RPR_PRC_ID IN (SELECT RPR_PRC_ID from TM_RELEASE_PRODUCT WHERE RPR_RLS_ID = @RlsId AND RPR_DELETE_FLAG = 0)
+	AND RPR_RLS_ID = @RlsId
 
 	RETURN @NewRlsId
 END

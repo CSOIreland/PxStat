@@ -717,4 +717,13 @@ app.library.utility.asyncController = function (control, callbackFunction, callb
 
 };
 
+app.library.utility.trimPapaParse = function (data) {
+  $(data).each(function (keyObject, dataObject) {
+    $.each(dataObject, function (key, property) {
+      dataObject[key] = property.trim();
+    });
+  });
+  return data;
+};
+
 //#endregion

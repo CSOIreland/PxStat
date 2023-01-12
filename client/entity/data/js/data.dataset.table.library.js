@@ -14,6 +14,7 @@ app.data.dataset.table.selectionCount = null;
 app.data.dataset.table.totalCount = null;
 app.data.dataset.table.apiParamsData = {}
 app.data.dataset.table.order = null;
+app.data.dataset.table.timeColumn = null;
 app.data.dataset.table.search = "";
 app.data.dataset.table.pivot = {};
 app.data.dataset.table.pivot.dimensionCode = null;
@@ -32,7 +33,7 @@ app.data.dataset.table.snippet.template = {
     "title": null,
     "link": null,
     "pivot": null,
-    "removeRedundantColumns": false,
+    "hideColumns": [],
     "internationalisation": {
         "unit": app.label.static["unit"],
         "value": app.label.static["value"]
@@ -74,16 +75,22 @@ app.data.dataset.table.snippet.template = {
         "responsive": false,
         "buttons": [
             {
-                "extend": 'csv',
+                "extend": "csv",
                 "text": app.label.static["download"] + " CSV",
                 "className": "export-button",
-                "title": app.data.MtrCode + "." + moment(Date.now()).format(app.config.mask.datetime.file)
+                "title": app.data.MtrCode + "." + moment(Date.now()).format(app.config.mask.datetime.file),
+                "exportOptions": {
+                    "columns": []
+                }
             },
             {
-                "extend": 'print',
+                "extend": "print",
                 "text": app.label.static["print"],
                 "className": "export-button",
-                "title": ""
+                "title": "",
+                "exportOptions": {
+                    "columns": []
+                }
             }
         ]
     }
@@ -95,7 +102,8 @@ app.data.dataset.table.drawDimensions = function () {
     $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").empty();
     $("#data-dataset-table-accordion-snippet-code").empty();
     $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").show();
-    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]").bootstrapToggle('disable');
+    $("#data-dataset-table-accordion-collapse-widget").find("[name=widget-snippet-information]").hide();
+    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('disable');
 
 
     //check for WIP
@@ -328,15 +336,27 @@ app.data.dataset.table.drawDimensions = function () {
             switch (status) {
                 case "asc":
                     select.attr("sort", "desc");
-                    return $(x).text() < $(y).text() ? 1 : -1;
+                    if (app.data.dataset.metadata.jsonStat.Dimension(dimension).role == "time") {
+                        return $(x).val() < $(y).val() ? 1 : -1;
+                    }
+                    else {
+                        return $(x).text() < $(y).text() ? 1 : -1;
+                    }
                 case "desc":
                     select.attr("sort", "asc");
-                    return $(x).text() > $(y).text() ? 1 : -1;
+                    if (app.data.dataset.metadata.jsonStat.Dimension(dimension).role == "time") {
+                        return $(x).val() > $(y).val() ? 1 : -1;
+                    }
+                    else {
+                        return $(x).text() > $(y).text() ? 1 : -1;
+                    }
+
                 default:
                     break;
             }
 
         }));
+
 
     });
 
@@ -392,8 +412,18 @@ app.data.dataset.table.drawDimensions = function () {
     //reset api params
     app.data.dataset.table.buildApiParams();
 
-    $("#data-dataset-table-accordion-collapse-widget [name=fluid-time], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]").once("change", function () {
+    $("#data-dataset-table-accordion-collapse-widget [name=fluid-time], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").once("change", function () {
         app.data.dataset.table.callback.drawSnippetCode(true);
+    });
+
+    $("#data-dataset-table-accordion-collapse-widget [name=include-title]").once("change", function () {
+        app.data.dataset.table.callback.drawSnippetCode(true);
+        if ($(this).is(':checked')) {
+            $("#data-dataset-table-accordion-collapse-widget").find("[name=title-value]").show();
+        } else {
+            $("#data-dataset-table-accordion-collapse-widget").find("[name=title-value]").hide();
+        }
+
     });
 
     $("#data-dataset-table-accordion-collapse-widget [name=auto-update]").once("change", function () {
@@ -791,6 +821,7 @@ app.data.dataset.table.callback.data = function (response) {
             app.data.dataset.table.search = "";
             app.data.dataset.table.callback.drawDatatable();
             app.data.dataset.table.callback.drawSnippetCode(true);
+
         }
         // Handle Exception
         else api.modal.exception(app.label.static["api-ajax-exception"]);
@@ -803,10 +834,85 @@ app.data.dataset.table.callback.data = function (response) {
     }
 };
 
+
+app.data.dataset.table.callback.drawHiddenColumsCheckBoxes = function () {
+    $("#data-dataset-table-accordion-collapse-widget").find("[name=hide-column-checkbox-container]").empty();
+    var columnsToHide = [];
+
+    //check the table has more than one row before allowing hidden columns
+    if ($("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().rows().count() != 1) {
+        $.each(app.data.dataset.table.jsonStat.Dimension(), function (index, value) {
+            //Only check non pivoted columns
+            if (app.data.dataset.table.jsonStat.id[index] != app.data.dataset.table.pivot.dimensionCode) {
+                if (value.id.length == 1) {
+                    columnsToHide.push(app.data.dataset.table.jsonStat.id[index]);
+                }
+            }
+
+        });
+
+        //if pivoted column is not statistic, add option to hide unit column
+
+        if (!app.data.dataset.table.pivot.dimensionCode || !app.data.dataset.table.pivot.isMetric) {
+            var units = [];
+            //check all units to see if that column can be hidden
+            $.each(app.data.dataset.table.jsonStat.Dimension({ role: "metric" })[0].Category(), function (index, value) {
+                units.push(value.unit.label)
+            });
+
+            var unitCanBeHidden = true;
+            if (units.length > 1) {
+                $.each(units, function (index, value) {
+                    if (index != units.length - 1) {
+                        if (value != units[index + 1]) {
+                            unitCanBeHidden = false;
+                            return false
+                        }
+                    }
+                });
+            }
+            if (unitCanBeHidden) {
+                columnsToHide.push("UNIT")
+            }
+        };
+
+        //build checkboxes
+        $.each(columnsToHide, function (index, value) {
+            var dimensionLabel = null;
+            if (value == C_APP_CSV_UNIT) {
+                dimensionLabel = app.label.static["unit"];
+            }
+            else {
+                dimensionLabel = app.data.dataset.table.jsonStat.Dimension(value).label;
+            }
+
+            var checkBox = $("#data-dataset-table-templates").find("[name=hide-column-checkbox]").clone();
+            checkBox.find("[name=hide-column]").val(value).attr("id", "data-dataset-table-accordion-heading-widget-hide-checxbox-" + value);
+            checkBox.find("label").attr("for", "data-dataset-table-accordion-heading-widget-hide-checxbox-" + value).text(dimensionLabel);
+            $("#data-dataset-table-accordion-collapse-widget").find("[name=hide-column-checkbox-container]").append(checkBox);
+        });
+    }
+
+    if (!columnsToHide.length) {
+        $("#data-dataset-table-accordion-collapse-widget").find("[name=no-columns-to-hide]").show();
+    }
+    else {
+        $("#data-dataset-table-accordion-collapse-widget").find("[name=no-columns-to-hide]").hide();
+    }
+
+    //add change event listener 
+    $("#data-dataset-table-accordion-collapse-widget").find("[name=hide-column-checkbox-container] [name=hide-column]").once("change", function () {
+        app.data.dataset.table.callback.drawSnippetCode(true);
+    });
+};
+
+
+
 app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //change to snippet
     if (widgetEnabled) {
         $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").hide();
-        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-responsive], #data-dataset-table-accordion-collapse-widget [name=remove-redundant-columns]").bootstrapToggle('enable');
+        $("#data-dataset-table-accordion-collapse-widget").find("[name=widget-snippet-information]").show();
+        $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('enable');
         $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").prop("disabled", false);
         $("#data-dataset-table-accordion-collapse-widget [name=add-custom-configuration], #data-dataset-table-accordion-collapse-widget [name=download-snippet]").prop("disabled", false);
         //check for WIP
@@ -829,7 +935,7 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
 
         app.data.dataset.table.snippet.configuration.autoupdate = $("#data-dataset-table-accordion-collapse-widget").find("[name=auto-update]").is(':checked');
         app.data.dataset.table.snippet.configuration.copyright = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-copyright]").is(':checked');
-        app.data.dataset.table.snippet.configuration.title = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-title]").is(':checked');
+        app.data.dataset.table.snippet.configuration.title = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-title]").is(':checked') ? $("#data-dataset-table-accordion-collapse-widget").find("[name=title-value]").val().trim() : "";
         app.data.dataset.table.snippet.configuration.link = $("#data-dataset-table-accordion-collapse-widget").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
         app.data.dataset.table.snippet.configuration.pivot = app.data.dataset.table.pivot.dimensionCode;
         app.data.dataset.table.saveQuery.configuration.pivot = app.data.dataset.table.pivot.dimensionCode;
@@ -846,6 +952,14 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
             app.data.dataset.table.snippet.configuration.options.dom = "Bft";
         }
 
+        if (!$("#data-dataset-table-accordion-collapse-widget").find("[name=include-buttons]").is(':checked')) {
+            app.data.dataset.table.snippet.configuration.options.dom = app.data.dataset.table.snippet.configuration.options.dom.replace('B', '');
+        }
+
+        if (!$("#data-dataset-table-accordion-collapse-widget").find("[name=include-search]").is(':checked')) {
+            app.data.dataset.table.snippet.configuration.options.dom = app.data.dataset.table.snippet.configuration.options.dom.replace('f', '');
+        }
+
         if ($("#data-dataset-table-accordion-collapse-widget").find("[name=include-responsive]").is(':checked')) {
             app.data.dataset.table.snippet.configuration.options.responsive = true;
         }
@@ -853,7 +967,9 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
             app.data.dataset.table.snippet.configuration.options.responsive = false;
         }
 
-        app.data.dataset.table.snippet.configuration.removeRedundantColumns = !$("#data-dataset-table-accordion-collapse-widget").find("[name=remove-redundant-columns]").is(':checked');
+        $("#data-dataset-table-accordion-collapse-widget").find("[name=hide-column-checkbox-container] [name=hide-column]:checked").each(function () {
+            app.data.dataset.table.snippet.configuration.hideColumns.push($(this).val());
+        });
 
         //add query to save query config
         var JsonQuery = {
@@ -908,6 +1024,7 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
 
     else {
         $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").show();
+        $("#data-dataset-table-accordion-collapse-widget").find("[name=widget-snippet-information]").hide();
     }
 
     //remove date if not live, can be present if prending live
@@ -1021,11 +1138,17 @@ app.data.dataset.table.callback.drawDatatable = function () {
 
         $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=header-row]").append(tableHeading);
 
+
+        if (data.Dimension(data.id[i]).role == "time") {
+            app.data.dataset.table.timeColumn = i;
+        };
+
         // Append datatable column
         tableColumns.push({
             data: data.id[i],
             "visible": data.id[i] == app.data.dataset.table.pivot.dimensionCode ? false : true,
             "searchable": data.id[i] == app.data.dataset.table.pivot.dimensionCode ? false : true,
+            "orderable": data.Dimension(data.id[i]).role == "metric" ? false : true,
             render: function (cell, type, row, meta) {
                 //alternative to using "createdCell" and data-order attribute which does not work with render
                 //depending on request type, return either the code to sort if the time column, or the label for any other column
@@ -1132,6 +1255,21 @@ app.data.dataset.table.callback.drawDatatable = function () {
         language: app.label.plugin.datatable
     };
 
+    //Set the default ordering to the time column if it exists, may be pivoted by time
+    if (app.data.dataset.table.pivot.dimensionCode) {
+        if (data.Dimension(app.data.dataset.table.pivot.dimensionCode).role == "time") {
+            localOptions.order = [];
+        }
+        else {
+            localOptions.order = [[app.data.dataset.table.timeColumn, "desc"]];
+        }
+
+    }
+    else {
+        localOptions.order = [[app.data.dataset.table.timeColumn, "desc"]];
+    }
+
+
     // Initiate DataTable
     $("#data-dataset-table-nav-content").find("[name=datatable]").off().DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
         app.data.dataset.table.drawCallbackDrawDataTable();
@@ -1164,6 +1302,8 @@ app.data.dataset.table.callback.drawDatatable = function () {
             scrollTop: $("#data-dataset-table-nav-content [name=result-table]").offset().top
         }, 1000);
     }
+
+    app.data.dataset.table.callback.drawHiddenColumsCheckBoxes();
 };
 
 /**
@@ -1281,7 +1421,7 @@ app.data.dataset.table.saveQuery.ajax.saveQuery = function () {
 
     saveQueryConfig.options.search.search = $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().search();
     saveQueryConfig.options.order = $("#data-dataset-table-nav-content").find("[name=datatable]").DataTable().order();
-    saveQueryConfig.title = true;
+    saveQueryConfig.title = "";
 
     var tagName = $("#data-dataset-save-query").find("[name=name]").val().replace(C_APP_REGEX_NOHTML, "");
     var base64snippet = nacl.util.encodeBase64(nacl.util.decodeUTF8(JSON.stringify(saveQueryConfig)));

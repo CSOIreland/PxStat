@@ -19,3 +19,8 @@
 /server/PxStat/obj
 /server/PxStat.DataMatrix.Test
 /utilities/Px5Migrator/.vs
+/client/config/config.demo.json
+/client/css/app.bootstrap.guideline.demo.css
+/client/css/app.bootstrap.guideline.demo.css.map
+/client/css/app.bootstrap.guideline.demo.scss
+/client/index.demo.html

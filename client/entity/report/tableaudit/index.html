@@ -1,0 +1,125 @@
+<!-- Select dropdowns  Subject and Product -->
+<div id="select-card" class="card m-3 border-primary">
+    <div class="card-header bg-primary text-light" label="select"></div>
+    <form name="table-audit-select">
+        <div class="card-body" name="card-submit">
+
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <label for="picker-date-range" label="date-range"></label>
+                </div>
+                <div class="col-8 p-2">
+                    <div id="table-audit-date-range" name="table-audit-date-range">
+                        <i class="fa fa-calendar"></i>&nbsp;
+                        <span></span> <i class="fa fa-caret-down"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <label label="reasons-to-publish"></label>
+                </div>
+                <div class="col-8 p-2">
+                    <select class="form-control" name="select-reason" multiple="multiple" disabled></select>
+                    <span class="serverValidationError text-danger" name="select-reason-error-holder"></span>
+                </div>
+            </div>
+            <div class="border-top border-right border-left row mx-0">
+                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <label label="groups"></label>
+                </div>
+                <div class="col-8 p-2">
+                    <select class="form-control" name="select-group" multiple="multiple" disabled></select>
+                    <span class="serverValidationError text-danger" name="select-reason-error-holder"></span>
+                </div>
+            </div>
+            <div class="border-top row mx-0"></div>
+        </div>
+        <div class="card-footer text-right">
+            <span>
+                <button name="button-cancel" class="btn btn-neutral">
+                    <i class="far fa-times-circle"></i> <span label="clear"></span>
+                </button>
+                <button name="button-submit" class="btn btn-primary text-light" type="button">
+                    <i class="fas fa-search"></i> <span label="submit"></span>
+                </button>
+            </span>
+        </div>
+    </form>
+
+</div>
+<div id="table-audit-results" style="display:none">
+
+    <div id="table-audit-data" class="card border-primary m-3">
+        <div class="card-header bg-primary text-light" label="result"></div>
+        <div class="card-body">
+            <table class="table table-striped hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th label="table-code"></th>
+                        <th label="release"></th>
+                        <th label="update-date"></th>
+                        <th label="scheduled"></th>
+                        <th label="frequency"></th>
+                        <th label="group"></th>
+                        <th label="reason"></th>
+                        <th label="footnote"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="card-footer">
+            <span>
+                <button name="csv" class="float-right btn btn-tertiary text-light">
+                    <i class="fas fa-download"></i> <span label="csv"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+
+</div>
+
+<div class="row m-1" id="table-audit-results-charts" style="display:none">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header p-2" label="reasons"></div>
+            <div class="card-body p-1">
+                <div id="table-audit-results-reasons-pie"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header p-2" label="release"></div>
+            <div class="card-body p-1">
+                <div id="table-audit-results-exceptional-pie"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Template: Region 1-->
+<div id="table-audit-reason-templates" class="invisible" style="display: none">
+    <!-- Reason table description -->
+    <div name="table-audit-reason-div-description" style="display: none">
+        <div class="card mb-2">
+            <div class="card-header" label="internal-description"></div>
+            <div class="card-body" name="reason-div-description-int-desc"></div>
+        </div>
+        <div class="card mb-2">
+            <div class="card-header" label="external-description"></div>
+            <div class="card-body">
+                <p name="reason-div-description-ext-desc"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page specific CSS -->
+<link rel="stylesheet" href="entity/report/tableaudit/css/tableaudit.css">
+<!-- Page specific JS -->
+<script src="entity/report/tableaudit/js/tableaudit.library.js"></script>
+<script src="entity/report/tableaudit/js/tableaudit.js"></script>

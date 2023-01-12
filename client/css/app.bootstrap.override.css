@@ -40,3 +40,41 @@ a[disabled] {
   }
 }
 
+
+#navigation a.text-light:focus,
+#navigation a.text-light:hover {
+
+  color: #ffffff !important;
+
+}
+
+
+
+
+/* Specific CSS for Modal Subscriber Access Login Buttons - Stretch Buttons to fit the -sm size */
+@media (min-width: 576px) {
+  #modal-subscriber-login-email .modal-footer .btn {
+    width: 100%
+  }
+}
+
+/* Specific CSS for Modal Subscriber Access Login Buttons*/
+@media (min-width: 768px) {
+  #modal-subscriber-login-email .modal-footer .btn {
+    width: auto
+  }
+}
+
+/* Specific CSS for Modal Subscriber Access Login Buttons*/
+@media (min-width: 992px) {
+  #modal-subscriber-login-email .modal-footer .btn {
+    width: auto
+  }
+}
+
+/* Specific CSS for Modal Subscriber Access Login Buttons*/
+@media (min-width: 1200px) {
+  #modal-subscriber-login-email .modal-footer .btn {
+    width: auto
+  }
+}

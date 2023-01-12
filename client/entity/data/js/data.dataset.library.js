@@ -122,7 +122,7 @@ app.data.dataset.callback.readMetadata = function (response) {
             });
         });
 
-        if (app.data.isLive) {
+        if (app.data.isLive && !app.data.RlsCode) {
             app.navigation.setBreadcrumb([
                 [app.data.dataset.metadata.jsonStat.extension.subject.value],
                 [app.data.dataset.metadata.jsonStat.extension.product.value, "entity/data/", "#nav-link-data", null, { "PrcCode": app.data.dataset.metadata.jsonStat.extension.product.code }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + app.data.dataset.metadata.jsonStat.extension.product.code],
@@ -584,6 +584,8 @@ app.data.dataset.callback.back = function () {
 
     if (app.data.PrdCode) {
         app.data.share(null, app.data.PrdCode);
+        //reload breadcrumb
+        app.data.searchResult.ajax.getBreadcrumb();
     }
     //first check if we have search results to display
     var numSearchResults = $("#data-search-row-desktop [name=search-results] [name=search-result-item]").length;

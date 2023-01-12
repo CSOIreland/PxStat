@@ -182,7 +182,14 @@ app.build.update.upload.validate.dataFile = function () {
     //add frequency code from select as this may have changed
     dimensionCodes.push($("#build-update-properties [name=frequency-code]").val());
 
-    var csvHeaders = app.build.update.upload.file.content.data.JSON.meta.fields;
+    var csvHeaders = $.extend(true, [], app.build.update.upload.file.content.data.JSON.meta.fields);
+
+    //trim any spaces in headers
+    $(csvHeaders).each(function (index, value) {
+        csvHeaders[index] = value.trim();
+    });
+
+
     //check that dimension codes are in csv header codes
     $(dimensionCodes).each(function (key, code) {
         if (jQuery.inArray(code, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
@@ -401,7 +408,10 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
                     header: true,
                     skipEmptyLines: true
                 });
+                //trim values 
+                app.build.update.upload.file.content.data.JSON.data = app.library.utility.trimPapaParse(app.build.update.upload.file.content.data.JSON.data);
             };
+
             readerUTF8.readAsText(file);
             readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
             readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });

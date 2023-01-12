@@ -148,6 +148,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps]").val("");
                 $("#data-dataset-chart-accordion-options-collapse [name=auto-scale-row], #data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse [name=series-dual-axis], #data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").hide();
+                $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").hide();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["categories"]);
                 break;
             case "mixed":
@@ -157,7 +158,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=sort-row]").hide();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
-
+                $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").show();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "line":
@@ -167,7 +168,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=sort-row]").show();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
-
+                $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").show();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "area":
@@ -177,7 +178,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=sort-row]").show();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
-
+                $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").show();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "bar":
@@ -187,7 +188,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=sort-row]").show();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
-
+                $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "horizontalBar":
@@ -198,7 +199,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-dual-axis], [name=right-yaxis-label-row]").hide();
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["y-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["y-axis-left"]);
-
+                $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["x-axis-label"]);
                 break;
             default:
@@ -1150,6 +1151,12 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
     };
 
+    //set lines to either curved or straight
+    if (!$("#data-dataset-chart-accordion-options-collapse").find("[name=curved-line]").is(':checked')) {
+        //straight line
+        app.data.dataset.chart.configuration.options.elements.line.tension = 0;
+    };
+
     if (!errors.length) {
         //set colour scheme
         switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
@@ -1158,12 +1165,24 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
             case "polarArea":
             case "radar":
                 var numSeriesCategories = app.data.dataset.chart.configuration.metadata.xAxis[xAxisDimensionCode].length;
-                app.data.dataset.chart.configuration.options.plugins.colorschemes.scheme = numSeriesCategories <= 10 ? "tableau.Tableau10" : "tableau.Tableau20";
+                if (!app.config.plugin.chartJs.chart.colours.length) {
+                    app.data.dataset.chart.configuration.options.plugins.colorschemes.scheme = numSeriesCategories <= 10 ? "tableau.Tableau10" : "tableau.Tableau20";
+                }
+                else {
+                    app.data.dataset.chart.configuration.options.plugins.colorschemes.scheme = app.config.plugin.chartJs.chart.colours;
+                }
+
                 break;
             default:
                 //set colour scheme depending on number of series        
                 var numDatasets = app.data.dataset.chart.configuration.data.datasets.length;
-                app.data.dataset.chart.configuration.options.plugins.colorschemes.scheme = numDatasets <= 10 ? "tableau.Tableau10" : "tableau.Tableau20";
+                if (!app.config.plugin.chartJs.chart.colours.length) {
+                    app.data.dataset.chart.configuration.options.plugins.colorschemes.scheme = numDatasets <= 10 ? "tableau.Tableau10" : "tableau.Tableau20";
+                }
+                else {
+                    app.data.dataset.chart.configuration.options.plugins.colorschemes.scheme = app.config.plugin.chartJs.chart.colours;
+                }
+
                 break;
         }
     };
@@ -1261,10 +1280,10 @@ app.data.dataset.chart.renderSnippet = function () {
     config.link = $("#data-dataset-chart-snippet-code").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
     config.copyright = $("#data-dataset-chart-snippet-code").find("[name=include-copyright]").is(':checked');
     if (!$("#data-dataset-chart-snippet-code").find("[name=include-title]").is(':checked')) {
-        config.options.title.text.shift();
+        config.options.title.text.unshift("");
     }
     else {
-        config.options.title.text.push(app.data.dataset.metadata.jsonStat.label.trim());
+        config.options.title.text.unshift($("#data-dataset-chart-snippet-code").find("[name=title-value]").val().trim());
     }
     if ($("#data-dataset-chart-snippet-code").find("[name=auto-update]").is(':checked')) {
         config.metadata.api.response = {};
@@ -1372,7 +1391,7 @@ app.data.dataset.chart.resetAll = function () {
 
     $("#data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps], #data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label], #data-dataset-chart-accordion-series-collapse [name=right-yaxis-label], #data-dataset-chart-accordion-series-collapse [name=left-yaxis-label]").val("");
 
-    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale-row], #data-dataset-chart-accordion-options-collapse [name=sort-row], #data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps-row]").show();
+    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale-row], #data-dataset-chart-accordion-options-collapse [name=curved-line-row], #data-dataset-chart-accordion-options-collapse [name=sort-row], #data-dataset-chart-accordion-options-collapse [name=xaxis-max-steps-row]").show();
 
     //reset chart type select
     app.data.dataset.chart.getChartTypes();
@@ -1381,10 +1400,10 @@ app.data.dataset.chart.resetAll = function () {
     $("#data-dataset-chart-accordion-series-collapse [name=dual-axis]").bootstrapToggle("off");
     $("#data-dataset-chart-accordion-options-collapse [name=stacked]").bootstrapToggle("off");
     //need to reset options, unbind listeners first
-    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link],#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=sort]").unbind("change");
+    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link],#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").unbind("change");
     //reset toggles
     $("#data-dataset-chart-snippet-code [name=fluid-time]").bootstrapToggle('enable');
-    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle("on");
+    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle("on");
 
     //reset listeners
     if (app.data.RlsCode) {
@@ -1400,7 +1419,9 @@ app.data.dataset.chart.resetAll = function () {
         app.data.dataset.chart.renderSnippet();
     });
 
-    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=sort]").once("change", app.data.dataset.chart.resetChart);
+    $("#data-dataset-chart-snippet-code").find("[name=title-value]").val(app.data.dataset.metadata.jsonStat.label.trim());
+
+    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").once("change", app.data.dataset.chart.resetChart);
 
     $("#data-dataset-chart-snippet-code [name=auto-update]").once("change", function () {
         app.data.dataset.chart.renderSnippet();
@@ -1425,7 +1446,7 @@ app.data.dataset.chart.resetAll = function () {
             scrollTop: $("#data-dataset-chart-properties").offset().top
         }, 1000);
     }
-}
+};
 //#endregion build config
 
 //#region save query

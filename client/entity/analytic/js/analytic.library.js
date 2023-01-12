@@ -8,6 +8,7 @@ app.analytic.ajax = {};
 app.analytic.callback = {};
 app.analytic.render = {};
 app.analytic.validation = {};
+app.analytic.result = [];
 
 app.analytic.dateFrom = moment().subtract(app.config.entity.analytic.dateRangePicker, 'days'); // Date type, not String
 app.analytic.dateTo = moment(); // Date type, not String
@@ -222,13 +223,7 @@ app.analytic.drawCallback = function () {
  * @param  {} data
  */
 app.analytic.callback.readAnalytics = function (data) {
-    var datePicker = $("#analytic-date-range").data('daterangepicker');
-    var startDate = datePicker.startDate ? moment(datePicker.startDate).format(app.config.mask.datetime.file) : "";
-    var endDate = datePicker.endDate ? moment(datePicker.endDate).format(app.config.mask.datetime.file) : "";
-    var exportFileName = 'analytic'
-        + "_" + startDate
-        + "_" + endDate
-        + "." + moment().format(app.config.mask.datetime.file);
+    app.analytic.result = data;
 
     if ($.fn.dataTable.isDataTable("#analytic-data table")) {
         app.library.datatable.reDraw("#analytic-data table", data);
@@ -236,24 +231,18 @@ app.analytic.callback.readAnalytics = function (data) {
 
         var localOptions = {
             data: data,
-            buttons: [{
-                extend: 'csv',
-                title: exportFileName,
-                exportOptions: {
-                    format: {
-                        body: function (data, row, column, node) {
-                            // Strip HTML
-                            return data.toString().replace(C_APP_REGEX_NOHTML, "");
-                        }
-                    }
-                }
-            }],
             columns: [
+                {
+                    "data": "MtrCode",
+                    "visible": false,
+                    "searchable": false
+                },
                 {
                     data: null,
                     render: function (data, type, row) {
                         return app.library.html.link.edit({ idn: row.MtrCode }, row.MtrCode, row.MtrTitle);
-                    }
+                    },
+                    orderData: [0]
                 },
                 { data: "SbjValue" },
 
@@ -287,41 +276,89 @@ app.analytic.callback.readAnalytics = function (data) {
             app.analytic.drawCallback();
         });
 
-        // Invoke DataTables CSV export
-        // https://stackoverflow.com/questions/45515559/how-to-call-datatable-csv-button-from-custom-button
-        $("#analytic-data").find("[name=csv]").once("click", function () {
-            $("#analytic-data table").DataTable().button('.buttons-csv').trigger();
-        });
     }
     var totalBot = 0;
     var totalWidgets = 0;
     var totalM2M = 0;
     var totalUsers = 0;
-    $("#summary-card").find("[name=analytic-sum-bots]").text(function () {
+    $("#analytic-results").find("[name=summary-card]").find("[name=analytic-sum-bots]").text(function () {
         $.each(data, function (index, value) {
             totalBot = totalBot + value.NltBot;
         });
         return app.library.utility.formatNumber(totalBot)
     });
-    $("#summary-card").find("[name=analytic-sum-widgets]").text(function () {
+    $("#analytic-results").find("[name=summary-card]").find("[name=analytic-sum-widgets]").text(function () {
         $.each(data, function (index, value) {
             totalWidgets = totalWidgets + value.NltWidget;
         });
         return app.library.utility.formatNumber(totalWidgets)
     });
-    $("#summary-card").find("[name=analytic-sum-m2m]").text(function () {
+    $("#analytic-results").find("[name=summary-card]").find("[name=analytic-sum-m2m]").text(function () {
         $.each(data, function (index, value) {
             totalM2M = totalM2M + value.NltM2m;
         });
         return app.library.utility.formatNumber(totalM2M)
     });
-    $("#summary-card").find("[name=analytic-sum-users]").text(function () {
+    $("#analytic-results").find("[name=summary-card]").find("[name=analytic-sum-users]").text(function () {
         $.each(data, function (index, value) {
             totalUsers = totalUsers + value.NltUser;
         });
         return app.library.utility.formatNumber(totalUsers)
     });
-    $("#summary-card").find("[name=analytic-sum-totals]").text(app.library.utility.formatNumber(totalBot + totalM2M + totalUsers));
+    $("#analytic-results").find("[name=summary-card]").find("[name=analytic-sum-totals]").text(app.library.utility.formatNumber(totalBot + totalM2M + totalUsers + totalWidgets));
+
+
+    // Scroll to the top section
+    $('html, body').animate({
+        scrollTop: $("#analytic-results").offset().top
+    }, 1000);
+
+};
+
+app.analytic.callback.downloadResults = function () {
+    var datePicker = $("#analytic-date-range").data('daterangepicker');
+    var startDate = datePicker.startDate ? moment(datePicker.startDate).format(app.config.mask.datetime.file) : "";
+    var endDate = datePicker.endDate ? moment(datePicker.endDate).format(app.config.mask.datetime.file) : "";
+    var exportFileName = 'analytic'
+        + "_" + startDate
+        + "_" + endDate
+        + "." + moment().format(app.config.mask.datetime.file);
+
+    var jsonToCSV = {
+        "fields": [
+            app.label.static["table"],
+            app.label.static["title"],
+            app.label.static["subject"],
+            app.label.static["product"],
+            app.label.static["date-published"],
+            app.label.static["bots"],
+            app.label.static["m2m"],
+            app.label.static["widgets"],
+            app.label.static["users"],
+            app.label.static["total"]
+        ],
+        "data": [
+        ]
+    };
+
+    $.each(app.analytic.result, function (index, value) {
+        jsonToCSV.data.push(
+            [
+                value.MtrCode,
+                value.MtrTitle,
+                value.SbjValue,
+                value.PrcValue,
+                value.PublishDate ? moment(value.PublishDate).format(app.config.mask.datetime.display) : "",
+                value.NltBot,
+                value.NltM2m,
+                value.NltWidget,
+                value.NltUser,
+                value.Total
+            ]
+        );
+    });
+    // Download the file
+    app.library.utility.download(exportFileName, Papa.unparse(jsonToCSV, { quotes: true }), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 };
 //#endregion
 
@@ -593,6 +630,11 @@ app.analytic.callback.readReferrer = function (data, selector) {
                         return label;
                     }
                 }
+            },
+            "plugins": {
+                "colorschemes": {
+                    "scheme": app.config.plugin.chartJs.chart.colours.length ? app.config.plugin.chartJs.chart.colours : "tableau.Tableau10"
+                }
             }
         }
     };
@@ -684,6 +726,11 @@ app.analytic.callback.readUserLanguage = function (data, selector) {
                         label += value;
                         return label;
                     }
+                }
+            },
+            "plugins": {
+                "colorschemes": {
+                    "scheme": app.config.plugin.chartJs.chart.colours.length ? app.config.plugin.chartJs.chart.colours : "tableau.Tableau10"
                 }
             }
         }
@@ -867,6 +914,11 @@ app.analytic.callback.readTimeline = function (data, selector) {
                         label += value;
                         return label;
                     }
+                }
+            },
+            "plugins": {
+                "colorschemes": {
+                    "scheme": app.config.plugin.chartJs.chart.colours.length ? app.config.plugin.chartJs.chart.colours : "tableau.Tableau10"
                 }
             }
         }

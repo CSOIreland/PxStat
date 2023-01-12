@@ -412,8 +412,9 @@ app.build.create.initiate.validation.setup = function () {
         rules: {
             "mtr-value": {
                 required: true,
+                validMatrix: true,
                 normalizer: function (value) {
-                    value = value.sanitise(C_SANITISE_UPPERCASE, C_APP_REGEX_ALPHANUMERIC_DIACRITIC);
+                    value = value.sanitise(C_SANITISE_UPPERCASE);
                     $(this).val(value);
                     return value;
                 }

@@ -2,6 +2,7 @@
 Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
+    app.data.dataset.map.getModes();
     app.data.dataset.map.drawMapToDisplay();
     app.data.dataset.map.getColourSchemes();
     if (app.data.isLive) {
@@ -23,6 +24,8 @@ $(document).ready(function () {
         offstyle: "warning",
         width: C_APP_TOGGLE_LENGTH
     });
+
+    $("#data-dataset-map-accordion-collapse-widget").find("[name=title-value]").val(app.data.dataset.metadata.jsonStat.label.trim());
 
     $('#data-dataset-map-accordion').on('show.bs.collapse', function (e) {
         $("#" + e.target.id).parent().find(".card-header i[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
@@ -75,8 +78,28 @@ $(document).ready(function () {
         }
     };
 
-    $("#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=colour-scale]").once("change", function () {
+    $("#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=include-borders], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=colour-scale]").once("change", function () {
         app.data.dataset.map.renderSnippet();
+    });
+
+    $("#data-dataset-map-accordion-collapse-widget [name=include-title]").once("change", function () {
+        app.data.dataset.map.renderSnippet();
+        if ($(this).is(':checked')) {
+            $("#data-dataset-map-accordion-collapse-widget").find("[name=title-value]").show();
+        } else {
+            $("#data-dataset-map-accordion-collapse-widget").find("[name=title-value]").hide();
+        }
+    });
+
+    $("#data-dataset-map-accordion-collapse-widget").find('input[name="title-value"]').once('keyup', function () {
+        if ($(this).val().trim().length) {
+            window.clearTimeout($(this).data('timer'));
+            $(this).data('timer', window.setTimeout(app.data.dataset.map.renderSnippet, 400));
+        } else {
+            app.data.dataset.map.renderSnippet(); //maybe clear input
+            window.clearTimeout($(this).data('timer'));
+        }
+
     });
 
     $("#data-dataset-map-accordion-collapse-widget [name=auto-update]").once("change", function () {
@@ -98,6 +121,10 @@ $(document).ready(function () {
             $("#modal-subscriber-login").modal("show");
         }
 
+    });
+
+    $("#data-dataset-map-nav-content").find("[name=mode-select]").once("change", function () {
+        app.data.dataset.map.buildMapConfig();
     });
 
 

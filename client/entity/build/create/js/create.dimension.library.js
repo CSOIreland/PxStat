@@ -553,7 +553,7 @@ app.build.create.dimension.submitUploadStatistic = function () {
     app.build.create.file.statistic.content.data.JSON = Papa.parse(app.build.create.file.statistic.content.UTF8, {
         header: true,
         skipEmptyLines: true
-    });
+    })
 
     if (app.build.create.file.statistic.content.data.JSON.errors.length) {
         $("#build-create-upload-si").find("[name=errors-card]").show();
@@ -2928,9 +2928,11 @@ app.build.create.dimension.callback.validateSelectedMap = function (data, gmpCod
     });
 
     if (!invalidClassificationCodes.length) {
-        app.build.create.initiate.data.Map[clsCode] = app.config.url.api.static + "/PxStat.Data.GeoMap_API.Read/" + gmpCode;
-        app.build.create.dimension.drawMapTable();
-        $("#build-map-modal").modal("hide");
+        var params = {
+            "gmpCode": gmpCode,
+            "clsCode": clsCode
+        };
+        app.build.create.dimension.callback.addSelectedMap(params)
     }
     else {
 
@@ -2949,15 +2951,23 @@ app.build.create.dimension.callback.validateSelectedMap = function (data, gmpCod
                 })
             )
         });
-        var eliminationMessage = "";
-        if (invalidClassificationCodes.length == 1) {
-            eliminationMessage = app.label.static["invalid-geojson-variables-suggestion"]
-        };
-        api.modal.error(app.label.static["invalid-geojson-variables"]
-            + errorsList.get(0).outerHTML
-            + eliminationMessage)
+
+        api.modal.confirm(
+            app.label.static["invalid-geojson-variables-confirm"] + errorsList.get(0).outerHTML,
+            app.build.create.dimension.callback.addSelectedMap,
+            {
+                "gmpCode": gmpCode,
+                "clsCode": clsCode
+            }
+        );
     }
 
+};
+
+app.build.create.dimension.callback.addSelectedMap = function (params) {
+    app.build.create.initiate.data.Map[params.clsCode] = app.config.url.api.static + "/PxStat.Data.GeoMap_API.Read/" + params.gmpCode;
+    app.build.create.dimension.drawMapTable();
+    $("#build-map-modal").modal("hide");
 };
 
 app.build.create.dimension.deleteMap = function (clsCode) {

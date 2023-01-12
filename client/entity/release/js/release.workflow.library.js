@@ -66,6 +66,8 @@ app.release.workflow.request.callback.readType = function (data) {
         });
         $("#release-workflow-request [name=rqs-code]").append(option);
     });
+    //always disable first by default
+    $("#release-workflow-request [name=button-add]").prop("disabled", true);
 };
 //#endregion
 

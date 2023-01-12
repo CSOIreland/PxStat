@@ -104,15 +104,19 @@
             <div class="modal-body p-0">
                 <div class="container-fluid">
 
-                    <div class="card m-3">
+                    <div class="card m-3" name="ignored-records-card">
                         <div class="card-header bg-danger text-light" label="records-to-be-ignored"></div>
-                        <div class="card-body">
-                            <table name="ignored-records" class="table table-striped table-bordered" style="width:100%">
-                                <thead>
-                                    <tr name="header-row"></tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div class="card-body text-center">
+                            <div name="ignored-records-wrapper">
+                                <table name="ignored-records" class="table table-striped table-bordered" style="width:100%">
+                                    <thead>
+                                        <tr name="header-row"></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                            <p style="display: none" name="no-data-to-display" label="no-records-to-display"></p>
                         </div>
                         <div class="card-footer text-right">
                             <button name="csv-ignored-records" class="btn btn-tertiary text-light">
@@ -121,15 +125,19 @@
                         </div>
                     </div>
 
-                    <div class="card m-3">
+                    <div class="card m-3" name="updated-records-card">
                         <div class="card-header bg-success text-light" label="records-to-be-updated"></div>
-                        <div class="card-body">
-                            <table name="updated-records" class="table table-striped table-bordered" style="width:100%">
-                                <thead>
-                                    <tr name="header-row"></tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                        <div class="card-body text-center">
+                            <div name="updated-records-wrapper">
+                                <table name="updated-records" class="table table-striped table-bordered" style="width:100%">
+                                    <thead>
+                                        <tr name="header-row"></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                            <p style="display: none" name="no-data-to-display" label="no-records-to-display"></p>
                         </div>
                         <div class="card-footer text-right">
                             <button name="csv-updated-records" class="btn btn-tertiary text-light">

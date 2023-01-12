@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 04/10/2018
 -- Description:	To read a Group Account entry. The output will be restricted depending on what parameters are or are not passed in
---exec Security_GroupAccount_Read
+--exec Security_GroupAccount_Read 'dissemination@cso.ie'
 -- =============================================
 CREATE
 	OR
@@ -58,6 +58,7 @@ BEGIN
 		,grp_inner.GRP_CODE AS GrpCode
 		,grp_inner.GRP_NAME AS GrpName
 		,gra_inner.GCC_APPROVE_FLAG AS GccApproveFlag
+		,acc_inner.CCN_DISPLAYNAME AS CcnDisplayName
 	FROM (
 		SELECT *
 		FROM TD_ACCOUNT
