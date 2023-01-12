@@ -41,8 +41,6 @@ namespace PxStat.Build
                 FrqCodeTimeval = this.FrqCodeTimeval,
                 FrqValueTimeval = this.FrqValueTimeval
             };
-
-
         }
     }
 }

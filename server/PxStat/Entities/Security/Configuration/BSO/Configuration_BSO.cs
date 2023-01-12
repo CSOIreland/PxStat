@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using PxStat.Data;
 using System;
 using System.IO;
+using System.Web;
 
 namespace PxStat.Security
 {
@@ -30,11 +31,24 @@ namespace PxStat.Security
 
         private Configuration_BSO()
         {
+
             UpdateConfigFromFiles();
+        }
+
+        private Configuration_BSO(bool useMetadata)
+        {
+            if (MetaData == null)
+                UpdateConfigFromFilesNonMetadata();
+            else
+                UpdateConfigFromFiles();
         }
 
         internal static dynamic GetCustomConfig(ConfigType configType, string configName = null)
         {
+            if (instance == null)
+            {
+                instance = new Configuration_BSO(false);
+            }
             return instance.GetCustomConfigNonStatic(configType, configName);
         }
 
@@ -75,7 +89,10 @@ namespace PxStat.Security
 
         virtual internal dynamic GetServerConfigFromFileNonStatic()
         {
-            serverFileConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigServerJSONPath()));
+            if (MetaData != null)
+                serverFileConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigServerJSONPath()));
+            else
+                serverFileConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_SERVER_JSON_PATH")));
             return Utility.JsonDeserialize_IgnoreLoopingReference(Utility.JsonSerialize_IgnoreLoopingReference(serverFileConfig));
         }
 
@@ -86,15 +103,39 @@ namespace PxStat.Security
 
         virtual internal dynamic GetGlobalConfigFromFileNonStatic()
         {
-            globalFileConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigGlobalJSONPath()));
+            if (MetaData != null)
+                globalFileConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigGlobalJSONPath()));
+            else
+                globalFileConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_GLOBAL_JSON_PATH")));
             return Utility.JsonDeserialize_IgnoreLoopingReference(Utility.JsonSerialize_IgnoreLoopingReference(globalFileConfig));
+        }
+
+        internal static bool UpdateConfigFromFilesNonMetadata()
+        {
+
+
+            dynamic serverConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_SERVER_JSON_PATH")));
+            dynamic globalConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_GLOBAL_JSON_PATH")));
+
+            MemCacheD.Store_BSO("PxStat.Security", "Configuration", "Read", ConfigType.global.ToString(), globalConfig, default(DateTime));
+            MemCacheD.Store_BSO("PxStat.Security", "Configuration", "Read", ConfigType.server.ToString(), serverConfig, default(DateTime));
+
+            return true;
         }
 
         internal static bool UpdateConfigFromFiles()
         {
+            dynamic serverConfig = null;
+            dynamic globalConfig = null;
+            if (MetaData != null)
+                serverConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigServerJSONPath()));
+            else
+                serverConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_SERVER_JSON_PATH")));
 
-            dynamic serverConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigServerJSONPath()));
-            dynamic globalConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigGlobalJSONPath()));
+            if (MetaData != null)
+                globalConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigGlobalJSONPath()));
+            else
+                globalConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_SERVER_JSON_PATH")));
 
             MemCacheD.Store_BSO("PxStat.Security", "Configuration", "Read", ConfigType.global.ToString(), globalConfig, default(DateTime));
             MemCacheD.Store_BSO("PxStat.Security", "Configuration", "Read", ConfigType.server.ToString(), serverConfig, default(DateTime));
@@ -105,8 +146,19 @@ namespace PxStat.Security
 
         virtual internal bool UpdateConfigFromFilesNonStatic()
         {
-            dynamic serverConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigServerJSONPath()));
-            dynamic globalConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigGlobalJSONPath()));
+            dynamic serverConfig = null;
+            dynamic globalConfig = null;
+
+            if (MetaData != null)
+                serverConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigServerJSONPath()));
+            else
+                serverConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_SERVER_JSON_PATH")));
+
+            if (MetaData != null)
+                globalConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(PathProvider.MapPath(MetaData.GetResourcesMapPath()) + MetaData.GetConfigGlobalJSONPath()));
+            else
+                globalConfig = Utility.JsonDeserialize_IgnoreLoopingReference(File.ReadAllText(HttpContext.Current.Server.MapPath(Utility.GetCustomConfig("APP_CONFIG_RESOURCES_MAP_PATH")) + Utility.GetCustomConfig("APP_CONFIG_SERVER_JSON_PATH")));
+
 
             MemCacheD.Store_BSO("PxStat.Security", "Configuration", "Read", ConfigType.global.ToString(), globalConfig, default(DateTime));
             MemCacheD.Store_BSO("PxStat.Security", "Configuration", "Read", ConfigType.server.ToString(), serverConfig, default(DateTime));

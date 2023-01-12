@@ -2,6 +2,7 @@
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace PxStat.Security
 {
@@ -34,10 +35,29 @@ namespace PxStat.Security
         {
             Analytic_ADO ado = new Analytic_ADO(Ado);
             ADO_readerOutput outputSummary = ado.ReadOs(DTO, SamAccountName);
+            List<nltOs> osList = new List<nltOs>();
+            List<int> groupList = new List<int>();
             if (outputSummary.hasData)
             {
-                Response.data = FormatData(outputSummary.data);
+                foreach (var item in outputSummary.data[0])
+                {
+                    osList.Add(new nltOs { NltOs = item.NltOs, GrpId = item.GrpId, nltCount = item.nltCount });
+                }
+                foreach (var item in outputSummary.data[1])
+                {
+                    groupList.Add(item.GrpId);
+                }
 
+                var restrictedGroupQuery = (from b in osList
+                                            join g in groupList on b.GrpId equals g
+                                            select b).ToList();
+
+                var result = from e in restrictedGroupQuery
+                             group e by e.NltOs into g
+                             select new { NltOs = g.Key, NltCount = g.Sum(x => x.nltCount) };
+
+
+                Response.data = FormatData(result);
                 return true;
             }
             return false;
@@ -70,5 +90,11 @@ namespace PxStat.Security
             if (otherSum > 0) itemDict.Add(Label.Get("analytic.others", DTO.LngIsoCode), otherSum);
             return output;
         }
+    }
+    class nltOs
+    {
+        public string NltOs { get; set; }
+        public int GrpId { get; set; }
+        public int nltCount { get; set; }
     }
 }

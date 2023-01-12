@@ -19,7 +19,7 @@ namespace PxStat.System.Navigation
             Ado = ado;
         }
 
-        internal dynamic RunWordSearch()
+        internal List<dynamic> RunWordSearch()
         {
 
             Navigation_ADO adoNav = new Navigation_ADO(Ado);
@@ -30,13 +30,13 @@ namespace PxStat.System.Navigation
             //Express the result of the keyword search as a list of objects
             List<RawSearchResult> rlistWordSearch = GetRawWordSearchResults(data);
 
-            //Get a list of matrixes that fit the search exactly
+            //Get a list of matrices that fit the search exactly
             var exactMatches = GetExactMatches(rlistWordSearch, searchTermCount);
 
-            //Get a list of matrixes that fit the search via synonyms
+            //Get a list of matrices that fit the search via synonyms
             var lemmaMatches = GetLemmaMatches(rlistWordSearch, searchTermCount);
 
-            //Express all of the matrixes in a data table
+            //Express all of the matrices in a data table
             DataTable dt = GetResultDataTableWordSearch(exactMatches, lemmaMatches);
 
             //pass the datatable to the stored procedure to get the metadata associated with the matrix
@@ -44,10 +44,35 @@ namespace PxStat.System.Navigation
 
             //Format the result as a json response
             return FormatOutput(dataPlusMetadata, DTO.LngIsoCode);
-
         }
 
-        internal dynamic RunEntitySearch()
+        internal List<dynamic> RunWordAssociatedSearch()
+        {
+            Navigation_ADO adoNav = new Navigation_ADO(Ado);
+
+            //Search based on the supplied keywords
+            dynamic data = adoNav.AssociatedSearch(DTO);
+
+            //Express the result of the keyword search as a list of objects
+            List<RawSearchResult> rlistWordSearch = GetRawWordSearchResults(data);
+
+            //Get a list of matrices that fit the search exactly
+            var exactMatches = GetExactMatches(rlistWordSearch, searchTermCount);
+
+            //Get a list of matrices that fit the search via synonyms
+            var lemmaMatches = GetLemmaMatches(rlistWordSearch, searchTermCount);
+
+            //Express all of the matrices in a data table
+            DataTable dt = GetResultDataTableWordSearch(exactMatches, lemmaMatches);
+
+            //pass the datatable to the stored procedure to get the metadata associated with the matrix
+            dynamic dataPlusMetadata = adoNav.ReadSearchResults(dt, DTO.LngIsoCode);
+
+            //Format the result as a json response
+            return FormatOutput(dataPlusMetadata, DTO.LngIsoCode, true);
+        }
+
+        internal List<dynamic> RunEntitySearch()
         {
             Navigation_ADO adoNav = new Navigation_ADO(Ado);
             //Search based on entities named in the DTO
@@ -61,6 +86,22 @@ namespace PxStat.System.Navigation
 
             //Format the result as a json response
             return FormatOutput(dataV2, DTO.LngIsoCode);
+        }
+
+        internal List<dynamic> RunEntityAssociatedSearch()
+        {
+            Navigation_ADO adoNav = new Navigation_ADO(Ado);
+            //Search based on entities named in the DTO
+            dynamic entityData = adoNav.EntityAssociatedSearch(DTO);
+            List<RawSearchResult> rEntities = GetRawWordSearchResults(entityData);
+
+            DataTable dt = GetResultDataTableEntitySearch(rEntities);
+
+            //pass the datatable to the stored procedure to get the metadata associated with the matrix
+            dynamic dataV2 = adoNav.ReadSearchResults(dt, DTO.LngIsoCode);
+
+            //Format the result as a json response
+            return FormatOutput(dataV2, DTO.LngIsoCode, true);
         }
 
         /// <summary>
@@ -313,11 +354,13 @@ namespace PxStat.System.Navigation
         }
 
         /// <summary>
-        /// Reformats the returned data into a complex object
+        /// Re-formats the returned data into a complex object
         /// </summary>
         /// <param name="rawList"></param>
+        /// <param name="lngIsoCode"></param>
+        /// <param name="isAssociatedFlag"></param>
         /// <returns></returns>
-        private List<dynamic> FormatOutput(List<dynamic> rawList, string lngIsoCode)
+        private List<dynamic> FormatOutput(List<dynamic> rawList, string lngIsoCode, bool isAssociatedFlag = false)
         {
             List<dynamic> releases = GetReleases(rawList).ToList();
             List<dynamic> classifications = GetClassifications(rawList).ToList();
@@ -346,6 +389,7 @@ namespace PxStat.System.Navigation
                 rel.LngIsoCode = release.LngIsoCode;
                 rel.LngIsoName = release.LngIsoName;
                 rel.classification = new List<dynamic>();
+                rel.AssociatedFlag = isAssociatedFlag;
                 List<dynamic> classList = new List<dynamic>();
                 var rlsCls = classifications.Where(x => x.RlsCode == release.RlsCode);
                 foreach (var cls in rlsCls)
@@ -520,8 +564,6 @@ namespace PxStat.System.Navigation
                                 grp.Key.LngIsoCode,
                                 grp.Key.LngIsoName,
                                 grp.Key.Score
-
-
                             }).ToList();
             return Releases;
         }

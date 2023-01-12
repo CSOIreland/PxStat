@@ -4,7 +4,7 @@ namespace PxStat.System.Settings
     /// <summary>
     /// DTO for Copyright Read
     /// </summary>
-    internal class Copyright_DTO_Read
+    public class Copyright_DTO_Read : ICopyright
     {
         #region Properties
         /// <summary>
@@ -15,6 +15,8 @@ namespace PxStat.System.Settings
         #endregion
 
         public string CprValue { get; set; }
+
+        public string CprUrl { get; set; }
 
         /// <summary>
         /// Blank constructor
@@ -37,7 +39,7 @@ namespace PxStat.System.Settings
     /// <summary>
     /// DTO for Copyright Create
     /// </summary>
-    public class Copyright_DTO_Create
+    public class Copyright_DTO_Create : ICopyright
     {
         #region Properties
         /// <summary>
@@ -142,5 +144,14 @@ namespace PxStat.System.Settings
                 this.CprCode = parameters.CprCode;
 
         }
+    }
+
+    public interface ICopyright
+    {
+        string CprCode { get; set; }
+
+        string CprValue { get; set; }
+
+        string CprUrl { get; set; }
     }
 }

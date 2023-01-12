@@ -33,6 +33,7 @@ namespace PxStat.System.Notification
             if (emails.Count == 0) return;
 
             foreach (string person in emails)
+
             {
                 email.Bcc.Add(person);
             }

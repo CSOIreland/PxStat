@@ -85,6 +85,7 @@
       "key-any-of": "PX Schema: the input must contain either the key &quot;{0}&quot; or &quot;{1}&quot;.",
       "key-boolean": "PX Schema: the keyword {0} must be either yes or no.",
       "key-length-min": "PX Schema: the keyword {0} must have a minimum length of {1} char(s).",
+      "key-length-exact": "PX Schema: the keyword {0} must have a length of {1} char(s).",
       "key-length-min-max": "PX Schema: the keyword {0} must have a length between {1} and {2} chars.",
       "key-mandatory": "PX Schema: the input must contain the key &quot;{0}&quot;.",
       "key-not-found": "PX Schema: the keyword &quot;{0}&quot; has not been found for the language &quot;{1}&quot;.",
@@ -107,6 +108,7 @@
   "xlsx": {
     "table": "Table",
     "code": "Code",
+    "label":  "Label",
     "name": "Name",
     "last-updated": "Last Updated",
     "note": "Note",
@@ -138,6 +140,7 @@
     "classification": "State",
     "csv": {
       "code": " CODE",
+      "label": "Label",
       "header": "Unit,Value",
       "unit": "UNIT",
       "value": "VALUE",

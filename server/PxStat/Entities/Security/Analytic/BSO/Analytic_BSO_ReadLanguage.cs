@@ -2,6 +2,7 @@
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace PxStat.Security
 {
@@ -34,9 +35,29 @@ namespace PxStat.Security
         {
             Analytic_ADO ado = new Analytic_ADO(Ado);
             ADO_readerOutput outputSummary = ado.ReadLanguage(DTO,SamAccountName );
+            List<nltLanguage> languageList = new List<nltLanguage>();
+            List<int> groupList = new List<int>();
             if (outputSummary.hasData)
             {
-                Response.data = FormatData(outputSummary.data);
+                foreach (var item in outputSummary.data[0])
+                {
+                    languageList.Add(new nltLanguage { LngIsoName = item.LngIsoName, GrpId = item.GrpId, lngCount = item.lngCount });
+                }
+                foreach (var item in outputSummary.data[1])
+                {
+                    groupList.Add(item.GrpId);
+                }
+
+                var restrictedGroupQuery = (from b in languageList
+                                            join g in groupList on b.GrpId equals g
+                                            select b).ToList();
+
+                var result = from e in restrictedGroupQuery
+                             group e by e.LngIsoName into g
+                             select new { LngIsoName = g.Key, lngCount = g.Sum(x => x.lngCount) };
+
+
+                Response.data = FormatData(result);
                 return true;
             }
             return false;
@@ -60,5 +81,11 @@ namespace PxStat.Security
             return output;
         }
 
+    }
+    class nltLanguage
+    {
+        internal string LngIsoName { get; set; }
+        internal int GrpId { get; set; }
+        internal int lngCount { get; set; }
     }
 }

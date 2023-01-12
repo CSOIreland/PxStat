@@ -30,6 +30,17 @@ namespace PxStat.Resources
             return JObject.Parse(Cleanse(parameters.ToString()));
         }
 
+        internal static bool TryCast<T>(this object obj, out T result)
+        {
+            if (obj is T)
+            {
+                result = (T)obj;
+                return true;
+            }
+
+            result = default(T);
+            return false;
+        }
         public static IList<string> Cleanse(IList<string> parameters)
         {
             List<string> cleanList = new List<string>();
@@ -105,11 +116,13 @@ namespace PxStat.Resources
                     props.Add(propertyInfo.Name);
             }
 
-
-            foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(parameters))
+            var propsTd = TypeDescriptor.GetProperties(parameters);
+            foreach (PropertyDescriptor prop in propsTd)
             {
                 string pName = prop.Name;
-                string pVal = prop.GetValue(parameters);
+
+                var pVal = prop.GetValue(parameters);
+                var ptype = pVal.GetType();
                 //If the Property corresponds to one in the NoHtmlStrip list then we set the parameter to false:
                 //The parameter will not be html cleansed in that case
                 string cVal = Cleanse(pVal, !props.Contains(pName));
@@ -118,6 +131,7 @@ namespace PxStat.Resources
             }
             return parameters;
         }
+
 
     }
 }

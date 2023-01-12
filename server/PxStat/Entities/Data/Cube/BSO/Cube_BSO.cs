@@ -7,6 +7,7 @@ using PxStat.System.Navigation;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace PxStat.Data
@@ -144,6 +145,17 @@ namespace PxStat.Data
                 return cAdo.ReadCollection(LngIsoCode, default, sbjInt, PrcCode);
             else
                 return cAdo.ReadCollection(LngIsoCode, default, 0, PrcCode);
+        }
+
+        /// <summary>
+        /// Read and update title to contain dimensions and time range
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        internal List<dynamic> ReadTitleUpdate(DataTable dataTable)
+        {
+            Cube_ADO cAdo = new Cube_ADO(ado);
+            return cAdo.ReadTitleUpdate(dataTable);
         }
 
         private List<dynamic> getPeriods(List<dynamic> releaseItems)

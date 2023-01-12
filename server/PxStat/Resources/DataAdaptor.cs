@@ -54,7 +54,7 @@ namespace PxStat.Resources
     /// <summary>
     /// Class to ensure that valid values are returned from the database to application classes
     /// </summary>
-    internal class DataAdaptor
+    public class DataAdaptor
     {
         /// <summary>
         /// Format boolean reads

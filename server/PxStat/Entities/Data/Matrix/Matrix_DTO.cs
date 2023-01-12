@@ -791,7 +791,7 @@ namespace PxStat.Data
                     NotesAsString = NotesAsString.Trim() + " " + infofile;
 
                 var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
-                if (maps != null) ValidateMappingData(maps, language);
+                //if (maps != null) ValidateMappingData(maps, language);
 
                 var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
                 var precisions = doc.GetSingleElementWithSubkeysIfExist("PRECISION", language);
@@ -971,7 +971,7 @@ namespace PxStat.Data
 
 
                 var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
-                if (maps != null) ValidateMappingData(maps, language);
+                //if (maps != null) ValidateMappingData(maps, language);
                 var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
                 var precisions = doc.GetSingleElementWithSubkeysIfExist("PRECISION", language);
                 var units = doc.GetSingleElementWithSubkeys("UNITS", language);
@@ -3048,17 +3048,17 @@ namespace PxStat.Data
                             foreach (var vrb in cls.Variable)
                             {
 
-                                if (!vrb.EliminationFlag)
+                                //if (!vrb.EliminationFlag)
 
-                                {
-                                    if (geoJson.Features.Where(x => x.Properties["code"] == vrb.Code).Count() == 0)
-                                    {
-                                        if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
-                                        spec.ValidationErrors.Add(new ValidationFailure("GeoJson", String.Format(Label.Get("error.geomap.unmapped-variable", spec.Language), vrb.Code)));
-                                        return;
+                                //{
+                                //    if (geoJson.Features.Where(x => x.Properties["code"] == vrb.Code).Count() == 0)
+                                //    {
+                                //        if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                                //        spec.ValidationErrors.Add(new ValidationFailure("GeoJson", String.Format(Label.Get("error.geomap.unmapped-variable", spec.Language), vrb.Code)));
+                                //        return;
 
-                                    }
-                                }
+                                //    }
+                                //}
 
 
                             }
@@ -4073,7 +4073,7 @@ namespace PxStat.Data
         /// </summary>
         public bool IsOfficialStatistic { get; set; }
 
-        public Copyright_DTO_Create Copyright { get; set; }
+        public ICopyright Copyright { get; set; }
 
         /// <summary>
         /// class property
@@ -4274,6 +4274,7 @@ namespace PxStat.Data
     public class PxUpload_DTO : IUpload_DTO
     {
         [NoTrim]
+       [DefaultSanitizer]
         public string MtrInput { get; set; }
         public bool Overwrite { get; set; }
         public string GrpCode { get; set; }
@@ -4315,7 +4316,7 @@ namespace PxStat.Data
 
             if (parameters["MtrInput"] != null)
             {
-                MtrInput = Utility.DecodeBase64ToUTF8((string)parameters["MtrInput"]);
+                MtrInput = Utility.DecodeBase64ToUTF8((string)parameters["MtrInput"]);           
             }
 
             if (parameters.Overwrite != null)

@@ -167,9 +167,8 @@ namespace PxStat.Data.Px
         /// <returns></returns>
         internal static PxDocument ParsePxInput(string pxInput)
         {
-
-            return PxParser.Resources.Parser.PxParser.Parse(pxInput);
-
+            var pxManualParser = new PxParser.Resources.Parser.PxManualParser(pxInput);
+            return pxManualParser.Parse();
         }
 
         /// <summary>
@@ -184,7 +183,8 @@ namespace PxStat.Data.Px
 
             try
             {
-                result = PxParser.Resources.Parser.PxParser.Parse(pxInput);
+                var pxManualParser = new PxParser.Resources.Parser.PxManualParser(pxInput);
+                result = pxManualParser.Parse();
             }
             catch (Exception e)
             {

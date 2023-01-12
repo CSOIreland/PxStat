@@ -2,6 +2,7 @@
 using Autofac;
 using PxStat.Data;
 using PxStat.JsonStatSchema;
+using PxStat.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -63,8 +64,7 @@ namespace PxStat.DataStore
             //Send empty data back if the query is referring to wrong variables
             if (!ValidateQueryForMatrix(query, matrix.Dspecs[matrix.Language]))
             {
-                throw new Exception("Invalid query");
-                //matrix.Cells = new List<dynamic>();
+                return null;
             }
             else
             {
@@ -147,6 +147,9 @@ namespace PxStat.DataStore
                 //We can also take the opportunity to amend the dimension to make it correspond to the query:
                 dim.Variables = queriedVariableList;
             });
+
+
+            //Keep this code for debugging :-)
 
             //foreach (var dim in _spec.Dimensions)
             //{
@@ -259,6 +262,45 @@ namespace PxStat.DataStore
 
 
             return matrix;
+        }
+
+        /// <summary>
+        /// Run fractal query using another matrix as query metaData. This version just returns the list of selected ordinals
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="querySpec"></param>
+        /// <returns></returns>
+        public List<int> RunFractalQueryOrdinalsOnly(IDmatrix matrix, IDspec querySpec,string lngIsoCode)
+        {
+            _spec = matrix.Dspecs[lngIsoCode];
+            //For each dimension, what variables are being queried? The result is stored in the QueryDimensionOrdinals
+            //property of each dimension
+            ApplyQueryToDimensions(ref _spec, querySpec);
+
+            //For each dimension, what ordinals of Cells would be selected if only that dimension was being queried?
+            //Parallel.ForEach(_spec.Dimensions, dim =>
+            //{
+            //    dim.QualifyingOrdinals = GetQualifyingOrdinals(dim, matrix.Cells.Count);
+            //    List<IDimensionVariable> queriedVariableList = new List<IDimensionVariable>();
+            //    foreach (int s in dim.QueryDimensionOrdinals)
+            //        queriedVariableList.Add(dim.Variables[s - 1]);
+                
+            //});
+
+            foreach( var dim in _spec.Dimensions)
+            {
+                dim.QualifyingOrdinals = GetQualifyingOrdinals(dim, matrix.Cells.Count);
+                List<IDimensionVariable> queriedVariableList = new List<IDimensionVariable>();
+                foreach (int s in dim.QueryDimensionOrdinals)
+                    queriedVariableList.Add(dim.Variables[s - 1]);
+            }
+
+
+            //Now do a linq join of the QueryDimensionOrdinals properties of each dimension
+            //This will result in a list of Cells ordinals that correspond to the query
+            var selectedCells = GetJoinedQueriedOrdinals(matrix);
+
+            return selectedCells;
         }
 
         public IDmatrix RunFractalQuery(IDmatrix matrix, IDspec querySpec, string lngIsoCode)
@@ -421,6 +463,8 @@ namespace PxStat.DataStore
                 d.QueryDimensionOrdinals.Sort();
             });
 
+            //Keep the following code for debugging
+
             //foreach (var d in spec.Dimensions)
             //{
             //    var codes = dto.jStatQuery.Id;
@@ -481,7 +525,10 @@ namespace PxStat.DataStore
                     //Convert these to a list of integers
                     foreach (var item in itemStringList)
                     {
-                        d.QueryDimensionOrdinals.Add((d.Variables.Where(x => x.Code == item).FirstOrDefault().Sequence));
+                        if (d.Variables.Where(x => x.Code == item).Count() > 0)
+                        {
+                            d.QueryDimensionOrdinals.Add((d.Variables.Where(x => x.Code == item).FirstOrDefault().Sequence));
+                        }
                     }
                 }
                 else
@@ -499,7 +546,10 @@ namespace PxStat.DataStore
             //        //Convert these to a list of integers
             //        foreach (var item in itemStringList)
             //        {
-            //            d.QueryDimensionOrdinals.Add((d.Variables.Where(x => x.Code == item).FirstOrDefault().Sequence));
+            //            if (d.Variables.Where(x => x.Code == item).Count() > 0)
+            //            {
+            //                d.QueryDimensionOrdinals.Add((d.Variables.Where(x => x.Code == item).FirstOrDefault().Sequence));
+            //            }
             //        }
             //    }
             //    else
@@ -595,7 +645,18 @@ namespace PxStat.DataStore
             spec.Language = lngIsoCode;
             spec.MatrixCode = dmatrix.Code;
             spec.MatrixId = dmatrix.Id;
-            spec.Notes = new List<string>() { dmatrixData.data[0].MtrNote };
+            if (dmatrixData.data[0].MtrNote != null)
+            {
+                if (Cleanser.TryCast<List<string>>(dmatrixData.data[0].MtrNote, out List<string> result))
+                {
+                    spec.Notes = result;
+                }
+                else
+                {
+                    spec.Notes = new List<string>() { dmatrixData.data[0].MtrNote };
+                }
+
+            }
             spec.Source = dmatrix.Copyright.CprValue;
             spec.Title = dmatrixData.data[0].MtrTitle;
 
@@ -684,7 +745,8 @@ namespace PxStat.DataStore
             IDspec dspec = new DSpecFactory().CreateDspec();
             dspec.Dimensions = new List<StatDimension>();
             dspec.Notes = new List<string>();
-            dspec.Notes.Add(dmatrixData.data[0].MtrNote);
+            if (!dmatrixData.data[0]?.MtrNote.Equals(DBNull.Value))
+                dspec.Notes.Add(dmatrixData.data[0].MtrNote);
 
             if (dmatrix.Cells == null)
             {
@@ -866,7 +928,12 @@ namespace PxStat.DataStore
             spec.Language = output.data[0].LngIsoCode;
             spec.MatrixCode = matrix.Code;
             spec.MatrixId = matrix.Id;
-            spec.Notes = new List<string>() { output.data[0].MtrNote };
+            spec.Notes = new List<string>();
+
+            if (!output.data[0]?.MtrNote.Equals(DBNull.Value))
+            {
+                spec.Notes.Add(output.data[0].MtrNote);
+            }
             spec.Source = matrix.Copyright.CprValue;
             spec.Title = output.data[0].MtrTitle;
 
@@ -990,7 +1057,15 @@ namespace PxStat.DataStore
             spec.Language = output.data[0].LngIsoCode;
             spec.MatrixCode = matrix.Code;
             spec.MatrixId = matrix.Id;
-            spec.Notes = new List<string>() { output.data[0].MtrNote };
+            if (output.data[0].MtrNote != null)
+            {
+                if (Cleanser.TryCast<List<string>>(output.data[0].MtrNote, out List<string> result))
+                {
+                    spec.Notes = result;
+                }
+
+            }
+
             spec.Source = matrix.Copyright.CprValue;
             spec.Title = output.data[0].MtrTitle;
 
@@ -1059,6 +1134,8 @@ namespace PxStat.DataStore
             matrix.Dspecs.Add(lngIsoCode, (Dspec)spec);
             return matrix;
         }
+
+
     }
 
     internal class SequencedCell

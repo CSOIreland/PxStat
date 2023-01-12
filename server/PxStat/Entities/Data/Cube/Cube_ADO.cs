@@ -2,6 +2,7 @@
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace PxStat.Data
 {
@@ -148,6 +149,33 @@ namespace PxStat.Data
             return null;
         }
 
+        /// <summary>
+        /// Update title to contain dimensions and time range
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        internal List<dynamic> ReadTitleUpdate(DataTable dataTable)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            IMetaData metaData = new MetaData();
+
+            inputParams.Add(new ADO_inputParams { name = "@Placeholder", value = metaData.GetTitleBy() });
+            var param = new ADO_inputParams
+            {
+                name = "@MatrixMap",
+                value = dataTable,
+                typeName = "KeyValueVarcharAttribute"
+            };
+            inputParams.Add(param);
+
+            var output = ado.ExecuteReaderProcedure("Data_Read_Title_Update", inputParams);
+
+            if (output.hasData)
+            {
+                return output.data;
+            }
+            return null;
+        }
         internal List<dynamic> ReadCollectionMetadata(string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
         {
             var inputParams = new List<ADO_inputParams>();

@@ -16,6 +16,7 @@ namespace PxStat.Data
         /// <returns>The <seealso cref="JSONRPC_Output"/> object with a list of errors or the data object in case of success. </returns>
         /// 
         //CacheFlush internally executed
+        [NoCleanseDto]
         public static dynamic Create(JSONRPC_API jsonrpcRequest)
         {
 
@@ -75,6 +76,8 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns>The <seealso cref="JSONRPC_Output"/> object with a list of errors or the data object in case of success. </returns>
+        /// 
+        [NoCleanseDto]
         public static dynamic Validate(JSONRPC_API jsonrpcRequest)
         {
             return new Matrix_BSO_Validate(jsonrpcRequest).Read().Response;

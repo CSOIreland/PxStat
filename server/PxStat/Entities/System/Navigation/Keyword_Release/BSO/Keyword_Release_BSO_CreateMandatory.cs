@@ -219,6 +219,11 @@ namespace PxStat.System.Navigation
 
         }
 
+        internal void RemoveDupes(IADO ado, int releaseId)
+        {
+            Keyword_Release_ADO krAdo = new Keyword_Release_ADO();
+            krAdo.RemoveDupes(ado, releaseId);
+        }
 
         internal void Create(IADO ado, IDmatrix matrix, int releaseId, string userName)
         {
@@ -227,9 +232,9 @@ namespace PxStat.System.Navigation
 
             var latestRelease = Release_ADO.GetReleaseDTO(rAdo.ReadID(releaseId, userName));
 
+
             if (latestRelease == null) return;
 
-           // rAdo.DeleteKeywords(latestRelease.RlsCode, userName);
 
             //Create the table that will be bulk inserted
             DataTable dt = new DataTable();
@@ -238,16 +243,14 @@ namespace PxStat.System.Navigation
             dt.Columns.Add("KRL_MANDATORY_FLAG", typeof(bool));
             dt.Columns.Add("KRL_SINGULARISED_FLAG", typeof(bool));
 
-            Keyword_Release_ADO adoKeywordCreate = new Keyword_Release_ADO();
 
-           
+
             //Create the table rows
             foreach (var item in matrix.Dspecs)
             {
 
                 //Get a Keyword Extractor - the particular version returned will depend on the language
                 Keyword_BSO_Extract kbe = new Keyword_BSO_Extract(item.Value.Language);
-                // IKeywordExtractor ext = kbe.GetExtractor();
 
                 //Add the keywords and other data to the output table
                 AddToTable(ref dt, kbe.ExtractSplitSingular(item.Value.Title), releaseId);
@@ -283,6 +286,8 @@ namespace PxStat.System.Navigation
             }
             DataTable distinctRows = dt.DefaultView.ToTable(true, new string[4] { "KRL_VALUE", "KRL_RLS_ID", "KRL_MANDATORY_FLAG", "KRL_SINGULARISED_FLAG" });
             //Final check to make sure there are no duplicates
+
+
             dAdo.CreateKeywordsFromTable(ado, distinctRows);
 
         }

@@ -59,8 +59,9 @@ namespace PxStat.Subscription
             List<string> emailsNotSent = new List<string>();
             foreach (var user in chnSubs)
             {
-                if (String.IsNullOrEmpty(user.CcnEmail))
+                if (String.IsNullOrEmpty(user.CcnEmail) || String.IsNullOrEmpty(user.FullName))
                     continue;
+                
                 attemptCounter++;
                 using (eMail email = new eMail())
                 {
@@ -68,6 +69,7 @@ namespace PxStat.Subscription
                     {
                         email.Body = DTO.EmailBody ?? Label.Get("email.subscription.notification-body", DTO.LngIsoCode);
                         email.Subject = DTO.EmailSubject ?? Label.Get("email.subscription.notification-body", DTO.LngIsoCode);
+                        
                         string salutation = String.Format(Label.Get("email.salutation-informal", DTO.LngIsoCode), user.FullName);
 
                         email.To.Add(user.CcnEmail);

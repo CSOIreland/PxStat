@@ -44,6 +44,9 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
+            //Flush the cache for search - it's now out of date
+            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+
             Response.data = JSONRPC.success;
 
             return true;

@@ -89,19 +89,49 @@ namespace PxStat.Template
                     }
 
                 }
+
+                //Create the trace now that we're sure we have a SamAccountName if it exists
+                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
+
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams;
 
                 //If the API has the IndividualCleanseNoHtml attribute then parameters are cleansed individually
                 //Any of these parameters whose corresponding DTO property contains the NoHtmlStrip attribute will not be cleansed of HTML tags
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                //if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                //{
+                //    dynamic dto = GetDTO(Request.parameters);
+                //    cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                //}
+                //else
+                //{
+                //    cleansedParams = Cleanser.Cleanse(Request.parameters);
+                //}
+
+                bool isKeyValueParameters = Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
+
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
                 {
-                    dynamic dto = GetDTO(Request.parameters);
-                    cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                    cleansedParams = Request.parameters;
                 }
                 else
                 {
-                    cleansedParams = Cleanser.Cleanse(Request.parameters);
+                    if (!isKeyValueParameters)
+                    {
+                        cleansedParams = Cleanser.Cleanse(Request.parameters);
+                    }
+                    else
+                    {
+                        if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                        {
+                            dynamic dto = GetDTO(Request.parameters);
+                            cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                        }
+                        else
+                        {
+                            cleansedParams = Cleanser.Cleanse(Request.parameters);
+                        }
+                    }
                 }
 
                 try

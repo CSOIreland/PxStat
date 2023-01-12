@@ -92,6 +92,7 @@ namespace PxStat.Data
             if (Throttle_BSO.IsNotInTheWhitelist(whitelist, host) && Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
             {
                 Log.Instance.Debug("Request throttled");
+                Response.statusCode = HttpStatusCode.Forbidden;
                 Response.error = Label.Get("error.throttled");
             }
 
@@ -110,11 +111,13 @@ namespace PxStat.Data
             //Modify mimetype etc
             AddFormatAndMimeType();
 
-            if (releaseDto.RlsLiveDatetimeTo != default(DateTime))
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO, Response.data, releaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.jStatQueryExtension.extension.Matrix);
-            else
-                MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO, Response.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.jStatQueryExtension.extension.Matrix);
-
+            if (hasRun)
+            {
+                if (releaseDto.RlsLiveDatetimeTo != default(DateTime))
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO, Response.data, releaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.jStatQueryExtension.extension.Matrix);
+                else
+                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO, Response.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.jStatQueryExtension.extension.Matrix);
+            }
             return hasRun;
 
         }
@@ -187,7 +190,9 @@ namespace PxStat.Data
                 foreach (var error in validation.Errors)
                 {
                     Log.Instance.Error(error.ErrorMessage);
+                    Log.Instance.Error($"Validation failure for matrix {theDto.jStatQueryExtension.extension.Matrix}");
                     theResponse.error = Label.Get("error.validation", theDto.jStatQueryExtension.extension.Language.Code);
+                    theResponse.statusCode = HttpStatusCode.InternalServerError;
                     return false;
                 }
             }
@@ -195,6 +200,12 @@ namespace PxStat.Data
             //Validate the query against the matrix??
 
             matrix = dr.QueryDataset(theDto, matrix);
+            if(matrix==null)
+            {
+                theResponse.data = null;
+                theResponse.statusCode = HttpStatusCode.BadRequest;
+                return false;
+            }
 
             if (theDto.jStatQueryExtension.extension.Format.Type.Equals(Resources.Constants.C_SYSTEM_XLSX_NAME))
             {
@@ -203,6 +214,7 @@ namespace PxStat.Data
                 if (dataSize > maxSize)
                 {
                     theResponse.error = String.Format(Label.Get("error.dataset.limit", requestLanguage), dataSize, Resources.Constants.C_SYSTEM_XLSX_NAME, maxSize);
+                    theResponse.statusCode = HttpStatusCode.Forbidden;
                     return false;
                 }
             }
@@ -213,6 +225,7 @@ namespace PxStat.Data
                 if (dataSize > maxSize)
                 {
                     theResponse.error = String.Format(Label.Get("error.dataset.limit", requestLanguage), dataSize, Resources.Constants.C_SYSTEM_CSV_NAME, maxSize);
+                    theResponse.statusCode = HttpStatusCode.Forbidden;
                     return false;
                 }
             }
@@ -228,6 +241,7 @@ namespace PxStat.Data
                 if (!pivotOk)
                 {
                     theResponse.error = Label.Get("error.validation", theDto.jStatQueryExtension.extension.Language.Code);
+                    theResponse.statusCode = HttpStatusCode.NotFound;
                     return false;
                 }
 
@@ -259,18 +273,21 @@ namespace PxStat.Data
                         JsonStatBuilder1_0 jxb = new JsonStatBuilder1_0();
                         var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(SerializeJsonStatV1.ToJson(jsonStat));
+                        //theResponse.data= new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                     }
                     else if (theDto.jStatQueryExtension.extension.Format.Version == "1.1")
                     {
                         JsonStatBuilder1_1 jxb = new JsonStatBuilder1_1();
                         var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(SerializeJsonStatV1_1.ToJson(jsonStat));
+                        //theResponse.data = new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                     }
                     else
                     {
                         JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
                         var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
+                        //theResponse.data = new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                     }
                     break;
                 case DatasetFormat.Csv:
@@ -279,12 +296,12 @@ namespace PxStat.Data
                         var pivot = theDto.jStatQueryExtension.extension.Pivot;
                         DataTable dt;
                         if (pivot == null)
-                            dt = ftb.GetMatrixDataTable(matrix, requestLanguage, false, 0, theDto.jStatQueryExtension.extension.Codes == null ? false : (bool)theDto.jStatQueryExtension.extension.Codes);
+                            dt = ftb.GetMatrixDataTableCodesAndLabels(matrix, requestLanguage, false, 0, theDto.jStatQueryExtension.extension.Codes == null ? false : (bool)theDto.jStatQueryExtension.extension.Codes);
                         else
                             dt = ftb.GetMatrixDataTablePivot(matrix, requestLanguage, pivot, theDto.jStatQueryExtension.extension.Codes == null ? false : (bool)theDto.jStatQueryExtension.extension.Codes);
 
-                        theResponse.data = ftb.GetCsv(dt, "\"", readCulture);
-
+                        theResponse.data = ftb.GetCsv(dt, "\"", readCulture, false);
+                        //theResponse.data = new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                         break;
                     }
                 case DatasetFormat.Px:

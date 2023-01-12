@@ -23,7 +23,7 @@ namespace PxStat.Data
         //The matrix code
         public string Code { get; set; }
         //The copyright string
-        public Copyright_DTO_Create Copyright { get; set; } = new Copyright_DTO_Create();
+        public ICopyright Copyright { get; set; } = new Copyright_DTO_Create();
         //Created datetime for the matrix
         public DateTime CreatedDateTime { get; set; }
         //Created date in local string format
@@ -112,8 +112,10 @@ namespace PxStat.Data
                 Language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             }
             Dspecs = new Dictionary<string, Dspec>();
-            var mainSpec = new Dspec(document, ConvertFactory.Convert(domain), dto, MetaData);
-            mainSpec.Language = Language;
+            var mainSpec = new Dspec(document, ConvertFactory.Convert(domain), dto, MetaData)
+            {
+                Language = Language
+            };
             Dspecs.Add(mainSpec.Language, mainSpec);
 
             Languages = document.GetListOfStringValuesIfExist("LANGUAGES");
@@ -132,5 +134,86 @@ namespace PxStat.Data
                 Languages.Add(Language);
             }
         }
+
+        public IDmatrix GetDmatrixFromPxDocument(IDocument document, IMetaData metaData, IUpload_DTO uploadDto,List<PxUpload_DTO> specUploads =null)
+        {
+            Dmatrix dmatrix = new Dmatrix();
+            dmatrix.FormatType = metaData.GetFormatType();
+
+            // The Matrix Code identifies the data cube
+            dmatrix.Code = document.GetStringElementValue("MATRIX");
+
+            dmatrix.Copyright.CprValue = document.GetStringElementValue("SOURCE");
+            Copyright_BSO cBso = new Copyright_BSO();
+
+            if (metaData.IsTest())
+                dmatrix.Copyright = metaData.GetCopyright();
+            else
+                dmatrix.Copyright = cBso.ReadFromValue(dmatrix.Copyright.CprValue);
+
+            // As the Px Document represents a px file, this represents the version of the px format specification, typically a year where the format was introduced
+            dmatrix.FormatVersion = document.GetStringElementValue("AXIS-VERSION");
+
+            string officialStat = document.GetStringValueIfExist("OFFICIAL-STATISTICS");
+            if (string.IsNullOrEmpty(officialStat))
+                dmatrix.IsOfficialStatistic = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.officialStatistics");
+            else
+                dmatrix.IsOfficialStatistic = officialStat.ToUpper() == metaData.GetIsOfficialStatistic();
+
+            // The data, common to all the different languages
+            dmatrix.Cells = (document.GetData("DATA")).Select(x => x.Value).ToList();
+
+            // we will use this to obtain the codes of the dimensions (optional)
+            var domain = document.GetSingleElementWithSubkeysIfExist("DOMAIN");
+
+            // The Main language of the Px File (other languages might exist)
+            dmatrix.Language = document.GetStringValueIfExist("LANGUAGE");
+
+            if (String.IsNullOrEmpty(dmatrix.Language))
+            {
+                dmatrix.Language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            }
+            dmatrix.Languages = document.GetListOfStringValuesIfExist("LANGUAGES");
+            this.Languages = dmatrix.Languages;
+            dmatrix.Dspecs = new Dictionary<string, Dspec>();
+            //var mainSpec = new Dspec(document, ConvertFactory.Convert(domain), dto, MetaData);
+            var mainSpec = new Dspec(uploadDto).GetDspecFromPxDocument(document, domain, null, metaData);
+
+            mainSpec.Language = dmatrix.Language;
+            dmatrix.Dspecs.Add(mainSpec.Language, mainSpec);
+
+
+
+            if (dmatrix.Languages != null && Languages.Count > 0)
+            {
+                var otherLanguages = dmatrix.Languages.Where(t => t != dmatrix.Language).Select(t => t);
+                
+                foreach (var otherlanguage in otherLanguages)
+                {
+                    if(specUploads!=null)
+                    {
+                        var thisSpecUpload = specUploads.Where(x => x.LngIsoCode.Equals(otherlanguage)).FirstOrDefault();
+                        if(thisSpecUpload!=null)
+                        {
+                            uploadDto.FrqValueTimeval = thisSpecUpload.FrqValueTimeval ?? uploadDto.FrqValueTimeval;
+                            uploadDto.LngIsoCode=thisSpecUpload.LngIsoCode ?? uploadDto.LngIsoCode;
+                            uploadDto.FrqCodeTimeval = thisSpecUpload.FrqCodeTimeval ?? uploadDto.FrqCodeTimeval ;
+                        }
+                    }
+                    dmatrix.Dspecs.Add(otherlanguage, new Dspec(uploadDto).GetDspecFromPxDocument(document, domain, otherlanguage, metaData));
+                }
+            }
+            else
+            {
+                dmatrix.Languages = new List<string>
+                {
+                    dmatrix.Language
+                };
+            }
+
+            return dmatrix;
+        }
+
+
     }
 }

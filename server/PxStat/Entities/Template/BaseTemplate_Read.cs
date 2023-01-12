@@ -1,4 +1,5 @@
-﻿using API;
+﻿using AngleSharp.Io;
+using API;
 using FluentValidation;
 using PxStat.Resources;
 using PxStat.Security;
@@ -62,6 +63,8 @@ namespace PxStat.Template
 
                 Response.response = Response.data;
 
+
+
                 //We need to change e.g. an Excel file to a byte array
                 string data = Response.data.ToString();
                 if (data.Contains(";base64,"))
@@ -75,6 +78,22 @@ namespace PxStat.Template
                     Response.response = Utility.DecodeBase64ToByteArray(Response.data);
                 }
 
+
+                //if (Request.GetType().Equals(typeof(JSONRPC_API)))
+                //{
+                //string data = Response.data.ToString();
+                //if (data.Contains(";base64,"))
+                //{
+                //    var base64Splits = data.Split(new[] { ";base64," }, StringSplitOptions.None);
+                //    var dataSplits = base64Splits[0].Split(new[] { "data:" }, StringSplitOptions.None);
+
+                //    // Override MimeType & Data
+                //    Response.mimeType = dataSplits[1];
+                //    Response.data = base64Splits[1];
+
+                //}
+
+                //}
             }
         }
 
@@ -122,8 +141,9 @@ namespace PxStat.Template
                             SamAccountName = user.data[0].CcnUsername;
                         }
                     }
-
+                    
                 }
+                Trace_BSO_Create.Execute(Ado, Request, SamAccountName );
 
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams;
@@ -133,23 +153,29 @@ namespace PxStat.Template
 
                 bool isKeyValueParameters = Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
 
-                if (!isKeyValueParameters)
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
                 {
-                    cleansedParams = Cleanser.Cleanse(Request.parameters);
+                    cleansedParams = Request.parameters;
                 }
                 else
                 {
-                    if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
-                    {
-                        dynamic dto = GetDTO(Request.parameters);
-                        cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
-                    }
-                    else
+                    if (!isKeyValueParameters)
                     {
                         cleansedParams = Cleanser.Cleanse(Request.parameters);
                     }
+                    else
+                    {
+                        if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                        {
+                            dynamic dto = GetDTO(Request.parameters);
+                            cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                        }
+                        else
+                        {
+                            cleansedParams = Cleanser.Cleanse(Request.parameters);
+                        }
+                    }
                 }
-
 
 
                 try

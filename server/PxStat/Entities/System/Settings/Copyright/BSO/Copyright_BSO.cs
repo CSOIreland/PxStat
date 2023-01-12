@@ -1,5 +1,4 @@
 ﻿using API;
-using PxStat.Data;
 using System;
 
 namespace PxStat.System.Settings
@@ -7,25 +6,27 @@ namespace PxStat.System.Settings
     /// <summary>
     /// Copyright methods for use outside of API's 
     /// </summary>
-    internal class Copyright_BSO
+    public class Copyright_BSO
     {
 
         /// <summary>
         /// Reads a copyright
+        /// virtual to enable test mocking
         /// </summary>
         /// <param name="CprCode"></param>
         /// <returns></returns>
-        internal Copyright_DTO_Create Read(string CprCode)
+        public virtual ICopyright Read(string CprCode)
         {
-            ADO Ado = new ADO("defaultConnection");
-            try
+
+
+            using (IADO ado = new ADO("defaultConnection"))
             {
                 Copyright_DTO_Create dto = new Copyright_DTO_Create();
 
                 Copyright_ADO cAdo = new Copyright_ADO();
                 Copyright_DTO_Read readDTO = new Copyright_DTO_Read();
                 readDTO.CprCode = CprCode;
-                var retval = cAdo.Read(Ado, readDTO);
+                var retval = cAdo.Read(ado, readDTO);
                 if (retval.hasData)
                 {
                     dto.CprCode = CprCode;
@@ -34,14 +35,6 @@ namespace PxStat.System.Settings
                 }
 
                 return dto;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                Ado.Dispose();
             }
         }
 

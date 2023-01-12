@@ -133,7 +133,7 @@ namespace PxStat.Subscription
                 {
                     sList.Add(item.SbrKey);
                 }
-                MemCacheD.Store_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache", sList, default(DateTime));
+                MemCacheD.Store_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache", sList, DateTime.Now.AddHours(24));
             }
 
         }

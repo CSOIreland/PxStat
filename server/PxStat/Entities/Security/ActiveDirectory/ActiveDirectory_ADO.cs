@@ -72,6 +72,7 @@ namespace PxStat.Security
             ActiveDirectory_DTO adDTO = new ActiveDirectory_DTO();
             if (result.Count != default(int))
                 adDTO = result.FirstOrDefault();
+
             return adDTO;
         }
 

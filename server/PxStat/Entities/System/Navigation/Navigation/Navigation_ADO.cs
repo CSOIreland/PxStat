@@ -86,6 +86,27 @@ namespace PxStat.System.Navigation
             return output.data;
         }
 
+        internal dynamic AssociatedSearch(Navigation_DTO_Search dto)
+        {
+            //The ExecuteReaderProcedure method requires that the parameters be contained in a List<ADO_inputParams>
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode }
+            };
+
+            ADO_inputParams param = new ADO_inputParams() { name = "@Search", value = dto.SearchTerms };
+
+            param.typeName = "KeyValueVarcharAttribute";
+            paramList.Add(param);
+            //We need a count of search terms (ignoring duplicates caused by singularisation)
+
+
+            //Call the stored procedure
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_Associated_Search", paramList);
+
+            return output.data;
+        }
+
         internal dynamic EntitySearch(Navigation_DTO_Search dto)
         {
 
@@ -108,17 +129,43 @@ namespace PxStat.System.Navigation
             if (dto.RlsArchiveFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsArchiveFlag", value = dto.RlsArchiveFlag });
             if (dto.RlsExperimentalFlag != null)
-                paramList.Add(new ADO_inputParams() { name = "@RlsExperiementalFlag", value = dto.RlsExperimentalFlag });
+                paramList.Add(new ADO_inputParams() { name = "@RlsExperimentalFlag", value = dto.RlsExperimentalFlag });
             if (dto.RlsAnalyticalFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsAnalyticalFlag", value = dto.RlsAnalyticalFlag });
 
-
-
-
-
             //Call the stored procedure
             ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_EntitySearch", paramList);
+            return output.data;
+        }
 
+        internal dynamic EntityAssociatedSearch(Navigation_DTO_Search dto)
+        {
+
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>();
+
+            if (dto.MtrCode != null)
+                paramList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
+            if (dto.MtrOfficialFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@MtrOfficialFlag", value = dto.MtrOfficialFlag });
+            if (dto.SbjCode != default(int))
+                paramList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+            if (dto.PrcCode != null)
+                paramList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
+            if (dto.CprCode != null)
+                paramList.Add(new ADO_inputParams() { name = "@CprCode", value = dto.CprCode });
+            if (dto.RlsExceptionalFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@RlsExceptionalFlag", value = dto.RlsExceptionalFlag });
+            if (dto.RlsReservationFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@RlsReservationFlag", value = dto.RlsReservationFlag });
+            if (dto.RlsArchiveFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@RlsArchiveFlag", value = dto.RlsArchiveFlag });
+            if (dto.RlsExperimentalFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@RlsExperimentalFlag", value = dto.RlsExperimentalFlag });
+            if (dto.RlsAnalyticalFlag != null)
+                paramList.Add(new ADO_inputParams() { name = "@RlsAnalyticalFlag", value = dto.RlsAnalyticalFlag });
+
+            //Call the stored procedure
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_Entity_Associated_Search", paramList);
             return output.data;
         }
 

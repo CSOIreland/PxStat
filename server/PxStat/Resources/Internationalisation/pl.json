@@ -82,6 +82,7 @@
       "key-boolean": "Schemat PX: słowo kluczowe {0} musi mieć wartość tak lub nie.",
       "key-length-min": "Schemat PX: słowo kluczowe {0} musi mieć minimalną długość {1} znak/znaków.",
       "key-length-min-max": "Schemat PX: słowo kluczowe {0} musi mieć długość od {1} do {2} znaków.",
+      "key-length-exact": "Schemat PX: słowo kluczowe {0} musi mieć długość {1} znaków.",
       "key-mandatory": "Schemat PX: dane wejściowe muszą zawierać klucz &quot;{0}&quot;.",
       "key-not-found": "Schemat PX: słowo kluczowe &quot;{0}&quot; nie znaleziono dla tego języka &quot;{1}&quot;.",
       "key-numeric-min-max": "Schemat PX: słowo kluczowe {0} musi mieć wartość między {1} a {2}."

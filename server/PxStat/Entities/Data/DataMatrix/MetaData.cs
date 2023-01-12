@@ -1,4 +1,7 @@
-﻿namespace PxStat.Data
+﻿using PxStat.Security;
+using PxStat.System.Settings;
+
+namespace PxStat.Data
 {
 
     public class MetaData : IMetaData
@@ -69,6 +72,44 @@
         public string GetConfidentialValue()
         {
             return API.Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+        }
+        public string GetRegexNoWhitespace()
+        {
+            return API.Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE");
+        }
+        public string GetBuildRegexForbiddenChars()
+        {
+            return API.Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS");
+        }
+
+        public bool IsTest()
+        {
+            return false;
+        }
+
+        public string GetAppCsvValue()
+        {
+            return API.Utility.GetCustomConfig("APP_CSV_VALUE");
+        }
+
+        public string GetAppCsvUnit()
+        {
+            return API.Utility.GetCustomConfig("APP_CSV_UNIT");
+        }
+
+        public string GetAppRegexAlphaNumeric()
+        {
+            return API.Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
+        }
+
+        public ICopyright GetCopyright()
+        {
+            return new Copyright_DTO_Read() { CprCode = "DHA", CprValue = "Department of Health and Children", CprUrl = "https://www.gov.ie/en/organisation/department-of-health/" };
+        }
+
+        public string GetTitleBy()
+        {
+            return API.Utility.GetCustomConfig("APP_PX_TITLE_BY");
         }
     }
 }

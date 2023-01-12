@@ -2,6 +2,7 @@
 using PxParser.Resources.Parser;
 using PxStat.Build;
 using PxStat.DataStore;
+using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Navigation;
 using PxStat.Template;
@@ -75,9 +76,10 @@ namespace PxStat.Data
                 return false;
             }
 
+      
             // Create the matrix from the Matrix Factory
-            DmatrixFactory dmatrixFactory = new DmatrixFactory(Ado); 
-            IMetaData metaData = new MetaData();    
+            DmatrixFactory dmatrixFactory = new DmatrixFactory(Ado);
+            IMetaData metaData = new MetaData();
             IDmatrix matrix = dmatrixFactory.CreateDmatrix(DTO, metaData);
 
             Matrix_BSO mBso = new Matrix_BSO(Ado);
@@ -166,13 +168,20 @@ namespace PxStat.Data
 
             Stopwatch swLoad = new Stopwatch();
             swLoad.Start();
+            Release_BSO rBso = new Release_BSO(Ado);
 
             // Write matrix and associated metaData to the database
             IDataWriter dataWriter = new DataWriter();
             dataWriter.CreateAndLoadDataField(Ado, matrix, SamAccountName, releaseId);
             dataWriter.CreateAndLoadMetadata(Ado, matrix);
             Keyword_Release_BSO_CreateMandatory krBSO = new Keyword_Release_BSO_CreateMandatory();
+
+
+
             krBSO.Create(Ado, matrix, releaseId, SamAccountName);
+
+            krBSO.RemoveDupes(Ado, releaseId);
+
             swLoad.Stop();
             Log.Instance.Info(string.Format("matrix loaded in db in {0} ms", Math.Round((double)swLoad.ElapsedMilliseconds)));
 

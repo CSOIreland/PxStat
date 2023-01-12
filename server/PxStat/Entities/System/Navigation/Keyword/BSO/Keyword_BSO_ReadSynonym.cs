@@ -40,9 +40,7 @@ namespace PxStat.System.Navigation
                 if (l.LngIsoCode != Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
                     results.Add(GetListForLanguage(l.LngIsoCode, synonymSets));
 
-
             }
-
 
             Response.data = results;
             return true;
@@ -62,8 +60,6 @@ namespace PxStat.System.Navigation
             else result.Synonym = languageSynonyms;
             return result;
         }
-
-
 
     }
 }

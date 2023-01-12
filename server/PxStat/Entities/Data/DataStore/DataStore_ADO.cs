@@ -85,16 +85,28 @@ namespace PxStat.DataStore
 
 
 
-        internal ADO_readerOutput GetFieldDataForMatrix(IADO ado, int mtrId)
+        internal ADO_readerOutput GetFieldDataForMatrix(IADO ado, int mtrId, int cacheLifetime = -1)
         {
 
             var inputParams = new List<ADO_inputParams>()
             {
                 new ADO_inputParams(){ name="@MtrId",value=mtrId}
             };
-            return ado.ExecuteReaderProcedure("Data_Matrix_ReadSingleField", inputParams);
+            if (cacheLifetime < 0) return ado.ExecuteReaderProcedure("Data_Matrix_ReadSingleField", inputParams);
 
+            var cache = MemCacheD.Get_ADO("PxStat.DataStore", "Data_Matrix_ReadSingleField", inputParams);
+            ADO_readerOutput result;
+            if (!cache.hasData)
+            {
+                result = ado.ExecuteReaderProcedure("Data_Matrix_ReadSingleField", inputParams);
 
+            }
+            else
+            {
+                result = cache.data;
+            }
+            MemCacheD.Store_ADO<dynamic>("PxStat.DataStore", "Data_Matrix_ReadSingleField", inputParams, result.data, (DateTime)default);
+            return result;
         }
 
         internal List<dynamic> ReadCollectionMetadata(IADO ado, string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)

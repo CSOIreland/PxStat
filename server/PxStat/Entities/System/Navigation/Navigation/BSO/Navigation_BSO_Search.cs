@@ -2,6 +2,8 @@
 using PxStat.Data;
 using PxStat.Template;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -65,11 +67,24 @@ namespace PxStat.System.Navigation
                 return true;
             }
 
-            if (wordSearch)
-                Response.data = nBso.RunWordSearch();
-            else
-                Response.data = nBso.RunEntitySearch();
+            var resultList = new List<dynamic>();
+            IEnumerable<IGrouping<dynamic, dynamic>> groups;
 
+            if (wordSearch)
+            {
+                groups = Enumerable.Concat(nBso.RunWordAssociatedSearch(), nBso.RunWordSearch()).GroupBy(x => x.MtrCode);
+            }
+            else
+            {
+                groups = Enumerable.Concat(nBso.RunEntityAssociatedSearch(), nBso.RunEntitySearch()).GroupBy(x => x.MtrCode);
+            }
+
+            foreach (var group in groups)
+            {
+                resultList.Add(group.First());
+            }
+
+            Response.data = resultList;
 
             DateTime minDateItem = default;
 

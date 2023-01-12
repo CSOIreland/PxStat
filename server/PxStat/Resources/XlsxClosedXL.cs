@@ -1,5 +1,6 @@
 ﻿using API;
 using ClosedXML.Excel;
+using Ganss.XSS;
 using PxStat.Data;
 using PxStat.Security;
 using PxStat.System.Settings;
@@ -10,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Web;
 using static PxStat.Data.Matrix;
 
 namespace PxStat.Resources
@@ -250,10 +252,36 @@ namespace PxStat.Resources
             string noteString = "";
             if (spec.Notes != null)
             {
-                noteString = new BBCode().Transform(spec.GetNotesAsString(), true);
+                noteString = spec.GetNotesAsString();
+                noteString = new BBCode().Transform(noteString, true);
 
-                //This Regex must be compatible with the output of the BBCode Transform
-                noteString = Regex.Replace(noteString, "<a\\shref=\"([^\"]*)\">([^<]*)<\\/a>", "$2 ($1)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                //Do this in case somebody tries to go under the radar by using html codes..
+                //pvalue = pvalue.Replace("&lt;", "<");
+                //pvalue = pvalue.Replace("&gt;", ">");
+
+                noteString = HttpUtility.HtmlDecode(noteString);
+
+                //If we don't sanitize natively then be default we use the HtmlSanitizer library to delete any script tags etc
+                //We pass in the list of allowed tags - which is empty in our case - nothing allowed!
+
+                //First iteration - nuke all scripts
+                HtmlSanitizer sanitizer = new HtmlSanitizer();
+                noteString = sanitizer.Sanitize(noteString);
+
+                //Second iteration - remove all other tags but keep their contents
+                sanitizer = new HtmlSanitizer(new List<string>());
+                sanitizer.KeepChildNodes = true;
+                noteString = sanitizer.Sanitize(noteString);
+
+                //Allow end users to see tags instead of codes - the sanitizer will have replaced real signs with html codes
+                //pvalue = pvalue.Replace("\u00A0", " ");
+                //pvalue = pvalue.Replace("&gt;", ">");
+                //pvalue = pvalue.Replace("&amp;", "&");
+
+                noteString = HttpUtility.HtmlDecode(noteString);
+
+
+                
             }
 
 

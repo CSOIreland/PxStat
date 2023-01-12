@@ -90,6 +90,25 @@ namespace PxStat.Subscription
 
     }
 
+    internal class Subscriber_DTO_Logout
+    {
+        public string LngIsoCode { get; set; }
+        public string AccessToken { get; set; }
+        public string Uid { get; set; }
+        public Subscriber_DTO_Logout(dynamic parameters)
+        {
+            if (parameters.Uid != null)
+                Uid = parameters.Uid;
+            if (parameters.AccessToken != null)
+                AccessToken = parameters.AccessToken;
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+        }
+
+    }
+
     internal class Subscriber_DTO_Delete
     {
         public string AccessToken { get; set; }

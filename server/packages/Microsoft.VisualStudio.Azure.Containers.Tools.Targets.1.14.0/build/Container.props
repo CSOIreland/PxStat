@@ -1,0 +1,8 @@
+﻿<Project>
+  <ItemGroup>
+    <ProjectCapability Include="ContainerTargets" />
+  </ItemGroup>
+  <PropertyGroup>
+    <HasContainerTargets>true</HasContainerTargets>
+  </PropertyGroup>
+</Project>

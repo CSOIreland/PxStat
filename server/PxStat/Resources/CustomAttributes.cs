@@ -2,6 +2,7 @@
 
 namespace PxStat
 {
+    internal class NoCleanseDto : Attribute { }
     /// <summary>
     /// If an object contains contains a parameter with the NoHtmlStrip attribute then no HTML tags will be stripped when passed to the Sanitizer
     /// </summary>
@@ -27,6 +28,11 @@ namespace PxStat
     /// All parameters will be cleansed except those with NoHtmlStrip on the corresponding DTO attribute
     /// </summary>
     internal class IndividualCleanseNoHtml : Attribute { }
+
+    /// <summary>
+    /// Do not sanitize this property in the BaseTemplate
+    /// </summary>
+    internal class DefaultSanitizer : Attribute { }
 
     /// <summary>
     /// If this attribute is asserted on an API method then calls to that method will not be traced

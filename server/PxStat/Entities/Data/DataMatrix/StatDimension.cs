@@ -33,6 +33,9 @@ namespace PxStat.Data
         public List<int> QueryDimensionOrdinals { get; set; }
         //For the fractal query, which cells would be selected if only this dimension was being queried?
         public List<int> QualifyingOrdinals { get; set; }
+        //Completely optional property - used to speed up intense calculations. Expresses the variables as a dictionary keyed by variable code.
+        //Not normally populated
+        public Dictionary<string, object> DictionaryVariables { get; set; }
 
         /// <summary>
         /// Get the hash for this object
@@ -100,4 +103,6 @@ namespace PxStat.Data
             return true;
         }
     }
+
+
 }

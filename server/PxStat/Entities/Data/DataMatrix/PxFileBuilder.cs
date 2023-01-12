@@ -1,5 +1,6 @@
 ﻿using API;
 using PxParser.Resources.Parser;
+using PxStat.DataStore;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
@@ -32,7 +33,6 @@ namespace PxStat.Data
             }
 
 
-
             if (matrix.Release != null)
             {
                 if (matrix.Release.RlsLiveDatetimeFrom != default)
@@ -49,15 +49,24 @@ namespace PxStat.Data
             {
                 if (statDim.Variables.Count > 0)
                 {
-                    baseKeywordList.Add(CreatePxElement("DECIMALS", statDim.Variables[0].Decimals));
-                    numberOfDecimalPlaces = statDim.Variables[0].Decimals;
+                    var minDec = statDim.Variables.Min(x => x.Decimals);
+
+                    baseKeywordList.Add(CreatePxElement("DECIMALS", minDec));
+                    matrix.Decimals=minDec; 
                 }
                 else
                 {
                     baseKeywordList.Add(CreatePxElement("DECIMALS", matrix.Decimals));
-                    numberOfDecimalPlaces = matrix.Decimals;
+                   
                 }
             }
+
+            //Get the correct decimal places based on the precision/decimal values
+            var theSpec = matrix.Dspecs[lngIsoCode];
+            Dictionary<int, int> precisionOrdinals = new Dictionary<int, int>();
+
+
+
 
             baseKeywordList.Add(CreatePxElement("MATRIX", matrix.Code));
 
@@ -92,17 +101,33 @@ namespace PxStat.Data
                     }
                 }
             }
+            
 
             if (matrix.Cells != null)
             {
                 string defaultVal = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
                 List<string> dataCells = new List<string>();
+                int counter = 0;
+
                 foreach (var c in matrix.Cells)
                 {
-                    var v = c.GetType();
-                    string sval;
-                    if (v.Name.Equals("Double"))
+                    if (c == null)
                     {
+                        dataCells.Add(defaultVal);
+                        continue;
+                    }
+                    var cType = c.GetType();
+                    string sval;
+                    if (cType.Name.Equals("Double"))
+                    {
+                        if(precisionOrdinals.Count>0)
+                        {
+                            if(precisionOrdinals.ContainsKey(counter))
+                                sval = FormatDecimalPlaces(c, precisionOrdinals[counter]);
+                            else sval = FormatDecimalPlaces(c, numberOfDecimalPlaces);
+
+                        }
+                        else
                         // Format number of decimal places
                         sval = FormatDecimalPlaces(c, numberOfDecimalPlaces);
                     }
@@ -118,6 +143,7 @@ namespace PxStat.Data
                     {
                         dataCells.Add(sval);
                     }
+                    counter++;
                 }
 
                 if (dataCells.Count > 0)
@@ -138,8 +164,20 @@ namespace PxStat.Data
                 sb.Append(doc.ToPxString());
             sb.Append(dataDoc.ToPxString());
 
-
             return new Resources.Xlsx().ConvertStringToUtf8Bom(sb.ToString());
+        }
+
+        public Dictionary<int,int> GetPrecisionOrdinals(IDmatrix matrix,IDspec qspec,string lngIsoCode)
+        {
+            DataReader dr = new DataReader();
+            Dictionary<int,int> precisionOrdinals = new Dictionary<int,int>();
+           List<int> foundOrdinals=dr.RunFractalQueryOrdinalsOnly(matrix, qspec,lngIsoCode );
+            int places = qspec.Dimensions.ToList()[0].Variables[0].Decimals;
+            foreach(int i in foundOrdinals)
+            {
+                precisionOrdinals.Add(i, places);
+            }
+            return precisionOrdinals;
         }
 
         private List<IPxKeywordElement> GetKeywordsForSpec(IDmatrix matrix, IMetaData metaData, IDspec spec, Dictionary<string, PxListOfValues> stub, Dictionary<string, PxListOfValues> heading, bool forceStatisticEntry = false)
@@ -169,9 +207,9 @@ namespace PxStat.Data
             keywordList.Add(CreatePxElement("DESCRIPTION" + lngTag, spec.Title)); /////
 
             if (spec.Title != null)
-                keywordList.Add(CreatePxElement("TITLE" + lngTag, spec.Title));
+                keywordList.Add(CreatePxElement("TITLE" + lngTag, spec.Title + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData)));
             else
-                keywordList.Add(CreatePxElement("TITLE" + lngTag, getContentString(spec))); ////
+                keywordList.Add(CreatePxElement("TITLE" + lngTag, GetContentString(spec) + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData)));
 
             keywordList.Add(CreatePxElement("CONTENTS" + lngTag, spec.Contents)); ////
 
@@ -214,7 +252,8 @@ namespace PxStat.Data
             foreach (IStatDimension dim in spec.Dimensions)
             {
                 PxListOfValues px = new PxListOfValues(dim.Variables.Select(x => x.Value).ToList());
-                keywordList.Add(CreatePxElementUnquoted("VALUES" + lngTag, dim.Value, px.ToPxQuotedString("VALUES", Convert.ToInt32(metaData.GetPxMultilineCharLimit()))));
+                //use the optional false to ensure this isn't cleansed...
+                keywordList.Add(CreatePxElementUnquoted("VALUES" + lngTag, dim.Value, px.ToPxQuotedString("VALUES", Convert.ToInt32(metaData.GetPxMultilineCharLimit())),false));
             }
 
             //Create the Timeval
@@ -284,26 +323,46 @@ namespace PxStat.Data
                 }
             }
 
-            keywordList.Add(CreatePxElement("SOURCE" + lngTag, spec.Source));
-            keywordList.Add(CreatePxElement("NOTE" + lngTag, String.Join(",", spec.Notes), false));
+            keywordList.Add(CreatePxElement("SOURCE" + lngTag,matrix.Copyright.CprValue ==null? spec.Source: matrix.Copyright.CprValue));
+            if (spec.Notes != null)
+                keywordList.Add(CreatePxElement("NOTE" + lngTag, String.Join(" ", spec.Notes), false));
 
             var statDim = spec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault();
 
 
+            //Do we need a PRECISION tag? If the decimal places for any statistic variable are different to the others, then yes.
+            bool requiresPrecision = false;
+            int refDecimal = statDim.Variables[0].Decimals;
+
             foreach (var vrb in statDim.Variables)
             {
-                if (vrb.Decimals > 0)
+                if (refDecimal != vrb.Decimals)
                 {
-                    List<string> statistics = new List<string>();
-                    if (contVariable)
-                        statistics.Add(spec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault().Code);
+                    requiresPrecision = true;
+                    break;
+                }
+            }
 
-                    statistics.Add(vrb.Value);
-                    var statsList = new PxListOfValues(statistics);
+            if (requiresPrecision)
+            {
+                foreach (var vrb in statDim.Variables)
+                {
+                    if (vrb.Decimals > 0)
+                    {
+                        List<string> statistics = new List<string>();
+                        if (contVariable)
+                            statistics.Add(spec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault().Value);
 
-                    IPxKeywordElement pxOut = CreatePxElementUnquotedIndividually("PRECISION" + lngTag, statsList.ToPxQuotedString(), vrb.Decimals.ToString());
+                        statistics.Add(vrb.Value);
+                        var statsList = new PxListOfValues(statistics);
 
-                    keywordList.Add(pxOut); ////
+                        if (vrb.Decimals != matrix.Decimals)
+                        {
+                            IPxKeywordElement pxOut = CreatePxElementUnquotedIndividually("PRECISION" + lngTag, statsList.ToPxQuotedString(), vrb.Decimals.ToString());
+
+                            keywordList.Add(pxOut); 
+                        }
+                    }
                 }
             }
 
@@ -311,7 +370,7 @@ namespace PxStat.Data
             return keywordList;
         }
 
-        private string getContentString(IDspec theSpec)
+        private string GetContentString(IDspec theSpec)
         {
             string content = theSpec.Contents;
             IEnumerable<string> clsList = new List<string>();
@@ -330,31 +389,80 @@ namespace PxStat.Data
 
         private Dictionary<string, PxListOfValues> getStubDefault(IList<StatDimension> dimensions, Dictionary<string, PxListOfValues> heading)
         {
-            Dictionary<string, PxListOfValues> headingDict = new Dictionary<string, PxListOfValues>();
+            //using the same order as dimensions, a dimension is a stub if it hasn't already been classified as a heading
+            Dictionary<string, PxListOfValues> stubDict = new Dictionary<string, PxListOfValues>();
 
             foreach (var dim in dimensions)
             {
                 if (!heading.ContainsKey(dim.Value))
-                    headingDict.Add(dim.Value, new PxListOfValues(dim.Variables.Select(x => x.Value).ToList()));
+                {
+                    stubDict.Add(dim.Value, new PxListOfValues(dim.Variables.Select(x => x.Value).ToList()));
+            }
             }
 
-            return headingDict;
+                return stubDict;
         }
 
+        //Get the header
         private Dictionary<string, PxListOfValues> getHeadingDefault(IList<StatDimension> dimensions)
         {
             Dictionary<string, PxListOfValues> headingDict = new Dictionary<string, PxListOfValues>();
+            //int dCount = 1;
+            //foreach(StatDimension d in dimensions)
+            //{
+            //    dCount = dCount * d.Variables.Count;
+            //}
+            ////Use the square root figure to make this as close as possible to a square matrix of data
+            //int targetCount = (int)Math.Sqrt(dCount);
+            //int actualCount = 0;
+            //int counter = 1;
 
-            headingDict.Add(dimensions[dimensions.Count - 1].Value, new PxListOfValues((dimensions[dimensions.Count - 1]).Variables.Select(x => x.Value).ToList()));
+            //headingDict.Add(dimensions[dimensions.Count - counter].Value, new PxListOfValues((dimensions[dimensions.Count - counter]).Variables.Select(x => x.Value).ToList()));
+            //counter++;
+            //actualCount = GetHeadingWidth(headingDict);
+            //while(counter<=dimensions.Count && actualCount<targetCount)
+            //{
+            //    counter++;
+            //    headingDict.Add(dimensions[dimensions.Count - counter].Value, new PxListOfValues((dimensions[dimensions.Count - counter]).Variables.Select(x => x.Value).ToList()));
+            //    actualCount = GetHeadingWidth(headingDict);
+            //}
+            bool foundTime = false;
+            for (int i=0; i<=dimensions.Count-1; i++)
+            {
 
+                if (dimensions[i].Role.Equals("TIME"))
+                    foundTime = true;
+                if(foundTime)
+                    headingDict.Add(dimensions[i].Value, new PxListOfValues((dimensions[i]).Variables.Select(x => x.Value).ToList()));
 
+            }
             return headingDict;
+        }
+
+        //How many datapoints currently in the headingDict?
+        private int GetHeadingWidth(Dictionary<string, PxListOfValues> headingDict)
+        {
+            if (headingDict.Count == 0) return 0;
+            int dCount = 1;
+            foreach(var item in headingDict)
+            {
+                dCount = dCount * item.Value.Values.Count;
+            }
+            return dCount;
         }
 
         private IPxKeywordElement CreatePxElementUnquoted(string key, string subKey, string value)
         {
 
             PxKeywordElement pk = new PxKeywordElement(new PxKey(key, new PxSubKey(subKey)), new PxStringValue(value));
+
+            return pk;
+        }
+
+        private IPxKeywordElement CreatePxElementUnquoted(string key, string subKey, string value,bool cleanse=true)
+        {
+
+            PxKeywordElement pk = new PxKeywordElement(new PxKey(key, new PxSubKey(subKey)), new PxStringValue(value,cleanse));
 
             return pk;
         }

@@ -53,7 +53,7 @@ namespace PxStat.Data
                 }
                 var theDimension = new DimensionV1()
                 {
-                    Label = aDimension.Code,
+                    Label = aDimension.Value,
                     Category = new CategoryV1()
                     {
                         Index = aDimension.Variables.ToDictionary(v => v.Code, v => aDimension.Variables.IndexOf(v)),

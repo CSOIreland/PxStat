@@ -23,7 +23,6 @@
       "expected": "Luach neamhthuartha: {0}",
       "eof": "EOF",
       "unmatched-parameters": "Ní rabhthas ábalta paraiméadair an iarratais a nascadh le sonraí atá ar fáil."
-
     },
     "account": {
       "locked": "Tá an cuntas faoi ghlas"
@@ -32,31 +31,29 @@
       "limit": "Tá tú ag iarraidh {0} cealla sonraí a íoslódáil i bhformáid {1}. Sáraíonn sé seo an t-uasmhéid de {2} cealla sonraí is féidir leat a íoslódáil i bhformáid {1}."
     },
     "geomap": {
-      "json-parse": "Can't create GeoJson map",
-      "code-tag": "\"code\" tag not defined in GeoJson Features property",
-      "mapped-elimination": "Elimination variable is a feature on the map",
-      "unmapped-variable": "Variable {0} is not represented on the map",
-      "not-found": "Map not found",
-      "invalid-format": "Map url format is invalid",
-      "inconsistent-map-data": "Map data is inconsistent"
-
+      "json-parse": "Ní féidir léarscáil GeoJson a chruthú",
+      "code-tag": "Níl an chlib \"cód\" sainithe in airí GeoJson Features",
+      "mapped-elimination": "Gné ar an léarscáil is ea athróg díothaithe",
+      "unmapped-variable": "Ní léirítear {0} Athróg ar an léarscáil",
+      "not-found": "Léarscáil gan aimsiú",
+      "invalid-format": "Tá formáid url léarscáile neamhbhailí",
+      "inconsistent-map-data": "Tá sonraí léarscáile neamhréireach"
     },
     "release": {
-      "locked": "The release is currently in use and is locked"
+      "locked": "Tá an scaoileadh in úsáid faoi láthair agus tá sé faoi ghlas"
     },
     "subscription": {
-      "query-threshold": "The maximum number of subscription snippet queries has been reached.",
-      "invalid-snippet-base64": "The Snippet Base64 string is invalid",
-      "duplicate-tagname": "Cannot create duplicate tag name for the query"
+      "query-threshold": "Baineadh amach an t-uaslíon fiosrúchán maidir le míreanna síntiús.",
+      "invalid-snippet-base64": "Tá an teaghrán Snippet Base64 neamhbhailí",
+      "duplicate-tagname": "Ní féidir ainm clibe dúblach a chruthú don cheist"
     },
     "firebase": {
-      "alreadySubscribed": "You are already a user of this application and you may not register again"
+      "alreadySubscribed": "Is úsáideoir den fheidhmchlár seo thú cheana féin agus ní féidir leat clárú arís"
     },
     "settings": {
-      "language-json-invalid": "You must create a json file for this language in Resources"
+      "language-json-invalid": "Ní mór duit comhad json a chruthú don teanga seo in Acmhainní"
     }
   },
-
   "authentication": {
     "authenticated": "FÍORDHEIMHNITHE",
     "registered": "CLÁRAITHE",
@@ -71,22 +68,20 @@
     "values": "Luachanna dúblacha faighte."
   },
   "px": {
-
     "build": {
       "language": "Ní bhfuarthas an teanga a sonraíodh a chomhad px a tugadh."
     },
     "duplicate": "Tá tú ar tí leasú nua ar an Tábla &quot;{0}&quot;. An bhfuil tú cinnte?",
     "duplicate-different-group": "Tá tú ar tí leasú nua ar an Tábla &quot;{0}&quot;  a uaslódáil agus an grúpa a athrú ó &quot;{1}&quot; go &quot;{2}&quot;. An bhfuil tú cinnte?",
-
     "parse": "Parsáil PX: tá comhréir neamhbhailí san ionchur.",
     "pendinglive": "Tá eisiúint bheo ar feitheamh ag Tábla &quot;{0}&quot;. Fan le do thoil leis an eisiúint bheith beo roimh leagan nua a uaslódáil.",
-
     "schema": {
       "key-alphanumeric": "Scéimre PX: ní mór don eochairfhocal  {0} bheith alfa-uimhriúil.",
       "key-any-of": "Scéimre PX: ní mór an eochair &quot;{0}&quot; nó &quot;{1}&quot; bheith san ionchur.",
       "key-boolean": "Scéimre PX: caithfidh an eochairfhocal {0} a bheith &quot;YES&quot; nó &quot;NO&quot;.",
       "key-length-min": "Scéimre PX: ní mór fad íosta {1} charachtar bheith ag an eochairfhocal {0}.",
       "key-length-min-max": "Scéimre PX: ní mór fad idir {1} agus {2} carachtar bheith san eochairfhocal {0}.",
+      "key-length-exact": "Scéimre PX: ní mór fad {1} carachtar bheith san eochairfhocal {0}.",
       "key-mandatory": "Scéimre PX: ní mór an eochair  &quot;{0}&quot; a bheith san ionchur.",
       "key-not-found": "Scéimre PX: ní bhfuarthas an eochairfhocal  &quot;{0}&quot; don teanga &quot;{1}&quot .",
       "key-numeric-min-max": "Scéimre PX: ní mór luach idir {1} agus {2} bheith san eochairfhocal {0}."
@@ -99,13 +94,14 @@
       "sources-invalid": "Socrú PX [SOURCE]: tá &quot;{Source}&quot; neamhbhailí."
     },
     "maps": {
-      "invalid-map-format": "The map url {0} is not in the correct format",
-      "map-not-found": "The map at {0} could not be found"
+      "invalid-map-format": "Níl an léarscáil url {0} san fhormáid cheart",
+      "map-not-found": "Níorbh fhéidir an léarscáil ag {0} a aimsiú"
     }
   },
   "xlsx": {
     "table": "Tábla",
     "code": "Cód",
+    "label": "Lipéad",
     "name": "Ainm",
     "last-updated": "Nuashonraithe Dheireanaigh",
     "note": "Nóta",
@@ -129,14 +125,15 @@
     "value": "Luach",
     "yes": "Is ea",
     "no": "Ní hea",
-    "pivoted": "Pivoted",
-    "unpivoted": "Unpivoted",
-    "row-limit-exceeded": "The number of data rows requested, {0}, exceeds the maximum allowed value for an XLSX file, {1}. You must either refine you search to return fewer rows or select a format other than XLSX"
+    "pivoted": "Casadh",
+    "unpivoted": "Neamh-casadh",
+    "row-limit-exceeded": "Sáraíonn líon na sraitheanna sonraí a iarradh, {0}, an t-uasluach ceadaithe do chomhad XLSX, {1}. Ní mór duit do chuardach a bheachtú chun níos lú sraitheanna a chur ar ais nó formáid eile seachas XLSX a roghnú"
   },
   "default": {
     "classification": "Stát",
     "csv": {
       "code": " CÓD",
+      "label": "Label",
       "header": "Aonad, Luach",
       "unit": "AONAD",
       "value": "LUACH",
@@ -148,7 +145,7 @@
     "variable": "Stát"
   },
   "email": {
-    "summary": "{0} emails sent",
+    "summary": "{0} ríomhphost seolta",
     "salutation-informal": "A {0}, a chara",
     "body": {
       "request-create": "Tá iarratas nua de saghas [b] {0} [/ b] curtha isteach le hais an Tábla [b] {1} [/ b] Leagan [b] {2}.{3} [/ b] agus tá sin ag fanacht le faomadh. \n Athbhreithnigh an sreabhadh oibre seo ag {4}.",
@@ -156,23 +153,21 @@
       "response-reject": "Tá iarratas nua den saghas [b] {0} [/ b] diúltaithe le hais an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] agus tá sin ag fanacht le faomhadh. \n Athbhreithnigh an sreabhadh oibre seo ag {4}. ",
       "signoff-approve": "Tá iarratas nua den saghas [b] {0} [/ b] curtha isteach le hais an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Athbhreithnigh an sreabhadh oibre seo ag {4}. ",
       "signoff-reject": "Tá iarratas nua den saghas [b] {0} [/ b] diúltaithe le hais an Tábla [b] {1} [/ b] Leagan [b] {2}. {3} [/ b] . \n Athbhreithnigh an sreabhadh oibre seo ag {4}. ",
-
       "header": {
-        "anchor-text": "here",
-        "setup-1fa": "{0}: You are invited to setup your access to the {1} application.",
-        "setup-2fa": "{0}: You are invited to setup your 2FA (Two-Factor Authentication) the {1} application.",
-        "update-1fa": "{0}: A request has been made to reset your password for the {1} application.",
-        "update-2fa": "{0}: A request has been made to reset your 2FA (Two-Factor Authentication) for the {1} application."
+        "anchor-text": "anseo",
+        "setup-1fa": "{0}: Tugtar cuireadh duit do rochtain ar an bhfeidhmchlár {1} a shocrú.",
+        "setup-2fa": "{0}: Tugtar cuireadh duit d’fheidhmchlár {1} (Fíordheimhniú Dhá Fhachtóir) a shocrú.",
+        "update-1fa": "{0}: Tá iarratas déanta chun do phasfhocal a athshocrú don fheidhmchlár {1}.",
+        "update-2fa": "{0}: Tá iarratas déanta chun do 2FA (Fíordheimhniú Dhá Fhachtóir) a athshocrú don fheidhmchlár {1}."
       },
       "sub-header": {
-        "setup-1fa": "Please click {0} or copy and paste the link below into a browser to begin setting up your password.",
-        "setup-2fa": "Please click {0} or copy and paste the link below into a browser to begin setting up your 2FA.",
-        "update-1fa": "Please click {0} or copy and paste the link below into a browser to begin resetting your password.",
-        "update-2fa": "Please click {0} or copy and paste the link below into a browser to begin resetting your 2FA.",
-        "list-2fa": "Ensure the following to reset your 2FA:~Have your smart device available (e.g. smartphone or tablet)~ Have an Authenticator App installed on your device (e.g. Microsoft Authenticator or Google Authenticator) which is free to use~Ensure your privacy is adequate"
-
+        "setup-1fa": "Cliceáil {0} le do thoil nó cóipeáil agus greamaigh an nasc thíos isteach i mbrabhsálaí chun tús a chur le do phasfhocal a shocrú.",
+        "setup-2fa": "Cliceáil {0} le do thoil nó cóipeáil agus greamaigh an nasc thíos isteach i mbrabhsálaí chun tús a chur le do 2FA a shocrú.",
+        "update-1fa": "Cliceáil {0} le do thoil nó cóipeáil agus greamaigh an nasc thíos isteach i mbrabhsálaí chun tús a chur le do phasfhocal a athshocrú.",
+        "update-2fa": "Cliceáil {0} le do thoil nó cóipeáil agus greamaigh an nasc thíos isteach i mbrabhsálaí chun tús a chur le do 2FA a athshocrú.",
+        "list-2fa": "Cinntigh na rudaí seo a leanas chun do 2FA a athshocrú:~Bíodh do ghléas cliste ar fáil (m.sh. fón cliste nó taibléad)~ Suiteáil Aip Authenticator ar do ghléas (m.sh. Microsoft Authenticator nó Google Authenticator) atá saor le húsáid ~ Cinntigh go bhfuil do phríobháideachas leordhóthanach"
       },
-      "footer": "Please ignore this email if you are not {0} or if you think that you may have received this email in error."
+      "footer": "Déan neamhaird den ríomhphost seo le do thoil mura bhfuil tú {0} nó má cheapann tú go bhfuil seans ann go bhfuair tú an ríomhphost seo trí thimpiste."
     },
     "subject": {
       "request-create": "{0} {1}.{2}: Ag feitheamh le faomhadh",
@@ -180,14 +175,14 @@
       "response-reject": "{0} {1}.{2}: Faomhadh diúltaithe",
       "signoff-approve": "{0} {1}.{2}: Sínithe Faofa",
       "signoff-reject": "{0} {1}.{2}: Sínithe Diúltaithe",
-      "setup-1fa": "Setup password for {0}",
-      "update-1fa": "Reset password for {0}",
-      "update-2fa": "Reset 2FA for {0}",
-      "setup-2fa": "Setup 2FA for {0}"
+      "setup-1fa": "Socrú pasfhocal le haghaidh {0}",
+      "update-1fa": "Athshocraigh pasfhocal le haghaidh {0}",
+      "update-2fa": "Athshocraigh 2FA le haghaidh {0}",
+      "setup-2fa": "Socrú 2FA le haghaidh {0}"
     },
     "subscription": {
       "notification-body": "This is a placeholder for the subscription notification body",
-      "notification-title": "Notification for Channel {0}",
+      "notification-title": "Fógraí don Ceannáil {0}",
       "notification-subject": "This is a placeholder for the subscription notification subject"
     }
   },
@@ -200,7 +195,7 @@
       "auto-approve-comment": "Freagairt Uathoibríoch",
       "autoSignoff-comment": "Síniú Uathoibríoch"
     },
-    "reason": "You received this email because you are part of this Workflow."
+    "reason": "Fuair ​​tú an ríomhphost seo toisc go bhfuil tú mar chuid den Shreabhadh Oibre seo."
   },
   "analytic": {
     "others": "Eile",
@@ -209,12 +204,11 @@
     "total": "Iomlán"
   },
   "label": {
-    "date-time": "Date/Time",
-    "date-format": "24h",
-    "timezone": "Local Time"
+    "date-time": "Dáta/Am",
+    "date-format": "24u",
+    "timezone": "Am Áitiúil"
   },
   "group_message": {
-    "received-by": "Received by: {0} and Power Users"
+    "received-by": "Arna fháil ag: {0} agus Úsáideoirí Cumhachtas"
   }
-
 }

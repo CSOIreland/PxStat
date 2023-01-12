@@ -707,7 +707,7 @@ namespace PxStat.Build
         internal static bool CopyrightCodeExists(Build_DTO dto)
         {
             Copyright_BSO bso = new Copyright_BSO();
-            Copyright_DTO_Create dtoCpr = bso.Read(dto.CprCode);
+            ICopyright dtoCpr = bso.Read(dto.CprCode);
             return (dtoCpr.CprCode != null);
         }
 

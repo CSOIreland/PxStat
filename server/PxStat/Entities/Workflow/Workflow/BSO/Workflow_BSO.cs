@@ -364,6 +364,14 @@ namespace PxStat.Workflow
 
             DTO.SignoffAccount = accAdo.GetUser(Ado, accDto);
 
+            //This may be a local user...
+            if (DTO.SignoffAccount.CcnUsername == null)
+            {
+                Account_ADO account_ADO = new Account_ADO();
+                var ac = account_ADO.Read(Ado, DataAdaptor.ReadString(accDto.CcnUsername));
+                if (ac.hasData)
+                    DTO.SignoffAccount = new Security.ActiveDirectory_DTO() { CcnUsername = ac.data[0].CcnUsername, CcnDisplayName = ac.data[0].CcnDisplayName, CcnEmail = ac.data[0].CcnEmail };
+            }
 
             var adoSignoff = new WorkflowSignoff_ADO();
 

@@ -1,12 +1,15 @@
 ﻿using API;
 using FluentValidation.Results;
+using Newtonsoft.Json;
 using PxParser.Resources.Parser;
+using PxStat.DataStore;
 using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PxStat.Data
 {
@@ -71,6 +74,17 @@ namespace PxStat.Data
 
         internal bool requiresResponse { get; set; }
 
+        public int GetCellCount()
+        {
+            int counter = 1;
+            foreach (var dim in this.Dimensions)
+            {
+                counter *= dim.Variables.Count;
+            }
+            return counter;
+        }
+
+
         public string GetNotesAsString()
         {
             string output = "";
@@ -117,6 +131,63 @@ namespace PxStat.Data
 
         public Dspec()
         {
+        }
+
+        public Dspec(IUpload_DTO uploadDto)
+        {
+            this.UploadDto = uploadDto;
+        }
+
+        public Dictionary<int,int> GetPrecisionOrdinals(IDmatrix matrix)
+        {
+            Dictionary<int, int> precisionOrdinals = new Dictionary<int, int>();
+            var statDim =this.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault();
+            if (statDim == null) return precisionOrdinals;
+            //Create a query spec to return the ordinals corresponding to the precision variables in the stats dimension
+            IDspec qspec = new Dspec() { Dimensions = new List<StatDimension>() };
+            qspec.Dimensions.Add(new StatDimension()
+            {
+                Lambda = statDim.Lambda,
+                Sequence = statDim.Sequence,
+                Code = statDim.Code,
+                Value = statDim.Value,
+                Role = statDim.Role,
+                Variables = new List<IDimensionVariable>()
+            });
+            
+            foreach (var vrb in statDim.Variables)
+            {
+                if (vrb.Decimals > 0)
+                {
+                    qspec.Dimensions.ToList()[0].Variables = new List<IDimensionVariable>();
+                    qspec.Dimensions.ToList()[0].Variables.Add(new DimensionVariable() { Code = vrb.Code, Value = vrb.Value, Sequence = vrb.Sequence, Decimals = vrb.Decimals });
+                    //If precision is specified, then because each statistic variable can have a different precision, 
+                    //we must get a list of cells ordinals that apply to each precision.
+                    //We do this by running a fractal query for each specified precision
+
+                    var precisionList = (GetOrdinalsForPrecision(matrix, qspec, this.Language ));
+                    foreach (var i in precisionList)
+                    {
+                        if (!precisionOrdinals.ContainsKey(i.Key))
+                            precisionOrdinals.Add(i.Key, i.Value);
+                    }
+                }
+            }
+            return precisionOrdinals;
+        }
+
+        //For each cell - what stat variable pertains to it and what precision should it have?
+        public Dictionary<int, int> GetOrdinalsForPrecision(IDmatrix matrix, IDspec qspec, string lngIsoCode)
+        {
+            DataReader dr = new DataReader();
+            Dictionary<int, int> precisionOrdinals = new Dictionary<int, int>();
+            List<int> foundOrdinals = dr.RunFractalQueryOrdinalsOnly(matrix, qspec, lngIsoCode);
+            int places = qspec.Dimensions.ToList()[0].Variables[0].Decimals;
+            foreach (int i in foundOrdinals)
+            {
+                precisionOrdinals.Add(i, places);
+            }
+            return precisionOrdinals;
         }
 
         private void SetMapErrors(string url, string language)
@@ -188,13 +259,10 @@ namespace PxStat.Data
                 int index = 0;
                 foreach (var value in statisticalIndicatorValues)
                 {
-
-                    // Remove unneccessary inverted commas
-                    var v = value.Replace("\"", "");
                     var c = statisticalIndicatorCodes.ElementAt(index).SingleValue;
-                    string aUnit = units.FirstOrDefault(i => i.Key == v).Value.First().SingleValue;
+                    string aUnit = units.FirstOrDefault(i => i.Key == value).Value.First().SingleValue;
                     DimensionVariable d = new DimensionVariable();
-                    d.Value = v;
+                    d.Value = value;
                     d.Code = c;
                     d.Unit = aUnit;
                     d.Decimals = Decimals;
@@ -327,7 +395,9 @@ namespace PxStat.Data
             }
             else
             {
-                aFrequencyCode = frequencyValue;
+                if (UploadDto?.FrqCodeTimeval != null) aFrequencyCode = UploadDto.FrqCodeTimeval;
+                else
+                    aFrequencyCode = frequencyValue;
             }
 
             StatDimension statDimension = new StatDimension();
@@ -341,6 +411,9 @@ namespace PxStat.Data
                 where c.Key == frequencyValue
                 select c.Value;
 
+            var pcount = periodValues.Count();
+            //We can't ascertain the time dimension and we'll have to return to the user for further information
+            if (pcount == 0) return null;
             IEnumerable<string> thePeriodValues = periodValues.First();
             IEnumerable<string> thePeriodCodes;
 
@@ -606,6 +679,28 @@ namespace PxStat.Data
             }
         }
 
+        internal void SetEliminationsByCode(ref ICollection<StatDimension> classification, Dictionary<string, string> eliminations)
+        {
+            //Update the variables with Elimination data
+            foreach (var elim in eliminations)
+            {
+                var cls = classification.Where(x => x.Code == elim.Key).FirstOrDefault();
+                if (cls != null)
+                {
+                    foreach (var v in cls.Variables)
+                        v.Elimination = false;
+
+                    if (eliminations[cls.Code] != null)
+                    {
+                        var vrb = cls.Variables.Where(x => x.Code == eliminations[cls.Code]).FirstOrDefault();
+                        if (vrb != null)
+                            vrb.Elimination = true;
+                    }
+
+                }
+            }
+        }
+
         /// <summary>
         /// Set properties for multiple languages
         /// </summary>
@@ -652,6 +747,12 @@ namespace PxStat.Data
             if (Notes != null)
             {
                 NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                if (NotesAsString.Equals("\"\""))
+                {
+                    Notes = null;
+                    NotesAsString = null;
+                }
+
             }
             else
             {
@@ -690,8 +791,6 @@ namespace PxStat.Data
                 var heading = headings.FirstOrDefault().ToString();
                 if (heading != null)
                 {
-                    // Remove unnecessary inverted commas
-                    heading = heading.Replace("\"", String.Empty);
                     UploadDto.FrqValueTimeval = heading;
                 }
             }
@@ -754,8 +853,9 @@ namespace PxStat.Data
                 ContentVariable = Label.Get("default.statistic");
             }
 
-            //Sequences need to be allocated based on the position of the dimension in Values
-            AllocateSequences(Values);
+
+            //Sequences are based on heading and stub values
+            Dimensions=AllocateSequences(headings, stubs, Dimensions);
 
         }
 
@@ -783,6 +883,72 @@ namespace PxStat.Data
             Dimensions = Dimensions.OrderBy(x => x.Sequence).ToList();
         }
 
+        //Set the sequences based on the heading and stub
+        private ICollection<StatDimension> AllocateSequences(IList<IPxSingleElement> heading, IList<IPxSingleElement> stub, ICollection<StatDimension> dimensions)
+        {
+            List<string> dimCodes = new List<string>();
+            List<string> dimValues = new List<string>();
+            int sequence = 1;
+
+            //If there's an implied statistic dimension, it gets a sequence of 1
+            var dimStatistic = dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_STATISTIC)).FirstOrDefault();
+            if (dimStatistic.Variables.Count == 1 )
+            {
+                List<string> stubsList = stub.Select(x => x.ToPxValue()).ToList();
+                List<string>headingsList=heading.Select(x=>x.ToPxValue()).ToList();
+                if (!stubsList.Contains(dimStatistic.Value) && !headingsList.Contains(dimStatistic.Value))
+                {
+                    dimStatistic.Sequence = sequence;
+                    dimCodes.Add(dimStatistic.Code);
+                    dimValues.Add(dimStatistic.Value);
+                }
+            }
+
+
+            foreach (var s in stub)
+            {
+                var nextDim=dimensions.Where(x => x.Value.Equals(s.ToPxValue())).FirstOrDefault();
+                nextDim.Sequence = ++sequence;
+                dimCodes.Add(nextDim.Code);
+                dimValues.Add(nextDim.Value);
+            }
+
+            foreach (var h in heading)
+            {
+                var nextDim = dimensions.Where(x => x.Value.Equals(h.ToPxValue())).FirstOrDefault();
+                nextDim.Sequence = ++sequence;
+                dimCodes.Add(nextDim.Code);
+                dimValues.Add(nextDim.Value);
+            }
+
+            
+
+            //check for dupes in heading/stub
+            if (dimCodes.GroupBy(x => x).Any(g => g.Count() > 1))
+            {
+                //duplicate found!
+                throw new Exception("Duplicate value in heading/stub");
+            }
+
+            //check for dimensions not in heading/stub
+            var notIn = dimensions.Where(x => !dimValues.Any(y => y ==x.Value));
+            if(notIn.Any())
+            {
+                foreach (var dim in notIn)
+                {
+                    //We make an exception for implied an statistic dimension
+                    if(!(dim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_STATISTIC) && this.ContentVariable==null))
+                    //dimension not in heading or stub
+                    throw new Exception("Dimension value not found either in the heading or stub");
+                }
+            }
+
+            return dimensions;
+        }
+
+
+
+
         public Dictionary<string, string> GetEliminationObject()
         {
             Dictionary<string, string> elimList = new Dictionary<string, string>();
@@ -799,6 +965,321 @@ namespace PxStat.Data
                 }
             }
             return elimList;
+        }
+
+        /// <summary>
+        /// Get the list of dimensions with speeded up access (uses dictionaries)
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, object> GetDimensionsAsDictionary()
+        {
+            Dictionary<string, object> dimensions = new Dictionary<string, object>();
+            foreach (var dim in this.Dimensions)
+            {
+                dim.DictionaryVariables = new Dictionary<string, object>();
+                foreach (var vrb in dim.Variables)
+                {
+
+                    dim.DictionaryVariables.Add(vrb.Code, vrb);
+
+                }
+                dimensions.Add(dim.Code, dim);
+            }
+            return dimensions;
+        }
+
+
+        public Dspec GetDspecFromPxDocument(IDocument doc, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string language, IMetaData metaData)
+        {
+            Dspec dspec = new Dspec(this.UploadDto);
+            string proposedLanguage = doc.GetStringValueIfExist("LANGUAGE");
+            if (!String.IsNullOrEmpty(language))
+            {
+                dspec.Language = language;
+            }
+
+            // Title for main language and Title[by other language] and same with all the others.
+            dspec.Title = doc.GetStringElementValue("CONTENTS", language);
+            var docValues = doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language);
+            dspec.Values = ConvertFactory.Convert(docValues);
+            dspec.MatrixCode = doc.GetStringElementValue("MATRIX");
+            dspec.MainValues = ConvertFactory.Convert(doc.GetMultiValuesWithSubkeysOnlyIfLanguageMatches("VALUES", language));
+            dspec.Contents = doc.GetStringElementValue("CONTENTS", language);
+            string infofile = doc.GetStringValueIfExist("INFOFILE", language);
+            var docTimeVals = doc.GetMultiValuesWithSubkeysIfExist("TIMEVAL", language);
+            if (docTimeVals != null)
+            {
+                dspec.TimeVals = ConvertFactory.Convert(docTimeVals);
+            }
+            dspec.Source = doc.GetStringElementValue("SOURCE", language);
+
+            //DECIMALS is specific to Matrix and is language invariant but the value is needed in each language specification and the main spec
+            dspec.Decimals = doc.GetShortElementValue("DECIMALS");
+            if (dspec.Decimals == -1) dspec.Decimals = doc.GetShortElementValue("DECIMAL");
+
+            //Contatenate Notes, Notex and Infofile
+            List<string> notex = null;
+            var notexCheck = doc.GetListOfStringValuesIfExist("NOTEX", language);
+            if (notexCheck != null)
+            {
+                notex = notexCheck.ToList();
+            }
+            dspec.Notes = doc.GetListOfStringValuesIfExist("NOTE", language);
+
+
+            // Concatenate notes into one string
+            if (dspec.Notes != null)
+            {
+                dspec.NotesAsString = string.Join("", dspec.Notes.Select(e => e.ToString()));
+                if (dspec.NotesAsString.Equals("\"\""))
+                {
+                    dspec.Notes = null;
+                    dspec.NotesAsString = null;
+                }
+
+            }
+            else
+            {
+                dspec.Notes = new List<string>();
+                dspec.NotesAsString = "";
+            }
+
+            //Get rid of multiple spaces
+            //NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
+            if (notex != null)
+            {
+                if (dspec.Notes == null) dspec.Notes = new List<string>();
+                dspec.NotesAsString = dspec.NotesAsString + " " + string.Join(" ", notex.Select(e => e.ToString()));
+                foreach (var n in notex)
+                    dspec.Notes.Add(n);
+            }
+
+            if (Uri.TryCreate(infofile, UriKind.Absolute, out Uri uri))
+            {
+                dspec.NotesAsString = dspec.NotesAsString.Trim() + " " + infofile;
+            }
+            var maps = doc.GetSingleElementWithSubkeysIfExist("MAP", language);
+            if (maps != null) ValidateMappingData(maps, language);
+            var codes = doc.GetMultiValuesWithSubkeysIfExist("CODES", language);
+            var precisions = doc.GetSingleElementWithSubkeysIfExist("PRECISION", language);
+                       
+            var units = doc.GetSingleElementWithSubkeys("UNITS", language);
+            dspec.ContentVariable = doc.GetStringValueIfExist("CONTVARIABLE", language);
+            this.ContentVariable = dspec.ContentVariable;
+            var stubs = doc.GetListOfElementsIfExist("STUB", language);
+            var headings = doc.GetListOfElementsIfExist("HEADING", language);
+
+
+            // get the Statistical Products, Time and Dimensions
+            var statDimension = dspec.GetStatisticalDimension(doc, language, codes, units, precisions, metaData);
+
+            statDimension.Code = statDimension.Code != null ? statDimension.Code : metaData.GetCsvStatistic();
+            if (ContentVariable != null)
+            {
+                statDimension.Value = ContentVariable;
+                statDimension.Code = metaData.GetCsvStatistic();
+            }
+            dspec.Dimensions.Add(statDimension);
+
+            // If Timevals is null and language is not null then update PxUploadDTO.FrqValueTimeval
+            // to reflect value for the language
+            if (dspec.TimeVals == null && language != null)
+            {
+                var heading = headings.FirstOrDefault().ToString();
+                if (heading != null)
+                {
+                    dspec.UploadDto.FrqValueTimeval = heading;
+                }
+            }
+
+            //otherwise we'll atempt to fill time values from the FrqValue DTO item (user will choose it)
+            //  if (PxUploadDto == null
+            var frequencyDimension = dspec.GetFrequencyDimension(headings, stubs, domain);
+            if (frequencyDimension != null)
+            {
+                dspec.Dimensions.Add(frequencyDimension);
+            }
+
+            //We may have to change things regarding the Frequency. This only happens for the build.
+            if (dspec.UploadDto != null)
+            {
+
+                if (frequencyDimension != null)
+                {
+                    //We have a frequency and if we also have a FrqCode from the user, we'll change the FrqCode value
+                    if (dspec.UploadDto.FrqCodeTimeval != null)
+                    {
+                        frequencyDimension.Code = dspec.UploadDto.FrqCodeTimeval;
+
+                        
+                    }
+                }
+                else//No Timeval was defined in the px file and we got no Frquency so we try to either ascertain it from the FrqCode or send back to the user for clarification
+                {
+                    //Not enough information, so we must ask the user
+                    if (dspec.UploadDto.FrqValueTimeval == null) dspec.requiresResponse = true;
+                    else //We might be able to get the Frequency from the FrqValue
+                    {
+                        proposedLanguage = dspec.Language ?? proposedLanguage;
+
+                        frequencyDimension = GetFrequencyDimension(doc, dspec.UploadDto.LngIsoCode, domain, proposedLanguage);
+                        if (frequencyDimension != null)
+                        {
+                            dspec.Dimensions.Add(frequencyDimension);
+                        }
+
+                        Frequency_BSO fBso = new Frequency_BSO();
+                        if (!fBso.ReadAll().Contains(dspec.UploadDto.FrqCodeTimeval)) frequencyDimension = null;
+                        //No joy, so we must go back to the user.
+                        if (frequencyDimension == null) dspec.requiresResponse = true;
+                    }
+                }
+            }
+
+            var classificationDimensions = dspec.GetClassificationDimensions(domain, codes, stubs, headings, dspec.Contents, maps, frequencyDimension);
+            foreach (var dimension in classificationDimensions)
+            {
+                dspec.Dimensions.Add(dimension);
+            }
+
+
+            Dictionary<string, string> dictElim = new Dictionary<string, string>();
+            foreach (var elim in doc.GetManySingleValuesWithSubkeysOnlyIfLanguageMatches("ELIMINATION", language))
+            {
+                dictElim.Add(elim.Key, elim.Value.ToPxValue());
+            }
+            var classification = (ICollection<StatDimension>)dspec.Dimensions.Where(s => s.Role == Constants.C_DATA_DIMENSION_ROLE_CLASSIFICATION).ToList();
+            SetEliminationsByValue(ref classification, dictElim);
+
+
+            
+            //Sequences need to be allocated based on the position of the dimension in stubs and headings
+            if (!dspec.requiresResponse)
+                dspec.Dimensions=AllocateSequences(headings, stubs,dspec.Dimensions);
+
+            //dspec.AllocateSequences(dspec.Values);
+            if (String.IsNullOrEmpty(dspec.ContentVariable))
+            {
+                dspec.ContentVariable = Label.Get("default.statistic");
+            }
+
+
+            //Allow for changes in the frequency value if this is build
+            if (dspec.UploadDto != null)
+            {
+                if (frequencyDimension != null)
+                {
+                    if (dspec.UploadDto.FrqValueTimeval != null)
+                    {
+                        var timeDim = dspec.Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).FirstOrDefault();
+                        timeDim.Value = dspec.UploadDto.FrqValueTimeval;
+                    }
+                }
+            }
+                return dspec;
+        }
+
+        public void ValidateMaps(bool formatValidationOnly = false)
+        {
+            foreach (var cls in this.Dimensions)
+            {
+                if (cls.GeoFlag)
+                {
+                    //validate that the map has a well formed url
+                    if (!Regex.IsMatch(cls.GeoUrl, Utility.GetCustomConfig("APP_REGEX_URL")))
+                    {
+                        if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
+                        this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.invalid-format", this.Language)));
+                        return;
+                    }
+
+
+                    //If we're not interested in the link between classifications and map entities, only validate that the map exists,
+                    //then return with or without a list of validation errors
+                    if (formatValidationOnly)
+                    {
+                        string code = "";
+                        List<string> pList = cls.GeoUrl.Split('/').ToList<string>();
+                        if (pList.Count > 0) code = pList.Last().Replace("\"", String.Empty);
+                        using (GeoMap_BSO gBso = new GeoMap_BSO())
+                        {
+                            if (!gBso.Read(code).hasData)
+                            {
+                                this.ValidationErrors = new List<ValidationFailure>();
+                                this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", this.Language)));
+                            }
+                            return;
+                        }
+                    }
+
+                    GeoJson geoJson = new GeoJson();
+                    using (GeoMap_BSO gBso = new GeoMap_BSO(new ADO("defaultConnection")))
+                    {
+                        string geoCode = cls.GeoUrl;
+                        //Accept only the rightmost 32 characters
+                        if (cls.GeoUrl.Length > 32)
+                        {
+                            geoCode = cls.GeoUrl.Substring(cls.GeoUrl.Length - 32);
+                            string baseUrl = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.static") + "/PxStat.Data.GeoMap_API.Read/";
+                            if (!cls.GeoUrl.Substring(0, cls.GeoUrl.Length - 32).Equals(baseUrl))
+                            {
+                                if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
+                                this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", this.Language)));
+                                return;
+
+                            }
+                        }
+                        var mapData = gBso.Read(geoCode);
+                        if (mapData != null)
+                        {
+                            try
+                            {
+                                geoJson = JsonConvert.DeserializeObject<GeoJson>(mapData.data[0].GmpGeoJson);
+                            }
+                            catch
+                            {
+                                if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
+                                this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.json-parse", this.Language)));
+                                return;
+                            }
+                            foreach (var feature in geoJson.Features)
+                            {
+                                if (!feature.Properties.ContainsKey("code"))
+                                {
+                                    if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
+                                    this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.code-tag", this.Language)));
+                                    return;
+                                }
+                            }
+                            foreach (var vrb in cls.Variables)
+                            {
+
+                                if (!vrb.Elimination)
+
+                                {
+                                    if (geoJson.Features.Where(x => x.Properties["code"] == vrb.Code).Count() == 0)
+                                    {
+                                        if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
+                                        this.ValidationErrors.Add(new ValidationFailure("GeoJson", String.Format(Label.Get("error.geomap.unmapped-variable", this.Language), vrb.Code)));
+                                        return;
+
+                                    }
+                                }
+
+
+                            }
+                        }
+                        else
+                        {
+
+                            if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
+                            this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", this.Language)));
+                            return;
+
+                        }
+                    }
+                }
+            }
         }
     }
 }

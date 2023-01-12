@@ -114,6 +114,7 @@ namespace PxStat.Data
             matrix.FormatVersion = theCubeDTO.Format.FrmVersion;
             matrix.Language = theCubeDTO.language;
 
+
             if (matrix == null)
             {
                 theResponse.data = null;
@@ -121,11 +122,11 @@ namespace PxStat.Data
                 return false;
             }
 
-
+           
             JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
             var jsonStat = jxb.Create(matrix, matrix.Language, false);
             theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
-
+            
             if (isLive)
             {
                 if (theReleaseDto.RlsLiveDatetimeTo != default)

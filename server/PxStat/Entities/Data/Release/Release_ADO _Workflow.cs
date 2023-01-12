@@ -10,7 +10,7 @@ namespace PxStat.Data
     /// <summary>
     /// ADO methods for Release
     /// </summary>
-    internal partial class Release_ADO : DataAdaptor
+    public partial class Release_ADO : DataAdaptor
     {
         /// <summary>
         /// Read live releases for a given release code

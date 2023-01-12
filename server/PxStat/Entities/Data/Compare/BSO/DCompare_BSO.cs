@@ -261,7 +261,7 @@ namespace PxStat.Data
         internal List<bool> GetAddDeleteList(IDspec spec, IDmatrix referenceMatrix, List<StatDimension> dimensionsWithAddedVariables)
         {
             FlatTableBuilder ftb = new FlatTableBuilder();
-            DataTable dt = ftb.GetMatrixDataTable(referenceMatrix, spec.Language);
+            DataTable dt = ftb.GetMatrixDataTableCodesAndLabels(referenceMatrix, spec.Language);
             dt.Columns.Add("Amended");
             dt.Columns.Add("seq");
 

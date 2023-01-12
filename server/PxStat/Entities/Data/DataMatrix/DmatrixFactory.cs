@@ -24,7 +24,8 @@ namespace PxStat.Data
                 IDmatrix dmatrix = scope.Resolve<IDmatrix>();
 
                 // Get PxDocument from dto
-                var pxDocument = PxParser.Resources.Parser.PxParser.Parse(dto.MtrInput);
+                var pxManualParser = new PxParser.Resources.Parser.PxManualParser(dto.MtrInput);
+                var pxDocument = pxManualParser.Parse();
 
                 // Load properties from PxDocument
                 dmatrix = new Dmatrix(pxDocument, dto, ado, metaData);

@@ -18,7 +18,7 @@ namespace PxStat.Data
         int PreviousLambda { get; set; }
         List<int> QueryDimensionOrdinals { get; set; }
         List<int> QualifyingOrdinals { get; set; }
-
+        Dictionary<string, object> DictionaryVariables { get; set; }
 
         int GetHashCode();
         Boolean Equals(IStatDimension otherDimension);

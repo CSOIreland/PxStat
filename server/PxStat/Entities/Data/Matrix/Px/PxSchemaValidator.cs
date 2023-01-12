@@ -13,13 +13,13 @@ namespace PxStat.Data.Px
     public class KeywordValidator : AbstractValidator<IPxKeywordElement>
     {
         /// <summary>
-        /// SetRuleLenghtMinMax
+        /// SetRuleLengthMinMax
         /// </summary>
         /// <param name="identifierName"></param>
         /// <param name="minLen"></param>
         /// <param name="maxLen"></param>
         /// <param name="errorMessage"></param>
-        private void SetRuleLenghtMinMax(string identifierName, int minLen, int maxLen, string errorMessage)
+        private void SetRuleLengthMinMax(string identifierName, int minLen, int maxLen, string errorMessage)
         {
             RuleFor(x => x.Element.ToPxValue().Trim())
                 .Length(minLen, maxLen)
@@ -28,12 +28,27 @@ namespace PxStat.Data.Px
         }
 
         /// <summary>
-        /// SetRuleLenghtMin
+        /// SetRuleLengthExact
+        /// </summary>
+        /// <param name="identifierName"></param>
+        /// <param name="len"></param>
+        /// <param name="errorMessage"></param>
+        private void SetRuleLengthExact(string identifierName, int len, string errorMessage)
+        {
+            RuleFor(x => x.Element.ToPxValue().Trim())
+                .Length(len, len)
+                .When(x => x.Key.Identifier == identifierName)
+                .WithMessage(string.Format(errorMessage, identifierName, len));
+        }
+
+
+        /// <summary>
+        /// SetRuleLengthMin
         /// </summary>
         /// <param name="identifierName"></param>
         /// <param name="minLen"></param>
         /// <param name="errorMessage"></param>
-        private void SetRuleLenghtMin(string identifierName, int minLen, string errorMessage)
+        private void SetRuleLengthMin(string identifierName, int minLen, string errorMessage)
         {
             RuleFor(x => x.Element.ToPxValue().Trim())
                 .MinimumLength(minLen)
@@ -105,23 +120,24 @@ namespace PxStat.Data.Px
         {
             string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : RequestLanguage.LngIsoCode;
             string errorMessageLenMinMax = Label.Get("px.schema.key-length-min-max", configLanguage);
+            string errorMessageLenExact = Label.Get("px.schema.key-length-exact", configLanguage);
             string errorMessageLenMin = Label.Get("px.schema.key-length-min", configLanguage);
             string errorMessageBoolean = Label.Get("px.schema.key-boolean", configLanguage);
             string errorMessageNumericMinMax = Label.Get("px.schema.key-numeric-min-max", configLanguage);
             string errorMessageAlphaNumeric = Label.Get("px.schema.key-alphanumeric", configLanguage);
-            string regularExpressionAphaNumeric = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC"); //Do not use translate
+            string regularExpressionAphaNumeric = Configuration_BSO.GetCustomConfig(ConfigType.global, "regex.matrix-name"); //Do not use translate
 
-            SetRuleLenghtMinMax("AXIS-VERSION", 1, 20, errorMessageLenMinMax);
-            SetRuleLenghtMinMax("CONTENTS", 1, 256, errorMessageLenMinMax);
-            SetRuleLenghtMinMax("CONTVARIABLE", 1, 256, errorMessageLenMinMax); // list but with subkeys
-            SetRuleLenghtMinMax("DOMAIN", 1, 256, errorMessageLenMinMax); // list but with subkeys
-            SetRuleLenghtMinMax("LANGUAGE", 2, 2, errorMessageLenMinMax);
+            SetRuleLengthMinMax("AXIS-VERSION", 1, 20, errorMessageLenMinMax);
+            SetRuleLengthMinMax("CONTENTS", 1, 256, errorMessageLenMinMax);
+            SetRuleLengthMinMax("CONTVARIABLE", 1, 256, errorMessageLenMinMax); // list but with subkeys
+            SetRuleLengthMinMax("DOMAIN", 1, 256, errorMessageLenMinMax); // list but with subkeys
+            SetRuleLengthExact("LANGUAGE", 2, errorMessageLenExact);
 
-            SetRuleLenghtMinMax("MATRIX", 1, 20, errorMessageLenMinMax);
+            SetRuleLengthMinMax("MATRIX", 1, 20, errorMessageLenMinMax);
             SetRuleRegEx("MATRIX", regularExpressionAphaNumeric, errorMessageAlphaNumeric);
 
-            SetRuleLenghtMinMax("SOURCE", 1, 256, errorMessageLenMinMax);
-            SetRuleLenghtMinMax("UNITS", 1, 256, errorMessageLenMinMax);  // list only with subkeys or languages
+            SetRuleLengthMinMax("SOURCE", 1, 256, errorMessageLenMinMax);
+            SetRuleLengthMinMax("UNITS", 1, 256, errorMessageLenMinMax);  // list only with subkeys or languages
 
             SetRuleNumericMinMax("DECIMAL", 0, 15, errorMessageNumericMinMax);
             SetRuleNumericMinMax("DECIMALS", 0, 15, errorMessageNumericMinMax); // list with subkeys 
@@ -129,8 +145,48 @@ namespace PxStat.Data.Px
 
             SetRuleBoolean("OFFICIAL-STATISTICS", errorMessageBoolean);
 
-            //SetRuleLenghtMin("NOTEX", 1, errorMessageLenMin);
-            SetRuleLenghtMin("MAP", 1, errorMessageLenMin);
+            //SetRuleLengthMin("NOTEX", 1, errorMessageLenMin);
+            SetRuleLengthMin("MAP", 1, errorMessageLenMin);
+
+            SetRuleLenghtMinMaxList("HEADING", 1, 256, errorMessageLenMinMax); // list
+            SetRuleLenghtMinMaxList("CODES", 1, 256, errorMessageLenMinMax); //list
+            SetRuleLenghtMinMaxList("LANGUAGES", 2, 2, errorMessageLenMinMax); // list 
+            SetRuleLenghtMinMaxList("STUB", 1, 256, errorMessageLenMinMax); // list but with subkeys
+            SetRuleLenghtMinMaxList("TIMEVAL", 1, 256, errorMessageLenMinMax); // list but with subkeys
+            SetRuleLenghtMinMaxList("VALUES", 1, 256, errorMessageLenMinMax); // list
+        }
+
+        public KeywordValidator(IMetaData metaData)
+        {
+            string configLanguage = RequestLanguage.LngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : RequestLanguage.LngIsoCode;
+            string errorMessageLenMinMax = Label.Get("px.schema.key-length-min-max", configLanguage);
+            string errorMessageLenExact = Label.Get("px.schema.key-length-exact", configLanguage);
+            string errorMessageLenMin = Label.Get("px.schema.key-length-min", configLanguage);
+            string errorMessageBoolean = Label.Get("px.schema.key-boolean", configLanguage);
+            string errorMessageNumericMinMax = Label.Get("px.schema.key-numeric-min-max", configLanguage);
+            string errorMessageAlphaNumeric = Label.Get("px.schema.key-alphanumeric", configLanguage);
+            string regularExpressionAphaNumeric = Configuration_BSO.GetCustomConfig(ConfigType.global, "regex.matrix-name"); //Do not use translate
+
+            SetRuleLengthMinMax("AXIS-VERSION", 1, 20, errorMessageLenMinMax);
+            SetRuleLengthMinMax("CONTENTS", 1, 256, errorMessageLenMinMax);
+            SetRuleLengthMinMax("CONTVARIABLE", 1, 256, errorMessageLenMinMax); // list but with subkeys
+            SetRuleLengthMinMax("DOMAIN", 1, 256, errorMessageLenMinMax); // list but with subkeys
+            SetRuleLengthMinMax("LANGUAGE", 2, 2, errorMessageLenMinMax);
+
+            SetRuleLengthMinMax("MATRIX", 1, 20, errorMessageLenMinMax);
+            SetRuleRegEx("MATRIX", regularExpressionAphaNumeric, errorMessageAlphaNumeric);
+
+            SetRuleLengthMinMax("SOURCE", 1, 256, errorMessageLenMinMax);
+            SetRuleLengthMinMax("UNITS", 1, 256, errorMessageLenMinMax);  // list only with subkeys or languages
+
+            SetRuleNumericMinMax("DECIMAL", 0, 15, errorMessageNumericMinMax);
+            SetRuleNumericMinMax("DECIMALS", 0, 15, errorMessageNumericMinMax); // list with subkeys 
+            SetRuleNumericMinMax("PRECISION", 1, 6, errorMessageNumericMinMax);
+
+            SetRuleBoolean("OFFICIAL-STATISTICS", errorMessageBoolean);
+
+            //SetRuleLengthMin("NOTEX", 1, errorMessageLenMin);
+            SetRuleLengthMin("MAP", 1, errorMessageLenMin);
 
             SetRuleLenghtMinMaxList("HEADING", 1, 256, errorMessageLenMinMax); // list
             SetRuleLenghtMinMaxList("CODES", 1, 256, errorMessageLenMinMax); //list
@@ -166,8 +222,22 @@ namespace PxStat.Data.Px
             PxElementMustExist("UNITS");
             PxElementMustExist("VALUES");
             PxElementMustExist("SOURCE");
-
             RuleForEach(x => x.Keywords).SetValidator(new KeywordValidator());
+        }
+
+        internal PxSchemaValidator(IMetaData metaData)
+        {
+            // mandatory
+            PxElementMustExist("AXIS-VERSION");
+            PxElementMustExist("CONTENTS");
+            PxElementMustExist("DATA");
+            OneOfPxElementMustExist("DECIMAL", "DECIMALS");
+            OneOfPxElementMustExist("HEADING", "STUB");
+            PxElementMustExist("MATRIX");
+            PxElementMustExist("UNITS");
+            PxElementMustExist("VALUES");
+            PxElementMustExist("SOURCE");
+            RuleForEach(x => x.Keywords).SetValidator(new KeywordValidator(metaData));
         }
 
         /// <summary>

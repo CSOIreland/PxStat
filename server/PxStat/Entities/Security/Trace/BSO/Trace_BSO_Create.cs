@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 
 namespace PxStat.Security
 {
@@ -15,7 +16,7 @@ namespace PxStat.Security
         /// <param name="request"></param>
         /// <param name="inTransaction"></param>
         /// <returns></returns>
-        internal static int Execute(ADO ado, IRequest request)
+        internal static int Execute(ADO ado, IRequest request,string ccnUsername=null)
         {
             //Check in case the NoTrace attribute is set for the requested API method
             //If so, don't proceed with the trace.
@@ -28,6 +29,14 @@ namespace PxStat.Security
             if (ActiveDirectory.IsAuthenticated(request.userPrincipal))
             {
                 dto.CcnUsername = request.userPrincipal.SamAccountName.ToString();
+            }
+
+            if (dto.CcnUsername == null)
+            {
+                if(MethodReader.DynamicHasProperty(request.parameters,"CcnUsername"))
+                    dto.CcnUsername = request.parameters.CcnUsername;
+                if (dto.CcnUsername == null && ccnUsername != null)
+                    dto.CcnUsername = ccnUsername;
             }
 
             dto.TrcIp = request.ipAddress;

@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using API;
+using DocumentFormat.OpenXml.Presentation;
+using Ganss.XSS;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace PxStat.Resources
 {
@@ -34,7 +39,38 @@ namespace PxStat.Resources
 
                     if (pvalue != null)
                     {
-                        pvalue = CleanValue(propertyInfo, pvalue);
+                        var noSanitizeAttribute = propertyInfo.CustomAttributes.Where(x => x.AttributeType.Name == "DefaultSanitizer").FirstOrDefault();
+                        if (noSanitizeAttribute==null)
+                        {
+                            pvalue = CleanValue(propertyInfo, pvalue);
+                        }
+                        else
+                        {
+                            //Do this in case somebody tries to go under the radar by using html codes..
+                            //pvalue = pvalue.Replace("&lt;", "<");
+                            //pvalue = pvalue.Replace("&gt;", ">");
+
+                            pvalue = HttpUtility.HtmlDecode(pvalue);
+
+                            //If we don't sanitize natively then be default we use the HtmlSanitizer library to delete any script tags etc
+                            //We pass in the list of allowed tags - which is empty in our case - nothing allowed!
+
+                            //First iteration - nuke all scripts
+                            HtmlSanitizer sanitizer = new HtmlSanitizer();
+                            pvalue = sanitizer.Sanitize(pvalue);
+
+                            //Second iteration - remove all other tags but keep their contents
+                            sanitizer = new HtmlSanitizer(new List<string>() );
+                            sanitizer.KeepChildNodes = true;
+                            pvalue=sanitizer.Sanitize(pvalue);
+
+                            //Allow end users to see tags instead of codes - the sanitizer will have replaced real signs with html codes
+                            //pvalue = pvalue.Replace("\u00A0", " ");
+                            //pvalue = pvalue.Replace("&gt;", ">");
+                            //pvalue = pvalue.Replace("&amp;", "&");
+
+                            pvalue= HttpUtility.HtmlDecode(pvalue);
+                        }
                         //update the input object
                         propertyInfo.SetValue(DTO, pvalue);
 
@@ -50,6 +86,11 @@ namespace PxStat.Resources
 
                         foreach (string s in pvalue)
                         {
+                            if (s == null)
+                            {
+                                // Ignore any null values
+                                continue;
+                            }
                             string clean = CleanValue(propertyInfo, s);
                             cleanList.Add(clean);
                         }
@@ -60,6 +101,35 @@ namespace PxStat.Resources
             }
             return DTO;
         }
+
+        internal static dynamic SanitizePostValidation(dynamic DTO)
+        {
+            //For all non-null strings we apply some general sanitization rules
+            var info = DTO.GetType().GetProperties();
+
+
+
+            foreach (PropertyInfo propertyInfo in info)
+            {
+
+                string nspace = propertyInfo.PropertyType.Namespace;
+
+                var pvalue = propertyInfo.GetValue(DTO);
+                if (propertyInfo.PropertyType.Name.Equals("String"))
+                {
+
+                    if (pvalue != null)
+                    {
+                        //replace the non-breaking line space with a char(32) space
+                        pvalue=pvalue.Replace((char)160, (char)32);
+                    }
+                    propertyInfo.SetValue(DTO, pvalue);
+                }
+            }
+
+            return DTO;
+        }
+
 
         /// <summary>
         /// Removes certain values from the string
@@ -75,6 +145,8 @@ namespace PxStat.Resources
             var attrLowerCase = propertyInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == "LowerCase").FirstOrDefault();
             var attrUpperCase = propertyInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == "UpperCase").FirstOrDefault();
 
+            pvalue = pvalue.Replace((char)160, (char)32);
+
             //Strip out all html tags if the NoHtmlStrip attribute is NOT asserted
             if (attrNoHtmlStrip == null)
                 pvalue = Regex.Replace(pvalue, @"<.*?>", "");
@@ -86,6 +158,8 @@ namespace PxStat.Resources
                 pvalue = Regex.Replace(pvalue, @"\s+$", "");
                 //replace double spaces with single ones - if the NoTrim attribute is NOT asserted
                 pvalue = Regex.Replace(pvalue, @" {2,}", " ");
+                
+                
             }
             //Force the value to lower case if the LowerCase attribute is asserted
             if (attrLowerCase != null)

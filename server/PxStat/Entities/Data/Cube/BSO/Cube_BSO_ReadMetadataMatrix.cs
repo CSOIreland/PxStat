@@ -45,6 +45,8 @@ namespace PxStat.Data
             IDmatrix matrix = dr.ReadLiveDataset(DTO.matrix, DTO.language, null, true);
             ApiMetadata amd = new ApiMetadata();
             var result = amd.GetApiMetadata(matrix, DTO.language);
+            IMetaData metaData = new MetaData();
+            result.Title = result.Title + ConvertFactory.GetDimensionValues(result.Title, matrix.Dspecs[DTO.language].Dimensions, metaData);
             Response.data = result;
             return true;
         }

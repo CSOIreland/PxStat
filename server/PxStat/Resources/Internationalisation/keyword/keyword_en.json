@@ -4,7 +4,7 @@
     "preposition": [ "of", "in", "to", "for", "with", "on", "at", "from", "by", "about", "as", "into", "like", "through", "after", "over", "between", "out", "against", "during", "without", "before", "under", "around", "among", "and", "or" ],
     "interrogative": [ "how", "where", "what", "why", "when", "who", "which", "much", "many" ],
     "miscellaneous": [ "has", "have", "is", "are", "not" ],
-    "regex": "[^a-zA-Z\\d\\s:]"
+    "regex": "[^a-zA-Z\\d\\s]"
   },
   "inflection": {
     "plural": [],

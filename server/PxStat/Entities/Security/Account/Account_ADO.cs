@@ -22,7 +22,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="account"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Account_DTO_Read account, bool adOnly = false, string ccnEmail = null)
+        internal ADO_readerOutput Read(IADO ado, Account_DTO_Read account, bool adOnly = false, string ccnEmail = null)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>();
             if (!string.IsNullOrEmpty(account.CcnUsername))
@@ -60,7 +60,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="CcnUsername"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, string CcnUsername)
+        internal ADO_readerOutput Read(IADO ado, string CcnUsername)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>();
 

@@ -265,6 +265,13 @@ namespace PxParser.Resources.Parser
             StringValue = Regex.Replace(value, @"<.*?>", "");
         }
 
+        public PxStringValue(string value,bool cleanse=true)
+        {
+
+            // Strip HTLML tags if cleanse==true
+            StringValue =cleanse? Regex.Replace(value, @"<.*?>", ""):value;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -721,7 +728,7 @@ namespace PxParser.Resources.Parser
             IList<IPxSingleElement> stringElements = new List<IPxSingleElement>();
             foreach (string str in elements)
             {
-                PxStringValue pxe = new PxStringValue(str);
+                PxStringValue pxe = new PxStringValue(str,false);
                 stringElements.Add(pxe);
             }
             Elements = stringElements;

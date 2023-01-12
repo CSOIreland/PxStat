@@ -1,4 +1,7 @@
-﻿using API;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using API;
 using PxStat.Template;
 
 namespace PxStat.Data
@@ -50,9 +53,41 @@ namespace PxStat.Data
 
             Response.data = cBso.ReadCollection(DTO.language, DTO.subject.ToString(), DTO.product);
 
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Key");
+            dataTable.Columns.Add("Value");
+            dataTable.Columns.Add("Attribute");
+
+            foreach (var data in Response.data)
+            {
+                DataRow dataRow = dataTable.NewRow();
+                dataRow["Key"] = data.MtrId;
+                dataRow["Value"] = data.MtrTitle;
+                dataTable.Rows.Add(dataRow);
+            }
+
+            List<dynamic> results = cBso.ReadTitleUpdate(dataTable);
+
+            Response.data = from d in (List<dynamic>) Response.data
+                join i in (List<dynamic>) results on d.MtrId equals i.MtrId
+                select new
+                {
+                    CprCode = d.CprCode,
+                    CprUrl = d.CprUrl,
+                    CprValue = d.CprValue,
+                    ExceptionalFlag = d.ExceptionalFlag,
+                    FrqCode = d.FrqCode,
+                    FrqValue = d.FrqValue,
+                    LngIsoCode = d.LngIsoCode,
+                    LngIsoName = d.LngIsoName,
+                    MtrCode = d.MtrCode,
+                    MtrTitle = i.MtrTitle,
+                    RlsCode = d.RlsCode,
+                    RlsLiveDatatimeFrom = d.RlsLiveDatatimeFrom,
+                    RlsLiveDatatimeTo = d.RlsLiveDatatimeTo
+                };
+
             return true;
         }
-
-
     }
 }

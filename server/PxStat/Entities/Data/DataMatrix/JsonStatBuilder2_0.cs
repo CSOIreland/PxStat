@@ -108,7 +108,8 @@ namespace PxStat.Data
 
             jsStat.Extension = new Dictionary<string, object>();
             jsStat.Extension.Add("matrix", matrix.Code);
-            jsStat.Extension.Add("reasons", matrix.Release.Reasons);
+            if (matrix.Release?.Reasons != null)
+                jsStat.Extension.Add("reasons", matrix.Release.Reasons);
 
             Language_BSO languageBSO = new Language_BSO();
             Language_DTO_Create language = languageBSO.Read(spec.Language);
@@ -203,9 +204,17 @@ namespace PxStat.Data
                 Dictionary<string, Unit> statUnit = null;
                 if (aDimension.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC)
                 {
-
-                    statUnit = statDim.Variables.ToDictionary(v => v.Code, v => new Unit() { Decimals = v.Decimals, Label = v.Unit, Position = Position.End });
-
+                    //Try catch block to diagnose why sometimes statDim.Variables looks like it has duplicate codes
+                    try
+                    {
+                        statUnit = statDim.Variables.ToDictionary(v => v.Code, v => new Unit() { Decimals = v.Decimals, Label = v.Unit, Position = Position.End });
+                    }
+                    catch(Exception ex)
+                    {
+                        Log.Instance.Error($"Error parsing statistic variables for dataset {matrix.Code}");
+                        Log.Instance.Error($"Variables for {matrix.Code} are: {Utility.JsonSerialize_IgnoreLoopingReference(statDim.Variables)}");
+                        throw ex;
+                    }
                 }
                 var theDimension = new Dimension()
                 {

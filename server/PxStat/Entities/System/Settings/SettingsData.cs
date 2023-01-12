@@ -1,9 +1,5 @@
-﻿using System;
+﻿using API;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using API;
 
 namespace PxStat.System.Settings
 {
@@ -89,6 +85,10 @@ namespace PxStat.System.Settings
             CprCode = copyrightCode;
             CprValue = copyrightValue;
             CprUrl = copyrightUrl;
+        }
+
+        public Copyright()
+        {
         }
     }
 

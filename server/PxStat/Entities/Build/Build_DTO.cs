@@ -26,11 +26,7 @@ namespace PxStat.Build
         /// </summary>
         internal Matrix_DTO matrixDto { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
 
-        /// <summary>
         /// 
         /// </summary>
         [LowerCase]
@@ -153,7 +149,7 @@ namespace PxStat.Build
                     {
                         mlDto.CprCode = this.CprCode;
                         Copyright_BSO cBso = new Copyright_BSO();
-                        Copyright_DTO_Create cDTO = cBso.Read(this.CprCode);
+                        ICopyright cDTO = cBso.Read(this.CprCode);
                         mlDto.CprValue = cDTO.CprValue;
                     }
                     if (dim.CprValue != null)

@@ -2,6 +2,7 @@
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace PxStat.Security
 {
@@ -27,9 +28,31 @@ namespace PxStat.Security
         {
             Analytic_ADO ado = new Analytic_ADO(Ado);
             ADO_readerOutput outputSummary = ado.ReadFormat(DTO,SamAccountName );
+            List<nltFormat> formatList = new List<nltFormat>();
+            List<int> groupList = new List<int>();
+
             if (outputSummary.hasData)
             {
-                Response.data = FormatData(outputSummary.data);
+                foreach (var item in outputSummary.data[0])
+                {
+                    formatList.Add(new nltFormat {FrmTypeVersion=item.FrmTypeVersion, GrpId=item.GrpId, NltCount=item.NltCount });
+                }
+                foreach (var item in outputSummary.data[1])
+                {
+                    groupList.Add(item.GrpId);
+                }
+
+                var restrictedGroupQuery = (from b in formatList
+                                            join g in groupList on b.GrpId equals g
+                                            select b).ToList();
+
+                var result = from e in restrictedGroupQuery
+                             group e by e.FrmTypeVersion into g
+                             select new { FrmTypeVersion = g.Key, NltCount = g.Sum(x => x.NltCount) };
+
+
+                Response.data = FormatData(result);
+
                 return true;
             }
             return false;
@@ -52,5 +75,12 @@ namespace PxStat.Security
             return output;
         }
 
+    }
+
+     class nltFormat
+    {
+        internal string FrmTypeVersion { get; set; }
+        internal int GrpId { get; set; }
+        internal int NltCount { get; set; }
     }
 }

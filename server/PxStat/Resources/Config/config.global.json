@@ -32,7 +32,8 @@
 
     },
     "password": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\\W]).{8,}$",
-    "codes-values": "['\"]"
+    "codes-values": "['\"]",
+    "matrix-name": "^[A-Z0-9]+$"
   },
   "workflow": {
     "embargo": {
@@ -80,5 +81,11 @@
   "search": {
 
     "maximumResults": 100
+  },
+  "report": {
+    "date-validation": {
+      "minDate": 365,
+      "maxDate": -1
+    }
   }
 }

@@ -101,8 +101,10 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="lngIsoCode"></param>
         /// <returns></returns>
-        internal static dynamic GetKeyword(string lngIsoCode)
+        internal static dynamic GetKeyword(string lngIsoCode, Dictionary<string, dynamic> kwords = null)
         {
+            if (kwords != null) return kwords[lngIsoCode];
+
             if (!Keywords.ContainsKey(lngIsoCode))
             {
                 lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");

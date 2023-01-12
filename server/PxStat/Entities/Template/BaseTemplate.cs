@@ -75,6 +75,7 @@ namespace PxStat.Template
             Configuration_BSO.SetConfigFromFiles();
             Ado = new ADO("defaultConnection");
 
+
             if (ActiveDirectory.IsAuthenticated(request.userPrincipal))
             {
                 SamAccountName = request.userPrincipal.SamAccountName.ToString();
@@ -88,7 +89,6 @@ namespace PxStat.Template
             else
                 Response = new JSONRPC_Output();
             Validator = validator;
-            Trace_BSO_Create.Execute(Ado, request);
         }
 
         /// <summary>

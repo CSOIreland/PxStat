@@ -34,6 +34,14 @@ namespace PxStat.Subscription
         }
     }
 
+    internal class Subscriber_VLD_Logout : AbstractValidator<Subscriber_DTO_Logout>
+    {
+        internal Subscriber_VLD_Logout()
+        {
+            RuleFor(x => x.LngIsoCode.Length).Equal(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode)).WithMessage("Invalid LngIsoCode");
+        }
+    }
+
     internal class Subscriber_VLD_UpdateKey : AbstractValidator<Subscriber_DTO_UpdateKey>
     {
         internal Subscriber_VLD_UpdateKey()

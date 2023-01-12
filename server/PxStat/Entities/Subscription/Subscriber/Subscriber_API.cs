@@ -30,6 +30,11 @@ namespace PxStat.Subscription
             return new Subscriber_BSO_UpdateKey(requestApi).Update().Response;
         }
 
+        public static dynamic Logout(JSONRPC_API requestApi)
+        {
+            return new Subscriber_BSO_Logout(requestApi).Update().Response;
+        }
+
         public static dynamic Delete(JSONRPC_API requestApi)
         {
             return new Subscriber_BSO_Delete(requestApi).Delete().Response;

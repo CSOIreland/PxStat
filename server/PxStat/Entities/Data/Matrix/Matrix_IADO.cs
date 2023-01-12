@@ -978,11 +978,14 @@ namespace PxStat.Data
                 new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
                 new ADO_inputParams() {name ="@FrmType",value= dmatrix.FormatType},
                 new ADO_inputParams() {name ="@FrmVersion",value= dmatrix.FormatVersion},
-                new ADO_inputParams() {name ="@MtrNote",value= dmatrix.Dspecs[lngIsoCode].NotesAsString},
                 new ADO_inputParams() {name ="@CprValue",value= dmatrix.Copyright.CprValue},
                 new ADO_inputParams() {name ="@MtrRlsId",value= releaseId},
                 new ADO_inputParams() {name ="@userName",value= username}
             };
+            if(dmatrix.Dspecs[lngIsoCode].NotesAsString!=null)
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@MtrNote", value = dmatrix.Dspecs[lngIsoCode].NotesAsString });
+            }
 
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
             ado.ExecuteNonQueryProcedure("Data_Matrix_Create", inputParams, ref returnParam);

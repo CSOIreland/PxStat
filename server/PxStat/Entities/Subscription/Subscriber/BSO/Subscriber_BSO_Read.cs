@@ -1,4 +1,5 @@
-﻿using API;
+﻿using System.Linq;
+using API;
 using PxStat.Template;
 
 namespace PxStat.Subscription
@@ -30,6 +31,15 @@ namespace PxStat.Subscription
         {
             Subscriber_BSO sbso = new Subscriber_BSO();
             var response = sbso.GetSubscribers(Ado, DTO.Uid);
+
+            // Remove d from response if the email and display name are null 
+            foreach (var d in response.ToList())
+            {
+                if (d.CcnEmail == null && d.DisplayName == null)
+                {
+                    response.Remove(d);
+                }
+            }
 
             if (response.Count > 0)
             {

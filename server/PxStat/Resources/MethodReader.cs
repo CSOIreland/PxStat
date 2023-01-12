@@ -62,10 +62,10 @@ namespace PxStat.Resources
                 }
 
                 //Get the required "attributeName" attribute if it exists
-                var attrNoTrace = methodInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == attributeName).FirstOrDefault();
+                var searchedAttribute = methodInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == attributeName).FirstOrDefault();
 
                 //Return true or false depending on whether the attribute was found
-                return attrNoTrace != null;
+                return searchedAttribute != null;
             }
             catch
             {

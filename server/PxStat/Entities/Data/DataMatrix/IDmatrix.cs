@@ -14,7 +14,7 @@ namespace PxStat.Data
         ICollection<dynamic> Cells { get; set; }
         string CellsString { get; set; }
         string Code { get; set; }
-        Copyright_DTO_Create Copyright { get; set; }
+        ICopyright Copyright { get; set; }
         DateTime CreatedDateTime { get; set; }
         string CreatedDateString { get; set; }
         Dictionary<string, Dspec> Dspecs { get; set; }
@@ -29,5 +29,7 @@ namespace PxStat.Data
         string Units { get; set; }
         List<bool> ComparisonReport { get; set; }
         string Language { get; set; }
+        IDmatrix GetDmatrixFromPxDocument(IDocument document, IMetaData metaData, IUpload_DTO uploadDto,List<PxUpload_DTO> dspecs=null);
+        IMetaData MetaData { get; set; }
     }
 }

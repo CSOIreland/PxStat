@@ -1,5 +1,7 @@
-﻿using FluentValidation;
+﻿using API;
+using FluentValidation;
 using PxStat.Resources;
+using PxStat.System.Settings;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,6 +22,8 @@ namespace PxStat.Data
             RuleFor(x => x).Must(LanguagesSpecsMatch).WithMessage("Mismatch between spec languages and the languages listed in the Languages property");
             RuleFor(x => x).Must(LanguageInLanguagesMatch).WithMessage("Language property value not found in Languages property");
             RuleFor(x => x).Must(SpecsHaveSameDimensionCodes).WithMessage("Inconsistent dimension codes across specs");
+            RuleFor(x => x).Must(CopyrightExists).WithMessage("Copyright not found");
+            //RuleFor(x => x).Must(y => Regex.Match(y.Units, "^[a-zA-Z0-9\\s]+$").Success).When(x => x.Units != null).WithMessage("Invalid Unit string");
 
             RuleForEach(x => x.Languages).Length(2).WithMessage((String, x) => $"Language code {x} is invalid");
 
@@ -31,6 +35,22 @@ namespace PxStat.Data
                  {
                      RuleFor(x => x).Must(SpecsAreEquivalent).WithMessage("Inconsistent dimensions across specs");
                  });
+        }
+
+        public bool CopyrightExists(IDmatrix matrix)
+        {
+            //If this is being run as a unit test, we don't want to try to go to the data store
+            if(matrix.MetaData!=null)
+                if (matrix.MetaData.IsTest()) return true;
+
+            if (matrix.Copyright.CprValue == null) return false;
+            using (IADO ado = new ADO("defaultConnection"))
+            {
+                Copyright_ADO cAdo = new Copyright_ADO();
+                var readCpr=cAdo.Read(ado, new Copyright_DTO_Read() { CprValue = matrix.Copyright.CprValue });
+                return readCpr.hasData;
+            }
+           
         }
 
         /// <summary>
@@ -139,6 +159,7 @@ namespace PxStat.Data
             RuleFor(x => x).Must(OneStatDimension).WithMessage((IDspec, x) => $"Error {x.Language} spec has a wrong statistic dimension count");
             RuleFor(x => x).Must(SomeClassificationDimensions).WithMessage((IDspec, x) => $"Error {x.Language} spec has a wrong classification dimension count");
             RuleFor(x => x).Must(DimensionsAreOrdered).WithMessage((IDspec, x) => $"Error {x.Language} spec has invalid dimension sequencing");
+
 
             RuleForEach(x => x.Dimensions).SetValidator(new Dimension_VLD()).WithMessage("Dimension error - see individual message");
         }
@@ -275,6 +296,7 @@ namespace PxStat.Data
         {
             RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage("Variable missing a variable code");
             RuleFor(x => x.Value).NotNull().NotEmpty().WithMessage("Variable missing a variable value");
+            //RuleFor(x => x).Must(y => Regex.Match(y.Unit, "^[a-zA-Z0-9\\s]+$").Success).When(x => x.Unit != null).WithMessage("Invalid Unit string");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Resources;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 
@@ -36,6 +37,15 @@ namespace PxStat.Workflow
                 Security.Account_DTO_Read accDto = new Security.Account_DTO_Read() { CcnUsername = requestUser.CcnUsername };
 
                 requestUser = accAdo.GetUser(ado, accDto);
+
+                //This may be a local user...
+                if (requestUser.CcnUsername == null)
+                {
+                    Account_ADO account_ADO = new Account_ADO();
+                    var ac = account_ADO.Read(ado, ReadString(element.CcnUsername));
+                    if (ac.hasData)
+                        requestUser = new Security.ActiveDirectory_DTO() { CcnUsername = ac.data[0].CcnUsername, CcnDisplayName = ac.data[0].CcnDisplayName, CcnEmail = ac.data[0].CcnEmail };
+                }
 
                 resultList.Add(
                     new WorkflowRequest_DTO()

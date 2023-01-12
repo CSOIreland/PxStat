@@ -1,4 +1,6 @@
-﻿namespace PxStat.Data
+﻿using PxStat.System.Settings;
+
+namespace PxStat.Data
 {
     public interface IMetaData
     {
@@ -16,5 +18,13 @@
         string GetPxMultilineCharLimit();
         string GetCsvStatistic();
         string GetConfidentialValue();
+        string GetRegexNoWhitespace();
+        string GetBuildRegexForbiddenChars();
+        string GetAppCsvValue();
+        string GetAppCsvUnit();
+        string GetAppRegexAlphaNumeric();
+        ICopyright GetCopyright();
+        bool IsTest();
+        string GetTitleBy();
     }
 }

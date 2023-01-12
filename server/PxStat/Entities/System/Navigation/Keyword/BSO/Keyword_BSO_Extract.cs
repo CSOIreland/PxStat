@@ -48,6 +48,25 @@ namespace PxStat.System.Navigation
 
         }
 
+        //internal Keyword_BSO_Extract(string lngIsoCode, MetaData metadata, Dictionary<string, dynamic> kwords = null)
+        //{
+        //    if (kwords != null)
+        //        keyword = new PxStat.Keyword(lngIsoCode, kwords);
+        //    else
+        //        return;
+
+        //    switch (lngIsoCode)
+        //    {
+        //        case "en":
+        //            this.extractor = new Keyword_en(lngIsoCode);
+        //            break;
+        //        case "ga":
+        //            this.extractor = new Keyword_ga(lngIsoCode);
+        //            break;
+
+        //    }
+        //}
+
         /// <summary>
         /// Indicates if a word is one of a specific list of number that are not to be processed. These words will not be added to the output.
         /// </summary>

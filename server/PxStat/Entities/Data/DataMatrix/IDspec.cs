@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FluentValidation.Results;
+using System.Collections.Generic;
 
 namespace PxStat.Data
 {
@@ -17,7 +18,9 @@ namespace PxStat.Data
         ICollection<KeyValuePair<string, ICollection<string>>> TimeVals { get; set; }
         bool TimeValsDefined { get; set; }
         string Title { get; set; }
+        List<ValidationFailure> ValidationErrors { get; set; }
         ICollection<KeyValuePair<string, ICollection<string>>> Values { get; set; }
         string GetNotesAsString();
+        int GetCellCount();
     }
 }

@@ -92,7 +92,7 @@ namespace PxStat.System.Navigation
         /// <param name="rlsCode"></param>
         /// <param name="mandatoryValue"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, int? rlsCode, int? krlCode, bool? mandatoryValue)
+        internal int Delete(IADO ado, int? rlsCode, int? krlCode, bool? mandatoryValue)
         {
             var inputParams = new List<ADO_inputParams>();
             if (rlsCode != null)
@@ -113,6 +113,16 @@ namespace PxStat.System.Navigation
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
             ado.ExecuteNonQueryProcedure("System_Navigation_Keyword_Release_Delete", inputParams, ref returnParam);
             return (int)returnParam.value;
+
+        }
+
+        internal void RemoveDupes(IADO ado, int releaseId)
+        {
+            var inputParams = new List<ADO_inputParams>() { new ADO_inputParams() { name = "@RlsId", value = releaseId } };
+
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+            ado.ExecuteNonQueryProcedure("System_Navigation_Keyword_Release_RemoveDupes", inputParams, ref returnParam);
+
 
         }
 

@@ -2,6 +2,7 @@
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace PxStat.Security
 {
@@ -34,9 +35,29 @@ namespace PxStat.Security
         {
             Analytic_ADO ado = new Analytic_ADO(Ado);
             ADO_readerOutput outputSummary = ado.ReadReferrer(DTO, SamAccountName );
+            List<nltReferer> refList = new List<nltReferer>();
+            List<int> groupList = new List<int>();
             if (outputSummary.hasData)
             {
-                Response.data = FormatData(outputSummary.data);
+                foreach (var item in outputSummary.data[0])
+                {
+                    refList.Add(new nltReferer { NltReferer = item.NltReferer, GrpId = item.GrpId, nltCount = item.nltCount });
+                }
+                foreach (var item in outputSummary.data[1])
+                {
+                    groupList.Add(item.GrpId);
+                }
+
+                var restrictedGroupQuery = (from b in refList
+                                            join g in groupList on b.GrpId equals g
+                                            select b).ToList();
+
+                var result = from e in restrictedGroupQuery
+                             group e by e.NltReferer into g
+                             select new { NltReferer = g.Key, NltCount = g.Sum(x => x.nltCount) };
+
+
+                Response.data = FormatData(result);
                 return true;
             }
             return false;
@@ -70,5 +91,11 @@ namespace PxStat.Security
 
             return output;
         }
+    }
+    class nltReferer
+    {
+        internal string NltReferer { get; set; }      
+        internal int GrpId { get; set; }
+        internal int nltCount { get; set; }
     }
 }

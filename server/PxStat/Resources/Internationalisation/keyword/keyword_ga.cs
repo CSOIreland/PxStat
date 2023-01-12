@@ -34,7 +34,7 @@ namespace PxStat.Resources
         public Keyword_ga()
         {
 
-            LngIsoCode = Utility.GetCustomConfig("APP_INTERNATIONALISATION_IRISH");
+                LngIsoCode = Utility.GetCustomConfig("APP_INTERNATIONALISATION_IRISH");
             keyword = new Keyword(LngIsoCode);
 
             nounDictionary = Keyword_BSO_ResourceFactory.GetMorphology(LngIsoCode);
