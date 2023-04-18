@@ -35,5 +35,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("5.6.0")]
 
 // Allow all internals to be visible
-[assembly: InternalsVisibleTo("PxStat.Test")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] 
