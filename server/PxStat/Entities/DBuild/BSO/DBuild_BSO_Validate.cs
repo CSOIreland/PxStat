@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using PxStat.Data.Px;
+using System;
 
 namespace PxStat.DBuild
 {
@@ -51,18 +52,51 @@ namespace PxStat.DBuild
                 Response.error = Error.GetValidationFailure(pxValidation.Errors);
                 return false;
             }
-
+            
             string lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
             IUpload_DTO uDto = new PxUpload_DTO() { FrqValueTimeval = DTO.FrqValueTimeval, LngIsoCode = lngIsoCode, FrqCodeTimeval = DTO.FrqCodeTimeval };
-            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument, new MetaData(), uDto);
+            var metaData = new MetaData();
+            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument, metaData, uDto);
+
+            if(!dmatrix.Dspecs.ContainsKey(lngIsoCode))
+            {
+                Response.error =String.Format( Label.Get("px.setting.language-no-default", DTO.LngIsoCode), lngIsoCode);
+                return false;
+            }
 
             bool requiresResponse = dmatrix.Dspecs[lngIsoCode].Dimensions.Where(x => x.Role.Equals("TIME")).Count() == 0;
 
-            DMatrix_VLD validator = new DMatrix_VLD();
+            DMatrix_VLD validator = new DMatrix_VLD(metaData, Ado, DTO.LngIsoCode);
+            // Also validate in english - just for the logs
+            DMatrix_VLD dmvEn = new DMatrix_VLD(metaData, Ado);
+            dmvEn.Validate(dmatrix);
+
             var vresult = validator.Validate(dmatrix);
+
+            List<string> ResponseError = new List<string>();
             if (!vresult.IsValid && !requiresResponse)
             {
-                List<string> ResponseError = vresult.Errors.Select(x => x.ErrorMessage).ToList();
+                ResponseError = vresult.Errors.Select(x => x.ErrorMessage).ToList();
+                Response.error = ResponseError;
+                return false;
+            }
+
+
+            //validate maps
+            foreach(string lng in dmatrix.Languages)
+            {
+                dmatrix.Dspecs[lng].ValidateMaps();
+                if(dmatrix.Dspecs[lng].ValidationErrors!=null)
+                {
+                    foreach(var err in dmatrix.Dspecs[lng].ValidationErrors)
+                    {
+                        ResponseError.Add(err.ErrorMessage);
+                    }
+                }
+            }
+
+            if(ResponseError.Count>0)
+            {
                 Response.error = ResponseError;
                 return false;
             }
@@ -78,6 +112,7 @@ namespace PxStat.DBuild
                 validationResult.FrqValues = new List<string>();
                 validationResult.Signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()));
             }
+
 
             Response.data = validationResult;
             return true;

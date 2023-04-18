@@ -48,7 +48,12 @@ namespace PxStat.DBuild
                 }
             }
 
-            DMatrix_VLD dmv = new DMatrix_VLD();
+            var metaData = new MetaData();
+            DMatrix_VLD dmv = new DMatrix_VLD(metaData, Ado, DTO.LngIsoCode);
+            // Also validate in english - just for the logs
+            DMatrix_VLD dmvEn = new DMatrix_VLD(metaData, Ado);
+            dmvEn.Validate(dmatrix);
+
             var vresult = dmv.Validate(dmatrix);
             if (vresult.IsValid)
             {
@@ -66,7 +71,7 @@ namespace PxStat.DBuild
             }
             else
             {
-                Response.error = Label.Get("error.invalid");
+                Response.error = Label.Get("error.invalid", DTO.LngIsoCode);
                 return false;
             }
         }

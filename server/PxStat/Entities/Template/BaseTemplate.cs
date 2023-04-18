@@ -6,6 +6,8 @@ using PxStat.Data;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PxStat.Template
 {
@@ -89,6 +91,11 @@ namespace PxStat.Template
             else
                 Response = new JSONRPC_Output();
             Validator = validator;
+
+
+
+            var lng=LanguageManager.Instance;
+
         }
 
         /// <summary>

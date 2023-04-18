@@ -83,6 +83,7 @@ namespace PxParser.Resources.Parser
             }
         }
 
+
         public string ConvertToHexUsingRegex(string input)
         {
             StringBuilder sb = new StringBuilder();
@@ -93,14 +94,14 @@ namespace PxParser.Resources.Parser
 
                 while ((line = lineReader.ReadLine()) != null)
                 {
-
+                    
                     Regex regex = new Regex("\"[^\"]+\"");
                     MatchCollection mc = regex.Matches(line);
                     foreach (var s in mc)
                     {
                         string sNoCommmas = s.ToString();
-                        line = line.Replace(sNoCommmas, '"' + ConvertStringToHexString(sNoCommmas) + '"');
-
+                        line = line.Replace(sNoCommmas,'"' + ConvertStringToHexString(sNoCommmas) + '"');
+                        
                     }
                     sb.AppendLine(line);
                 }
@@ -134,26 +135,26 @@ namespace PxParser.Resources.Parser
             string line;
             using (StringReader lineReader = new StringReader(input))
             {
-
+                
                 while ((line = lineReader.ReadLine()) != null)
                 {
                     Regex regex = new Regex("\"[^\"]+\"");
-                    MatchCollection mc = regex.Matches(line);
-                    foreach (var s in mc)
+                    MatchCollection mc= regex.Matches(line);
+                    foreach(var s in mc)
                     {
                         string sNoCommas = s.ToString().Replace("\"", "");
                         if (!String.IsNullOrEmpty(sNoCommas))
                         {
-                            var conversion = ConvertHexStringToString(sNoCommas).Replace("\"", "");
+                            var conversion = ConvertHexStringToString(sNoCommas).Replace("\"", ""); 
                             line = line.Replace(sNoCommas, conversion);
                         }
-
+                            
                     }
                     sb.AppendLine(line);
                 }
             }
-            return sb.ToString();
-        }
+            return sb.ToString() ;
+        } 
 
         /// <summary>
         /// Converts temp HEX string to a string
@@ -371,21 +372,7 @@ namespace PxParser.Resources.Parser
                 case VALUENOTEX:
                     // Remove all inverted commas from value
                     value = value.Replace("\"", "");
-                    List<string> lines = value.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
-                    StringBuilder stringBuilder = new StringBuilder();
-
-                    // Iterate over strings to join words that may occur across a newline
-                    foreach (string line in lines)
-                    {
-                        if (!String.IsNullOrEmpty(line))
-                        {
-                            stringBuilder = stringBuilder.Append(line);
-                        }
-                    }
-
-                    // Convert string builder into string array for parameter to PxValueMultiline constructor
-                    List<string> multiline = new List<string>();
-                    multiline.Add(stringBuilder.ToString());
+                    List<string> multiline = value.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
                     if (subKey != null)
                     {
                         return new PxKeywordElement(new PxKey(key, language, new PxSubKey(subKey.Replace("\"", ""))), new PxValueMultiline(multiline));
@@ -504,7 +491,6 @@ namespace PxParser.Resources.Parser
             data = rx.Replace(data, " ");
             var filteredData = data.Split(' ').ToList();
 
-            int i = 0;
             foreach (string d in filteredData)
             {
                 if (String.IsNullOrEmpty(d))

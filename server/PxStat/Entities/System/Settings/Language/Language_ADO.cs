@@ -11,8 +11,8 @@ namespace PxStat.System.Settings
         /// <summary>
         /// 
         /// </summary>
-        private ADO ado;
-        internal Language_ADO(ADO theAdo)
+        private IADO ado;
+        internal Language_ADO(IADO theAdo)
         {
             ado = theAdo;
         }

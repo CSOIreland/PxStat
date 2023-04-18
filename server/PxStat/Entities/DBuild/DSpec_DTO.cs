@@ -44,7 +44,7 @@ namespace PxStat.DBuild
                 if (!thisList[i].IsEquivalent(otherList[i])) return false;
             }
 
-            if (!this.ContentVariable.Equals(otherSpec.ContentVariable)) return false;
+           
             if (this.CopyrightUrl == null && otherSpec.CopyrightUrl != null) return false;
             if (this.CopyrightUrl != null && otherSpec.CopyrightUrl == null) return false;
             if (this.CopyrightUrl != null && otherSpec.CopyrightUrl != null)

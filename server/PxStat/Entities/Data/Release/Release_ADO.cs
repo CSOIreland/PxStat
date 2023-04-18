@@ -255,6 +255,31 @@ namespace PxStat.Data
             var inputParams = new List<ADO_inputParams>();
             inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = releaseCode });
             inputParams.Add(new ADO_inputParams { name = "@CcnUsername", value = userName });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_Read", inputParams);
+            if (reader.hasData)
+            {
+                return reader.data[0];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Reads record(s) from the TD_RELEASE & dependent tables
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="userName"></param>
+        /// <returns>dynamic object from the stored procedure output</returns>
+        internal dynamic ReadLanguageInvariant(Release_DTO_Read rDto, string userName)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = rDto.RlsCode });
+            inputParams.Add(new ADO_inputParams { name = "@CcnUsername", value = userName });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = rDto.LngIsoCode });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
 
             var reader = ado.ExecuteReaderProcedure("Data_Release_Read", inputParams);
             if (reader.hasData)
@@ -276,6 +301,8 @@ namespace PxStat.Data
             var inputParams = new List<ADO_inputParams>();
             inputParams.Add(new ADO_inputParams { name = "@RlsID", value = releaseID });
             inputParams.Add(new ADO_inputParams { name = "@CcnUsername", value = userName });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
 
             var reader = ado.ExecuteReaderProcedure("Data_Release_Read", inputParams);
             if (reader.hasData)

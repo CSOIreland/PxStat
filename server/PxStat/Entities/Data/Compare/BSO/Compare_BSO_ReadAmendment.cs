@@ -49,6 +49,8 @@ namespace PxStat.Data
             IMetaData metaData = new MetaData();
             var comparisonMatrix = bso.CompareAmendment(Ado, metaData, dtoLeft, dtoRight);
 
+
+
             JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
             var jsonStat = jxb.Create(comparisonMatrix, comparisonMatrix.Language, true, true);
 

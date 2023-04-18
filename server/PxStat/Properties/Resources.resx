@@ -118,24 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="en" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Internationalisation\en.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="ga" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\internationalisation\ga.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="pl" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\internationalisation\pl.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="keyword_en" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\internationalisation\keyword\keyword_en.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="keyword_ga" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\internationalisation\keyword\keyword_ga.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="keyword_pl" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\internationalisation\keyword\keyword_pl.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="template_GroupMessage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\email\template_groupmessage.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -147,18 +129,6 @@
   </data>
   <data name="template_LoginBulletPoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\email\template_LoginBulletPoint.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="dictionary_ga" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Internationalisation\keyword\dictionary_ga.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="synonym_en" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Internationalisation\keyword\synonym_en.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="synonym_ga" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Internationalisation\keyword\synonym_ga.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="dictionary_en" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Internationalisation\keyword\dictionary_en.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="FirebaseKey" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\FirebaseKey.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

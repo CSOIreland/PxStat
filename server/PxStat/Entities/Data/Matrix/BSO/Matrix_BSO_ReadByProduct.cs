@@ -21,7 +21,7 @@ namespace PxStat.Data
         {
             var adoMatrix = new Matrix_ADO(Ado);
 
-            var list = adoMatrix.ReadByProduct(DTO.PrcCode, DTO.LngIsoCode);
+            var list = adoMatrix.ReadByProduct(DTO.PrcCode, DTO.LngIsoCode, DTO.AssociatedOnly);
             if (list.hasData)
                 Response.data = list.data;
 

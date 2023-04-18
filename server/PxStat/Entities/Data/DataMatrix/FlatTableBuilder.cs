@@ -215,7 +215,7 @@ namespace PxStat.Data
 
 
 
-            MemoryStream documentStream = xcl.CreatAboutPage(theMatrix, "About", lngIsoCode, ci);
+            MemoryStream documentStream = xcl.CreateAboutPage(theMatrix, Label.Get("xlsx.about",lngIsoCode), lngIsoCode, ci);
 
 
             if (pivot != null)
@@ -227,6 +227,11 @@ namespace PxStat.Data
                 {
                     if (pivot.Equals(dim.Code))
                     {
+                        if (dim.Code.ToUpper().Equals(dim.Value.ToUpper()))
+                        {
+                            pivot = dim.Value + " " + Label.Get("default.csv.label");
+                        }
+                        else
                         pivot = dim.Value;
                         break;
                     }
@@ -298,6 +303,7 @@ namespace PxStat.Data
                 //var pivotDimensionName = theSpec.Dimensions.Where(x => x.Code.Equals(pivotDimension)).FirstOrDefault().Value;
                 //pt.ColumnLabels.Add(pivotDimensionName);
                 pt.ColumnLabels.Add(pivotDimension);
+
             }
 
             List<string> clsNames = new List<string>();
@@ -305,6 +311,8 @@ namespace PxStat.Data
             {
                 clsNames.Add(cls.Value);
             }
+
+
             foreach (DataColumn col in dt.Columns)
             {
                 //pivot dimension is treated differently...
@@ -312,7 +320,7 @@ namespace PxStat.Data
                 {
                     //Only value fields in the pivot, not codes!
 
-                    if (col.ColumnName == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault().Value || col.ColumnName == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_TIME).FirstOrDefault().Value || clsNames.Contains(col.ColumnName))
+                    if (GetDimensionNameFromColumnName(col.ColumnName) == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault().Value || col.ColumnName == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_TIME).FirstOrDefault().Value || clsNames.Contains(col.ColumnName))
                         pt.RowLabels.Add(col.ColumnName);
                 }
             }
@@ -330,6 +338,18 @@ namespace PxStat.Data
             return output;
         }
 
+        /// <summary>
+        /// Translates from a column name to a dimension name where necessary
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
+        private string GetDimensionNameFromColumnName(string columnName)
+        {
+            string ending = " " + Label.Get("default.csv.label");
+            if (columnName.EndsWith(ending))
+                return columnName.Substring(0, columnName.IndexOf(ending));
+            return columnName;
+        }
 
 
         internal IEnumerable<IEnumerable<T>> CartesianProduct<T>(IEnumerable<IEnumerable<T>> sequences)

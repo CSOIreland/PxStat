@@ -26,5 +26,6 @@ namespace PxStat.Data
         ICopyright GetCopyright();
         bool IsTest();
         string GetTitleBy();
+        string GetDefaultCodingLanguage();
     }
 }

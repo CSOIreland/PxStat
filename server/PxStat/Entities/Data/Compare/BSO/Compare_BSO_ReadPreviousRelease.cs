@@ -1,6 +1,7 @@
 ﻿using API;
 using PxStat.Security;
 using PxStat.Template;
+using System.Dynamic;
 
 namespace PxStat.Data
 {
@@ -40,14 +41,19 @@ namespace PxStat.Data
                 return true;
             }
 
-            int previousReleaseId = new Compare_ADO(Ado).ReadPreviousReleaseForUser(DTO.RlsCode, SamAccountName);
-            if (previousReleaseId == 0)
+            int previousReleaseCode = new Compare_ADO(Ado).ReadPreviousReleaseForUser(DTO.RlsCode, SamAccountName);
+
+            dynamic output = new ExpandoObject();
+
+            if (previousReleaseCode == 0)
             {
                 Response.data = null;
             }
             else
             {
-                Response.data = previousReleaseId;
+                output.RlsCode = previousReleaseCode;
+                output.LngIsoCode = new Compare_ADO(Ado).ReadLanguagesForRelease(previousReleaseCode);
+                Response.data = output;
             }
 
             return true;

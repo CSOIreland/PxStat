@@ -54,6 +54,7 @@ namespace PxStat.Report
                 catch (Exception e)
                 {
                     Log.Instance.Error(string.Format("Parameter value {0} cannot be deserialized", parameters.GrpCode));
+                    Log.Instance.Error(e.Message);
                     throw;
                 }
             }
@@ -67,6 +68,7 @@ namespace PxStat.Report
                 catch (Exception e)
                 {
                     Log.Instance.Error(string.Format("Parameter value {0} cannot be deserialized", parameters.RsnCode));
+                    Log.Instance.Error(e.Message);
                     throw;
                 }
             }

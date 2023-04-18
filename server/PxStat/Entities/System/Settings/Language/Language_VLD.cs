@@ -68,4 +68,17 @@ namespace PxStat.System.Settings
             RuleFor(f => f.LngIsoCode).NotEmpty().Length(2).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
         }
     }
+
+    /// <summary>
+    /// Validator for Language check
+    /// </summary>
+    internal class Language_VLD_Check : AbstractValidator<Language_DTO_Check>
+    {
+        internal Language_VLD_Check()
+        {
+            //Mandatory - LngIsoCode
+            RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$").WithMessage("Invalid ISO code").WithName("LngIsoCodeValidation");
+        }
+    }
+
 }

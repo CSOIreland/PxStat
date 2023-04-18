@@ -44,20 +44,29 @@ namespace PxStat.System.Navigation
         /// <param name="parameters"></param>
         public Product_DTO(dynamic parameters)
         {
-            //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
+ 
+            //Check if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
             if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
             {
                 if (parameters.PrcCode != null)
-                    this.PrcCode = parameters.PrcCode;
+                {
+                    // Convert parameters.PrcCode to uppercase
+                    this.PrcCode = ((string) parameters.PrcCode).ToUpper();
+                }
 
                 if (parameters.PrcCodeNew != null)
-                    this.PrcCodeNew = parameters.PrcCodeNew;
+                {
+                    // Convert parameters.PrcCodeNew to uppercase
+                    this.PrcCodeNew = ((string) parameters.PrcCodeNew).ToUpper();
+                }
 
                 if (parameters.SbjCode != null)
                     this.SbjCode = parameters.SbjCode;
 
                 if (parameters.PrcValue != null)
+                {
                     this.PrcValue = parameters.PrcValue;
+                }
 
                 if (parameters.LngIsoCode != null)
                     this.LngIsoCode = parameters.LngIsoCode;
@@ -96,6 +105,10 @@ namespace PxStat.System.Navigation
                     prop.SetValue(this, value, null);
                 }
             }
+        }
+
+        public Product_DTO()
+        {
         }
     }
 }

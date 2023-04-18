@@ -11,13 +11,13 @@ namespace PxStat.System.Navigation
         /// <summary>
         /// ADO class parameter
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        public Product_ADO(ADO ado)
+        public Product_ADO(IADO ado)
         {
             this.ado = ado;
         }

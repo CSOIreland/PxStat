@@ -37,20 +37,20 @@ namespace PxStat.DBuild
             DBuild_BSO dbso = new DBuild_BSO();
             if (!dbso.HasBuildPermission(SamAccountName, "update"))
             {
-                Response.error = Label.Get("error.privilege");
+                Response.error = Label.Get("error.privilege", DTO.LngIsoCode);
                 return false;
             }
 
 
             if (!DTO.Signature.Equals(Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()))))
             {
-                Response.error = Label.Get("error.validation");
+                Response.error = Label.Get("error.validation", DTO.LngIsoCode);
                 return false;
             }
 
 
-
-            Response = dbso.BsoUpdate(Response, DTO, new MetaData());
+            var metaData = new MetaData();
+            Response = dbso.BsoUpdate(Response, DTO, metaData, Ado, true, null, DTO.LngIsoCode);
             return Response.error != null;
         }
 

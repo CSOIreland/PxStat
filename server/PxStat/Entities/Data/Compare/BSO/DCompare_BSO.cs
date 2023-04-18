@@ -1,9 +1,12 @@
 ﻿using API;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using PxStat.DataStore;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
 
 namespace PxStat.Data
@@ -26,7 +29,10 @@ namespace PxStat.Data
             //We need a reference version to ensure that leftMatrix is not changed by reference
             var matrixLeftRef = dr.GetDataset(Ado, metaData, dtoLeft.LngIsoCode, lDto);
 
-            return CompareDmatrixAmendment(matrixLeft, matrixRight, matrixLeftRef);
+            if (matrixRight.Dspecs.Count == 0 || matrixLeftRef.Dspecs.Count == 0)
+                return null;
+
+            return CompareDmatrixAmendment(matrixLeft, matrixRight, matrixLeftRef, Ado, null, metaData);
         }
 
         /// <summary>
@@ -38,14 +44,14 @@ namespace PxStat.Data
         /// <param name="matrixRight"></param>
         /// <param name="confidentialString"></param>
         /// <returns></returns>
-        public IDmatrix CompareDmatrixAmendment(IDmatrix matrixLeft, IDmatrix matrixRight, IDmatrix matrixLeftRef, string confidentialString = null, IMetaData meta = null)
+        public IDmatrix CompareDmatrixAmendment(IDmatrix matrixLeft, IDmatrix matrixRight, IDmatrix matrixLeftRef, IADO ado = null, string confidentialString = null, IMetaData meta = null)
         {
-            DMatrix_VLD vld = new DMatrix_VLD();
+            DMatrix_VLD vld = new DMatrix_VLD(meta, ado);
             var res = vld.Validate(matrixLeft);
-            res = vld.Validate(matrixRight);
+           
             bool totalChange = false;
 
-
+            //check usage of validation
             //bool test = matrixLeft.Dspecs[matrixLeft.Language].Dimensions.Equals(matrixRight.Dspecs[matrixRight.Language].Dimensions);
 
             Dspec commonSpec = new Dspec();
@@ -131,15 +137,75 @@ namespace PxStat.Data
             else
                 confidential = meta.GetConfidentialValue();
 
+            var granularReport=GetGranularReport(leftQueried,rightQueried);
 
             //matrixRight.ComparisonReport = GetAmendedList(commonSpec);
-            var report = GetAmendedList(leftQueried, rightQueried, totalChange);
+            var report = granularReport.Select(x => x.value).ToList();// GetAmendedList(leftQueried, rightQueried, totalChange);
 
             leftQueried.ComparisonReport = report;
             leftQueried.Cells = rightQueried.Cells;
 
             return leftQueried; ;
 
+        }
+
+        private List<boolId> GetGranularReport(IDmatrix leftQueried, IDmatrix rightQueried)
+        {
+            
+            FlatTableBuilder fb = new FlatTableBuilder();
+            
+            //express leftQueried as a DataTable
+            DataTable dtLeft = fb.GetMatrixDataTableCodesOnly(leftQueried, leftQueried.Dspecs.First().Value.Language);
+            //express rightQueried as a DataTable
+            DataTable dtRight = fb.GetMatrixDataTableCodesOnly(rightQueried, rightQueried.Dspecs.First().Value.Language);
+
+            //create a sort expression based on dimension columns and sort each datatable
+            List<string> codeList=rightQueried.Dspecs.First().Value.Dimensions.OrderBy(x => x.Sequence).Select(x => x.Code).ToList();
+            string sortStatement = "";
+            foreach(string s in codeList)
+            {
+                sortStatement =sortStatement + s +  ( s!=codeList.Last()? "," : "");
+            }
+            //Apply sort
+            dtLeft.DefaultView.Sort=sortStatement;
+            dtRight.DefaultView.Sort = sortStatement;
+
+            dtLeft=dtLeft.DefaultView.ToTable();
+            dtRight = dtRight.DefaultView.ToTable();
+
+            List<objectId> leftObjectIds = new List<objectId>();
+            List<objectId> rightObjectIds = new List<objectId>();
+
+            int counter = 0;
+            string leftValueColumn = Label.Get("xlsx.value", leftQueried.Dspecs.First().Value.Language);
+            string rightValueColumn = Label.Get("xlsx.value", rightQueried.Dspecs.First().Value.Language);
+            foreach (DataRow row in dtLeft.Rows)
+            {
+                if (dtLeft.Columns.Contains(leftValueColumn))
+                {
+                    leftObjectIds.Add(new objectId { id = counter,value=row[leftValueColumn] });
+                    counter++;
+               }
+            }
+
+            counter = 0;
+            foreach (DataRow row in dtRight.Rows)
+            {
+                if (dtRight.Columns.Contains(rightValueColumn))
+                {
+                    rightObjectIds.Add(new objectId { id = counter, value = row[rightValueColumn] });
+                    counter++;
+                }
+            }
+
+            //Check that the cells for each matrix are the same or otherwise and compile a report
+            var result = from l in leftObjectIds
+                         join r in rightObjectIds
+                         on l.id equals r.id
+                         select new boolId { id = l.id,  value= !l.value.Equals(r.value) };
+
+
+            return result.ToList();
         }
 
         private bool DimensionsAreEqual(ICollection<StatDimension> leftDims, ICollection<StatDimension> rightDims)
@@ -345,5 +411,16 @@ namespace PxStat.Data
 
         }
 
+    }
+    internal class objectId
+    {
+        internal int id { get; set; }
+        internal dynamic value { get; set; }    
+    }
+
+    internal class boolId
+    {
+        internal int id { get; set; }
+        internal bool value { get; set; }
     }
 }

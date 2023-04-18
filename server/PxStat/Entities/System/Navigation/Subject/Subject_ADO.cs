@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System.Collections.Generic;
 
 namespace PxStat.System.Navigation
@@ -11,13 +12,13 @@ namespace PxStat.System.Navigation
         /// <summary>
         /// ADO class parameter
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        public Subject_ADO(ADO ado)
+        public Subject_ADO(IADO ado)
         {
             this.ado = ado;
         }
@@ -95,6 +96,8 @@ namespace PxStat.System.Navigation
 
             if (dto.LngIsoCode != null)
                 inputParams.Add(new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode });
+            else
+                inputParams.Add(new ADO_inputParams() { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")});
 
             var reader = ado.ExecuteReaderProcedure("System_Navigation_Subject_Read", inputParams);
 

@@ -18,13 +18,13 @@ namespace PxStat.Resources
         {
             //Set the tags that we are interested in translating
             var parser = new BBCodeParser(new[]
-                {
-                //  a newline is automatically parsed when \n is encountered. Hence [p] is not necessary.
-                    new BBTag("b", "<b>", "</b>"),
-                    new BBTag("i", "<i>", "</i>"),
-                    new BBTag("u", "<u>", "</u>"),
-                    new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")),
-                });
+            {
+                // A newline is automatically parsed when \n is encountered. Hence [p] is not necessary.
+                new BBTag("b", "<b>", "</b>"),
+                new BBTag("i", "<i>", "</i>"),
+                new BBTag("u", "<u>", "</u>"),
+                new BBTag("url", "", "(${url})",  new BBAttribute("url", ""))
+            });
 
             try
             {
@@ -45,10 +45,13 @@ namespace PxStat.Resources
             List<int> startPostions = new List<int>();
             List<int> utfValue = new List<int>();
             int pos = inString.IndexOf("&#", 0);
-            while (pos > -1)
+            int fuse = 0; //just in case we end up with an infinite loop!
+            while (pos > -1 && fuse<=inString.Length)
             {
-                startPostions.Add(pos);
+                if(!startPostions.Contains(pos))
+                    startPostions.Add(pos);
                 pos = inString.IndexOf("&#", pos + 1);
+                fuse++;
             }
             foreach (var item in startPostions)
             {

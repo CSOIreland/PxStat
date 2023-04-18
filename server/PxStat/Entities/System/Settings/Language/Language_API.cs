@@ -50,7 +50,7 @@ namespace PxStat.System.Settings
         }
 
         /// <summary>
-        /// Aministrator or Power user only
+        /// Administrator or Power user only
         /// Updates a language entity. Only the LngIsoName can be changed.
         /// </summary>
         /// <param name="requestApi"></param>
@@ -72,5 +72,20 @@ namespace PxStat.System.Settings
         {
             return new Language_BSO_Delete(requestApi).Delete().Response;
         }
+
+        /// <summary>
+        /// The LanguageCheck method must receive LngIsoCode as a parameter
+        /// This has restricted access to Administrator or Power User only.
+        /// This checks if the Language plugin is available for the input 
+        /// LngIsoCode.
+        /// </summary>
+        /// <param name="requestApi"></param>
+        /// <returns></returns>
+        public static dynamic CheckIsLngIsoCode(JSONRPC_API requestApi)
+        {
+            return new Language_BSO_CheckIsLngIsoCode(requestApi).Read().Response;
+        }
+
+
     }
 }

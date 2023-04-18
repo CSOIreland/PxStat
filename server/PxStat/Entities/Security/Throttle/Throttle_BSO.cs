@@ -18,7 +18,7 @@ namespace PxStat.Security
         //also, maybe see about reading subscriptions from the cache rather than from a db read request
         internal static bool IsThrottled(ADO Ado, HttpRequest hRequest, IRequest  request, string samAccountName = null)
         {
-
+            
             //We need MemcacheD to use this
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["API_MEMCACHED_ENABLED"]))
                 return false;
@@ -85,7 +85,7 @@ namespace PxStat.Security
 
                 //We only count the entries inside the current window
                 workingList = userHistory.Where(x => x > DateTime.Now.AddSeconds(window * -1)).ToList();
-                if (workingList.Count() > cutoff + 1)
+                if (workingList.Count() >= cutoff)
                 {
                     Log.Instance.Info(String.Format("Throttle event for user {0}, {1} requests in {2} seconds", user, workingList.Count, window));
                     return true;

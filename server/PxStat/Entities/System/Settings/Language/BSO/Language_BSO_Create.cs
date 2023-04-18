@@ -35,16 +35,6 @@ namespace PxStat.System.Settings
             var adoLanguage = new Language_ADO(Ado);
 
 
-            LanguageUtility lu = new LanguageUtility();
-            var languageFileNames = lu.GetLanguageCodes();
-
-            if (!languageFileNames.Contains(DTO.LngIsoCode))
-            {
-                //This language exists already, we can't proceed
-                Log.Instance.Debug("You must create a language file in resources for language " + DTO.LngIsoName);
-                Response.error = Label.Get("error.settings.language-json-invalid");
-                return false;
-            }
 
             //First we must check if the language exists already (we can't have duplicates)
             if (adoLanguage.Exists(DTO.LngIsoCode))

@@ -195,21 +195,25 @@ namespace PxStat.Data
 
             if (matrix.Release != null)
             {
-                keywordList.Add(CreatePxElement("SUBJECT-AREA" + lngTag, !String.IsNullOrEmpty(matrix.Release.PrcValue) ? matrix.Release.PrcValue : Label.Get("default.subject-area")));
-                keywordList.Add(CreatePxElement("SUBJECT-CODE" + lngTag, !String.IsNullOrEmpty(matrix.Release.PrcValue) ? matrix.Release.PrcCode.ToString() : Label.Get("default.subject-code"))); ////
+                keywordList.Add(CreatePxElement("SUBJECT-AREA" + lngTag, !String.IsNullOrEmpty(spec.PrcValue) ? spec.PrcValue : Label.Get("default.subject-area",spec.Language)));
+                //Code is only applied for the main spec
+                if(spec.Language .Equals(Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")))
+                    keywordList.Add(CreatePxElement("SUBJECT-CODE" + lngTag, !String.IsNullOrEmpty(matrix.Release.PrcValue) ? matrix.Release.PrcCode.ToString() : Label.Get("default.subject-code",spec.Language))); ////
             }
             else
             {
-                keywordList.Add(CreatePxElement("SUBJECT-AREA" + lngTag, Label.Get("default.subject-area")));
-                keywordList.Add(CreatePxElement("SUBJECT-CODE" + lngTag, Label.Get("default.subject-code")));
+                keywordList.Add(CreatePxElement("SUBJECT-AREA" + lngTag, Label.Get("default.subject-area", spec.Language)));
+                //Code is only applied for the main spec
+                if (spec.Language.Equals(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")))
+                    keywordList.Add(CreatePxElement("SUBJECT-CODE" + lngTag, Label.Get("default.subject-code", spec.Language)));
             }
 
             keywordList.Add(CreatePxElement("DESCRIPTION" + lngTag, spec.Title)); /////
 
             if (spec.Title != null)
-                keywordList.Add(CreatePxElement("TITLE" + lngTag, spec.Title + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData)));
+                keywordList.Add(CreatePxElement("TITLE" + lngTag, spec.Title + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData,spec.Language)));
             else
-                keywordList.Add(CreatePxElement("TITLE" + lngTag, GetContentString(spec) + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData)));
+                keywordList.Add(CreatePxElement("TITLE" + lngTag, GetContentString(spec) + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData, spec.Language)));
 
             keywordList.Add(CreatePxElement("CONTENTS" + lngTag, spec.Contents)); ////
 
@@ -407,33 +411,15 @@ namespace PxStat.Data
         private Dictionary<string, PxListOfValues> getHeadingDefault(IList<StatDimension> dimensions)
         {
             Dictionary<string, PxListOfValues> headingDict = new Dictionary<string, PxListOfValues>();
-            //int dCount = 1;
-            //foreach(StatDimension d in dimensions)
-            //{
-            //    dCount = dCount * d.Variables.Count;
-            //}
-            ////Use the square root figure to make this as close as possible to a square matrix of data
-            //int targetCount = (int)Math.Sqrt(dCount);
-            //int actualCount = 0;
-            //int counter = 1;
-
-            //headingDict.Add(dimensions[dimensions.Count - counter].Value, new PxListOfValues((dimensions[dimensions.Count - counter]).Variables.Select(x => x.Value).ToList()));
-            //counter++;
-            //actualCount = GetHeadingWidth(headingDict);
-            //while(counter<=dimensions.Count && actualCount<targetCount)
-            //{
-            //    counter++;
-            //    headingDict.Add(dimensions[dimensions.Count - counter].Value, new PxListOfValues((dimensions[dimensions.Count - counter]).Variables.Select(x => x.Value).ToList()));
-            //    actualCount = GetHeadingWidth(headingDict);
-            //}
+            var dList = dimensions.OrderBy(x => x.Sequence).ToList();
             bool foundTime = false;
-            for (int i=0; i<=dimensions.Count-1; i++)
+            for (int i=0; i<=dList.Count-1; i++)
             {
 
-                if (dimensions[i].Role.Equals("TIME"))
+                if (dList[i].Role.Equals("TIME"))
                     foundTime = true;
                 if(foundTime)
-                    headingDict.Add(dimensions[i].Value, new PxListOfValues((dimensions[i]).Variables.Select(x => x.Value).ToList()));
+                    headingDict.Add(dList[i].Value, new PxListOfValues((dList[i]).Variables.Select(x => x.Value).ToList()));
 
             }
             return headingDict;

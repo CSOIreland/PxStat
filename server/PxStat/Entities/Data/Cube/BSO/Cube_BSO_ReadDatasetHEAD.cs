@@ -13,7 +13,6 @@ namespace PxStat.Data
     /// </summary>
     internal class Cube_BSO_ReadDatasetHEAD : BaseTemplate_Read<CubeQuery_DTO, JsonStatQueryLiveHEAD_VLD>
     {
-        static Stopwatch _sw;
         internal bool defaultPivot = false;
         /// <summary>
         /// Constructor

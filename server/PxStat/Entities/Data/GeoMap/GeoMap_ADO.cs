@@ -45,6 +45,7 @@ namespace PxStat.Data
                     new ADO_inputParams() {name ="@GmpName",value=dto.GmpName  },
                     new ADO_inputParams() {name ="@GmpDescription",value=dto.GmpDescription },
                      new ADO_inputParams() {name ="@CcnUsername",value= userName},
+                     new ADO_inputParams() {name="@GlrCode",value=dto.GlrCode}
 
                 };
 

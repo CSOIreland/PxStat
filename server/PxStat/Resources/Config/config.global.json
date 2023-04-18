@@ -29,11 +29,10 @@
     "phone": {
       "pattern": "^(\\(\\+\\d{1,3}\\) \\d+ \\d+ \\d+)$",
       "placeholder": "(+353) 21 452 2253"
-
     },
     "password": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\\W]).{8,}$",
-    "codes-values": "['\"]",
-    "matrix-name": "^[A-Z0-9]+$"
+    "matrix-name": "^[A-Z0-9]+$",
+    "product-code": "^[a-zA-Z0-9]+$"
   },
   "workflow": {
     "embargo": {

@@ -95,6 +95,7 @@ namespace PxStat.Data
         public string GmpName { get; set; }
         public string GmpDescription { get; set; }
         public string GmpCode { get; set; }
+        public string GlrCode { get; set; }
         public GeoMap_DTO_Update(dynamic parameters)
         {
             if (parameters.GmpName != null)
@@ -103,6 +104,8 @@ namespace PxStat.Data
                 GmpDescription = parameters.GmpDescription;
             if (parameters.GmpCode != null)
                 GmpCode = parameters.GmpCode;
+            if (parameters.GlrCode != null)
+                GlrCode = parameters.GlrCode;
 
         }
     }

@@ -1,5 +1,7 @@
 ﻿
+using API;
 using FluentValidation;
+using PxStat.Security;
 
 namespace PxStat.System.Navigation
 {
@@ -16,6 +18,10 @@ namespace PxStat.System.Navigation
             RuleFor(x => x.SbjCode).NotEmpty();
             //Mandatory - ProductCode
             RuleFor(x => x.PrcCode).NotEmpty();
+
+            string productCodeRegex = (string) Configuration_BSO.GetCustomConfig(ConfigType.global, "regex.product-code");
+            RuleFor(x => x.PrcCode).Matches(productCodeRegex);
+            RuleFor(x => x.PrcCodeNew).Matches(productCodeRegex);
         }
     }
 
@@ -34,6 +40,10 @@ namespace PxStat.System.Navigation
             RuleFor(x => x.PrcValue).NotEmpty();
             //Optional for API users but this field will be populated by the DTO in all cases - LngIsoCode
             RuleFor(f => f.LngIsoCode.Length).Equal(2).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
+
+            string productCodeRegex = (string)Configuration_BSO.GetCustomConfig(ConfigType.global, "regex.product-code");
+            RuleFor(x => x.PrcCode).Matches(productCodeRegex);
+            RuleFor(x => x.PrcCodeNew).Matches(productCodeRegex);
         }
     }
 

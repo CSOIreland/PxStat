@@ -19,7 +19,7 @@ namespace PxStat.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,155 +61,15 @@ namespace PxStat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [ { } ].
-        /// </summary>
-        internal static string dictionary_en {
-            get {
-                return ResourceManager.GetString("dictionary_en", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {&quot;abacais&quot;:&quot;abacas&quot;,&quot;abacas&quot;:&quot;abacas&quot;,&quot;abacht&quot;:&quot;abacht&quot;,&quot;abachta&quot;:&quot;abacht&quot;,&quot;abach&quot;:&quot;abach&quot;,&quot;abaigh&quot;:&quot;abach&quot;,&quot;abairtí&quot;:&quot;abairt&quot;,&quot;abairte&quot;:&quot;abairt&quot;,&quot;abarlacha&quot;:&quot;abarlach&quot;,&quot;abarlaí&quot;:&quot;abarlach&quot;,&quot;abarlach&quot;:&quot;abarlach&quot;,&quot;abarthacht&quot;:&quot;abarthacht&quot;,&quot;abarthachta&quot;:&quot;abarthacht&quot;,&quot;abair&quot;:&quot;abar&quot;,&quot;abar&quot;:&quot;abar&quot;,&quot;abdómain&quot;:&quot;abdóman&quot;,&quot;abdóman&quot;:&quot;abdóman&quot;,&quot;abhacréaltaí&quot;:&quot;abhacréalta&quot;,&quot;abhacréalta&quot;:&quot;abhacréalta&quot;,&quot;abhaic&quot;:&quot;abhac&quot;,&quot;abhac&quot;:&quot;abhac&quot;,&quot;abhacáid&quot;:&quot;abhacád&quot;,&quot;abhacád&quot;:&quot;abhacád&quot;,&quot;abhlacha&quot;:&quot;abhaill&quot;,&quot;abhla&quot;:&quot;abhaill&quot;,&quot;aibhne [re....
-        /// </summary>
-        internal static string dictionary_ga {
-            get {
-                return ResourceManager.GetString("dictionary_ga", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;static&quot;: {
-        ///    &quot;release&quot;: &quot;Release&quot;,
-        ///    &quot;all-groups&quot;: &quot;All Groups&quot;
-        ///  },
-        ///  &quot;error&quot;: {
-        ///    &quot;authentication&quot;: &quot;Invalid authentication. Access denied.&quot;,
-        ///    &quot;create&quot;: &quot;No record has been created. Please review your input.&quot;,
-        ///    &quot;delete&quot;: &quot;No record has been deleted. Please review your selection.&quot;,
-        ///    &quot;duplicate&quot;: &quot;No record has been created. A duplicate record already exists. Please review your input.&quot;,
-        ///    &quot;exception&quot;: &quot;An unexpected error has occurred. Please seek technical support.&quot;,
-        ///    &quot;i [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string en {
-            get {
-                return ResourceManager.GetString("en", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;type&quot;: &quot;service_account&quot;,
         ///  &quot;project_id&quot;: &quot;dev-data-2beba&quot;,
-        ///  &quot;private_key_id&quot;: &quot;4b016e8509242142d8adf12946bafb347a27d104&quot;,
-        ///  &quot;private_key&quot;: &quot;-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDl5x5IB0+0MjJd\nc5qn6Ik+YCfCaOWiHkQzf+eVhQHsET1xHvdRvXV43hap9nsginGnIpH//cFD5zbn\n59Jk4S1VABiBtBsD9NyKkJy1UtOoHibV9tYUNfWRdt/8qCq5Y/kcv/z0/fgrZ2GB\npOjazdSteBfeo5cBHfKFcR2Prha0+KdoQfCoZ2Xt5vtuTbw+8zuLEEKmFhiwMcTC\npu1E/pFYDlgZbkHz37gaicGIn5/X1ouKoe2q8WAq3AxtLd3U22l+u+M5Qbcvv/rE\nag [rest of string was truncated]&quot;;.
+        ///  &quot;private_key_id&quot;: &quot;8bfec768382fa4a757477341cb96f83d9ef894a0&quot;,
+        ///  &quot;private_key&quot;: &quot;-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCQ1EgpDUGDIZlo\n9umSK3wFcBDnIiuSmrXOWrMWDt1NdwJ73zTCPDEEGwRyDIRvcChLwiLYYf/S6ukq\n4O3IRHPpOLHWL5pygiEI3IM3k4YHwmKWBdt7yKRf7LBkJk6Pgyh2II/L36aOyryZ\nLdUImPW8mdPdJpvCTGeB/ixTmy0Pw4nSm8/9C5I5Fb4NtNBcJeE9WUgIKW5+oWWU\nxuMKsF10m5ixVmmegFIIomhRO42PQSyhm1e1iFe2b4DmxEsFE+MjHKBtyPX3p/yV\nNr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string FirebaseKey {
             get {
                 return ResourceManager.GetString("FirebaseKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;static&quot;: {
-        ///    &quot;release&quot;: &quot;Eisiúint &quot;,
-        ///    &quot;all-groups&quot;: &quot;Gach grúpa&quot;
-        ///  },
-        ///  &quot;error&quot;: {
-        ///    &quot;authentication&quot;: &quot;Fíordheimhniú neamhbhailí. Níl cead isteach.&quot;,
-        ///    &quot;create&quot;: &quot;Níor cruthaíodh taifead. Athbhreithnigh an méid a chuir tú isteach.&quot;,
-        ///    &quot;delete&quot;: &quot;Níor scriosadh taifead. Athbhreithnigh an rogha a rinne tú.&quot;,
-        ///    &quot;duplicate&quot;: &quot;Níor cruthaíodh taifead. Tá taifead dúblach ann cheana. Athbhreithnigh an méid a chuir tú isteach.&quot;,
-        ///    &quot;exception&quot;: &quot;Tharla earráid neamhthuartha. Iarr tacaí [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ga {
-            get {
-                return ResourceManager.GetString("ga", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;excluded&quot;: {
-        ///    &quot;article&quot;: [ &quot;the&quot;, &quot;an&quot;, &quot;a&quot; ],
-        ///    &quot;preposition&quot;: [ &quot;of&quot;, &quot;in&quot;, &quot;to&quot;, &quot;for&quot;, &quot;with&quot;, &quot;on&quot;, &quot;at&quot;, &quot;from&quot;, &quot;by&quot;, &quot;about&quot;, &quot;as&quot;, &quot;into&quot;, &quot;like&quot;, &quot;through&quot;, &quot;after&quot;, &quot;over&quot;, &quot;between&quot;, &quot;out&quot;, &quot;against&quot;, &quot;during&quot;, &quot;without&quot;, &quot;before&quot;, &quot;under&quot;, &quot;around&quot;, &quot;among&quot;, &quot;and&quot;, &quot;or&quot; ],
-        ///    &quot;interrogative&quot;: [ &quot;how&quot;, &quot;where&quot;, &quot;what&quot;, &quot;why&quot;, &quot;when&quot;, &quot;who&quot;, &quot;which&quot;, &quot;much&quot;, &quot;many&quot; ],
-        ///    &quot;miscellaneous&quot;: [ &quot;has&quot;, &quot;have&quot;, &quot;is&quot;, &quot;are&quot;, &quot;not&quot; ],
-        ///    &quot;regex&quot;: &quot;[^a-zA-Z\\d\\s:]&quot;
-        ///  },
-        ///  &quot;infle....
-        /// </summary>
-        internal static string keyword_en {
-            get {
-                return ResourceManager.GetString("keyword_en", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///
-        ///  &quot;excluded&quot;: {
-        ///    &quot;article&quot;: [ &quot;na&quot;, &quot;an&quot; ],
-        ///    &quot;preposition&quot;: [ &quot;agus&quot;, &quot;ag&quot;, &quot;ar&quot;, &quot;as&quot;, &quot;chun&quot;, &quot;chuig&quot;, &quot;de&quot;, &quot;do&quot;, &quot;den&quot;, &quot;don&quot;, &quot;fara&quot;, &quot;faoi&quot;, &quot;i&quot;, &quot;in&quot;, &quot;idir&quot;, &quot;ionsar&quot;, &quot;le&quot;, &quot;ó&quot;, &quot;roimh&quot;, &quot;trí&quot;, &quot;thar&quot;, &quot;um&quot;, &quot;a&quot;, &quot;dar&quot;, &quot;is&quot;, &quot;gan&quot;, &quot;go&quot;, &quot;godtí&quot;, &quot;go dtí&quot;, &quot;mar&quot;, &quot;os&quot;, &quot;seachas&quot; ],
-        ///    &quot;interrogative&quot;: [ &quot;cé&quot;, &quot;cén&quot;, &quot;cá&quot;, &quot;cad&quot;, &quot;conas&quot;, &quot;cathain&quot;, &quot;bhfuil&quot;, &quot;nach&quot;, &quot;nár&quot;, &quot;ar&quot;, &quot;air&quot; ],
-        ///    &quot;miscellaneous&quot;: [ &quot;méid&quot;, &quot;mhéid&quot;, &quot;faoin&quot;, &quot;is&quot;, &quot;céi....
-        /// </summary>
-        internal static string keyword_ga {
-            get {
-                return ResourceManager.GetString("keyword_ga", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///    &quot;static&quot;: [ &quot;january, february, march, april, may, june, july, august, september, october, november, december, cpi, annual, average,total,mean,median,hourly,weekly,daily,monthly&quot; ],
-        ///    &quot;excluded&quot;: {
-        ///        &quot;article&quot;: [ &quot;the,an,a&quot; ],
-        ///        &quot;preposition&quot;: [ &quot;of, in, to, for, with, on, at, from, by, about, as, into, like, through, after, over, between, out, against, during, without, before, under, around, among, and, or&quot; ],
-        ///        &quot;interrogative&quot;: [ &quot;how&quot;, &quot;where&quot;, &quot;what&quot;, &quot;why&quot;, &quot;when&quot;, &quot;who&quot;, [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string keyword_pl {
-            get {
-                return ResourceManager.GetString("keyword_pl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {
-        ///  &quot;static&quot;: {
-        ///    &quot;release&quot;: &quot;Wydanie&quot;,
-        ///    &quot;all-groups&quot;: &quot;Wszystkie Grupy&quot;
-        ///  },
-        ///  &quot;error&quot;: {
-        ///    &quot;authentication&quot;: &quot;Niepoprawne uwierzytelnienie. Brak dostępu.&quot;,
-        ///    &quot;create&quot;: &quot;Nie utworzono żadnego rekordu. Sprawdź swoje dane wejściowe.&quot;,
-        ///    &quot;delete&quot;: &quot;Żaden rekord nie został usunięty. Sprawdź swój wybór.&quot;,
-        ///    &quot;duplicate&quot;: &quot;Nie utworzono żadnego rekordu. Zduplikowany rekord już istnieje. Sprawdź swoje dane wejściowe.&quot;,
-        ///    &quot;exception&quot;: &quot;Wystąpił nieoczekiwany błąd. Proszimy o kontakt z pomoc [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string pl {
-            get {
-                return ResourceManager.GetString("pl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [{&quot;match&quot;:&quot;mutilate&quot;,&quot;lemma&quot;:&quot;mutilation&quot;},{&quot;match&quot;:&quot;prank&quot;,&quot;lemma&quot;:&quot;prankster&quot;},{&quot;match&quot;:&quot;hope&quot;,&quot;lemma&quot;:&quot;despair&quot;},{&quot;match&quot;:&quot;ascetically&quot;,&quot;lemma&quot;:&quot;ascetic&quot;},{&quot;match&quot;:&quot;withdraw&quot;,&quot;lemma&quot;:&quot;withdrawer&quot;},{&quot;match&quot;:&quot;Jamaican&quot;,&quot;lemma&quot;:&quot;Jamaica&quot;},{&quot;match&quot;:&quot;ionize&quot;,&quot;lemma&quot;:&quot;ionization&quot;},{&quot;match&quot;:&quot;susceptible&quot;,&quot;lemma&quot;:&quot;susceptibleness&quot;},{&quot;match&quot;:&quot;sorriness&quot;,&quot;lemma&quot;:&quot;sorry&quot;},{&quot;match&quot;:&quot;ascertain&quot;,&quot;lemma&quot;:&quot;ascertainable&quot;},{&quot;match&quot;:&quot;express&quot;,&quot;lemma&quot;:&quot;local&quot;},{&quot;match&quot;:&quot;punt&quot;,&quot;lemma&quot;:&quot;punter&quot;},{&quot;match&quot;:&quot;evade&quot;,&quot;lemma&quot;:&qu....
-        /// </summary>
-        internal static string synonym_en {
-            get {
-                return ResourceManager.GetString("synonym_en", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [{&quot;match&quot;:&quot;ab&quot;,&quot;lemma&quot;:&quot;ab&quot;},{&quot;match&quot;:&quot;abacas&quot;,&quot;lemma&quot;:&quot;abacas&quot;},{&quot;match&quot;:&quot;abacht&quot;,&quot;lemma&quot;:&quot;abacht&quot;},{&quot;match&quot;:&quot;abairt&quot;,&quot;lemma&quot;:&quot;abairt&quot;},{&quot;match&quot;:&quot;abairtín&quot;,&quot;lemma&quot;:&quot;abairt&quot;},{&quot;match&quot;:&quot;frása&quot;,&quot;lemma&quot;:&quot;abairt&quot;},{&quot;match&quot;:&quot;abairt&quot;,&quot;lemma&quot;:&quot;abairtín&quot;},{&quot;match&quot;:&quot;abairtín&quot;,&quot;lemma&quot;:&quot;abairtín&quot;},{&quot;match&quot;:&quot;frása&quot;,&quot;lemma&quot;:&quot;abairtín&quot;},{&quot;match&quot;:&quot;ábaltacht&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:&quot;acmhainn&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:&quot;bua&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:&quot;cumas&quot;,&quot;lemma&quot;:&quot;ábaltacht&quot;},{&quot;match&quot;:....
-        /// </summary>
-        internal static string synonym_ga {
-            get {
-                return ResourceManager.GetString("synonym_ga", resourceCulture);
             }
         }
         
@@ -225,15 +85,12 @@ namespace PxStat.Properties {
         ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
         ///
         ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
-        ///        &lt;img src={image_source} /&gt;
+        ///        &lt;img src={image_source} style=&quot;max-height : 145px&quot; /&gt;
         ///        &lt;h1&gt;{title}&lt;/h1&gt;
         ///        &lt;h2&gt;{subject}&lt;/h2&gt;
         ///        &lt;hr&gt;
         ///
-        ///        &lt;p&gt;{body}&lt;/p&gt;
-        ///
-        ///        &lt;hr&gt;
-        ///        [rest of string was truncated]&quot;;.
+        ///        &lt;p&gt;{body}&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_GroupMessage {
             get {
@@ -253,15 +110,13 @@ namespace PxStat.Properties {
         ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
         ///
         ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
-        ///        &lt;img src={image_source} /&gt;
+        ///        &lt;img src={image_source} style=&quot;max-height : 145px&quot; /&gt;
         ///        &lt;h2&gt;{subject}&lt;/h2&gt;
         ///        &lt;hr&gt;
         ///
         ///        &lt;p&gt;{header}&lt;/p&gt;
         ///
-        ///        &lt;p&gt;{sub_header}&lt;/p&gt;
-        ///
-        ///        &lt;p&gt;{co [rest of string was truncated]&quot;;.
+        ///        &lt;p&gt;{sub_he [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_Login {
             get {
@@ -281,15 +136,13 @@ namespace PxStat.Properties {
         ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
         ///
         ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
-        ///        &lt;img src={image_source} /&gt;
+        ///        &lt;img src={image_source} style=&quot;max-height : 145px&quot; /&gt;
         ///        &lt;h2&gt;{subject}&lt;/h2&gt;
         ///        &lt;hr&gt;
         ///
         ///        &lt;p&gt;{header}&lt;/p&gt;
         ///
-        ///        &lt;p&gt;{list_header}&lt;/p&gt;
-        ///
-        ///        &lt;ul s [rest of string was truncated]&quot;;.
+        ///        &lt;p&gt;{list_h [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_LoginBulletPoint {
             get {
@@ -299,15 +152,22 @@ namespace PxStat.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
-        ///&lt;html&gt;
-        ///&lt;head&gt;
-        ///    &lt;meta charset=&quot;utf-8&quot; /&gt;
-        ///    &lt;title&gt;&lt;/title&gt;
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
         ///
-        ///&lt;/body&gt;
-        ///&lt;/html&gt;.
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;utf-16&quot;&gt;
+        ///    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        ///&lt;/head&gt;
+        ///
+        ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
+        ///
+        ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
+        ///        &lt;img src={image_source} style=&quot;max-height : 145px&quot; /&gt;
+        ///        &lt;h1&gt;{title}&lt;/h1&gt;
+        ///        &lt;h2&gt;{subject}&lt;/h2&gt;
+        ///        &lt;hr&gt;
+        ///
+        ///        &lt;p&gt;{salutat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_NotifyChannelSubscription {
             get {
@@ -327,15 +187,12 @@ namespace PxStat.Properties {
         ///&lt;body style=&quot;background-color: #fff; font-family: &apos;Roboto Sans&apos;, sans-serif; color: #384350; font-size: 15px; padding: 0 0 0 0;&quot;&gt;
         ///
         ///    &lt;div class=&quot;container&quot; style=&quot;margin: 0px auto;  width: 75%;&quot;&gt;
-        ///        &lt;img src={image_source} /&gt;
+        ///        &lt;img src={image_source} style=&quot;max-height : 145px&quot; /&gt;
         ///        &lt;h1&gt;{title}&lt;/h1&gt;
         ///        &lt;h2&gt;{subject}&lt;/h2&gt;
         ///        &lt;hr&gt;
         ///
-        ///        &lt;p&gt;{body}&lt;/p&gt;
-        ///
-        ///        &lt;hr&gt;
-        ///        [rest of string was truncated]&quot;;.
+        ///        &lt;p&gt;{body}&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template_NotifyWorkflow {
             get {

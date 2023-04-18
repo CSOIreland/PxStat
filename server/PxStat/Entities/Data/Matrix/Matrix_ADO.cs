@@ -120,12 +120,13 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="prcCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadByProduct(string prcCode, string lngIsoCode)
+        internal ADO_readerOutput ReadByProduct(string prcCode, string lngIsoCode, bool associatedOnly)
         {
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@PrcCode", value = prcCode },
                 new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
-                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") },
+                new ADO_inputParams { name = "@AssociatedOnly", value = associatedOnly ? 1 : 0 }
 
             };
 

@@ -1,41 +1,48 @@
 ﻿using API;
+using DocumentFormat.OpenXml.Spreadsheet;
 using FluentValidation;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PxStat.Data
 {
 
     public class DMatrix_VLD : AbstractValidator<IDmatrix>
     {
-        public DMatrix_VLD()
+        readonly string _lng;
+        public DMatrix_VLD(IMetaData metaData, IADO ado=null, string language=null)
         {
-            RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage("Code must not be empty");
-            RuleFor(x => x.Copyright).NotNull().NotEmpty().WithMessage("Copyright must not be empty");
-            RuleFor(x => x.Languages).NotNull().NotEmpty().WithMessage("No Language list found in the matrix");
-            RuleFor(x => x.Languages.Count).GreaterThan(0).When(x => x.Languages != null).WithMessage("At least one language must be exist");
-            RuleFor(x => x).Must(ValidateCellCount).WithMessage(x => $"Actual and expected count of values do not match - actual: {x.Cells.Count}");
-            RuleFor(x => x.Dspecs).NotNull().NotEmpty().WithMessage("Specifcation list not found");
-            RuleFor(x => x.Dspecs.Count).GreaterThan(0).When(x => x.Dspecs != null).WithMessage("There must be at least 1 spec in the matrix");
-            RuleFor(x => x).Must(LanguagesSpecsMatch).WithMessage("Mismatch between spec languages and the languages listed in the Languages property");
-            RuleFor(x => x).Must(LanguageInLanguagesMatch).WithMessage("Language property value not found in Languages property");
-            RuleFor(x => x).Must(SpecsHaveSameDimensionCodes).WithMessage("Inconsistent dimension codes across specs");
-            RuleFor(x => x).Must(CopyrightExists).WithMessage("Copyright not found");
-            //RuleFor(x => x).Must(y => Regex.Match(y.Units, "^[a-zA-Z0-9\\s]+$").Success).When(x => x.Units != null).WithMessage("Invalid Unit string");
+            _lng = language ?? metaData.GetDefaultCodingLanguage();
+
+            RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage(x=>Label.Get("px.build.code-empty",_lng));
+            RuleFor(x => x.Copyright).NotNull().NotEmpty().WithMessage(x=>Label.Get("px.build.copyright-empty",_lng));
+            RuleFor(x => x.Languages).NotNull().NotEmpty().WithMessage(x=>Label.Get("px.build.no-language-list",_lng));
+            RuleFor(x => x.Languages.Count).GreaterThan(0).When(x => x.Languages != null).WithMessage(x => Label.Get("px.build.minimum-language", _lng));
+            RuleFor(x => x).Must(ValidateCellCount).WithMessage(x =>String.Format( Label.Get("px.build.cell-match", _lng), x.Cells.Count));
+            RuleFor(x => x.Dspecs).NotNull().NotEmpty().WithMessage(x => Label.Get("px.build.no-spec-list", _lng)); ;
+            RuleFor(x => x.Dspecs.Count).GreaterThan(0).When(x => x.Dspecs != null).WithMessage(x => Label.Get("px.build.minimum-spec", _lng));
+            RuleFor(x => x).Must(LanguagesSpecsMatch).WithMessage(x => Label.Get("px.build.language-mismatch", _lng));
+            RuleFor(x => x).Must(LanguageInLanguagesMatch).WithMessage(x => Label.Get("px.build.no-language-property", _lng));
+            RuleFor(x => x).Must(SpecsHaveSameDimensionCodes).WithMessage(x => Label.Get("px.build.dimension-codes-inconsistent", _lng));
+            RuleFor(x => x).Must(CopyrightExists).WithMessage(x => Label.Get("px.build.copyright-not-found", _lng));
 
             RuleForEach(x => x.Languages).Length(2).WithMessage((String, x) => $"Language code {x} is invalid");
 
             When(x => x.Dspecs != null, () =>
            {
-               RuleForEach(x => x.Dspecs.Values).NotNull().When(x => x.Dspecs != null).SetValidator(new Dspec_VLD());
+               RuleForEach(x => x.Dspecs.Values).NotNull().When(x => x.Dspecs != null).SetValidator(new Dspec_VLD(metaData, ado, _lng));
            });
             When(x => x.Dspecs?.Count > 1, () =>
                  {
-                     RuleFor(x => x).Must(SpecsAreEquivalent).WithMessage("Inconsistent dimensions across specs");
+                     RuleFor(x => x).Must(SpecsAreEquivalent).WithMessage(x => Label.Get("px.build.dimension-codes-inconsistent", _lng));
                  });
         }
+
 
         public bool CopyrightExists(IDmatrix matrix)
         {
@@ -63,7 +70,7 @@ namespace PxStat.Data
             var specs = matrix.Dspecs.Values.ToList();
             foreach (var spec in specs)
             {
-                foreach (var otherSpec in specs.Where(x => x.Language != spec.Language))
+                foreach (var otherSpec in specs.Where(x => _lng != spec.Language))
                 {
                     for (int i = 0; i < spec.Dimensions.Count; i++)
                     {
@@ -148,20 +155,38 @@ namespace PxStat.Data
 
     public class Dspec_VLD : AbstractValidator<IDspec>
     {
-        public Dspec_VLD()
+        readonly string _lng;
+        private IADO ado;
+
+        public Dspec_VLD(IMetaData metaData, IADO ado=null, string language=null)
         {
-            RuleFor(x => x.Title).NotNull().NotEmpty().WithMessage(x => $"No spec title for spec {x.Language}");
-            RuleFor(x => x.Contents).NotNull().NotEmpty().WithMessage(x => $"No spec Contents field for spec {x.Language}");
-            RuleFor(x => x.Source).NotNull().NotEmpty().WithMessage(x => $"No Source field found for spec {x.Language}");
-            RuleFor(x => x).Must(NoDimCodeDupe).WithMessage((IDspec, x) => $"Error {x.Language} spec has duplicate dimension codes");
-            RuleFor(x => x).Must(NoDimValueDupe).WithMessage((IDspec, x) => $"Error {x.Language} spec has duplicate dimension values");
-            RuleFor(x => x).Must(OneTimeDimension).WithMessage((IDspec, x) => $"Error {x.Language} spec has a wrong time dimension count");
-            RuleFor(x => x).Must(OneStatDimension).WithMessage((IDspec, x) => $"Error {x.Language} spec has a wrong statistic dimension count");
-            RuleFor(x => x).Must(SomeClassificationDimensions).WithMessage((IDspec, x) => $"Error {x.Language} spec has a wrong classification dimension count");
-            RuleFor(x => x).Must(DimensionsAreOrdered).WithMessage((IDspec, x) => $"Error {x.Language} spec has invalid dimension sequencing");
+            _lng = language ?? metaData.GetDefaultCodingLanguage();
+            this.ado = ado;
 
+            RuleFor(x => x.Title).NotNull().NotEmpty().WithMessage(x => String.Format(Label.Get("px.build.no-spec-title", _lng),_lng));
+            RuleFor(x => x.Contents).NotNull().NotEmpty().WithMessage(x => String.Format(Label.Get("px.build.no-spec-contents", _lng), _lng));
+            RuleFor(x => x.Source).NotNull().NotEmpty().WithMessage(x => String.Format(Label.Get("px.build.no-source-field", _lng), _lng));
+            RuleFor(x => x).Must(NoDimCodeDupe).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.dupe-spec-dimension-codes", _lng), _lng));
+            RuleFor(x => x).Must(NoDimValueDupe).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.dupe-spec-dimension-values", _lng), _lng));
 
-            RuleForEach(x => x.Dimensions).SetValidator(new Dimension_VLD()).WithMessage("Dimension error - see individual message");
+            RuleFor(x => x).Must(OneTimeDimension).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.time-dimension-count", _lng), _lng));
+            RuleFor(x => x).Must(OneStatDimension).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.statistic-dimension-count", _lng), _lng));
+
+            RuleFor(x => x).Must(SomeClassificationDimensions).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.classification-dimension-count", _lng), _lng));
+            RuleFor(x => x).Must(DimensionsAreOrdered).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.dimension-sequence", _lng), _lng));
+            RuleFor(x=>x).Must(LanguageMustExist).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.language-not-exist", _lng), _lng));
+
+            RuleForEach(x => x.Dimensions).SetValidator(new Dimension_VLD(metaData, _lng)).WithMessage(x=>Label.Get("px.build.dimension-error", _lng));
+        }
+
+        public bool LanguageMustExist(IDspec spec)
+        {
+            if (ado == null)
+            {
+                return false;
+            }
+            Language_ADO lAdo = new Language_ADO(ado);
+            return lAdo.Exists(spec.Language);
         }
 
         /// <summary>
@@ -252,17 +277,21 @@ namespace PxStat.Data
 
     public class Dimension_VLD : AbstractValidator<IStatDimension>
     {
-        public Dimension_VLD()
+        readonly string _lng;
+        public Dimension_VLD(IMetaData metaData, string language=null)
         {
-            RuleFor(x => x.Variables.Count).GreaterThan(0).When(x => x.Variables != null).WithMessage(x => $"No variables found for dimension {x.Code}");
-            RuleFor(x => x.Variables).NotEmpty().NotNull().WithMessage(x => $"Missing variable set in dimension {x.Code}");
-            RuleFor(x => x.Role).NotNull().NotEmpty().WithMessage(x => $"Dimension {x.Code} has no Role assigned to it");
-            RuleForEach(x => x.Variables).SetValidator(new DimensionVariable_VLD()).WithMessage("Variable Error - see individual message");
-            RuleFor(x => x).Must(DimensionVariablesAreOrdered).WithMessage(x => $"Variable sequencing error for dimension {x.Code}");
-            RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage("Dimension Code must not be empty");
-            RuleFor(x => x.Value).NotNull().NotEmpty().WithMessage("Dimension Value must not be empty");
-            RuleFor(x => x.GeoUrl).NotNull().NotEmpty().When(x => x.GeoFlag).WithMessage("A Geo url must be provided when the Geo flag is set");
+            _lng = language ?? metaData.GetDefaultCodingLanguage();
 
+            RuleFor(x => x.Variables.Count).GreaterThan(0).When(x => x.Variables != null).WithMessage(x=>String.Format(Label.Get("px.build.no-variables", _lng), x.Code));
+
+            RuleFor(x => x.Variables.Count).GreaterThan(0).When(x => x.Variables != null).WithMessage(x => String.Format(Label.Get("px.build.no-variables", _lng), x.Code));
+            RuleFor(x => x.Variables).NotEmpty().NotNull().WithMessage(x => String.Format(Label.Get("px.build.missing-variable", _lng), x.Code));
+            RuleFor(x => x.Role).NotNull().NotEmpty().WithMessage(x => String.Format(Label.Get("px.build.dimension-no-role", _lng), x.Code));
+            RuleForEach(x => x.Variables).SetValidator(new DimensionVariable_VLD(metaData, _lng)).WithMessage(Label.Get("px.build.variable-error", _lng));
+            RuleFor(x => x).Must(DimensionVariablesAreOrdered).WithMessage(x => String.Format(Label.Get("px.build.variable-sequence", _lng), x.Code));
+            RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage(Label.Get("px.build.dimension-code-empty", _lng));
+            RuleFor(x => x.Value).NotNull().NotEmpty().WithMessage(Label.Get("px.build.dimension-value-empty", _lng));
+            RuleFor(x => x.GeoUrl).NotNull().NotEmpty().When(x => x.GeoFlag).WithMessage(Label.Get("px.build.no-geo-url", _lng));
         }
 
 
@@ -292,11 +321,13 @@ namespace PxStat.Data
 
     public class DimensionVariable_VLD : AbstractValidator<IDimensionVariable>
     {
-        public DimensionVariable_VLD()
+        readonly string _lng;
+        public DimensionVariable_VLD(IMetaData metaData, string language=null)
         {
-            RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage("Variable missing a variable code");
-            RuleFor(x => x.Value).NotNull().NotEmpty().WithMessage("Variable missing a variable value");
-            //RuleFor(x => x).Must(y => Regex.Match(y.Unit, "^[a-zA-Z0-9\\s]+$").Success).When(x => x.Unit != null).WithMessage("Invalid Unit string");
+            _lng = language ?? metaData.GetDefaultCodingLanguage();
+
+            RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage(Label.Get("px.build.no-variable-code", _lng));
+            RuleFor(x => x.Value).NotNull().NotEmpty().WithMessage(Label.Get("px.build.no-variable-value", _lng));
         }
     }
 }

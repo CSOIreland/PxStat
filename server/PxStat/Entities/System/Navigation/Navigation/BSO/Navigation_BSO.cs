@@ -1,4 +1,6 @@
 ﻿using API;
+using FluentValidation.Resources;
+using PxStat.Resources;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
@@ -307,44 +309,42 @@ namespace PxStat.System.Navigation
             int searchSynonymMult = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.synonym-multiplier");
             int searchWordMult = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.search-word-multiplier");
 
+            ILanguagePlugin language = Resources.LanguageManager.GetLanguage(DTO.LngIsoCode);
+            List<Synonym> synList = new List<Synonym>();
             //Gather any synonyms and include them in the search, in the synonyms column
             foreach (string word in searchList)
             {
+                List<string> sList = language.GetSynonyms(word).Select(x=>x.ToLower()).ToList();
 
-                var hitlist = kbe.extractor.SynonymList.Where(x => x.match == word.ToLower());
-                if ((kbe.extractor.SynonymList.Where(x => x.match == word.ToLower())).Count() > 0)
+                foreach(var s in sList)
                 {
-
-                    foreach (var syn in hitlist)
+                    Synonym sItem = new Synonym() { lemma = word, match = s };
+                    if(!synList.Contains(sItem))
                     {
-                        var row = dt.NewRow();
-                        row["Key"] = syn.lemma;
-                        row["Value"] = syn.match;
-                        row["Attribute"] = searchSynonymMult;
-                        dt.Rows.Add(row);
+                        synList.Add(sItem);
                     }
                 }
-                else
+
+                foreach(var item in synList)
                 {
                     var row = dt.NewRow();
-                    row["Key"] = word;
-                    row["Value"] = word;
+                    row["Key"] = item.lemma;
+                    row["Value"] = item.match;
                     row["Attribute"] = searchSynonymMult;
                     dt.Rows.Add(row);
-
                 }
-                //The main search term must be included along with the synonyms, i.e. a word is a synonym of itself
-                //But with a higher search priority, which goes into the Attribute column
-                var keyrow = dt.NewRow();
-                if (dt.Select("Key = '" + word + "'").Count() == 0)
+
+                Synonym syn = new Synonym() { lemma = word, match = word };
+                if (!synList.Contains(syn))
                 {
-                    keyrow["Key"] = word;
-                    keyrow["Value"] = word;
-                    keyrow["Attribute"] = searchWordMult;
-                    dt.Rows.Add(keyrow);
+                    var row = dt.NewRow();
+                    row["Key"] = syn.lemma;
+                    row["Value"] = syn.match;
+                    row["Attribute"] = searchWordMult;
+                    dt.Rows.Add(row);
                 }
-            }
 
+            }
 
             //Sort the search terms to ensure invariant word order in the search       
             dt.DefaultView.Sort = "Key,Value asc";

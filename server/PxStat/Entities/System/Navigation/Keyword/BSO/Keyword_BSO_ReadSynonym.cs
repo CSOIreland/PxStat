@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Settings;
 using PxStat.Template;
@@ -26,40 +27,21 @@ namespace PxStat.System.Navigation
         protected override bool Execute()
         {
 
-            Dictionary<string, List<Synonym>> synonymSets = Keyword_BSO_ResourceFactory.GetAllSynonymSets();
+            Dictionary<string, List<Synonym>> synonymSets = new Dictionary<string, List<Synonym>>();
             dynamic results = new List<ExpandoObject>();
-            results.Add(GetListForLanguage(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"), synonymSets));
 
-            Language_ADO lAdo = new Language_ADO(Ado);
-            var languages = lAdo.Read(new Language_DTO_Read());
-
-
-            foreach (var l in languages.data)
+            foreach(ILanguagePlugin  language in Resources.LanguageManager.Languages.Values.Where(x=>x.IsLive))
             {
-
-                if (l.LngIsoCode != Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
-                    results.Add(GetListForLanguage(l.LngIsoCode, synonymSets));
-
+                dynamic result = new ExpandoObject();
+                result.LngIsoCode = language.LngIsoCode ;
+                result.LngIsoName = new Language_BSO().Read(language.LngIsoCode).LngIsoName;
+                result.Synonym = language.GetSynonyms(DTO.KrlValue);
+                results.Add(result);
             }
-
             Response.data = results;
             return true;
         }
 
-        private dynamic GetListForLanguage(string lngIsoCode, Dictionary<string, List<Synonym>> synonyms)
-        {
-            dynamic result = new ExpandoObject();
-            result.LngIsoCode = lngIsoCode;
-            result.LngIsoName = new Language_BSO().Read(lngIsoCode).LngIsoName;
-            List<Synonym> languageSynonyms = new List<Synonym>();
-            if (synonyms.ContainsKey(lngIsoCode))
-            {
-                languageSynonyms = synonyms[lngIsoCode].Where(x => x.match == DTO.KrlValue).ToList();
-                result.Synonym = languageSynonyms.Select(x => x.lemma).ToList();
-            }
-            else result.Synonym = languageSynonyms;
-            return result;
-        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
@@ -9,113 +10,33 @@ using System.Text.RegularExpressions;
 
 namespace PxStat.System.Navigation
 {
-    /// <summary>
-    /// This class returns an instance of IKeywordExtractor depending on the Language Iso Code (LngIsoCode)
-    /// supplied to it.
-    /// If the LngIsoCode is not recognised, a default implementation will be returned.
-    /// In order to extend this application to deal with keywords in another language, you will need to do the following:
-    ///  - Write an implementation of IKeywordExtractor for the required language
-    ///  - Add to the case statement in GetExtractor to call the implementation when the corresponding LngIsoCode is supplied.
-    /// </summary>
-    internal class Keyword_BSO_Extract : PluralizationService
+
+    internal class Keyword_BSO_Extract
     {
-        internal IKeywordExtractor extractor { get; }
-
-        Keyword keyword;
-
-        /// <summary>
-        /// In the constructor, we will attempt to get the language specific extractor.
-        /// If we can't find one then we'll revert to the default language
-        /// </summary>
-        /// <param name="lngIsoCode"></param>
+        readonly ILanguagePlugin language;
         internal Keyword_BSO_Extract(string lngIsoCode)
         {
-
-            keyword = new PxStat.Keyword(lngIsoCode);
-
-            string extractorClassName = Utility.GetCustomConfig("APP_INTERNATIONALISATION_EXTRACTOR_CLASS_NAME") + lngIsoCode;
-
-
-            Type extractorType = Type.GetType(extractorClassName);
-            if (extractorType != null)
-                this.extractor = (IKeywordExtractor)Assembly.GetAssembly(extractorType).CreateInstance(extractorType.FullName);
-            else
-            {
-                extractorClassName = Utility.GetCustomConfig("APP_INTERNATIONALISATION_EXTRACTOR_CLASS_NAME") + Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
-                extractorType = Type.GetType(extractorClassName);
-                this.extractor = (IKeywordExtractor)Assembly.GetAssembly(extractorType).CreateInstance(extractorClassName);
-            }
-
+            language=LanguageManager.GetLanguage(lngIsoCode);
         }
 
-        //internal Keyword_BSO_Extract(string lngIsoCode, MetaData metadata, Dictionary<string, dynamic> kwords = null)
-        //{
-        //    if (kwords != null)
-        //        keyword = new PxStat.Keyword(lngIsoCode, kwords);
-        //    else
-        //        return;
-
-        //    switch (lngIsoCode)
-        //    {
-        //        case "en":
-        //            this.extractor = new Keyword_en(lngIsoCode);
-        //            break;
-        //        case "ga":
-        //            this.extractor = new Keyword_ga(lngIsoCode);
-        //            break;
-
-        //    }
-        //}
-
-        /// <summary>
-        /// Indicates if a word is one of a specific list of number that are not to be processed. These words will not be added to the output.
-        /// </summary>
-        /// <param name="word"></param>
-        /// <returns></returns>
         internal bool IsExcluded(string word)
         {
-            if (word.Length < 2) return true;
-
-            List<string> wordList = keyword.GetStringList("excluded.article");
-
-            wordList.AddRange(keyword.GetStringList("excluded.preposition"));
-            wordList.AddRange(keyword.GetStringList("excluded.interrogative"));
-            wordList.AddRange(keyword.GetStringList("excluded.miscellaneous"));
-
-
-            if (wordList.Contains(word.ToLower()))
-                return true;
-            else
-                return false;
+            return language.GetExcludedTerms().Contains(word);          
         }
 
-        /// <summary>
-        /// Checks if a word is not to be singularized or pluralized. These words will be unchanged in the output.
-        /// </summary>
-        /// <param name="word"></param>
-        /// <returns></returns>
         internal bool IsDoNotAmend(string word)
         {
-            //time words, some statistical terms
-            List<string> wordList = keyword.Get("static.month").Split(',').ToList();
-            wordList.AddRange(keyword.Get("static.statistical").Split(',').ToList());
-            if (wordList.Contains(word.ToLower()))
-                return true;
-            else
-                return false;
+            return language.GetDoNotAmend().Contains(word);
         }
 
-        /// <summary>
-        /// This function returns a list of words derived from splitting an input phrase. The words are not singularized.
-        /// The words are sanitized and are also subject to exclusions
-        /// </summary>
-        /// <param name="readString"></param>
-        /// <returns></returns>
         internal List<string> ExtractSplit(string readString, bool sanitize = true)
         {
             if (sanitize)
-                readString = extractor.Sanitize(readString);
+                readString = language.Sanitize(readString);
 
+            //We need to treat spaces and non-breaking spaces the same, so we replace any space with a standard space
+            Regex rx = new Regex("[\\s]");
+            readString = rx.Replace(readString, " ");
             // convert the sentence to a list of words
             List<string> wordListInput = readString.Split(' ').ToList<string>();
 
@@ -145,21 +66,17 @@ namespace PxStat.System.Navigation
             return wordList;
         }
 
-
-
-        /// <summary>
-        /// This function returns a list of nominative singular words from a string of space separated words (e.g. a sentance).
-        /// For a non-inflected language like English, it suffices to return the word if singular and the singular version of the word
-        /// if plural.
-        /// </summary>
-        /// <param name="readString"></param>
-        /// <returns></returns>
         internal List<string> ExtractSplitSingular(string readString)
         {
-            readString = extractor.Sanitize(readString);
+
+            readString = language.Sanitize(readString);
+
+            //We need to treat spaces and non-breaking spaces the same, so we replace any space with a standard space
+            Regex rx = new Regex("[\\s]");
+            readString = rx.Replace(readString, " ");
 
             // convert the sentance to a list of words
-            List<string> wordListInput = readString.Split(' ').ToList<string>();
+            List<string> wordListInput = (readString.Split(' ')).Where(x=>x.Length>0).ToList();
 
             //create an output list
             List<string> wordList = new List<string>();
@@ -198,32 +115,29 @@ namespace PxStat.System.Navigation
             return wordList;
         }
 
-        public override bool IsPlural(string word)
+        public string Singularize(string word)
         {
-            throw new NotImplementedException();
-        }
-
-        public override bool IsSingular(string word)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Pluralize(string word)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Singularize(string word)
-        {
-            return extractor.Singularize(word);
+            return language.Singularize(word);
         }
     }
 
-    public class Synonym
+   
+
+    public class Synonym :IEquatable <Synonym>  
     {
         public string match { get; set; }
         public string lemma { get; set; }
 
+
         public Synonym() { }
+
+        public  bool Equals(Synonym other)
+        {
+            return match == other.match && lemma == other.lemma;    
+        }
+        public override int GetHashCode()
+        {
+            return (match != null ? match.GetHashCode() : 0) ^ lemma.GetHashCode();
+        }
     }
 }

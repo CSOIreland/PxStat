@@ -1,9 +1,9 @@
 ﻿using System;
 using PxParser.Resources.Parser;
-using PxStat.Security;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
+using PxStat.Security;
 
 namespace PxStat.Data
 {
@@ -20,6 +20,11 @@ namespace PxStat.Data
         {
             ICollection<KeyValuePair<string, ICollection<string>>> result =
                 new List<KeyValuePair<string, ICollection<string>>>();
+
+            if (value == null) {
+                return result;
+            }
+
             foreach (var item in value)
             {
                 IList<IPxSingleElement> elements = item.Value;
@@ -75,12 +80,15 @@ namespace PxStat.Data
         /// <param name="title"></param>
         /// <param name="dimensions"></param>
         /// <returns></returns>
-        public static string GetDimensionValues(string title, ICollection<StatDimension> dimensions, IMetaData metaData)
+        public static string GetDimensionValues(string title, ICollection<StatDimension> dimensions, IMetaData metaData,string lngIsoCode=null)
         {
             if (dimensions.Count == 0)
             {
                 return "";
             }
+
+            if (lngIsoCode == null)
+                lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
 
             List<string> dims = new List<string>();
             List<string> times = new List<string>();
@@ -131,7 +139,7 @@ namespace PxStat.Data
                 }
                 else
                 {
-                    sb.Append("and " + dims[i]);
+                    sb.Append(Label.Get("label.and",lngIsoCode) + " " + dims[i]);
                 }
             }
 

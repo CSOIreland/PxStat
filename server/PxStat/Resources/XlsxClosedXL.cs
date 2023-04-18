@@ -40,211 +40,130 @@ namespace PxStat.Resources
             return output;
         }
 
-        internal MemoryStream CreatAboutPage(Data.Matrix theMatrix, string title, string lngIsoCode, CultureInfo ci = null)
+        public XLWorkbook GetWorkbook()
         {
-            Specification theSpec = theMatrix.GetSpecFromLanguage(lngIsoCode);
-
-            if (theSpec == null) theSpec = theMatrix.MainSpec;
-
-            string noteString = "";
-            if (theSpec.NotesAsString != null)
-            {
-                noteString = new BBCode().Transform(theSpec.NotesAsString, true);
-
-                //This Regex must be compatible with the output of the BBCode Transform
-                noteString = Regex.Replace(noteString, "<a\\shref=\"([^\"]*)\">([^<]*)<\\/a>", "$2 ($1)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            }
-
-
-            if (theMatrix.Release != null)
-            {
-                if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
-                {
-                    string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' +
-                        string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Constants.C_SYSTEM_XLSX_NAME, Constants.C_SYSTEM_XLSX_VERSION, theSpec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
-                }
-
-            }
-
-            var sheet = workbook.AddWorksheet(title);
-            sheet.AddPicture(new MemoryStream(GetImage(Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo")))).MoveTo(sheet.Cell("A1"));
-
-            sheet.Columns("B").Width = 100;
-            int row = 8;
-            int counter = 0;
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.table", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.FontSize = 13;
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);// XLColor.AirForceBlue;   //( "A2B8E1");
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.code");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Code;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.name");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theSpec.Title;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.last-updated");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 1).DataType = XLDataType.Text;
-            sheet.Cell(row + counter, 2).SetValue<string>(Convert.ToString(theMatrix.Release.RlsLiveDatetimeFrom.ToString(ci ?? CultureInfo.InvariantCulture)));
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.note");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = noteString;
-            counter++;
-
-            if (theMatrix.Release != null)
-            {
-                if (theMatrix.Release.RlsLiveFlag && theMatrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
-                {
-                    string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' +
-                        string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), theMatrix.Code, Constants.C_SYSTEM_XLSX_NAME, Constants.C_SYSTEM_XLSX_VERSION, theSpec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
-
-                    sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.url");
-                    sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-                    sheet.Cell(row + counter, 2).Value = Href;
-                    sheet.Cell(row + counter, 2).Hyperlink = new XLHyperlink(Href);
-                }
-            }
-            counter += 2;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.product", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.FontSize = 13;
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.code", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.PrcCode;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.name", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.PrcValue;
-            counter += 2;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.contacts", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.FontSize = 13;
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.name", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.GrpContactName;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.email", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.GrpContactEmail;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.phone", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.GrpContactPhone;
-            counter += 2;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.copyright", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.FontSize = 13;
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.code", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Copyright.CprCode;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.name", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Copyright.CprValue;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.url", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Copyright.CprUrl;
-            sheet.Cell(row + counter, 2).Hyperlink = new XLHyperlink(theMatrix.Copyright.CprUrl);
-            counter += 2;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.properties", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.FontSize = 13;
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.official-statistics", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.IsOfficialStatistic ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.exceptional");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.RlsExceptionalFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.archived");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.RlsArchiveFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.analytical");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.RlsAnalyticalFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.experimental");
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theMatrix.Release.RlsExperimentalFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode);
-            counter += 2;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.language", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.FontSize = 13;
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorder = XLBorderStyleValues.Thick;
-            sheet.Cell(row + counter, 1).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            sheet.Cell(row + counter, 2).Style.Border.BottomBorderColor = XLColor.FromArgb(0xA2B8E1);
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.iso-code", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = theSpec.Language;
-            counter++;
-
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.iso-name", lngIsoCode);
-            sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = new Language_BSO().Read(theSpec.Language).LngIsoName;
-
-
-            sheet.Columns("A").Width = 20;
-            MemoryStream output = new MemoryStream();
-            workbook.SaveAs(output);
-            return output;
+            return workbook;
         }
 
-        internal MemoryStream CreatAboutPage(IDmatrix matrix, string title, string lngIsoCode, CultureInfo ci = null)
+        /// <summary>
+        /// Parse a specific html tag from the note string and return the start index and the length of the
+        /// tag content to be used to decorate with rich text
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="index"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        public int[] ParseTag(string[] tag, int[] index, ref string note)
+        {
+            if (String.IsNullOrEmpty(note))
+            {
+                return index;
+            }
+
+            int startCount = Regex.Matches(note, tag[0]).Count;
+            int endCount = Regex.Matches(note, tag[1]).Count;
+
+            // Start and end tags have to match other wise there is an error 
+            if (startCount != endCount)
+            {
+                Log.Instance.Error("The opening and closing tags for " + tag[0] + " do not match");
+                return index;
+            }
+
+            // Get the start index of the html tag and the end end index of the html tag,
+            // remove the tags from the note string and add the recalculated indexes to the index array
+            index = new int[startCount * 2];
+            int startIndex = 0;
+            int endIndex = 0;
+            int j = 0;
+
+            for (int i = 0; i < startCount; i++)
+            {
+                startIndex = note.IndexOf(tag[0], startIndex, StringComparison.Ordinal);
+                endIndex = note.IndexOf(tag[1], endIndex, StringComparison.Ordinal) - 3;
+                note = note.Remove(startIndex, 3); // 3, for example, the length of the start tag: <b>
+                note = note.Remove(endIndex, 4); // 4, for example, the length of the end tag: </b>
+
+                // If there are other tags in the string before the startIndex
+                int tags = Regex.Matches(note.Substring(0, startIndex), "<[biu]>").Count;
+                if (tags > 0)
+                {
+                    startIndex -= tags * 7; // 7 for example, the length of the start and end tags: <b> </b>
+                    endIndex -= tags * 7;
+                }
+
+                // If there are other tags in the string between the startIndex and endIndex
+                tags = Regex.Matches(note.Substring(startIndex, endIndex - startIndex), "<[biu]>").Count;
+                if (tags > 0)
+                {
+                    endIndex -= tags * 7; // 7 for example, the length of the start and end tags: <b> </b>
+                }
+
+                index[j++] = startIndex;
+                index[j] = endIndex - startIndex;
+                j++;
+            }
+            return index;
+        }
+
+        /// <summary>
+        /// Parse the note string and add rich text where there are specific html tags
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="note"></param>
+        /// <returns></returns>
+        public IXLWorksheet Parse(IXLWorksheet sheet, int row, int column, string note)
+        {
+            int[] boldIndex = new int[] { };
+            int[] italicIndex = new int[] {};
+            int[] underlineIndex = new int[] {};
+
+            boldIndex = ParseTag(new string[] { "<b>", "</b>" }, boldIndex, ref note);
+            italicIndex = ParseTag(new string[] { "<i>", "</i>" }, italicIndex, ref note);
+            underlineIndex = ParseTag(new string[] { "<u>", "</u>" }, underlineIndex, ref note);
+
+            sheet.Cell(row, column).Value = note;
+
+            ProcessRichTextForTag(ref sheet, row, column, boldIndex, "b");
+            ProcessRichTextForTag(ref sheet, row, column, italicIndex, "i");
+            ProcessRichTextForTag(ref sheet, row, column, underlineIndex, "u");
+
+            return sheet;
+        }
+
+        /// <summary>
+        /// Process the rich text for the tag using the index array to find the start index of the substring and the size of the substring
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="index"></param>
+        /// <param name="tag"></param>
+        private static void ProcessRichTextForTag(ref IXLWorksheet sheet, int row, int column, int[] index, string tag)
+        {
+            for (int i = 0; i < index.Length; i = i + 2)
+            {
+                switch (tag)
+                {
+                    case "b":
+                        sheet.Cell(row, column).RichText.Substring(index[i], index[i + 1]).SetBold(true);
+                        break;
+                    case "i":
+                        sheet.Cell(row, column).RichText.Substring(index[i], index[i + 1]).SetItalic(true);
+                        break;
+                    case "u":
+                        sheet.Cell(row, column).RichText.Substring(index[i], index[i + 1]).SetUnderline();
+                        break;
+                    default:
+                        Log.Instance.Error("Tag " + tag + " is not found, so cannot be processed");
+                        break;
+                }
+            }
+        }
+
+        internal MemoryStream CreateAboutPage(IDmatrix matrix, string title, string lngIsoCode, CultureInfo ci = null)
         {
             IDspec spec = matrix.Dspecs[lngIsoCode];
 
@@ -270,6 +189,9 @@ namespace PxStat.Resources
 
                 //Second iteration - remove all other tags but keep their contents
                 sanitizer = new HtmlSanitizer(new List<string>());
+                sanitizer.AllowedTags.Add("b");
+                sanitizer.AllowedTags.Add("i");
+                sanitizer.AllowedTags.Add("u");
                 sanitizer.KeepChildNodes = true;
                 noteString = sanitizer.Sanitize(noteString);
 
@@ -279,9 +201,6 @@ namespace PxStat.Resources
                 //pvalue = pvalue.Replace("&amp;", "&");
 
                 noteString = HttpUtility.HtmlDecode(noteString);
-
-
-                
             }
 
 
@@ -292,7 +211,6 @@ namespace PxStat.Resources
                     string Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' +
                         string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), matrix.Code, Constants.C_SYSTEM_XLSX_NAME, Constants.C_SYSTEM_XLSX_VERSION, spec.Language), Type = Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
                 }
-
             }
 
             var sheet = workbook.AddWorksheet(title);
@@ -329,7 +247,10 @@ namespace PxStat.Resources
 
             sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.note", lngIsoCode);
             sheet.Cell(row + counter, 1).Style.Font.Bold = true;
-            sheet.Cell(row + counter, 2).Value = noteString;
+
+            // Parse the noteString to add some RichText, if needed
+            Parse(sheet, row + counter, 2, noteString);
+
             sheet.Cell(row + counter,2).Style.Alignment.WrapText = true;
             counter++;
 
@@ -366,7 +287,7 @@ namespace PxStat.Resources
             sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.name", lngIsoCode);
             sheet.Cell(row + counter, 1).Style.Font.Bold = true;
             if (matrix.Release != null)
-                sheet.Cell(row + counter, 2).Value = matrix.Release.PrcValue;
+                sheet.Cell(row + counter, 2).Value = spec.PrcValue;
             counter += 2;
 
             sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.contacts", lngIsoCode);
@@ -586,7 +507,6 @@ namespace PxStat.Resources
 
 
         internal void Dispose()
-
         {
             workbook.Dispose();
         }

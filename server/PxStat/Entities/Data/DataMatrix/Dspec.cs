@@ -74,6 +74,9 @@ namespace PxStat.Data
 
         internal bool requiresResponse { get; set; }
 
+        public string PrcValue { get; set; }
+        public string SbjValue { get; set; }
+
         public int GetCellCount()
         {
             int counter = 1;
@@ -362,9 +365,8 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="headings"></param>
         /// <param name="stubs"></param>
-        /// <param name="domain"></param>
         /// <returns></returns>
-        private StatDimension GetFrequencyDimension(IList<IPxSingleElement> headings, IList<IPxSingleElement> stubs, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain)
+        private StatDimension GetFrequencyDimension(IList<IPxSingleElement> headings, IList<IPxSingleElement> stubs)
         {
             // typically the period is defined in the headings, but can also be in stubs
             // when this happens we should have a timeval to helps us make the right call
@@ -746,7 +748,7 @@ namespace PxStat.Data
             // Concatenate notes into one string
             if (Notes != null)
             {
-                NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                NotesAsString = string.Join(Environment.NewLine, Notes.Select(e => e.ToString()));
                 if (NotesAsString.Equals("\"\""))
                 {
                     Notes = null;
@@ -763,7 +765,7 @@ namespace PxStat.Data
             //Get rid of multiple spaces
             //NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
             if (notex != null)
-                NotesAsString = NotesAsString + string.Join("", notex.Select(e => e.ToString()));
+                NotesAsString = NotesAsString + " " + string.Join(Environment.NewLine, notex.Select(e => e.ToString()));
 
             if (Uri.TryCreate(infofile, UriKind.Absolute, out Uri uri))
             {
@@ -797,7 +799,7 @@ namespace PxStat.Data
 
             //otherwise we'll atempt to fill time values from the FrqValue DTO item (user will choose it)
             //  if (PxUploadDto == null
-            var frequencyDimension = GetFrequencyDimension(headings, stubs, domain);
+            var frequencyDimension = GetFrequencyDimension(headings, stubs);
             if (frequencyDimension != null)
             {
                 Dimensions.Add(frequencyDimension);
@@ -888,6 +890,7 @@ namespace PxStat.Data
         {
             List<string> dimCodes = new List<string>();
             List<string> dimValues = new List<string>();
+            List<StatDimension> orderedDimensions = new List<StatDimension>();
             int sequence = 1;
 
             //If there's an implied statistic dimension, it gets a sequence of 1
@@ -911,6 +914,7 @@ namespace PxStat.Data
                 nextDim.Sequence = ++sequence;
                 dimCodes.Add(nextDim.Code);
                 dimValues.Add(nextDim.Value);
+               // orderedDimensions.Add(nextDim);
             }
 
             foreach (var h in heading)
@@ -919,6 +923,7 @@ namespace PxStat.Data
                 nextDim.Sequence = ++sequence;
                 dimCodes.Add(nextDim.Code);
                 dimValues.Add(nextDim.Value);
+                //orderedDimensions.Add(nextDim);
             }
 
             
@@ -943,7 +948,8 @@ namespace PxStat.Data
                 }
             }
 
-            return dimensions;
+            return dimensions.OrderBy(x=>x.Sequence).ToList();
+            //return orderedDimensions;
         }
 
 
@@ -1030,7 +1036,7 @@ namespace PxStat.Data
             // Concatenate notes into one string
             if (dspec.Notes != null)
             {
-                dspec.NotesAsString = string.Join("", dspec.Notes.Select(e => e.ToString()));
+                dspec.NotesAsString = string.Join(Environment.NewLine, dspec.Notes.Select(e => e.ToString()));
                 if (dspec.NotesAsString.Equals("\"\""))
                 {
                     dspec.Notes = null;
@@ -1049,7 +1055,7 @@ namespace PxStat.Data
             if (notex != null)
             {
                 if (dspec.Notes == null) dspec.Notes = new List<string>();
-                dspec.NotesAsString = dspec.NotesAsString + " " + string.Join(" ", notex.Select(e => e.ToString()));
+                dspec.NotesAsString = dspec.NotesAsString + " " + string.Join(Environment.NewLine, notex.Select(e => e.ToString()));
                 foreach (var n in notex)
                     dspec.Notes.Add(n);
             }
@@ -1094,7 +1100,7 @@ namespace PxStat.Data
 
             //otherwise we'll atempt to fill time values from the FrqValue DTO item (user will choose it)
             //  if (PxUploadDto == null
-            var frequencyDimension = dspec.GetFrequencyDimension(headings, stubs, domain);
+            var frequencyDimension = dspec.GetFrequencyDimension(headings, stubs);
             if (frequencyDimension != null)
             {
                 dspec.Dimensions.Add(frequencyDimension);

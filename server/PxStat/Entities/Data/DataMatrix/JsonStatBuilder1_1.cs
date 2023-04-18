@@ -108,14 +108,14 @@ namespace PxStat.Data
                     new
                     {
                         code = matrix.Release.SbjCode,
-                        value = matrix.Release.SbjValue
+                        value = spec.SbjValue,
                     });
 
                 jsStat.Extension.Add("product",
                     new
                     {
                         code = matrix.Release.PrcCode,
-                        value = matrix.Release.PrcValue
+                        value = spec.PrcValue 
                     });
             }
 

@@ -24,3 +24,10 @@
 /client/css/app.bootstrap.guideline.demo.css.map
 /client/css/app.bootstrap.guideline.demo.scss
 /client/index.demo.html
+/server/PxStat/Web.Demo.config
+/server/PxStat/Resources/FirebaseKey.demo.json
+/server/PxStat/Resources/Config/config.global.demo.json
+/server/PxStat/Resources/FirebaseKey.live.json
+/server/PxStat/Resources/FirebaseKey.test.json
+/server/PxStat/Properties/PublishProfiles/Demo.pubxml
+/server/PxStat/Properties/PublishProfiles/Demo.pubxml.user

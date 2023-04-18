@@ -92,10 +92,12 @@ namespace PxStat.System.Settings
         /// </summary>
         [LowerCase]
         public string LngIsoCode { get; set; }
+
         /// <summary>
         /// ISO Language Name
         /// </summary>
         public string LngIsoName { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -119,6 +121,7 @@ namespace PxStat.System.Settings
         /// </summary>
         [LowerCase]
         public string LngIsoCode { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -128,6 +131,28 @@ namespace PxStat.System.Settings
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
         }
+    }
 
+    /// <summary>
+    /// DTO for a language check
+    /// </summary>
+    internal class Language_DTO_Check
+    {
+        /// <summary>
+        /// ISO Language Code
+        /// </summary>
+        [LowerCase]
+        public string LngIsoCode { get; set; }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="parameters"></param>
+        public Language_DTO_Check(dynamic parameters)
+        {
+            if (parameters.LngIsoCode != null)
+            {
+                this.LngIsoCode = parameters.LngIsoCode;
+            }
+        }
     }
 }

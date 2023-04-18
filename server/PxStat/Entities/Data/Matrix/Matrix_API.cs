@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.DBuild;
 using System;
 
 namespace PxStat.Data
@@ -80,7 +81,8 @@ namespace PxStat.Data
         [NoCleanseDto]
         public static dynamic Validate(JSONRPC_API jsonrpcRequest)
         {
-            return new Matrix_BSO_Validate(jsonrpcRequest).Read().Response;
+            //return new Matrix_BSO_Validate(jsonrpcRequest).Read().Response;
+            return new DBuild_BSO_Validate(jsonrpcRequest).Read().Response;
         }
 
         /// <summary>

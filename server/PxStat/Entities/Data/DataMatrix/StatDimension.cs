@@ -99,6 +99,7 @@ namespace PxStat.Data
             }
             if (this.Variables == null && otherDimension.Variables != null) return false;
             if (this.Variables != null && otherDimension.Variables == null) return false;
+            if (this.Sequence != otherDimension.Sequence) return false;
 
             return true;
         }

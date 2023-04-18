@@ -1,6 +1,7 @@
 ﻿using API;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace PxStat.Data
 {
@@ -32,7 +33,9 @@ namespace PxStat.Data
         {
             var inputParams = new List<ADO_inputParams>();
 
-
+            //We need to treat spaces and non-breaking spaces the same, so we replace any space with a standard space
+            Regex rx = new Regex("[\\s]");
+            dto.Search = rx.Replace(dto.Search, " ");
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Value");

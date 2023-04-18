@@ -1,9 +1,0 @@
-﻿{
-    "static": [ "january, february, march, april, may, june, july, august, september, october, november, december, cpi, annual, average,total,mean,median,hourly,weekly,daily,monthly" ],
-    "excluded": {
-        "article": [ "the,an,a" ],
-        "preposition": [ "of, in, to, for, with, on, at, from, by, about, as, into, like, through, after, over, between, out, against, during, without, before, under, around, among, and, or" ],
-        "interrogative": [ "how", "where", "what", "why", "when", "who", "which", "many" ],
-        "miscellaneous": [ "percent", "percentage", "number", "is", "are", "not" ]
-    }
-}

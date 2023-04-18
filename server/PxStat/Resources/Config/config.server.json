@@ -35,5 +35,21 @@
   },
   "whitelist": [
     "domain.extension"
+  ],
+  "language-resource": [
+    {
+      "iso": "en",
+      "name": "English",
+      "plugin-location": "Resources\\Internationalisation\\LanguagePlugins\\en\\PxLanguagePlugin.en.dll",
+      "namespace-class": "PxLanguagePlugin.Language",
+      "is-live": true
+    },
+    {
+      "iso": "ga",
+      "name": "Gaeilge",
+      "plugin-location": "Resources\\Internationalisation\\LanguagePlugins\\ga\\PxLanguagePlugin.ga.dll",
+      "namespace-class": "PxLanguagePlugin.Language",
+      "is-live": true
+    }
   ]
 }

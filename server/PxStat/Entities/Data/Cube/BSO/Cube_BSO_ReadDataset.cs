@@ -56,6 +56,8 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+
+
             _sw = new Stopwatch();
             _sw.Start();
             if (DTO.jStatQueryExtension.extension.Pivot != null)
@@ -88,12 +90,22 @@ namespace PxStat.Data
             var hRequest = HttpContext.Current.Request;
             string host = hRequest.Url.Host;
 
+
             // Check if host is not in the whitelist and the request is throttled
             if (Throttle_BSO.IsNotInTheWhitelist(whitelist, host) && Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
             {
                 Log.Instance.Debug("Request throttled");
                 Response.statusCode = HttpStatusCode.Forbidden;
                 Response.error = Label.Get("error.throttled");
+
+
+
+                //Further information if this is an m2m request
+                if ((bool)DTO.m2m)
+                {
+                    Response.error = Response.error + " " + Label.Get("error.throttled-m2m");
+                }
+                return false;
             }
 
 
@@ -168,10 +180,24 @@ namespace PxStat.Data
             DataStore_ADO dAdo = new DataStore_ADO();
 
             IDmatrix matrix = null;
+
+            //If we are reading px we will bring all languages down. We start with the default language.
+            //Therefore we set the request language to the default and pick up the other language(s) later
+            if (theDto.jStatQueryExtension.extension.Format.Type.Equals(DatasetFormat.Px))
+            {
+                requestLanguage = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            }
+
             if (isLive)
+            {
                 matrix = dr.GetLiveData(theAdo, metaData, theDto.jStatQueryExtension.extension.Matrix, requestLanguage, releaseDto);
+            }
             else
+            {
                 matrix = dr.GetNonLiveData(theAdo, metaData, requestLanguage, releaseDto);
+            }
+
+            
 
             if (matrix == null)
             {
@@ -182,7 +208,7 @@ namespace PxStat.Data
 
 
 
-            DMatrix_VLD vld = new DMatrix_VLD();
+            DMatrix_VLD vld = new DMatrix_VLD(metaData, theAdo);
             var validation = vld.Validate(matrix);
 
             if (!validation.IsValid)
@@ -206,6 +232,38 @@ namespace PxStat.Data
                 theResponse.statusCode = HttpStatusCode.BadRequest;
                 return false;
             }
+            //public IDmatrix RunFractalQueryMetadata(IDmatrix matrix, CubeQuery_DTO query)
+
+            //If this is a px file request we gather up the other language specs one by one
+            if (theDto.jStatQueryExtension.extension.Format.Type.Equals(DatasetFormat.Px))
+            {
+                //See what languages exist for this release:
+                var languages = new Compare_ADO(theAdo).ReadLanguagesForRelease(matrix.Release.RlsCode);
+                var nonCoreLanguages = languages.Where(x => x != requestLanguage).ToList();
+                foreach (var lng in nonCoreLanguages)
+                {
+                    IDmatrix lMatrix;
+                    if (isLive)
+                    {
+                        lMatrix = dr.GetLiveData(theAdo, metaData, theDto.jStatQueryExtension.extension.Matrix, lng, releaseDto);
+                        
+                    }
+                    else
+                    {
+                        lMatrix = dr.GetNonLiveData(theAdo, metaData, lng, releaseDto);
+                    }
+
+                    //Apply the query to the other language version of the matrix
+                    //Metadata only - we already have the data
+                    DataReader datareader = new DataReader();
+                    lMatrix = datareader.RunFractalQueryMetadata(lMatrix, theDto);
+
+                    //Add the spec of the other language matrix to the main output matrix
+                    matrix.Dspecs.Add(lng, lMatrix.Dspecs[lng]);
+                    matrix.Languages.Add(lng);
+                }
+            }
+
 
             if (theDto.jStatQueryExtension.extension.Format.Type.Equals(Resources.Constants.C_SYSTEM_XLSX_NAME))
             {
@@ -273,21 +331,18 @@ namespace PxStat.Data
                         JsonStatBuilder1_0 jxb = new JsonStatBuilder1_0();
                         var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(SerializeJsonStatV1.ToJson(jsonStat));
-                        //theResponse.data= new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                     }
                     else if (theDto.jStatQueryExtension.extension.Format.Version == "1.1")
                     {
                         JsonStatBuilder1_1 jxb = new JsonStatBuilder1_1();
                         var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(SerializeJsonStatV1_1.ToJson(jsonStat));
-                        //theResponse.data = new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                     }
                     else
                     {
                         JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
                         var jsonStat = jxb.Create(matrix, matrix.Language, true);
                         theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
-                        //theResponse.data = new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                     }
                     break;
                 case DatasetFormat.Csv:
@@ -301,7 +356,6 @@ namespace PxStat.Data
                             dt = ftb.GetMatrixDataTablePivot(matrix, requestLanguage, pivot, theDto.jStatQueryExtension.extension.Codes == null ? false : (bool)theDto.jStatQueryExtension.extension.Codes);
 
                         theResponse.data = ftb.GetCsv(dt, "\"", readCulture, false);
-                        //theResponse.data = new Resources.Xlsx().ConvertStringToUtf8Bom((string)theResponse.data);
                         break;
                     }
                 case DatasetFormat.Px:

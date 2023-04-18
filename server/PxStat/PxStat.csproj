@@ -98,6 +98,9 @@
     <Reference Include="DocumentFormat.OpenXml, Version=2.7.2.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.7.2\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="Dynamitey, Version=2.0.9.136, Culture=neutral, PublicKeyToken=cbf53ea3aeb972c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dynamitey.2.0.9.136\lib\net40\Dynamitey.dll</HintPath>
+    </Reference>
     <Reference Include="Enyim.Caching, Version=2.16.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
       <HintPath>..\packages\EnyimMemcached.2.16.0\lib\net35\Enyim.Caching.dll</HintPath>
       <Private>True</Private>
@@ -139,6 +142,9 @@
     <Reference Include="HtmlSanitizer, Version=7.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlSanitizer.7.1.542\lib\net461\HtmlSanitizer.dll</HintPath>
     </Reference>
+    <Reference Include="ImpromptuInterface, Version=7.0.1.0, Culture=neutral, PublicKeyToken=0b1781c923b2975b, processorArchitecture=MSIL">
+      <HintPath>..\packages\ImpromptuInterface.7.0.1\lib\net40\ImpromptuInterface.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -156,8 +162,8 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
@@ -356,6 +362,8 @@
     <Content Include="Resources\eMail\template_Login.html" />
     <Content Include="Resources\eMail\template_LoginBulletPoint.html" />
     <Content Include="Resources\eMail\template_NotifyChannelSubscription.html" />
+    <Content Include="Resources\Internationalisation\LanguagePlugins\en\PxLanguagePlugin.en.dll" />
+    <Content Include="Resources\Internationalisation\LanguagePlugins\ga\PxLanguagePlugin.ga.dll" />
     <Content Include="Resources\regexes\bots.yml" />
     <Content Include="Resources\regexes\client\browsers.yml" />
     <Content Include="Resources\regexes\client\browser_engine.yml" />
@@ -378,12 +386,6 @@
     <Content Include="Static.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Resources\Internationalisation\en.json" />
-    <Content Include="Resources\Internationalisation\pl.json" />
-    <Content Include="Resources\Internationalisation\ga.json" />
-    <Content Include="Resources\Internationalisation\keyword\keyword_en.json" />
-    <Content Include="Resources\Internationalisation\keyword\keyword_ga.json" />
-    <Content Include="Resources\Internationalisation\keyword\keyword_pl.json" />
     <None Include="Properties\PublishProfiles\Demo.pubxml" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
@@ -392,10 +394,6 @@
     <Content Include="Resources\Config\config.server.json" />
     <None Include="Properties\PublishProfiles\Test.pubxml" />
     <Content Include="Resources\FirebaseKey.json" />
-    <None Include="Resources\Internationalisation\keyword\dictionary_en.json" />
-    <None Include="Resources\Internationalisation\keyword\dictionary_ga.json" />
-    <None Include="Resources\Internationalisation\keyword\synonym_en.json" />
-    <None Include="Resources\Internationalisation\keyword\synonym_ga.json" />
     <None Include="Web.Demo.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -720,7 +718,6 @@
     <Compile Include="Entities\System\Navigation\Alert\BSO\Alert_BSO_Update.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_Extract.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ReadSynonym.cs" />
-    <Compile Include="Entities\System\Navigation\Keyword\BSO\Keyword_BSO_ResourceFactory.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_API.cs" />
     <Compile Include="Entities\System\Navigation\Navigation\BSO\Navigation_BSO.cs" />
     <Compile Include="Entities\System\Navigation\ThemeLanguage\ThemeLanguage_ADO.cs" />
@@ -736,6 +733,7 @@
     <Compile Include="Entities\System\Navigation\Theme\Theme_VLD.cs" />
     <Compile Include="Entities\System\Notification\Email\BSO\Email_BSO.cs" />
     <Compile Include="Entities\System\Settings\Format\BSO\Format_BSO.cs" />
+    <Compile Include="Entities\System\Settings\Language\BSO\Language_BSO_CheckIsLngIsoCode.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workdflow_BSO_ReadPendingLive.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadLive.cs" />
@@ -744,11 +742,14 @@
     <Compile Include="Entities\Security\Configuration\Configuration_API.cs" />
     <Compile Include="Entities\Security\Configuration\Configuration_DTO.cs" />
     <Compile Include="Entities\Security\Configuration\Configuration_VLD.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Config\IConfiguration.cs" />
     <Compile Include="Resources\Config\PxStatConfiguration.cs" />
-    <Compile Include="Resources\Internationalisation\keyword\keyword_en.cs" />
-    <Compile Include="Resources\Internationalisation\keyword\keyword_ga.cs" />
-    <Compile Include="Entities\System\Navigation\Keyword\IKeywordExtractor.cs" />
+    <Compile Include="Resources\Internationalisation\ILanguagePlugin.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_DTO.cs" />
     <Compile Include="Entities\System\Navigation\Keyword\Keyword_VLD.cs" />
     <Compile Include="Entities\System\Navigation\Keyword_Product\BSO\Keyword_Product_BSO_Mandatory.cs" />
@@ -802,11 +803,6 @@
     <Compile Include="Entities\Workflow\WorkflowSignoff\WorkflowSignoff_API.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadAwaitingSignoff.cs" />
     <Compile Include="Entities\Workflow\Workflow\BSO\Workflow_BSO_ReadWorkInProgress.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Resources\BBCode.cs" />
     <Compile Include="Resources\CacheMetadata.cs" />
     <Compile Include="Resources\Cleanser.cs" />
@@ -961,8 +957,8 @@
     <Compile Include="Resources\Constants.cs" />
     <Compile Include="Resources\CustomAttributes.cs" />
     <Compile Include="Resources\Exceptions.cs" />
+    <Compile Include="Resources\Internationalisation\LanguageManager.cs" />
     <Compile Include="Resources\JsonStatQuery.cs" />
-    <Compile Include="Resources\Keyword.cs" />
     <Compile Include="Resources\Label.cs" />
     <Compile Include="Resources\MethodReader.cs" />
     <Compile Include="Resources\PxParser\IPxManualParser.cs" />
@@ -983,8 +979,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

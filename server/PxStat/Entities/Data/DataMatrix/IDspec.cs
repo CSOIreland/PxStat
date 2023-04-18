@@ -22,5 +22,7 @@ namespace PxStat.Data
         ICollection<KeyValuePair<string, ICollection<string>>> Values { get; set; }
         string GetNotesAsString();
         int GetCellCount();
+        string PrcValue { get; set; }
+        string SbjValue { get; set; }   
     }
 }

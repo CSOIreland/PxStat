@@ -3,6 +3,7 @@ using Autofac;
 using PxStat.Data;
 using PxStat.JsonStatSchema;
 using PxStat.Resources;
+using PxStat.System.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -75,6 +76,8 @@ namespace PxStat.DataStore
             sw.Stop();
             return matrix;
         }
+
+
 
         public bool ValidateQueryForMatrix(CubeQuery_DTO query, Dspec spec)
         {
@@ -190,7 +193,7 @@ namespace PxStat.DataStore
             return matrix;
         }
 
-        private IDmatrix RunFractalQueryMetadata(IDmatrix matrix, CubeQuery_DTO query)
+        public IDmatrix RunFractalQueryMetadata(IDmatrix matrix, CubeQuery_DTO query)
         {
             if (_spec == null) _spec = matrix.Dspecs[matrix.Language];
             //For each dimension, what variables are being queried? The result is stored in the QueryDimensionOrdinals
@@ -567,19 +570,6 @@ namespace PxStat.DataStore
 
 
 
-            //var reason = new ReasonRelease_ADO().Read(ado, new ReasonRelease_DTO_Read() { RlsCode = matrix.Release.RlsCode, LngIsoCode = lngIsoCode });
-
-
-            //if (reason.hasData)
-            //{
-            //    foreach (var r in reason.data)
-            //    {
-            //        if (matrix.Release.Reasons == null) matrix.Release.Reasons = new List<string>();
-            //        matrix.Release.Reasons.Add(r.RsnValueExternal);
-            //    }
-
-            //}
-
             return matrix;
         }
 
@@ -662,7 +652,31 @@ namespace PxStat.DataStore
 
             spec.ContentVariable = Utility.GetCustomConfig("APP_CSV_STATISTIC");
 
+            //Get the language appropriate version of the Product Value for this spec
+            if (dmatrix.Release?.PrcCode != null)
+            {
+                
+                    Product_ADO pAdo = new Product_ADO(ado);
+                    Product_DTO pDTO = new Product_DTO() { LngIsoCode = spec.Language, PrcCode = dmatrix.Release.PrcCode };
+                    var pResult = pAdo.Read(pDTO);
+                    if (pResult.Count > 0)
+                    {
+                        spec.PrcValue = pResult[0].PrcValue;
+                    }
+                
+            }
 
+            //Get the language appropriate version of the Subject Value for this spec
+            if(dmatrix.Release?.SbjCode !=null)
+            {
+                Subject_ADO sAdo = new Subject_ADO(ado);
+                Subject_DTO sDto = new Subject_DTO() { SbjCode = dmatrix.Release.SbjCode, LngIsoCode = spec.Language };
+                var sResult = sAdo.Read(sDto);
+                if(sResult.Count > 0)
+                {
+                    spec.SbjValue= sResult[0].SbjValue;
+                }
+            }
 
 
 
@@ -747,6 +761,31 @@ namespace PxStat.DataStore
             dspec.Notes = new List<string>();
             if (!dmatrixData.data[0]?.MtrNote.Equals(DBNull.Value))
                 dspec.Notes.Add(dmatrixData.data[0].MtrNote);
+
+            if (dmatrix.Release?.PrcCode != null)
+            {
+
+                Product_ADO pAdo = new Product_ADO(ado);
+                Product_DTO pDTO = new Product_DTO() { LngIsoCode = dspec.Language, PrcCode = dmatrix.Release.PrcCode };
+                var pResult = pAdo.Read(pDTO);
+                if (pResult.Count > 0)
+                {
+                    dspec.PrcValue = pResult[0].PrcValue;
+                }
+
+            }
+
+            if (dmatrix.Release?.SbjCode != null)
+            {
+                Subject_ADO sAdo = new Subject_ADO(ado);
+                Subject_DTO sDTO = new Subject_DTO() { LngIsoCode = dspec.Language, SbjCode = dmatrix.Release.SbjCode };
+                var sResult = sAdo.Read(sDTO);
+                if(sResult.Count > 0)
+                {
+                    dspec.SbjValue= sResult[0].SbjValue; 
+                }
+            }
+
 
             if (dmatrix.Cells == null)
             {
@@ -939,9 +978,36 @@ namespace PxStat.DataStore
 
             spec.ContentVariable = Utility.GetCustomConfig("APP_CSV_STATISTIC");
 
+            if (matrix.Release?.PrcCode != null)
+            {
+                using (var ado = new ADO("defaultConnection"))
+                {
+                    Product_ADO pAdo = new Product_ADO(ado);
+                    Product_DTO pDTO = new Product_DTO() { LngIsoCode = spec.Language, PrcCode = matrix.Release.PrcCode };
+                    var pResult = pAdo.Read(pDTO);
+                    if(pResult.Count>0)
+                    {
+                        spec.PrcValue = pResult[0].PrcValue;
+                    }
+                }
+            }
 
+            if(matrix.Release?.SbjCode !=null)
+            {
+                using (var ado=new ADO("defaultConnection"))
+                {
+                    Subject_ADO sAdo = new Subject_ADO(ado);
+                    Subject_DTO sDTO = new Subject_DTO() { LngIsoCode = spec.Language, SbjCode = matrix.Release.SbjCode };
+                    var sResult = sAdo.Read(sDTO);
+                    if(sResult.Count>0)
+                    {
+                        spec.SbjValue = sResult[0].SbjValue;
+                    }
 
-            using (var scope = Container.BeginLifetimeScope())
+                }
+            }
+
+                using (var scope = Container.BeginLifetimeScope())
             {
                 var ado = scope.Resolve<IADO>();
                 int previousLambda = 0;
@@ -1071,7 +1137,34 @@ namespace PxStat.DataStore
 
             spec.ContentVariable = Utility.GetCustomConfig("APP_CSV_STATISTIC");
 
+            if (matrix.Release?.PrcCode != null)
+            {
+                using (var ado = new ADO("defaultConnection"))
+                {
+                    Product_ADO pAdo = new Product_ADO(ado);
+                    Product_DTO pDTO = new Product_DTO() { LngIsoCode = spec.Language, PrcCode = matrix.Release.PrcCode };
+                    var pResult = pAdo.Read(pDTO);
+                    if (pResult.Count > 0)
+                    {
+                        spec.PrcValue = pResult[0].PrcValue;
+                    }
+                }
+            }
 
+            if(matrix.Release?.SbjCode!=null)
+            {
+                using (var ado=new ADO("defaultConnection"))
+                {
+                    Subject_ADO sAdo = new Subject_ADO(ado);
+                    Subject_DTO sDTO = new Subject_DTO() { LngIsoCode = spec.Language, SbjCode = matrix.Release.SbjCode };
+                    var sResult = sAdo.Read(sDTO);  
+                    if(sResult.Count > 0)
+                    {
+                        spec.SbjValue= sResult[0].SbjValue;
+                    }
+                }
+
+            }
 
             using (var scope = Container.BeginLifetimeScope())
             {

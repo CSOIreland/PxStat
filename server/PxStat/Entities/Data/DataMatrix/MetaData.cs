@@ -111,5 +111,10 @@ namespace PxStat.Data
         {
             return API.Utility.GetCustomConfig("APP_PX_TITLE_BY");
         }
+
+        public string GetDefaultCodingLanguage()
+        {
+            return API.Utility.GetCustomConfig("APP_DEFAULT_CODING_LANGUAGE");
+        }
     }
 }

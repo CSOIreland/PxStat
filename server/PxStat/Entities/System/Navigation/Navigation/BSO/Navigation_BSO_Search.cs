@@ -18,8 +18,6 @@ namespace PxStat.System.Navigation
         /// <param name="request"></param>
         /// 
 
-        int searchTermCount;
-
         internal Navigation_BSO_Search(JSONRPC_API request) : base(request, new Navigation_VLD_Search())
         { }
 

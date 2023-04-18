@@ -774,7 +774,7 @@ namespace PxStat.Data
                 {
 
 
-                    NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                    NotesAsString = string.Join(Environment.NewLine, Notes.Select(e => e.ToString()));
                 }
                 else
                 {
@@ -782,10 +782,8 @@ namespace PxStat.Data
                     NotesAsString = "";
                 }
 
-                //Get rid of multiple spaces
-                NotesAsString = Regex.Replace(NotesAsString, @"/\s\s+/g", " ");
                 if (notex != null)
-                    NotesAsString = NotesAsString + " " + string.Join("", notex.Select(e => e.ToString()));
+                    NotesAsString = NotesAsString + " " + string.Join(Environment.NewLine, notex.Select(e => e.ToString()));
 
                 if (Uri.TryCreate(infofile, UriKind.Absolute, out Uri uri))
                     NotesAsString = NotesAsString.Trim() + " " + infofile;
@@ -950,7 +948,7 @@ namespace PxStat.Data
                 if (Notes != null)
                 {
 
-                    NotesAsString = string.Join("", Notes.Select(e => e.ToString()));
+                    NotesAsString = string.Join(Environment.NewLine, Notes.Select(e => e.ToString()));
                 }
                 else
                 {
@@ -958,13 +956,8 @@ namespace PxStat.Data
                     NotesAsString = "";
                 }
 
-                //Get rid of multiple spaces
-                //NotesAsString = Regex.Replace(NotesAsString, @"\s+", " ");
-
-
-
                 if (notex != null)
-                    NotesAsString = NotesAsString + string.Join("", notex.Select(e => e.ToString()));
+                    NotesAsString = NotesAsString + Environment.NewLine + string.Join("", notex.Select(e => e.ToString()));
 
                 if (Uri.TryCreate(infofile, UriKind.Absolute, out Uri uri))
                     NotesAsString = NotesAsString.Trim() + " " + infofile;
@@ -2053,26 +2046,6 @@ namespace PxStat.Data
         {
             return new ApiMetadata().GetApiMetadata(this, LngIsoCode);
 
-        }
-
-        internal string GetXlsxObject(string lngIsoCode = null, CultureInfo ci = null, string pivot = null, bool viewCodes = true)
-        {
-
-            Xlsx xl = new Xlsx();
-            // if (pivot == null) 
-            return xl.GetXlsx(this, lngIsoCode, ci, pivot, viewCodes);
-            //else
-            //    return xl.GetXlsx(this, GetMatrixSheetPivoted(pivot, lngIsoCode, false, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), lngIsoCode, ci, pivot);
-
-        }
-
-        internal string GetCsvObject(string lngIsoCode = null, bool indicateBlankSymbols = false, CultureInfo ci = null, string pivot = null, bool viewCodes = true)
-        {
-            Xlsx xl = new Xlsx();
-            if (pivot == null)
-                return xl.GetCsv(GetMatrixSheet(lngIsoCode, indicateBlankSymbols, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_DATA_STYLE")), viewCodes), "\"", ci);
-            else
-                return xl.GetCsv(GetMatrixSheetPivoted(pivot, lngIsoCode, indicateBlankSymbols, Convert.ToInt32(Utility.GetCustomConfig("APP_XLSX_HEADER_STYLE")), viewCodes), "\"", ci);
         }
 
         internal string GetCsvObject(List<DataItem_DTO> dtoList, string lngIsoCode = null, bool indicateBlankSymbols = false, CultureInfo ci = null, bool getLabels = true)
@@ -3294,6 +3267,10 @@ namespace PxStat.Data
                 {
                     jsStat.Note.Add(spec.NotesAsString);
                 }
+                else
+                {
+                    jsStat.Note.Add("");
+                }
             }
 
 
@@ -3306,6 +3283,10 @@ namespace PxStat.Data
             if (!string.IsNullOrEmpty(spec.NotesAsString))
             {
                 jsStat.Note.Add(spec.NotesAsString);
+            }
+            else
+            {
+                jsStat.Note.Add("");
             }
 
             // the release note is now appended to the other notes from the px file
@@ -4397,17 +4378,30 @@ namespace PxStat.Data
     {
         public string PrcCode { get; internal set; }
         public string LngIsoCode { get; internal set; }
-
-
+        public bool AssociatedOnly { get; internal set; }
 
         public Matrix_DTO_ReadByProduct(dynamic parameters)
         {
             if (parameters.PrcCode != null)
+            {
                 PrcCode = parameters.PrcCode;
+            }
             if (parameters.LngIsoCode != null)
+            {
                 LngIsoCode = parameters.LngIsoCode;
+            }
             else
+            {
                 LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            }
+            if (parameters.AssociatedOnly != null)
+            {
+                AssociatedOnly = parameters.AssociatedOnly;
+            } 
+            else
+            {
+                AssociatedOnly = false;
+            }
         }
     }
 

@@ -8,6 +8,7 @@ using PxStat.System.Navigation;
 using PxStat.Template;
 using PxStat.Workflow;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
 namespace PxStat.Data
@@ -82,6 +83,7 @@ namespace PxStat.Data
             IMetaData metaData = new MetaData();
             IDmatrix matrix = dmatrixFactory.CreateDmatrix(DTO, metaData);
 
+
             Matrix_BSO mBso = new Matrix_BSO(Ado);
 
             // Check if a WIP Release already exists for the Matrix to Upload
@@ -91,11 +93,11 @@ namespace PxStat.Data
                 Group_DTO_Create dtoGroup = this.GetGroup(DTO.GrpCode);
                 if (latestRelease.GrpCode != DTO.GrpCode)
                 {
-                    Response.data = String.Format(Label.Get("px.duplicate-different-group"), matrix.Code, latestRelease.GrpName + " (" + latestRelease.GrpCode + ")", dtoGroup.GrpName + " (" + DTO.GrpCode + ")");
+                    Response.data = String.Format(Label.Get("px.duplicate-different-group",DTO.LngIsoCode), matrix.Code, latestRelease.GrpName + " (" + latestRelease.GrpCode + ")", dtoGroup.GrpName + " (" + DTO.GrpCode + ")");
                 }
                 else
                 {
-                    Response.data = String.Format(Label.Get("px.duplicate"), matrix.Code);
+                    Response.data = String.Format(Label.Get("px.duplicate",DTO.LngIsoCode), matrix.Code);
                 }
                 return true;
             }
@@ -103,14 +105,14 @@ namespace PxStat.Data
             // Check if this Release already has a pending WorkflowRequest 
             if (latestRelease != null && new WorkflowRequest_ADO().IsCurrent(Ado, latestRelease.RlsCode))
             {
-                Response.error = String.Format(Label.Get("error.workflow"), matrix.Code);
+                Response.error = String.Format(Label.Get("error.workflow", DTO.LngIsoCode), matrix.Code);
                 return false;
             }
 
             // Check if this Release has another pending live release
             if (latestRelease != null && new Release_ADO(Ado).IsLiveNext(latestRelease.RlsCode))
             {
-                Response.error = String.Format(Label.Get("px.pendinglive"), matrix.Code);
+                Response.error = String.Format(Label.Get("px.pendinglive", DTO.LngIsoCode), matrix.Code);
                 return false;
             }
 
@@ -123,7 +125,7 @@ namespace PxStat.Data
                     DateTime lockedTime = dResult.data[0].DttDatetimeLocked.Equals(DBNull.Value) ? default : (DateTime)dResult.data[0].DttDatetimeLocked;
                     if (lockedTime.AddMinutes(Configuration_BSO.GetCustomConfig(ConfigType.server, "release.lockTimeMinutes")) > DateTime.Now)
                     {
-                        Response.error = Label.Get("error.release.locked");
+                        Response.error = Label.Get("error.release.locked", DTO.LngIsoCode);
                         return false;
                     }
                 }

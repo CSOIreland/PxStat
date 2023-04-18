@@ -758,7 +758,7 @@ namespace PxStat.DBuild
 
         }
 
-        public IResponseOutput BsoUpdate(IResponseOutput response, DBuild_DTO_Update DTO, IMetaData metaData, bool validatePxDoc = true, ICopyright cpr = null)
+        public IResponseOutput BsoUpdate(IResponseOutput response, DBuild_DTO_Update DTO, IMetaData metaData, IADO ado, bool validatePxDoc = true, ICopyright cpr = null, string lngIsoCode=null)
         {
 
             //Parse the px document
@@ -830,8 +830,11 @@ namespace PxStat.DBuild
             refMatrix = dmatrix;
             dmatrix.MetaData = metaData;
 
-            //validate the matrix we just created
-            DMatrix_VLD validator = new DMatrix_VLD();
+            // Validate the matrix we just created
+            DMatrix_VLD validator = new DMatrix_VLD(metaData, ado, lngIsoCode);
+            // Also validate in english - just for the logs
+            DMatrix_VLD dmvEn = new DMatrix_VLD(metaData, ado);
+            dmvEn.Validate(dmatrix);
             var matrixValidation = validator.Validate(dmatrix);
             if (!matrixValidation.IsValid)
             {

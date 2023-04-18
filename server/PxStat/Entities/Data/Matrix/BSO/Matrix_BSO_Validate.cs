@@ -311,7 +311,7 @@ namespace PxStat.Data
             catch (Exception e)
             {
 
-                ParseValidatorResult.Errors.Add(new ValidationFailure("MtrInput", RequestLanguage.LngIsoCode == null ? Label.Get("px.parse") : Label.GetFromRequestLanguage("px.parse")));
+                ParseValidatorResult.Errors.Add(new ValidationFailure("MtrInput", RequestLanguage.LngIsoCode == null ? Label.Get("px.parse") : Label.Get("px.parse", RequestLanguage.LngIsoCode)));
                 ParseValidatorResult.Errors.Add(new ValidationFailure("MtrInput", e.Message));
             }
 

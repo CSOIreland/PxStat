@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 
 namespace PxStat.DBuild
 {
@@ -11,6 +12,7 @@ namespace PxStat.DBuild
         public string FrqCodeTimeval { get; set; }
         public string FrqValueTimeval { get; set; }
         public string Signature { get; set; }
+        public string LngIsoCode { get; set; }
 
         public DBuild_DTO_Validate(dynamic parameters)
         {
@@ -22,6 +24,10 @@ namespace PxStat.DBuild
                 FrqValueTimeval = parameters.FrqValueTimeval;
             if (parameters.Signature != null)
                 Signature = parameters.Signature;
+            if(parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode; 
+            else
+                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
         }
         internal Signature_DTO GetSignatureDTO()
         {

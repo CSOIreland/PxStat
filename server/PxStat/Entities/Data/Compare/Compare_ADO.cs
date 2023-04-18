@@ -1,5 +1,6 @@
 ﻿using API;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PxStat.Data
 {
@@ -11,13 +12,13 @@ namespace PxStat.Data
         /// <summary>
         /// 
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        public Compare_ADO(ADO ado)
+        public Compare_ADO(IADO ado)
         {
             this.ado = ado;
         }
@@ -44,7 +45,7 @@ namespace PxStat.Data
         }
 
         /// <summary>
-        /// Read the previous release if the user has rights
+        /// Read the previous release code if the user has rights
         /// </summary>
         /// <param name="releaseCode"></param>
         /// <returns></returns>
@@ -63,6 +64,28 @@ namespace PxStat.Data
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Read the previous release
+        /// </summary>
+        /// <param name="releaseCode"></param>
+        /// <returns></returns>
+        internal List<dynamic>  ReadLanguagesForRelease(int releaseCode)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@RlsCode", value = releaseCode }
+            };
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_LanguagesForRelease", inputParams);
+
+            if (reader.hasData)
+            {
+                List<dynamic> languages = reader.data.Select(x => x.LngIsoCode).ToList(); 
+                return languages;
+            }
+            return null;
+           
         }
 
     }

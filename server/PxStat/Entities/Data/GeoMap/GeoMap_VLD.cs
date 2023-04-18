@@ -136,6 +136,7 @@ namespace PxStat.Data
         {
             RuleFor(x => x.GmpName).Length(0, 256).WithMessage("GmpName invalid length");
             RuleFor(x => x.GmpCode).Length(0, 32).WithMessage("GmpCode invalid length");
+            RuleFor(x => x.GlrCode).Length(0, 256).WithMessage("GlrCode invalid length");
         }
     }
 }

@@ -34,7 +34,7 @@ namespace PxStat.Data
         protected override bool Execute()
         {
             var adoRelease = new Release_ADO(Ado);
-            var list = adoRelease.Read(DTO.RlsCode, SamAccountName);
+            var list = adoRelease.ReadLanguageInvariant(DTO, SamAccountName);
             Response.data = list;
 
             return true;

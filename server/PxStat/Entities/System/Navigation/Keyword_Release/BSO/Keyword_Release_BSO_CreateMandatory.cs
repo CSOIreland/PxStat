@@ -252,6 +252,7 @@ namespace PxStat.System.Navigation
                 //Get a Keyword Extractor - the particular version returned will depend on the language
                 Keyword_BSO_Extract kbe = new Keyword_BSO_Extract(item.Value.Language);
 
+                var test = kbe.ExtractSplitSingular(item.Value.Title);
                 //Add the keywords and other data to the output table
                 AddToTable(ref dt, kbe.ExtractSplitSingular(item.Value.Title), releaseId);
 
@@ -266,7 +267,7 @@ namespace PxStat.System.Navigation
 
 
 
-                foreach (dynamic dim in matrix.Dspecs[matrix.Language].Dimensions)
+                foreach (dynamic dim in matrix.Dspecs[item.Value.Language].Dimensions)
                 {
 
 
