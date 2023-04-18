@@ -54,6 +54,22 @@ BEGIN
 		RETURN 0
 	END
 
+    IF EXISTS (SELECT 1
+               FROM   TM_RELEASE_PRODUCT
+               WHERE  RPR_PRC_ID = @PrcID
+                      AND RPR_DELETE_FLAG = 0)
+	BEGIN
+		SET @eMessage = 'SP: System_Navigation_Product_Delete - Release Product association is being used: ' + cast(isnull(@PrcCode, 0) AS VARCHAR)
+
+		RAISERROR (
+				@eMessage
+				,16
+				,1
+				);
+
+		RETURN 0
+	END
+
 	UPDATE [TD_PRODUCT]
 	SET [PRC_DELETE_FLAG] = 1
 	WHERE PRC_ID = @PrcID

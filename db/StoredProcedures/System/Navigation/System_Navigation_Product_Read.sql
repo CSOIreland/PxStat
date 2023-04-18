@@ -8,7 +8,7 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 11 Oct 2018
 -- Description:	Reads record(s) from the TD_Product table
--- exec System_Navigation_Product_Read null,null,'en','Wheat'
+-- exec System_Navigation_Product_Read null, 1, 'en', null
 -- =============================================
 CREATE
 	OR
@@ -34,6 +34,8 @@ BEGIN
 					END
 				)) AS RlsLiveCount
 		,coalesce(MtrCount, 0) AS MtrCount
+		,coalesce(MtrAssociatedCount,0) as MtrAssociatedCount 
+
 	FROM (
 		SELECT TD_PRODUCT.PRC_CODE
 			,SBJ_CODE
@@ -43,10 +45,33 @@ BEGIN
 			,PRC_DELETE_FLAG
 			,RLS_DELETE_FLAG
 			,mtrCount AS MtrCount
+			,MtrAssociatedCount 
 		FROM TD_PRODUCT
 		INNER JOIN [TD_SUBJECT]
 			ON SBJ_ID = PRC_SBJ_ID
 				AND SBJ_DELETE_FLAG = 0
+
+				LEFT JOIN
+		(
+			SELECT PRC_ID as PrcIdAssociated
+			,PRC_SBJ_ID as SbjIdAssociated
+			,COUNT(*)  AS MtrAssociatedCount
+			FROM TD_PRODUCT 
+			INNER JOIN TM_RELEASE_PRODUCT 
+			ON PRC_ID=RPR_PRC_ID 
+			AND (@PrcCode IS NULL OR @PrcCode=PRC_CODE)
+			AND PRC_DELETE_FLAG=0
+			AND RPR_DELETE_FLAG=0	
+			INNER JOIN (select distinct VRN_RLS_ID  from VW_RELEASE_LIVE_NOW ) vrn
+			ON RPR_RLS_ID=VRN_RLS_ID 
+			INNER JOIN TD_SUBJECT 
+			ON PRC_SBJ_ID=SBJ_ID
+			AND SBJ_DELETE_FLAG=0
+			AND (@SbjCode IS NULL OR @SbjCode=SBJ_CODE)			
+			GROUP BY PRC_ID,PRC_SBJ_ID,PRC_VALUE 
+		) AS MTR_ASSOCIATED
+		on PrcIdAssociated=PRC_ID 
+
 		LEFT JOIN (
 			SELECT PRC_CODE
 				,COUNT(*) AS mtrCount
@@ -120,6 +145,7 @@ BEGIN
 		,SBJ_CODE
 		,SBJ_VALUE
 		,MtrCount
+		,MtrAssociatedCount
 END
 GO
 

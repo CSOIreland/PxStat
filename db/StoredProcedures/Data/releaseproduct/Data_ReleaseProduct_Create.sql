@@ -19,12 +19,6 @@ BEGIN
 	WHERE RLS_CODE = @ReleaseCode
 	AND RLS_DELETE_FLAG = 0
 
-	-- If the Release does not have a core Product, return 0
-	IF @ReleaseProductId IS NULL
-	BEGIN
-		RETURN 0
-	END
-
 	SELECT @ProductId = PRC_ID
     FROM   TD_PRODUCT
     WHERE  PRC_CODE = @ProductCode

@@ -8,14 +8,18 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 22 Oct 2018
 -- Description:	Reads record(s) from the TD_Release & dependent tables
--- exec Data_Release_Read_dev 'okeeffene',102
+-- exec Data_Release_Read 'okeeffene','GA',1414,null,'en' --1403 1414
 -- =============================================
 CREATE
 	OR
 
 ALTER PROCEDURE Data_Release_Read @CcnUsername NVARCHAR(256)
+	,@LngIsoCode CHAR(2)
+	,@LngIsoCodeDefault CHAR(2)
 	,@RlsCode INT = NULL
 	,@RlsID INT = NULL
+	
+
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -30,6 +34,43 @@ BEGIN
 
 	INSERT INTO @GroupUserHasAccess
 	EXEC Security_Group_AccessList @CcnUsername
+
+	--Test if data exists for our preferred language
+	DECLARE @TestLngIsoCode CHAR(2)
+
+	SET @TestLngIsoCode =
+	(SELECT LNG_ISO_CODE 
+	FROM TS_LANGUAGE 
+	INNER JOIN TD_MATRIX
+	ON MTR_LNG_ID=LNG_ID 
+	AND LNG_DELETE_FLAG=0
+	AND MTR_DELETE_FLAG=0
+	INNER JOIN TD_RELEASE 
+	ON RLS_DELETE_FLAG=0
+	AND MTR_RLS_ID=RLS_ID
+	WHERE MTR_DELETE_FLAG = 0
+		AND (
+			@RlsCode IS NULL
+			OR @RlsCode = RLS_CODE
+			)
+		AND (
+			@RlsID IS NULL
+			OR @RlsID = RLS_ID
+			)
+		AND (LNG_ISO_CODE=@LngIsoCode 
+		)
+		)
+
+	IF @TestLngIsoCode IS NOT NULL
+	BEGIN
+		SET @LngIsoCode=@TestLngIsoCode
+	END
+	ELSE
+	BEGIN
+		SET @LngIsoCode=@LngIsoCodeDefault 
+	END
+	
+
 
 	SELECT MTR_CODE MtrCode
 		,RLS_CODE RlsCode
@@ -48,9 +89,9 @@ BEGIN
 		,CMM_CODE CmmCode
 		,CMM_VALUE CmmValue
 		,SBJ_CODE SbjCode
-		,SBJ_VALUE SbjValue
+		,COALESCE(SLG_VALUE,SBJ_VALUE) AS  SbjValue
 		,PRC_CODE PrcCode
-		,PRC_VALUE PrcValue
+		,COALESCE(PLG_VALUE,PRC_VALUE) AS PrcValue
 		,RQS_CODE RqsCode
 		,RQS_VALUE RqsValue
 		,RSP_CODE RspCode
@@ -63,6 +104,8 @@ BEGIN
 		,WRQ_ARCHIVE_FLAG WrqArchiveFlag
 		,WRQ_EXPERIMENTAL_FLAG WrqExperimentalFlag
 	FROM TD_MATRIX
+	INNER JOIN TS_LANGUAGE 
+	ON MTR_LNG_ID=LNG_ID
 	INNER JOIN TD_RELEASE
 		ON RLS_ID = MTR_RLS_ID
 			AND RLS_DELETE_FLAG = 0
@@ -94,6 +137,12 @@ BEGIN
 	ON WSG_WRS_ID=WRS_ID 
 	LEFT JOIN TS_SIGNOFF 
 	ON WSG_SGN_ID=SGN_ID 
+	LEFT JOIN TD_PRODUCT_LANGUAGE 
+	ON PLG_PRC_ID=PRC_ID
+	AND PLG_LNG_ID=LNG_ID 
+	LEFT JOIN TD_SUBJECT_LANGUAGE 
+	ON SLG_SBJ_ID =SBJ_ID
+	AND SLG_LNG_ID=LNG_ID
 	WHERE MTR_DELETE_FLAG = 0
 		AND (
 			@RlsCode IS NULL
@@ -103,6 +152,7 @@ BEGIN
 			@RlsID IS NULL
 			OR @RlsID = RLS_ID
 			)
+		AND (LNG_ISO_CODE=@LngIsoCode )
 
 	GROUP BY MTR_CODE
 		,RLS_CODE
@@ -135,6 +185,8 @@ BEGIN
 		,WRQ_RESERVATION_FLAG 
 		,WRQ_ARCHIVE_FLAG 
 		,WRQ_EXPERIMENTAL_FLAG 
+		,PLG_VALUE 
+		,SLG_VALUE 
 END
 GO
 
