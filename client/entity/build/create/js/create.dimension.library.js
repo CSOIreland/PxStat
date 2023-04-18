@@ -1183,7 +1183,8 @@ app.build.create.dimension.callback.drawSearchClassifications = function (search
                         if (row.ClsGeoUrl) {
                             var truncatedUrl = $.trim(row.ClsGeoUrl).substring(0, 20)
                                 .trim(this) + "...";
-                            return app.library.html.link.geoJson({ "gmp-code": row.GmpCode }, truncatedUrl, app.label.static["view-map"]);
+                            var gmpCode = row.ClsGeoUrl.substr(row.ClsGeoUrl.lastIndexOf('/') + 1)
+                            return app.library.html.link.geoJson({ "gmp-code": gmpCode }, truncatedUrl, app.label.static["view-map"]);
                         }
                         else {
                             return null
@@ -1696,7 +1697,6 @@ app.build.create.dimension.addPeriodsManual = function () {
     }
 
     //valid inputs, continue
-    // if (app.build.create.dimension.periodsManualValid) {
     var codes = [];
     var values = [];
     //add new periods to array
@@ -1710,7 +1710,6 @@ app.build.create.dimension.addPeriodsManual = function () {
         return;
     }
 
-
     $.each(app.build.create.initiate.data.Dimension, function (index, dimension) {
         if (dimension.LngIsoCode == lngIsoCode) {
             $.each(codes, function (index, code) {
@@ -1719,13 +1718,16 @@ app.build.create.dimension.addPeriodsManual = function () {
                     PrdValue: values[index]
                 });
             });
+            //sort periods
+            dimension.Frequency.Period.sort(function (a, b) {
+                return b.PrdCode - a.PrdCode
+            });
         }
     });
     $("#build-create-upload-periods").find("[name=upload-periods-errors]").empty();
     $("#build-create-upload-periods").find("[name=upload-periods-errors-card]").hide();
     app.build.create.dimension.drawPeriods(lngIsoCode);
     $("#build-create-new-periods").modal("hide");
-
 };
 
 app.build.create.dimension.addPeriodsUpload = function () {
@@ -1941,10 +1943,6 @@ app.build.create.dimension.drawPeriods = function (lngIsoCode) {
             data = $.extend(true, [], dimension.Frequency.Period);
         }
     });
-    //sort descending 
-    data.sort(function (a, b) {
-        return b.PrdCode - a.PrdCode
-    });
 
     var table = $("#build-create-dimension-accordion-" + lngIsoCode).find("[name=periods-added-table]");
     if ($.fn.DataTable.isDataTable(table)) {
@@ -1977,7 +1975,8 @@ app.build.create.dimension.drawPeriods = function (lngIsoCode) {
             drawCallback: function (settings) {
                 app.build.create.dimension.drawCallbackDrawPeriods(table, lngIsoCode);
             },
-
+            //Translate labels language
+            language: app.label.plugin.datatable
         };
 
         $(table).DataTable($.extend(true, {}, app.config.plugin.datatable, localOptions)).on('responsive-display', function (e, datatable, row, showHide, update) {
@@ -2238,7 +2237,7 @@ app.build.create.dimension.buildDataObject = function () {
             }
         }
 
-        //check that period codes for are the same for all languages
+        //check that period codes are the same for all languages
         if (!errors.length) {
             var defaultLngPeriodCodes = [];
             //get default language codes

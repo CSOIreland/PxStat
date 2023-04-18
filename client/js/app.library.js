@@ -141,6 +141,27 @@ app.library.html.parseDynamicLabel = function (keyword, params) {
 };
 
 /**
+ * / Parse all Dynamic popover in the DOM
+ */
+app.library.html.parseDynamicPopover = function (element, keyword, params) {
+  // Get the keyword from the attribute value
+  var keyword = $(element).attr("label-popover-dynamic");
+  // If the Keyword exists in the Dictionary
+  if (app.label.help[keyword]) {
+    // If the data-original-title attribute exists
+    $(element).attr("data-content", app.label.help[keyword].sprintf(params));
+  } else {
+    $(element).attr("data-content", keyword);
+  }
+
+  $(element).popover({
+    html: true
+  });
+
+  $(element).removeAttr("label-popover-dynamic");
+};
+
+/**
  * Generate an HTML boolean element
  * @param {*} bool
  * @param {*} showColor
@@ -291,7 +312,8 @@ app.library.html.parseBbCode = function (bbCode) {
 
   for (var tag in tags) {
     var regTag = tag.replace(/[\[\]]/g, '\\$&');
-    var regExp = new RegExp(regTag, 'gi');
+    //add s modifier to include newlines
+    var regExp = new RegExp(regTag, 'gis');
 
     bbCode = bbCode.replace(regExp, tags[tag]);
   }
@@ -640,9 +662,10 @@ app.library.utility.arrayHasDuplicate = function (items) {
 /**
  * Download a dynamic resource
  */
-app.library.utility.download = function (fileName, fileData, fileExtension, mimeType, isBase64) {
+app.library.utility.download = function (fileName, fileData, fileExtension, mimeType, isBase64, isHtmlEncoding) {
   mimeType = mimeType || null;
   isBase64 = isBase64 || false;
+  isHtmlEncoding = isHtmlEncoding || false;
 
   if (isBase64) {
     // split by the ;base64, definition
@@ -653,6 +676,13 @@ app.library.utility.download = function (fileName, fileData, fileExtension, mime
     fileData = fileData.s2ab();
     // remove the data: definition
     mimeType = dataStruct[0].substring(5);
+  }
+  else if (isHtmlEncoding) {
+    //prepend <meta charset="UTF-16"> to fileData
+    var metaCharset = $("<meta>", {
+      charset: "UTF-16"
+    }).get(0).outerHTML
+    fileData = metaCharset + fileData;
   }
 
   var blob = new Blob([fileData], { type: mimeType });

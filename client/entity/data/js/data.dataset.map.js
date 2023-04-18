@@ -17,7 +17,7 @@ $(document).ready(function () {
     };
 
     new ClipboardJS("#data-dataset-map-accordion-api [name=copy-api-info], #data-dataset-map-accordion-api [name=copy-api-object]");
-    $('#data-dataset-map-accordion-collapse-widget [name=auto-update],#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders]').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-map-accordion-collapse-widget [name=auto-update],#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=link-to-wip], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -57,7 +57,7 @@ $(document).ready(function () {
 
     $("#data-dataset-map-accordion [name=download-snippet]").once("click", function () {
         // Download the snippet file
-        app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-dataset-map-accordion-snippet-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML);
+        app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-dataset-map-accordion-snippet-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML, false, true);
     });
 
     //format advanced options
@@ -112,6 +112,18 @@ $(document).ready(function () {
         }
     });
 
+    $("#data-dataset-map-accordion-collapse-widget [name=link-to-wip]").once("change", function () {
+        app.data.dataset.map.renderSnippet();
+        if ($(this).is(':checked')) {
+            //disable download HTML button as this won't work with private api due to CORS rules
+            $("#data-dataset-map-accordion").find("[name=download-snippet]").prop('disabled', true);
+        }
+        else {
+            //disable download HTML button as this won't work with private api due to CORS rules
+            $("#data-dataset-map-accordion").find("[name=download-snippet]").prop('disabled', false);
+        }
+    });
+
     $("#data-dataset-map-nav-content").find("[name=save-query]").once("click", function () {
         //check that we have a user to save the table against
         if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess || app.navigation.user.isSubscriberAccess) {
@@ -133,4 +145,6 @@ $(document).ready(function () {
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
+    app.library.html.parseDynamicPopover("#data-dataset-map-accordion-collapse-widget [label-popover-dynamic=link-to-wip]", "link-to-wip", [app.config.corsDomain]);
+
 });

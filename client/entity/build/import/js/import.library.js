@@ -342,6 +342,7 @@ app.build.import.callback.createOnSuccess = function (data) {
     } else {
         // Duplicate found, prompt to complete
         api.modal.confirm(data, app.build.import.ajax.create, true);
+        $("#build-import-container").find("[name=validate]").prop("disabled", true);
     }
 };
 

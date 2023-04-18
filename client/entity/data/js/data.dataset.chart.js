@@ -29,7 +29,15 @@ $(document).ready(function () {
         if (!$("#data-dataset-chart-accordion-series-collapse [name=series-tabs] li").length) {
             $("#data-dataset-chart-accordion-series-collapse").find("[name=add-series]").trigger("click");
         }
-        $("#data-dataset-chart-accordion [name=view-chart]").prop("disabled", false);
+        //check for pyramid and number of series before enabling
+
+        if ($("#data-dataset-chart-properties").find("[name=type]").val() == "pyramid"
+            && $("#data-dataset-chart-accordion-series-collapse [name=series-tabs] li").length != 2) {
+            $("#data-dataset-chart-accordion [name=view-chart]").prop("disabled", true);
+        }
+        else {
+            $("#data-dataset-chart-accordion [name=view-chart]").prop("disabled", false);
+        }
     });
 
     //format advanced options
@@ -37,7 +45,7 @@ $(document).ready(function () {
 
     $("#data-dataset-chart-snippet-code [name=download-snippet]").once("click", function () {
         // Download the snippet file
-        app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-pxwidget-snippet-chart-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML);
+        app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-pxwidget-snippet-chart-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML, false, true);
     });
 
     $("#data-dataset-chart-snippet-code [name=custom-config]").val(JSON.stringify({ "options": {} }));
@@ -65,7 +73,7 @@ $(document).ready(function () {
         $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
     });
 
-    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update],#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale],#data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle({
+    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update],#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=link-to-wip], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale],#data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -108,6 +116,11 @@ $(document).ready(function () {
     $("#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link]").once("change", function () {
         app.data.dataset.chart.renderSnippet();
     });
+
+    $("#data-dataset-chart-snippet-code [name=link-to-wip]").once("change", function () {
+        app.data.dataset.chart.renderSnippet();
+    });
+
 
     $("#data-dataset-chart-snippet-code [name=include-title]").once("change", function () {
         app.data.dataset.chart.renderSnippet();
@@ -163,4 +176,5 @@ $(document).ready(function () {
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
+    app.library.html.parseDynamicPopover("#data-dataset-chart-snippet-code [label-popover-dynamic=link-to-wip]", "link-to-wip", [app.config.corsdDomain]);
 });

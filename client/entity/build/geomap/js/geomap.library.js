@@ -231,6 +231,16 @@ app.geomap.drawExtraInfo = function (data) {
 
 
 };
+
+app.geomap.ajax.readLayers = function (params) {
+    $("#map-modal-add").find("[name=glr-code]").prop('disabled', true);
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Data.GeoLayer_API.Read",
+        {},
+        params.callback,
+        params.idn);
+};
 //#endregion read
 
 //#region import
@@ -378,30 +388,19 @@ app.geomap.callback.readLanguage = function (data) {
             }
         });
     };
-}
-
-app.geomap.ajax.readLayers = function () {
-    $("#map-modal-add").find("[name=glr-code]").prop('disabled', true);
-    api.ajax.jsonrpc.request(
-        app.config.url.api.jsonrpc.private,
-        "PxStat.Data.GeoLayer_API.Read",
-        {},
-        "app.geomap.callback.readLayers");
 };
 
-app.geomap.callback.readLayers = function (data) {
+app.geomap.callback.readLayersAdd = function (data) {
     $("#map-modal-add").find("[name=glr-code]").empty();
-
-    $("#map-modal-add").find("[name=glr-code]").append($("<option>", {
-        "text": app.label.static["select-uppercase"],
-        "disabled": "disabled",
-        "selected": "selected"
-    }));
-    $.each(data, function (key, value) {
-        $("#map-modal-add").find("[name=glr-code]").append($("<option>", {
-            "value": value.GlrCode,
-            "text": value.GlrName
-        }));
+    // Load select2
+    $("#map-modal-add").find("[name=glr-code]").empty().append($("<option>")).select2({
+        dropdownParent: $('#map-modal-add').find("[name=set-details-card]"),
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.geomap.mapData(data),
+        sorter: data => data.sort((a, b) => a.text.localeCompare(b.text))
     });
 
     $("#map-modal-add").find("[name=glr-code]").prop('disabled', false);
@@ -831,7 +830,8 @@ app.geomap.modal.addMapReset = function () {
     $("#map-modal-add").find("[name=view-map]").prop('disabled', true);
     $("#map-modal-add").find("button[type=submit]").prop('disabled', true);
     $("#map-modal-add").find("[name=set-properties]").prop('disabled', false);
-    $("#map-modal-add").find("[name=simplify-range-value]").text("0")
+    $("#map-modal-add").find("[name=simplify-range-value]").text("0");
+    $("#map-modal-add").find("[name=glr-code]").val(null).trigger('change');
 
     $("#map-modal-add form").trigger("reset");
 
@@ -976,7 +976,40 @@ app.geomap.modal.updateMap = function (data) {
     $("#map-modal-update").find("[name=gmp-name]").val(data.GmpName);
     var tinyMceDescription = $("#map-modal-update").find("[name=gmp-description]").attr("id");
     tinymce.get(tinyMceDescription).setContent(data.GmpDescription);
+    //fill layer dropdown
+    app.geomap.ajax.readLayers(
+        {
+            "idn": data.GlrCode,
+            "callback": "app.geomap.callback.readLayersUpdate"
+        }
+    );
     $("#map-modal-update").modal("show");
+};
+
+
+app.geomap.callback.readLayersUpdate = function (data, idn) {
+    // Load select2
+    $("#map-modal-update").find("[name=glr-code]").empty().append($("<option>")).select2({
+        dropdownParent: $('#map-modal-update'),
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.geomap.mapData(data),
+        sorter: data => data.sort((a, b) => a.text.localeCompare(b.text))
+    });
+
+    // Enable and Focus Search input
+    $("#map-modal-update").find("[name=glr-code]").prop('disabled', false);
+
+    $("#map-modal-update").find("[name=glr-code]").val(idn).trigger("change").trigger({
+        type: 'select2:select',
+        params: {
+            data: $("#map-modal-update").find("[name=glr-code]").select2('data')[0]
+        }
+    });
+
+    $("#map-modal-update").find("[name=submit]").prop('disabled', false);
 };
 
 app.geomap.validation.updateMap = function () {
@@ -986,6 +1019,9 @@ app.geomap.validation.updateMap = function () {
         },
         ignore: [],
         rules: {
+            "glr-code": {
+                required: true
+            },
             "gmp-name": {
                 required: true
             },
@@ -1015,6 +1051,7 @@ app.geomap.ajax.updateMap = function () {
             "GmpCode": $("#map-modal-update").find("[name=idn]").val(),
             "GmpName": gmpName,
             "GmpDescription": $("#map-modal-update").find("[name=gmp-description]").val().trim(),
+            "GlrCode": $("#map-modal-update").find("[name=glr-code]").val()
         },
         "app.geomap.callback.updateMap",
         gmpName);
@@ -1030,6 +1067,18 @@ app.geomap.callback.updateMap = function (data, gmpName) {
 
     //Refresh the table
     app.geomap.ajax.read();
+    app.geomap.panel.ajax.readLayers();
 };
 
 //#endregion update map
+
+//#region map geo layer data
+app.geomap.mapData = function (dataAPI) {
+    $.each(dataAPI, function (i, item) {
+        // Create ID and NAME to the list
+        dataAPI[i].id = item.GlrCode;
+        dataAPI[i].text = item.GlrName;
+    });
+    return dataAPI;
+};
+//#endregion

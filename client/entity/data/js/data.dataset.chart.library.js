@@ -21,6 +21,7 @@ app.data.dataset.chart.snippetConfig = {
 app.data.dataset.chart.template = {};
 app.data.dataset.chart.template.wrapper = {
     "autoupdate": null,
+    "matrix": null,
     "type": null,
     "copyright": false,
     "link": null,
@@ -31,7 +32,8 @@ app.data.dataset.chart.template.wrapper = {
         "datasets": [],
         "null": app.config.entity.data.datatable.null
     },
-    "options": app.config.plugin.chartJs.chart.options
+    "options": app.config.plugin.chartJs.chart.options,
+    "datasetLabels": []
 };
 
 app.data.dataset.chart.template.metadata = {
@@ -192,6 +194,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "horizontalBar":
+            case "pyramid":
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=series-toggles]").show();
                 $("#data-dataset-chart-accordion-xaxis-collapse [name=x-axis-label-row]").show();
                 $("#data-dataset-chart-accordion-options-collapse").find("[name=series-stacked]").show();
@@ -798,6 +801,14 @@ app.data.dataset.chart.addSeries = function () {
     }
 
     $("#data-dataset-chart-accordion [name=view-chart]").prop("disabled", false);
+
+    //for pyramid charts, limit the number of series to 2
+    if (
+        $("#data-dataset-chart-properties").find("[name=type]").val() == "pyramid"
+        && $("#data-dataset-chart-accordion-series-collapse [name=series-tabs] li").length == 2
+    ) {
+        $("#data-dataset-chart-accordion-series-collapse").find("[name=add-series]").prop("disabled", true);
+    }
 };
 
 app.data.dataset.chart.dualAxis = function () {
@@ -868,12 +879,27 @@ app.data.dataset.chart.deleteSeries = function (series) {
     }
 
     //get number of series remaining to enable/disable view chart button
-    if (!$("#data-dataset-chart-accordion-series-collapse").find("[name=tab-content]").length) {
+    if ($("#data-dataset-chart-properties").find("[name=type]").val() == "pyramid") {
         $("#data-dataset-chart-accordion [name=view-chart]").prop("disabled", true);
     }
+    else if (!$("#data-dataset-chart-accordion-series-collapse").find("[name=tab-content]").length) {
+        $("#data-dataset-chart-accordion [name=view-chart]").prop("disabled", true);
+    }
+
     else {
         $("#data-dataset-chart-accordion [name=view-chart]").prop("disabled", false);
     }
+
+    //for pyramid charts, limit the number of series to 2
+    if (
+        $("#data-dataset-chart-properties").find("[name=type]").val() == "pyramid"
+        && $("#data-dataset-chart-accordion-series-collapse [name=series-tabs] li").length < 2
+    ) {
+        $("#data-dataset-chart-accordion-series-collapse").find("[name=add-series]").prop("disabled", false);
+    }
+
+
+
 }
 
 app.data.dataset.chart.formatJson = function () {
@@ -897,6 +923,14 @@ app.data.dataset.chart.formatJson = function () {
 
 //#region build config
 app.data.dataset.chart.buildChartConfig = function (scroll) {
+    //show link-to-wip-wrapper toggle if modal
+
+    if (app.data.RlsCode) {
+        if (!app.data.isLive) {
+            $("#data-dataset-chart-snippet-code").find("[name=link-to-wip-wrapper]").show();
+        }
+    }
+
     $('#data-dataset-chart-errors').find("[name=errors]").empty();
     $('#data-dataset-chart-errors').hide();
     $("#data-dataset-chart-accordion-series-collapse canvas").remove();
@@ -1066,7 +1100,6 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
             case "pie":
             case "doughnut":
             case "polarArea":
-            case "radar":
                 app.data.dataset.chart.configuration.options.title.text.push($(this).find("[name=name]").val().trim());
                 break;
             case "mixed":
@@ -1076,6 +1109,8 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
                 break;
         }
         thisDataset.label = $(this).find("[name=name]").val().trim();
+        app.data.dataset.chart.configuration.datasetLabels.push($(this).find("[name=name]").val().trim());
+
         if (!thisDataset.label.length) {
             switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
                 case "pie":
@@ -1213,6 +1248,16 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
     }
     if (!errors.length) {
+
+        if (app.data.RlsCode) {
+            if (app.data.isLive) {
+                app.data.dataset.chart.configuration = app.data.dataset.chart.getFluidTime(app.data.dataset.chart.configuration);
+            }
+        }
+        else {
+            app.data.dataset.chart.configuration = app.data.dataset.chart.getFluidTime(app.data.dataset.chart.configuration);
+        }
+
         $("#data-dataset-chart-render, #data-dataset-chart-snippet-code").show();
         pxWidget.draw.init(C_APP_PXWIDGET_TYPE_CHART, "pxwidget-chart", app.data.dataset.chart.configuration, function () {
             // Render the Snippet
@@ -1285,20 +1330,34 @@ app.data.dataset.chart.renderSnippet = function () {
     else {
         config.options.title.text.unshift($("#data-dataset-chart-snippet-code").find("[name=title-value]").val().trim());
     }
-    if ($("#data-dataset-chart-snippet-code").find("[name=auto-update]").is(':checked')) {
+
+    if ($("#data-dataset-chart-snippet-code").find("[name=link-to-wip]").is(':checked')) {
         config.metadata.api.response = {};
+        config.matrix = app.data.MtrCode;
+
         $.each(config.data.datasets, function (key, value) {
             value.api.response = {};
             value.unit = [];
             value.decimal = [];
         });
-    } else {
-        config.metadata.api.query = {};
-        $.each(config.data.datasets, function (key, value) {
-            value.api.query = {};
-            value.decimal = [];
-        });
 
+    }
+    else {
+        if ($("#data-dataset-chart-snippet-code").find("[name=auto-update]").is(':checked')) {
+            config.metadata.api.response = {};
+            $.each(config.data.datasets, function (key, value) {
+                value.api.response = {};
+                value.unit = [];
+                value.decimal = [];
+            });
+        } else {
+            config.metadata.api.query = {};
+            $.each(config.data.datasets, function (key, value) {
+                value.api.query = {};
+                value.decimal = [];
+            });
+
+        }
     }
 
     //remove date if not live, can be present if prending live
@@ -1320,9 +1379,24 @@ app.data.dataset.chart.renderSnippet = function () {
 
     $("#data-pxwidget-snippet-chart-code").hide().text(snippet.trim()).fadeIn();
     Prism.highlightAll();
+
+    $("#data-dataset-chart-render").find("[name=save-query]").prop('disabled', false);
+    $("#data-dataset-chart-snippet-code").find("[name=copy-snippet-code]").prop('disabled', false);
+    $("#data-dataset-chart-render").find("[name=download-chart]").removeClass('disabled');
+
+    if ($("#data-dataset-chart-snippet-code [name=link-to-wip]").is(':checked')) {
+        //disable download HTML button as this won't work with private api due to CORS rules
+        $("#data-dataset-chart-snippet-code").find("[name=download-snippet]").prop('disabled', true);
+    }
+    else {
+        //disable download HTML button as this won't work with private api due to CORS rules
+        $("#data-dataset-chart-snippet-code").find("[name=download-snippet]").prop('disabled', false);
+    }
+
 };
 
 app.data.dataset.chart.getFluidTime = function (config) {
+    config.metadata.fluidTime = [];
     if (config.metadata.xAxis.role == "time") {
 
         var dimensionSize = app.data.dataset.metadata.jsonStat.Dimension(app.data.dataset.metadata.timeDimensionCode).id.length;
@@ -1348,6 +1422,7 @@ app.data.dataset.chart.getFluidTime = function (config) {
     else {
         //timepoint must be in each series
         $.each(config.data.datasets, function (index, value) {
+            value.fluidTime = [];
             var timeCodeSelected = value.api.query.data.params.dimension[app.data.dataset.metadata.timeDimensionCode].category.index[0];
             var dimensionSize = app.data.dataset.metadata.jsonStat.Dimension(app.data.dataset.metadata.timeDimensionCode).id.length;
             //get position of variables selected releative to the end of the array as new time points are added to the end of the array
@@ -1400,11 +1475,11 @@ app.data.dataset.chart.resetAll = function () {
     $("#data-dataset-chart-accordion-series-collapse [name=dual-axis]").bootstrapToggle("off");
     $("#data-dataset-chart-accordion-options-collapse [name=stacked]").bootstrapToggle("off");
     //need to reset options, unbind listeners first
-    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link],#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").unbind("change");
+    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=link-to-wip], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link],#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").unbind("change");
     //reset toggles
     $("#data-dataset-chart-snippet-code [name=fluid-time]").bootstrapToggle('enable');
     $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle("on");
-
+    $("#data-dataset-chart-snippet-code [name=link-to-wip]").bootstrapToggle("off");
     //reset listeners
     if (app.data.RlsCode) {
         if (!app.data.isLive) {
@@ -1415,7 +1490,7 @@ app.data.dataset.chart.resetAll = function () {
         }
     }
 
-    $("#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link]").once("change", function () {
+    $("#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=link-to-wip], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link]").once("change", function () {
         app.data.dataset.chart.renderSnippet();
     });
 

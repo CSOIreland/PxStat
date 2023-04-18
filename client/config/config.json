@@ -1,5 +1,6 @@
 {
-	"organisation": "ORGANIISATION NAME",
+	"organisation": "ORGANIISATION NAME",		
+	"corsDomain": "domain.extension",
 	"url": {
 		"configuration": {
 			"global": "https://ws.domain.extension/public/Resources/Config/config.global.json",

@@ -141,6 +141,9 @@ app.build.create.import.callback.read = function (data) {
 };
 
 app.build.create.import.callback.read.drawProperties = function () {
+    //call this to clear any errors and reset the validation
+    app.build.create.initiate.validation.setup();
+
     //get matrix code
     var defaultData = app.build.create.file.import.content.JsonStat[0];
 

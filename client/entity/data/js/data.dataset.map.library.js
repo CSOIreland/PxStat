@@ -18,12 +18,14 @@ app.data.dataset.map.saveQuery.ajax = {};
 app.data.dataset.map.saveQuery.callback = {};
 app.data.dataset.map.template.wrapper = {
     "autoupdate": true,
+    "matrix": null,
     "mapDimension": null,
     "copyright": true,
     "link": null,
     "title": null,
     "borders": true,
     "colorScale": "red",
+    "tooltipTitle": null,
     "fullScreen": {
         "title": app.label.static["view-fullscreen"],
         "titleCancel": app.label.static["exit-fullscreen"]
@@ -240,6 +242,14 @@ app.data.dataset.map.buildMapConfig = function () {
 }
 
 app.data.dataset.map.renderSnippet = function () {
+
+    if (app.data.RlsCode) {
+        if (!app.data.isLive) {
+            $("#data-dataset-map-accordion-collapse-widget").find("[name=link-to-wip-wrapper]").show();
+        }
+    }
+
+
     var snippet = app.config.entity.data.snippet;
     var config = $.extend(true, {}, app.data.dataset.map.snippetConfig);
     app.data.dataset.map.saveQuery.configuration = {};
@@ -248,16 +258,38 @@ app.data.dataset.map.renderSnippet = function () {
     app.data.dataset.map.saveQuery.configuration.link = app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode;
     app.data.dataset.map.saveQuery.configuration.copyright = true;
 
+
     config.autoupdate = $("#data-dataset-map-accordion-collapse-widget").find("[name=auto-update]").is(':checked');
     config.link = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
     config.copyright = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-copyright]").is(':checked');
     config.colorScale = $("#data-dataset-map-accordion-collapse-widget").find("[name=colour-scale]").val();
 
-    if ($("#data-dataset-map-accordion-collapse-widget").find("[name=fluid-time]").is(':checked')) {
-        config = app.data.dataset.map.getFluidTime(config);
+
+    if ($("#data-dataset-map-accordion-collapse-widget").find("[name=link-to-wip]").is(':checked')) {
+        config.matrix = app.data.MtrCode;
+        $.each(config.data.datasets, function (key, value) {
+            value.api.response = {};
+        });
+        config.metadata.api.query = {};
     }
     else {
-        config.metadata.api.query = {};
+        if ($("#data-dataset-map-accordion-collapse-widget").find("[name=fluid-time]").is(':checked')) {
+            config = app.data.dataset.map.getFluidTime(config);
+        }
+        else {
+            config.metadata.api.query = {};
+        }
+
+        if ($("#data-dataset-map-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {
+            $.each(config.data.datasets, function (key, value) {
+                value.api.response = {};
+            });
+
+        } else {
+            $.each(config.data.datasets, function (key, value) {
+                value.api.query = {};
+            });
+        }
     }
 
     if ($("#data-dataset-map-accordion-collapse-widget").find("[name=include-title]").is(':checked')) {
@@ -265,17 +297,6 @@ app.data.dataset.map.renderSnippet = function () {
     }
 
     config.borders = $("#data-dataset-map-accordion-collapse-widget").find("[name=include-borders]").is(':checked');
-
-    if ($("#data-dataset-map-accordion-collapse-widget").find("[name=auto-update]").is(':checked')) {
-        $.each(config.data.datasets, function (key, value) {
-            value.api.response = {};
-        });
-
-    } else {
-        $.each(config.data.datasets, function (key, value) {
-            value.api.query = {};
-        });
-    }
 
     //remove date if not live, can be present if prending live
     if (!app.data.isLive) {
@@ -295,6 +316,24 @@ app.data.dataset.map.renderSnippet = function () {
 
     $("#data-dataset-map-accordion-snippet-code").hide().text(snippet.trim()).fadeIn();
     Prism.highlightAll();
+
+    //Add map disclainer if exists
+    var disclaimer = "";
+    $.each(app.config.plugin.leaflet.baseMap.esri, function (index, value) {
+        if (value.disclaimer.length) {
+            if (index > 0) {
+                disclaimer += "<br>"
+            }
+            disclaimer += value.disclaimer.trim();
+        }
+    });
+    if (disclaimer.length) {
+        $("#data-dataset-map-accordion-collapse-widget").find("[name=map-discalimer]").find("[data-toggle=popover]").popover({
+            "content": disclaimer,
+            "html": true
+        });
+        $("#data-dataset-map-accordion-collapse-widget").find("[name=map-discalimer]").show();
+    }
 };
 
 app.data.dataset.map.getFluidTime = function (config) {

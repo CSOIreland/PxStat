@@ -1,6 +1,18 @@
 /*******************************************************************************
 Custom JS application specific
 *******************************************************************************/
+//Load dynamically the ISOGRAM before document ready to avoid race conditions
+if (typeof pxWidget === "undefined" || C_APP_URL_PXWIDGET_ISOGRAM.search(pxWidget.root) == -1) {
+    jQuery.ajax({
+        "url": C_APP_URL_PXWIDGET_ISOGRAM,
+        "dataType": "script",
+        "async": false,
+        "error": function (jqXHR, textStatus, errorThrown) {
+            api.modal.exception(app.label.static["api-ajax-exception"]);
+        }
+    });
+};
+
 $(document).ready(function () {
     app.navigation.setLayout(true);
     app.navigation.setBreadcrumb([]);

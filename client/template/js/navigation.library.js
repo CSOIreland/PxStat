@@ -220,6 +220,8 @@ app.navigation.access.callback.ReadCurrent = function () {
   }
 
   app.navigation.access.renderMenu(app.navigation.user.prvCode);
+  // Set language dropdown
+  app.navigation.language.ajax.read(app.navigation.user.prvCode);
 };
 
 /**
@@ -554,12 +556,12 @@ app.navigation.user.callback.read = function (data) {
 /**
 * Get languages
 */
-app.navigation.language.ajax.read = function () {
+app.navigation.language.ajax.read = function (prvCode) {
   api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.public,
     "PxStat.System.Settings.Language_API.Read",
     { LngIsoCode: null },
     "app.navigation.language.callback.read",
-    null,
+    prvCode,
     null,
     null,
     { async: false });
@@ -569,7 +571,8 @@ app.navigation.language.ajax.read = function () {
 * Fill dropdown for Language
 * @param {*} data 
 */
-app.navigation.language.callback.read = function (data) {
+app.navigation.language.callback.read = function (data, prvCode) {
+  prvCode = prvCode || null;
   //if only one language, no need for language dropdown
   if (data.length == 1) {
     //add rounded corners to buttons
@@ -577,67 +580,131 @@ app.navigation.language.callback.read = function (data) {
     $("#nav-language").remove();
     return
   }
+
+  if ($("#nav-language").find("[name=dropdown] a[code=" + app.label.language.iso.code + "]").length
+    && !Boolean($("#nav-language").find("[name=dropdown] a[code=" + app.label.language.iso.code + "]").attr("exists"))) {
+    var clickedLanguageExists = false;
+  }
+  else {
+    var clickedLanguageExists = true;
+  }
+
   // Empty dropdown
   $("#nav-language").find("[name=dropdown]").empty();
 
   // Populate the selection and the dropdown with alternative options
-  $.each(data, function (_key, _entry) {
-    if (app.label.language.iso.code == this.LngIsoCode) {
-      $("#nav-language").find("[name=selection]").text(this.LngIsoName);
+  $.each(data, function (key, value) {
+
+    if (app.label.language.iso.code == value.LngIsoCode) {
+
+      if (!clickedLanguageExists) {
+        $("#nav-language").find("[name=selection]").addClass("bg-danger")
+      }
+
+      $("#nav-language").find("[name=selection]").text(value.LngIsoName);
     } else {
       $("#nav-language").find("[name=dropdown]").append(
         $("<a>", {
           href: "#",
           class: "dropdown-item",
-          code: this.LngIsoCode,
-          name: this.LngIsoName,
-          text: this.LngIsoName
+          code: value.LngIsoCode,
+          name: value.LngIsoName,
+          text: value.LngIsoName,
+          style: "display:none;"
         }).get(0).outerHTML);
     }
+
+
+    //check for client language
+    $.getJSON(C_APP_URL_PXLANGUAGEPLUGINS + value.LngIsoCode + ".json")
+      .done(function (json) {
+        //fetch server language
+        app.navigation.language.ajax.checkServer(
+          {
+            "lngIsoCode": value.LngIsoCode,
+            "lngIsoName": value.LngIsoName,
+            "prvCode": prvCode
+
+          }
+        )
+      })
+      .fail(function (jqxhr, textStatus, error) {
+        //if power user or admin, 
+        if (prvCode == C_APP_PRIVILEGE_ADMINISTRATOR || prvCode == C_APP_PRIVILEGE_POWER_USER) {
+          $("#nav-language").find("[name=dropdown] a[code=" + value.LngIsoCode + "]").addClass("text-danger").show();
+        }
+        else {
+          $("#nav-language").find("[name=dropdown] a[code=" + value.LngIsoCode + "]").remove();
+        }
+      });
   });
+
 
   //Add event to language dropdown menu
   $("#nav-language").find("[name=dropdown] a").once('click', function () {
+    //overriding language object
+    app.label.language.iso.code = $(this).attr('code');
+    app.label.language.iso.name = $(this).attr('name');
 
-    var languageSelected = {
-      "code": $(this).attr('code'),
-      "name": $(this).attr('name')
-    };
-
-    //first check that dictionary exists to avoid endless loop
-    $.getJSON("internationalisation/label/" + languageSelected.code + ".json", function (result) {
-      //dictionary exists, proceed
+    if ($(this).attr('exists') && $(this).attr('exists').length) {
+      //set cookie language
+      Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie.persistent);
+      //switch between user types
       if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
         //local or AD user
         //update account via api
-        app.navigation.language.ajax.updateUserLanguage(languageSelected);
+        app.navigation.language.ajax.updateUserLanguage(app.label.language.iso);
       }
       else if (app.auth.firebase.user.details) {
-        app.navigation.language.ajax.updateSubscriberLanguage(languageSelected);
+        //update account via api for subscriber user
+        app.navigation.language.ajax.updateSubscriberLanguage(app.label.language.iso);
       }
-
       else {
-        //anonymous user
-        // Set the selected language
-        app.label.language.iso.code = languageSelected.code;
-        app.label.language.iso.name = languageSelected.name;
-
-        // Update Document Language
-        $("html").attr("lang", app.label.language.iso.code);
-
-        Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie.persistent);
-
+        //anonymous user 
         // Prevent backbutton check
         app.plugin.backbutton.check = false;
         // Force page reload
         window.location.href = window.location.pathname;
       }
-    }).fail(function () {
-      api.modal.error(app.library.html.parseDynamicLabel("language-change-dictionary-not-found", [languageSelected.name]))
-    });
-
-
+    }
+    else {
+      app.navigation.language.ajax.read(prvCode);
+    }
   });
+};
+
+
+app.navigation.language.ajax.checkServer = function (params) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.public,
+    "PxStat.System.Settings.Language_API.CheckIsLngIsoCode",
+    {
+      "LngIsoCode": params.lngIsoCode
+    },
+    "app.navigation.language.callback.checkServer",
+    params,
+    null,
+    null,
+    { async: false }
+  );
+};
+
+app.navigation.language.callback.checkServer = function (data, params) {
+  if (data) {
+    $("#nav-language").find("[name=dropdown] a[code=" + params.lngIsoCode + "]").attr("exists", "true").show();
+  }
+  else {
+    //if power user or admin, 
+    if (params.prvCode == C_APP_PRIVILEGE_ADMINISTRATOR || params.prvCode == C_APP_PRIVILEGE_POWER_USER) {
+      $("#nav-language").find("[name=dropdown] a[code=" + params.lngIsoCode + "]").addClass("text-danger").show();
+      if (app.label.language.iso.code == value.LngIsoCode) {
+        $("#nav-language").find("[name=selection]").addClass("text-danger");
+      }
+    }
+    else {
+      $("#nav-language").find("[name=dropdown] a[code=" + params.lngIsoCode + "]").remove();
+    }
+  }
 };
 
 app.navigation.language.ajax.updateUserLanguage = function (languageSelected) {
@@ -652,16 +719,8 @@ app.navigation.language.ajax.updateUserLanguage = function (languageSelected) {
   );
 };
 
-app.navigation.language.callback.updateUserLanguage = function (data, languageSelected) {
+app.navigation.language.callback.updateUserLanguage = function (data) {
   if (data == C_API_AJAX_SUCCESS) {
-    // Set the selected language
-    app.label.language.iso.code = languageSelected.code;
-    app.label.language.iso.name = languageSelected.name;
-
-    // Update Document Language
-    $("html").attr("lang", languageSelected.code);
-    //update cookie
-    Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie.persistent);
     // Prevent backbutton check
     app.plugin.backbutton.check = false;
     // Force page reload
@@ -693,14 +752,6 @@ app.navigation.language.ajax.updateSubscriberLanguage = function (languageSelect
 
 app.navigation.language.callback.updateSubscriberLanguage = function (data, languageSelected) {
   if (data == C_API_AJAX_SUCCESS) {
-    // Set the selected language
-    app.label.language.iso.code = languageSelected.code;
-    app.label.language.iso.name = languageSelected.name;
-
-    // Update Document Language
-    $("html").attr("lang", languageSelected.code);
-    //update cookie
-    Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie.persistent);
     // Prevent backbutton check
     app.plugin.backbutton.check = false;
     // Force page reload

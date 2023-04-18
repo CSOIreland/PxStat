@@ -10,7 +10,17 @@
                 <input type="hidden" name="idn">
                 <div class="modal-body">
 
-                    <div class="border row mx-0">
+                    <div class="border-top border-right border-left row mx-0">
+                        <div class="bg-default border-right col p-2 text-right font-weight-bold">
+                            <label class="mandatory" for="glr-code" label="geo-layer"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <select class="form-control" name="glr-code" disabled></select>
+                            <span class="serverValidationError text-danger" name="glr-code-error-holder"></span>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-right border-left row mx-0">
                         <div class="bg-default border-right col p-2 text-right font-weight-bold">
                             <label class="mandatory" for="gmp-name" label="name"></label>
                         </div>
@@ -24,7 +34,7 @@
                             <label class="mandatory" for="gmp-description" label="description"></label>
                         </div>
                         <div class="col-8 p-2">
-                            <textarea rows="3" name="gmp-description" class="form-control" maxlength="256"></textarea>
+                            <textarea rows="3" name="gmp-description" class="form-control"></textarea>
                             <span class="serverValidationError text-danger" name="gmp-description-error-holder"></span>
                         </div>
                     </div>
@@ -36,7 +46,7 @@
                             <button type="button" class="btn btn-neutral" data-dismiss="modal">
                                 <i class="far fa-times-circle"></i> <span label="cancel"></span>
                             </button>
-                            <button class="btn btn-primary text-light" type="submit">
+                            <button class="btn btn-primary text-light" name="submit" type="submit" disabled>
                                 <i class="far fa-save"></i> <span label="update"></span>
                             </button>
                         </div>

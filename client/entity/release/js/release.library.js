@@ -6,6 +6,7 @@ Custom JS application specific
 app.release = {};
 app.release.RlsCode = null;
 app.release.RlsCodePrevious = null;
+app.release.LngIsoCodePrevious = [];
 app.release.MtrCode = null;
 app.release.SbjCode = null;
 app.release.PrcCode = null;

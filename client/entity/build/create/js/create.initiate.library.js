@@ -17,7 +17,8 @@ app.build.create.initiate.data = {
     "FrmVersion": null,
     "Dimension": [],
     "Elimination": {},
-    "Map": {}
+    "Map": {},
+    "LngIsoCode": app.label.language.iso.code
 };
 
 //#region Matrix Lookup

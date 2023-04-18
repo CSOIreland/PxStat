@@ -25,7 +25,7 @@ $(document).ready(function () {
         $("#data-dataset-table-result").find("[name=save-query]").remove()
     };
 
-    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time],#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
+    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time], #data-dataset-table-accordion-collapse-widget [name=link-to-wip], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
         on: app.label.static["true"],
         off: app.label.static["false"],
         onstyle: "primary",
@@ -111,4 +111,6 @@ $(document).ready(function () {
     new ClipboardJS("#data-dataset-table-accordion [name=copy-api-info], #data-dataset-table-accordion [name=copy-api-object], #data-dataset-table-accordion [name=copy-snippet-code]");
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
+    app.library.html.parseDynamicPopover("#data-dataset-table-accordion-collapse-widget [label-popover-dynamic=link-to-wip]", "link-to-wip", [app.config.corsDomain]);
+
 });

@@ -4,14 +4,20 @@ Custom JS application specific
 $(document).ready(function () {
 
     $("#release-source").find("[name=compare-release]").once("click", function () {
-
-        if (app.release.fileContent.length > app.config.entity.release.comparison.threshold.soft) {
-            api.modal.confirm(app.label.static["confirm-comparison"], app.release.comparison.render);
+        //first check that the language is available in the previous release
+        if ($.inArray($("#release-source [name=lng-iso-code] option:selected").val(), app.release.LngIsoCodePrevious) != -1) {
+            if (app.release.fileContent.length > app.config.entity.release.comparison.threshold.soft) {
+                api.modal.confirm(app.label.static["confirm-comparison"], app.release.comparison.render);
+            }
+            else {
+                // Run comparison
+                app.release.comparison.render();
+            }
         }
         else {
-            // Run comparison
-            app.release.comparison.render();
+            api.modal.information(app.library.html.parseDynamicLabel("comparison-language-not-available", [$("#release-source [name=lng-iso-code] option:selected").text()]));
         }
+
     });
 
     $("#release-comparison-modal").on('show.bs.modal', function (e) {

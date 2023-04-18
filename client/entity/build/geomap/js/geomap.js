@@ -34,7 +34,15 @@ $(document).ready(function () {
     $("#map-read-container").find("[name=button-add]").once("click", function () {
         app.geomap.validation.addMap();
         app.geomap.ajax.readLanguage();
-        app.geomap.ajax.readLayers();
+        app.geomap.ajax.readLayers(
+            {
+                "idn": null,
+                "callback": "app.geomap.callback.readLayersAdd"
+            }
+        );
+
+
+
         $("#map-modal-add").modal("show");
 
         //need to place this here as the range slider is in the <form> and the trigger reset in the form validation affects the change event

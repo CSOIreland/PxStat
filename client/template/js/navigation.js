@@ -297,7 +297,4 @@ $(document).ready(function () {
     }
     app.library.subscriber.ajax.readCurrent();
   });
-
-  // Set language dropdown
-  app.navigation.language.ajax.read();
 });

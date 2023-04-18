@@ -370,7 +370,7 @@ app.language.validation.create = function () {
     },
     submitHandler: function (form) {
       $(form).sanitiseForm();
-      app.language.ajax.create();
+      app.language.ajax.checkClient();
     }
   }).resetForm();
 };
@@ -378,26 +378,55 @@ app.language.validation.create = function () {
 /**
  * Submit on create modal
  */
-app.language.ajax.create = function () {
+
+app.language.ajax.checkClient = function () {
   var lngIsoCode = $("#language-modal-create").find("[name=lng-iso-code]").val();
-  $.getJSON("internationalisation/label/" + lngIsoCode + ".json", function (result) {
-    //only add language if the dictionary can be found first
-    api.ajax.jsonrpc.request(
-      app.config.url.api.jsonrpc.private,
-      "PxStat.System.Settings.Language_API.Create",
-      {
-        LngIsoCode: lngIsoCode,
-        LngIsoName: $("#language-modal-create").find("[name=lng-iso-name]").val()
-      },
-      "app.language.callback.createOnSuccess",
-      lngIsoCode,
-      "app.language.callback.createOnError",
-      null,
-      { async: false }
-    );
+  //only add language if the dictionary can be found in the language pack first
+  $.getJSON(C_APP_URL_PXLANGUAGEPLUGINS + lngIsoCode + ".json", function (result) {
+    //client side labguage exists
+    app.language.ajax.checkServer();
   }).fail(function () {
-    api.modal.error(app.library.html.parseDynamicLabel("language-dictionary-not-found", [lngIsoCode]))
+    api.modal.confirm(app.library.html.parseDynamicLabel("language-client-dictionary-not-found", [lngIsoCode]), app.language.ajax.checkServer);
   });
+};
+
+
+
+app.language.ajax.checkServer = function () {
+  //next, check that the server side language dll exists
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.System.Settings.Language_API.CheckIsLngIsoCode",
+    {
+      "LngIsoCode": $("#language-modal-create").find("[name=lng-iso-code]").val()
+    },
+    "app.language.callback.checkServer"
+  );
+};
+
+app.language.callback.checkServer = function (data) {
+  if (data) {
+    app.language.ajax.create()
+  }
+  else {
+    api.modal.confirm(app.library.html.parseDynamicLabel("language-server-dictionary-not-found", [$("#language-modal-create").find("[name=lng-iso-code]").val()]), app.language.ajax.create);
+  }
+};
+
+app.language.ajax.create = function () {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.System.Settings.Language_API.Create",
+    {
+      LngIsoCode: $("#language-modal-create").find("[name=lng-iso-code]").val(),
+      LngIsoName: $("#language-modal-create").find("[name=lng-iso-name]").val()
+    },
+    "app.language.callback.createOnSuccess",
+    $("#language-modal-create").find("[name=lng-iso-code]").val(),
+    "app.language.callback.createOnError",
+    null,
+    { async: false }
+  );
 
 };
 

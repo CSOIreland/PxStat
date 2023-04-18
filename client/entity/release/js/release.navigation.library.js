@@ -37,7 +37,9 @@ app.release.navigation.ajax.readSubject = function (SbjCode) {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Subject_API.Read",
-        null,
+        {
+            "LngIsoCode": app.label.language.iso.code
+        },
         "app.release.navigation.callback.readSubject",
         { SbjCode: SbjCode });
 };
@@ -108,7 +110,10 @@ app.release.navigation.ajax.readProduct = function (SbjCode, PrcCode) {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Product_API.Read",
-        { SbjCode: SbjCode },
+        {
+            "SbjCode": SbjCode,
+            "LngIsoCode": app.label.language.iso.code
+        },
         "app.release.navigation.callback.readProduct",
         { PrcCode: PrcCode });
 };
@@ -344,7 +349,9 @@ app.release.navigation.ajax.associationReadSubject = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Subject_API.Read",
-        null,
+        {
+            "LngIsoCode": app.label.language.iso.code
+        },
         "app.release.navigation.callback.associationReadSubject")
 };
 
@@ -399,7 +406,10 @@ app.release.navigation.ajax.associationReadProduct = function (SbjCode) {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.System.Navigation.Product_API.Read",
-        { SbjCode: SbjCode },
+        {
+            "SbjCode": SbjCode,
+            "LngIsoCode": app.label.language.iso.code
+        },
         "app.release.navigation.callback.associationReadProduct",
         SbjCode
     );

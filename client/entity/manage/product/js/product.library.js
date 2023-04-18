@@ -159,7 +159,8 @@ app.product.drawCallbackProduct = function () {
     e.preventDefault();
     var callbackParam = {
       idn: $(this).attr("idn"),
-      "PrcValue": $(this).attr("prc-value")
+      "PrcValue": $(this).attr("prc-value"),
+      "associated": $(this).data("link-type") == "associated" ? true : false
     };
 
     // Ajax read 
@@ -222,7 +223,13 @@ app.product.drawDataTableProduct = function (data) {
         {
           data: null,
           render: function (_data, _type, row) {
-            return app.library.html.link.internal({ idn: row.PrcCode, "prc-value": row.PrcValue }, String(row.MtrCount));
+            return app.library.html.link.internal({ "data-link-type": "table", idn: row.PrcCode, "prc-value": row.PrcValue }, String(row.MtrCount));
+          }
+        },
+        {
+          data: null,
+          render: function (_data, _type, row) {
+            return app.library.html.link.internal({ "data-link-type": "associated", idn: row.PrcCode, "prc-value": row.PrcValue }, String(row.MtrAssociatedCount));
           }
         },
         {
@@ -230,7 +237,7 @@ app.product.drawDataTableProduct = function (data) {
           sorting: false,
           searchable: false,
           render: function (data, type, row) {
-            return app.library.html.deleteButton({ idn: row.PrcCode, "prc-value": row.PrcValue, "sbj-code": row.SbjCode }, row.MtrCount > 0 ? true : false);
+            return app.library.html.deleteButton({ idn: row.PrcCode, "prc-value": row.PrcValue, "sbj-code": row.SbjCode }, (row.MtrCount + row.MtrAssociatedCount) > 0 ? true : false);
           },
           "width": "1%"
         }
@@ -607,7 +614,8 @@ app.product.ajax.readMatrixByProduct = function (callbackParam) {
     "PxStat.Data.Matrix_API.ReadByProduct",
     {
       "PrcCode": callbackParam.idn,
-      "LngIsoCode": app.label.language.iso.code
+      "LngIsoCode": app.label.language.iso.code,
+      "AssociatedOnly": callbackParam.associated
     },
     "app.product.callback.readMatrixByProduct",
     callbackParam);
@@ -696,7 +704,12 @@ app.product.validation.create = function () {
     },
     rules: {
       "prc-code": {
-        required: true
+        required: true,
+        normalizer: function (value) {
+          value = value.sanitise(C_SANITISE_UPPERCASE, C_APP_REGEX_ALPHANUMERIC);
+          $(this).val(value);
+          return value;
+        }
       },
       "prc-value": {
         required: true
@@ -722,7 +735,12 @@ app.product.validation.update = function () {
     },
     rules: {
       "prc-code": {
-        required: true
+        required: true,
+        normalizer: function (value) {
+          value = value.sanitise(C_SANITISE_UPPERCASE, C_APP_REGEX_ALPHANUMERIC);
+          $(this).val(value);
+          return value;
+        }
       },
       "prc-value": {
         required: true

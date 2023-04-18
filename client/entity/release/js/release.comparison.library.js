@@ -61,11 +61,13 @@ app.release.comparison.ajax.readRlsCodePrevious = function () {
  */
 app.release.comparison.callback.readRlsCodePrevious = function (data) {
     if (data) {
-        app.release.RlsCodePrevious = data;
+        app.release.RlsCodePrevious = data.RlsCode;
+        app.release.LngIsoCodePrevious = data.LngIsoCode;
         $("#release-source").find("[name=compare-release]").prop("disabled", false);
     }
     else {
         app.release.RlsCodePrevious = null;
+        app.release.LngIsoCodePrevious = [];
         $("#release-source").find("[name=compare-release]").prop("disabled", true);
     }
 

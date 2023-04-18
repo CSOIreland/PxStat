@@ -203,23 +203,45 @@ app.savedquery.ajax.getQuery = function (queryId) {
  */
 app.savedquery.callback.savedQueryRead = function (response) {
     if (response) {
-        pxWidget.draw.init(
-            response[0].SnippetType,
-            "saved-query-widget-wrapper",
-            JSON.parse(nacl.util.encodeUTF8(nacl.util.decodeBase64(response[0].SnippetQueryBase64)))
-        );
-
-        $("#saved-query-widget-modal").find("[name=query-name]").html(response[0].Matrix + ": " + response[0].TagName);
-        $("#saved-query-widget-modal").modal("show");
+        var isogram = response[0].SnippetIsogram;
+        //Load dynamically the ISOGRAM
+        if (typeof pxWidget === "undefined" || isogram.search(pxWidget.root) == -1) {
+            jQuery.ajax({
+                "url": isogram,
+                "dataType": "script",
+                "async": false,
+                "success": function () {
+                    app.savedquery.callback.savedQueryDraw(response);
+                },
+                "error": function (jqXHR, textStatus, errorThrown) {
+                    api.modal.exception(app.label.static["api-ajax-exception"]);
+                    console.log(isogram + " failed to load")
+                }
+            });
+        }
+        else {
+            app.savedquery.callback.savedQueryDraw(response);
+        }
     }
     // Handle Exception
     else {
         api.modal.exception(app.label.static["api-ajax-exception"]);
     }
+};
+
+app.savedquery.callback.savedQueryDraw = function (response) {
+    pxWidget.draw.init(
+        response[0].SnippetType,
+        "saved-query-widget-wrapper",
+        JSON.parse(nacl.util.encodeUTF8(nacl.util.decodeBase64(response[0].SnippetQueryBase64)))
+    );
+
+    $("#saved-query-widget-modal").find("[name=query-name]").html(response[0].Matrix + ": " + response[0].TagName);
+    $("#saved-query-widget-modal").modal("show");
 
     //draw snippet code
     var snippet = app.config.entity.data.snippet;
-    snippet = snippet.sprintf([C_APP_URL_PXWIDGET_ISOGRAM, response[0].SnippetType, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(JSON.parse(nacl.util.encodeUTF8(nacl.util.decodeBase64(response[0].SnippetQueryBase64))))]);
+    snippet = snippet.sprintf([response[0].SnippetIsogram, response[0].SnippetType, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(JSON.parse(nacl.util.encodeUTF8(nacl.util.decodeBase64(response[0].SnippetQueryBase64))))]);
     $("#saved-query-widget-modal-snippet-code-copy").hide().text(snippet.trim()).fadeIn();
     Prism.highlightAll();
 
@@ -228,7 +250,6 @@ app.savedquery.callback.savedQueryRead = function (response) {
         // Download the snippet file
         app.library.utility.download(response[0].Matrix + "_" + response[0].TagName.replace(/ /g, "_").toLowerCase() + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#saved-query-widget-modal-snippet-code-copy").text(), "html", "text/html");
     });
-
 };
 
 

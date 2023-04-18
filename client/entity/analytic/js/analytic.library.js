@@ -955,7 +955,7 @@ app.analytic.callback.readTimeline = function (data, selector) {
         M2M.data.push(el.NltM2m);
         widgets.data.push(el.NltWidget);
         users.data.push(el.NltUser);
-        total.data.push(el.Total);
+        total.data.push(el.total);
         localConfig.data.labels.push(el.date ? moment(el.date).format(app.config.mask.date.display) : "");
     });
     localConfig.data.datasets = [bots, M2M, widgets, users, total];

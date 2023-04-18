@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "5.4.1";
+const C_APP_VERSION = "5.6.0";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -19,8 +19,11 @@ const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/
 const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.4.6/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.4.6/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.1/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.1/snippet.html";
+
+// URLs Language Files
+const C_APP_URL_PXLANGUAGEPLUGINS = "https://cdn.jsdelivr.net/gh/CSOIreland/PxLanguagePlugins@2.2.0/client/";
 
 // Public API
 const C_APP_API_JSONRPC_VERSION = "2.0";
@@ -193,7 +196,7 @@ const C_APP_SORT_OLDEST = "oldest";
 const C_APP_PXWIDGET_TYPE_CHART = 'chart';
 const C_APP_PXWIDGET_TYPE_TABLE = 'table';
 const C_APP_PXWIDGET_TYPE_MAP = 'map';
-const C_APP_PXWIDGET_CHART_TYPES = ["line", "bar", "horizontalBar", "pie", "doughnut", "mixed", "polarArea", "radar"];
+const C_APP_PXWIDGET_CHART_TYPES = ["line", "bar", "horizontalBar", "pyramid", "pie", "doughnut", "mixed", "polarArea", "radar"];
 const C_APP_PXWIDGET_CHART_TYPES_MIXED = ["line", "bar"];
 const C_APP_PXWIDGET_CHART_TYPES_DUAL_POSITION = ["y-axis-1", "y-axis-2"];
 const C_APP_PXWIDGET_CHART_LEGEND_POSITION = ["top", "left", "bottom", "right"];

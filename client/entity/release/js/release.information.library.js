@@ -26,7 +26,10 @@ app.release.information.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.Data.Release_API.Read",
-        { RlsCode: app.release.RlsCode },
+        {
+            "RlsCode": app.release.RlsCode,
+            "LngIsoCode": app.label.language.iso.code
+        },
         "app.release.information.callback.read",
         null,
         null,

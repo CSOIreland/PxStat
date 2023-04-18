@@ -222,10 +222,7 @@ app.build.update.dimension.drawNewPeriod = function (lngIsoCode) {
             data = $.extend(true, [], dimension.Frequency.Period);
         }
     });
-    //sort descending 
-    data.sort(function (a, b) {
-        return b.PrdCode - a.PrdCode
-    });
+
     //enable disable download csv data depending on new periods added 
     if (!data.length) {
         $("#build-update-matrix-data").find("[name=download-data-file-new], [name=download-data-file-all]").addClass("disabled");

@@ -302,6 +302,11 @@ app.build.update.addManualPeriod = function () {
                     }
                 );
             });
+
+            //sort periods
+            dimension.Frequency.Period.sort(function (a, b) {
+                return b.PrdCode - a.PrdCode
+            });
         }
     });
 
@@ -438,9 +443,12 @@ app.build.update.addUploadPeriod = function () {
                     }
                 );
             });
+            //sort periods
+            dimension.Frequency.Period.sort(function (a, b) {
+                return b.PrdCode - a.PrdCode
+            });
         }
     });
-
 
     app.build.update.dimension.drawNewPeriod(lngIsoCode);
     $("#build-update-new-periods").modal("hide");
