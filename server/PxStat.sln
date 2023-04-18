@@ -1,35 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32825.248
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33130.400
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PxStat", "PxStat\PxStat.csproj", "{41C45653-C643-45B8-902D-4755A647F0FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Demo|Any CPU = Demo|Any CPU
-		Dev|Any CPU = Dev|Any CPU
 		Live|Any CPU = Live|Any CPU
 		Release|Any CPU = Release|Any CPU
-		TD|Any CPU = TD|Any CPU
-		Test|Any CPU = Test|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.Demo|Any CPU.ActiveCfg = Demo|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.Demo|Any CPU.Build.0 = Demo|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.Dev|Any CPU.ActiveCfg = Dev|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.Dev|Any CPU.Build.0 = Dev|Any CPU
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Live|Any CPU.ActiveCfg = Live|Any CPU
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Live|Any CPU.Build.0 = Live|Any CPU
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41C45653-C643-45B8-902D-4755A647F0FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.TD|Any CPU.ActiveCfg = Test|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.TD|Any CPU.Build.0 = Test|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.Test|Any CPU.ActiveCfg = Test|Any CPU
-		{41C45653-C643-45B8-902D-4755A647F0FB}.Test|Any CPU.Build.0 = Test|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

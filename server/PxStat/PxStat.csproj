@@ -386,20 +386,10 @@
     <Content Include="Static.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Properties\PublishProfiles\Dev.pubxml" />
-    <None Include="Properties\PublishProfiles\Live.pubxml" />
     <Content Include="Resources\Config\config.global.json" />
     <Content Include="Resources\Config\config.server.json" />
-    <None Include="Properties\PublishProfiles\Test.pubxml" />
     <Content Include="Resources\FirebaseKey.json" />
-    <None Include="Web.Dev.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
     <None Include="Web.Live.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web.Test.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </None>
