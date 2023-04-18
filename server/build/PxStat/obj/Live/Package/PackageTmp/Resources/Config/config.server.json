@@ -1,0 +1,55 @@
+﻿{
+  "bulkcopy-tranche-multiplier": 10,
+  "px": {
+    "confidential-value": "..",
+    "default-units": "-"
+  },
+  "analytic": {
+    "read-os-item-limit": 10,
+    "read-browser-item-limit": 10,
+    "read-referrer-item-limit": 100,
+    "referrer-not-applicable": "n/a",
+    "read-environment-language-limit": 100
+  },
+  "search": {
+    "synonym-multiplier": 1,
+    "search-word-multiplier": 15,
+    "release_word_multiplier": 1,
+    "product_word_multiplier": 10,
+    "subject_word_multiplier": 100
+  },
+  "release": {
+    "lockTimeMinutes": 60
+  },
+  "subscription": {
+    "query-threshold": 1000
+  },
+  "maintenance": {
+    "post-import-delete": false
+  },
+  "throttle": {
+    "subscribedWindowSeconds": 60,
+    "subscribedCallLimit": 30,
+    "nonSubscribedWindowSeconds": 180,
+    "nonSubscribedCallLimit": 10
+  },
+  "whitelist": [
+    "domain.extension"
+  ],
+  "language-resource": [
+    {
+      "iso": "en",
+      "name": "English",
+      "plugin-location": "Resources\\Internationalisation\\LanguagePlugins\\en\\PxLanguagePlugin.en.dll",
+      "namespace-class": "PxLanguagePlugin.Language",
+      "is-live": true
+    },
+    {
+      "iso": "ga",
+      "name": "Gaeilge",
+      "plugin-location": "Resources\\Internationalisation\\LanguagePlugins\\ga\\PxLanguagePlugin.ga.dll",
+      "namespace-class": "PxLanguagePlugin.Language",
+      "is-live": true
+    }
+  ]
+}
