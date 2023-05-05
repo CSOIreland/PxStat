@@ -1319,7 +1319,14 @@ app.data.dataset.chart.renderSnippet = function () {
     //check for fluid time for xAxis or series
     if ($("#data-dataset-chart-snippet-code").find("[name=fluid-time]").is(':checked')) {
         config = app.data.dataset.chart.getFluidTime(config);
-    };
+    }
+    else {
+        //empty fluid time
+        config.metadata.fluidTime = [];
+        $.each(config.data.datasets, function (key, value) {
+            value.fluidTime = []
+        });
+    }
 
     config.autoupdate = $("#data-dataset-chart-snippet-code").find("[name=auto-update]").is(':checked');
     config.link = $("#data-dataset-chart-snippet-code").find("[name=include-link]").is(':checked') ? app.config.url.application + C_COOKIE_LINK_TABLE + "/" + app.data.MtrCode : null;
@@ -1535,7 +1542,14 @@ app.data.dataset.chart.saveQuery.ajax.saveQuery = function () {
     var saveQueryConfig = $.extend(true, {}, app.data.dataset.chart.saveQuery.configuration);
     if ($("#data-dataset-save-query").find("[name=fluid-time]").is(':checked')) {
         saveQueryConfig = app.data.dataset.chart.getFluidTime(saveQueryConfig);
-    };
+    }
+    else {
+        //empty fluid time
+        saveQueryConfig.metadata.fluidTime = [];
+        $.each(saveQueryConfig.data.datasets, function (key, value) {
+            value.fluidTime = []
+        });
+    }
 
     var tagName = $("#data-dataset-save-query").find("[name=name]").val().replace(C_APP_REGEX_NOHTML, "");
     var base64snippet = nacl.util.encodeBase64(nacl.util.decodeUTF8(JSON.stringify(saveQueryConfig)));

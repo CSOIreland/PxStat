@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "5.6.0";
+const C_APP_VERSION = "5.6.1";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -19,8 +19,8 @@ const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/
 const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.1/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.1/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.4/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.4/snippet.html";
 
 // URLs Language Files
 const C_APP_URL_PXLANGUAGEPLUGINS = "https://cdn.jsdelivr.net/gh/CSOIreland/PxLanguagePlugins@2.2.0/client/";
@@ -206,3 +206,6 @@ C_APP_GEOJSON_PROPERTIES_UNIQUE_IDENTIFIER = "code";
 
 //GoTo Params
 C_APP_GOTO_PARAMS = "params";
+
+//Format number max precision 
+const C_APP_MAX_PRECISION = 6;

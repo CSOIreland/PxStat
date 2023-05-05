@@ -1718,10 +1718,6 @@ app.build.create.dimension.addPeriodsManual = function () {
                     PrdValue: values[index]
                 });
             });
-            //sort periods
-            dimension.Frequency.Period.sort(function (a, b) {
-                return b.PrdCode - a.PrdCode
-            });
         }
     });
     $("#build-create-upload-periods").find("[name=upload-periods-errors]").empty();

@@ -546,6 +546,9 @@ app.library.utility.formatNumber = function (number, precision) {
   }
 
   if (precision !== undefined) {
+    if (precision > C_APP_MAX_PRECISION) { //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toFixed#description
+      precision = C_APP_MAX_PRECISION;
+    }
     floatNumber = floatNumber.toFixed(precision);
   }
   else {
