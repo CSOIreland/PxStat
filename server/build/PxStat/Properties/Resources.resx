@@ -130,13 +130,7 @@
   <data name="template_LoginBulletPoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\email\template_LoginBulletPoint.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="FirebaseKey" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\FirebaseKey.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="template_NotifyChannelSubscription" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\eMail\template_NotifyChannelSubscription.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="config.global" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Config\config.global.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

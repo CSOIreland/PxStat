@@ -31,3 +31,7 @@
 /server/PxStat/Resources/FirebaseKey.test.json
 /server/PxStat/Properties/PublishProfiles/Demo.pubxml
 /server/PxStat/Properties/PublishProfiles/Demo.pubxml.user
+/server/build/PxStat/bin
+/server/build/PxStat/obj
+/server/build/PxStatCore.Test/obj
+/server/build/PxStatCore.Test/bin

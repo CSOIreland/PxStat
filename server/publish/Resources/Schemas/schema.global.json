@@ -1,0 +1,365 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"language": {
+			"type": "object",
+			"properties": {
+				"iso": {
+					"type": "object",
+					"properties": {
+						"code": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"code",
+						"name"
+					],
+					"additionalProperties": false
+				},
+				"culture": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"iso",
+				"culture"
+			],
+			"additionalProperties": false
+		},
+		"url": {
+			"type": "object",
+			"properties": {
+				"api": {
+					"type": "object",
+					"properties": {
+						"restful": {
+							"type": "string"
+						},
+						"static": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"restful",
+						"static"
+					],
+					"additionalProperties": false
+				},
+				"logo": {
+					"type": "string"
+				},
+				"application": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"api",
+				"logo",
+				"application"
+			],
+			"additionalProperties": false
+		},
+		"dataset": {
+			"type": "object",
+			"properties": {
+				"officialStatistics": {
+					"type": "boolean"
+				},
+				"download": {
+					"type": "object",
+					"properties": {
+						"threshold": {
+							"type": "object",
+							"properties": {
+								"csv": {
+									"type": "integer"
+								},
+								"xlsx": {
+									"type": "integer"
+								}
+							},
+							"required": [
+								"csv",
+								"xlsx"
+							],
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"threshold"
+					],
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"officialStatistics",
+				"download"
+			],
+			"additionalProperties": false
+		},
+		"regex": {
+			"type": "object",
+			"properties": {
+				"phone": {
+					"type": "object",
+					"properties": {
+						"pattern": {
+							"type": "string"
+						},
+						"placeholder": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"pattern",
+						"placeholder"
+					],
+					"additionalProperties": false
+				},
+				"password": {
+					"type": "string"
+				},
+				"matrix-name": {
+					"type": "string"
+				},
+				"product-code": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"phone",
+				"password",
+				"matrix-name",
+				"product-code"
+			],
+			"additionalProperties": false
+		},
+		"workflow": {
+			"type": "object",
+			"properties": {
+				"embargo": {
+					"type": "object",
+					"properties": {
+						"time": {
+							"type": "string",
+							"pattern": "^(?:([01]?\\d|2[0-3]):([0-5]?\\d):)?([0-5]?\\d)$"
+						},
+						"day": {
+							"type": "array",
+							"items": [
+								{
+									"type": "integer"
+								}
+							],
+							"maxItems":5,
+							"minItems":5
+						}
+					},
+					"required": [
+						"time",
+						"day"
+					],
+					"additionalProperties": false
+				},
+				"fastrack": {
+					"type": "object",
+					"properties": {
+						"response": {
+							"type": "object",
+							"properties": {
+								"approver": {
+									"type": "boolean"
+								},
+								"poweruser": {
+									"type": "boolean"
+								},
+								"administrator": {
+									"type": "boolean"
+								}
+							},
+							"required": [
+								"approver",
+								"poweruser",
+								"administrator"
+							],
+							"additionalProperties": false
+						},
+						"signoff": {
+							"type": "object",
+							"properties": {
+								"poweruser": {
+									"type": "boolean"
+								},
+								"administrator": {
+									"type": "boolean"
+								}
+							},
+							"required": [
+								"poweruser",
+								"administrator"
+							],
+							"additionalProperties": false
+						}
+					},
+					"required": [
+						"response",
+						"signoff"
+					],
+					"additionalProperties": false
+				},
+				"release": {
+					"type": "object",
+					"properties": {
+						"reasonRequired": {
+							"type": "boolean"
+						}
+					},
+					"required": [
+						"reasonRequired"
+					],
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"embargo",
+				"fastrack",
+				"release"
+			],
+			"additionalProperties": false
+		},
+		"build": {
+			"type": "object",
+			"properties": {
+				"create": {
+					"type": "object",
+					"properties": {
+						"moderator": {
+							"type": "boolean"
+						}
+					},
+					"required": [
+						"moderator"
+					],
+					"additionalProperties": false
+				},
+				"update": {
+					"type": "object",
+					"properties": {
+						"moderator": {
+							"type": "boolean"
+						}
+					},
+					"required": [
+						"moderator"
+					],
+					"additionalProperties": false
+				},
+				"import": {
+					"type": "object",
+					"properties": {
+						"moderator": {
+							"type": "boolean"
+						}
+					},
+					"required": [
+						"moderator"
+					],
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"create",
+				"update",
+				"import"
+			],
+			"additionalProperties": false
+		},
+		"session": {
+			"type": "object",
+			"properties": {
+				"length": {
+					"type": "integer"
+				}
+			},
+			"required": [
+				"length"
+			],
+			"additionalProperties": false
+		},
+		"security": {
+			"type": "object",
+			"properties": {
+				"adOpenAccess": {
+					"type": "boolean"
+				},
+				"demo": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"adOpenAccess",
+				"demo"
+			],
+			"additionalProperties": false
+		},
+		"search": {
+			"type": "object",
+			"properties": {
+				"maximumResults": {
+					"type": "integer"
+				}
+			},
+			"required": [
+				"maximumResults"
+			],
+			"additionalProperties": false
+		},
+		"report": {
+			"type": "object",
+			"properties": {
+				"date-validation": {
+					"type": "object",
+					"properties": {
+						"minDate": {
+							"type": "integer"
+						},
+						"maxDate": {
+							"type": "integer"
+						}
+					},
+					"required": [
+						"minDate",
+						"maxDate"
+					],
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"date-validation"
+			],
+			"additionalProperties": false
+		}
+	},
+	"required": [
+		"title",
+		"language",
+		"url",
+		"dataset",
+		"regex",
+		"workflow",
+		"build",
+		"session",
+		"security",
+		"search",
+		"report"
+	],
+	"additionalProperties": false
+}

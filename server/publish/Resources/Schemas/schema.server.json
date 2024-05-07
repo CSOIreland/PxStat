@@ -1,0 +1,202 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"bulkcopy-tranche-multiplier": {
+			"type": "integer"
+		},
+		"px": {
+			"type": "object",
+			"properties": {
+				"confidential-value": {
+					"type": "string"
+				},
+				"default-units": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"confidential-value",
+				"default-units"
+			],
+			"additionalProperties": false
+		},
+		"analytic": {
+			"type": "object",
+			"properties": {
+				"read-os-item-limit": {
+					"type": "integer"
+				},
+				"read-browser-item-limit": {
+					"type": "integer"
+				},
+				"read-referrer-item-limit": {
+					"type": "integer"
+				},
+				"referrer-not-applicable": {
+					"type": "string"
+				},
+				"read-environment-language-limit": {
+					"type": "integer"
+				}
+			},
+			"required": [
+				"read-os-item-limit",
+				"read-browser-item-limit",
+				"read-referrer-item-limit",
+				"referrer-not-applicable",
+				"read-environment-language-limit"
+			],
+			"additionalProperties": false
+		},
+		"search": {
+			"type": "object",
+			"properties": {
+				"synonym-multiplier": {
+					"type": "integer"
+				},
+				"search-word-multiplier": {
+					"type": "integer"
+				},
+				"release_word_multiplier": {
+					"type": "integer"
+				},
+				"product_word_multiplier": {
+					"type": "integer"
+				},
+				"subject_word_multiplier": {
+					"type": "integer"
+				}
+			},
+			"required": [
+				"synonym-multiplier",
+				"search-word-multiplier",
+				"release_word_multiplier",
+				"product_word_multiplier",
+				"subject_word_multiplier"
+			],
+			"additionalProperties": false
+		},
+		"language": {
+			"type": "object",
+			"properties": {
+				"iso": {
+					"type": "object",
+					"properties": {
+						"code": {
+							"type": "string",
+							"pattern": "[a-z]{2}"
+						},
+						"name": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"code",
+						"name"
+					],
+					"additionalProperties": false
+				}
+			},
+			"required": [
+				"iso"
+			],
+			"additionalProperties": false
+		},
+		"release": {
+			"type": "object",
+			"properties": {
+				"lockTimeMinutes": {
+					"type": "integer"
+				}
+			},
+			"required": [
+				"lockTimeMinutes"
+			],
+			"additionalProperties": false
+		},
+		"subscription": {
+			"type": "object",
+			"properties": {
+				"query-threshold": {
+					"type": "integer"
+				}
+			},
+			"required": [
+				"query-threshold"
+			],
+			"additionalProperties": false
+		},
+		"maintenance": {
+			"type": "object",
+			"properties": {
+				"post-import-delete": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"post-import-delete"
+			],
+			"additionalProperties": false
+		},
+		"throttle": {
+			"type": "object",
+			"properties": {
+				"subscribedWindowSeconds": {
+					"type": "integer"
+				},
+				"subscribedCallLimit": {
+					"type": "integer"
+				},
+				"nonSubscribedWindowSeconds": {
+					"type": "integer"
+				},
+				"nonSubscribedCallLimit": {
+					"type": "integer"
+				}
+			},
+			"required": [
+				"subscribedWindowSeconds",
+				"subscribedCallLimit",
+				"nonSubscribedWindowSeconds",
+				"nonSubscribedCallLimit"
+			],
+			"additionalProperties": false
+		},
+		"whitelist": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"pxapiv1": {
+			"type": "object",
+			"properties": {
+				"formats": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"formats"
+			],
+			"additionalProperties": false
+		}
+	},
+	"required": [
+		"bulkcopy-tranche-multiplier",
+		"px",
+		"analytic",
+		"search",
+		"language",
+		"release",
+		"subscription",
+		"maintenance",
+		"throttle",
+		"whitelist",
+		"pxapiv1"
+	],
+	"additionalProperties": false
+}
