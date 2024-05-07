@@ -43,14 +43,14 @@ app.release.workflow.history.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.release.workflow.history.drawCallback = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     $("td.details-request-control i.fa.plus-control").css({ "color": "forestgreen" });
     app.library.datatable.showExtraInfo('#release-workflow-history table', app.release.workflow.history.render.extraInfo);
 
     //Delete Request button click event. Passing function reference.
     $("#release-workflow-history table").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", app.release.workflow.history.delete);
     // Bootstrap tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 }
 
 
@@ -199,7 +199,7 @@ app.release.workflow.history.render.replyResponse = function (requestType, textT
     switch (requestType) {
         case C_APP_TS_RESPONSE_APPROVED:
             return $("<a>", {
-                "data-toggle": "tooltip",
+                "data-bs-toggle": "tooltip",
                 "data-original-title": textTooltip ? app.label.datamodel.response[textTooltip] : "", //textTooltip,
                 html:
                     $("<i>", {
@@ -209,7 +209,7 @@ app.release.workflow.history.render.replyResponse = function (requestType, textT
             break;
         case C_APP_TS_RESPONSE_REJECTED:
             return $("<a>", {
-                "data-toggle": "tooltip",
+                "data-bs-toggle": "tooltip",
                 "data-original-title": textTooltip ? app.label.datamodel.response[textTooltip] : "", //textTooltip,
                 html:
                     $("<i>", {
@@ -219,7 +219,7 @@ app.release.workflow.history.render.replyResponse = function (requestType, textT
             break;
         default:
             return $("<a>", {
-                "data-toggle": "tooltip",
+                "data-bs-toggle": "tooltip",
                 "data-original-title": app.label.static["pending"], //textTooltip,
                 html:
                     $("<i>", {
@@ -240,7 +240,7 @@ app.release.workflow.history.render.replySignoff = function (requestType, textTo
     switch (requestType) {
         case C_APP_TS_SIGNOFF_APPROVED:
             return $("<a>", {
-                "data-toggle": "tooltip",
+                "data-bs-toggle": "tooltip",
                 "data-original-title": textTooltip ? app.label.datamodel.signoff[textTooltip] : "", //textTooltip,
                 html:
                     $("<i>", {
@@ -250,7 +250,7 @@ app.release.workflow.history.render.replySignoff = function (requestType, textTo
             break;
         case C_APP_TS_SIGNOFF_REJECTED:
             return $("<a>", {
-                "data-toggle": "tooltip",
+                "data-bs-toggle": "tooltip",
                 "data-original-title": textTooltip ? app.label.datamodel.signoff[textTooltip] : "", //textTooltip,
                 html:
                     $("<i>", {
@@ -261,7 +261,7 @@ app.release.workflow.history.render.replySignoff = function (requestType, textTo
 
         default:
             return $("<a>", {
-                "data-toggle": "tooltip",
+                "data-bs-toggle": "tooltip",
                 "data-original-title": app.label.static["pending"], //textTooltip,
                 html:
                     $("<i>", {
@@ -278,7 +278,7 @@ app.release.workflow.history.render.replySignoff = function (requestType, textTo
  */
 app.release.workflow.history.render.extraInfo = function (row) {
     //clone template from html not reuse dynamically
-    var grid = $("#release-workflow-history-extra-info").clone();
+    var grid = $("#release-workflow-history-extra-info").find("[name=wrapper]").clone();
     // Request
     grid.find("[name=rqs-value]").empty().html(app.label.datamodel.request[row.RqsValue]); //Translation
     grid.find("[name=wrq-exceptional-flag]").empty().html(app.library.html.boolean(row.WrqExceptionalFlag, true, true));
@@ -331,7 +331,7 @@ app.release.workflow.history.render.extraInfo = function (row) {
         grid.find("[name=card-signoff]").remove();
     }
 
-    return grid.show();
+    return grid;
 };
 
 /**

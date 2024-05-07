@@ -17,15 +17,17 @@ app.footer.render.contact = function () {
 //Set Links
 app.footer.render.links = function () {
   $.each(app.config.template.footer.links, function (index, value) {
-    $("#footer [name=footer-links]").append($("<li>", {
-      "html": $("<a>", {
-        "href": value.url,
-        "text": value.text,
-        "target": "_blank",
-        "class": "text-light",
-        "rel": "noreferrer" // Best practice for cross-origin links
-      }).get(0).outerHTML
-    }));
+    if (value.text) {
+      $("#footer [name=footer-links]").append($("<li>", {
+        "html": $("<a>", {
+          "href": value.url,
+          "text": value.text,
+          "target": "_blank",
+          "class": "text-light",
+          "rel": "noreferrer" // Best practice for cross-origin links
+        }).get(0).outerHTML
+      }));
+    }
   });
 
   $("#footer [name=footer-links]").append($("<li>", {
@@ -59,7 +61,7 @@ app.footer.render.links = function () {
   // Set Version in Footer
   $("#footer").find("[name=version]").html(
     $("<a>", {
-      "href": C_APP_URL_GITHUB_RELEASE_TAG.sprintf([C_APP_VERSION]),
+      "href": C_APP_URL_GITHUB,
       "text": 'PxStat ' + C_APP_VERSION,
       "class": "text-light",
       "target": "_blank",
@@ -77,10 +79,10 @@ app.footer.render.social = function () {
       "aria-label": app.label.static[value.label],
       "rel": "noreferrer" // Best practice for cross-origin links
     }).append($("<i>", {
-      "class": value.icon + " fa-3x mr-2 text-white",
+      "class": value.icon + " fa-3x me-2 text-white",
       "title": app.label.static[value.label],
-      "data-toggle": "tooltip",
-      "data-placement": "top"
+      "data-bs-toggle": "tooltip",
+      "data-bs-placement": "top"
     })).get(0).outerHTML);
   });
 

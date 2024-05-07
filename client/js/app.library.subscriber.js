@@ -117,10 +117,12 @@ app.library.subscriber.callback.drawUser = function () {
 
 
     $("#modal-read-subscriber").find("[name='" + value.ChnCode + "']").bootstrapToggle("destroy").bootstrapToggle({
-      on: app.label.static["on"],
-      off: app.label.static["off"],
+      onlabel: app.label.static["on"],
+      offlabel: app.label.static["off"],
       onstyle: "success",
-      offstyle: "warning",
+      offstyle: "warning text-dark",
+      height: 38,
+      style: "m-1 text-light",
       width: C_APP_TOGGLE_LENGTH //Depend on language translation.
     }).once("change", function () {
       if ($(this).is(':checked')) {
@@ -397,7 +399,7 @@ app.library.subscriber.ajax.deleteCurrentUser = function () {
 app.library.subscriber.callback.deleteCurrentUser = function (data) {
   if (data == C_API_AJAX_SUCCESS) {
     //redirect to home page
-    app.plugin.backbutton.check = false;
+
     window.location.href = window.location.pathname;
   }
 };

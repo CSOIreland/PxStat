@@ -306,7 +306,7 @@ app.tableaudit.callback.readTableAudit = function (data) {
  * Draw Callback for Datatable
  */
 app.tableaudit.drawCallback = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     $("#table-audit-data").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();
         var idn = $(this).attr("idn");

@@ -25,10 +25,12 @@ app.release.workflow.modal.request.fastrackSignoff = false;
 app.release.workflow.modal.request.setFlag = function () {
     // Modal Request Publish
     $("#request-workflow-modal-request-publish .bootstrap-toggle").bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
-        onstyle: "success",
-        offstyle: "warning",
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
+        onstyle: "success text-light",
+        offstyle: "warning text-dark",
+        height: 38,
+        style: "text-light",
         width: C_APP_TOGGLE_LENGTH
     });
     $("#request-workflow-modal-request-publish [name=wrq-exceptional-flag]").bootstrapToggle("off");
@@ -38,10 +40,12 @@ app.release.workflow.modal.request.setFlag = function () {
 
     // Modal Request Flag
     $("#request-workflow-modal-request-flag .bootstrap-toggle").bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
-        onstyle: "success",
-        offstyle: "warning",
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
+        onstyle: "success text-light",
+        offstyle: "warning text-dark",
+        height: 38,
+        style: "text-light",
         width: C_APP_TOGGLE_LENGTH
     });
     $("#request-workflow-modal-request-flag [name=wrq-reservation-flag]").bootstrapToggle(app.release.RlsReservationFlag ? "on" : "off");

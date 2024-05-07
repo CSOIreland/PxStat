@@ -11,9 +11,10 @@ app.geomap.import = {};
 app.geomap.import.file = {};
 app.geomap.import.file.content = {};
 app.geomap.import.file.content.geojson = null;
+app.geomap.import.file.content.subsetCodes = null;
 app.geomap.import.file.content.geojsonModified = null;
+app.geomap.import.file.content.geojsonModifiedRollBack = null;
 app.geomap.import.file.content.geojsonSimplified = null;
-app.geomap.import.file.content.isPointGeometry = false;
 app.geomap.import.file.name = null;
 app.geomap.import.file.extension = null;
 app.geomap.import.file.size = null;
@@ -22,11 +23,48 @@ app.geomap.import.file.type = null;
 //#endregion
 
 //#region read
+
+app.geomap.ajax.readLayersSelect = function () {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Data.GeoLayer_API.Read",
+        {},
+        "app.geomap.callback.readLayersSelect");
+};
+
+app.geomap.callback.readLayersSelect = function (data) {
+    var mapLayerOptions = [];
+
+    $.each(data, function (index, value) {
+        mapLayerOptions.push({
+            "id": value.GlrCode,
+            "text": value.GlrName
+        })
+    });
+
+    $("#map-read-container").find("[name=select-layer]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["select"] + " " + app.label.static["geo-layer"],//app.label.static["start-typing"],
+        data: mapLayerOptions
+    }).on('select2:select', function (e) {
+        app.geomap.ajax.read();
+    }).on('select2:clear', function (e) {
+        app.geomap.ajax.read();
+    });;
+
+    $("#map-read-container").find("[name=select-layer]").prop('disabled', false);
+    app.geomap.ajax.read();
+};
+
 app.geomap.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.Data.GeoMap_API.ReadCollection",
-        {},
+        {
+            "GlrCode": $("#map-read-container").find("[name=select-layer]").val() || null
+        },
         "app.geomap.callback.read",
         null,
         null,
@@ -191,7 +229,7 @@ app.geomap.drawCallback = function () {
         );
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 };
@@ -211,9 +249,9 @@ app.geomap.drawExtraInfo = function (data) {
             return $("<button>", {
                 class: "btn btn-outline-primary btn-sm mt-2",
                 name: "map-url-copy-icon",
-                "data-toggle": "tooltip",
-                "data-clipboard-target": "#modal-information [name=map-url-" + data.GmpCode + "]",
-                "data-placement": "right",
+                "data-bs-toggle": "tooltip",
+                "data-clipboard-target": "#modal-information [name=map-url-" + data.GmpCode + "] [name=link-text]",
+                "data-bs-placement": "right",
                 "title": "",
                 "style": "cursor: grab",
                 "data-clipboard-action": "copy",
@@ -245,102 +283,154 @@ app.geomap.ajax.readLayers = function (params) {
 
 //#region import
 api.plugin.dragndrop.readFiles = function (files, inputObject) {
+    var uploadDimension = inputObject.attr("id");
     // Read single file only
     var file = files[0];
     if (!file) {
-        return;
-    };
-
-    // set namespaced variables
-    app.geomap.import.file.name = file.name;
-    app.geomap.import.file.extension = file.name.match(/\.[0-9a-z]+$/i)[0];
-    app.geomap.import.file.type = file.type;
-    app.geomap.import.file.size = file.size;
-
-    if ($.inArray(app.geomap.import.file.extension.toLowerCase(), C_APP_UPLOAD_MAP_FILE_ALLOWED_EXTENSION) == -1) {
-        // Show Error
-        api.modal.error(app.library.html.parseDynamicLabel("error-file-extension", [app.geomap.import.file.extension]));
-        return;
-    }
-    // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
-    if ($.inArray(app.geomap.import.file.type.toLowerCase(), C_APP_UPLOAD_MAP_FILE_ALLOWED_TYPE) == -1) {
-        // Show Error
-        api.modal.error(app.library.html.parseDynamicLabel("error-file-type", [app.geomap.import.file.type]));
-    }
-    // Check for the hard limit of the file size
-    if (app.geomap.import.file.size > app.config.transfer.threshold.hard) {
-        // Show Error
-        api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
-
-    }
-
-    // Info on screen 
-    inputObject.parent().find("[name=upload-file-tip]").hide();
-    inputObject.parent().find("[name=upload-file-name]").html(app.geomap.import.file.name + " (" + app.library.utility.formatNumber(Math.ceil(app.geomap.import.file.size / 1024)) + " KB)").show();
-
-    // Read file into an UTF8 string
-    var readerUTF8 = new FileReader();
-    readerUTF8.onload = function (e) {
-        // Set the file's content
-        try {
-            app.geomap.import.file.content.geojson = JSON.parse(e.target.result);
-            app.geomap.ajax.isFileValid();
-
-        } catch (error) {
-            api.modal.error(app.label.static["invalid-geojson-file"]);
-            return
+        switch (uploadDimension) {
+            case "map-upload-file":
+                app.geomap.modal.addMapReset();
+                return;
+            case "map-modal-create-subset-file":
+                app.geomap.modal.createSubsetReset();
+                return;
+            default:
+                break;
         }
+
     };
-    readerUTF8.readAsText(file);
-    readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
-    readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });
-    readerUTF8.addEventListener("abort", function (e) { api.spinner.stop(); });
-    readerUTF8.addEventListener("loadend", function (e) {
-        api.spinner.stop();
+
+
+
+    var fileExt = file.name.match(/\.[0-9a-z]+$/i)[0];
+
+    switch (uploadDimension) {
+        case "map-upload-file":
+
+            // set namespaced variables
+            app.geomap.import.file.name = file.name;
+            app.geomap.import.file.extension = fileExt;
+            app.geomap.import.file.type = file.type;
+            app.geomap.import.file.size = file.size;
+
+            if ($.inArray(app.geomap.import.file.extension.toLowerCase(), C_APP_UPLOAD_MAP_FILE_ALLOWED_EXTENSION) == -1) {
+                // Show Error
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-extension", [app.geomap.import.file.extension]));
+                return;
+            }
+            // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
+            if ($.inArray(app.geomap.import.file.type.toLowerCase(), C_APP_UPLOAD_MAP_FILE_ALLOWED_TYPE) == -1) {
+                // Show Error
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-type", [app.geomap.import.file.type]));
+            }
+            // Check for the hard limit of the file size
+            if (app.geomap.import.file.size > app.config.transfer.threshold.hard) {
+                // Show Error
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
+
+            }
+
+            // Info on screen 
+            inputObject.parent().find("[name=upload-file-tip]").hide();
+            inputObject.parent().find("[name=upload-file-name]").html(app.geomap.import.file.name + " (" + app.library.utility.formatNumber(Math.ceil(app.geomap.import.file.size / 1024)) + " KB)").show();
+
+            // Read file into an UTF8 string
+            var readerUTF8 = new FileReader();
+            readerUTF8.onload = function (e) {
+                // Set the file's content
+                try {
+                    app.geomap.import.file.content.geojson = JSON.parse(e.target.result);
+                    app.geomap.isFileValid();
+
+                } catch (error) {
+                    api.modal.error(app.label.static["invalid-geojson-file"]);
+                    return
+                }
+            };
+            readerUTF8.readAsText(file);
+            readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
+            readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });
+            readerUTF8.addEventListener("abort", function (e) { api.spinner.stop(); });
+            readerUTF8.addEventListener("loadend", function (e) {
+                api.spinner.stop();
+            });
+            return;
+        default:
+        case "map-modal-create-subset-file":
+
+            $("#map-modal-create-subset").find("[name=errors]").empty();
+            $("#map-modal-create-subset").find("[name=errors-card]").hide();
+
+            // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
+            if ($.inArray(fileExt.toLowerCase(), C_APP_CREATE_FILE_ALLOWED_EXTENSION) == -1) {
+                // Show Error
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-extension", [fileExt]));
+                $("#map-modal-create-subset").find("[name=upload-submit-subset]").prop("disabled", true);
+                return;
+            };
+            // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
+            if ($.inArray(file.type.toLowerCase(), C_APP_CREATE_FILE_ALLOWED_TYPE) == -1) {
+                // Show Error
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-type", [file.type]));
+                $("#map-modal-create-subset").find("[name=upload-submit-subset]").prop("disabled", true);
+                return;
+            };
+
+            if (file.size > app.config.transfer.threshold.hard) {
+                // Show Error
+                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.config.transfer.threshold.hard]));
+                // Disable Validate Button
+                $("#map-modal-create-subset").find("[name=upload-submit-subset]").prop("disabled", true);
+                return;
+            };
+
+            // info on screen 
+            inputObject.parent().find("[name=file-tip]").hide();
+            inputObject.parent().find("[name=file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
+            // Read file into an UTF8 string
+            var readerUTF8 = new FileReader();
+            readerUTF8.onload = function (e) {
+                app.geomap.import.file.content.subsetCodes = e.target.result;
+            };
+            readerUTF8.readAsText(file);
+            readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
+            readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });
+            readerUTF8.addEventListener("abort", function (e) { api.spinner.stop(); });
+            readerUTF8.addEventListener("loadend", function (e) {
+                $("#map-modal-create-subset").find("[name=upload-submit-subset]").prop("disabled", false);
+                api.spinner.stop();
+            });
+            return;
+    }
+
+
+
+};
+
+app.geomap.isFileValid = function () {
+    var errors = geojsonhint.hint(app.geomap.import.file.content.geojson, {
+        ignoreRightHandRule: true
     });
 
-};
+    if (!errors.length) {
+        $("#map-modal-add").find("[name=import]").prop('disabled', false);
 
-app.geomap.ajax.isFileValid = function () {
-    // Add the progress bar
-    api.spinner.progress.start(api.spinner.progress.getTimeout(JSON.stringify(app.geomap.import.file.content.geojson).length, app.config.transfer.unitsPerSecond["PxStat.Data.GeoMap_API.Validate"]));
+    } else if (Array.isArray(errors) && errors.length) {
+        var errorsList = $("<ul>", {
+            "class": "list-group"
+        });
+        $.each(errors, function (index, value) {
+            errorsList.append(
+                $("<li>", {
+                    "class": "list-group-item",
+                    "text": value.message
+                })
+            )
+        });
+        api.modal.error(errorsList.get(0).outerHTML)
 
-    api.ajax.jsonrpc.request(
-        app.config.url.api.jsonrpc.private,
-        "PxStat.Data.GeoMap_API.Validate",
-        {
-            "GmpGeoJson": app.geomap.import.file.content.geojson
-        },
-        "app.geomap.callback.isFileValid",
-        null,
-        null,
-        null,
-        { async: false });
-
-};
-
-app.geomap.callback.isFileValid = function (data) {
-    if (data) {
-        // Check for signature
-        if (data == C_API_AJAX_SUCCESS) {
-            $("#map-modal-add").find("[name=import]").prop('disabled', false);
-
-        } else if (Array.isArray(data) && data.length) {
-            var errors = $("<ul>", {
-                "class": "list-group"
-            });
-            $.each(data, function (index, value) {
-                errors.append(
-                    $("<li>", {
-                        "class": "list-group-item",
-                        "text": value
-                    })
-                )
-            });
-            api.modal.error(errors.get(0).outerHTML)
-
-        } else api.modal.exception(app.label.static["api-ajax-exception"]);
-    } else api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
 };
 
 app.geomap.ajax.readLanguage = function () {
@@ -526,9 +616,13 @@ app.geomap.setProperties = function () {
                 if (app.library.utility.arrayHasDuplicate(codes)) {
                     api.modal.error(app.library.html.parseDynamicLabel("invalid-geojson-mapping", [codeMapping]));
                     $("#map-modal-add").find("[name=view-map]").prop('disabled', true);
+                    $("#map-modal-add").find("[name=create-subset]").prop('disabled', true);
                 }
                 else {
+                    //create version to roll back to if subset removed
+                    app.geomap.import.file.content.geojsonModifiedRollBack = $.extend(true, {}, app.geomap.import.file.content.geojsonModified);
                     $("#map-modal-add").find("[name=view-map]").prop('disabled', false);
+                    $("#map-modal-add").find("[name=create-subset]").prop('disabled', false);
                 }
             }
             else {
@@ -539,6 +633,7 @@ app.geomap.setProperties = function () {
     });
 
 };
+
 
 /**
  * @param {*} weight 
@@ -558,9 +653,14 @@ app.geomap.viewAddMap = async function (weight) {
     $("#map-modal-add").find("button[type=submit]").prop('disabled', false);
 
     $("#map-modal-add").find("[name=view-map-card]").show();
-    if (app.geomap.import.file.content.isPointGeometry) {
+
+    if (app.geomap.import.file.content.geojsonModified.features[0].geometry.type == "MultiPolygon"
+        || app.geomap.import.file.content.geojsonModified.features[0].geometry.type == "Polygon") {
+        $("#map-modal-add").find("[name=simplify-range-wrapper]").show();
+    }
+    else {
         $("#map-modal-add").find("[name=simplify-range-wrapper]").hide();
-    };
+    }
 
     // Create canvas in parent div
     var mapContainer = $('<div>', {
@@ -572,6 +672,7 @@ app.geomap.viewAddMap = async function (weight) {
     var map = L.map('map-modal-view-map', {
         maxBounds: app.geomap.getMaxBounds(app.geomap.import.file.content.geojsonSimplified)
     });
+    map.attributionControl.setPrefix('');
 
     //add baselayers
     $.each(app.config.entity.map.baseMap.leaflet, function (index, value) {
@@ -644,7 +745,6 @@ app.geomap.viewAddMap = async function (weight) {
     map.setMinZoom(map.getZoom());
 
     $('#map-modal-add').find("[name=file-size]").text(app.library.utility.formatNumber(Math.ceil(JSON.stringify(app.geomap.import.file.content.geojsonSimplified).length / 1024)) + " KB");
-
     $('#map-modal-add').animate({
         scrollTop: '+=' + $('#map-modal-add [name=view-map-card]')[0].getBoundingClientRect().top
     }, 1000);
@@ -778,7 +878,16 @@ app.geomap.validation.addMap = function () {
         },
         submitHandler: function (form) {
             $(form).sanitiseForm();
-            app.geomap.ajax.addMap();
+
+            // Checking file size to warn administrator
+            var fileSize = Math.ceil(JSON.stringify(app.geomap.import.file.content.geojsonSimplified).length);
+            if (fileSize > app.config.entity.build.threshold.geoJson) {
+                api.modal.confirm(app.library.html.parseDynamicLabel("confirm-geojson-add", [Math.round(app.config.entity.build.threshold.geoJson / 1024 / 1024)]),
+                    app.geomap.ajax.addMap
+                );
+            } else {
+                app.geomap.ajax.addMap();
+            }
         }
     }).resetForm();
 
@@ -822,12 +931,16 @@ app.geomap.modal.addMapReset = function () {
     // tidy up
     app.geomap.import.file.content.geojson = null;
     app.geomap.import.file.content.geojsonModified = null;
+    app.geomap.import.file.content.geojsonModifiedRollBack = null;
     app.geomap.import.file.content.geojsonSimplified = null;
-    app.geomap.import.file.content.isPointGeometry = false;
+
+    app.geomap.ajax.readLanguage();
 
     $("#map-modal-add").find("[name=feature-label-mappings]").empty();
     $("#map-modal-add").find("[name=import]").prop('disabled', true);
     $("#map-modal-add").find("[name=view-map]").prop('disabled', true);
+    $("#map-modal-add").find("[name=create-subset]").prop('disabled', true);
+    $("#map-modal-add").find("[name=remove-subset]").prop('disabled', true);
     $("#map-modal-add").find("button[type=submit]").prop('disabled', true);
     $("#map-modal-add").find("[name=set-properties]").prop('disabled', false);
     $("#map-modal-add").find("[name=simplify-range-value]").text("0");
@@ -841,7 +954,7 @@ app.geomap.modal.addMapReset = function () {
 
     $("#map-modal-add").find("[name=map-upload-file]").prop('disabled', false);
 
-    $('#map-modal-add-preview-map-content').tab('show');
+    $('#map-modal-add-preview-map-content').show();
     $("#map-modal-add-preview-properties-tab").removeClass("active");
     $("#map-modal-add-preview-map-tab").addClass("active");
 
@@ -850,9 +963,113 @@ app.geomap.modal.addMapReset = function () {
 
     $("#map-modal-add [name=set-properties-card], #map-modal-add [name=view-map-card], #map-modal-add [name=set-details-card]").hide();
     $("#map-modal-add").find("[name=simplify-range-wrapper]").show();
-}
 
+
+};
 //#endregion import
+//#region create subset
+app.geomap.modal.createSubsetReset = function () {
+    app.geomap.import.file.content.subsetCodes = null;
+    $("#map-modal-create-subset").find("[name=errors]").empty();
+    $("#map-modal-create-subset").find("[name=errors-card]").hide();
+    $("#map-modal-create-subset").find("[name=file-name]").empty().hide();
+    $("#map-modal-create-subset").find("[name=file-tip]").show();
+    $("#map-modal-create-subset").find("[name=map-modal-create-subset-file]").val("");
+    $("#map-modal-create-subset").find("[name=upload-submit-subset]").prop("disabled", true);
+};
+
+app.geomap.modal.createSubset = function () {
+    $("#map-modal-create-subset").find("[name=errors]").empty();
+    $("#map-modal-create-subset").find("[name=errors-card]").hide();
+    var subsetCodesJSON = Papa.parse(app.geomap.import.file.content.subsetCodes, {
+        header: true,
+        skipEmptyLines: true
+    });
+
+
+    if (subsetCodesJSON.errors.length) {
+        $("#map-modal-create-subset").find("[name=errors-card]").show();
+        $('#map-modal-create-subset').find("[name=errors]").append($("<li>", {
+            "class": "list-group-item",
+            "html": app.label.static["invalid-csv-format"]
+        }));
+        return;
+    };
+
+    var errors = [];
+
+    //check that csv contains data
+    if (!subsetCodesJSON.data.length) {
+        errors.push(app.label.static["invalid-csv-format"]);
+    };
+
+    var csvHeaders = subsetCodesJSON.meta.fields;
+
+    //check that csv headers contain C_APP_CSV_CODE and C_APP_CSV_VALUE, both case sensitive
+    if (jQuery.inArray(C_APP_CSV_CODE, csvHeaders) == -1) {
+        errors.push(app.library.html.parseDynamicLabel("invalid-csv-format-code-value", [C_APP_CSV_CODE]));
+    };
+
+    if (!errors.length) {
+        //check that each rows has correct data
+        $.each(subsetCodesJSON.data, function (index, value) {
+            var rowNum = index + 2;
+            if (!value[C_APP_CSV_CODE]) {
+                //use error message from create as it's generic
+                errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_CODE, rowNum]));
+            }
+
+            if (!value[C_APP_CSV_VALUE]) {
+                //use error message from create as it's generic
+                errors.push(app.library.html.parseDynamicLabel("create-dimension-upload-error", [C_APP_CSV_VALUE, rowNum]));
+            }
+        });
+    };
+
+    if (errors.length) {
+        $('#map-modal-create-subset').find("[name=errors-card]").show()
+        $.each(errors, function (index, value) {
+            $('#map-modal-create-subset').find("[name=errors]").append($("<li>", {
+                "class": "list-group-item",
+                "html": value
+            }));
+        });
+    }
+    else {
+        var subsetCodes = [];
+
+        $.each(subsetCodesJSON.data, function (index, value) {
+            subsetCodes.push(value[C_APP_CSV_CODE]);
+        });
+
+        //Always revert geoJSON back to original features as it might not be the first time you are creating a subset
+        app.geomap.import.file.content.geojsonModified.features = app.geomap.import.file.content.geojsonModifiedRollBack.features;
+
+        var featuresToKeep = [];
+
+        $.each(app.geomap.import.file.content.geojsonModified.features, function (index, value) {
+            if ($.inArray(value.properties.code, subsetCodes) != -1) {
+                featuresToKeep.push(value);
+            }
+        });
+
+        //replace original features with subset features
+        app.geomap.import.file.content.geojsonModified.features = featuresToKeep;
+        api.modal.success(app.label.static["subset-created"]);
+        $("#map-modal-add").find("[name=remove-subset").prop('disabled', false);
+        $('#map-modal-create-subset').modal("hide");
+    }
+};
+
+app.geomap.modal.removeSubset = function () {
+    //Revert geoJSON back to original features
+    app.geomap.import.file.content.geojsonModified.features = app.geomap.import.file.content.geojsonModifiedRollBack.features;
+    api.modal.success(app.label.static["subset-removed"]);
+    $("#map-modal-add").find("[name=remove-subset").prop('disabled', true);
+};
+
+
+//#endregion
 
 //#region delete map
 
@@ -923,14 +1140,13 @@ app.geomap.callback.readMatrixByMap = function (data, params) {
 };
 
 app.geomap.callback.drawCallbackReadMatrixByMap = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Release version link click redirect to 
     $("#map-release-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
         //Set the code
         var MtrCode = $(this).attr("MtrCode");
-
         $("#map-release-modal").modal("hide");
 
         //Wait for the modal to close

@@ -77,7 +77,7 @@ app.alert.callback.readOnError = function (error) {
  */
 app.alert.drawCallback = function () {
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Event click update Alert.
     $("#alert-container table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
@@ -100,11 +100,13 @@ app.alert.callback.drawDatatable = function (data) {
 
         var localOptions = {
             data: data,
+            order: [[1, 'desc']],
             columns: [
                 {
+                    data: null,
                     render: function (_data, _type, row) {
                         var attributes = { idn: row.LrtCode };
-                        return app.library.html.link.edit(attributes, app.library.html.parseBbCode(row.LrtMessage));
+                        return app.library.html.parseBbCode(row.LrtMessage);
                     }
                 },
                 {
@@ -112,6 +114,15 @@ app.alert.callback.drawDatatable = function (data) {
                     render: function (data, type, row) {
                         return app.library.utility.formatDatetime(row.LrtDatetime);
                     }
+                },
+                {
+                    data: null,
+                    sorting: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return app.library.html.editButton({ idn: row.LrtCode }, false);
+                    },
+                    "width": "1%"
                 },
                 {
                     data: null,
@@ -199,6 +210,11 @@ app.alert.ajax.create = function () {
         LrtMessage: lrtMessage,
         LrtDatetime: lrtDateTimeAjax, //lrtDateTimeAjax
     };
+    //check for demo site
+    if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+        api.modal.error(app.label.static["demo-site-restricted-access"]);
+        return
+    }
     // CAll Ajax to Create Reason. Do Redraw Data Table for Create Reason.
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
@@ -321,6 +337,11 @@ app.alert.ajax.update = function () {
         LrtDatetime: lrtDateTimeAjax, // lrtDateTimeAjax
         LngIsoCode: app.label.language.iso.code
     };
+    //check for demo site
+    if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+        api.modal.error(app.label.static["demo-site-restricted-access"]);
+        return
+    }
     // CAll Ajax to Update the Alert. Get the fresh new data. Redraw table
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
@@ -377,6 +398,11 @@ app.alert.modal.delete = function () {
  * @param {*} idn
  */
 app.alert.ajax.delete = function (idn) {
+    //check for demo site
+    if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+        api.modal.error(app.label.static["demo-site-restricted-access"]);
+        return
+    }
     // Call the API by passing the idn to delete alert from DB
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,

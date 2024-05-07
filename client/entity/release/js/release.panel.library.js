@@ -59,7 +59,7 @@ app.release.panel.workInProgress.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.release.panel.drawCallbackWorkInProgress = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Edit link click
     $("#release-panel-workinprogress table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
@@ -100,7 +100,7 @@ app.release.panel.workInProgress.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         return $("<span>", {
-                            "data-toggle": "tooltip",
+                            "data-bs-toggle": "tooltip",
                             "text": row.GrpCode,
                             "title": row.GrpName
                         }).get(0).outerHTML;
@@ -167,7 +167,7 @@ app.release.panel.awaitingResponse.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.release.panel.drawCallbackAwaitingResponse = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Edit link click
     $("#release-panel-awaitingresponse table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
@@ -208,7 +208,7 @@ app.release.panel.awaitingResponse.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         return $("<span>", {
-                            "data-toggle": "tooltip",
+                            "data-bs-toggle": "tooltip",
                             "text": row.GrpCode,
                             "title": row.GrpName
                         }).get(0).outerHTML;
@@ -276,7 +276,7 @@ app.release.panel.awaitingSignoff.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.release.panel.drawCallbackAwaitingSignOff = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     //Edit link click
     $("#release-panel-awaitingsignoff table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();
@@ -317,7 +317,7 @@ app.release.panel.awaitingSignoff.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         return $("<span>", {
-                            "data-toggle": "tooltip",
+                            "data-bs-toggle": "tooltip",
                             "text": row.GrpCode,
                             "title": row.GrpName
                         }).get(0).outerHTML;
@@ -383,7 +383,7 @@ app.release.panel.pendingLive.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.release.panel.drawCallbackPendingLive = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     //Edit link click
     $("#release-panel-pendinglive table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();
@@ -424,7 +424,7 @@ app.release.panel.pendingLive.callback.drawDataTable = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         return $("<span>", {
-                            "data-toggle": "tooltip",
+                            "data-bs-toggle": "tooltip",
                             "text": row.GrpCode,
                             "title": row.GrpName
                         }).get(0).outerHTML;

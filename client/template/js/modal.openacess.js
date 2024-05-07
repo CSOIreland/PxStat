@@ -5,13 +5,13 @@ Open access
 $(document).ready(function () {
     $('#modal-open-access-setup-1fa').on('hide.bs.modal', function (e) {
         // Force the reload of the application 
-        app.plugin.backbutton.check = false;
+
         window.location.href = window.location.pathname;
     })
 
     $('#modal-open-access-setup-2fa').on('hide.bs.modal', function (e) {
         // Force the reload of the application 
-        app.plugin.backbutton.check = false;
+
         window.location.href = window.location.pathname;
     });
 

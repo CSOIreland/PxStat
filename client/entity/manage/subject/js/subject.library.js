@@ -38,7 +38,7 @@ app.subject.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.subject.drawCallback = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
   // click event update
   $("#subject-read-container table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
     e.preventDefault();
@@ -50,6 +50,7 @@ app.subject.drawCallback = function () {
     var idn = $(this).attr("idn");
     var sbjValue = $(this).attr("sbj-value");
     var obj2send = { "SbjCode": idn, "SbjValue": sbjValue };
+
     api.content.goTo("entity/manage/product/", "#nav-link-product", "#nav-link-manage", obj2send);
   });
   // click event delete

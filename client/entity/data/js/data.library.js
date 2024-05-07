@@ -120,7 +120,7 @@ app.data.callback.drawCallbackDrawLatestReleases = function () {
         app.data.dataset.draw();
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //populate colection api  
     app.data.callback.drawCollectionApiDetails();
@@ -218,7 +218,7 @@ app.data.callback.drawLatestReleases = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         return $("<span>", {
-                            class: "badge badge-primary",
+                            class: "badge bg-primary",
                             text: data.extension.language.name
                         }).get(0).outerHTML;
                     }
@@ -231,8 +231,8 @@ app.data.callback.drawLatestReleases = function (data) {
                         if (row.extension.exceptional) {
                             return $("<i>", {
                                 "class": "fas fa-exclamation-triangle text-warning",
-                                "data-toggle": "tooltip",
-                                "data-placement": "top",
+                                "data-bs-toggle": "tooltip",
+                                "data-bs-placement": "top",
                                 "title": app.label.static["exceptional-release"],
                             }).get(0).outerHTML;
                         }

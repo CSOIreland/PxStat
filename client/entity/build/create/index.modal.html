@@ -1,17 +1,15 @@
-<div class="modal fade" id="build-create-statistic" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div id="build-create-statistic" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title" label="add-statistics"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" aria-label="Close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <nav>
                     <div class="nav nav-tabs" role="tablist">
-                        <a class="nav-item nav-link active" name="manual-si-tab" data-toggle="tab" href="#build-create-manual-si" role="tab" aria-controls="manual-si" aria-selected="true" label="manual"></a>
-                        <a class="nav-item nav-link" name="upload-si-tab" data-toggle="tab" href="#build-create-upload-si" role="tab" aria-controls="upload-si" aria-selected="false" label="upload"></a>
+                        <a class="nav-item nav-link active" name="manual-si-tab" data-bs-toggle="tab" href="#build-create-manual-si" role="tab" aria-controls="manual-si" aria-selected="true" label="manual"></a>
+                        <a class="nav-item nav-link" name="upload-si-tab" data-bs-toggle="tab" href="#build-create-upload-si" role="tab" aria-controls="upload-si" aria-selected="false" label="upload"></a>
                     </div>
                 </nav>
                 <div class="tab-content">
@@ -44,7 +42,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer text-right">
+                            <div class="card-footer text-end">
                                 <button name="manual-submit-statistics" class="btn btn-primary"><i class="far fa-save"></i>
                                     <span label="save"></span>
                                 </button>
@@ -84,12 +82,12 @@
                             </div>
                             <div class="card-footer">
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                                    <div class="col-xs-12 col-sm-4 text-start my-2">
                                         <a class="btn btn-primary" href="entity/build/create/csv/template-statistics.csv" download><i class="fas fa-file-download"></i>
                                             <span label="download-csv-template"></span>
                                         </a>
                                     </div>
-                                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                                    <div class="col-xs-12 col-sm-8 text-end my-2">
                                         <button name="upload-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
                                         <button name="upload-submit-statistics" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
                                             <span label="add-statistics"></span>
@@ -102,7 +100,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="far fa-times-circle"></i>
                     <span label="cancel"></span>
                 </button>
             </div>
@@ -114,15 +112,13 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title" label="add-classifications"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" aria-label="Close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <nav>
                     <div class="nav nav-tabs" role="tablist">
-                        <a class="nav-item nav-link active" name="manual-classification-tab" data-toggle="tab" href="#build-create-manual-classification" role="tab" aria-controls="manual-classification" aria-selected="true" label="manual"></a>
-                        <a class="nav-item nav-link" name="upload-classification-tab" data-toggle="tab" href="#build-create-upload-classification" role="tab" aria-controls="upload-classification" aria-selected="false" label="upload"></a>
+                        <a class="nav-item nav-link active" name="manual-classification-tab" data-bs-toggle="tab" href="#build-create-manual-classification" role="tab" aria-controls="manual-classification" aria-selected="true" label="manual"></a>
+                        <a class="nav-item nav-link" name="upload-classification-tab" data-bs-toggle="tab" href="#build-create-upload-classification" role="tab" aria-controls="upload-classification" aria-selected="false" label="upload"></a>
                     </div>
                 </nav>
                 <div class="tab-content">
@@ -135,15 +131,15 @@
                                             <span label="classification"></span>
                                         </div>
                                         <div class="card-body">
-                                            <div class="border-top border-right border-left row mx-0">
-                                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cls-code" placeholder="" autocomplete="off" label="code"></label></div>
+                                            <div class="border-top border-end border-start row mx-0">
+                                                <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="cls-code" placeholder="" autocomplete="off" label="code"></label></div>
                                                 <div class="col-8 p-2">
                                                     <input class="form-control" name="cls-code" type="text" maxlength="256" autocomplete="off">
                                                     <span class="serverValidationError text-danger" name="cls-code-error-holder"></span>
                                                 </div>
                                             </div>
-                                            <div class="border-top border-right border-left row mx-0">
-                                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="cls-value" placeholder="" autocomplete="off" label="value"></label></div>
+                                            <div class="border-top border-end border-start row mx-0">
+                                                <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="cls-value" placeholder="" autocomplete="off" label="value"></label></div>
                                                 <div class="col-8 p-2">
                                                     <input class="form-control" name="cls-value" type="text" maxlength="256" autocomplete="off">
                                                     <span class="serverValidationError text-danger" name="cls-value-error-holder"></span>
@@ -182,7 +178,7 @@
                                     </div>
 
                                 </div>
-                                <div class="card-footer text-right">
+                                <div class="card-footer text-end">
 
                                     <button type="submit" name="manual-submit-classifications" class="btn btn-primary"><i class="far fa-save"></i>
                                         <span label="save"></span>
@@ -201,15 +197,15 @@
                                         </div>
                                         <div class="card-body">
 
-                                            <div class="border-top border-right border-left row mx-0">
-                                                <div class="bg-default border-right col p-2 text-right font-weight-bold"><label class="mandatory" for="cls-code" placeholder="" autocomplete="off" label="code"></label></div>
+                                            <div class="border-top border-end border-start row mx-0">
+                                                <div class="bg-default border-end col p-2 text-end fw-bold"><label class="mandatory" for="cls-code" placeholder="" autocomplete="off" label="code"></label></div>
                                                 <div class="col-8 p-2">
                                                     <input class="form-control" name="cls-code" type="text" maxlength="256" autocomplete="off">
                                                     <span class="serverValidationError text-danger" name="cls-code-error-holder"></span>
                                                 </div>
                                             </div>
-                                            <div class="border-top border-right border-left row mx-0">
-                                                <div class="bg-default border-right col p-2 text-right font-weight-bold"><label class="mandatory" for="cls-value" placeholder="" autocomplete="off" label="value"></label></div>
+                                            <div class="border-top border-end border-start row mx-0">
+                                                <div class="bg-default border-end col p-2 text-end fw-bold"><label class="mandatory" for="cls-value" placeholder="" autocomplete="off" label="value"></label></div>
                                                 <div class="col-8 p-2">
                                                     <input class="form-control" name="cls-value" type="text" maxlength="256" autocomplete="off">
                                                     <span class="serverValidationError text-danger" name="cls-value-error-holder"></span>
@@ -239,7 +235,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card-footer text-right">
+                                        <div class="card-footer text-end">
                                             <button name="upload-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
                                         </div>
                                     </div>
@@ -247,12 +243,12 @@
                                 </div>
                                 <div class="card-footer">
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-4 text-left my-2">
+                                        <div class="col-xs-12 col-sm-4 text-start my-2">
                                             <a class="btn btn-primary" href="entity/build/create/csv/template-classification-variables.csv" download><i class="fas fa-file-download"></i>
                                                 <span label="download-csv-template"></span>
                                             </a>
                                         </div>
-                                        <div class="col-xs-12 col-sm-8 text-right my-2">
+                                        <div class="col-xs-12 col-sm-8 text-end my-2">
                                             <button type="submit" name="upload-submit-classifications" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
                                                 <span label="add-classification"></span>
                                             </button>
@@ -273,7 +269,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="far fa-times-circle"></i>
                     <span label="cancel"></span>
                 </button>
             </div>
@@ -286,18 +282,14 @@
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title"><span label="search-classifications"></span>: <span name="search-classification-language"></span>
                 </h5>
-                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" aria-label="Close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="input-group mb-3 input-group-lg">
                     <input type="text" name="classifications-search-input" required="true" oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Required')" maxlength="256" class="form-control" placeholder="" autocomplete="off" aria-label="Recipient's username">
-                    <div class="input-group-append">
-                        <button name="search-classifications-modal-search-button" class="btn btn-outline-secondary" type="button">
-                            <span label="search"></span>
-                        </button>
-                    </div>
+                    <button name="search-classifications-modal-search-button" class="btn btn-outline-secondary" type="button">
+                        <span label="search"></span>
+                    </button>
                 </div>
                 <!-- Search classifications Results table (1)-->
                 <div name="search-classifications-list-table-container" class="card mb-2 border-info border" style="display: none">
@@ -305,7 +297,7 @@
                         <span label="classifications"></span>
                     </div>
                     <div class="card-body">
-                        <table name="search-classifications-list-table" class="table table-striped hover display" style="width:100%">
+                        <table name="search-classifications-list-table" class="table table-striped pt-2 hover display" style="width:100%">
                             <thead>
                                 <tr>
                                     <th label="table"></th>
@@ -333,7 +325,7 @@
                         <h5 name="read-classification-table-label" class=""></h5>
                     </div>
                     <div class="card-body">
-                        <table name="read-classification-table" class="table table-striped hover display" style="width:100%">
+                        <table name="read-classification-table" class="table table-striped pt-2 hover display" style="width:100%">
                             <thead>
                                 <tr>
                                     <th label="code"></th>
@@ -349,7 +341,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="card-footer text-right">
+                    <div class="card-footer text-end">
                         <button name="use-classification" type="button" class="btn btn-neutral"><i class="fas fa-check"></i>
                             <span label="use"></span>
                         </button>
@@ -360,22 +352,22 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="far fa-times-circle"></i>
                     <span label="cancel"></span>
                 </button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="build-create-view-classification" tabindex="-1" role="dialog" aria-hidden="true" data-dismiss="modal">
+<div class="modal fade" id="build-create-view-classification" tabindex="-1" role="dialog" aria-hidden="true" data-bs-dismiss="modal">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title" name="title"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4" id="result">
-                <table class="table table-striped hover" style="width:100%">
+                <table class="table table-striped pt-2 hover" style="width:100%">
                     <thead>
                         <tr>
                             <th label="code"></th>
@@ -388,14 +380,14 @@
             </div>
             <div class="card-footer">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-8 text-left my-2">
+                    <div class="col-xs-12 col-sm-8 text-start my-2">
                         <button name="download" class="btn btn-primary text-light">
                             <i class="fas fa-file-download"></i>
                             <span label="download-csv"></span>
                         </button>
                     </div>
-                    <div class="col-xs-12 col-sm-4 text-right my-2">
-                        <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                    <div class="col-xs-12 col-sm-4 text-end my-2">
+                        <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="far fa-times-circle"></i>
                             <span label="cancel"></span>
                         </button>
                     </div>
@@ -409,15 +401,13 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title" label="add-periods"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" aria-label="Close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <nav>
                     <div class="nav nav-tabs" role="tablist">
-                        <a class="nav-item nav-link active" name="manual-periods-tab" data-toggle="tab" href="#build-create-manual-periods" role="tab" aria-controls="manual-periods" aria-selected="true" label="manual"></a>
-                        <a class="nav-item nav-link" name="upload-periods-tab" data-toggle="tab" href="#build-create-upload-periods" role="tab" aria-controls="upload-periods" aria-selected="false" label="upload"></a>
+                        <a class="nav-item nav-link active" name="manual-periods-tab" data-bs-toggle="tab" href="#build-create-manual-periods" role="tab" aria-controls="manual-periods" aria-selected="true" label="manual"></a>
+                        <a class="nav-item nav-link" name="upload-periods-tab" data-bs-toggle="tab" href="#build-create-upload-periods" role="tab" aria-controls="upload-periods" aria-selected="false" label="upload"></a>
                     </div>
                 </nav>
                 <div class="tab-content">
@@ -452,7 +442,7 @@
                                 <!--   </div> -->
 
                             </div>
-                            <div class="card-footer text-right">
+                            <div class="card-footer text-end">
                                 <button name="manual-submit-periods" class="btn btn-primary"><i class="far fa-save"></i>
                                     <span label="save"></span>
                                 </button>
@@ -492,11 +482,11 @@
                             </div>
                             <div class="card-footer">
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                                    <div class="col-xs-12 col-sm-4 text-start my-2">
                                         <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv" download><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
                                         </a>
                                     </div>
-                                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                                    <div class="col-xs-12 col-sm-8 text-end my-2">
                                         <button name="upload-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
                                         <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
                                             <span label="add-periods"></span>
@@ -509,7 +499,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="far fa-times-circle"></i>
                     <span label="cancel"></span>
                 </button>
             </div>
@@ -523,10 +513,10 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="table-lookup"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <table class="table table-striped hover display" style="width:100%">
+                <table class="table table-striped pt-2 hover display" style="width:100%">
                     <thead>
                         <tr>
                             <th label="table"></th>
@@ -537,7 +527,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                     <i class="far fa-times-circle"></i>
                     <span label="close"></span>
                 </button>
@@ -552,7 +542,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="import"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
                 <div class="box">
@@ -575,12 +565,12 @@
             <div class="modal-footer">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-4  text-left my-2">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="col-xs-12 col-sm-4  text-start my-2">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i> <span label="close"></span>
                             </button>
                         </div>
-                        <div class="col-xs-12 col-sm-8 text-right  my-2">
+                        <div class="col-xs-12 col-sm-8 text-end  my-2">
                             <button name="import-file-reset" class="btn btn-warning text-dark" type="button">
                                 <i class="fas fa-undo"></i> <span label="reset"></span>
                             </button>
@@ -601,20 +591,20 @@
             <form>
                 <div class="modal-header  bg-info">
                     <h5 class="modal-title  text-light" label="frequency"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="frequency-code"></label>
                         </div>
                         <div class="col-8 p-2">
-                            <select class="form-control" name="frq-code"></select>
+                            <select class="form-select" name="frq-code"></select>
                             <span class="serverValidationError text-danger" name="frq-code-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <span class="mandatory" label="dimension"></span>
                         </div>
                         <div class="col-8 p-2">
@@ -632,8 +622,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="container-fluid">
-                        <div class="text-right">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i> <span label="close"></span>
                             </button>
                             <button name="btn-validate" type="submit" class="btn btn-primary text-light">
@@ -653,16 +643,16 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" name="cls-value"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="cls-code" value="">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div label="elimination-variable" class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div label="elimination-variable" class="bg-default border-end col-4 p-2 text-end fw-bold">
 
                         </div>
                         <div class="col-8 p-2">
-                            <select class="form-control" name="variable"></select>
+                            <select class="form-select" name="variable"></select>
                             <span class="serverValidationError text-danger" name="variable-error-holder"></span>
                         </div>
                     </div>
@@ -672,8 +662,8 @@
 
                 <div class="modal-footer">
                     <div class="container-fluid">
-                        <div class="text-right">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i> <span label="cancel"></span>
                             </button>
                             <button name="save" type="submit" class="btn btn-primary text-light">

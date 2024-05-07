@@ -3,15 +3,13 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                     <i class="far fa-times-circle"></i> <span label="close"></span>
                 </button>
             </div>
@@ -25,20 +23,20 @@
             <form>
                 <div class="modal-header  bg-info">
                     <h5 class="modal-title  text-light" label="frequency"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="frequency-code"></label>
                         </div>
                         <div class="col-8 p-2">
-                            <select class="form-control" name="frq-code"></select>
+                            <select class="form-select" name="frq-code"></select>
                             <span class="serverValidationError text-danger" name="frq-code-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <span class="mandatory" label="dimension"></span>
                         </div>
                         <div class="col-8 p-2">
@@ -56,8 +54,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="container-fluid">
-                        <div class="text-right">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i> <span label="close"></span>
                             </button>
                             <button name="btn-validate" type="submit" class="btn btn-primary text-light">
@@ -76,15 +74,13 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                     <i class="far fa-times-circle"></i> <span label="close"></span>
                 </button>
             </div>
@@ -97,9 +93,7 @@
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" label="confirm"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
                 <div class="container-fluid">
@@ -108,7 +102,7 @@
                         <div class="card-header bg-danger text-light" label="records-to-be-ignored"></div>
                         <div class="card-body text-center">
                             <div name="ignored-records-wrapper">
-                                <table name="ignored-records" class="table table-striped table-bordered" style="width:100%">
+                                <table name="ignored-records" class="table table-striped pt-2 table-bordered" style="width:100%">
                                     <thead>
                                         <tr name="header-row"></tr>
                                     </thead>
@@ -118,7 +112,7 @@
 
                             <p style="display: none" name="no-data-to-display" label="no-records-to-display"></p>
                         </div>
-                        <div class="card-footer text-right">
+                        <div class="card-footer text-end">
                             <button name="csv-ignored-records" class="btn btn-tertiary text-light">
                                 <i class="fas fa-download"></i> <span label="csv"></span>
                             </button>
@@ -129,7 +123,7 @@
                         <div class="card-header bg-success text-light" label="records-to-be-updated"></div>
                         <div class="card-body text-center">
                             <div name="updated-records-wrapper">
-                                <table name="updated-records" class="table table-striped table-bordered" style="width:100%">
+                                <table name="updated-records" class="table table-striped pt-2 table-bordered" style="width:100%">
                                     <thead>
                                         <tr name="header-row"></tr>
                                     </thead>
@@ -139,7 +133,7 @@
 
                             <p style="display: none" name="no-data-to-display" label="no-records-to-display"></p>
                         </div>
-                        <div class="card-footer text-right">
+                        <div class="card-footer text-end">
                             <button name="csv-updated-records" class="btn btn-tertiary text-light">
                                 <i class="fas fa-download"></i> <span label="csv"></span>
                             </button>
@@ -149,7 +143,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                     <i class="far fa-times-circle"></i> <span label="cancel"></span>
                 </button>
                 <button type="button" class="btn btn-warning" name="download-file">
@@ -160,24 +154,24 @@
     </div>
 </div>
 
-<div class="modal fade" id="build-update-edit-classification" tabindex="-1" role="dialog" aria-hidden="true" data-dismiss="modal">
+<div class="modal fade" id="build-update-edit-classification" tabindex="-1" role="dialog" aria-hidden="true" data-bs-dismiss="modal">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title" name="title"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4" id="result">
 
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="cls-code" placeholder="" autocomplete="off" label="code"></label></div>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label for="cls-code" placeholder="" autocomplete="off" label="code"></label></div>
                     <div class="col-8 p-2">
                         <span name="cls-code"></span>
                     </div>
                 </div>
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label for="cls-value" placeholder="" autocomplete="off" label="value"></label></div>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label for="cls-value" placeholder="" autocomplete="off" label="value"></label></div>
                     <div class="col-8 p-2">
                         <span name="cls-value"></span>
                     </div>
@@ -188,7 +182,7 @@
                         Variables
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped hover" style="width:100%">
+                        <table class="table table-striped pt-2 hover" style="width:100%">
                             <thead>
                                 <tr>
                                     <th label="code"></th>
@@ -203,8 +197,8 @@
             </div>
             <div class="modal-footer">
                 <div class="container-fluid">
-                    <div class="text-right">
-                        <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="fas fa-times"></i> <span label="close"></span></button>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="fas fa-times"></i> <span label="close"></span></button>
                     </div>
                 </div>
             </div>
@@ -217,10 +211,10 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="table-lookup"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <table class="table table-striped hover display" style="width:100%">
+                <table class="table table-striped pt-2 hover display" style="width:100%">
                     <thead>
                         <tr>
                             <th label="table"></th>
@@ -231,7 +225,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                     <i class="far fa-times-circle"></i><span label="cancel"></span>
                 </button>
             </div>
@@ -244,15 +238,13 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-light">
                 <h5 class="modal-title" label="add-periods"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <nav>
                     <div class="nav nav-tabs" role="tablist">
-                        <a class="nav-item nav-link active" name="manual-tab" data-toggle="tab" href="#build-update-manual-periods" role="tab" aria-controls="manual-si" aria-selected="true" label="manual"></a>
-                        <a class="nav-item nav-link" name="upload-tab" data-toggle="tab" href="#build-update-upload-periods" role="tab" aria-controls="upload-si" aria-selected="false" label="upload"></a>
+                        <a class="nav-item nav-link active" name="manual-tab" data-bs-toggle="tab" href="#build-update-manual-periods" role="tab" aria-controls="manual-si" aria-selected="true" label="manual"></a>
+                        <a class="nav-item nav-link" name="upload-tab" data-bs-toggle="tab" href="#build-update-upload-periods" role="tab" aria-controls="upload-si" aria-selected="false" label="upload"></a>
                     </div>
                 </nav>
                 <div class="tab-content">
@@ -285,7 +277,7 @@
 
 
                             </div>
-                            <div class="card-footer text-right">
+                            <div class="card-footer text-end">
 
                                 <button name="manual-submit-periods" class="btn btn-primary"><i class="far fa-save"></i>
                                     <span label="save"></span>
@@ -318,14 +310,21 @@
                                 <div class="border row mx-0">
                                     <span class="serverValidationError text-danger" name="upload-error-holder"></span>
                                 </div>
+                                <div class="card mt-2 border-danger" name="errors-card" style="display: none">
+                                    <div class="card-header bg-danger text-light" label="errors"></div>
+                                    <div class="card-body">
+                                        <ul name="errors" class="list-group mt-2">
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-footer">
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                                    <div class="col-xs-12 col-sm-4 text-start my-2">
                                         <a class="btn btn-primary" href="entity/build/update/csv/template-period-variables.csv" download><i class="fas fa-file-download"></i> <span label="download-csv-template"></span>
                                         </a>
                                     </div>
-                                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                                    <div class="col-xs-12 col-sm-8 text-end my-2">
                                         <button name="upload-reset-periods" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
                                         <button name="upload-submit-periods" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
                                             <span label="add-periods"></span>
@@ -338,7 +337,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal"><i class="far fa-times-circle"></i>
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="far fa-times-circle"></i>
                     <span label="cancel"></span>
                 </button>
             </div>
@@ -351,10 +350,10 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="table-lookup"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <table class="table table-striped hover display" style="width:100%">
+                <table class="table table-striped pt-2 hover display" style="width:100%">
                     <thead>
                         <tr>
                             <th label="table"></th>
@@ -365,7 +364,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                     <i class="far fa-times-circle"></i>
                     <span label="close"></span>
                 </button>
@@ -379,40 +378,38 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form>
-                <div class="modal-header">
-                    <h5 class="modal-title" label="periods"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-light" label="periods"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="card mb-4">
                         <div class="card-header bg-default text-dark d-flex justify-content-between align-items-center p-2"><span>
-                                <span class="font-weight-bold">
-                                    <input name="select-all" data-toggle="tooltip" data-placement="top" title="" type="checkbox" value="" data-original-title="Select All" label-tooltip="select-all">
+                                <span class="fw-bold">
+                                    <input name="select-all" data-bs-toggle="tooltip" data-bs-placement="top" title="" type="checkbox" value="" data-original-title="Select All" label-tooltip="select-all">
                                     <span name="dimension-label"><small name="dimension-code"></small></span></span>
-                                <span name="dimension-count" class="badge badge-data badge-pill bg-info text-light"></span></span>
-                            <i name="sort-options" data-toggle="tooltip" data-placement="top" title="" class="sort-icon fas fa-sort px-1 fa-lg" data-original-title="Sort" label-tooltip="sort"></i></span>
+                                <span name="dimension-count" class="badge bg-data rounded-pill bg-info text-light"></span></span>
+                            <i name="sort-options" data-bs-toggle="tooltip" data-bs-placement="top" title="" class="sort-icon fas fa-sort px-1 fa-lg" data-original-title="Sort" label-tooltip="sort"></i></span>
                         </div>
                         <div class="card-body p-1">
                             <input name="period-filter" type="search" class="form-control mb-1" placeholder="Filter" aria-label="Filter" aria-describedby="basic-addon2" autocomplete="off">
 
-                            <select name="period-select" class="custom-select" multiple="multiple" size="7" sort="asc">
+                            <select name="period-select" class="form-select" multiple="multiple" size="7" sort="asc">
                             </select>
                             <span class="serverValidationError text-danger" name="period-select-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left border-bottom row mx-0 my-2">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
-                            <span label="labels-and-unit" class="text-right font-weight-bold"></span>
+                    <div class="border-top border-end border-start border-bottom row mx-0 my-2">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                            <span label="labels-and-unit" class="text-end fw-bold"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input type="checkbox" name="labels" data-toggle="toggle"></span>
+                            <input type="checkbox" name="labels" data-bs-toggle="toggle"></span>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                         <i class="far fa-times-circle"></i>
                         <span label="close"></span>
                     </button>
@@ -429,16 +426,16 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" name="cls-value"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="cls-code" value="">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div label="elimination-variable" class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div label="elimination-variable" class="bg-default border-end col-4 p-2 text-end fw-bold">
 
                         </div>
                         <div class="col-8 p-2">
-                            <select class="form-control" name="variable"></select>
+                            <select class="form-select" name="variable"></select>
                             <span class="serverValidationError text-danger" name="variable-error-holder"></span>
                         </div>
                     </div>
@@ -448,8 +445,8 @@
 
                 <div class="modal-footer">
                     <div class="container-fluid">
-                        <div class="text-right">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i> <span label="cancel"></span>
                             </button>
                             <button name="save" type="submit" class="btn btn-primary text-light">

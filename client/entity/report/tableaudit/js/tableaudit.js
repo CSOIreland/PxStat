@@ -8,8 +8,7 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["reports"]], [app.label.static["table-audit"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["reports"] + " - " + app.label.static["table-audit"]);
-
-
+    app.navigation.setState("#nav-link-report-table-audit");
 
     app.tableaudit.setDatePicker();
     app.tableaudit.ajax.readReason();
@@ -29,7 +28,7 @@ $(document).ready(function () {
     $("#table-audit-results").find("[name=csv]").once("click", app.tableaudit.callback.downloadResults);
 
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

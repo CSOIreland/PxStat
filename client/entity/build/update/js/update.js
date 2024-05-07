@@ -9,6 +9,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["build"]], [app.label.static["update"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["update"]);
+    app.navigation.setState("#nav-link-nav-link-update");
+
 
     $("#modal-entity").empty();
     api.content.load("#modal-entity", "entity/build/update/index.modal.html", null, true);
@@ -136,14 +138,15 @@ $(document).ready(function () {
     });
 
     $("#build-update-download-csv-file [name=labels]").bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
-        onstyle: "success",
-        offstyle: "warning",
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
+        onstyle: "success text-light",
+        offstyle: "warning text-dark",
+        height: 38,
         width: C_APP_TOGGLE_LENGTH
     });
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

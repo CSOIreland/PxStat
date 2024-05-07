@@ -73,8 +73,8 @@ app.library.group.modal.callback.readAccountList = function (data) {
       idn: row.CcnUsername,
       href: "#",
       html: $("<i>", {
-        "data-toggle": "tooltip",
-        "data-placement": "top",
+        "data-bs-toggle": "tooltip",
+        "data-bs-placement": "top",
         "title": "", //userTooltipTitle,
         "data-original-title": userTooltipTitle,
         "class": userIconClass
@@ -90,7 +90,7 @@ app.library.group.modal.callback.readAccountList = function (data) {
     $("#modal-read-group .list-group").append(li);
   });
   //Bootstrap tooltip
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
   // Switch between the modals to avoid overlapping
   $("#modal-read-user").modal("hide");
   $("#modal-read-group").modal("show");

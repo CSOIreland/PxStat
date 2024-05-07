@@ -8,6 +8,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["build"]], [app.label.static["create"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["create"]);
+    app.navigation.setState("#nav-link-create");
+
 
     api.content.load("#build-create-initiate", "entity/build/create/index.initiate.html");
     api.content.load("#build-create-dimensions", "entity/build/create/index.dimension.html");
@@ -27,7 +29,7 @@ $(document).ready(function () {
     // Initiate Drag n Drop plugin
     api.plugin.dragndrop.initiate(document, window);
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

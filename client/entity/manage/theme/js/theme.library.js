@@ -38,7 +38,7 @@ app.theme.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.theme.drawCallback = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // click event update
     $("#theme-read-container table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();

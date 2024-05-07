@@ -22,30 +22,33 @@ $(document).ready(function () {
 
     $("#release-comparison-modal").on('show.bs.modal', function (e) {
         $("#comparison-amendment-toggle").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["false"],
-            off: app.label.static["true"],
+            onlabel: app.label.static["false"],
+            offlabel: app.label.static["true"],
             onstyle: "primary",
             offstyle: "neutral",
+            height: 38,
             width: C_APP_TOGGLE_LENGTH
         });
 
         $("#comparison-amendment-toggle").bootstrapToggle('on');
 
         $("#comparison-addition-toggle").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["false"],
-            off: app.label.static["true"],
+            onlabel: app.label.static["false"],
+            offlabel: app.label.static["true"],
             onstyle: "primary",
             offstyle: "neutral",
+            height: 38,
             width: C_APP_TOGGLE_LENGTH
         });
 
         $("#comparison-addition-toggle").bootstrapToggle('on');
 
         $("#comparison-deletion-toggle").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["false"],
-            off: app.label.static["true"],
+            onlabel: app.label.static["false"],
+            offlabel: app.label.static["true"],
             onstyle: "primary",
             offstyle: "neutral",
+            height: 38,
             width: C_APP_TOGGLE_LENGTH
         });
 

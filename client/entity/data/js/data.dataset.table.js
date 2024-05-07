@@ -13,8 +13,8 @@ $(document).ready(function () {
     }
     //show codes
     $('#data-dataset-table-code-toggle').bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["false"],
-        off: app.label.static["true"],
+        onlabel: app.label.static["false"],
+        offlabel: app.label.static["true"],
         onstyle: "tertiary",
         offstyle: "neutral",
         width: C_APP_TOGGLE_LENGTH
@@ -25,13 +25,17 @@ $(document).ready(function () {
         $("#data-dataset-table-result").find("[name=save-query]").remove()
     };
 
-    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time], #data-dataset-table-accordion-collapse-widget [name=link-to-wip], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
-        onstyle: "primary",
-        offstyle: "warning",
+    $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time], #data-dataset-table-api-data-connector-content [name=fluid-time], #data-dataset-table-accordion-collapse-widget [name=link-to-wip], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
+        onstyle: "success text-light",
+        offstyle: "warning text-dark",
+        height: 38,
+        style: "text-light",
         width: C_APP_TOGGLE_LENGTH
     });
+
+    $("#data-dataset-table-api-data-connector-content [name=fluid-time]").once("change", app.data.dataset.table.buildApiParams);
 
     $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").val(JSON.stringify({ "options": {} }));
     app.data.dataset.table.callback.formatJson();
@@ -74,24 +78,15 @@ $(document).ready(function () {
     });
 
 
-
-    $('#data-dataset-table-accordion').on('show.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find(".card-header i[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
-    });
-
-    $('#data-dataset-table-accordion').on('hide.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find(".card-header i[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
-    });
-
     $('#data-dataset-table-accordion').on('shown.bs.collapse', function (e) {
         if (app.data.isModal) {
             $('#data-view-modal').animate({
-                scrollTop: '+=' + $("#" + e.target.id).parent().find(".card-header")[0].getBoundingClientRect().top
+                scrollTop: '+=' + $("#" + e.target.id).parent()[0].getBoundingClientRect().top
             }, 1000);
         }
         else {
             $('html, body').animate({
-                scrollTop: $("#" + e.target.id).parent().find(".card-header").offset().top
+                scrollTop: $("#" + e.target.id).parent().offset().top
             }, 1000);
         }
     });
@@ -107,10 +102,10 @@ $(document).ready(function () {
 
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
+
     new ClipboardJS("#data-dataset-table-accordion [name=copy-api-info], #data-dataset-table-accordion [name=copy-api-object], #data-dataset-table-accordion [name=copy-snippet-code]");
+    app.library.html.parseDynamicPopover("#data-dataset-table-accordion-collapse-widget [label-popover-dynamic=link-to-wip]", "link-to-wip", [app.config.corsDomain]);
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
-    app.library.html.parseDynamicPopover("#data-dataset-table-accordion-collapse-widget [label-popover-dynamic=link-to-wip]", "link-to-wip", [app.config.corsDomain]);
-
+    $('[data-bs-toggle="tooltip"]').tooltip();
 });

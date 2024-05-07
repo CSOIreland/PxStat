@@ -71,6 +71,8 @@ app.geomap.preview.callback.renderMap = async function (data) {
         maxBounds: app.geomap.preview.getMaxBounds(app.geomap.preview.geoJson)
     });
 
+    map.attributionControl.setPrefix('');
+
     //add baselayers
     $.each(app.config.entity.map.baseMap.leaflet, function (index, value) {
         L.tileLayer(value.url, value.options).addTo(map);
@@ -220,7 +222,7 @@ app.geomap.preview.callback.renderProperties = function (data) {
     });
 
     $('#map-modal-preview').on('hide.bs.modal', function (event) {
-        $('#map-modal-preview-map-content').tab('show');
+        $('#map-modal-preview-map-content').show();
         $("#map-modal-preview-properties-tab").removeClass("active");
         $("#map-modal-preview-map-tab").addClass("active");
 

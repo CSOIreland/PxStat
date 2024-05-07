@@ -73,26 +73,4 @@ app.database.callback.drawCallback = function () {
         app.database.ajax.readByTable($(this).attr("idn"));
     });
 }
-
-
-app.database.ajax.reorganise = function (idn) {
-    api.ajax.jsonrpc.request(
-        app.config.url.api.jsonrpc.private,
-        "PxStat.Security.Database_API.Update",
-        {},
-        "app.database.callback.reorganise",
-        null,
-        null,
-        null
-    );
-};
-
-app.database.callback.reorganise = function (data) {
-    if (data == C_API_AJAX_SUCCESS) {
-        $("#database-modal-index-reorganise").modal("hide");
-        api.modal.success(app.label.static["success-index-reorganise"]);
-    } else {
-        api.modal.exception(app.label.static["api-ajax-exception"]);
-    }
-};
 //#endregion

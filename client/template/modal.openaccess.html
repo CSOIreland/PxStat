@@ -5,11 +5,11 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" label="management-login"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" for="email" label="email"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -17,23 +17,21 @@
                             <span class="serverValidationError text-danger" name="email-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="password" label="password"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="password" label="password"></label></div>
                         <div class="col-8 p-2">
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="password" maxlength="256"></input>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" name="show-password" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="show-password"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-outline-secondary" name="hide-password" type="button" style="display: none;" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="hide-password"><i class="fas fa-eye-slash"></i></button>
-                                </div>
+                                <button class="btn btn-outline-secondary" name="show-password" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="show-password"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-outline-secondary" name="hide-password" type="button" style="display: none;" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="hide-password"><i class="fas fa-eye-slash"></i></button>
                             </div>
                             <span class="serverValidationError text-danger" name="password-error-holder"></span>
-                            <div class="text-right mt-2"><a href="#" label="forgotten-password" name="forgotten-password"></a></div>
+                            <div class="text-end mt-2"><a href="#" label="forgotten-password" name="forgotten-password"></a></div>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="captcha"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -44,9 +42,9 @@
 
                     <div class="border-bottom row mx-0 mb-3"></div>
                 </div>
-                <div class="modal-footer justify-content-start bg-neutral rounded-0" name="ad-user-disabled" style="display: none;"></div>
+                <div class="modal-footer justify-content-start bg-neutral text-dark rounded-0" name="ad-user-disabled" style="display: none;"></div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                         <i class="far fa-times-circle"></i> <span label="cancel"></span>
                     </button>
                     <button class="btn btn-primary text-light" type="submit" name="login">
@@ -61,21 +59,21 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" label="verify"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="email" label="email"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="email" label="email"></label></div>
                         <div class="col-8 p-2" name="email">
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0" name="authentication-code-row">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="authentication-code" label="2fa-code"></label></div>
+                    <div class="border-top border-end border-start row mx-0" name="authentication-code-row">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="authentication-code" label="2fa-code"></label></div>
                         <div class="col-8 p-2">
                             <input type="input" class="form-control" name="authentication-code" maxlength="6" autocomplete="off"></input>
                             <span class="serverValidationError text-danger" name="authentication-code-error-holder"></span>
-                            <div class="text-right mt-2"><a href="#" label="reset-2fa" name="reset-2fa"></a></div>
+                            <div class="text-end mt-2"><a href="#" label="reset-2fa" name="reset-2fa"></a></div>
                         </div>
                     </div>
 
@@ -85,7 +83,7 @@
                     <label label="2fa-verify-info"></label>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                         <i class="far fa-times-circle"></i> <span label="cancel"></span>
                     </button>
                     <button class="btn btn-primary text-light" type="submit" name="verify" style="display: none;">
@@ -106,19 +104,19 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" label="forgotten-password"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="email" label="email"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="email" label="email"></label></div>
                         <div class="col-8 p-2">
                             <input type="text" class="form-control" name="email" maxlength="256"></input>
                             <span class="serverValidationError text-danger" name="email-error-holder"></span>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="captcha"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -130,7 +128,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                         <i class="far fa-times-circle"></i> <span label="cancel"></span>
                     </button>
                     <button class="btn btn-primary text-light" type="submit">
@@ -150,53 +148,49 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" label="set-password"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" label="name"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" label="name"></label></div>
                         <div class="col-8 p-2" name="name">
 
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" label="email"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" label="email"></label></div>
                         <div class="col-8 p-2" name="email">
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" for="password" label="password"></label>
                         </div>
                         <div class="col-8 p-2">
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="password" maxlength="256" autocomplete="new-password"></input>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" name="show-password" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="show-password"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-outline-secondary" name="hide-password" type="button" style="display: none;" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="hide-password"><i class="fas fa-eye-slash"></i></button>
-                                </div>
+                                <button class="btn btn-outline-secondary" name="show-password" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="show-password"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-outline-secondary" name="hide-password" type="button" style="display: none;" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="hide-password"><i class="fas fa-eye-slash"></i></button>
                             </div>
                             <span class="serverValidationError text-danger" name="password-error-holder"></span>
-                            <div class="text-right mt-2">
-                                <a href="#" label="minimum-requirements" name="password-requirements" data-toggle="popover" data-trigger="hover" tabindex="0"></a>
+                            <div class="text-end mt-2">
+                                <a href="#" label="minimum-requirements" name="password-requirements" data-bs-toggle="popover" data-bs-trigger="hover" tabindex="0"></a>
                             </div>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="repeat-password" label="repeat-password"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="repeat-password" label="repeat-password"></label></div>
                         <div class="col-8 p-2">
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="repeat-password" maxlength="256" autocomplete="new-password"></input>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" name="show-password" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="show-password"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-outline-secondary" name="hide-password" type="button" style="display: none;" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="hide-password"><i class="fas fa-eye-slash"></i></button>
-                                </div>
+                                <button class="btn btn-outline-secondary" name="show-password" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="show-password"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-outline-secondary" name="hide-password" type="button" style="display: none;" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="hide-password"><i class="fas fa-eye-slash"></i></button>
                             </div>
                             <span class="serverValidationError text-danger" name="repeat-password-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="captcha"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -207,7 +201,7 @@
                     <div class="border-bottom row mx-0 mb-3"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                         <i class="far fa-times-circle"></i> <span label="cancel"></span>
                     </button>
                     <button class="btn btn-primary text-light" type="submit">
@@ -226,25 +220,25 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" label="set-2fa"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="name"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label label="name"></label></div>
                         <div class="col-8 p-2" name="name">
                         </div>
                     </div>
-                    <div class="border-top border-right border-left border-bottom row mx-0 mb-4">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="email"></label></div>
+                    <div class="border-top border-end border-start border-bottom row mx-0 mb-4">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label label="email"></label></div>
                         <div class="col-8 p-2" name="email">
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0" name="open-access-2fa-checks">
-                        <div class="bg-warning text-dark border-right col-12 p-2 text-center" label="open-access-2fa-checks"></div>
+                    <div class="border-top border-end border-start row mx-0" name="open-access-2fa-checks">
+                        <div class="bg-warning text-dark border-end col-12 p-2 text-center" label="open-access-2fa-checks"></div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0" name="smart-device-row">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
-                            <span class="mandatory"><a href="#" name="smart-device-popover" label="smart-device-ready" data-toggle="popover" data-placement="left" tabindex="0" data-trigger="hover"></a></span>
+                    <div class="border-top border-end border-start row mx-0" name="smart-device-row">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                            <span class="mandatory"><a href="#" name="smart-device-popover" label="smart-device-ready" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="hover"></a></span>
                         </div>
                         <div class="col-8 p-2">
                             <div class="form-check">
@@ -254,9 +248,9 @@
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0" name="authenticator-app-row">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
-                            <span class="mandatory"><a href="#" name="authenticator-app-popover" label="authenticator-app-open" data-toggle="popover" data-placement="left" tabindex="0" data-trigger="hover"></a></span>
+                    <div class="border-top border-end border-start row mx-0" name="authenticator-app-row">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                            <span class="mandatory"><a href="#" name="authenticator-app-popover" label="authenticator-app-open" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="hover"></a></span>
                         </div>
                         <div class="col-8 p-2">
                             <div class="form-check">
@@ -266,9 +260,9 @@
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0" name="secure-location-row">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
-                            <span class="mandatory"><a href="#" name="secure-location-popover" label="secure-location" data-toggle="popover" data-placement="left" tabindex="0" data-trigger="hover"></a></span>
+                    <div class="border-top border-end border-start row mx-0" name="secure-location-row">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                            <span class="mandatory"><a href="#" name="secure-location-popover" label="secure-location" data-bs-toggle="popover" data-bs-placement="left" tabindex="0" data-bs-trigger="hover"></a></span>
                         </div>
                         <div class="col-8 p-2">
                             <div class="form-check">
@@ -278,8 +272,8 @@
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left border-bottom row mx-0 mb-4" name="captcha-row">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start border-bottom row mx-0 mb-4" name="captcha-row">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="captcha"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -288,19 +282,19 @@
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0" name="qr-generate-row">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="qr-code"></label></div>
+                    <div class="border-top border-end border-start row mx-0" name="qr-generate-row">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label label="qr-code"></label></div>
                         <div class="col-8 p-2">
                             <button type="submit" class="btn btn-primary" name="generate-qr-code">
                                 <i class="fas fa-qrcode"></i> <span label="generate"></span>
                             </button>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0" name="qr-row" style="display: none;">
-                        <div class="bg-warning text-dark border-right col-12 p-2 text-center" label="scan-qr-code"></div>
+                    <div class="border-top border-end border-start row mx-0" name="qr-row" style="display: none;">
+                        <div class="bg-warning text-dark border-end col-12 p-2 text-center" label="scan-qr-code"></div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0" name="qr-row" style="display: none;">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label label="qr-code"></label></div>
+                    <div class="border-top border-end border-start row mx-0" name="qr-row" style="display: none;">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label label="qr-code"></label></div>
                         <div class="col-8 p-2" name="qr-code">
 
                         </div>
@@ -311,7 +305,7 @@
                     <label label="2fa-info"></label>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                         <i class="far fa-times-circle"></i> <span label="close"></span>
                     </button>
                 </div>
@@ -326,19 +320,19 @@
             <form>
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-light" label="reset-2fa"></h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="email" label="email"></label></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="email" label="email"></label></div>
                         <div class="col-8 p-2">
                             <input type="text" class="form-control" name="email" maxlength="256"></input>
                             <span class="serverValidationError text-danger" name="email-error-holder"></span>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="captcha"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -350,7 +344,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                    <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                         <i class="far fa-times-circle"></i> <span label="cancel"></span>
                     </button>
                     <button class="btn btn-primary text-light" type="submit">

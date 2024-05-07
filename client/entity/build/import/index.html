@@ -6,10 +6,10 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr class="d-flex">
-                            <th class="bg-default text-right col-2" label="group"></th>
+                            <th class="bg-default text-end col-2" label="group"></th>
                             <td class="col-10">
                                 <form>
-                                    <select class="form-control" name="select-group" disabled></select>
+                                    <select class="form-select" name="select-group" disabled></select>
                                     <span class="serverValidationError text-danger " name="select-group-error-holder"></span>
                                 </form>
                             </td>
@@ -36,12 +36,12 @@
 
             <div class="card-footer">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                    <div class="col-xs-12 col-sm-4 text-start my-2">
                         <button name="preview" type="button" class="btn btn-info" disabled>
                             <i class="far fa-file"></i> <span label="preview"></span>
                         </button>
                     </div>
-                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                    <div class="col-xs-12 col-sm-8 text-end my-2">
                         <button name="cancel" type="button" class="btn btn-warning text-dark">
                             <i class="fas fa-undo"></i> <span label="reset"></span>
                         </button>
@@ -68,7 +68,7 @@
 
 <div id="build-import-history" class="card m-3 border-primary">
     <div class="card-header bg-primary text-light">
-        <div class="row justify-content-between align-items-center px-2">
+        <div class="d-flex justify-content-between px-2">
             <span label="import-history"></span>
             <span><span label="from"></span>
                 : <span id="build-import-import-history-date-picker" class="text-dark p-2" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
@@ -79,7 +79,7 @@
         </div>
     </div>
     <div class="card-body">
-        <table class="table table-striped hover" style="width:100%">
+        <table class="table table-striped pt-2 hover" style="width:100%">
             <thead>
                 <tr>
                     <th label="table"></th>

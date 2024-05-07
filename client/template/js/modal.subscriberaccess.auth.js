@@ -129,7 +129,6 @@ app.auth.validation.signIn = function () {
                     if (!userCredential.user.emailVerified) {
                         //send verification email
                         app.auth.sendEmailVerification(userCredential.user);
-
                     }
                     else {
                         //user signed in
@@ -163,7 +162,6 @@ app.auth.callback.signOut = function (data) {
             //clean up language cookie. It will be reset again if the user logs in
             Cookies.remove(C_COOKIE_LANGUAGE);
             //reload application
-            app.plugin.backbutton = false;
             window.location.href = window.location.pathname;
 
         }).catch((error) => {
@@ -248,7 +246,7 @@ app.auth.validation.resetPassword = function () {
                 api.modal.error(app.label.static["firebase-authentication-link-invalid"]);
                 $('#modal-error').on('hide.bs.modal', function (e) {
                     // Force the reload of the application 
-                    app.plugin.backbutton.check = false;
+
                     window.location.href = window.location.pathname;
                 })
                 console.log("firebase authentication error : " + error.message);
@@ -328,7 +326,6 @@ app.auth.subscriberEmailActions = function () {
             case "resetPassword":
                 if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
                     //logged in as AD or local account, don't allow to verify email
-                    app.plugin.backbutton = false;
                     window.location.href = window.location.pathname;
                 }
                 else {
@@ -341,7 +338,7 @@ app.auth.subscriberEmailActions = function () {
                         api.modal.error(app.label.static["firebase-authentication-link-invalid"]);
                         $('#modal-error').on('hide.bs.modal', function (e) {
                             // Force the reload of the application 
-                            app.plugin.backbutton.check = false;
+
                             window.location.href = window.location.pathname;
                         })
                         console.log("firebase authentication error : " + error.message);
@@ -351,21 +348,19 @@ app.auth.subscriberEmailActions = function () {
             case "verifyEmail":
                 if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
                     //logged in as AD or local account, don't allow to verify email
-                    app.plugin.backbutton = false;
                     window.location.href = window.location.pathname;
                 }
                 else {
                     applyActionCode(app.auth.getFirebaseAuthApp, api.uri.getParam('oobCode')).then(() => {
                         api.modal.success(app.label.static["email-address-verified"]);
                         $("#modal-success").on('hide.bs.modal', function (e) {
-                            app.plugin.backbutton = false;
                             window.location.href = window.location.pathname;
                         });
                     }).catch((error) => {
                         api.modal.error(app.label.static["firebase-authentication-link-invalid"]);
                         $('#modal-error').on('hide.bs.modal', function (e) {
                             // Force the reload of the application 
-                            app.plugin.backbutton.check = false;
+
                             window.location.href = window.location.pathname;
                         })
                         console.log("firebase authentication error : " + error.message);
@@ -453,7 +448,9 @@ $(document).ready(function () {
             // https://firebase.google.com/docs/reference/js/firebase.User
             //always make sure we have the user in PxStat
             if ((app.auth.firebase.user.type == C_APP_FIREBASE_ID_PASSWORD) && !user.emailVerified) {
-                //user logged in with password but not verified, do nothing
+                //user logged in with password but not verified
+                //log the user out, if they attempt to sign in again with the same email, verification email will be resent
+                app.auth.ajax.signOut();
             }
             else if (!api.uri.isParam("mode")) {
                 app.navigation.access.ajax.readCurrentSubscriber(user);
@@ -560,7 +557,6 @@ $(document).ready(function () {
     });
 
     $("#modal-subscriber-password-reset").on('hide.bs.modal', function (event) {
-        app.plugin.backbutton = false;
         window.location.href = window.location.pathname;
     });
 

@@ -107,7 +107,7 @@ app.keyword.subject.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.keyword.drawCallback = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   //Call Synonyms when word is selected.
   $("td.details-request-control i.fa.plus-control").css({ "color": "forestgreen" });

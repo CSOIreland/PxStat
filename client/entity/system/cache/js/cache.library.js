@@ -32,7 +32,7 @@ app.cache.render.chartOptions = {
 app.cache.ajax.read = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
-        "PxStat.Security.cache_API.Read",
+        "PxStat.Security.Cache_API.Read",
         {},
         "app.cache.callback.read",
         null,
@@ -43,6 +43,12 @@ app.cache.ajax.read = function () {
 };
 
 app.cache.callback.read = function (data) {
+    if (!data) {
+        $("#cache-read-container").find("[name='no-cache-message']").show();
+        return
+    }
+    //enable cache flush button
+    $("#cache-read-container").find("[name='flush-cache']").prop('disabled', false);
     app.cache.render.summary(data);
     app.cache.render.count(data);
     app.cache.render.byte(data);
@@ -121,7 +127,7 @@ app.cache.render.usedMemory = function (data) {
 
 
 
-//#region load config
+//#region flush cache
 app.cache.ajax.flushCache = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
@@ -136,7 +142,7 @@ app.cache.ajax.flushCache = function () {
 app.cache.callback.flushCache = function (data) {
     if (data == C_API_AJAX_SUCCESS) {
         $("#modal-success").on('hide.bs.modal', function (e) {
-            app.plugin.backbutton.check = false;
+
             window.location.href = window.location.pathname;
         });
         api.modal.success(app.label.static["success-cache-flush"]);

@@ -48,7 +48,7 @@ app.language.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.language.drawCallback = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   // Update link
   $("#language-read-container table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
@@ -131,7 +131,7 @@ app.language.drawMatrixByLanguageDataTable = function (data, callbackParam) {
 }
 
 app.language.drawCallbackMatrix = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   //Release version link click redirect to 
   $("#language-matrix-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
@@ -139,15 +139,13 @@ app.language.drawCallbackMatrix = function () {
     //Set the code
     var MtrCode = $(this).attr("MtrCode");
 
-    $("#language-matrix-modal").modal("hide");
-
     //Wait for the modal to close
     $("#language-matrix-modal").on('hidden.bs.modal', function (e) {
       //Unbind the event for next call
       $("#language-matrix-modal").off('hidden.bs.modal');
 
       api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": MtrCode });
-    })
+    }).modal("hide");
 
 
   });

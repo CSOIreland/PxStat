@@ -103,6 +103,11 @@ app.email.validation.create = function () {
  *
  */
 app.email.ajax.create = function () {
+    //check for demo site
+    if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+        api.modal.error(app.label.static["demo-site-restricted-access"]);
+        return
+    }
     // CAll Ajax to Create send message.
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,

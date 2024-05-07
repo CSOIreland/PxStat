@@ -56,6 +56,9 @@ app.release.search.callback.readMatrixList = function (data) {
 
                 // Store the MtrCode for later use
                 app.release.MtrCode = selectedObject.id;
+                app.navigation.replaceState("#nav-link-release", {
+                    "MtrCode": app.release.MtrCode
+                })
                 app.release.search.readReleaseList();
             }
             else {
@@ -189,6 +192,12 @@ app.release.search.loadRelease = function (e) {
     e.preventDefault();
     // Store for later use
     app.release.RlsCode = $(this).attr("idn");
+
+    //update state
+    app.navigation.replaceState("#nav-link-release", {
+        "MtrCode": app.release.MtrCode,
+        "RlsCode": app.release.RlsCode
+    })
 
     //scroll to the bottom of the search results table to avoid bouncing
     $('html, body').animate({

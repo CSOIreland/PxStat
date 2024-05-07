@@ -107,7 +107,7 @@ app.navigation.access.callback.ReadCurrentLoginAccess_OnError = function () {
   //attempted login from invalid logged in user
   //clean up session by logging out
   $('#modal-error').on('hide.bs.modal', function (event) {
-    app.plugin.backbutton.check = false;
+
     api.cookie.session.end(app.config.url.api.jsonrpc.public, "PxStat.Security.Login_API.Logout");
   });
 }
@@ -136,19 +136,19 @@ app.navigation.access.callback.readCurrentSubscriber = function (data, user) {
     app.library.user.data.language = data.LngIsoCode;
     switch (app.auth.firebase.user.type) {
       case C_APP_FIREBASE_ID_PASSWORD:
-        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fas fa-user mr-2");
+        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fas fa-user me-2");
         break;
       case C_APP_FIREBASE_ID_GOOGLE:
-        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-google mr-2");
+        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-google me-2");
         break;
       case C_APP_FIREBASE_ID_FACEBOOK:
-        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-facebook mr-2");
+        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-facebook me-2");
         break;
       case C_APP_FIREBASE_ID_TWITTER:
-        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-twitter mr-2");
+        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-twitter me-2");
         break;
       case C_APP_FIREBASE_ID_GITHUB:
-        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-github mr-2");
+        $("#navigation").find("[name=nav-subscriber-details]").find("[name=subscriber-icon]").removeClass().addClass("fab fa-github me-2");
         break;
       default:
         break;
@@ -454,6 +454,34 @@ app.navigation.setTitle = function (title) {
   title = title || null;
   // Set Document Title
   $("title").text(title ? title : app.config.title);
+
+
+}
+
+/**
+ * Set state for managing history
+ * @param {*} state 
+ */
+app.navigation.setState = function (triggerSelector, state) {
+  if (window._popState) {
+    window._popState = false;
+    return
+  }
+  state = state || {};
+  state.triggerSelector = triggerSelector;
+  history.pushState(state, null, window.location.href);
+
+}
+
+/**
+ * Replace state for managing history
+ * @param {*} state 
+ */
+app.navigation.replaceState = function (triggerSelector, state) {
+  state = state || {};
+  state.triggerSelector = triggerSelector;
+  history.replaceState(state, null, window.location.href);
+
 }
 
 /**
@@ -472,16 +500,17 @@ app.navigation.access.check = function (PrvCodeList) {
     app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadCurrent",
     null,
-    "app.navigation.access.callback.check",
-    PrvCodeList
+    "app.navigation.access.callback.success",
+    PrvCodeList,
+    "app.navigation.access.callback.error",
   );
 };
 /**
- * Check access callback against current user
+ * Check success access callback against current user
  * @param {*} data 
  * @param {*} PrvCodeList 
  */
-app.navigation.access.callback.check = function (data, PrvCodeList) {
+app.navigation.access.callback.success = function (data, PrvCodeList) {
   PrvCodeList = PrvCodeList || [];
   // Add Administrator privilege by default;
   // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
@@ -492,16 +521,28 @@ app.navigation.access.callback.check = function (data, PrvCodeList) {
     // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
     if ($.inArray(data.PrvCode, PrvCodeList) == -1) {
       // Prevent backbutton check
-      app.plugin.backbutton.check = false;
+
       // Force page reload
       window.location.href = window.location.pathname;
     }
   } else {
     // Prevent backbutton check
-    app.plugin.backbutton.check = false;
+
     // Force page reload
     window.location.href = window.location.pathname;
   }
+};
+
+/**
+ * Check error access callback against current user
+ * @param {*} data 
+ * @param {*} PrvCodeList 
+ */
+app.navigation.access.callback.error = function () {
+  // Prevent backbutton check
+
+  // Force page reload
+  window.location.href = window.location.pathname;
 };
 //#endregion
 
@@ -648,7 +689,7 @@ app.navigation.language.callback.read = function (data, prvCode) {
 
     if ($(this).attr('exists') && $(this).attr('exists').length) {
       //set cookie language
-      Cookies.set(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie.persistent);
+      Cookies.setJSON(C_COOKIE_LANGUAGE, app.label.language, app.config.plugin.jscookie.persistent);
       //switch between user types
       if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess) {
         //local or AD user
@@ -662,7 +703,7 @@ app.navigation.language.callback.read = function (data, prvCode) {
       else {
         //anonymous user 
         // Prevent backbutton check
-        app.plugin.backbutton.check = false;
+
         // Force page reload
         window.location.href = window.location.pathname;
       }
@@ -722,7 +763,7 @@ app.navigation.language.ajax.updateUserLanguage = function (languageSelected) {
 app.navigation.language.callback.updateUserLanguage = function (data) {
   if (data == C_API_AJAX_SUCCESS) {
     // Prevent backbutton check
-    app.plugin.backbutton.check = false;
+
     // Force page reload
     window.location.href = window.location.pathname;
   } else {
@@ -753,7 +794,7 @@ app.navigation.language.ajax.updateSubscriberLanguage = function (languageSelect
 app.navigation.language.callback.updateSubscriberLanguage = function (data, languageSelected) {
   if (data == C_API_AJAX_SUCCESS) {
     // Prevent backbutton check
-    app.plugin.backbutton.check = false;
+
     // Force page reload
     window.location.href = window.location.pathname;
   } else {
@@ -771,7 +812,9 @@ app.navigation.user.ajax.getSavedTables = function () {
     api.ajax.jsonrpc.request(
       app.config.url.api.jsonrpc.private,
       "PxStat.Subscription.Subscription_API.TableSubscriptionReadCurrent",
-      {},
+      {
+        "LngIsoCode": app.label.language.iso.code
+      },
       "app.navigation.user.callback.getSavedTables"
     );
   }
@@ -779,7 +822,9 @@ app.navigation.user.ajax.getSavedTables = function () {
     api.ajax.jsonrpc.request(
       app.config.url.api.jsonrpc.public,
       "PxStat.Subscription.Subscription_API.TableSubscriptionReadCurrent",
-      {},
+      {
+        "LngIsoCode": app.label.language.iso.code
+      },
       "app.navigation.user.callback.getSavedTables"
     );
   }
@@ -790,7 +835,8 @@ app.navigation.user.ajax.getSavedTables = function () {
         "PxStat.Subscription.Subscription_API.TableSubscriptionReadCurrent",
         {
           "Uid": app.auth.firebase.user.details.uid,
-          "AccessToken": accessToken
+          "AccessToken": accessToken,
+          "LngIsoCode": app.label.language.iso.code
         },
         "app.navigation.user.callback.getSavedTables"
       );
@@ -828,7 +874,7 @@ app.navigation.user.callback.drawSavedTables = function () {
           data: null,
           render: function (data, type, row) {
             var attributes = {
-              "mtr-code": row.RsbTable, MtrCode: row.MtrCode, "data-toggle": "tooltip",
+              "mtr-code": row.RsbTable, MtrCode: row.MtrCode, "data-bs-toggle": "tooltip",
               "text": row.RsbTable,
               "title": row.MtrTitle
             };
@@ -848,8 +894,8 @@ app.navigation.user.callback.drawSavedTables = function () {
             if (row.RlsExceptionalFlag) {
               return $("<i>", {
                 "class": "fas fa-exclamation-triangle text-warning",
-                "data-toggle": "tooltip",
-                "data-placement": "top",
+                "data-bs-toggle": "tooltip",
+                "data-bs-placement": "top",
                 "title": app.label.static["exceptional-release"],
               }).get(0).outerHTML;
             }
@@ -900,7 +946,7 @@ app.navigation.user.callback.drawCallbackSavedTables = function () {
     app.data.init(app.label.language.iso.code, $(this).attr("mtr-code"), null, $(this).attr("mtr-code"), false, true);
     app.data.dataset.draw();
   });
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 };
 //#endregion
 

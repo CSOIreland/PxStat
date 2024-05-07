@@ -8,7 +8,7 @@
     <div class="col-12">
         <div id="data-latest-releases" class="card border-info" style="display: none;">
             <div class="card-header bg-info text-light">
-                <div class="row justify-content-between align-items-center px-2">
+                <div class="d-flex justify-content-between px-2">
                     <span>
                         <h5 label="last-updated-tables"></h5>
                     </span>
@@ -42,33 +42,31 @@
 
     <div class="col-12">
         <div id="data-collection-api" class="mx-0 mt-4">
-            <div id="data-accordion-collection-api" style="display:none">
-                <div class="card">
-                    <div class="card-header d-flex w-100 justify-content-between" id="heading-one">
-                        <span>
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" data-toggle="collapse" data-target="#data-accordion-collection-api-collapse-one" aria-expanded="true" aria-controls="data-accordion-collection-api-collapse-one">
-                                    <i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="api"></span> <span label="last-updated-tables"></span>
-                                </button>
-                            </h5>
-                        </span><span><i class="text-light fas fa-cogs fa-2x"></i></span>
-                    </div>
-                    <div id="data-accordion-collection-api-collapse-one" class="collapse" aria-labelledby="heading-one" data-parent="#data-accordion-collection-api">
-                        <div class="card-body">
+
+            <div class="accordion" id="data-accordion-collection-api" style="display:none">
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-accordion-collection-api-collapse-one" aria-expanded="false" aria-controls="collapseTwo">
+                            <span label="api"></span>&nbsp;<span label="last-updated-tables"></span>
+                        </button>
+                    </h2>
+                    <div id="data-accordion-collection-api-collapse-one" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="#data-accordion-collection-api">
+                        <div class="accordion-body">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="data-dataset-collection-api-jspnrpc-tab" data-toggle="tab" href="#data-dataset-collection-api-jspnrpc-content" role="tab" aria-controls="home" aria-selected="true">JSON-RPC</a>
+                                    <a class="nav-link active" id="data-dataset-collection-api-jspnrpc-tab" data-bs-toggle="tab" href="#data-dataset-collection-api-jspnrpc-content" role="tab" aria-controls="home" aria-selected="true">JSON-RPC</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="data-dataset-collection-api-restful-tab" data-toggle="tab" href="#data-dataset-collection-api-restful-content" role="tab" aria-controls="profile" aria-selected="false">RESTful</a>
+                                    <a class="nav-link" id="data-dataset-collection-api-restful-tab" data-bs-toggle="tab" href="#data-dataset-collection-api-restful-content" role="tab" aria-controls="profile" aria-selected="false">RESTful</a>
                                 </li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade show active" id="data-dataset-collection-api-jspnrpc-content" role="tabpanel" aria-labelledby="data-dataset-collection-api-jspnrpc-tab">
                                     <p class="mt-2"><span name="information-documentation"></span> </p>
                                     <div class="card mb-2 mt-2">
-                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-info mr-1 mt-1">GET</span> URL</span>
-                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-jsonrpc-get-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-info me-1 mt-1">GET</span> URL</span>
+                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-jsonrpc-get-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                                         </div>
                                         <div class="card-body p-0 border-top">
                                             <pre class="line-numbers language-http m-0"><code id="data-dataset-collection-api-jsonrpc-get-url"></code></pre>
@@ -76,8 +74,8 @@
                                     </div>
                                     <div class="card mb-2 mt-2">
 
-                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> URL</span>
-                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-jsonrpc-post-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-tertiary me-1 mt-1">POST</span> URL</span>
+                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-jsonrpc-post-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                                         </div>
 
                                         <div class="card-body p-0 border-top">
@@ -86,8 +84,8 @@
                                     </div>
 
                                     <div class="card mb-2">
-                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> <span label="body"></span> </span>
-                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-obj" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-tertiary me-1 mt-1">POST</span> <span label="body"></span> </span>
+                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-obj" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                                         </div>
                                         <div class="card-body p-0 border-top">
                                             <pre class="line-numbers language-json m-0"><code id="data-dataset-collection-api-obj"></code></pre>
@@ -97,8 +95,8 @@
                                 <div class="tab-pane fade" id="data-dataset-collection-api-restful-content" role="tabpanel" aria-labelledby="data-dataset-collection-api-restful-tab">
                                     <p class="mt-2"><span name="information-documentation"></span></p>
                                     <div class="card mb-2 mt-2">
-                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-info mr-1 mt-1">GET</span> <span class="badge badge-tertiary mr-1 mt-1">POST</span> <span>URL</span> </span>
-                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-restful-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                                        <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-info me-1 mt-1">GET</span> <span class="badge bg-tertiary me-1 mt-1">POST</span> <span>URL</span> </span>
+                                            <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-collection-api-restful-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                                         </div>
                                         <div class="card-body p-0 border-top">
                                             <pre class="line-numbers language-http m-0"><code id="data-dataset-collection-api-restful-url"></code></pre>
@@ -110,9 +108,21 @@
                     </div>
                 </div>
             </div>
+
+
+
         </div>
+
+
+
+
+
+
+
     </div>
 
+
+</div>
 
 </div>
 
@@ -130,12 +140,12 @@
         </div>
         <div class="row">
             <div class="col">
-                <span name="classifications"></span> <span name="time" class="badge badge-secondary mr-1 mt-1 text-light"></span> <span name="time-span" class="badge badge-neutral mr-1 mt-1"></span>
+                <span name="classifications"></span> <span name="time" class="badge bg-secondary me-1 mt-1 text-light"></span> <span name="time-span" class="badge bg-neutral text-dark me-1 mt-1"></span>
             </div>
         </div>
     </div>
 
-    <span name="classification" class="badge badge-tertiary mr-1 mt-1"></span>
+    <span name="classification" class="badge bg-tertiary me-1 mt-1"></span>
 
 
 </div>

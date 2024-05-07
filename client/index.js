@@ -60,25 +60,15 @@ $(document).ready(function () {
     });
   });
 
-  //Changing minus to plus
-  $("#modal-read-subscriber-developer, #modal-read-subscriber-manage").on('hidden.bs.collapse', function (e) {
-    $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
-  });
-
-  //Changing plus to minus
-  $("#modal-read-subscriber-developer, #modal-read-subscriber-manage").on('shown.bs.collapse', function (e) {
-    $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
-  });
-
   //show/hide password across application
   $("[name=show-password]").once("click", function () {
-    $(this).parent().siblings("[type=password]").attr("type", "text");
+    $(this).parent().find("[type=password]").attr("type", "text");
     $(this).hide();
     $(this).siblings("[name=hide-password]").show();
   });
 
   $("[name=hide-password]").once("click", function () {
-    $(this).parent().siblings("[type=text]").attr("type", "password");
+    $(this).parent().find("[type=text]").attr("type", "password");
     $(this).hide();
     $(this).siblings("[name=show-password]").show();
   });
@@ -125,10 +115,34 @@ $(document).ready(function () {
         break;
       default:
         //redirect to home page
-        app.plugin.backbutton.check = false;
+
         window.location.href = window.location.pathname;
         break;
     }
 
   };
+
+  app.library.bootstrap.getBreakPoint();
+
+  /*
+  Fix for adding links to a TinyMCE in a bootstrap modal
+  https://stackoverflow.com/questions/66871451/tinymce-doesnt-work-within-bootstrap-5-modal
+  https://www.tiny.cloud/docs/integrations/bootstrap/#usingtinymceinabootstrapdialog
+  */
+
+  document.addEventListener('focusin', function (e) {
+    if (e.target.closest('.tox-tinymce-aux, .moxman-window, .tam-assetmanager-root') !== null) {
+      e.stopImmediatePropagation();
+    }
+  });
+
+  $(window).on("resize", function () {
+    app.library.bootstrap.getBreakPoint()
+  });
 });
+
+$(window).on("popstate", function (event) {
+  window._popState = true;
+  var state = event.originalEvent.state;
+  $(state.triggerSelector).trigger("click");
+}) 

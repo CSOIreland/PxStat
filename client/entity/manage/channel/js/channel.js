@@ -7,6 +7,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["manage"]], [app.label.static["channel"]]]);
     app.navigation.setLayout(false);
     app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["channel"]);
+    app.navigation.setState("#nav-link-channel");
+
 
     app.channel.ajax.readChannel();
     app.channel.ajax.readLanguage();

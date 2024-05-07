@@ -49,20 +49,10 @@ app.dashboard.ajax.ReadCurrent = function () {
 app.dashboard.callback.ReadCurrent = function (data) {
     switch (data.PrvCode) {
         case C_APP_PRIVILEGE_MODERATOR:
-            $("#collapse-work-in-progress").collapse('show');
-            $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-                $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-            });
-            /*  $("#collapse-awaiting-response").collapse('show');
-              $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-                  $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-              });*/
+            $("#dashboard-panel-workinprogress").collapse('show');
             break;
         case C_APP_PRIVILEGE_POWER_USER:
-            $("#collapse-awaiting-sign-off").collapse('show');
-            $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-                $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-            });
+            $("#dashboard-panel-awaitingsignoff").collapse('show');
             break;
         case C_APP_PRIVILEGE_ADMINISTRATOR:
         default:
@@ -98,14 +88,13 @@ app.dashboard.workInProgress.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.dashboard.workInProgress.drawCallbackWorkInProgress = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Edit link click
     $("#dashboard-panel-workinprogress table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
+        //Remove tool tip after click 
         $('.tooltip').remove();
-
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
     });
 
@@ -236,12 +225,12 @@ app.dashboard.awaitingResponse.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.dashboard.drawCallbackAwaitingResponse = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Edit link click
     $("#dashboard-panel-awaitingresponse table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
+        //Remove tool tip after click 
         $('.tooltip').remove();
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
     });
@@ -391,12 +380,12 @@ app.dashboard.awaitingSignoff.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.dashboard.drawCallbackAwaitingSignOff = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Edit link click
     $("#dashboard-panel-awaitingsignoff table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
+        //Remove tool tip after click 
         $('.tooltip').remove();
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
     });
@@ -546,12 +535,12 @@ app.dashboard.pendinglive.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.dashboard.drawCallbackPendingLive = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Edit link click
     $("#dashboard-panel-pendinglive table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-        //Remove tool tip after click at "[name=" + C_APP_NAME_LINK_INTERNAL + "]" link.
+        //Remove tool tip after click 
         $('.tooltip').remove();
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("MtrCode"), "RlsCode": $(this).attr("idn") });
     });
@@ -698,12 +687,11 @@ app.dashboard.liveReleases.callback.readOnError = function (error) {
  * Draw Callback for Datatable
  */
 app.dashboard.drawCallbackliveReleases = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Edit link click
     $("#dashboard-panel-livereleases table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
-
         $('.tooltip').remove();
         api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": $(this).attr("mtr-code"), "RlsCode": $(this).attr("rls-code") });
     });
@@ -715,20 +703,9 @@ app.dashboard.drawCallbackliveReleases = function () {
 
     $("#dashboard-panel-livereleases table").find("[name=" + C_APP_NAME_LINK_ANALYTIC + "]").once("click", function (e) {
         e.preventDefault();
-        app.analytic.ajax.readBrowser($(this).attr("mtr-code"), "#analytic-chart-modal [name=browser-pie-chart]");
-        app.analytic.ajax.readUserLanguage($(this).attr("mtr-code"), "#analytic-chart-modal [name=user-language-column-chart]");
-        app.analytic.ajax.readOs($(this).attr("mtr-code"), "#analytic-chart-modal [name=operating-system-pie-chart]");
-        app.analytic.ajax.readReferrer($(this).attr("mtr-code"), "#analytic-chart-modal [name=referrer-column-chart]");
-        app.analytic.ajax.readTimeline($(this).attr("mtr-code"), "#analytic-chart-modal [name=dates-line-chart]");
-        app.analytic.ajax.readLanguage($(this).attr("mtr-code"), "#analytic-chart-modal [name=language-pie-chart]");
-        app.analytic.ajax.readFormat($(this).attr("mtr-code"), "#analytic-chart-modal [name=format-pie-chart]");
-        $("#matrix-chart-modal").find("[name=mtr-title]").text($(this).attr("mtr-code") + " : " + $(this).attr("mtr-title"));// + "          "
-        //  + app.label.static["from"] + " : " + app.analytic.dateFrom.format(app.config.mask.date.display)
-        //  + "    " + app.label.static["to"] + " : " + app.analytic.dateTo.format(app.config.mask.date.display));
-        $("#matrix-chart-modal").find("[name=date-range]").html(app.analytic.dateFrom.format(app.config.mask.date.display)
-            + "    " + " - " + app.analytic.dateTo.format(app.config.mask.date.display));
-        $("#matrix-chart-modal").modal("show");
-
+        app.analytic.MtrCode = $(this).attr("mtr-code");
+        app.analytic.setDatePickerModal();
+        $("#matrix-chart-modal").find("[name=mtr-title]").text(" : " + $(this).attr("mtr-title"));
     });
 }
 

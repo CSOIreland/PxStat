@@ -6,6 +6,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["dashboard"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["dashboard"]);
+    app.navigation.setState("#nav-link-dashboard");
+
 
     // Load Analytics Modal 
     api.content.load("#modal-entity", "entity/analytic/index.modal.html");
@@ -17,19 +19,10 @@ $(document).ready(function () {
     app.dashboard.pendinglive.ajax.read();
     app.dashboard.liveReleases.ajax.read();
 
-    //Changing plus to minus
-    $("#dashboard-accordion").on('show.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-minus-circle");
-    });
-    //Changing minus to plus
-    $("#dashboard-accordion").on('hide.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find(".card-header i").removeClass().addClass("fas fa-plus-circle");
-    });
-
     // Check access to open relevant Accordion
     app.dashboard.ajax.ReadCurrent();
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     //Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

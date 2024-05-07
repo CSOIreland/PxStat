@@ -4,21 +4,23 @@ Custom JS application specific
 $(document).ready(function () {
     //insert navigation in navigation div
     var navigation = $("#data-search-templates").find("[name=navigation]").clone();
-    navigation.find("[data-toggle=collapse]").attr("data-target", "#data-browse-collapse");
+    navigation.find("[data-bs-toggle=collapse]").attr("data-bs-target", "#data-browse-collapse");
     navigation.find(".collapse").attr("id", "data-browse-collapse");
     navigation.find(".accordion").attr("id", "data-browse-collapse-accordion");
 
     $('#data-search-result-pagination-toggle').bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
         onstyle: "success",
-        offstyle: "warning",
+        offstyle: "warning text-dark",
+        style: "text-light",
+        height: 37,
         width: C_APP_TOGGLE_LENGTH
     }).once("change", app.data.searchResult.callback.filterResults);
 
     $("#data-navigation").find("[name=menu]").html(navigation.get(0).outerHTML);
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
 
     //Pass User SELECTED language. //If Matrix in many languages return only Matrix in User SELECTED language.
     app.data.search.ajax.readNav(app.label.language.iso.code);

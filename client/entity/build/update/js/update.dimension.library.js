@@ -243,7 +243,7 @@ app.build.update.dimension.drawNewPeriod = function (lngIsoCode) {
                 $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
             },
             data: data,
-            ordering: false,
+            order: [[0, 'desc']],
             columns: [
                 {
                     data: "PrdCode"
@@ -403,7 +403,7 @@ app.build.update.dimension.drawElimination = function () {
 }
 
 app.build.update.dimension.drawEliminationCallback = function (table) {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     $(table).find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();
         app.build.update.dimension.modal.updateElimination($(this).attr("cls-value"), $(this).attr("cls-code"), $(this).attr("vrb-elimination-code"))
@@ -623,7 +623,7 @@ app.build.update.dimension.callback.drawMapTable = function (data) {
                         else if (row.gmpUrl) {
                             app.build.update.dimension.mapsValid = false;
                             return $("<i>", {
-                                "data-toggle": "tooltip",
+                                "data-bs-toggle": "tooltip",
                                 "data-original-title": app.library.html.parseDynamicLabel("invalid-geojson-in-px-file-tooltip", [row.gmpUrl]),
                                 "class": "fas fa-exclamation-triangle text-danger"
                             }).get(0).outerHTML + " " + app.label.static["invalid-geojson-in-px-file"];
@@ -678,7 +678,7 @@ app.build.update.dimension.drawCallbackDrawMapTable = function () {
             "clsValue": $(this).attr("cls-value"),
             "callback": "app.build.update.dimension.selectMap"
         };
-        app.build.map.ajax.readMaps(params);
+        app.build.map.ajax.readLayersSelect(params);
     });
 
     $("#build-update-dimensions").find("[name=classification-map]").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", function () {

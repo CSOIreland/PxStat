@@ -4,24 +4,24 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="update-map"> </h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form>
                 <input type="hidden" name="idn">
                 <div class="modal-body">
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col p-2 text-end fw-bold">
                             <label class="mandatory" for="glr-code" label="geo-layer"></label>
                         </div>
                         <div class="col-8 p-2">
-                            <select class="form-control" name="glr-code" disabled></select>
+                            <select class="form-select" name="glr-code" disabled></select>
                             <span class="serverValidationError text-danger" name="glr-code-error-holder"></span>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col p-2 text-end fw-bold">
                             <label class="mandatory" for="gmp-name" label="name"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -29,8 +29,8 @@
                             <span class="serverValidationError text-danger" name="gmp-name-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" for="gmp-description" label="description"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -42,8 +42,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="container-fluid">
-                        <div class="text-right">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i> <span label="cancel"></span>
                             </button>
                             <button class="btn btn-primary text-light" name="submit" type="submit" disabled>
@@ -64,7 +64,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="add-map"> </h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form>
                 <div class="modal-body">
@@ -80,7 +80,7 @@
                                         <i class="fas fa-upload fa-2x"></i>
                                         <span name="upload-file-name"></span>
                                         <span name="upload-file-tip">
-                                            <strong><span label="choose"></span> <span label="GeoJSON"></span> <span label="file"></span></strong>
+                                            <strong><span label="choose"></span> <span label="geojson"></span> <span label="file"></span></strong>
                                             <span class="box__dragndrop"> <span label="drag-here"></span></span>
                                         </span>
                                         <br />
@@ -89,7 +89,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer text-right">
+                        <div class="card-footer text-end">
                             <button class="btn  text-light btn-primary" type="button" name="import" disabled>
                                 <i class="fas fa-upload"></i> <span label="upload"> </span>
                             </button>
@@ -99,18 +99,18 @@
                     <div class="card mt-2" name="set-details-card" style="display: none;">
                         <div class="card-header" label="details"></div>
                         <div class="card-body">
-                            <div class="border-top border-right border-left row mx-0 mt-4">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0 mt-4">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <span class="mandatory" label="geo-layer"></span>
                                 </div>
                                 <div class="col-8 p-2">
-                                    <select class="form-control" name="glr-code" disabled></select>
+                                    <select class="form-select" name="glr-code" disabled></select>
                                     <span class="serverValidationError text-danger" name="glr-code-error-holder"></span>
                                 </div>
                             </div>
 
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <span class="mandatory" label="name"></span>
                                 </div>
                                 <div class="col-8 p-2">
@@ -119,8 +119,8 @@
                                 </div>
                             </div>
 
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <span class="mandatory" label="description"></span>
                                 </div>
                                 <div class="col-8 p-2">
@@ -129,8 +129,8 @@
                                 </div>
                             </div>
 
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <span class="mandatory" label="languages"></span>
                                 </div>
                                 <div class="col-8 p-2">
@@ -140,7 +140,7 @@
 
                             <div class="border-top row mx-0"></div>
                         </div>
-                        <div class="card-footer text-right">
+                        <div class="card-footer text-end">
                             <button class="btn  text-light btn-primary" type="button" name="set-properties">
                                 <i class="far fa-file-alt"></i> <span label="set-properties"> </span>
                             </button>
@@ -150,12 +150,12 @@
                     <div class="card mt-2" name="set-properties-card" style="display: none;">
                         <div class="card-header" label="set-properties"></div>
                         <div class="card-body">
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <span class="mandatory" label="code"></span>
                                 </div>
                                 <div class="col-8 p-2">
-                                    <select class="form-control" name="code-mapping"></select>
+                                    <select class="form-select" name="code-mapping"></select>
                                 </div>
                             </div>
                             <div name="feature-label-mappings">
@@ -163,10 +163,26 @@
                             </div>
                             <div class="border-top row mx-0"></div>
                         </div>
-                        <div class="card-footer text-right">
-                            <button class="btn text-light btn-primary" type="button" name="view-map" disabled>
-                                <i class="fas fa-eye"></i> <span label="view-map"> </span>
-                            </button>
+                        <div class="card-footer text-end">
+
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6 text-start my-2">
+                                    <button class="btn  text-light btn-primary" type="button" name="create-subset" disabled>
+                                        <i class="far fa-file-alt"></i> <span label="create-subset"> </span>
+                                    </button>
+
+                                    <button class="btn btn btn-neutral" type="button" name="remove-subset" disabled>
+                                        <i class="fas fa-times-circle"></i> <span label="remove-subset"> </span>
+                                    </button>
+
+                                </div>
+                                <div class="col-xs-12 col-sm-6 text-end my-2">
+                                    <button class="btn text-light btn-primary" type="button" name="view-map" disabled>
+                                        <i class="fas fa-eye"></i> <span label="view-map"> </span>
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -175,10 +191,10 @@
                         <div class="card-body p-0">
                             <ul class="nav nav-tabs mt-4 mx-2" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link active" id="map-modal-add-preview-map-tab" data-toggle="tab" href="#map-modal-add-preview-map-content" role="tab" aria-controls="map-modal-add-preview-map-content" aria-selected="true" label="map"></a>
+                                    <a class="nav-link active" id="map-modal-add-preview-map-tab" data-bs-toggle="tab" href="#map-modal-add-preview-map-content" role="tab" aria-controls="map-modal-add-preview-map-content" aria-selected="true" label="map"></a>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <a class="nav-link" id="map-modal-add-preview-properties-tab" data-toggle="tab" href="#map-modal-add-preview-properties-content" role="tab" aria-controls="map-modal-add-preview-properties-content" aria-selected="false" label="properties"></a>
+                                    <a class="nav-link" id="map-modal-add-preview-properties-tab" data-bs-toggle="tab" href="#map-modal-add-preview-properties-content" role="tab" aria-controls="map-modal-add-preview-properties-content" aria-selected="false" label="properties"></a>
                                 </li>
                             </ul>
                             <div class="tab-content p-2">
@@ -186,15 +202,15 @@
 
 
                                     <div name="view-map-wrapper"></div>
-                                    <div name="simplify-range-wrapper">
+                                    <div name="simplify-range-wrapper" style="display: none;">
                                         <div class="form-group m-4">
                                             <label for="formControlRange"><span label="simplify"></span> <span name="simplify-range-value">0</span>%</label>
-                                            <input type="range" name="simplify-range" class="form-control-range" min="0" max="0.00000100" step="0.00000010" value="0">
+                                            <input type="range" name="simplify-range" class="form-range" min="0" max="0.00000100" step="0.00000010" value="0">
                                         </div>
                                     </div>
                                     <div class="pt-0 pb-2 px-2">
-                                        <div class="border-top border-right border-left row mx-0 mt-4">
-                                            <div class="bg-default border-right col-4 p-2 text-right font-weight-bold" label="size"></div>
+                                        <div class="border-top border-end border-start row mx-0 mt-4">
+                                            <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="size"></div>
                                             <div class="col-8 p-2" name="file-size"></div>
                                         </div>
                                         <div class="border-top row mx-0"></div>
@@ -204,7 +220,7 @@
                                 <div class="tab-pane fade" id="map-modal-add-preview-properties-content" role="tabpanel" aria-labelledby="map-modal-add-preview-properties-tab">
                                     <div class="card border-0">
                                         <div class="card-body p-0">
-                                            <table name="datatable" class="table table-striped table-bordered" style="width:100%">
+                                            <table name="datatable" class="table table-striped pt-2 table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr name="header-row"></tr>
                                                 </thead>
@@ -212,9 +228,9 @@
                                             </table>
                                         </div>
                                         <div class="row mt-2">
-                                            <div class="col text-right">
+                                            <div class="col text-end">
                                                 <div class="btn-group">
-                                                    <button name="download-classification" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <button name="download-classification" type="button" class="btn btn-tertiary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <i class="fas fa-download"></i> <span label="download-classification"></span>
                                                     </button>
                                                     <div name="download-classification-selection" class="dropdown-menu" aria-labelledby="data-download-results"></div>
@@ -232,13 +248,13 @@
 
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-4  text-left my-2">
+                            <div class="col-xs-12 col-sm-4  text-start my-2">
                                 <button name="upload-file-reset" class="btn btn-warning text-dark" type="button">
                                     <i class="fas fa-undo"></i> <span label="reset"></span>
                                 </button>
                             </div>
-                            <div class="col-xs-12 col-sm-8 text-right  my-2">
-                                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                            <div class="col-xs-12 col-sm-8 text-end  my-2">
+                                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                     <i class="far fa-times-circle"></i>
                                     <span label="cancel"></span>
                                 </button>
@@ -257,18 +273,103 @@
     </div>
 </div>
 
+<!--Modal create subset-->
+<div id="map-modal-create-subset" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" label="create-subset"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="box">
+                            <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
+                            <input id="map-modal-create-subset-file" hidden="true" type="file" name="map-modal-create-subset-file" class="box__file" />
+                            <div class="box__input2">
+                                <label class="box__input3" for="map-modal-create-subset-file">
+                                    <i class="fas fa-upload fa-2x"></i>
+                                    <span name="file-name"></span>
+                                    <span name="file-tip">
+                                        <strong><span label="choose"></span> <span label="csv"></span> <span label="file"></span></strong>
+                                        <span class="box__dragndrop"> <span label="drag-here"></span></span>
+                                    </span>
+                                    <br />
+                                    <small><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="border row mx-0">
+                            <span class="serverValidationError text-danger" name="upload-error-holder"></span>
+                        </div>
+
+                        <div class="card mt-2 border-danger" name="errors-card" style="display: none">
+                            <div class="card-header bg-danger text-light" label="errors"></div>
+                            <div class="card-body">
+                                <ul name="errors" class="list-group mt-2">
+                                </ul>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-4 text-start my-2">
+                                <a class="btn btn-primary" href="entity/build/geomap/csv/template-geojson-subset.csv" download=""><i class="fas fa-file-download"></i>
+                                    <span label="download-csv-template"></span>
+                                </a>
+                            </div>
+                            <div class="col-xs-12 col-sm-8 text-end my-2">
+                                <button name="upload-reset-subset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
+                                <button name="upload-submit-subset" class="btn btn-primary" disabled><i class="far fa-check-circle"></i>
+                                    <span label="create-subset"></span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal"><i class="far fa-times-circle"></i>
+                    <span label="cancel"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal - Create layer-->
 <div id="map-modal-create-layer" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="add-geo-layer"></h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form>
                 <div class="modal-body">
                     <div class="border row mx-0">
-                        <div class="bg-default border-right col p-2 text-right font-weight-bold">
+                        <div class="bg-default border-end col p-2 text-end fw-bold">
                             <label class="mandatory" for="glr-name" label="name"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -279,8 +380,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="container-fluid">
-                        <div class="text-right">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i>
                                 <span label="cancel"></span>
                             </button>
@@ -302,14 +403,14 @@
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <h5 class="modal-title text-light" label="update-layer"> </h5>
-                <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form>
                 <input type="hidden" name="idn">
 
                 <div class="modal-body">
                     <div class="border row mx-0">
-                        <div class="bg-default border-right col p-2 text-right font-weight-bold">
+                        <div class="bg-default border-end col p-2 text-end fw-bold">
                             <label class="mandatory" for="glr-name" label="layer"></label>
                         </div>
                         <div class="col-8 p-2">
@@ -320,8 +421,8 @@
                 </div>
                 <div class="modal-footer">
                     <div class="container-fluid">
-                        <div class="text-right">
-                            <button type="button" class="btn btn-neutral" data-dismiss="modal">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                                 <i class="far fa-times-circle"></i>
                                 <span label="cancel"></span>
                             </button>
@@ -347,11 +448,11 @@
                     <h5>
                         <span name="gmp-name"></span>
                     </h5>
-                    <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <table class="table table-striped hover" style="width: 100%">
+                        <table class="table table-striped pt-2 hover" style="width: 100%">
                             <thead>
                                 <tr>
                                     <th label="table"></th>
@@ -363,8 +464,8 @@
                     </div>
                     <div class="modal-footer">
                         <div class="container-fluid">
-                            <div class="text-right">
-                                <button type="button" name="cancel" class="btn btn-neutral" data-dismiss="modal">
+                            <div class="text-end">
+                                <button type="button" name="cancel" class="btn btn-neutral" data-bs-dismiss="modal">
                                     <i class="far fa-times-circle"></i> <span label="cancel"></span>
                                 </button>
                             </div>
@@ -377,12 +478,12 @@
 </div>
 
 <div id="map-modal-view-templtes" style="display: none;">
-    <div name="feature-label-mapping" class="border-top border-right border-left row mx-0">
-        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+    <div name="feature-label-mapping" class="border-top border-end border-start row mx-0">
+        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
             <span class="mandatory" name="language"></span>
         </div>
         <div class="col-8 p-2">
-            <select class="form-control"></select>
+            <select class="form-select"></select>
         </div>
     </div>
 </div>

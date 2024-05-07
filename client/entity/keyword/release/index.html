@@ -3,11 +3,11 @@
   <div class="card-header bg-primary text-light" label="select"></div>
   <div class="card-body">
     <div class="border row mx-0">
-      <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+      <div class="bg-default border-end col-4 p-2 text-end fw-bold">
         <label class="mandatory" for="keyword-release-matrix-search" label="table"></label>
       </div>
       <div class="col-8 p-2">
-        <select class="form-control" name="keyword-release-matrix-search" disable></select>
+        <select class="form-select" name="keyword-release-matrix-search" disable></select>
         <span class="serverValidationError text-danger" name="keyword-release-matrix-search-error-holder"></span>
       </div>
     </div>
@@ -19,7 +19,7 @@
 <div id="keyword-release-table-release-container" class="card m-3 border-primary" style="display: none">
   <div class="card-header bg-primary text-light" label="releases"></div>
   <div class="card-body">
-    <table class="table table-striped hover" style="width:100%">
+    <table class="table table-striped pt-2 hover" style="width:100%">
       <thead>
         <tr>
           <th label="release"></th>
@@ -37,7 +37,7 @@
 <div id="keyword-release-table-release-keyword-container" class="card m-3 border-primary" style="display: none">
   <div class="card-header bg-primary text-light" label="release-keywords"></div>
   <div class="card-body">
-    <table class="table table-striped hover display" style="width:100%">
+    <table class="table table-striped pt-2 hover display" style="width:100%">
       <thead>
         <tr>
           <th label="keyword"></th>
@@ -50,7 +50,7 @@
     </table>
   </div>
   <!-- Button trigger modal Create Release-Keyword -->
-  <div class="card-footer text-right">
+  <div class="card-footer text-end">
     <button name="button-view" class="btn btn-primary text-light update-btn">
       <i class="fas fa-search"></i> <span label="view-data"></span>
     </button>
@@ -71,12 +71,12 @@
       <form>
         <div class="modal-header bg-primary">
           <h5 class="modal-title text-light" label="synonym-list"></h5>
-          <button type="button" class="close text-light" data-dismiss="modal">&times;</button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="card">
           <div class="card-body">
-            <div class="border-top border-right border-left border-bottom row mx-0 mb-3">
-              <div class="bg-default border-right col-4 p-2 text-right font-weight-bold" label="keyword :"></div>
+            <div class="border-top border-end border-start border-bottom row mx-0 mb-3">
+              <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="keyword :"></div>
               <span class="col-8 p-2">
                 <span name="keyword"></span>
               </span>
@@ -87,8 +87,8 @@
           </div>
           <div class="modal-footer">
             <div class="container-fluid">
-              <div class="text-right">
-                <button type="button" class="btn btn-neutral" data-dismiss="modal">
+              <div class="text-end">
+                <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
                   <i class="far fa-times-circle"></i> <span label="cancel"></span>
                 </button>
               </div>
@@ -102,7 +102,7 @@
 
 <div id="keyword-release-synonym-template" style="display:none">
   <div class="card mb-2" name="synonym-language-card">
-    <div class="card-header font-weight-bold"></div>
+    <div class="card-header fw-bold"></div>
     <div class="card-body p-0">
       <ul class="list-group list-group-flush" name="synonym-group"></ul>
     </div>

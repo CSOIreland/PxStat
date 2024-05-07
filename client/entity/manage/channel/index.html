@@ -5,8 +5,8 @@
         <form name="channel-form">
             <div class="card-header bg-primary text-light" label="send-notification"></div>
             <div class="card-body">
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                         <label class="mandatory" for="channel-type" label="channel"></label>
                     </div>
                     <div class="col-8 p-2">
@@ -14,24 +14,24 @@
                         <span class="serverValidationError text-danger" name="channel-type-error-holder"></span>
                     </div>
                 </div>
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                         <label class="mandatory" label=target-language></label>
                     </div>
                     <div class="col-8 p-2">
-                        <select class="form-control" name="language"></select>
+                        <select class="form-select" name="language"></select>
                         <span class="serverValidationError text-danger" name="language-error-holder"></span>
                     </div>
                 </div>
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold"><label class="mandatory" for="subject" label="subject"></label></div>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 text-end fw-bold"><label class="mandatory" for="subject" label="subject"></label></div>
                     <div class="col-8 p-2">
                         <input type="text" class="form-control" name="subject" placeholder="" maxlength="998">
                         <span class="serverValidationError text-danger" name="subject-error-holder"></span>
                     </div>
                 </div>
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                         <label class="mandatory" for="body" label="body"></label>
                     </div>
                     <div class="col-8 p-2">
@@ -42,7 +42,7 @@
                 <div class="border-top row mx-0"></div>
             </div>
 
-            <div class="card-footer text-right">
+            <div class="card-footer text-end">
                 <button name="button-reset" class="btn btn-warning text-dark" type="button">
                     <i class="fas fa-undo"></i> <span label="reset"></span>
                 </button>

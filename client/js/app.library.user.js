@@ -117,10 +117,12 @@ app.library.user.modal.callback.displayUser = function (data) {
   if (data.CcnUsername == app.library.user.data.CcnUsername) {
     //initiate toggle buttons
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
-      on: app.label.static["true"],
-      off: app.label.static["false"],
-      onstyle: "success",
-      offstyle: "warning",
+      onlabel: app.label.static["true"],
+      offlabel: app.label.static["false"],
+      onstyle: "success text-light",
+      offstyle: "warning text-dark",
+      height: 38,
+      style: "text-light",
       width: C_APP_TOGGLE_LENGTH //Depend on language translation.
     });
 
@@ -137,10 +139,12 @@ app.library.user.modal.callback.displayUser = function (data) {
   } else {
     //initiate toggle buttons
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
-      on: app.label.static["true"],
-      off: app.label.static["false"],
-      onstyle: "light",
-      offstyle: "neutral",
+      onlabel: app.label.static["true"],
+      offlabel: app.label.static["false"],
+      onstyle: "success text-light",
+      offstyle: "warning text-dark",
+      height: 38,
+      style: "text-light",
       width: C_APP_TOGGLE_LENGTH //Depend on language translation.
     });
 
@@ -176,10 +180,12 @@ app.library.user.modal.callback.displayUser = function (data) {
 
 
     $("#modal-read-user").find("[name='" + value.ChnCode + "']").bootstrapToggle("destroy").bootstrapToggle({
-      on: app.label.static["on"],
-      off: app.label.static["off"],
-      onstyle: "success",
-      offstyle: "warning",
+      onlabel: app.label.static["on"],
+      offlabel: app.label.static["off"],
+      onstyle: "success text-light",
+      offstyle: "warning text-dark",
+      height: 38,
+      style: "m-1 text-light",
       width: C_APP_TOGGLE_LENGTH //Depend on language translation.
     }).once("change", function () {
       if ($(this).is(':checked')) {
@@ -277,8 +283,8 @@ app.library.user.modal.buildGroupList = function (data) {
       idn: value.GrpCode,
       href: "#",
       html: $("<i>", {
-        "data-toggle": "tooltip",
-        "data-placement": "top",
+        "data-bs-toggle": "tooltip",
+        "data-bs-placement": "top",
         "title": "", //userTooltipTitle,
         "data-original-title": userTooltipTitle,
         class: userIconClass
@@ -293,7 +299,7 @@ app.library.user.modal.buildGroupList = function (data) {
     }).html(linkGroup);
     $("#modal-read-user .list-group").append(li);
     //Bootstrap tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
   });
 };
 

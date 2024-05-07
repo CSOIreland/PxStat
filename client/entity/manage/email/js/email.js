@@ -8,6 +8,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["manage"]], [app.label.static["email"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["email"]);
+    app.navigation.setState("#nav-link-email");
+
 
     // Initiate all text areas as tinyMCE
     app.plugin.tinyMce.initiate();
@@ -23,7 +25,7 @@ $(document).ready(function () {
         app.email.reset();
     });
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

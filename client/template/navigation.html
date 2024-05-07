@@ -1,13 +1,13 @@
 <div class="container-fullwidth">
-    <nav class="navbar navbar-expand-xl navbar-dark bg-navbar nav-pills">
-        <button class="navbar-toggler mb-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <nav class="navbar navbar-expand-xl navbar-dark bg-navbar nav-pills px-3">
+        <button class="navbar-toggler mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 
             <span label="menu"></span>
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item pl-1">
                     <a id="nav-link-data" class="nav-link text-light px-3" href="#" label="data"> </a>
                 </li>
@@ -24,7 +24,7 @@
                     <a id="nav-link-analytic" class="nav-link text-light px-3" href="#" label="analytics"></a>
                 </li>
                 <li class="nav-item pl-1 dropdown" style="display: none;">
-                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-build" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-build" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span label="build"></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="nav-link-build">
@@ -36,7 +36,7 @@
                     </div>
                 </li>
                 <li class="nav-item pl-1 dropdown" style="display: none;">
-                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-manage" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-manage" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span label="manage"></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="nav-link-manage">
@@ -54,7 +54,7 @@
                     </div>
                 </li>
                 <li class="nav-item pl-1 dropdown" style="display: none;">
-                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-report" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-report" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span label="reports"></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="nav-link-report">
@@ -62,7 +62,7 @@
                     </div>
                 </li>
                 <li class="nav-item pl-1 dropdown" style="display: none;">
-                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-keyword" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-keyword" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span label="keywords"></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="nav-link-keyword">
@@ -73,7 +73,7 @@
                     </div>
                 </li>
                 <li class="nav-item pl-1 dropdown" style="display: none;">
-                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-system" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link text-light dropdown-toggle px-3" href="#" id="nav-link-system" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span label="system"></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="nav-link-keyword">
@@ -90,51 +90,51 @@
                 </li>
             </ul>
 
-            <div class="btn-group mr-3" role="group">
+            <div class="btn-group me-3" role="group">
                 <button id="nav-user" type="button" class="btn btn-outline-info btn-info text-light" style="display: none;">
-                    <i class="fas fa-user mr-2"></i><span name="name"></span>
+                    <i class="fas fa-user me-2"></i><span name="name"></span>
                 </button>
 
                 <button id="nav-user-locked" type="button" class="btn btn-outline-info btn-warning text-dark" style="display: none;">
-                    <i class="fas fa-user-slash mr-2"></i><span label="account-locked"></span>
+                    <i class="fas fa-user-slash me-2"></i><span label="account-locked"></span>
                 </button>
 
                 <button id="nav-user-login" type="button" class="btn btn-outline-primary text-light rounded-left" style="display: none;">
-                    <i class="fas fa-sign-in-alt mr-2"></i><span label="login"></span>
+                    <i class="fas fa-sign-in-alt me-2"></i><span label="login"></span>
                 </button>
 
                 <button id="nav-subscriber-logout" type="button" class="btn btn-outline-warning btn-warning text-dark" style="display: none;">
-                    <i class="fas fa-sign-out-alt mr-2"></i><span label="logout"></span>
+                    <i class="fas fa-sign-out-alt me-2"></i><span label="logout"></span>
                 </button>
 
                 <!-- Example single danger button -->
                 <div name="nav-subscriber-details" class="btn-group" style="display: none;">
-                    <button type="button" class="rounded-left btn btn-outline-primary text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="rounded-left btn btn-outline-primary text-light dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="" name="subscriber-icon"></i><span name="name"></span>
                     </button>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" name="subscriber-profile" href="#"><i class="far fa-id-card"></i> <span label="my-profile"></span></a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" name="logout"><i class="fas fa-sign-out-alt mr-2"></i><span label="logout"></span></a>
+                        <a class="dropdown-item" href="#" name="logout"><i class="fas fa-sign-out-alt me-2"></i><span label="logout"></span></a>
                     </div>
                 </div>
 
                 <button id="nav-user-logout" type="button" class="btn btn-outline-warning btn-warning text-dark" style="display: none;">
-                    <i class="fas fa-sign-out-alt mr-2"></i><span label="logout"></span>
+                    <i class="fas fa-sign-out-alt me-2"></i><span label="logout"></span>
                 </button>
 
                 <div id="nav-language" class="btn-group" role="group">
-                    <button name="selection" type="button" class="btn btn-outline-primary text-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    <button name="selection" type="button" class="btn btn-outline-primary text-light dropdown-toggle px-4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                     <div name="dropdown" class="dropdown-menu dropdown-menu-left dropdown-menu-xl-right"></div>
                 </div>
             </div>
 
-            <i id="nav-loader" class="fas fa-spinner fa-lg text-navbar navbar-text"></i>
+            <i id="nav-loader" class="fas fa-spinner fa-lg text-yellow fa-spin invisible"></i>
         </div>
     </nav>
 
     <nav id="breadcrumb-nav" aria-label="breadcrumb">
-        <ol name="breadcrumb-list" class="breadcrumb"></ol>
+        <ol name="breadcrumb-list" class="breadcrumb px-4 py-2 bg-default"></ol>
     </nav>
 </div>
 
@@ -145,12 +145,12 @@
 
     <div class="card m-3 border-tertiary" name="favourite-tables-card" style="display: none;">
         <div class="card-header bg-tertiary text-light">
-            <a class="text-light" data-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
+            <a class="text-light" data-bs-toggle="collapse" href="" role="button" aria-expanded="false" aria-controls="">
                 <i class="fas fa-plus-circle"></i> <span label="favourite-tables"></span>
             </a>
         </div>
         <div id="" class="collapse card-body">
-            <table class="table table-striped hover" style="width:100%">
+            <table class="table table-striped pt-2 hover" style="width:100%">
                 <thead>
                     <tr>
                         <th label="table"></th>

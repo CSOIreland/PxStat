@@ -6,6 +6,7 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["build"]], [app.label.static["import"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["import"]);
+  app.navigation.setState("#nav-link-import");
 
   // Load Modal
   api.content.load("#modal-entity", "entity/build/import/index.modal.html");

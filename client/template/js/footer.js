@@ -12,7 +12,7 @@ $(document).ready(function () {
     //smoother rendering of dynamic footer
     $("#footer .footer").fadeIn(1000);
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     // Bind Privacy click event
     $("#footer").find("[name=privacy]").once("click", function (e) {
@@ -37,19 +37,9 @@ $(document).ready(function () {
         }
     });
 
-
-    //init bootstrap breatpoints for toggle panel
-    $(window).on('init.bs.breakpoint', function (e) {
-        bsBreakpoints.toggle(e.breakpoint);
-    });
-
-    $(window).on('new.bs.breakpoint', function (e) {
-        bsBreakpoints.toggle(e.breakpoint);
-    });
-    bsBreakpoints.init();
-
     $(window).on("resize", function () {
-        $("#content").css("padding-bottom", $("#footer .footer").outerHeight(true) + "px")
+        $("#content").css("padding-bottom", $("#footer .footer").outerHeight(true) + "px");
+
     });
 
     if (api.uri.isParam("privacy")) {

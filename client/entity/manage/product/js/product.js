@@ -8,10 +8,11 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["manage"]], [app.label.static["products"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["products"]);
+  app.navigation.setState("#nav-link-product");
 
   // GoTo
-  var sbjCode = api.content.getParam("SbjCode");
-
+  var sbjCode = history.state.SbjCode || api.content.getParam("SbjCode");
+  
   // Load Modal - must be after GoTo
   api.content.load("#modal-entity", "entity/manage/product/index.modal.html");
 
@@ -32,7 +33,7 @@ $(document).ready(function () {
   // Parse warning
   $("#product-card-read [name=warning]").find("label").html(app.library.html.parseDynamicLabel("switch-default-language", [app.config.language.iso.name]).sprintf([app.config.language.iso.name]));
   //run bootstrap toggle to show/hide toggle button
-  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+  app.library.bootstrap.getBreakPoint();
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 });

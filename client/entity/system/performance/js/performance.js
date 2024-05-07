@@ -11,6 +11,7 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["performance"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["performance"]);
+  app.navigation.setState("#nav-link-performance");
 
   app.performance.setDatePicker();
 
@@ -26,7 +27,7 @@ $(document).ready(function () {
   });
 
   //run bootstrap toggle to show/hide toggle button
-  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+  app.library.bootstrap.getBreakPoint();
 
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();

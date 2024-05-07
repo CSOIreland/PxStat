@@ -8,6 +8,7 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["manage"]], [app.label.static["reasons"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["reasons"]);
+  app.navigation.setState("#nav-link-reason");
 
   // Load Modal 
   api.content.load("#modal-entity", "entity/manage/reason/index.modal.html");

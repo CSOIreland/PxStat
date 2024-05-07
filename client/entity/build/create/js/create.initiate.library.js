@@ -47,7 +47,7 @@ app.build.create.initiate.callback.matrixLookup = function (data) {
  * Draw Callback for Datatable
  */
 app.build.create.initiate.drawCallbackDrawMatrix = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // Responsive
     $("#build-create-initiate-matrix-lookup table").DataTable().columns.adjust().responsive.recalc();
 }
@@ -438,7 +438,7 @@ app.build.create.initiate.validation.setup = function () {
             app.build.create.initiate.data.MtrOfficialFlag = $("#build-create-initiate-setup").find("[name=official-flag]").prop('checked');
             app.build.create.initiate.setUpDimensions();
             app.build.create.dimension.drawElimination();
-            app.build.create.dimension.drawMapTable(true);
+            app.build.create.dimension.drawMapTable();
             //disable build dimension button to avoid duplicate dimensions
             $("#build-create-initiate-setup").find("[name=button-generate]").prop("disabled", true);
         }

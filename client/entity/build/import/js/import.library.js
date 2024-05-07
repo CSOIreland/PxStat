@@ -529,7 +529,7 @@ app.build.import.ajax.importHistory = function (dateFrom, dateTo) {
  * Draw Callback for Datatable
  */
 app.build.import.drawCallbackimportHistory = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     //Edit link click
     $("#build-import-history table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();

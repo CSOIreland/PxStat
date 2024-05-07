@@ -2,60 +2,193 @@
     <div class="card border-primary m-3">
         <div class="card-header bg-primary text-light" label="configuration"></div>
         <div class="card-body">
-            <div class="accordion" id="configuration-accordion">
-                <div class="card">
-                    <div class="card-header" id="configuration-client-config-header">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#configuration-client-config" aria-expanded="true" aria-controls="configuration-client-config">
-                                <i name="configuration-accordion-icon" class="fas fa-plus-circle"></i>
-                                <span label="client"></span>
-                            </button>
-                        </h2>
-                    </div>
+            <ul class="nav nav-tabs border-top-0" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="configuration-read-app-tab" data-bs-toggle="tab" data-bs-target="#configuration-read-app-content" type="button" role="tab" aria-controls="configuration-read-app-content" aria-selected="true">Application Config</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="configuration-read-api-tab" data-bs-toggle="tab" data-bs-target="#configuration-read-api-content" type="button" role="tab" aria-controls="configuration-read-api-content" aria-selected="false">API Config</button>
+                </li>
 
-                    <div id="configuration-client-config" class="collapse" aria-labelledby="configuration-client-config-header" data-parent="#configuration-accordion">
-                        <div class="card-body p-0">
-                            <pre class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="configuration-read-app-content" role="tabpanel" aria-labelledby="configuration-read-app-tab">
+
+                    <div class="card border-radius-0">
+                        <div class="card-body bg-warning p-2 border-bottom text-dark" label="update-application-config-warning">
+                        </div>
+                        <div class="card-body">
+                            <div class="border row mx-0 mb-4">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="current-version"></div>
+                                <div class="col-8 p-2" name="current-version">
+                                </div>
+                            </div>
+
+                            <div class="accordion" id="configuration-application-accordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="configuration-client-config-header">
+                                        <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#configuration-client-config" aria-expanded="false" aria-controls="configuration-client-config">
+                                            <span label="client"></span>
+                                        </button>
+                                    </h2>
+                                    <div id="configuration-client-config" class="accordion-collapse collapse" aria-labelledby="configuration-client-config-header" data-bs-parent="#configuration-application-accordion">
+                                        <div class="accordion-body">
+                                            <button type="button" class="btn btn-neutral" name="cancel" data-config="client" style="display: none;">
+                                                <i class="far fa-times-circle"></i>
+                                                <span label="cancel"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary" name="edit" data-config="client">
+                                                <i class="far fa-edit"></i>
+                                                <span label="edit"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary text-light" name="update" data-config="client" style="display: none;">
+                                                <i class="far fa-save"></i>
+                                                <span label="update"></span>
+                                            </button>
+
+                                            <button type="button" class="btn btn-info" name="schema" data-config="client">
+                                                <i class="fas fa-code"></i>
+                                                <span label="schema"></span>
+                                            </button>
+                                            <button name="copy-snippet-code" type="button" data-config="client" data-clipboard-target="#configuration-client-config [name=config-obj]" class="btn btn-outline-primary">
+                                                <i class="far fa-copy"></i> <span label="copy"></span>
+                                            </button>
+                                            <button name="copy-snippet-code-edit" type="button" data-config="client" data-clipboard-target="#configuration-client-config [name=config-obj-edit]" class="btn btn-outline-primary" style="display: none;">
+                                                <i class="far fa-copy"></i> <span label="copy"></span>
+                                            </button>
+                                        </div>
+
+                                        <div class="accordion-body p-0">
+                                            <pre name="config-obj-wrapper" class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                                            <textarea class="form-control" name="config-obj-edit" rows="20" style="display: none;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="configuration-global-config-header">
+                                        <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#configuration-global-config" aria-expanded="false" aria-controls="configuration-global-config">
+                                            <span label="global"></span>
+                                        </button>
+                                    </h2>
+                                    <div id="configuration-global-config" class="accordion-collapse collapse" aria-labelledby="configuration-global-config-header" data-bs-parent="#configuration-application-accordion">
+                                        <div class="accordion-body">
+                                            <button type="button" class="btn btn-neutral" name="cancel" data-config="global" style="display: none;">
+                                                <i class="far fa-times-circle"></i>
+                                                <span label="cancel"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary" name="edit" data-config="global">
+                                                <i class="far fa-edit"></i>
+                                                <span label="edit"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary text-light" name="update" data-config="global" style="display: none;">
+                                                <i class="far fa-save"></i>
+                                                <span label="update"></span>
+                                            </button>
+
+                                            <button type="button" class="btn btn-info" name="schema" data-config="global">
+                                                <i class="fas fa-code"></i>
+                                                <span label="schema"></span>
+                                            </button>
+                                            <button name="copy-snippet-code" type="button" data-config="global" data-clipboard-target="#configuration-global-config [name=config-obj]" class="btn btn-outline-primary">
+                                                <i class="far fa-copy"></i> <span label="copy"></span>
+                                            </button>
+                                            <button name="copy-snippet-code-edit" type="button" data-config="client" data-clipboard-target="#configuration-global-config [name=config-obj-edit]" class="btn btn-outline-primary" style="display: none;">
+                                                <i class="far fa-copy"></i> <span label="copy"></span>
+                                            </button>
+                                        </div>
+                                        <div class="accordion-body p-0">
+                                            <pre name="config-obj-wrapper" class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                                            <textarea class="form-control" name="config-obj-edit" rows="20" style="display: none;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="configuration-server-config-header">
+                                        <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#configuration-server-config" aria-expanded="false" aria-controls="configuration-server-config">
+                                            <span label="server"></span>
+                                        </button>
+                                    </h2>
+                                    <div id="configuration-server-config" class="accordion-collapse collapse" aria-labelledby="configuration-server-config-header" data-bs-parent="#configuration-application-accordion">
+                                        <div class="accordion-body">
+                                            <button type="button" class="btn btn-neutral" name="cancel" data-config="server" style="display: none;">
+                                                <i class="far fa-times-circle"></i>
+                                                <span label="cancel"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary" name="edit" data-config="server">
+                                                <i class="far fa-edit"></i>
+                                                <span label="edit"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-primary text-light" name="update" data-config="server" style="display: none;">
+                                                <i class="far fa-save"></i>
+                                                <span label="update"></span>
+                                            </button>
+
+                                            <button type="button" class="btn btn-info" name="schema" data-config="server">
+                                                <i class="fas fa-code"></i>
+                                                <span label="schema"></span>
+                                            </button>
+                                            <button name="copy-snippet-code" type="button" data-config="server" data-clipboard-target="#configuration-server-config [name=config-obj]" class="btn btn-outline-primary">
+                                                <i class="far fa-copy"></i> <span label="copy"></span>
+                                            </button>
+                                            <button name="copy-snippet-code-edit" type="button" data-config="client" data-clipboard-target="#configuration-server-config [name=config-obj-edit]" class="btn btn-outline-primary" style="display: none;">
+                                                <i class="far fa-copy"></i> <span label="copy"></span>
+                                            </button>
+                                        </div>
+                                        <div class="accordion-body p-0">
+                                            <pre name="config-obj-wrapper" class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                                            <textarea class="form-control" name="config-obj-edit" rows="20" style="display: none;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-end">
+                            <button class="btn text-light btn-primary" name="search-file">
+                                <i class="fas fa-search"></i> <span label="search"></span>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header" id="configuration-global-config-header">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#configuration-global-config" aria-expanded="false" aria-controls="configuration-global-config">
-                                <i name="configuration-accordion-icon" class="fas fa-plus-circle"></i>
-                                <span label="global"></span>
-                            </button>
-                        </h2>
-                    </div>
-                    <div id="configuration-global-config" class="collapse" aria-labelledby="configuration-global-config-header" data-parent="#configuration-accordion">
-                        <div class="card-body p-0">
-                            <pre class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                <div class="tab-pane fade" id="configuration-read-api-content" role="tabpanel" aria-labelledby="configuration-read-api-tab">
+
+                    <div class="card">
+                        <div class="card-body bg-warning p-2 border-bottom text-dark" label="update-api-config-warning">
                         </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" id="configuration-server-config-header">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#configuration-server-config" aria-expanded="false" aria-controls="configuration-server-config">
-                                <i name="configuration-accordion-icon" class="fas fa-plus-circle"></i>
-                                <span label="server"></span>
+                        <div class="card-body">
+
+                            <div class="border row mx-0 mb-4">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="current-version"></div>
+                                <div class="col-8 p-2" name="current-version">
+
+                                </div>
+                            </div>
+
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-6 p-2 text-start">
+                                    <select class="form-select" name="api-key"></select>
+                                </div>
+                                <div class="col-6 p-2">
+                                    <input class="form-control" type="text" name="api-value" disabled>
+                                    <div name="sensitive-message" class="invalid-feedback" style="display: none;" label="sensitive-api-key-message">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-top row mx-0"></div>
+                        </div>
+                        <div class="card-footer text-end">
+                            <button type="button" name="cancel" class="btn btn-neutral">
+                                <i class="far fa-times-circle"></i> <span label="cancel"></span>
                             </button>
-                        </h2>
-                    </div>
-                    <div id="configuration-server-config" class="collapse" aria-labelledby="configuration-server-config" data-parent="#configuration-accordion">
-                        <div class="card-body p-0">
-                            <pre class="line-numbers language-json m-0"><code name="config-obj"></code></pre>
+                            <button type="button" class="btn btn-primary text-light" name="update" disabled>
+                                <i class="far fa-save"></i>
+                                <span label="update"></span>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card-footer text-right">
-            <button class="btn text-light btn-primary" name="search-file">
-                <i class="fas fa-search"></i> <span label="search"></span>
-            </button>
-        </div>
+
     </div>
 </div>
 </div>

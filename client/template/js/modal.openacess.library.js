@@ -35,7 +35,7 @@ app.openAccess.callback.readOpen1FA = function (data) {
 
         $('#modal-error').on('hide.bs.modal', function (e) {
             // Force the reload of the application 
-            app.plugin.backbutton.check = false;
+
             window.location.href = window.location.pathname;
         })
     }
@@ -146,7 +146,7 @@ app.openAccess.callback.readOpen2FA = function (data) {
 
         $('#modal-error').on('hide.bs.modal', function (e) {
             // Force the reload of the application 
-            app.plugin.backbutton.check = false;
+
             window.location.href = window.location.pathname;
         })
     }
@@ -335,7 +335,7 @@ app.openAccess.callback.login = function (data) {
     if (data == C_API_AJAX_SUCCESS) {
         $("#modal-open-access-user-login").modal("hide");
         // Force the reload of the application 
-        app.plugin.backbutton.check = false;
+
         window.location.href = window.location.pathname;
     }
     else {
@@ -353,7 +353,7 @@ app.openAccess.callback.loginCaptchaExpired = function () {
 app.openAccess.modal.logout = function () {
     //clean up language cookie. It will be reset again if the user logs in
     Cookies.remove(C_COOKIE_LANGUAGE);
-    app.plugin.backbutton.check = false;
+
     api.cookie.session.end();
 }
 //#endregion logout
@@ -487,7 +487,7 @@ app.openAccess.callback.reset2fa = function (data) {
 //#region session warning
 api.cookie.session.confirmExtension = function () {
     if (!$("#modal-confirm").is(":visible")) {
-        app.plugin.backbutton.check = false;
+
         api.modal.confirm(app.label.static["open-access-confirm-session-extension"], app.openAccess.ajax.extendSession)
         $("#modal-confirm").find("[data-dismiss=modal]").once("click", function () {
             api.cookie.session.end();
@@ -496,7 +496,6 @@ api.cookie.session.confirmExtension = function () {
 };
 
 app.openAccess.ajax.extendSession = function () {
-    app.plugin.backbutton.check = true;
     $("#modal-confirm").find("[data-dismiss=modal]").off();
     // Extend session by calling a silent API
     api.ajax.jsonrpc.request(

@@ -45,7 +45,7 @@ app.copyright.drawCallback = function () {
   });
   //initiate all copy to clipboard 
   new ClipboardJS("#copyright-read-container [name=copyright-url-copy-icon]");
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 
@@ -123,7 +123,7 @@ app.copyright.drawMatrixByCopyrightDataTable = function (data, callbackParam) {
 }
 
 app.copyright.drawCallbackMatrix = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   //Release version link click redirect to 
   $("#copyright-matrix-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
@@ -175,11 +175,11 @@ app.copyright.drawDatatable = function (data) {
           data: null,
           render: function (_data, _type, row) {
             return app.library.html.link.external({ name: "copyright-url-" + row.CprCode }, app.config.url.application + C_COOKIE_LINK_COPYRIGHT + "/" + row.CprCode) + $("<i>", {
-              "class": "far fa-copy fa-lg ml-2",
+              "class": "far fa-copy fa-lg ms-2",
               "name": "copyright-url-copy-icon",
-              "data-toggle": "tooltip",
+              "data-bs-toggle": "tooltip",
               "data-clipboard-target": "#copyright-read-container [name=copyright-url-" + row.CprCode + "]",
-              "data-placement": "right",
+              "data-bs-placement": "right",
               "title": "",
               "style": "cursor: grab",
               "data-clipboard-action": "copy",
@@ -288,6 +288,11 @@ app.copyright.ajax.create = function () {
     CprValue: cprValue,
     CprUrl: cprUrl
   };
+  //check for demo site
+  if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+    api.modal.error(app.label.static["demo-site-restricted-access"]);
+    return
+  }
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Create",
@@ -429,6 +434,11 @@ app.copyright.ajax.update = function () {
   var callbackParam = {
     CprCodeOld: cprCodeOld,
   };
+  //check for demo site
+  if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+    api.modal.error(app.label.static["demo-site-restricted-access"]);
+    return
+  }
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Update",
@@ -491,6 +501,11 @@ app.copyright.ajax.delete = function (idn) {
   var apiParams = {
     CprCode: idn
   };
+  //check for demo site
+  if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+    api.modal.error(app.label.static["demo-site-restricted-access"]);
+    return
+  }
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.System.Settings.Copyright_API.Delete",

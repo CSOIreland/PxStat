@@ -1,3 +1,10 @@
 /*******************************************************************************
 Custom CSS application specific
 *******************************************************************************/
+
+#release-panel-workinprogress .dataTables_wrapper .dataTables_length,
+#release-panel-awaitingresponse .dataTables_wrapper .dataTables_length,
+#release-panel-awaitingsignoff .dataTables_wrapper .dataTables_length,
+#release-panel-pendinglive .dataTables_wrapper .dataTables_length {
+    clear: both;
+}

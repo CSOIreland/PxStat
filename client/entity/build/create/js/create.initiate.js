@@ -16,10 +16,12 @@ $(document).ready(function () {
     }
 
     $("#build-create-initiate-setup [name=official-flag]").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
-        onstyle: "primary",
-        offstyle: "warning",
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
+        onstyle: "success text-light",
+        offstyle: "warning text-dark",
+        height: 38,
+        style: "text-light",
         width: C_APP_TOGGLE_LENGTH
     });
 

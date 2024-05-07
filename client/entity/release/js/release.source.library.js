@@ -182,7 +182,7 @@ app.release.data.view = function () {
         $("#data-dataset-chart-nav-content").empty()
         $("#data-dataset-map-nav-content").empty()
         $('#data-dataset-map-nav-tab').hide();
-        $('#data-dataset-table-nav-tab').tab('show')
+        $('#data-dataset-table-nav-tab').show()
     })
 };
 

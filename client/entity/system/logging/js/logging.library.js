@@ -168,7 +168,7 @@ app.logging.drawDataTable = function (data) {
 
         // Bootstrap tooltip
         $("body").tooltip({
-            selector: '[data-toggle="tooltip"]'
+            selector: '[data-bs-toggle="tooltip"]'
         });
     }
     $("#logging-result").show();

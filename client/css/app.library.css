@@ -5,25 +5,30 @@ Application - Library
 /* Prevent scrollwork flickering */
 
 body {
-    overflow-y: scroll;
+  overflow-y: scroll;
 }
 
 /* Mandatory icon for lables on forms */
 
-label.mandatory:before, span.mandatory:before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    content: "\f069";
-    vertical-align: super;
-    font-size: xx-small;
-    color: #DC4128;
-    margin: 1px;
+label.mandatory:before,
+span.mandatory:before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f069";
+  vertical-align: super;
+  font-size: xx-small;
+  color: #dc4128;
+  margin: 1px;
 }
 
 /* 
 * Mouse over disabled button
 */
 
-button:hover:disabled, a:hover:disabled, .toggle[disabled=disabled] .toggle-group label.toggle-off:hover, .toggle[disabled=disabled] .toggle-group label.toggle-on:hover, a[name="un-pivot"].text-muted {
-    cursor: not-allowed;
+button:hover:disabled,
+a:hover:disabled,
+.toggle[disabled="disabled"] .toggle-group label.toggle-off:hover,
+.toggle[disabled="disabled"] .toggle-group label.toggle-on:hover,
+a[name="un-pivot"].text-muted {
+  cursor: not-allowed;
 }

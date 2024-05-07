@@ -130,6 +130,7 @@ app.geomap.panel.callback.createLayer = function (data, glrName) {
 
     //Refresh the table
     app.geomap.panel.ajax.readLayers();
+    app.geomap.ajax.readLayersSelect();
 };
 
 app.geomap.panel.ajax.readUpdate = function (idn) {
@@ -153,6 +154,7 @@ app.geomap.panel.callback.readUpdate = function (data) {
         api.modal.information(app.label.static["api-ajax-nodata"]);
         //Refresh the table
         app.geomap.panel.ajax.readLayers();
+        app.geomap.ajax.readLayersSelect();
     }
 };
 
@@ -205,7 +207,7 @@ app.geomap.panel.callback.updateLayer = function (data, glrName) {
 
     //Refresh the table
     app.geomap.panel.ajax.readLayers();
-    app.geomap.ajax.read();
+    app.geomap.ajax.readLayersSelect();
 };
 
 app.geomap.panel.ajax.deleteLayer = function (params) {
@@ -222,6 +224,7 @@ app.geomap.panel.ajax.deleteLayer = function (params) {
 app.geomap.panel.callback.deleteLayer = function (data, glrName) {
     //Refresh the table
     app.geomap.panel.ajax.readLayers();
+    app.geomap.ajax.readLayersSelect();
 
     if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [glrName]));

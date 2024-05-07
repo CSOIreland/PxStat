@@ -573,7 +573,7 @@ app.release.comparison.callback.readComparison = function (data, selector) {
         for (i = 0; i < numDimensions; i++) { //build columns
             var codeSpan = $('<span>', {
                 "name": "code",
-                "class": "badge badge-pill badge-neutral mx-2 d-none",
+                "class": "badge rounded-pill bg-neutral text-dark mx-2 d-none",
                 "text": data.id[i]
             }).get(0).outerHTML;
 
@@ -590,7 +590,7 @@ app.release.comparison.callback.readComparison = function (data, selector) {
                     var dimensionLabel = jsonTableId.meta.id[meta.col];
                     var codeSpan = $('<span>', {
                         "name": "code",
-                        "class": "badge badge-pill badge-neutral mx-2 d-none",
+                        "class": "badge rounded-pill bg-neutral text-dark mx-2 d-none",
                         "text": jsonTableId.data[meta.row][dimensionLabel]
                     }).get(0).outerHTML;
                     return data + codeSpan;
@@ -616,14 +616,14 @@ app.release.comparison.callback.readComparison = function (data, selector) {
             "data": 'value',
             "type": "natural-nohtml",
             "defaultContent": app.config.entity.data.datatable.null,
-            "class": "text-right",
+            "class": "text-end",
             "render": function (data, type, row, meta) {
                 return app.library.utility.formatNumber(data, row.unit.decimals);
             }
         });
         var valueHeading = $("<th>",
             {
-                "class": "value text-right"
+                "class": "value text-end"
             });
         valueHeading.html("Value");
         $(selector).find("[name=comparison-table] thead tr").append(valueHeading);

@@ -1,90 +1,117 @@
-/*!
- * Bootstrap Grid v4.5.2 (https://getbootstrap.com/)
- * Copyright 2011-2020 The Bootstrap Authors
- * Copyright 2011-2020 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
- */
+// N.B. Compile against Bootstrap v5.3.3
 
-$theme-colors : ( // Use functional color palette for Branding maintenance
-  "primary": #006F74,
-  "secondary": #128091,
-  "tertiary": #35456B,
-  "navbar": #004F50,
-  "success": #019E79,
-  "info": #008099,
-  "warning": #EBA900,
-  "danger": #DC4128,
-  "light": #fff,
-  "dark": #343a40,
-  "neutral": #CDD3D9,
-  "default": #f8f9fa,
-  // Functional Colors for flags
-  "official": #DC4128,
-  "exceptional": #EBA900,
-  "reservation": #DC4128,
-  "archive": #343a40,
-  "analytical": #EBA900,
-  "experimental": #EBA900,
+// Set functional color palette for CSO guidelines
+$primary: #006F74;
+$secondary: #128091;
+$tertiary: #35456B;
+$navbar: #004F50;
+$success: #019E79;
+$info: #008099;
+$warning: #EBA900;
+$danger: #DC4128;
+$light: #fff;
+$dark: #343a40;
+$neutral: #CDD3D9;
+$default: #f8f9fa;
+$primary-light: #579599;
 
-  // Do NOT use standard color palette for Branding maintenance
-  "blue" : #008FAA,
-  "indigo" : #6610f2,
-  "purple": #1D345C,
-  "pink": #B51E83,
-  "red": #DC4128,
-  "orange": #fd7e14,
-  "yellow": #FAA21B,
-  "green": #006168,
-  "teal": #45C1C0,
-  "cyan": #17a2b8,
-  "white": #fff,
-  "gray": #6c757d,
-  "gray-dark": #343a40,
-);
+// Add functional color palette for CSO guidelines
+$official: #DC4128;
+$exceptional: #EBA900;
+$reservation: #DC4128;
+$archive: #343a40;
+$analytical: #EBA900;
+$experimental: #EBA900;
 
-// Website font
-@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,300italic,400italic,700,700italic);
+// Do NOT use standard color palette for CSO guidelines
+$blue: #008FAA;
+$indigo: #6610f2;
+$purple: #1D345C;
+$pink: #B51E83;
+$red: #DC4128;
+$orange: #fd7e14;
+$yellow: #FAA21B;
+$green: #006168;
+$teal: #45C1C0;
+$cyan: #17a2b8;
+$black: #000000;
+$white: #ffffff;
+$gray: #6c757d;
+$gray-dark: #343a40;
 
-$font-family-sans-serif: 'Roboto Sans', sans-serif;
-$font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
-$font-family-base: $font-family-sans-serif  !default;
-$headings-font-family: 'Roboto Slab', sans-serif;
-
-// Bootstrap imports
+// Import dependency for compiling theme colours
 @import "functions";
 @import "variables";
-@import "mixins";
-@import "root";
-@import "reboot";
-@import "type";
-@import "images";
-@import "code";
-@import "grid";
-@import "tables";
-@import "forms";
-@import "buttons";
-@import "transitions";
-@import "dropdown";
-@import "button-group";
-@import "input-group";
-@import "custom-forms";
-@import "nav";
-@import "navbar";
-@import "card";
-@import "breadcrumb";
-@import "pagination";
-@import "badge";
-@import "jumbotron";
-@import "alert";
-@import "progress";
-@import "media";
-@import "list-group";
-@import "close";
-@import "toasts";
-@import "modal";
-@import "tooltip";
-@import "popover";
-@import "carousel";
-@import "spinners";
-@import "utilities";
-@import "print";
+
+// Set CSO theme colours
+$cso-theme-colours: (
+  'blue': $blue,
+  'indigo':$indigo,
+  'purple':$purple,
+  'pink':$pink,
+  'orange':$orange,
+  'yellow':$yellow,
+  'green':$green,
+  'teal':$teal,
+  'cyan':$cyan,
+  'black':$black,
+  'white':$white,
+  'gray':$gray,
+  'gray-dark':$gray-dark,
+  'primary': $primary,
+  'secondary': $secondary,
+  'tertiary': $tertiary,
+  'navbar': $navbar,
+  'success': $success,
+  'info': $info,
+  'warning': $warning,
+  'danger': $danger,
+  'light': $light,
+  'dark': $dark,
+  'neutral': $neutral,
+  'default': $default,
+  'official': $official,
+  'exceptional': $exceptional,
+  'reservation': $reservation,
+  'archive': $archive,
+  'analytical': $analytical,
+  'experimental': $experimental,
+  'primary-light': $primary-light
+);
+
+// Merge the CSO theme with bootstraps default
+// N.B. map-merge is mandatory, do NOT assign $theme-colors directly
+$theme-colors: map-merge($cso-theme-colours, $theme-colors);
+
+// Set navbar
+$navbar-text-hover-color: #cbd3da;
+$navbar-light-hover-color: $navbar-text-hover-color !important;
+$navbar-light-active-color: $white;
+$navbar-light-color: $white;
+$navbar-light-disabled-color : $navbar-text-hover-color;
+
+// Set and import CSO font
+$font-family-sans-serif: 'Roboto Sans', sans-serif;
+@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,300italic,400italic,700,700italic);
+
+// Toggle global options
+$enable-dark-mode : false;
+$spacer: 1rem; //1rem (default), or any value > 0	Specifies the default spacer value to programmatically generate our spacer utilities.
+$enable-rounded: true; //true (default) or false	Enables predefined border-radius styles on various components.
+$enable-shadows: true; //	true or false (default)	Enables predefined decorative box-shadow styles on various components. Does not affect box-shadows used for focus states.
+$enable-gradients :true; //	true or false (default)	Enables predefined gradients via background-image styles on various components.
+$enable-transitions : true; //	true (default) or false	Enables predefined transitions on various components.
+$enable-reduced-motion :true; //	true (default) or false	Enables the prefers-reduced-motion media query, which suppresses certain animations/transitions based on the users’ browser/operating system preferences.
+$enable-grid-classes : true; //	true (default) or false	Enables the generation of CSS classes for the grid system (e.g. .row, .col-md-1, etc.).
+$enable-container-classes: true; //	true (default) or false	Enables the generation of CSS classes for layout containers. (New in v5.2.0)
+$enable-caret : true; //	true (default) or false	Enables pseudo element caret on .dropdown-toggle.
+$enable-button-pointers : false; //	true (default) or false	Add “hand” cursor to non-disabled button elements.
+$enable-rfs: true; //true (default) or false	Globally enables RFS.
+$enable-validation-icons: true; //	true (default) or false	Enables background-image icons within textual inputs and some custom forms for validation states.
+$enable-negative-margins : true; //	true or false (default)	Enables the generation of negative margin utilities.
+$enable-deprecation-messages : true; //	true (default) or false	Set to false to hide warnings when using any of the deprecated mixins and functions that are planned to be removed in v6.
+$enable-important-utilities: true; //true (default) or false	Enables the !important suffix in utility classes.
+$enable-smooth-scroll : true; //	true (default) or false	Applies scroll-behavior: smooth globally, except for users asking for reduced motion through prefers-reduced-motion media query
+
+// Import vanila bootstrap
+@import "bootstrap";

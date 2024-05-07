@@ -65,7 +65,9 @@ app.product.ajax.readSubject = function (SbjCode) {
       "LngIsoCode": app.label.language.iso.code
     },
     "app.product.callback.readSubject",
-    SbjCode
+    {
+      SbjCode: SbjCode
+    }
   );
 };
 
@@ -74,7 +76,7 @@ app.product.ajax.readSubject = function (SbjCode) {
  * @param  {} data
  * @param {*} SbjCode 
  */
-app.product.callback.readSubject = function (data, SbjCode) {
+app.product.callback.readSubject = function (data, params) {
   // Load select2
   $("#product-container").find("[name=select-main-subject-search]").empty().append($("<option>")).select2({
     minimumInputLength: 0,
@@ -97,6 +99,11 @@ app.product.callback.readSubject = function (data, SbjCode) {
         $("#product-modal-create").find("[name='idn']").val(selectedObject.SbjCode);
         $("#product-card-read").find("[name=button-create]").attr("idn", selectedObject.SbjCode);
         var subject = { SbjCode: selectedObject.SbjCode, SbjValue: selectedObject.SbjValue };
+        //update state
+        app.navigation.replaceState("#nav-link-product", {
+          "SbjCode": selectedObject.SbjCode
+        })
+
         //Read Products for searched Subject.
         app.product.ajax.read(subject);
       }
@@ -110,8 +117,9 @@ app.product.callback.readSubject = function (data, SbjCode) {
       $("#product-release-modal").hide();
     }
   });
-  if (SbjCode) {
-    app.product.load(SbjCode);
+
+  if (params.SbjCode) {
+    app.product.load(params.SbjCode);
   }
 };
 
@@ -151,7 +159,7 @@ app.product.drawCallbackProduct = function () {
   });
   //initiate all copy to clipboard 
   new ClipboardJS("#product-card-read [name=product-url-copy-icon]");
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
   // Click event "internalLink"
@@ -208,11 +216,11 @@ app.product.drawDataTableProduct = function (data) {
           data: null,
           render: function (_data, _type, row) {
             return app.library.html.link.external({ name: "product-url-" + row.PrcCode }, app.config.url.application + C_COOKIE_LINK_PRODUCT + "/" + row.PrcCode) + $("<i>", {
-              "class": "far fa-copy fa-lg ml-2",
+              "class": "far fa-copy fa-lg ms-2",
               "name": "product-url-copy-icon",
-              "data-toggle": "tooltip",
+              "data-bs-toggle": "tooltip",
               "data-clipboard-target": "#product-card-read [name=product-url-" + row.PrcCode + "]",
-              "data-placement": "right",
+              "data-bs-placement": "right",
               "title": "",
               "style": "cursor: grab",
               "data-clipboard-action": "copy",
@@ -634,7 +642,7 @@ app.product.callback.readMatrixByProduct = function (data, callbackParam) {
  * Draw Callback for Datatable
  */
 app.product.drawCallbackRelease = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   //Release version link click redirect to 
   $("#product-release-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
@@ -642,15 +650,13 @@ app.product.drawCallbackRelease = function () {
     //Set the code
     var MtrCode = $(this).attr("MtrCode");
 
-    $("#product-release-modal").modal("hide");
-
     //Wait for the modal to close
     $("#product-release-modal").on('hidden.bs.modal', function (e) {
       //Unbind the event for next call
       $("#product-release-modal").off('hidden.bs.modal');
 
       api.content.goTo("entity/release", null, "#nav-link-release", { "MtrCode": MtrCode });
-    })
+    }).modal("hide");
 
 
   });

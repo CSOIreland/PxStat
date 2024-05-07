@@ -8,12 +8,16 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["releases"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["releases"]);
+  app.navigation.setState("#nav-link-release");
   // Entity with restricted access
   app.navigation.access.check([C_APP_PRIVILEGE_MODERATOR, C_APP_PRIVILEGE_POWER_USER]);
 
+  //check history state
+
+
   // Get GoTo params
-  app.release.goTo.MtrCode = api.content.getParam("MtrCode");
-  app.release.goTo.RlsCode = api.content.getParam("RlsCode");
+  app.release.goTo.MtrCode = history.state.MtrCode || api.content.getParam("MtrCode");
+  app.release.goTo.RlsCode = history.state.RlsCode || api.content.getParam("RlsCode");
 
   // Clear Overlay and load dependencies (loading order relevant) - must be after GoTo
   $("#modal-entity").empty();

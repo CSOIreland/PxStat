@@ -11,6 +11,8 @@ app.keyword.release.ajax = {};
 app.keyword.release.callback = {};
 app.keyword.release.display = {};
 app.keyword.release.RlsCode = null;
+app.keyword.release.isLive = null;
+
 //#endregion
 
 //#region Functions keyword.release.
@@ -221,7 +223,7 @@ app.keyword.release.callback.readReleaseList = function (data) {
  * Draw Callback for Datatable
  */
 app.keyword.drawCallbackRelease = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // Display  the modal "modal-update-reason" on click
     $("#keyword-release-table-release-container table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
         e.preventDefault();
@@ -232,6 +234,15 @@ app.keyword.drawCallbackRelease = function () {
 
         // Set namespace var
         app.keyword.release.RlsCode = idn;
+
+        //set namespace app.keyword.release.isLive
+        app.keyword.release.isLive = app.release.checkStatusLive(
+            {
+                "RlsLiveDatetimeFrom": $(this).attr("rls-datatime-from"),
+                "RlsLiveDatetimeTo": $(this).attr("rls-datatime-to"),
+                "RlsRevision": $(this).attr("rls-revision")
+            }
+        );
 
         //Set RlsCode for create new #keyword-release
         $("#keyword-release-modal-create").find("[name='rls-code']").val(idn);
@@ -268,7 +279,7 @@ app.keyword.release.drawDataTableRelease = function (data) {
                 {
                     data: null,
                     render: function (data, type, row) {
-                        var attributes = { idn: row.RlsCode, "rls-version": row.RlsVersion, "rls-revision": row.RlsRevision, "mtr-code": row.MtrCode, "lng-iso-code": row.LngIsoCode }; //idn RlsCode
+                        var attributes = { idn: row.RlsCode, "rls-version": row.RlsVersion, "rls-revision": row.RlsRevision, "mtr-code": row.MtrCode, "lng-iso-code": row.LngIsoCode, "rls-datatime-from": row.RlsLiveDatetimeFrom, "rls-datatime-to": row.RlsLiveDatetimeTo }; //idn RlsCode
                         return app.library.html.link.internal(attributes, row.RlsVersion + "." + row.RlsRevision);
                     }
                 },
@@ -338,7 +349,7 @@ app.keyword.release.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.keyword.drawCallbackKeyword = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // Display  the modal "modal-update-release-keyword" on "[name=" + C_APP_NAME_LINK_EDIT + "]" click
     $("#keyword-release-table-release-keyword-container table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();
@@ -463,7 +474,9 @@ app.keyword.release.drawDataTable = function (data) {
                 $(this).attr('mtr-code'),
                 $(this).attr('rls-code'),
                 $("#keyword-release-container").find("[name=keyword-release-matrix-search]").val(),
-                true);
+                true,
+                app.keyword.release.isLive
+            );
             app.data.dataset.draw();
         });
     }
@@ -827,4 +840,4 @@ app.keyword.release.callback.readSynonym = function (data, callbackParam) {
 }
 
 
-  //#endregion
+//#endregion
