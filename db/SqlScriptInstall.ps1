@@ -251,48 +251,6 @@ try
 }
 
 
-# ********************************************************************************
-# Create Schedules
-# ********************************************************************************
-
-#Extract all of the .sql files into an object
-$files = Get-ChildItem -recurse $scriptDir\Schedules\*.sql
-	
-$successCount = 0
-$errorCount = 0
-
-#Run each script
-ForEach ($file in $files)#
-{
-	try
-    {
-		
-		if($file.GetType().ToString()-eq "System.IO.FileInfo")
-		{
-			$fname=$file.FullName
-			Write-Host ":r$delim$fname$delim"
-			Add-Content $scriptDir\$outputScript ":r$delim$fname$delim"
-		}
-    }
-    catch
-    {
-        $ErrorMessage = $_.Exception.Message
-        Write-Host "ERROR $file - $ErrorMessage"
-        "ERROR $date : $file - $ErrorMessage" | out-file $scriptDir\update.log -Append
-        Write-Host ""
-        Write-Host "Script Schedules - Failed"
-        Write-Host "********************************************************************************"
-        Write-Host ""
-        Continue
-    }
-		
-}
-Write-Host ""
-Write-Host "Schedules - Errors: $errorCount"
-Write-Host "Schedules - Success: $successCount"
-Write-Host "********************************************************************************"
-Write-Host ""
-
 Write-Host ""
 Write-Host "Your SQL Script is now ready at $($scriptDir)$('\')$($outputScript)"
 Write-Host "Please remember to run the script in SQL Command Mode if running from Sql Server Management Studio"

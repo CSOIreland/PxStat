@@ -10,6 +10,7 @@ GO
 -- Description:	Reads record(s) from the TD_Product table along with Subject data
 -- The LngIso code will ensure that it will return SbjValue and PrcValue in the requested language if it exists
 -- If there are no values in the requested language, the sp will return the values in the default language
+-- exec System_Navigation_Navigation_Read 'ga','en'
 -- =============================================
 CREATE
 	OR
@@ -22,40 +23,50 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @LngId AS INT;
+	DECLARE @LngId INT
 
 	SET @LngId = (
 			SELECT LNG_ID
 			FROM TS_LANGUAGE
 			WHERE LNG_ISO_CODE = @LngIsoCode
 				AND LNG_DELETE_FLAG = 0
-			);
+			)
 
 	IF @LngId = 0
 		OR @LngId IS NULL
 	BEGIN
-		RETURN;
+		RETURN
 	END
 
-	DECLARE @LngIdDefault AS INT;
+	DECLARE @LngIdDefault INT
 
 	SET @LngIdDefault = (
 			SELECT LNG_ID
 			FROM TS_LANGUAGE
 			WHERE LNG_ISO_CODE = @LngIsoCodeDefault
 				AND LNG_DELETE_FLAG = 0
-			);
+			)
 
 	IF @LngIdDefault = 0
 		OR @LngIdDefault IS NULL
 	BEGIN
-		RETURN;
+		RETURN
 	END
-	SELECT * from (
+	SELECT SbjCode
+	,COALESCE(SLG_VALUE,SbjValue) as SbjValue
+	,PrcCode
+	,COALESCE(PLG_VALUE,PrcValue) as PrcValue
+	,PrcReleaseCount 
+	,COALESCE(TLG_VALUE,ThmValue) as ThmValue
+	,ThmCode
+	from (
 	SELECT sbj.SBJ_CODE AS SbjCode
 		,sbj.SBJ_VALUE AS SbjValue
 		,prd.PRC_CODE AS PrcCode
 		,prd.PRC_VALUE AS PrcValue
+		,thm.THM_ID 
+		,prd.PRC_ID 
+		,sbj.SBJ_ID 
 		,(
 			CASE 
 				WHEN RelatedCountPerProduct IS NULL
@@ -79,27 +90,30 @@ BEGIN
 	LEFT JOIN (
 		SELECT PRC_ID
 			,PRC_CODE
-			,PRC_VALUE
 			,COUNT(*) AS RelatedCountPerProduct
 		FROM TD_RELEASE
 		INNER JOIN TD_PRODUCT ON RLS_PRC_ID = PRC_ID
 			AND RLS_DELETE_FLAG = 0
 			AND PRC_DELETE_FLAG = 0
-		INNER JOIN VW_RELEASE_LIVE_NOW ON RLS_ID = VRN_RLS_ID
+		INNER JOIN VW_RELEASE_LIVE_NOW ON RLS_ID = VRN_RLS_ID 
+		inner join td_matrix
+		on mtr_id=VRN_MTR_ID 
+		and MTR_LNG_ID=@LngIdDefault
 		GROUP BY PRC_ID
 			,PRC_CODE
-			,PRC_VALUE
 		) rcp ON prd.PRC_ID = rcp.PRC_ID
 		AND PRC_DELETE_FLAG = 0
 	LEFT JOIN (
 		SELECT PRC_CODE
 			,PRC_ID 
-			,COALESCE(PLG_Value, PRC_VALUE) AS PRC_VALUE
+			,PRC_VALUE
 			,SBJ_CODE
-			,COALESCE(SLG_VALUE, SBJ_VALUE) AS SBJ_VALUE
+			, SBJ_VALUE
 			,COUNT(*) AS AssociatedReleaseCountPerProduct
-			,COALESCE(TLG_VALUE, THM_VALUE) AS THM_VALUE
+			,THM_VALUE
 			,THM_CODE
+			,THM_ID 
+			,SBJ_ID 
 		FROM TD_RELEASE
 		INNER JOIN TM_RELEASE_PRODUCT ON RLS_ID = RPR_RLS_ID
 		INNER JOIN TD_PRODUCT ON RPR_PRC_ID = PRC_ID
@@ -114,31 +128,9 @@ BEGIN
 			AND SBJ_DELETE_FLAG = 0
 		INNER JOIN TD_THEME ON SBJ_THM_ID = THM_ID
 			AND THM_DELETE_FLAG = 0
-		LEFT OUTER JOIN (
-			SELECT SLG_SBJ_ID
-				,SLG_VALUE
-			FROM TD_SUBJECT_LANGUAGE
-			INNER JOIN TS_LANGUAGE ON SLG_LNG_ID = LNG_ID
-				AND LNG_DELETE_FLAG = 0
-				AND LNG_ISO_CODE = @LngIsoCode
-			) AS INNER_SLG ON SBJ_ID = INNER_SLG.SLG_SBJ_ID
-		LEFT OUTER JOIN (
-			SELECT prg.PLG_PRC_ID
-				,prg.PLG_VALUE
-			FROM TD_PRODUCT_LANGUAGE AS prg
-			INNER JOIN TS_LANGUAGE ON prg.PLG_LNG_ID = LNG_ID
-				AND LNG_DELETE_FLAG = 0
-				AND LNG_ISO_CODE = @LngIsoCode
-			) AS INNER_PRG ON PRC_ID = INNER_PRG.PLG_PRC_ID
-		LEFT OUTER JOIN (
-			SELECT TLG_THM_ID
-				,TLG_VALUE
-			FROM TD_THEME_LANGUAGE
-			INNER JOIN TS_LANGUAGE ON TLG_LNG_ID = LNG_ID
-				AND LNG_DELETE_FLAG = 0
-				AND LNG_ISO_CODE = @LngIsoCode
-			) AS INNER_TLG ON INNER_TLG.TLG_THM_ID = THM_ID
+
 		INNER JOIN (
+			--get matrix items where a language version exists, otherwise get the matrixes in the main language
 			SELECT mtr.MTR_RLS_ID
 				,mtrLng.MtrRlsIdLng
 				,MTR_CODE
@@ -163,15 +155,17 @@ BEGIN
 				AND mtr.MTR_CODE = mtrLng.mtrCodeLng
 			) AS mtr ON mtr.MTR_RLS_ID = RLS_ID
 		GROUP BY PRC_CODE
-			,PLG_Value
+			--,PLG_Value
 			,PRC_VALUE
 			,SBJ_CODE
-			,SLG_VALUE
+			--,SLG_VALUE
 			,SBJ_VALUE
-			,TLG_VALUE
+			--,TLG_VALUE
 			,THM_VALUE
 			,THM_CODE
 			,PRC_ID 
+			,THM_ID 
+			,SBJ_ID 
 		) arc ON arc.PRC_ID  = prd.PRC_ID 
 	GROUP BY prd.PRC_VALUE
 		,prd.PRC_CODE
@@ -180,7 +174,19 @@ BEGIN
 		,thm.THM_CODE
 		,thm.THM_VALUE
 		,arc.AssociatedReleaseCountPerProduct
-		,rcp.RelatedCountPerProduct) qry
+		,rcp.RelatedCountPerProduct
+		,thm.THM_ID 
+		,prd.PRC_ID 
+		,sbj.SBJ_ID ) qry
+	LEFT JOIN TD_THEME_LANGUAGE 
+	ON qry.THM_ID=TLG_THM_ID
+	AND TLG_LNG_ID=@LngId 
+	LEFT JOIN TD_SUBJECT_LANGUAGE 
+	ON qry.SBJ_ID=SLG_SBJ_ID 
+	AND SLG_LNG_ID=@LngId
+	LEFT JOIN TD_PRODUCT_LANGUAGE 
+	on qry.PRC_ID=PLG_PRC_ID 
+	AND PLG_LNG_ID=@LngId
 	WHERE qry.PrcReleaseCount > 0
 	ORDER BY ThmValue
 		,SbjValue

@@ -19,10 +19,20 @@ BEGIN
 	WHERE RLS_CODE = @ReleaseCode
 	AND RLS_DELETE_FLAG = 0
 
+	IF @ReleaseId IS NULL
+	BEGIN
+	    RETURN -3
+	END
+
 	SELECT @ProductId = PRC_ID
     FROM   TD_PRODUCT
     WHERE  PRC_CODE = @ProductCode
 	AND PRC_DELETE_FLAG = 0
+
+	IF @ProductId IS NULL
+	BEGIN
+		RETURN -2
+	END
 
 	--If you are trying to associate the Product with the core Product, this is a duplicate, return -1
 	IF @ProductId = @ReleaseProductId

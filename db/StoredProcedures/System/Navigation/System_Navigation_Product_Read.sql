@@ -8,7 +8,6 @@ GO
 -- Author:		Paulo Patricio
 -- Read date: 11 Oct 2018
 -- Description:	Reads record(s) from the TD_Product table
--- exec System_Navigation_Product_Read null, 1, 'en', null
 -- =============================================
 CREATE
 	OR

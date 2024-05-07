@@ -63,6 +63,7 @@ BEGIN
 			OR lrt.LRT_CODE = @LrtCode
 			)
 		AND lrt.LRT_DELETE_FLAG = 0
+	ORDER BY lrt.LRT_DATETIME DESC
 END
 GO
 

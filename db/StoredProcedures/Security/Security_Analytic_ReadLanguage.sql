@@ -1,3 +1,4 @@
+-- ================================================
 SET ANSI_NULLS ON
 GO
 
@@ -6,78 +7,68 @@ GO
 
 -- =============================================
 -- Author:		Neil O'Keeffe
--- Create date: 15/05/2019
--- Description:	Returns a count of matrices queried per language
--- exec Security_Analytic_ReadLanguage '2020-08-01','2022-11-21','okeeffene'
+-- Create date: 17/07/2023
+-- Read analytic for the language of the matrix
+--EXEC Security_Analytic_ReadLanguage '2023-06-22','2023-06-29', 'en'
 -- =============================================
 CREATE
 	OR
 
 ALTER PROCEDURE Security_Analytic_ReadLanguage @DateFrom DATE
 	,@DateTo DATE
-	,@CcnUsername NVARCHAR(256)
-	,@NltInternalNetworkMask VARCHAR(12) = NULL
+	,@LngIsoCode CHAR(2)
 	,@MtrCode NVARCHAR(20) = NULL
-	,@SbjCode INT = NULL
 	,@PrcCode NVARCHAR(32) = NULL
+	,@SbjCode INT = NULL
+	,@NltMaskedIp VARCHAR(11) = NULL
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
 
-	DECLARE @GroupUserHasAccess TABLE (GRP_ID INT NOT NULL);
+	 DECLARE @LngId INT
+	 SET @LngId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCode AND LNG_DELETE_FLAG=0)
 
-	INSERT INTO @GroupUserHasAccess
-	EXEC Security_Group_AccessList @CcnUsername
 
-	SELECT LNG_ISO_NAME AS LngIsoName
-		,GRP_ID AS GrpId
-		,count(*) AS lngCount
-	FROM TD_ANALYTIC
-	INNER JOIN TD_MATRIX
-		ON NLT_MTR_ID = MTR_ID
-			AND MTR_DELETE_FLAG = 0
-	INNER JOIN TS_LANGUAGE
-		ON MTR_LNG_ID = LNG_ID
-			AND LNG_DELETE_FLAG = 0
+	SELECT COUNT(*) AS lngCount
+		
+		,LNG_ISO_CODE AS mtrLngIsoCode
+		,LNG_ISO_NAME AS mtrLngName
+		
 
-	INNER JOIN TD_RELEASE
-		ON RLS_ID = MTR_RLS_ID
-			AND TD_RELEASE.RLS_DELETE_FLAG = 0
-	INNER JOIN TD_GROUP 
-		ON GRP_ID=RLS_GRP_ID 
-	LEFT JOIN TD_PRODUCT
-		ON RLS_PRC_ID = PRC_ID
-			AND PRC_DELETE_FLAG = 0
-	LEFT JOIN TD_SUBJECT
-		ON PRC_SBJ_ID = SBJ_ID
-			AND SBJ_DELETE_FLAG = 0
+	FROM TD_PRODUCT
+	INNER JOIN TD_RELEASE ON RLS_PRC_ID = PRC_ID
+	INNER JOIN TD_SUBJECT ON PRC_SBJ_ID = SBJ_ID
+	INNER JOIN TD_MATRIX ON MTR_RLS_ID = RLS_ID
+	INNER JOIN TD_GROUP ON RLS_GRP_ID = GRP_ID
+	INNER JOIN TS_LANGUAGE ON MTR_LNG_ID = LNG_ID
+		AND LNG_DELETE_FLAG = 0
+
+	INNER JOIN TD_ANALYTIC ON MTR_ID = NLT_MTR_ID
+	
+	
+
+
 	WHERE NLT_DATE >= @DateFrom
 		AND NLT_DATE <= @DateTo
 		AND (
 			@MtrCode IS NULL
-			OR @MtrCode = MTR_CODE
-			)
-		
-		AND (
-			@NltInternalNetworkMask IS NULL
-			OR NLT_MASKED_IP NOT LIKE @NltInternalNetworkMask
+			OR MTR_CODE = @MtrCode
 			)
 		AND (
-			@SbjCode = SBJ_CODE
-			OR @SbjCode IS NULL
+			@PrcCode IS NULL
+			OR PRC_CODE = @PrcCode
 			)
 		AND (
-			@PrcCode = PRC_CODE
-			OR @PrcCode IS NULL
+			@SbjCode IS NULL
+			OR SBJ_CODE = @SbjCode
 			)
-	GROUP BY LNG_ISO_NAME,GRP_ID
-
-	SELECT GRP_ID AS GrpId
-	FROM @GroupUserHasAccess;
+		AND (
+			@NltMaskedIp IS NULL
+			OR NLT_MASKED_IP <> @NltMaskedIp
+			)
+		GROUP BY LNG_ISO_CODE, LNG_ISO_NAME 
 END
 GO
-
 

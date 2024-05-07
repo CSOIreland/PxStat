@@ -26,8 +26,7 @@ BEGIN
 	INSERT INTO @GroupUserHasAccess
 	EXEC Security_Group_AccessList @CcnUsername
 
-	INSERT INTO @GroupUserHasAccess
-	EXEC Security_Group_AccessList @CcnUsername
+
 
 	DECLARE @MtrCode NVARCHAR(20)
 

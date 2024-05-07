@@ -46,16 +46,6 @@ if([System.Version]$DbVersion -lt "5.0.0" -and [System.Version]$DbNewVersion -gt
     exit
 }
 
-#Drop the jobs
-$fileName="\Drop\drop_jobs.sql"
-Add-Content $scriptDir\$outputScript ":r$delim$scriptDir$fileName$delim"
-Write-Host ":r$delim$scriptDir$fileName$delim"
-
-#Drop the schedules
-$fileName="\Drop\drop_schedules.sql"
-Add-Content $scriptDir\$outputScript ":r$delim$scriptDir$fileName$delim"
-Write-Host ":r$delim$scriptDir$fileName$delim"
-
 Write-Host "USE [$DbData]"
 Add-Content $scriptDir\$outputScript "USE [$DbData]"
 

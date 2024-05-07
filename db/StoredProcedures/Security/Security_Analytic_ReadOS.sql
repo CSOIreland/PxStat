@@ -1,3 +1,4 @@
+-- ================================================
 SET ANSI_NULLS ON
 GO
 
@@ -6,77 +7,73 @@ GO
 
 -- =============================================
 -- Author:		Neil O'Keeffe
--- Create date: 22/01/2019
--- Description:	Reads counts of Operating Systems
--- exec Security_Analytic_ReadOS '2019-04-13','2022-11-15','okeeffene'
+-- Create date: 17/07/2023
+-- Analytic read for OS
+--EXEC Security_Analytic_ReadOs '2023-06-22','2023-06-29', 'en'
 -- =============================================
 CREATE
 	OR
 
-ALTER PROCEDURE Security_Analytic_ReadOS @DateFrom DATE
+ALTER PROCEDURE Security_Analytic_ReadOs @DateFrom DATE
 	,@DateTo DATE
-	,@CcnUsername NVARCHAR(256)
-	,@NltInternalNetworkMask VARCHAR(12) = NULL
+	,@LngIsoCode CHAR(2)
 	,@MtrCode NVARCHAR(20) = NULL
-	,@SbjCode INT = NULL
 	,@PrcCode NVARCHAR(32) = NULL
+	,@SbjCode INT = NULL
+	,@NltMaskedIp VARCHAR(11) = NULL
 AS
 BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
 
-	DECLARE @GroupUserHasAccess TABLE (GRP_ID INT NOT NULL);
+	 DECLARE @LngId INT
+	 SET @LngId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCode AND LNG_DELETE_FLAG=0)
+ 
 
-	INSERT INTO @GroupUserHasAccess
-	EXEC Security_Group_AccessList @CcnUsername
-
-
-		SELECT CASE 
+	SELECT COUNT(*) AS NltCount
+		
+		,CASE 
 			WHEN NLT_OS IS NULL
+				OR NLT_OS = ''
 				THEN '-'
 			ELSE NLT_OS
-			END AS NltOs,
-			GRP_ID AS GrpId
-			,count(*) AS nltCount
-		FROM TD_ANALYTIC
-		INNER JOIN TD_MATRIX
-			ON NLT_MTR_ID = MTR_ID
-				AND MTR_DELETE_FLAG = 0
-		INNER JOIN TD_RELEASE
-			ON RLS_ID = MTR_RLS_ID
-				AND TD_RELEASE.RLS_DELETE_FLAG = 0
-		INNER JOIN TD_GROUP
-		ON GRP_ID=RLS_GRP_ID 
-		LEFT JOIN TD_PRODUCT
-			ON RLS_PRC_ID = PRC_ID
-				AND PRC_DELETE_FLAG = 0
-		LEFT JOIN TD_SUBJECT
-			ON PRC_SBJ_ID = SBJ_ID
-				AND SBJ_DELETE_FLAG = 0
-		WHERE NLT_DATE >= @DateFrom
-			AND NLT_DATE <= @DateTo
-			AND (
-				@MtrCode IS NULL
-				OR @MtrCode = MTR_CODE
-				)
-			AND (
-				@NltInternalNetworkMask IS NULL
-				OR NLT_MASKED_IP NOT LIKE @NltInternalNetworkMask
-				)
-			AND (
-				@SbjCode = SBJ_CODE
-				OR @SbjCode IS NULL
-				)
-			AND (
-				@PrcCode = PRC_CODE
-				OR @PrcCode IS NULL
-				)
-		GROUP BY NLT_OS,GRP_ID
+			END AS NltOs
+		
 
-		SELECT GRP_ID AS GrpId
-	FROM @GroupUserHasAccess;
 
+	FROM TD_PRODUCT
+	INNER JOIN TD_RELEASE ON RLS_PRC_ID = PRC_ID
+	INNER JOIN TD_SUBJECT ON PRC_SBJ_ID = SBJ_ID
+	INNER JOIN TD_MATRIX ON MTR_RLS_ID = RLS_ID
+	INNER JOIN TD_GROUP ON RLS_GRP_ID = GRP_ID
+	INNER JOIN TS_LANGUAGE AS mtrLNG ON MTR_LNG_ID = mtrLng.LNG_ID
+		AND mtrLng.LNG_DELETE_FLAG = 0
+
+	INNER JOIN TD_ANALYTIC ON MTR_ID = NLT_MTR_ID
+	INNER JOIN TS_FORMAT ON NLT_FRM_ID = FRM_ID
+	
+
+
+	WHERE NLT_DATE >= @DateFrom
+		AND NLT_DATE <= @DateTo
+		AND (
+			@MtrCode IS NULL
+			OR MTR_CODE = @MtrCode
+			)
+		AND (
+			@PrcCode IS NULL
+			OR PRC_CODE = @PrcCode
+			)
+		AND (
+			@SbjCode IS NULL
+			OR SBJ_CODE = @SbjCode
+			)
+		AND (
+			@NltMaskedIp IS NULL
+			OR NLT_MASKED_IP <> @NltMaskedIp
+			)
+		GROUP BY NLT_OS
 END
 GO
-
 

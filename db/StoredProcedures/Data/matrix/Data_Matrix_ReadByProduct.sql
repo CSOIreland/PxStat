@@ -8,6 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 03/12/2019
 -- Description:	Returns a list of individual Matrix codes that are associated with a given product code (via the Release entity)
+-- EXEC Data_Matrix_ReadByProduct 'CP1HII','ga','en'
 -- =============================================
 CREATE
 	OR

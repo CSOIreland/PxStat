@@ -1,3 +1,4 @@
+-- ================================================
 SET ANSI_NULLS ON
 GO
 
@@ -6,71 +7,81 @@ GO
 
 -- =============================================
 -- Author:		Neil O'Keeffe
--- Create date: 22/01/2019
--- Description:	Reads counts of Referrers
--- exec Security_Analytic_ReadReferers '2019-04-13','2022-11-15','okeeffene'
+-- Create date: 17/07/2023
+-- Read analytic for referrers
+--EXEC Security_Analytic_ReadReferers '2024-01-09','2024-02-16', 'en'
 -- =============================================
 CREATE
 	OR
 
 ALTER PROCEDURE Security_Analytic_ReadReferers @DateFrom DATE
 	,@DateTo DATE
-	,@CcnUsername NVARCHAR(256)
-	,@NltInternalNetworkMask VARCHAR(12) = NULL
+	,@LngIsoCode CHAR(2)
 	,@MtrCode NVARCHAR(20) = NULL
-	,@SbjCode INT = NULL
 	,@PrcCode NVARCHAR(32) = NULL
+	,@SbjCode INT = NULL
+	,@NltMaskedIp VARCHAR(11) = NULL
 AS
 BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	SET @NltInternalNetworkMask = @NltInternalNetworkMask + '%'
 
-	DECLARE @GroupUserHasAccess TABLE (GRP_ID INT NOT NULL);
+	 DECLARE @LngId INT
+	 SET @LngId=(SELECT LNG_ID FROM TS_LANGUAGE WHERE LNG_ISO_CODE=@LngIsoCode AND LNG_DELETE_FLAG=0)
 
-	INSERT INTO @GroupUserHasAccess
-	EXEC Security_Group_AccessList @CcnUsername
 
-	SELECT CASE 
+
+	SELECT COUNT(*) AS NltCount, NltReferer
+	from
+	(
+		SELECT
+		CASE 
 			WHEN NLT_REFERER IS NULL
+				OR NLT_REFERER = ''
 				THEN '-'
 			ELSE NLT_REFERER
 			END AS NltReferer
-		,GRP_ID AS GrpId
-		,count(*) AS nltCount
-	FROM TD_ANALYTIC
-	INNER JOIN TD_MATRIX ON NLT_MTR_ID = MTR_ID
-		AND MTR_DELETE_FLAG = 0
-	INNER JOIN TD_RELEASE ON RLS_ID = MTR_RLS_ID
-		AND TD_RELEASE.RLS_DELETE_FLAG = 0
-	INNER JOIN TD_GROUP ON GRP_ID = RLS_GRP_ID
-	LEFT JOIN TD_PRODUCT ON RLS_PRC_ID = PRC_ID
-		AND PRC_DELETE_FLAG = 0
-	LEFT JOIN TD_SUBJECT ON PRC_SBJ_ID = SBJ_ID
-		AND SBJ_DELETE_FLAG = 0
+		
+ 
+
+
+	FROM TD_PRODUCT
+	INNER JOIN TD_RELEASE ON RLS_PRC_ID = PRC_ID
+	INNER JOIN TD_SUBJECT ON PRC_SBJ_ID = SBJ_ID
+	INNER JOIN TD_MATRIX ON MTR_RLS_ID = RLS_ID
+	INNER JOIN TD_GROUP ON RLS_GRP_ID = GRP_ID
+	INNER JOIN TS_LANGUAGE AS mtrLNG ON MTR_LNG_ID = mtrLng.LNG_ID
+		AND mtrLng.LNG_DELETE_FLAG = 0
+
+	INNER JOIN TD_ANALYTIC ON MTR_ID = NLT_MTR_ID
+	INNER JOIN TS_FORMAT ON NLT_FRM_ID = FRM_ID
+	
+	
+	LEFT JOIN TS_LANGUAGE AS nltLng ON nltLng.LNG_ISO_CODE = NLT_LNG_ISO_CODE
+		AND nltLng.LNG_DELETE_FLAG = 0
+
+
 	WHERE NLT_DATE >= @DateFrom
 		AND NLT_DATE <= @DateTo
-		AND (
+	AND (
 			@MtrCode IS NULL
-			OR @MtrCode = MTR_CODE
+			OR MTR_CODE = @MtrCode
 			)
 		AND (
-			@NltInternalNetworkMask IS NULL
-			OR NLT_MASKED_IP NOT LIKE @NltInternalNetworkMask
+			@PrcCode IS NULL
+			OR PRC_CODE = @PrcCode
 			)
 		AND (
-			@SbjCode = SBJ_CODE
-			OR @SbjCode IS NULL
+			@SbjCode IS NULL
+			OR SBJ_CODE = @SbjCode
 			)
 		AND (
-			@PrcCode = PRC_CODE
-			OR @PrcCode IS NULL
+			@NltMaskedIp IS NULL
+			OR NLT_MASKED_IP <> @NltMaskedIp
 			)
-	GROUP BY NLT_REFERER
-		,GRP_ID
-
-	SELECT GRP_ID AS GrpId
-	FROM @GroupUserHasAccess;
+			) Q
+		GROUP BY Q.NltReferer
 END
 GO
-
 

@@ -43,31 +43,17 @@ BEGIN
 				AND RLS_DELETE_FLAG = 0
 			)
 	BEGIN
-		SET @eMessage = 'SP: System_Navigation_Product_Delete - Product is being used in a release: ' + cast(isnull(@PrcCode, 0) AS VARCHAR)
-
-		RAISERROR (
-				@eMessage
-				,16
-				,1
-				);
-
-		RETURN 0
+		RETURN - 1
 	END
 
-    IF EXISTS (SELECT 1
-               FROM   TM_RELEASE_PRODUCT
-               WHERE  RPR_PRC_ID = @PrcID
-                      AND RPR_DELETE_FLAG = 0)
+	IF EXISTS (
+			SELECT 1
+			FROM TM_RELEASE_PRODUCT
+			WHERE RPR_PRC_ID = @PrcID
+				AND RPR_DELETE_FLAG = 0
+			)
 	BEGIN
-		SET @eMessage = 'SP: System_Navigation_Product_Delete - Release Product association is being used: ' + cast(isnull(@PrcCode, 0) AS VARCHAR)
-
-		RAISERROR (
-				@eMessage
-				,16
-				,1
-				);
-
-		RETURN 0
+		RETURN - 2
 	END
 
 	UPDATE [TD_PRODUCT]
@@ -100,26 +86,36 @@ BEGIN
 			RETURN
 		END
 	END
-	
+
 	-- Remove all entries in the TM_RELEASE_PRODUCT table that contain a reference to the product code
-    DECLARE @auditId AS INT = NULL;
-    EXECUTE @auditId = Security_Auditing_Delete @DtgID, @userName;
-    IF @auditId IS NULL
-       OR @auditId = 0
-        BEGIN
-            RAISERROR ('SP: Security_Auditing_Delete has failed!', 16, 1);
-            RETURN 0;
-        END
+	DECLARE @auditId AS INT = NULL;
+
+	EXECUTE @auditId = Security_Auditing_Delete @DtgID
+		,@userName;
+
+	IF @auditId IS NULL
+		OR @auditId = 0
+	BEGIN
+		RAISERROR (
+				'SP: Security_Auditing_Delete has failed!'
+				,16
+				,1
+				);
+
+		RETURN 0;
+	END
 
 	UPDATE TM_RELEASE_PRODUCT
-    SET    RPR_DELETE_FLAG = 1,
-           RPR_DTG_ID      = @auditId
-           WHERE RPR_PRC_ID = (SELECT PRC_ID
-                             FROM   TD_PRODUCT
-                             WHERE  PRC_CODE = @PrcCode
-                                    AND PRC_DELETE_FLAG = 0)
-           AND RPR_DELETE_FLAG = 0;
-		   
+	SET RPR_DELETE_FLAG = 1
+		,RPR_DTG_ID = @auditId
+	WHERE RPR_PRC_ID = (
+			SELECT PRC_ID
+			FROM TD_PRODUCT
+			WHERE PRC_CODE = @PrcCode
+				AND PRC_DELETE_FLAG = 0
+			)
+		AND RPR_DELETE_FLAG = 0;
+
 	-- Return the number of rows deleted
 	RETURN @updateCount
 END
