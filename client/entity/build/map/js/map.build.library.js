@@ -8,12 +8,53 @@ app.build.map.callback = {};
 app.build.map.params = null;
 //#endregion
 
+
+app.build.map.ajax.readLayersSelect = function (params) {
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Data.GeoLayer_API.Read",
+        {},
+        "app.build.map.callback.readLayersSelect",
+        params);
+};
+
+app.build.map.callback.readLayersSelect = function (data, params) {
+    var mapLayerOptions = [];
+
+    $.each(data, function (index, value) {
+        mapLayerOptions.push({
+            "id": value.GlrCode,
+            "text": value.GlrName
+        })
+    });
+
+    $("#build-map-modal").find("[name=select-layer]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        dropdownParent: $("#build-map-modal"),
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: mapLayerOptions
+    }).on('select2:select', function (e) {
+        app.build.map.ajax.readMaps(params);
+    }).on('select2:clear', function (e) {
+        app.build.map.ajax.readMaps(params);
+    });;
+
+    $("#build-map-modal").find("[name=select-layer]").prop('disabled', false);
+    app.build.map.ajax.readMaps(params);
+};
+
+
+
 app.build.map.ajax.readMaps = function (params) {
     app.build.map.params = params;
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.Data.GeoMap_API.ReadCollection",
-        {},
+        {
+            "GlrCode": $("#build-map-modal").find("[name=select-layer]").val() || null
+        },
         "app.build.map.callback.readMaps",
         null,
         null,

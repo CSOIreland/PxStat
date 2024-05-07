@@ -18,32 +18,25 @@ $(document).ready(function () {
 
     new ClipboardJS("#data-dataset-map-accordion-api [name=copy-api-info], #data-dataset-map-accordion-api [name=copy-api-object]");
     $('#data-dataset-map-accordion-collapse-widget [name=auto-update],#data-dataset-map-accordion-collapse-widget [name=fluid-time], #data-dataset-map-accordion-collapse-widget [name=link-to-wip], #data-dataset-map-accordion-collapse-widget [name=include-copyright], #data-dataset-map-accordion-collapse-widget [name=include-link], #data-dataset-map-accordion-collapse-widget [name=include-title], #data-dataset-map-accordion-collapse-widget [name=include-borders]').bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
         onstyle: "primary",
-        offstyle: "warning",
+        offstyle: "warning text-dark",
+        height: 37,
         width: C_APP_TOGGLE_LENGTH
     });
 
     $("#data-dataset-map-accordion-collapse-widget").find("[name=title-value]").val(app.data.dataset.metadata.jsonStat.label.trim());
 
-    $('#data-dataset-map-accordion').on('show.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find(".card-header i[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
-    });
-
-    $('#data-dataset-map-accordion').on('hide.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find(".card-header i[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
-    });
-
     $('#data-dataset-map-accordion').on('shown.bs.collapse', function (e) {
         if (app.data.isModal) {
             $('#data-view-modal').animate({
-                scrollTop: '+=' + $("#" + e.target.id).parent().find(".card-header")[0].getBoundingClientRect().top
+                scrollTop: '+=' + $("#" + e.target.id).parent().getBoundingClientRect().top
             }, 1000);
         }
         else {
             $('html, body').animate({
-                scrollTop: $("#" + e.target.id).parent().find(".card-header").offset().top
+                scrollTop: $("#" + e.target.id).parent().offset().top
             }, 1000);
         }
     });
@@ -141,7 +134,7 @@ $(document).ready(function () {
 
 
     new ClipboardJS("#data-dataset-map-accordion-collapse-widget [name=copy-snippet-code]");
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

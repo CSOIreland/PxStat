@@ -260,6 +260,8 @@ app.build.update.cancelUpoadPeriod = function () {
 
 app.build.update.resetUpoadPeriod = function () {
     $("#build-update-upload-periods-file").val("");
+    $("#build-update-upload-periods").find("[name=errors-card]").hide();
+    $("#build-update-upload-periods").find("[name=errors]").empty();
     app.build.update.cancelUpoadPeriod();
 };
 
@@ -305,7 +307,7 @@ app.build.update.addManualPeriod = function () {
 
             //sort periods
             dimension.Frequency.Period.sort(function (a, b) {
-                return b.PrdCode - a.PrdCode
+                return a.PrdCode - b.PrdCode
             });
         }
     });
@@ -445,7 +447,7 @@ app.build.update.addUploadPeriod = function () {
             });
             //sort periods
             dimension.Frequency.Period.sort(function (a, b) {
-                return b.PrdCode - a.PrdCode
+                return a.PrdCode - b.PrdCode
             });
         }
     });

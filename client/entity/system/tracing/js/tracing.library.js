@@ -54,7 +54,7 @@ app.tracing.callback.readType = function (data) {
 * Set up date picker
 */
 app.tracing.setDatePicker = function () {
-    var start = moment().startOf('day');
+    var start = moment().subtract(1, 'hour')
     var end = moment();
 
     $("#tracing-input").find("[name=input-date-range]").daterangepicker({
@@ -68,7 +68,6 @@ app.tracing.setDatePicker = function () {
     }, function (start, end) {
 
     });
-    app.tracing.ajax.read();
 };
 
 
@@ -210,7 +209,7 @@ app.tracing.drawDataTable = function (data) {
 
         // Bootstrap tooltip
         $("body").tooltip({
-            selector: '[data-toggle="tooltip"]'
+            selector: '[data-bs-toggle="tooltip"]'
         });
     }
     $("#tracing-result").show();
@@ -254,9 +253,9 @@ app.tracing.authenticationType = function (user, privilege) {
     if (user == null && privilege == null) //Anonymous user
     {
         return $("<span>", {
-            "data-toggle": "tooltip",
+            "data-bs-toggle": "tooltip",
             "idn": user,
-            "data-placement": "left",
+            "data-bs-placement": "left",
             "title": "", //app.label.datamodel.authentication["anonymous"],
             "data-original-title": app.label.datamodel.authentication["anonymous"],
             "html": $("<i>", {
@@ -269,8 +268,8 @@ app.tracing.authenticationType = function (user, privilege) {
             "class": "viewLink",
             "idn": user,
             "href": "#",
-            "data-toggle": "tooltip",
-            "data-placement": "left",
+            "data-bs-toggle": "tooltip",
+            "data-bs-placement": "left",
             "title": "", //app.label.datamodel.authentication["registered"],
             "data-original-title": app.label.datamodel.authentication["registered"],
             "html":
@@ -284,8 +283,8 @@ app.tracing.authenticationType = function (user, privilege) {
         return $("<a>", {
             "class": "viewLink",
             "idn": user,
-            "data-toggle": "tooltip",
-            "data-placement": "left",
+            "data-bs-toggle": "tooltip",
+            "data-bs-placement": "left",
             "title": "", //app.label.datamodel.authentication["authenticated"],
             "data-original-title": app.label.datamodel.authentication["authenticated"],
             "href": "#",

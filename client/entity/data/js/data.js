@@ -17,13 +17,14 @@ $(document).ready(function () {
     app.navigation.setLayout(true);
     app.navigation.setBreadcrumb([]);
     app.navigation.setTitle(app.label.static["data"]);
+    app.navigation.setState("#nav-link-data");
     app.navigation.setMetaDescription(app.library.html.parseDynamicLabel("meta-description-home", [app.config.organisation]))
 
     // Read GoTo
-    app.data.goTo.Search = api.content.getParam("Search");
-    app.data.goTo.PrcCode = api.content.getParam("PrcCode");
-    app.data.goTo.CprCode = api.content.getParam("CprCode");
-    app.data.goTo.MtrCode = api.content.getParam("MtrCode");
+    app.data.goTo.Search = history.state.Search || api.content.getParam("Search");
+    app.data.goTo.PrcCode = history.state.PrcCode || api.content.getParam("PrcCode");
+    app.data.goTo.CprCode = history.state.CprCode || api.content.getParam("CprCode");
+    app.data.goTo.MtrCode = history.state.MtrCode || api.content.getParam("MtrCode");
     app.data.goTo[C_APP_GOTO_PARAMS] = api.content.getParam(C_APP_GOTO_PARAMS);
 
     // Load Modal - must be after GoTo
@@ -52,17 +53,10 @@ $(document).ready(function () {
     });
 
     //run bootstrap toggle to show/hide search inputs
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
 
     //initiate all copy to clipboard 
     new ClipboardJS("#data-collection-api [name=copy-api-info], #data-collection-api [name=copy-api-object]");
-    $("#data-accordion-collection-api").on('show.bs.collapse', function () {
-        $("#data-accordion-collection-api").find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
-    });
-
-    $("#data-accordion-collection-api").on('hide.bs.collapse', function () {
-        $("#data-accordion-collection-api").find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
-    });
 
     $('#data-accordion-collection-api').on('shown.bs.collapse', function () {
         $('html, body').animate({
@@ -70,12 +64,14 @@ $(document).ready(function () {
         }, 1000);
     });
 
-    // Translate labels language (Last to run)
-    app.library.html.parseStaticLabel();
     // Implement GoTo
     if (app.data.goTo.Search) {
         app.data.searchResult.ajax.readSearch(app.data.goTo.Search);
     } else if (app.data.goTo.PrcCode) {
+        //update state
+        app.navigation.replaceState("#nav-link-data", {
+            "PrcCode": app.data.goTo.PrcCode
+        });
         // Run Sharethis.
         app.data.isSearch = false;
         app.data.isCopyrightGoTo = false;
@@ -91,6 +87,10 @@ $(document).ready(function () {
             { async: false }
         );
     } else if (app.data.goTo.CprCode) {
+        //update state
+        app.navigation.replaceState("#nav-link-data", {
+            "CprCode": app.data.goTo.CprCode
+        });
         app.data.isSearch = false;
         app.data.isCopyrightGoTo = true;
         api.ajax.jsonrpc.request(
@@ -104,6 +104,10 @@ $(document).ready(function () {
             { async: false }
         );
     } else if (app.data.goTo.MtrCode) {
+        //update state
+        app.navigation.replaceState("#nav-link-data", {
+            "MtrCode": app.data.goTo.MtrCode
+        });
         app.data.isSearch = false;
         app.data.isCopyrightGoTo = false;
         api.ajax.jsonrpc.request(
@@ -117,4 +121,7 @@ $(document).ready(function () {
             { async: false }
         );
     }
+
+    // Translate labels language (Last to run)
+    app.library.html.parseStaticLabel();
 });

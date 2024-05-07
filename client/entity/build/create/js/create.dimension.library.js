@@ -102,10 +102,10 @@ app.build.create.dimension.drawTabs = function () {
         }
         tabContent.find(".accordion").attr("id", "build-create-dimension-accordion-" + value.LngIsoCode);
         $.each(tabContent.find("[name=dimension-collapse]"), function () {
-            $(this).find(".collapse").attr("data-parent", "#" + "build-create-dimension-accordion-" + value.LngIsoCode);
-            $(this).find(".collapse").attr("id", "build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.LngIsoCode);
-            $(this).find(".card-header").find(".btn-link").attr("data-target", "#build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.LngIsoCode);
-            $(this).find(".card-header").find(".btn-link").attr("aria-controls", "collapse-" + $(this).attr("card"));
+            $(this).find(".accordion-collapse").attr("data-bs-parent", "#" + "build-create-dimension-accordion-" + value.LngIsoCode);
+            $(this).find(".accordion-collapse").attr("id", "build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.LngIsoCode);
+            $(this).find(".accordion-header").find(".accordion-button").attr("data-bs-target", "#build-create-dimension-accordion-collapse-" + $(this).attr("card") + "-" + value.LngIsoCode);
+            $(this).find(".accordion-header").find(".accordion-button").attr("aria-controls", "collapse-" + $(this).attr("card"));
         });
 
 
@@ -1138,7 +1138,7 @@ app.build.create.dimension.callback.searchClassifications = function (data) {
  *  @param {*} data
  */
 app.build.create.dimension.drawCallbackSearchClassification = function (data) {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     $("#build-create-search-classiication table[name=search-classifications-list-table] [name=" + C_APP_NAME_LINK_VIEW + "]").once("click", function (e) {
         e.preventDefault();
         app.build.create.dimension.ajax.readClassification($(this).attr("cls-id"));
@@ -1719,7 +1719,12 @@ app.build.create.dimension.addPeriodsManual = function () {
                 });
             });
         }
+        //sort periods
+        dimension.Frequency.Period.sort(function (a, b) {
+            return a.PrdCode - b.PrdCode
+        });
     });
+
     $("#build-create-upload-periods").find("[name=upload-periods-errors]").empty();
     $("#build-create-upload-periods").find("[name=upload-periods-errors-card]").hide();
     app.build.create.dimension.drawPeriods(lngIsoCode);
@@ -1771,6 +1776,10 @@ app.build.create.dimension.addPeriodsUpload = function () {
                 });
             });
         }
+        //sort periods
+        dimension.Frequency.Period.sort(function (a, b) {
+            return a.PrdCode - b.PrdCode
+        });
     });
     $("#build-create-upload-periods").find("[name=upload-periods-errors]").empty();
     $("#build-create-upload-periods").find("[name=upload-periods-errors-card]").hide();
@@ -1838,7 +1847,7 @@ app.build.create.dimension.uploadPeriodsInvalid = function () {
 
     //check that csv headers contain C_APP_CSV_CODE and C_APP_CSV_VALUE, both case sensitive
     if (jQuery.inArray(C_APP_CSV_CODE, csvHeaders) == -1 || jQuery.inArray(C_APP_CSV_VALUE, csvHeaders) == -1) {
-        app.library.html.parseDynamicLabel("invalid-csv-format-code-value", [C_APP_CSV_CODE, C_APP_CSV_VALUE]);
+        errors.push(app.library.html.parseDynamicLabel("invalid-csv-format-code-value", [C_APP_CSV_CODE, C_APP_CSV_VALUE]));
     };
 
     //check that each rows has correct data
@@ -1950,7 +1959,7 @@ app.build.create.dimension.drawPeriods = function (lngIsoCode) {
                 $(row).attr(C_APP_DATATABLE_ROW_INDEX, dataIndex);
             },
             data: data,
-            ordering: false,
+            order: [[0, 'desc']],
             columns: [
                 {
                     data: "PrdCode"
@@ -2584,7 +2593,7 @@ app.build.create.dimension.drawElimination = function () {
 }
 
 app.build.create.dimension.drawCallbackElimination = function (table) {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     $(table).find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
         e.preventDefault();
         app.build.create.dimension.modal.updateElimination($(this).attr("cls-value"), $(this).attr("cls-code"), $(this).attr("vrb-elimination-code"))
@@ -2678,8 +2687,7 @@ app.build.create.dimension.deleteElimination = function (clsCode) {
 //#endregion elimination variables
 
 //#region maps
-app.build.create.dimension.drawMapTable = function (isImported) {
-    isImported = isImported || false;
+app.build.create.dimension.drawMapTable = function () {
     var defaultDimension = $.grep(app.build.create.initiate.data.Dimension, function (n, i) { // just use arr
         return n.LngIsoCode == app.config.language.iso.code;
     });
@@ -2698,27 +2706,23 @@ app.build.create.dimension.drawMapTable = function (isImported) {
         };
     });
 
-    var params = {
-        "mapDetails": mapDetails,
-        "isImported": isImported
-    };
-    app.build.create.dimension.ajax.readMapCollection(params);
+    app.build.create.dimension.ajax.readMapCollection(mapDetails);
 };
 
-app.build.create.dimension.ajax.readMapCollection = function (params) {
+app.build.create.dimension.ajax.readMapCollection = function (mapDetails) {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.Data.GeoMap_API.ReadCollection",
         {},
         "app.build.create.dimension.callback.readMapCollection",
-        params,
+        mapDetails,
         null,
         null,
         { async: false });
 };
 
-app.build.create.dimension.callback.readMapCollection = function (data, params) {
-    $.each(params.mapDetails, function (index, value) {
+app.build.create.dimension.callback.readMapCollection = function (data, mapDetails) {
+    $.each(mapDetails, function (index, value) {
         if (value.gmpUrl) {
             var mapUrlSplit = value.gmpUrl.split("/");
             var gmpCode = mapUrlSplit[mapUrlSplit.length - 1];
@@ -2731,52 +2735,7 @@ app.build.create.dimension.callback.readMapCollection = function (data, params) 
 
         }
     });
-    //if imported, validate variables
-    if (params.isImported) {
-        $.each(params.mapDetails, function (index, value) {
-            if (value.gmpName) {
-                //if imported and has a confirmed name, we need to validate the variables against the classification
-                $.ajax({
-                    url: value.gmpUrl,
-                    dataType: 'json',
-                    async: false,
-                    success: function (data) {
-                        //get feature codes from map
-                        var featureCodes = [];
-                        $.each(data.features, function (index, value) {
-                            featureCodes.push(value.properties[C_APP_GEOJSON_PROPERTIES_UNIQUE_IDENTIFIER])
-                        });
-                        //get classification codes
-                        var defaultDimension = $.grep(app.build.create.initiate.data.Dimension, function (n, i) {
-                            return n.LngIsoCode == app.config.language.iso.code;
-                        });
-                        var classification = $.grep(defaultDimension[0].Classification, function (n, i) {
-                            return n.ClsCode == value.clsCode;
-                        });
-
-                        var invalidClassificationCodes = [];
-                        $.each(classification[0].Variable, function (index, value) {
-                            if (value.VrbCode != app.build.create.initiate.data.Elimination[classification[0].ClsCode]) {//don't check elimination variable
-                                if ($.inArray(value.VrbCode, featureCodes) == -1) {
-                                    invalidClassificationCodes.push(value.VrbCode);
-                                }
-                            }
-                        });
-
-                        if (invalidClassificationCodes.length) {
-                            value.gmpName = null;
-                        }
-                    },
-                    error: function (xhr) {
-                        value.gmpName = null;
-                    }
-                });
-            }
-
-        });
-    };
-
-    app.build.create.dimension.callback.drawMapTable(params.mapDetails);
+    app.build.create.dimension.callback.drawMapTable(mapDetails);
 };
 
 app.build.create.dimension.callback.drawMapTable = function (data) {
@@ -2813,7 +2772,7 @@ app.build.create.dimension.callback.drawMapTable = function (data) {
                         else if (row.gmpUrl) {
                             app.build.create.dimension.mapsValid = false;
                             return $("<i>", {
-                                "data-toggle": "tooltip",
+                                "data-bs-toggle": "tooltip",
                                 "data-original-title": app.library.html.parseDynamicLabel("invalid-geojson-in-px-file-tooltip", [row.gmpUrl]),
                                 "class": "fas fa-exclamation-triangle text-danger"
                             }).get(0).outerHTML + " " + app.label.static["invalid-geojson-in-px-file"];
@@ -2854,7 +2813,7 @@ app.build.create.dimension.callback.drawMapTable = function (data) {
 };
 
 app.build.create.dimension.drawCallbackDrawMapTable = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     $("#build-create-matrix-dimensions").find("[name=classification-map]").find("[name=" + C_APP_NAME_LINK_VIEW + "]").once("click", function (e) {
         e.preventDefault();
         app.geomap.preview.ajax.readMap($(this).attr("gmp-code"))
@@ -2867,7 +2826,7 @@ app.build.create.dimension.drawCallbackDrawMapTable = function () {
             "clsValue": $(this).attr("cls-value"),
             "callback": "app.build.create.dimension.ajax.validateSelectedMap"
         };
-        app.build.map.ajax.readMaps(params);
+        app.build.map.ajax.readLayersSelect(params);
     });
 
     $("#build-create-matrix-dimensions").find("[name=classification-map]").find("[name=" + C_APP_NAME_LINK_DELETE + "]").once("click", function () {

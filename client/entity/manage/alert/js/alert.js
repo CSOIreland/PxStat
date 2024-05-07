@@ -8,6 +8,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["manage"]], [app.label.static["alerts"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["alerts"]);
+    app.navigation.setState("#nav-link-alert");
+
 
     // Load Modal
     api.content.load("#modal-entity", "entity/manage/alert/index.modal.html");
@@ -19,7 +21,7 @@ $(document).ready(function () {
     // Initiate all text areas as tinyMCE
     app.plugin.tinyMce.initiate();
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

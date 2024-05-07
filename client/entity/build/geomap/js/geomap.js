@@ -5,6 +5,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["build"]], [app.label.static["maps"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["maps"]);
+    app.navigation.setState("#nav-link-map");
+
 
     // Load Modal - must be after GoTo
     api.content.load("#modal-entity", "entity/build/geomap/index.modal.html");
@@ -25,9 +27,10 @@ $(document).ready(function () {
     api.content.load("#panel", "entity/build/geomap/index.panel.html");
 
     //display maps table
-    app.geomap.ajax.read();
+    app.geomap.ajax.readLayersSelect();
 
     $("#map-modal-add").find("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB");
+    $("#map-modal-create-subset").find("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB");
     // Initiate Drag n Drop plugin
     api.plugin.dragndrop.initiate(document, window);
 
@@ -54,11 +57,24 @@ $(document).ready(function () {
 
 
     $("#map-modal-add").find("[name=import]").once("click", app.geomap.setDetails);
+    $("#map-modal-create-subset").find("[name=upload-submit-subset]").once("click", app.geomap.modal.createSubset);
     $("#map-modal-add").find("[name=set-properties]").once("click", app.geomap.setProperties);
+    $("#map-modal-add").find("[name=create-subset]").once("click", function () {
+        $("#map-modal-add").find("button[type=submit]").prop('disabled', true);
+        $("#map-modal-add").find("[name=view-map-card]").hide();
+        $("#map-modal-create-subset").modal("show");
+    });
+
+    $("#map-modal-add").find("[name=remove-subset]").once("click", function () {
+        $("#map-modal-add").find("[name=view-map-card]").hide();
+        api.modal.confirm(app.label.static["confirm-remove-subset"], app.geomap.modal.removeSubset);
+    });
+
     $("#map-modal-add").find("[name=upload-file-reset]").once("click", app.geomap.modal.addMapReset);
+    $("#map-modal-create-subset").find("[name=upload-reset-subset]").once("click", app.geomap.modal.createSubsetReset);
     $("#map-modal-add").find("[name=view-map]").once("click", function () {
         //map div has to be shown before any map is rendered
-        $('#map-modal-add-preview-map-content').tab('show');
+        $('#map-modal-add-preview-map-content').show();
         $("#map-modal-add-preview-properties-tab").removeClass("active");
         $("#map-modal-add-preview-map-tab").addClass("active");
         $("#map-modal-add-preview-properties-content").removeClass("active show");
@@ -72,16 +88,16 @@ $(document).ready(function () {
         $("#map-modal-add").find("[name=simplify-range-value]").text($(this).val() * 100000000)
     });
 
-    $("#map-modal-add").on('hide.bs.modal', function () {
-        app.geomap.modal.addMapReset();
-    });
+    $("#map-modal-add").on('hide.bs.modal', app.geomap.modal.addMapReset);
+
+    $("#map-modal-create-subset").on('hide.bs.modal', app.geomap.modal.createSubsetReset);
 
     //Initialize TinyMce
     app.plugin.tinyMce.initiate(true);
 
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-bs-toggle="tooltip"]').tooltip()
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

@@ -1,113 +1,128 @@
-<div class="accordion m-3" id="dashboard-accordion" aria-multiselectable="true">
-    <div class="card border-primary pb-1" id="dashboard-panel-workinprogress">
-        <div class="card-header bg-primary" id="heading-one">
-            <h5 class="mb-0">
-                <button class="btn btn-link text-light" type="button" data-toggle="collapse" data-target="#collapse-work-in-progress" aria-expanded="false" aria-controls="collapse-work-in-progress">
-                    <i name="dashboard-accordion-icon" class="fas fa-plus-circle"></i>
-                    <span name="" label="work-in-progress"></span>
+<div class="container-fluid">
+    <div class="accordion" id="dashboard-accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="dashboard-panel-workinprogress-heading">
+                <button class="accordion-button bg-primary text-light collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dashboard-panel-workinprogress" aria-expanded="false" aria-controls="dashboard-panel-workinprogress">
+                    <span label="work-in-progress"></span>
                 </button>
-            </h5>
+            </h2>
+            <div id="dashboard-panel-workinprogress" class="accordion-collapse collapse" aria-labelledby="dashboard-panel-workinprogress-heading" data-bs-parent="#dashboard-accordion">
+                <div class="accordion-body clearfix">
+                    <table class="table table-striped pt-2 hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th label="table"></th>
+                                <th label="group"></th>
+                                <th label="imported-by"></th>
+                                <th label="imported-date"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div id="collapse-work-in-progress" class="collapse" aria-labelledby="heading-one" data-parent="#dashboard-accordion">
-            <div class="card-body mb-5">
-                <table class="table table-striped hover" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th label="table"></th>
-                            <th label="group"></th>
-                            <th label="imported-by"></th>
-                            <th label="imported-date"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="dashboard-panel-awaitingresponse-heading">
+                <button class="accordion-button bg-secondary text-light collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dashboard-panel-awaitingresponse" aria-expanded="false" aria-controls="dashboard-panel-awaitingresponse">
+                    <span label="awaiting-response"></span>
+                </button>
+            </h2>
+            <div id="dashboard-panel-awaitingresponse" class="accordion-collapse collapse" aria-labelledby="dashboard-panel-awaitingresponse-heading" data-bs-parent="#dashboard-accordion">
+                <div class="accordion-body clearfix">
+                    <table class="table table-striped pt-2 hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th label="table"></th>
+                                <th label="group"></th>
+                                <th label="request"></th>
+                                <th label="exceptional"></th>
+                                <th label="publish-date"></th>
+                                <th label="requested-by"></th>
+                                <th label="requested-date"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="dashboard-panel-awaitingsignoff-heading">
+                <button class="accordion-button bg-tertiary text-light bg-tertiary collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dashboard-panel-awaitingsignoff" aria-expanded="false" aria-controls="dashboard-panel-awaitingsignoff">
+                    <span label="awaiting-sign-off"></span>
+                </button>
+            </h2>
+            <div id="dashboard-panel-awaitingsignoff" class="accordion-collapse collapse" aria-labelledby="dashboard-panel-awaitingsignoff-heading" data-bs-parent="#dashboard-accordion">
+                <div class="accordion-body clearfix">
+                    <table class="table table-striped pt-2 hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th label="table"></th>
+                                <th label="group"></th>
+                                <th label="request"></th>
+                                <th label="exceptional"></th>
+                                <th label="publish-date"></th>
+                                <th label="approved-by"></th>
+                                <th label="approved-date"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="dashboard-panel-pendinglive-heading">
+                <button class="accordion-button bg-warning text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dashboard-panel-pendinglive" aria-expanded="false" aria-controls="dashboard-panel-pendinglive">
+                    <span label="pending-live"></span>
+                </button>
+            </h2>
+            <div id="dashboard-panel-pendinglive" class="accordion-collapse collapse" aria-labelledby="dashboard-panel-pendinglive-heading" data-bs-parent="#dashboard-accordion">
+                <div class="accordion-body clearfix">
+                    <table class="table table-striped pt-2 hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th label="table"></th>
+                                <th label="group"></th>
+                                <th label="request"></th>
+                                <th label="exceptional"></th>
+                                <th label="publish-date"></th>
+                                <th label="approved-by"></th>
+                                <th label="approved-date"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-    <div class="card  border-primary pb-1" id="dashboard-panel-awaitingresponse">
-        <div class="card-header bg-secondary" id="headingTwo">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed text-light" type="button" data-toggle="collapse" data-target="#collapse-awaiting-response" aria-expanded="false" aria-controls="collapse-awaiting-response">
-                    <i name="dashboard-accordion-icon" class="fas fa-plus-circle"></i>
-                    <span name="" label="awaiting-response"></span>
-                </button>
-            </h5>
-        </div>
-        <div id="collapse-awaiting-response" class="collapse" aria-labelledby="headingTwo" data-parent="#dashboard-accordion">
+
+    <div id="dashboard-panel-livereleases" class="card mt-4">
+        <div class="card-header bg-danger text-light" label="live-releases"></div>
+        <div>
             <div class="card-body mb-5">
-                <table class="table table-striped hover" style="width:100%">
+                <table class="table table-striped pt-2 hover" style="width:100%">
                     <thead>
                         <tr>
                             <th></th>
                             <th label="table"></th>
                             <th label="group"></th>
-                            <th label="request"></th>
-                            <th label="exceptional"></th>
-                            <th label="publish-date"></th>
-                            <th label="requested-by"></th>
-                            <th label="requested-date"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="card border-primary pb-1" id="dashboard-panel-awaitingsignoff">
-        <div class="card-header bg-tertiary" id="headingThree">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed text-light" type="button" data-toggle="collapse" data-target="#collapse-awaiting-sign-off" aria-expanded="false" aria-controls="collapse-awaiting-sign-off">
-                    <i name="dashboard-accordion-icon" class="fas fa-plus-circle"></i>
-                    <span name="" label="awaiting-sign-off"></span>
-                </button>
-            </h5>
-        </div>
-        <div id="collapse-awaiting-sign-off" class="collapse" aria-labelledby="headingThree" data-parent="#dashboard-accordion">
-            <div class="card-body mb-5">
-                <table class="table table-striped hover" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th label="table"></th>
-                            <th label="group"></th>
-                            <th label="request"></th>
-                            <th label="exceptional"></th>
-                            <th label="publish-date"></th>
-                            <th label="approved-by"></th>
-                            <th label="approved-date"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="card border-primary pb-1" id="dashboard-panel-pendinglive">
-        <div class="card-header bg-warning" id="headingFour">
-            <h5 class="mb-0">
-                <button class="btn btn-link collapsed text-light" type="button" data-toggle="collapse" data-target="#collapse-pending-live" aria-expanded=" false" aria-controls="collapse-pending-live">
-                    <i name="dashboard-accordion-icon" class="fas fa-plus-circle"></i>
-                    <span name="" label="pending-live"></span>
-                </button>
-            </h5>
-        </div>
-        <div id="collapse-pending-live" class="collapse" aria-labelledby="headingFour" data-parent="#dashboard-accordion">
-            <div class="card-body mb-5">
-                <table class="table table-striped hover" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th label="table"></th>
-                            <th label="group"></th>
-                            <th label="request"></th>
-                            <th label="exceptional"></th>
-                            <th label="publish-date"></th>
-                            <th label="approved-by"></th>
-                            <th label="approved-date"></th>
+                            <th label="last-updated"></th>
+                            <th label="analytics"></th>
+                            <th label="official-statistics"></th>
+                            <th label="under-reservation"></th>
+                            <th label="experimental"></th>
+                            <th label="archived"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -118,30 +133,6 @@
     </div>
 </div>
 
-<div id="dashboard-panel-livereleases" class="card m-3 border-secondary">
-    <div class="card-header bg-danger text-light" label="live-releases"></div>
-    <div>
-        <div class="card-body mb-5">
-            <table class="table table-striped hover" style="width:100%">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th label="table"></th>
-                        <th label="group"></th>
-                        <th label="last-updated"></th>
-                        <th label="analytics"></th>
-                        <th label="official-statistics"></th>
-                        <th label="under-reservation"></th>
-                        <th label="experimental"></th>
-                        <th label="archived"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
 <!-- Module  CSS -->
 <link rel="stylesheet" href="entity/analytic/css/analytic.css">

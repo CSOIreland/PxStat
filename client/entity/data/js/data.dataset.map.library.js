@@ -26,6 +26,7 @@ app.data.dataset.map.template.wrapper = {
     "borders": true,
     "colorScale": "red",
     "tooltipTitle": null,
+    "defaultContent": app.config.entity.data.datatable.null,
     "fullScreen": {
         "title": app.label.static["view-fullscreen"],
         "titleCancel": app.label.static["exit-fullscreen"]
@@ -69,7 +70,12 @@ app.data.dataset.map.template.wrapper = {
             "response": {}
         }
     },
-    "options": {}
+    "options": {
+        "mode": null,
+        "geojson": null,
+        "identifier": null,
+        "geometryType": null
+    }
 };
 //#endregion
 
@@ -91,6 +97,8 @@ app.data.dataset.map.getModes = function () {
             }
         ));
     });
+    //set default
+    $("#data-dataset-map-nav-content").find("[name=mode-select] option[value='" + app.config.plugin.leaflet.defaultValue + "']").attr("selected", true);
 };
 
 
@@ -115,6 +123,7 @@ app.data.dataset.map.drawMapToDisplay = function () {
     $("#data-dataset-map-nav-content").find("[name=geo-select-container]").append(geoSelectContainer.get(0).outerHTML);
 
     $("#data-dataset-map-nav-content [name=geo-select-container] select").select2({
+        dropdownParent: $('#data-dataset-map-nav-content'),
         minimumInputLength: 0,
         allowClear: false,
         width: '100%',
@@ -194,6 +203,7 @@ app.data.dataset.map.drawDimensions = function () {
     });
 
     $("#data-dataset-map-nav-content [name=dimension-containers] select").select2({
+        dropdownParent: $('#data-dataset-map-nav-content'),
         minimumInputLength: 0,
         allowClear: false,
         width: '100%',
@@ -313,7 +323,10 @@ app.data.dataset.map.renderSnippet = function () {
     }
 
     snippet = snippet.sprintf([C_APP_URL_PXWIDGET_ISOGRAM, C_APP_PXWIDGET_TYPE_MAP, app.library.utility.randomGenerator('pxwidget'), JSON.stringify(config)]);
-
+    if (config.options.geometryType != "Point") {
+        $("#data-dataset-map-nav-content").find("[name=mode-select-wrapper]").show();
+        $("#data-dataset-map-accordion-collapse-widget").find("[name=include-borders-wrapper]").show();
+    }
     $("#data-dataset-map-accordion-snippet-code").hide().text(snippet.trim()).fadeIn();
     Prism.highlightAll();
 
@@ -328,7 +341,7 @@ app.data.dataset.map.renderSnippet = function () {
         }
     });
     if (disclaimer.length) {
-        $("#data-dataset-map-accordion-collapse-widget").find("[name=map-discalimer]").find("[data-toggle=popover]").popover({
+        $("#data-dataset-map-accordion-collapse-widget").find("[name=map-discalimer]").find("[data-bs-toggle=popover]").popover({
             "content": disclaimer,
             "html": true
         });

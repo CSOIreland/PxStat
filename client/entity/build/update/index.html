@@ -25,10 +25,10 @@
 
             <div class="card-footer">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-4 text-left my-2">
+                    <div class="col-xs-12 col-sm-4 text-start my-2">
                         <button name="file-data-view" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview"></span> </button>
                     </div>
-                    <div class="col-xs-12 col-sm-8 text-right my-2">
+                    <div class="col-xs-12 col-sm-8 text-end my-2">
                         <button name="upload-source-file-reset" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset"></span></button>
                         <button name="upload-source-file" class="btn btn-primary text-light" disabled><i class="fas fa-upload"></i> <span label="parse"></span></button>
                     </div>
@@ -45,53 +45,51 @@
                 <div class="card-header bg-primary text-light" label="properties"></div>
                 <div class="card-body">
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <span class="mandatory" for="mtr-value" label="table"></span>
                         </div>
                         <div class="col-8 p-2">
                             <div class="input-group">
                                 <input type="text" class="form-control text-uppercase" name="mtr-value" maxlength="20" autocomplete="off" aria-describedby="button-addon">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" name="button-matrix-lookup" data-toggle="modal"><i class="fas fa-search"></i> <span label="lookup"></span></button>
-                                </div>
+                                <button class="btn btn-outline-secondary" type="button" name="button-matrix-lookup" data-bs-toggle="modal"><i class="fas fa-search"></i> <span label="lookup"></span></button>
                             </div>
                             <div class="serverValidationError text-danger" name="mtr-value-error-holder"></div>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <span class="mandatory" label="languages"></span>
                         </div>
                         <div class="col-8 p-2">
                             <ul class="list-group" name="lng-list-group"></ul>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="frequency-code"></label>
                         </div>
                         <div class="col-8 p-2">
-                            <select class="form-control" name="frequency-code"></select>
+                            <select class="form-select" name="frequency-code"></select>
                             <span class="serverValidationError text-danger" name="frequency-code-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <label class="mandatory" label="copyright"></label>
                         </div>
                         <div class="col-8 p-2">
-                            <select class="form-control" name="copyright-code"></select>
+                            <select class="form-select" name="copyright-code"></select>
                             <span class="serverValidationError text-danger" name="copyright-code-error-holder"></span>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                             <span class="mandatory" label="official-statistics"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="official-flag" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                            <input name="official-flag" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
                     <div class="border-top row mx-0"></div>
@@ -115,20 +113,16 @@
                 </div>
 
                 <div class="accordion mt-4" id="build-update-elimination-map">
-                    <div class="card">
-                        <div class="card-header" id="build-update-elimination-map-heading-one">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#build-update-elimination-map-collapse-elimination" aria-expanded="true" aria-controls="build-update-elimination-map-collapse-elimination">
-                                    <span label="elimination"></span>
-                                    <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="elimination-explanation" style="cursor: help;"></i>
-                                </button>
-                            </h2>
-                        </div>
-
-                        <div id="build-update-elimination-map-collapse-elimination" class="collapse show pb-2" aria-labelledby="build-update-elimination-map-heading-one" data-parent="#build-update-elimination-map">
-                            <div class="card-body">
-
-                                <table name="classification-elimination-variables" class="table table-striped hover" style="width:100%">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="build-update-elimination-map-heading-one">
+                            <button class="accordion-button text-primary bg-neutral bg-opacity-25" type="button" data-bs-toggle="collapse" data-bs-target="#build-update-elimination-map-collapse-elimination" aria-expanded="true" aria-controls="build-update-elimination-map-collapse-elimination">
+                                <span label="elimination"></span>
+                                <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="elimination-explanation" style="cursor: help;"></i>
+                            </button>
+                        </h2>
+                        <div id="build-update-elimination-map-collapse-elimination" class="accordion-collapse collapse show" aria-labelledby="build-update-elimination-map-heading-one" data-bs-parent="#build-update-elimination-map">
+                            <div class="accordion-body clearfix">
+                                <table name="classification-elimination-variables" class="table table-striped pt-2 hover" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th label="classification-code"></th>
@@ -139,23 +133,20 @@
                                         </tr>
                                     </thead>
                                 </table>
-
                             </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header" id="build-update-elimination-map-heading-two">
-                            <h2 class="mb-0">
-                                <button name="map-accordion-button" class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#build-update-elimination-map-collapse-map" aria-expanded="false" aria-controls="build-update-elimination-map-collapse-map">
-                                    <span label="map"></span>
-                                    <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="map-explanation" style="cursor: help;"></i>
-                                    <i name="warning-icon" data-toggle="tooltip" class="fas fa-exclamation-triangle text-danger" style="display: none;"></i>
-                                </button>
-                            </h2>
-                        </div>
-                        <div id="build-update-elimination-map-collapse-map" class="collapse pb-2" aria-labelledby="build-update-elimination-map-heading-two" data-parent="#build-update-elimination-map">
-                            <div class="card-body">
-                                <table name="classification-map" class="table table-striped hover" style="width:100%">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="build-update-elimination-map-heading-two">
+                            <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#build-update-elimination-map-collapse-map" aria-expanded="false" aria-controls="build-update-elimination-map-collapse-map">
+                                <span label="map"></span>
+                                <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="map-explanation" style="cursor: help;"></i>
+                                <i name="warning-icon" data-bs-toggle="tooltip" class="fas fa-exclamation-triangle text-danger" style="display: none;"></i>
+                            </button>
+                        </h2>
+                        <div id="build-update-elimination-map-collapse-map" class="accordion-collapse collapse" aria-labelledby="build-update-elimination-map-heading-two" data-bs-parent="#build-update-elimination-map">
+                            <div class="accordion-body clearfix">
+                                <table name="classification-map" class="table table-striped pt-2 hover" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th label="classification-code"></th>
@@ -169,8 +160,6 @@
                         </div>
                     </div>
                 </div>
-
-
 
 
 
@@ -211,13 +200,13 @@
                     </div>
                     <div class="card-footer">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6 text-left my-2">
+                            <div class="col-xs-12 col-sm-6 text-start my-2">
                                 <button name="preview-data" class="btn btn-info" type="button" disabled><i class="fas fa-eye"></i> <span label="preview">Preview</span> </button>
                                 <button name="download-data-template" class="btn btn-primary" type="button" disabled><i class="fas fa-file-download"></i> <span label="download-csv-template"></span> </button>
                             </div>
-                            <div class="col-xs-12 col-sm-6 text-right my-2">
+                            <div class="col-xs-12 col-sm-6 text-end my-2">
                                 <button name="reset-data" class="btn btn-warning text-dark" type="button"> <i class="fas fa-undo"></i> <span label="reset">Reset</span></button>
-                                <button name="download-csv-data" class="btn btn-primary text-light" data-toggle="modal" data-target="#exampleModal">
+                                <button name="download-csv-data" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     <i class="fas fa-download"></i> <span label="download-csv-data"></span>
                                 </button>
                             </div>
@@ -225,11 +214,11 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer text-right">
+            <div class="card-footer text-end">
                 <button name="reset" class="btn btn-warning text-dark" type="button">
                     <i class="fas fa-undo"></i> <span label="reset"></span>
                 </button>
-                <button class="btn btn-tertiary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-download"></i> <span label="update"></span></button>
+                <button class="btn btn-tertiary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-download"></i> <span label="update"></span></button>
                 <div name="format-list" class="dropdown-menu"></div>
             </div>
         </div>
@@ -241,18 +230,18 @@
 <div id="build-update-dimension-metadata-templates" style="display: none">
 
     <!-- template: tabs items languages-->
-    <a name="nav-lng-tab-item" class="nav-item nav-link" id="" data-toggle="tab" href="" role="tab" aria-controls="" aria-selected="true"></a>
+    <a name="nav-lng-tab-item" class="nav-item nav-link" id="" data-bs-toggle="tab" href="" role="tab" aria-controls="" aria-selected="true"></a>
 
 
     <!-- template: tab item language content -->
     <div name="nav-lng-tab-item-content" class="tab-pane fade show" id="" role="tabpanel" aria-labelledby="" lng-iso-code="">
 
 
-        <div class="accordion" id="">
+        <!--     <div class="accordion" id="">
             <div class="card border-top-0 rounded-0" name="dimension-collapse" card="properties">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="" aria-expanded="true" aria-controls="" label="properties">
+                        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="true" aria-controls="" label="properties">
                         </button>
                     </h5>
                 </div>
@@ -260,8 +249,8 @@
                 <div id="" class="collapse show" aria-labelledby="heading-one" data-parent="">
                     <form>
                         <div class="card-body">
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <label class="mandatory" for="title-value" label="title"></label>
                                 </div>
                                 <div class="col-8 p-2">
@@ -269,8 +258,8 @@
                                     <span class="serverValidationError text-danger" name="title-value-error-holder"></span>
                                 </div>
                             </div>
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <label class="mandatory" for="statistic-label" label="statistic-label"></label>
                                 </div>
                                 <div class="col-8 p-2">
@@ -278,8 +267,8 @@
                                     <span class="serverValidationError text-danger" name="statistic-label-error-holder"></span>
                                 </div>
                             </div>
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <label class="mandatory" for="frequency-value" label="frequency-value"></label>
                                 </div>
                                 <div class="col-8 p-2">
@@ -287,8 +276,8 @@
                                     <span class="serverValidationError text-danger" name="frequency-value-error-holder"></span>
                                 </div>
                             </div>
-                            <div class="border-top border-right border-left row mx-0">
-                                <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+                            <div class="border-top border-end border-start row mx-0">
+                                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
                                     <label class="" for="note-value" label="note"></label>
                                 </div>
                                 <div class="col-8 p-2">
@@ -305,7 +294,7 @@
             <div class="card" name="dimension-collapse" card="statistics">
                 <div class="card-header" id="build-update-statistics-heading">
                     <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+                        <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">
                             <span label="statistics"></span>
                         </button>
                     </h5>
@@ -314,7 +303,7 @@
                     <div class="card-body">
                         <div class="card border-bottom">
                             <div class="card-body ">
-                                <table name="statistics-added-table" class="table table-striped hover display" style="width:100%">
+                                <table name="statistics-added-table" class="table table-striped pt-2 hover display" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th label="code"></th>
@@ -335,7 +324,7 @@
             <div class="card" name="dimension-collapse" card="classifications">
                 <div class="card-header" id="build-update-classifications-heading">
                     <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+                        <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">
                             <span label="classifications"></span>
                         </button>
                     </h5>
@@ -344,7 +333,7 @@
                     <div class="card-body">
                         <div class="card border-bottom">
                             <div class="card-body ">
-                                <table name="classifications-added-table" class="table table-striped hover display" style="width:100%">
+                                <table name="classifications-added-table" class="table table-striped pt-2 hover display" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th label="code"></th>
@@ -363,7 +352,7 @@
             <div class="card" name="dimension-collapse" card="periods">
                 <div class="card-header" id="build-update-periods-heading">
                     <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+                        <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">
                             <span label="periods"></span>
                         </button>
                     </h5>
@@ -373,7 +362,7 @@
                         <div class="card border-bottom">
                             <div class="card-header" label="existing"></div>
                             <div class="card-body">
-                                <table name="periods-existing" class="table table-striped hover display" style="width:100%">
+                                <table name="periods-existing" class="table table-striped pt-2 hover display" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th label="code"></th>
@@ -390,7 +379,7 @@
                         <div class="card border-bottom mt-2">
                             <div class="card-header" label="new"> </div>
                             <div class="card-body">
-                                <table name="periods-new" class="table table-striped hover display" style="width:100%">
+                                <table name="periods-new" class="table table-striped pt-2 hover display" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th label="code"></th>
@@ -402,7 +391,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="card-footer text-right">
+                            <div class="card-footer text-end">
                                 <button name="add-periods" class="btn btn-primary text-light">
                                     <i class="fas fa-plus-circle"></i>
                                     <span label="add-periods"></span>
@@ -414,6 +403,162 @@
                 </div>
             </div>
 
+        </div> -->
+
+        <div class="accordion" id="">
+            <div class="accordion-item" card="properties" name="dimension-collapse">
+                <h2 class="accordion-header" id="">
+                    <button class="accordion-button text-primary bg-neutral bg-opacity-25" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="true" aria-controls="">
+                        <span label="properties"></span>
+                    </button>
+                </h2>
+                <div id="" class="accordion-collapse collapse show" aria-labelledby="" data-bs-parent="">
+                    <div class="accordion-body">
+                        <form>
+                            <div class="card-body">
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                                        <label class="mandatory" for="title-value" label="title"></label>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input class="form-control" name="title-value" type="text" maxlength="256" autocomplete="off">
+                                        <span class="serverValidationError text-danger" name="title-value-error-holder"></span>
+                                    </div>
+                                </div>
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                                        <label class="mandatory" for="statistic-label" label="statistic-label"></label>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input class="form-control" name="statistic-label" type="text" maxlength="256" autocomplete="off">
+                                        <span class="serverValidationError text-danger" name="statistic-label-error-holder"></span>
+                                    </div>
+                                </div>
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                                        <label class="mandatory" for="frequency-value" label="frequency-value"></label>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input class="form-control" name="frequency-value" type="text" autocomplete="off">
+                                        <span class="serverValidationError text-danger" name="frequency-value-error-holder"></span>
+                                    </div>
+                                </div>
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                                        <label class="" for="note-value" label="note"></label>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <textarea rows="3" name="note-value" contenteditable="false" class="form-control" autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="border-top row mx-0"></div>
+                            </div>
+                            <input type="submit" style="display:none">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="accordion-item" card="statistics" name="dimension-collapse">
+                <h2 class="accordion-header" id="">
+                    <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">
+                        <span label="statistics"></span>
+                    </button>
+                </h2>
+                <div id="" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="">
+                    <div class="accordion-body clearfix">
+                        <table name="statistics-added-table" class="table table-striped pt-2 hover display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th label="code"></th>
+                                    <th label="value"></th>
+                                    <th label="unit">Unit</th>
+                                    <th label="decimal"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item" card="classifications" name="dimension-collapse">
+                <h2 class="accordion-header" id="">
+                    <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">
+                        <span label="classifications"></span>
+                    </button>
+                </h2>
+                <div id="" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="">
+                    <div class="accordion-body clearfix">
+                        <table name="classifications-added-table" class="table table-striped pt-2 hover display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th label="code"></th>
+                                    <th label="value"></th>
+                                    <th label="variables-no"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item" card="periods" name="dimension-collapse">
+                <h2 class="accordion-header" id="">
+                    <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">
+                        <span label="periods"></span>
+                    </button>
+                </h2>
+                <div id="" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="">
+                    <div class="accordion-body">
+                        <div class="card border-bottom">
+                            <div class="card-header" label="existing"></div>
+                            <div class="card-body">
+                                <table name="periods-existing" class="table table-striped pt-2 hover display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th label="code"></th>
+                                            <th label="value"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <div class="card border-bottom mt-2">
+                            <div class="card-header" label="new"> </div>
+                            <div class="card-body">
+                                <table name="periods-new" class="table table-striped pt-2 hover display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th label="code"></th>
+                                            <th label="value"></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button name="add-periods" class="btn btn-primary text-light">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span label="add-periods"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>

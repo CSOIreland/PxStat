@@ -11,7 +11,7 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["languages"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["languages"]);
-
+  app.navigation.setState("#nav-link-language");
 
   // Load Modal 
   api.content.load("#modal-entity", "entity/system/language/index.modal.html");
@@ -26,10 +26,10 @@ $(document).ready(function () {
 
 
   // Initiate all bootstrap tooltip
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   //run bootstrap toggle to show/hide toggle button
-  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+  app.library.bootstrap.getBreakPoint();
 
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();

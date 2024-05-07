@@ -5,14 +5,6 @@ Navigation
 //#region Data
 
 $(document).ready(function () {
-  //#region Dashboard
-  api.content.navigate(
-    "#nav-link-dashboard",
-    "entity/dashboard/",
-    "#nav-link-dashboard"
-  );
-  //#endregion
-
   //#region Data
   api.content.navigate(
     "#nav-link-data",

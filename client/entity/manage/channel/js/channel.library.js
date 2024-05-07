@@ -119,6 +119,11 @@ app.channel.validation.create = function () {
 
 
 app.channel.ajax.sendNotification = function () {
+    //check for demo site
+    if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+        api.modal.error(app.label.static["demo-site-restricted-access"]);
+        return
+    }
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.Subscription.NotificationChannel_API.Send",

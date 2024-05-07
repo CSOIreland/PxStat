@@ -46,7 +46,7 @@ app.data.search.callback.readNav = function (data) {
     $.each(data, function (index1, valueTheme) {
         var theme = $("#data-search-templates").find("[name=navigation-theme]").clone();
         theme.find(".card-header").attr("id", "navigation-theme-heading-" + index1);
-        theme.find("[data-toggle=collapse]").attr("data-target", "#navigation-theme-collapse-" + index1).html(
+        theme.find("[data-bs-toggle=collapse]").attr("data-bs-target", "#navigation-theme-collapse-" + index1).html(
             $("<span>", {
                 "style": "white-space: normal",
                 "text": valueTheme.ThmValue
@@ -96,6 +96,10 @@ app.data.search.callback.readNav = function (data) {
             "LngIsoCode": $(this).attr("lng-iso-code")
         };
         app.data.PrdCode = $(this).attr("prc-code");
+        //update state
+        app.navigation.replaceState("#nav-link-data", {
+            "PrcCode": app.data.PrdCode
+        });
         app.data.searchResult.ajax.readNavigationResults(apiParams);
         //Collapse navigation
         $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
@@ -505,7 +509,7 @@ app.data.searchResult.callback.readResults = function (data, params) {
     }
 
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     if (!app.data.isSearch) {
         app.data.share(null, app.data.PrdCode);
     }
@@ -883,6 +887,6 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
         $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
         app.data.dataset.draw();
     });
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 };
 //#endregion search results

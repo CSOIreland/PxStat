@@ -5,6 +5,7 @@ $(document).ready(function () {
     app.navigation.setLayout(false);
     app.navigation.setBreadcrumb([[app.label.static["saved-queries"]]]);
     app.navigation.setTitle(app.label.static["saved-queries"]);
+    app.navigation.setState("#nav-link-saved-query");
 
     app.savedquery.ajax.getSavedQueries();
 

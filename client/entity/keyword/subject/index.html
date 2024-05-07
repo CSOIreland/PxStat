@@ -3,11 +3,11 @@
   <div class="card-header bg-primary text-light" label="select"></div>
   <div class="card-body">
     <div class="border row mx-0 mt-3">
-      <div class="bg-default border-right col-4 p-2 text-right font-weight-bold">
+      <div class="bg-default border-end col-4 p-2 text-end fw-bold">
         <label class="mandatory" for="select-main-subject-search" label="subject" label="subject"></label>
       </div>
       <div class="col-8 p-2">
-        <select class="form-control" name="select-main-subject-search" disabled></select>
+        <select class="form-select" name="select-main-subject-search" disabled></select>
         <span class="serverValidationError text-danger" name="select-main-subject-search-error-holder"></span>
       </div>
     </div>
@@ -19,7 +19,7 @@
   <div class="card-header bg-primary text-light" label="subject-keywords"></div>
   <div class="card-body">
     <!-- Keyword Subject Table -->
-    <table class="table table-striped hover" style="width:100%">
+    <table class="table table-striped pt-2 hover" style="width:100%">
       <thead>
         <tr>
           <th class="col-4" label="keyword"></th>
@@ -33,7 +33,7 @@
     </table>
 
   </div>
-  <div class="card-footer text-right">
+  <div class="card-footer text-end">
     <button class="btn  text-light btn-primary" name="button-create">
       <i class="fas fa-plus-circle"></i> <span label="add-subject-keyword"></span>
     </button>
@@ -42,7 +42,7 @@
 
 <div id="keyword-subject-template" style="display:none">
   <div class="card mb-2" name="synonym-language-card">
-    <div class="card-header font-weight-bold"></div>
+    <div class="card-header fw-bold"></div>
     <div class="card-body p-0">
       <ul class="list-group list-group-flush" name="synonym-group"></ul>
     </div>

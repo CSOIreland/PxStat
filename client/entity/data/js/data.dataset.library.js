@@ -302,13 +302,13 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     //copyright
     matrixSelectionHeading.find("[name=copyright]").html(
         $("<i>", {
-            class: "far fa-copyright mr-1"
+            class: "far fa-copyright me-1"
         }).get(0).outerHTML + data.extension.copyright.name
     ).attr("href", data.extension.copyright.href);
     $("#data-dataset-selected-table [name=card-header]").html(matrixSelectionHeading.get(0).outerHTML);
     $("#data-dataset-row").show();
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
 
     $("#data-dataset-selected-table").find("[name=save-table]").once("click", function () {
         //check that we have a user to save the table against
@@ -338,6 +338,7 @@ app.data.dataset.callback.drawFavouriteButtons = function (data) {
     }
     else {
         $("#data-dataset-selected-table").find("[name=remove-table]").hide();
+        $("#data-dataset-selected-table").find("[name=save-table]").show();
     }
 };
 
@@ -353,21 +354,24 @@ app.data.dataset.callback.readMatrixNotes = function () {
     matrixNotes.find("[name=full-download-card]").find(".collapse").attr("id", "data-dataset-selected-table-download-collapse");
 
     //notes
-    if (data.note && data.note.length) {
-
+    if (data.note) {
 
         matrixNotes.find("[name=notes]").find(".card-header a").attr("href", "#data-dataset-selected-table-notes-collapse").attr("aria-controls", "#data-dataset-selected-table-notes-collapse");
         matrixNotes.find("[name=notes]").find(".collapse").attr("id", "data-dataset-selected-table-notes-collapse");
 
         $.each(data.note, function (index, value) {
-            matrixNotes.find("[name=notes]").find(".card-body").append(
-                $("<p>", {
-                    html: app.library.html.parseBbCode(value)
-                }).get(0).outerHTML
-            );
-        });
+            if (value) {
+                matrixNotes.find("[name=notes]").find(".card-body").append(
+                    $("<p>", {
+                        html: app.library.html.parseBbCode(value)
+                    }).get(0).outerHTML
+                );
+            }
 
-        matrixNotes.find("[name=notes]").show();
+        });
+        if (!matrixNotes.find("[name=notes]").find(".card-body").is(":empty")) {
+            matrixNotes.find("[name=notes]").show();
+        }
     }
 
     //reasons
@@ -411,7 +415,7 @@ app.data.dataset.callback.readMatrixNotes = function () {
 
     $("#panel").html(matrixNotes.get(0).outerHTML);
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
 
     // Run Sharethis.
     app.data.share(data.extension.matrix, null);
@@ -595,7 +599,7 @@ app.data.dataset.callback.back = function () {
         $("#data-search-row-desktop [name=search-results], #data-filter, #data-search-result-pagination [name=pagination], #data-search-result-pagination [name=pagination-toggle]").show();
         $("#data-accordion-api").hide();
         //run bootstrap toggle to show/hide toggle button
-        bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+        app.library.bootstrap.getBreakPoint();
         $('html, body').animate({
             scrollTop: $("[name=search-results]").parent().offset().top
         }, 1000);
@@ -697,10 +701,11 @@ app.data.dataset.callback.deleteTable = function (data, matrix) {
 app.data.dataset.saveQuery.validation.drawSaveQuery = function () {
 
     $('#data-dataset-save-query [name=fluid-time]').bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
         onstyle: "primary",
-        offstyle: "warning",
+        offstyle: "warning text-dark",
+        height: 38,
         width: C_APP_TOGGLE_LENGTH
     }).bootstrapToggle('on');
 

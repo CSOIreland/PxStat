@@ -122,7 +122,7 @@ app.user.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.user.drawCallback = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
   //Update User link click event
   $("#user-read-container table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
     e.preventDefault();
@@ -165,7 +165,7 @@ app.user.drawUserDataTable = function (data) {
             return row.CcnDisplayName || $("<i>", {
               "class": "fas fa-user-slash",
               "data-original-title": app.label.static["missing"],
-              "data-toggle": "tooltip"
+              "data-bs-toggle": "tooltip"
             }).get(0).outerHTML;
           }
         },
@@ -175,7 +175,7 @@ app.user.drawUserDataTable = function (data) {
             return row.CcnEmail ? app.library.html.email(row.CcnEmail) : row.CcnDisplayName || $("<i>", {
               "class": "fas fa-user-slash",
               "data-original-title": app.label.static["missing"],
-              "data-toggle": "tooltip"
+              "data-bs-toggle": "tooltip"
             }).get(0).outerHTML;
           }
         },
@@ -301,10 +301,12 @@ app.user.modal.createActiveDirectory = function () {
   $("#user-modal-create-ad-user").find("[name=ccn-email-create]").empty();
   //initiate toggle buttons
   $("#user-modal-create-ad-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
-    on: app.label.static["true"],
-    off: app.label.static["false"],
-    onstyle: "success",
-    offstyle: "warning",
+    onlabel: app.label.static["true"],
+    offlabel: app.label.static["false"],
+    onstyle: "success text-light",
+    offstyle: "warning text-dark",
+    height: 38,
+    style: "text-light",
     width: C_APP_TOGGLE_LENGTH //Depend on language translation.
   });
 
@@ -358,6 +360,11 @@ app.user.validation.createActiveDirectory = function () {
  *
  */
 app.user.ajax.createActiveDirectory = function () {
+  //check for demo site
+  if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+    api.modal.error(app.label.static["demo-site-restricted-access"]);
+    return
+  }
   // CAll Ajax to Create User. Do Redraw Data Table for Create User.
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
@@ -413,10 +420,12 @@ app.user.callback.createActiveDirectoryOnError = function (error) {
 app.user.modal.createLocal = function () {
   app.user.validation.createLocal();
   $("#user-modal-create-local-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
-    on: app.label.static["true"],
-    off: app.label.static["false"],
-    onstyle: "success",
-    offstyle: "warning",
+    onlabel: app.label.static["true"],
+    offlabel: app.label.static["false"],
+    onstyle: "success text-light",
+    offstyle: "warning text-dark",
+    height: 38,
+    style: "text-light",
     width: C_APP_TOGGLE_LENGTH //Depend on language translation.
   });
 
@@ -607,18 +616,22 @@ app.user.modal.update = function (userRecord) {
   $("#user-modal-update").find("[name=ccn-email-update]").empty();
   //initiate toggle buttons
   $("#user-modal-update").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
-    on: app.label.static["true"],
-    off: app.label.static["false"],
-    onstyle: "success",
-    offstyle: "warning",
+    onlabel: app.label.static["true"],
+    offlabel: app.label.static["false"],
+    onstyle: "success text-light",
+    offstyle: "warning text-dark",
+    height: 38,
+    style: "text-light",
     width: C_APP_TOGGLE_LENGTH //Depend on language translation.
   });
 
   $("#user-modal-update").find("[name=locked]").bootstrapToggle("destroy").bootstrapToggle({
-    on: app.label.static["true"],
-    off: app.label.static["false"],
-    onstyle: "success",
-    offstyle: "warning",
+    onlabel: app.label.static["true"],
+    offlabel: app.label.static["false"],
+    onstyle: "success text-light",
+    offstyle: "warning text-dark",
+    height: 38,
+    style: "text-light",
     width: C_APP_TOGGLE_LENGTH //Depend on language translation.
   });
   // Add validation for Update User
@@ -712,8 +725,8 @@ app.user.modal.buildGroupList = function (data) {
       href: "#",
       html: $("<i>", {
         class: userIconClass,
-        "data-toggle": "tooltip",
-        "data-placement": "top",
+        "data-bs-toggle": "tooltip",
+        "data-bs-placement": "top",
         "title": "",//userTooltipTitle,
         "data-original-title": userTooltipTitle
       }).get(0).outerHTML + " " + value.GrpName
@@ -734,7 +747,7 @@ app.user.modal.buildGroupList = function (data) {
     //Add Group Link's.
     $("#user-modal-update .list-group").append(li);
     //Bootstrap tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
   });
 };
 
@@ -805,6 +818,11 @@ app.user.validation.update = function () {
  * Save updated User via AJAX call.
  */
 app.user.ajax.update = function () {
+  //check for demo site
+  if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+    api.modal.error(app.label.static["demo-site-restricted-access"]);
+    return
+  }
   //Get fields values at user-modal-update Modal
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
@@ -873,9 +891,11 @@ app.user.modal.delete = function () {
  * @param {*} idn
  */
 app.user.ajax.delete = function (idn) {
-
-  // Get the indemnificator to delete
-  var apiParams = { CcnUsername: idn };
+  //check for demo site
+  if (app.config.security.demo && app.navigation.user.prvCode != C_APP_PRIVILEGE_ADMINISTRATOR) {
+    api.modal.error(app.label.static["demo-site-restricted-access"]);
+    return
+  }
   // Call the API by passing the idn to delete User from DB
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,

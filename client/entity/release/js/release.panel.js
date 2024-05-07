@@ -15,7 +15,7 @@ $(document).ready(function () {
     //Load requests Data Table data
     app.release.panel.pendingLive.ajax.read();
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

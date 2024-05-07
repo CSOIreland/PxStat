@@ -54,7 +54,6 @@ $(document).ready(function () {
 
     //Changing plus to minus
     $("#data-dataset-chart-accordion").on('shown.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-minus-circle");
         //scroll to top of content
         if (app.data.isModal) {
             $('#data-view-modal').animate({
@@ -68,16 +67,15 @@ $(document).ready(function () {
             }, 1000);
         }
     });
-    //Changing minus to plus
-    $("#data-dataset-chart-accordion").on('hidden.bs.collapse', function (e) {
-        $("#" + e.target.id).parent().find("[name=accordion-icon]").removeClass().addClass("fas fa-plus-circle");
-    });
 
-    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update],#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=link-to-wip], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale],#data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
-        onstyle: "primary",
-        offstyle: "warning",
+
+    $("#data-dataset-chart-accordion-series-collapse [name=dual-axis], #data-dataset-chart-accordion-options-collapse [name=stacked], #data-dataset-chart-accordion-options-collapse [name=stacked-percent], #data-dataset-chart-snippet-code [name=auto-update],#data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=link-to-wip], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale],#data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort], #data-dataset-chart-accordion-options-collapse [name=show-percentage]").bootstrapToggle({
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
+        onstyle: "success text-light",
+        offstyle: "warning text-dark",
+        height: 38,
+        style: "text-light",
         width: C_APP_TOGGLE_LENGTH
     });
 
@@ -142,7 +140,7 @@ $(document).ready(function () {
     });
 
 
-    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").once("change", app.data.dataset.chart.resetChart);
+    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort], #data-dataset-chart-accordion-options-collapse [name=show-percentage]").once("change", app.data.dataset.chart.resetChart);
 
 
     $("#data-dataset-chart-render").find("[name=download-chart]").once("click", function (e) {
@@ -172,7 +170,7 @@ $(document).ready(function () {
     });
 
     new ClipboardJS("#data-dataset-chart-snippet-code [name=copy-snippet-code]");
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

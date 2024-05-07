@@ -8,6 +8,7 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["analytics"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["analytics"]);
+    app.navigation.setState("#nav-link-analytic");
 
 
     // Load Modal 
@@ -17,27 +18,27 @@ $(document).ready(function () {
     app.analytic.ajax.readSubject();
     app.analytic.validation.select();
     //cancel click
-    $("#select-card").find("[name=button-cancel]").once("click", function (e) {
+    $("#analytic-select-card").find("[name=button-cancel]").once("click", function (e) {
         e.preventDefault();
-        $("#select-card").find(".error").empty();
+        $("#analytic-select-card").find(".error").empty();
         $("#analytic-results").hide();
         //clear subject dropdown
-        $("#select-card").find("[name=select-subject]").val(null).trigger("change");
-        $("#select-card").find("[name=select-product]").empty();
+        $("#analytic-select-card").find("[name=select-subject]").val(null).trigger("change");
+        $("#analytic-select-card").find("[name=select-product]").empty();
         // Disable product 
-        $("#select-card").find("[name=select-product]").prop('disabled', true);
+        $("#analytic-select-card").find("[name=select-product]").prop('disabled', true);
         // Clear ip address
-        $("#select-card").find("[name=nlt-masked-ip]").val("");
+        $("#analytic-select-card").find("[name=nlt-masked-ip]").val("");
         // Reset date picker
         app.analytic.dateFrom = moment().subtract(app.config.entity.analytic.dateRangePicker, 'days');
-        app.analytic.dateTo = moment();
+        app.analytic.dateTo = moment().subtract(1, 'days');
         app.analytic.setDatePicker();
     });
 
     $("#analytic-data").find("[name=csv]").once("click", app.analytic.callback.downloadResults);
 
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

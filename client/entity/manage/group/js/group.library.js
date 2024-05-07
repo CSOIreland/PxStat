@@ -34,22 +34,6 @@ app.group.childRowContact = function (data) {
 };
 
 /**
- * Toggle accordion icons when showing/hiding panels 
- */
-$(".collapse").on("shown.bs.collapse", function () {
-    $(this).parent()
-        .find(".accordion-icon")
-        .removeClass()
-        .addClass('accordion-icon fas fa-minus-circle');
-});
-$(".collapse").on("hidden.bs.collapse", function () {
-    $(this).parent()
-        .find(".accordion-icon")
-        .removeClass()
-        .addClass('accordion-icon fas fa-plus-circle');
-});
-
-/**
  * Map API data to searchUser data model
  * @param {*} dataAPI 
  */
@@ -196,7 +180,7 @@ app.group.drawMatrixByGroupDataTable = function (data, callbackParam) {
 }
 
 app.group.drawCallbackMatrix = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //Release version link click redirect to 
     $("#group-matrix-modal table").find("[name=" + C_APP_NAME_LINK_INTERNAL + "]").once("click", function (e) {
@@ -404,7 +388,7 @@ app.group.callback.createOnSuccess = function (data, callbackParam) {
     //Redraw Data Table for Create/Add User
     app.group.ajax.read();
     //hide the accordion
-    $("#accordion-group").hide();
+    $("#group-edit").hide();
     //Close modal
     $("#group-modal-create-group").modal("hide");
 
@@ -421,7 +405,7 @@ app.group.callback.createOnError = function (error) {
     //Redraw Data Table for Create/Add User
     app.group.ajax.read();
     //hide the accordion
-    $("#accordion-group").hide();
+    $("#group-edit").hide();
     //Close modal
     $("#group-modal-create-group").modal("hide");
 };
@@ -473,7 +457,7 @@ app.group.callback.deleteOnSuccess = function (data, callbackParam) {
     //Redraw Data Table Group with fresh data.
     app.group.ajax.read();
     // Hide the group in case it was open
-    $("#accordion-group").hide();
+    $("#group-edit").hide();
 
     if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-deleted", [callbackParam.GrpCode]));
@@ -490,7 +474,7 @@ app.group.callback.deleteOnError = function (error) {
     //Redraw Data Table Group with fresh data.
     app.group.ajax.read();
     // Hide the group in case it was open
-    $("#accordion-group").hide();
+    $("#group-edit").hide();
 };
 
 //#endregion Delete Group
@@ -519,7 +503,7 @@ app.group.callbackMembersGroupRead = function (data, groupCode) {
  * Draw Callback for Datatable
  */
 app.group.drawCallbackGroupMember = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // Edit Members Group link click 
     //Display  the modal "group-modal-update-group-member" on row click
     $("#group-members-read table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {
@@ -630,7 +614,7 @@ app.group.callback.readgroup = function (data) {
         api.modal.information(app.label.static["api-ajax-nodata"]);
         // Force reload
         app.group.ajax.read();
-        $("#accordion-group").hide();
+        $("#group-edit").hide();
     }
 };
 
@@ -644,9 +628,9 @@ app.group.readgroup = function (groupRecord) {
     $("#group-members-read").find("[name=button-create]").attr("current-group", groupRecord.GrpCode);
     $("#group-form-update-group").find("[name=reset]").attr("current-group", groupRecord.GrpCode);
     //var groupformeditlabel = groupRecord.GrpCode + " - Edit";
-    $("#group-form-update-group").find("[name=group-span-edit-group-title]").text(groupRecord.GrpCode + " - " + app.label.static["edit"]);
+    $("#group-edit").find("[name=group-span-edit-group-title]").text(groupRecord.GrpCode + " - " + app.label.static["edit"]);
     //var membersgrouplabel = groupRecord.GrpCode + " - Members";
-    $("#accordion-group").find("[name=group-span-members-title]").text(groupRecord.GrpCode + " - " + app.label.static["members"]);
+    $("#group-edit").find("[name=group-span-members-title]").text(groupRecord.GrpCode + " - " + app.label.static["members"]);
     // Validate Edit Group at form  "group-table-edit-form"
     app.group.validation.update();
     $("#group-form-update-group").find("[name=idn]").val(groupRecord.GrpCode);
@@ -656,13 +640,13 @@ app.group.readgroup = function (groupRecord) {
     $("#group-form-update-group").find("[name=grp-contact-phone]").val(groupRecord.GrpContactPhone);
     $("#group-form-update-group").find("[name=grp-contact-email]").val(groupRecord.GrpContactEmail);
 
-    $("#accordion-group").hide().fadeIn();
+    $("#group-edit").hide().fadeIn();
     //Expand the "group-table-update-form"
     //$("#collapse-one-group-table-update-form").collapse('show');
     //Expand the "members-group-table"
     $("#collapse-two-members-group-table").collapse('show');
     //Scroll to "name" field.
-    $('html, body').animate({ scrollTop: $('#accordion-group #headingTwo').offset().top }, 1000);
+    $('html, body').animate({ scrollTop: $('#group-edit #headingTwo').offset().top }, 1000);
     $("#group-form-update-group").find("[name=reset]").once("click", function (event) {
         app.group.ajax.readGroup($("#group-form-update-group").find("[name=reset]").attr("current-group"));
         $("#collapse-one-group-table-update-form").collapse('hide');
@@ -758,7 +742,7 @@ app.group.callback.updateOnSuccess = function (data, callbackParam) {
     //Redraw  Data Table
     app.group.ajax.read();
     //hide the accordion
-    $("#accordion-group").hide();
+    $("#group-edit").hide();
 
     if (data == C_API_AJAX_SUCCESS) {
         api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [callbackParam.GrpCodeOld]));
@@ -776,7 +760,7 @@ app.group.callback.updateOnError = function (error) {
     //Redraw  Data Table
     app.group.ajax.read();
     //hide the accordion
-    $("#accordion-group").hide();
+    $("#group-edit").hide();
 };
 
 //#endregion

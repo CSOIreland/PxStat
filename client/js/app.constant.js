@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "5.6.1";
+const C_APP_VERSION = "8.0.0";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -12,18 +12,14 @@ const C_APP_MASTER_LANGUAGE = "en";
 // URLs GitHub
 const C_APP_URL_GITHUB = "https://github.com/CSOIreland/PxStat";
 const C_APP_URL_GITHUB_EUG_DATA_PIVOT = "https://github.com/CSOIreland/PxStat/wiki/EUG-Data#pivoting";
-const C_APP_URL_GITHUB_RELEASE_TAG = "https://github.com/CSOIreland/PxStat/releases/tag/{0}";
 const C_APP_URL_GITHUB_REPORT_ISSUE = "https://github.com/CSOIreland/PxStat/issues/new/choose";
 const C_APP_URL_GITHUB_API_CUBE_JSONRPC = "https://github.com/CSOIreland/PxStat/wiki/API-Cube";
 const C_APP_URL_GITHUB_API_CUBE_RESFFUL = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-RESTful";
 const C_APP_URL_GITHUB_API_CUBE_PXAPIV1 = "https://github.com/CSOIreland/PxStat/wiki/API-Cube-PxAPIv1";
 
-// URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.4/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.5.4/snippet.html";
-
-// URLs Language Files
-const C_APP_URL_PXLANGUAGEPLUGINS = "https://cdn.jsdelivr.net/gh/CSOIreland/PxLanguagePlugins@2.2.0/client/";
+// URLs Configuration
+const C_APP_CONFIG_CLIENT = C_APP_URL_API + "public/api.restful/PxStat.Config.Config_API.ReadApp/config.client.json";
+const C_APP_CONFIG_GLOBAL = C_APP_URL_API + "public/api.restful/PxStat.Config.Config_API.ReadApp/config.global.json";
 
 // Public API
 const C_APP_API_JSONRPC_VERSION = "2.0";

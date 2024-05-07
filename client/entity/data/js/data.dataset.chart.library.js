@@ -23,6 +23,7 @@ app.data.dataset.chart.template.wrapper = {
     "autoupdate": null,
     "matrix": null,
     "type": null,
+    "showPercentage": null,
     "copyright": false,
     "link": null,
     "sort": false,
@@ -65,6 +66,7 @@ app.data.dataset.chart.template.dataset = {
     "pointRadius": 2,
     "pointHoverRadius": 4,
     "maxBarThickness": 90,
+    "minBarLength": 1,
     "api": {
         "query": {
             "url": null,
@@ -137,9 +139,14 @@ app.data.dataset.chart.getChartTypes = function () {
         allowClear: true,
         width: '100%',
         placeholder: app.label.static["start-typing"],
-        data: chartTypes
+        data: chartTypes,
+        dropdownParent: $("#data-dataset-chart-properties")
     }).on('select2:select', function (e) {
         switch ($(this).val()) {
+            case "pie":
+            case "doughnut":
+                $("#data-dataset-chart-accordion-options-collapse [name=show-percentage-row]").show();
+            //no break as we want to move to the next case regardless
             case "pie":
             case "doughnut":
             case "polarArea":
@@ -161,6 +168,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
                 $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").show();
+                $("#data-dataset-chart-accordion-options-collapse [name=show-percentage-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "line":
@@ -171,6 +179,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
                 $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").show();
+                $("#data-dataset-chart-accordion-options-collapse [name=show-percentage-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "area":
@@ -181,6 +190,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
                 $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").show();
+                $("#data-dataset-chart-accordion-options-collapse [name=show-percentage-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "bar":
@@ -191,6 +201,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["x-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["x-axis-label"]);
                 $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").hide();
+                $("#data-dataset-chart-accordion-options-collapse [name=show-percentage-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["y-axis-left"]);
                 break;
             case "horizontalBar":
@@ -203,6 +214,7 @@ app.data.dataset.chart.getChartTypes = function () {
                 $("#data-dataset-chart-accordion-xaxis-heading").find("[name=accordion-xaxis-heading]").text(app.label.static["y-axis"]);
                 $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=x-axis-label-holder]").text(app.label.static["y-axis-left"]);
                 $("#data-dataset-chart-accordion-options-collapse [name=curved-line-row]").hide();
+                $("#data-dataset-chart-accordion-options-collapse [name=show-percentage-row]").hide();
                 $("#data-dataset-chart-accordion-series-collapse").find("[name=y-axis-left-label-holder]").text(app.label.static["x-axis-label"]);
                 break;
             default:
@@ -378,15 +390,24 @@ app.data.dataset.chart.buildXAxisSelect = function () {
         var dimensionToSearch = app.data.dataset.variables[dimensionCode];
 
         $.each(dimensionToSearch, function (key, value) {
-
             if ((value.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
                 //variable is valid, append to select if not already selected
                 if (!select.find("option[value='" + key + "']").is(':selected')) {
-                    select.append($('<option>', {
-                        "value": key,
-                        "title": value,
-                        "text": thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "")
-                    }));
+                    if (select.attr("role") == "time") {
+                        select.prepend($('<option>', {
+                            "value": key,
+                            "title": value,
+                            "text": thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "")
+                        }));
+                    }
+                    else {
+                        select.append($('<option>', {
+                            "value": key,
+                            "title": value,
+                            "text": thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "")
+                        }));
+                    }
+
                 };
             }
         });
@@ -751,11 +772,20 @@ app.data.dataset.chart.addSeries = function () {
             if ((value.toLowerCase().indexOf(filter) > -1) || $(this).is(':selected')) {
                 //variable is valid, append to select if not already selected
                 if (!select.find("option[value='" + key + "']").is(':selected')) {
-                    select.append($('<option>', {
-                        "value": key,
-                        "title": value,
-                        "text": thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "")
-                    }));
+                    if (select.attr("role") == "time") {
+                        select.prepend($('<option>', {
+                            "value": key,
+                            "title": value,
+                            "text": thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "")
+                        }));
+                    }
+                    else {
+                        select.append($('<option>', {
+                            "value": key,
+                            "title": value,
+                            "text": thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "")
+                        }));
+                    }
                 };
             }
         });
@@ -959,6 +989,7 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
     switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
         case "horizontalBar":
+        case "pyramid":
             app.data.dataset.chart.configuration.options.scales.xAxes[0].scaleLabel.display = $("#data-dataset-chart-accordion-series-collapse").find("[name=left-yaxis-label]").val().trim() ? true : false;
             app.data.dataset.chart.configuration.options.scales.xAxes[0].scaleLabel.labelString = $("#data-dataset-chart-accordion-series-collapse").find("[name=left-yaxis-label]").val().trim() || null;
 
@@ -1247,6 +1278,20 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
 
 
     }
+
+    //change the tooltip mode for pie/donut etc
+    if (!errors.length) {
+        switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
+            case "pie":
+            case "doughnut":
+            case "polarArea":
+            case "radar":
+                app.data.dataset.chart.configuration.options.tooltips.mode = "nearest";
+                break;
+            default:
+                break;
+        }
+    }
     if (!errors.length) {
 
         if (app.data.RlsCode) {
@@ -1338,9 +1383,28 @@ app.data.dataset.chart.renderSnippet = function () {
         config.options.title.text.unshift($("#data-dataset-chart-snippet-code").find("[name=title-value]").val().trim());
     }
 
+    switch ($("#data-dataset-chart-properties").find("[name=type]").val()) {
+        case "pie":
+        case "doughnut":
+            app.data.dataset.chart.configuration.showPercentage = $("#data-dataset-chart-accordion-options-collapse").find("[name=show-percentage]").is(':checked');
+            break;
+
+        default:
+            app.data.dataset.chart.configuration.showPercentage = null;
+            break;
+    }
+
     if ($("#data-dataset-chart-snippet-code").find("[name=link-to-wip]").is(':checked')) {
         config.metadata.api.response = {};
         config.matrix = app.data.MtrCode;
+
+        //if link to WIP, then make query explicit so it is always a point in time query with no additional variables added at a later date because they selected all variables in initial query
+        var xAxisDimensionCode = $("#data-dataset-chart-accordion-xaxis-collapse").find("[name=dimension-containers]").find("select:enabled").attr("idn");
+        config.metadata.xAxis[xAxisDimensionCode] = [];
+
+        $("#data-dataset-chart-accordion-xaxis-collapse").find("select[idn='" + xAxisDimensionCode + "'] option:selected").each(function () {
+            config.metadata.xAxis[xAxisDimensionCode].push(this.value);
+        });
 
         $.each(config.data.datasets, function (key, value) {
             value.api.response = {};
@@ -1481,11 +1545,12 @@ app.data.dataset.chart.resetAll = function () {
 
     $("#data-dataset-chart-accordion-series-collapse [name=dual-axis]").bootstrapToggle("off");
     $("#data-dataset-chart-accordion-options-collapse [name=stacked]").bootstrapToggle("off");
+
     //need to reset options, unbind listeners first
-    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=link-to-wip], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link],#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").unbind("change");
+    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=link-to-wip], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link],#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort], #data-dataset-chart-accordion-options-collapse [name=show-percentage]").unbind("change");
     //reset toggles
     $("#data-dataset-chart-snippet-code [name=fluid-time]").bootstrapToggle('enable');
-    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").bootstrapToggle("on");
+    $("#data-dataset-chart-snippet-code [name=auto-update], #data-dataset-chart-snippet-code [name=fluid-time], #data-dataset-chart-snippet-code [name=include-title], #data-dataset-chart-snippet-code [name=include-copyright], #data-dataset-chart-snippet-code [name=include-link], #data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort], #data-dataset-chart-accordion-options-collapse [name=show-percentage]").bootstrapToggle("on");
     $("#data-dataset-chart-snippet-code [name=link-to-wip]").bootstrapToggle("off");
     //reset listeners
     if (app.data.RlsCode) {
@@ -1503,7 +1568,7 @@ app.data.dataset.chart.resetAll = function () {
 
     $("#data-dataset-chart-snippet-code").find("[name=title-value]").val(app.data.dataset.metadata.jsonStat.label.trim());
 
-    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort]").once("change", app.data.dataset.chart.resetChart);
+    $("#data-dataset-chart-accordion-options-collapse [name=auto-scale], #data-dataset-chart-accordion-options-collapse [name=curved-line], #data-dataset-chart-accordion-options-collapse [name=sort], #data-dataset-chart-accordion-options-collapse [name=show-percentage]").once("change", app.data.dataset.chart.resetChart);
 
     $("#data-dataset-chart-snippet-code [name=auto-update]").once("change", function () {
         app.data.dataset.chart.renderSnippet();

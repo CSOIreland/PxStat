@@ -28,20 +28,17 @@
 </div>
 <div id="data-search-result-pagination" class="col-12 px-3 mt-2" style="display: none;">
     <span name="pagination-toggle"><span label="show-all"></span> <input type="checkbox" id="data-search-result-pagination-toggle"></span>
-    <ul name="pagination" class="mb-4 pagination float-right"></ul>
+    <ul name="pagination" class="mb-4 pagination float-end"></ul>
 </div>
 <div id="data-search-result-templates" style="display: none">
     <div name="share" style="display: none;"></div>
     <div name="search-results-sort" class="mt-2">
         <div class="input-group px-3">
-            <select name="search-results-sort-select" class="custom-select">
+            <select name="search-results-sort-select" class="form-select">
 
             </select>
-            <div class="input-group-append">
-                <label class="input-group-text" for="inputGroupSortSelect" label="sort"></label>
-            </div>
+            <label class="input-group-text" for="inputGroupSortSelect" label="sort"></label>
         </div>
-
     </div>
 
     <div name="filter-list" class="list-group p-3">
@@ -50,7 +47,7 @@
     <a name="filter-list-heading" href="#" class="list-group-item list-group-item-primary" disabled></a>
     <a name="filter-list-item" href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
         <span>
-            <i name="filter-list-item-checkbox" class="far fa-square mr-2" active="false" aria-label="unchecked"></i>
+            <i name="filter-list-item-checkbox" class="far fa-square me-2" active="false" aria-label="unchecked"></i>
             <span name="filter-list-item-value"></span>
         </span>
         <span name="filter-list-item-count"></span>
@@ -62,17 +59,17 @@
             <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-2 order-lg-1 order-md-2 order-sm-2 ">
                 <h6 class="mb-1">
                     <span name="mtr-code"></span>
-                    <i name="official-flag" class="fas fa-certificate text-official ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="official-statistics"></i>
-                    <i name="geo-flag" class="fas fa-globe text-tertiary ml-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
-                    <i name="archive-flag" class="fas fa-file-archive text-archive mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
-                    <i name="reservation-flag" class="fas fa-exclamation text-reservation mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
-                    <i name="analytical-flag" class="fas fa-chart-line text-analytical mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
-                    <i name="experimental-flag" class="fas fa-flask text-experimental mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="experimental"></i>
+                    <i name="official-flag" class="fas fa-certificate text-official ms-1 d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="official-statistics"></i>
+                    <i name="geo-flag" class="fas fa-globe text-tertiary ms-1 d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="Map" label-tooltip="map"></i>
+                    <i name="archive-flag" class="fas fa-file-archive text-archive me-1 d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="archived"></i>
+                    <i name="reservation-flag" class="fas fa-exclamation text-reservation me-1 d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="under-reservation"></i>
+                    <i name="analytical-flag" class="fas fa-chart-line text-analytical me-1 d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="analytical"></i>
+                    <i name="experimental-flag" class="fas fa-flask text-experimental me-1 d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="experimental"></i>
                 </h6>
             </div>
-            <div class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0 order-1 order-lg-2 order-md-1 order-sm-1">
+            <div class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-end text-md-start px-0 order-1 order-lg-2 order-md-1 order-sm-1">
                 <small>
-                    <i name="exceptional-flag" class="fas fa-exclamation-triangle text-exceptional mr-1 d-none" data-toggle="tooltip" data-placement="top" title="" data-original-title="" label-tooltip="exceptional-release"></i>
+                    <i name="exceptional-flag" class="fas fa-exclamation-triangle text-exceptional me-1 d-none" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-original-title="" label-tooltip="exceptional-release"></i>
                     <span label="last-updated"></span>: <b name="from-date"></b> <span name="from-time"></span>
                 </small>
             </div>
@@ -83,9 +80,9 @@
             <div class="col-8 px-0 order-1 my-auto">
                 <h5 name="mtr-title" class="mb-1"></h5>
             </div>
-            <div class="col-4 px-0 order-2 text-right my-auto">
+            <div class="col-4 px-0 order-2 text-end my-auto">
                 <p class="mb-1">
-                    <span name="language" class="badge badge-primary"></span>
+                    <span name="language" class="badge bg-primary"></span>
                 </p>
             </div>
         </div>
@@ -95,34 +92,32 @@
             <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0 order-1 my-auto">
                 <span name="dimensions"></span>
             </div>
-            <div class="col-12 col-lg-4 col-md-12 col-sm-12 px-0 order-2 mt-2 text-lg-right text-md-left">
+            <div class="col-12 col-lg-4 col-md-12 col-sm-12 px-0 order-2 mt-2 text-lg-end text-md-start">
                 <small>
-                    <i class="far fa-copyright mr-1"></i>
+                    <i class="far fa-copyright me-1"></i>
                     <span name="copyright"></span>
                 </small>
             </div>
         </div>
     </a>
 
-    <span name="dimension" class="badge badge-tertiary mr-1 mt-1"></span>
-    <span name="frequency" class="badge badge-secondary mr-1 mt-1"></span>
-    <span name="frequency-span" class="badge badge-neutral mr-1 mt-1"></span>
+    <span name="dimension" class="badge bg-tertiary me-1 mt-1"></span>
+    <span name="frequency" class="badge bg-secondary me-1 mt-1"></span>
+    <span name="frequency-span" class="badge bg-neutral text-dark me-1 mt-1"></span>
 
 </div>
 <div id="data-search-templates" style="display:none">
 
     <div name="search-input-group">
         <div class="input-group input-group-lg">
-            <input type="text" name="search-input" class="form-control p-4" placeholder="" aria-label="Search for data" autocomplete="off">
-            <div class="input-group-append">
-                <button name="data-search-input-button" class="btn btn-neutral" type="button">
-                    <i class="fas fa-search"></i> <span label="search"></span>
-                </button>
-            </div>
+            <input type="text" name="search-input" class="form-control" placeholder="" aria-label="Search for data" autocomplete="off">
+            <button name="data-search-input-button" class="btn btn-lg btn-neutral" type="button">
+                <i class="fas fa-search"></i> <span label="search"></span>
+            </button>
         </div>
         <div class="col-sm-12 mt-4 px-0" name="no-search-results" style="display: none;">
             <div class="card border-warning">
-                <div class="card-body font-weight-bold">
+                <div class="card-body fw-bold">
                     <span label="no-data-found"></span>
                 </div>
             </div>
@@ -132,7 +127,7 @@
     <!-- Template: data-search-navigation-->
     <div name="navigation" class="col px-2 pt-2">
         <nav class="navbar px-2">
-            <a class="w-100 p-1 text-light bg-primary rounded-top p-3" data-toggle="collapse" data-target="" href="#"><i class="fas fa-bars"></i>
+            <a class="w-100 p-1 text-light bg-primary rounded-top p-3" data-bs-toggle="collapse" data-bs-target="" href="#"><i class="fas fa-bars"></i>
                 <span label="browse"></span>
             </a>
             <div class="collapse navbar-collapse show" id="">
@@ -141,10 +136,10 @@
             </div>
         </nav>
     </div>
-    <div name="navigation-theme" class="card rounded-0">
-        <div class="card-header p-1" id="">
+    <div name="navigation-theme" class="card rounded-0 border-bottom border-top-0">
+        <div class="card-header p-1 border-0" id="">
             <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="" aria-expanded="false" aria-controls="">
+                <button class="btn btn-link btn-block text-start" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">
 
                 </button>
             </h2>
@@ -155,16 +150,16 @@
             </div>
         </div>
     </div>
-    <a name="subject-dropdown-link" class="nav-link text-muted d-flex justify-content-between align-items-center dropdown-toggle text-wrap px-0" href="" data-toggle="collapse" role="button" aria-expanded="false" aria-controls=""><span><i class="far fa-folder mr-2"></i><span name="subject-name"></span></a>
+    <a name="subject-dropdown-link" class="nav-link text-muted d-flex justify-content-between align-items-center dropdown-toggle text-wrap py-2" href="" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls=""><span><i class="far fa-folder me-2"></i><span name="subject-name"></span></a>
     <div name="subject-dropdown" class="collapse" id="">
         <div name="product-list-card-body" class="card card-body p-1">
 
         </div>
     </div>
 
-    <a name="navigation-product-item" class="dropdown-item d-flex justify-content-between align-items-center text-wrap px-2" href="" prc-code="" lng-iso-code="">
+    <a name="navigation-product-item" class="dropdown-item d-flex justify-content-between align-items-center text-wrap p-2" href="" prc-code="" lng-iso-code="">
         <span name="product-name"></span>
-        <span name="product-release-count" class="badge badge-primary badge-pill"></span>
+        <span name="product-release-count" class="badge bg-primary rounded-pill"></span>
     </a>
 
     <!-- Template: data-filter-template-->

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>PxStat - System Unavailable</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- JQuery 3.X - https://github.com/jquery/jquery/ -->
+    <script src="https://cdn.jsdelivr.net/gh/jquery/jquery@3.4.1/dist/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap - https://github.com/twbs/bootstrap/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@v4.5.2/dist/css/bootstrap.min.css" integrity="sha256-Ww++W3rXBfapN8SZitAvc9jw2Xb+Ixt0rvDsmWmQyTo=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/gh/FezVrasta/popper.js@v1.16.1/dist/umd/popper.min.js" integrity="sha256-/ijcOLwFf26xEYAjW75FizKVo5tnTYiQddPZoLUHHZ8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/twbs/bootstrap@v4.5.2/dist/js/bootstrap.min.js" integrity="sha256-ecWZ3XYM7AwWIaGvSdmipJ2l1F4bN9RXW6zgpeAiZYI=" crossorigin="anonymous"></script>
+
+    <!-- Font-awesome - https://github.com/FortAwesome/Font-Awesome/-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous">
+    <!-- URI.js - https://github.com/medialize/URI.js/ -->
+    <script src="https://cdn.jsdelivr.net/gh/medialize/URI.js@v1.19.2/src/URI.min.js" integrity="sha256-4G6Z1Q3FCGF8hoYV4zb54OENwcZkuE0NnvblFsJTg7s=" crossorigin="anonymous"></script>
+
+    <!-- API Constant -->
+    <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@4.2.2/src/js/api.constant.min.js" integrity="sha256-rG5j/lanPjzG2zaKHW6stibN9v12MPuzuFWqhQbGi4I=" crossorigin="anonymous"></script>
+
+    <!-- App - CSS -->
+    <link href="css/app.bootstrap.guideline.css" rel="stylesheet">
+
+    <script src="js/env/app.env.js"></script>
+    <script>
+        function probe() {
+            //probe syetem using ping api
+            $.get(C_APP_URL_API + "public/api.restful/PxStat.Config.Config_API.Ping", function (response) {
+                if (response == C_API_AJAX_SUCCESS) {
+                    //ping api returns success so redirect back to application root
+                    window.location.href = "./";
+                }
+            }).fail(function () {
+                //ping api fails so remain on page
+                //stop icon spinning and enable button after api finsihes and you remain on the page, delay for better UX
+                setTimeout(function () {
+                    $("#system-unavailable-retry").find("i").removeClass("fa-spin");
+                    $("#system-unavailable-retry").prop('disabled', false);
+                }, 3000);
+            })
+        };
+
+        $(document).ready(function () {
+            //probe the system every 5 minutes
+            setInterval(probe, 60 * 5 * 1000);
+            //probe the system on entry or page refresh
+            probe();
+            //probe the system on retry click
+            $("#system-unavailable-retry").click(function () {
+                //spin icon and disable button while api running
+                $(this).find("i").addClass("fa-spin");
+                $(this).prop('disabled', true);
+                probe();
+            });
+
+            // Parse the URL by using URI.js
+            var uri = new URI(window.location.href);
+            // Get the Query Parameters
+            var paramsURL = URI.parseQuery(uri.search());
+            if ("exception" in paramsURL) {
+                $("body").find('[name="message"]').text("An unexpected network or server error has occured. Please try again later.");
+                $("body").find('[name="icon"]').addClass("fa-exclamation-triangle");
+            }
+            else {
+                $("body").find('[name="icon"]').addClass("fa-tools");
+                $("body").find('[name="message"]').text("The system is currently unavailable due to essential maintenance.");
+            }
+        });
+    </script>
+
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col text-center my-4">
+                <i name="icon" class="fas text-tertiary fa-10x"></i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <b>PxStat:</b> System Unavailable
+                    </div>
+                    <div class="card-body">
+                        <p name="message" class="card-text"></p>
+                        <button id="system-unavailable-retry" type="button" class="btn btn-primary"><i class="fas fa-redo"></i> Try again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

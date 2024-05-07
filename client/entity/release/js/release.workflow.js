@@ -19,7 +19,7 @@ $(document).ready(function () {
     // Bind Add Signoff
     $("#release-workflow-signoff").find("[name=button-add]").once("click", app.release.workflow.modal.signoff.create);
     // Bootstrap tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

@@ -5,35 +5,35 @@
     </div>
     <div class="card-body bg-default p-2 border-bottom">
         <div class="row p-2">
-            <div class="col-xs-12 col-sm-6 text-left my-2">
-                <span label="codes" class="text-right font-weight-bold"></span>
+            <div class="col-xs-12 col-sm-6 text-start my-2">
+                <span label="codes" class="text-end fw-bold"></span>
                 <span><input checked type="checkbox" id="data-dataset-table-code-toggle"></span>
             </div>
-            <div class="col-xs-12 col-sm-6 text-right my-2">
-                <span label="data-selected" class="font-weight-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
+            <div class="col-xs-12 col-sm-6 text-end my-2">
+                <span label="data-selected" class="fw-bold"></span>: <span name="data-count-cells"></span> / <span name="data-total-cells"></span>
             </div>
         </div>
     </div>
     <div class="card-body bg-default p-2">
         <div class="row p-2">
-            <div class="col-xs-12 col-sm-6 text-left my-2">
+            <div class="col-xs-12 col-sm-6 text-start my-2">
 
                 <button name="reset" type="button" class="btn btn-warning text-dark">
                     <i class="fas fa-undo"></i> <span label="reset"></span>
                 </button>
             </div>
 
-            <div class="col-xs-12 col-sm-6 text-right my-2">
+            <div class="col-xs-12 col-sm-6 text-end my-2">
 
                 <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-random"></i> <span label="pivot"></span> - <span class="text-wrap" name="selected-pivot"></span>
                     </button>
                     <div name="pivot-dimension-options" class="dropdown-menu"></div>
                 </div>
 
                 <div class="btn-group">
-                    <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button name="data-download-results" type="button" class="btn btn-tertiary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-download"></i> <span label="download"></span>
                     </button>
                     <div name="download-select-dropdown" class="dropdown-menu" aria-labelledby="data-download-results"></div>
@@ -56,7 +56,7 @@
             <div class="card-header d-flex justify-content-between">
                 <h5 label="results"></h5>
                 <span name="save-query-wrapper">
-                    <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
+                    <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
                     <button name="save-query" class="btn btn-tertiary" type="button">
                         <i class="far fa-save"></i> <span label="save-query"></span>
                     </button>
@@ -65,7 +65,7 @@
             </div>
             <!-- Data Table data table-->
             <div class="card-body">
-                <table name="datatable" class="table table-striped table-bordered" style="width:100%">
+                <table name="datatable" class="table table-striped pt-2 table-bordered" style="width:100%">
                     <thead>
                         <tr name="header-row"></tr>
                     </thead>
@@ -76,46 +76,40 @@
     </div>
 </div>
 
-<div class="accordion mt-2" id="data-dataset-table-accordion">
-    <div class="card">
-        <div class="card-header" id="data-dataset-table-accordion-heading-api">
-            <div class="row px-2 order-1 order-lg-1 order-md-1 order-sm-1">
-                <div class="col-12 col-lg-8 col-md-12 col-sm-12 px-0">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#data-dataset-table-accordion-collapse-api" aria-expanded="false" aria-controls="data-dataset-table-accordion-collapse-api">
-                            <i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="api-data-query"></span>
-                        </button>
-                    </h5>
+<div class="accordion mt-4" id="data-dataset-table-accordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="data-dataset-table-accordion-heading-api">
+            <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-table-accordion-collapse-api" aria-expanded="false" aria-controls="data-dataset-table-accordion-collapse-api">
+                <span label="api-data-query"></span>
+            </button>
+        </h2>
+        <div id="data-dataset-table-accordion-collapse-api" class="accordion-collapse collapse" aria-labelledby="data-dataset-table-accordion-heading-api" data-bs-parent="#data-dataset-table-accordion">
+            <div class="accordion-body">
+                <div class="input-group mb-2">
+                    <label class="input-group-text" label="format"></label>
+                    <select name="format" class="form-select">
+                    </select>
                 </div>
-                <div class="col-12 col-lg-4 col-md-12 col-sm-12 text-lg-right text-md-left px-0">
-                    <div class="form-inline float-right">
-                        <label label="format" class="pr-2"></label>
-                        <select name="format" class="form-control">
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="data-dataset-table-accordion-collapse-api" class="collapse" aria-labelledby="data-dataset-table-accordion-heading-api" data-parent="#data-dataset-table-accordion">
-            <div class="card-body">
-                <ul class="nav nav-tabs" role="tablist">
+                <ul class="nav nav-tabs pt-4" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="data-dataset-table-api-jspnrpc-tab" data-toggle="tab" href="#data-dataset-table-api-jspnrpc-content" role="tab" aria-controls="home" aria-selected="true">JSON-RPC</a>
+                        <a class="nav-link active" id="data-dataset-table-api-jspnrpc-tab" data-bs-toggle="tab" href="#data-dataset-table-api-jspnrpc-content" role="tab" aria-controls="home" aria-selected="true">JSON-RPC</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="data-dataset-table-api-restful-tab" data-toggle="tab" href="#data-dataset-table-api-restful-content" role="tab" aria-controls="profile" aria-selected="false">RESTful</a>
+                        <a class="nav-link" id="data-dataset-table-api-restful-tab" data-bs-toggle="tab" href="#data-dataset-table-api-restful-content" role="tab" aria-controls="profile" aria-selected="false">RESTful</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="data-dataset-table-api-pxapiv1-tab" data-toggle="tab" href="#data-dataset-table-api-pxapiv1-content" role="tab" aria-controls="profile" aria-selected="false">PxAPI v1</a>
+                        <a class="nav-link" id="data-dataset-table-api-pxapiv1-tab" data-bs-toggle="tab" href="#data-dataset-table-api-pxapiv1-content" role="tab" aria-controls="profile" aria-selected="false">PxAPI v1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="data-dataset-table-api-data-connector-tab" data-bs-toggle="tab" href="#data-dataset-table-api-data-connector-content" role="tab" aria-controls="profile" aria-selected="false" label="data-connector"></a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="data-dataset-table-api-jspnrpc-content" role="tabpanel" aria-labelledby="data-dataset-table-api-jspnrpc-tab">
                         <p class="mt-2"><span name="information-documentation"></span> </p>
                         <div class="card mb-2 mt-2">
-                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-info mr-1 mt-1">GET</span> URL</span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-jsonrpc-get-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-info me-1 mt-1">GET</span> URL</span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-jsonrpc-get-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
                             <div class="card-body p-0 border-top">
                                 <pre class="line-numbers language-http m-0"><code id="data-dataset-table-api-jsonrpc-get-url"></code></pre>
@@ -123,8 +117,8 @@
                         </div>
                         <div class="card mb-2 mt-2">
 
-                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> URL</span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-jsonrpc-post-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-tertiary me-1 mt-1">POST</span> URL</span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-jsonrpc-post-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
 
                             <div class="card-body p-0 border-top">
@@ -133,8 +127,8 @@
                         </div>
 
                         <div class="card mb-2">
-                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> <span label="body"></span> </span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-jsonrpc-post-body" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-tertiary me-1 mt-1">POST</span> <span label="body"></span> </span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-jsonrpc-post-body" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
                             <div class="card-body p-0 border-top">
                                 <pre class="line-numbers language-json m-0"><code id="data-dataset-table-api-jsonrpc-post-body" name="api-object"></code></pre>
@@ -144,8 +138,8 @@
                     <div class="tab-pane fade" id="data-dataset-table-api-restful-content" role="tabpanel" aria-labelledby="data-dataset-table-api-restful-tab">
                         <p class="mt-2"><span name="information-documentation"></span></p>
                         <div class="card mb-2 mt-2">
-                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-info mr-1 mt-1">GET</span> <span class="badge badge-tertiary mr-1 mt-1">POST</span> <span>URL</span> </span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-restful-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-info me-1 mt-1">GET</span> <span class="badge bg-tertiary me-1 mt-1">POST</span> <span>URL</span> </span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-restful-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
                             <div class="card-body p-0 border-top">
                                 <pre class="line-numbers language-http m-0"><code id="data-dataset-table-api-restful-url"></code></pre>
@@ -155,8 +149,8 @@
                     <div class="tab-pane fade" id="data-dataset-table-api-pxapiv1-content" role="tabpanel" aria-labelledby="data-dataset-table-api-pxapiv1-tab">
                         <p class="mt-2"><span name="information-documentation"></span> </p>
                         <div class="card mb-2 mt-2">
-                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-info mr-1 mt-1">GET</span> URL</span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-get-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-info me-1 mt-1">GET</span> URL</span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-get-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
                             <div class="card-body p-0 border-top">
                                 <pre class="line-numbers language-http m-0"><code id="data-dataset-table-api-pxapiv1-get-url"></code></pre>
@@ -164,8 +158,8 @@
                         </div>
                         <div class="card mb-2 mt-2">
 
-                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> URL</span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-post-url" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-tertiary me-1 mt-1">POST</span> URL</span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-post-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
 
                             <div class="card-body p-0 border-top">
@@ -174,11 +168,31 @@
                         </div>
 
                         <div class="card mb-2">
-                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge badge-tertiary mr-1 mt-1">POST</span> <span label="body"></span> </span>
-                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-post-body" data-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-tertiary me-1 mt-1">POST</span> <span label="body"></span> </span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-pxapiv1-post-body" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
                             </div>
                             <div class="card-body p-0 border-top">
                                 <pre class="line-numbers language-json m-0"><code id="data-dataset-table-api-pxapiv1-post-body" name="api-object"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="data-dataset-table-api-data-connector-content" role="tabpanel" aria-labelledby="data-dataset-table-api-data-connector-tab">
+                        <p class="mt-2"><span name="information-documentation"></span> </p>
+                        <div class="card mb-2 mt-2">
+                            <div class="card-header d-flex w-100 justify-content-between"> <span><span class="badge bg-info me-1 mt-1">GET</span> URL</span>
+                                <span><i name="copy-api-info" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#data-dataset-table-api-data-connector-get-url" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard"></i></span>
+                            </div>
+                            <div class="card-body p-0 border-top">
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
+                                        <span label="fluid-time"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" disabled></input>
+                                    </div>
+                                </div>
+                                <pre class="line-numbers language-http m-0"><code id="data-dataset-table-api-data-connector-get-url"></code></pre>
                             </div>
                         </div>
                     </div>
@@ -187,118 +201,116 @@
             </div>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header" id="data-dataset-table-accordion-heading-widget">
-            <h2 class="mb-0">
-                <button class="btn btn-link px-2" data-toggle="collapse" data-target="#data-dataset-table-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-table-accordion-collapse-api">
-                    <i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="widget"></span>
-                </button>
-            </h2>
-        </div>
-        <div id="data-dataset-table-accordion-collapse-widget" class="collapse" aria-labelledby="data-dataset-table-accordion-heading-widget" data-parent="#data-dataset-table-accordion">
-            <div class="card-body">
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="data-dataset-table-accordion-heading-widget">
+            <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-table-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-table-accordion-collapse-widget">
+                <span label="widget"></span>
+            </button>
+        </h2>
+        <div id="data-dataset-table-accordion-collapse-widget" class="accordion-collapse collapse" aria-labelledby="data-dataset-table-accordion-heading-widget" data-bs-parent="#data-dataset-table-accordion">
+            <div class="accordion-body">
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
                         <span label="auto-update"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
                         <span label="fluid-time"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0" name="link-to-wip-wrapper" style="display:none">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover-dynamic="link-to-wip" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0" name="link-to-wip-wrapper" style="display:none">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover-dynamic="link-to-wip" style="cursor: help;"></i>
                         <span label="link-to-wip"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="link-to-wip" type="checkbox" class="bootstrap-toggle" data-toggle="toggle"></input>
+                        <input name="link-to-wip" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle"></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
                         <span label="copyright"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="include-copyright" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="include-copyright" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
                         <span label="link"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="include-link" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="include-link" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
                         <span label="title"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="include-title" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="include-title" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         <input type="text" class="form-control mt-2" name="title-value" autocomplete="off">
                     </div>
                 </div>
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-pagination" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-pagination" style="cursor: help;"></i>
                         <span label="pagination"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="include-pagination" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="include-pagination" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-buttons" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-buttons" style="cursor: help;"></i>
                         <span label="buttons"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="include-buttons" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="include-buttons" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-search" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-search" style="cursor: help;"></i>
                         <span label="search"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="include-search" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="include-search" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-responsive" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-responsive" style="cursor: help;"></i>
                         <span label="responsive"></span>
                     </div>
                     <div class="col-8 p-2">
-                        <input name="include-responsive" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                        <input name="include-responsive" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="hide-columns" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2 pt-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="hide-columns" style="cursor: help;"></i>
                         <span label="hide-columns"></span>
                     </div>
                     <div class="col-8 p-2">
@@ -307,9 +319,9 @@
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex flex-row-reverse">
-                        <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-custom-json" style="cursor: help;"></i>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2 pt-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-custom-json" style="cursor: help;"></i>
                         <span label="custom-JSON"></span>
                     </div>
                     <div class="col-8 p-2">
@@ -327,14 +339,14 @@
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0" name="make-selection-message" style="display: none;">
-                    <div class="bg-info text-light border-right col p-2">
+                <div class="border-top border-end border-start row mx-0" name="make-selection-message" style="display: none;">
+                    <div class="bg-info text-light border-end col p-2">
                         <span label="widget-make-selection"></span>
                     </div>
                 </div>
 
-                <div class="border-top border-right border-left row mx-0">
-                    <div class="bg-default border-right col-4 p-2 text-right font-weight-bold" label="snippet-code"></div>
+                <div class="border-top border-end border-start row mx-0">
+                    <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="snippet-code"></div>
                     <div class="col-8 p-0">
                         <p class="mb-0 p-2 bg-info text-light" label="widget-snippet-information" name="widget-snippet-information" style="display: none;"></p>
                         <pre class="line-numbers language-markup m-0"><code id="data-dataset-table-accordion-snippet-code"></code></pre>
@@ -348,27 +360,27 @@
                 </div>
 
                 <div class="border-top row mx-0"></div>
-
-
             </div>
         </div>
     </div>
 </div>
 
+
+
 <div id="data-dataset-table-templates" style="display: none">
     <div name="dimension-container" class="col-xl-6 col-sm-12">
         <div class="card mb-4">
             <div class="card-header bg-default text-dark d-flex justify-content-between align-items-center p-2"><span>
-                    <span class="font-weight-bold">
-                        <input name="select-all" data-toggle="tooltip" data-placement="top" title="" type="checkbox" value="" data-original-title="" label-tooltip="select-all">
+                    <span class="fw-bold">
+                        <input name="select-all" data-bs-toggle="tooltip" data-bs-placement="top" title="" type="checkbox" value="" data-original-title="" label-tooltip="select-all">
                         <span name="dimension-label"></span></span>
-                    <span name="dimension-count" class="badge badge-data badge-pill bg-info text-light"></span></span>
+                    <span name="dimension-count" class="badge bg-data rounded-pill bg-info text-light"></span></span>
                 <span><a name="geojson-link" href="" target="_blank" class="d-none"><i class="fas fa-external-link-alt"></i> <span label="geojson"></span>
-                    </a> <i name="sort-options" data-toggle="tooltip" data-placement="top" title="" class="sort-icon fas fa-sort px-1 fa-lg" data-original-title="" label-tooltip="sort"></i></span>
+                    </a> <i name="sort-options" data-bs-toggle="tooltip" data-bs-placement="top" title="" class="sort-icon fas fa-sort px-1 fa-lg" data-original-title="" label-tooltip="sort"></i></span>
             </div>
             <div class="card-body p-1">
                 <input name="dimension-filter" type="search" class="form-control mb-1" placeholder="Filter" aria-label="Filter" aria-describedby="basic-addon2" autocomplete="off">
-                <select name="dimension-select" class="custom-select" multiple="multiple" size="7" idn="" role="" sort="desc">
+                <select name="dimension-select" class="form-select" multiple="multiple" size="7" idn="" role="" sort="desc">
                 </select>
             </div>
 

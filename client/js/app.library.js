@@ -58,7 +58,7 @@ app.library.datatable.showExtraInfo = function (datatableSelector, callbackFunct
     // Refresh Prism highlight
     Prism.highlightAll();
     // Bootstrap tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
   });
 };
 
@@ -97,9 +97,9 @@ app.library.html.parseStaticLabel = function (keyword) {
       // If the Keyword exists in the Dictionary
       if (app.label.static[keyword]) {
         // If the data-original-title attribute exists
-        $(this).attr("data-original-title", app.label.static[keyword]);
+        $(this).attr("title", app.label.static[keyword]);
       } else {
-        $(this).attr("data-original-title", keyword);
+        $(this).attr("title", keyword);
       }
 
       $(this).removeAttr();
@@ -113,9 +113,9 @@ app.library.html.parseStaticLabel = function (keyword) {
       // If the Keyword exists in the Dictionary
       if (app.label.help[keyword]) {
         // If the data-original-title attribute exists
-        $(this).attr("data-content", app.label.help[keyword]);
+        $(this).attr("data-bs-content", app.label.help[keyword]);
       } else {
-        $(this).attr("data-content", keyword);
+        $(this).attr("data-bs-content", keyword);
       }
 
       $(this).removeAttr("label-popover");
@@ -149,9 +149,9 @@ app.library.html.parseDynamicPopover = function (element, keyword, params) {
   // If the Keyword exists in the Dictionary
   if (app.label.help[keyword]) {
     // If the data-original-title attribute exists
-    $(element).attr("data-content", app.label.help[keyword].sprintf(params));
+    $(element).attr("data-bs-content", app.label.help[keyword].sprintf(params));
   } else {
-    $(element).attr("data-content", keyword);
+    $(element).attr("data-bs-content", keyword);
   }
 
   $(element).popover({
@@ -196,8 +196,8 @@ app.library.html.boolean = function (bool, showColor, showFalse) {
  * */
 app.library.html.locked = function (textElement) {
   return $("<span>", {
-    "data-toggle": "tooltip",
-    "data-placement": "right",
+    "data-bs-toggle": "tooltip",
+    "data-bs-placement": "right",
     "title": app.label.static["locked"],
     html:
       $("<i>", {
@@ -214,8 +214,8 @@ app.library.html.locked = function (textElement) {
  * */
 app.library.html.tooltip = function (textElement, name) {
   return $("<span>", {
-    "data-toggle": "tooltip",
-    "data-placement": "right",
+    "data-bs-toggle": "tooltip",
+    "data-bs-placement": "right",
     "title": name,
     html: textElement
   }).get(0).outerHTML;
@@ -229,13 +229,13 @@ app.library.html.groupRole = function (approveFlag) {
   if (approveFlag === true) {
     return $("<i>", {
       class: "app-html-group-role fas fa-user-check text-success",
-      "data-toggle": "tooltip",
+      "data-bs-toggle": "tooltip",
       "title": app.label.static["approver"]
     }).get(0).outerHTML; // + " " + entry.GrpName;
   } else {
     return $("<i>", {
       class: "app-html-group-role fas fa-user-edit text-orange",
-      "data-toggle": "tooltip",
+      "data-bs-toggle": "tooltip",
       "title": app.label.static["editor"]
     }).get(0).outerHTML; // + " " + entry.GrpName;
   }
@@ -290,6 +290,31 @@ app.library.html.deleteButton = function (attributes, disabled) {
   return deleteButton.get(0).outerHTML;
 
 };
+
+app.library.html.editButton = function (attributes, disabled) {
+
+  disabled = disabled || false;
+
+  var editButton = $("<button>", {
+    class: "btn btn-info btn-sm",
+    name: C_APP_NAME_LINK_EDIT,
+    html:
+      $("<i>", {
+        class: "far fa-edit"
+      }).get(0).outerHTML + " " + app.label.static["edit"]
+  });
+
+  $.each(attributes, function (key, value) {
+    editButton.attr(key, value);
+  });
+
+  if (disabled) {
+    editButton.prop("disabled", true);
+  }
+
+  return editButton.get(0).outerHTML;
+
+};
 /**
  * Format bbcode as html
  * @param  {} bbCode
@@ -336,9 +361,11 @@ app.library.html.link.baseConstructor = function (attributes, textElement, textT
         class: iconElement
       }).get(0).outerHTML +
       " " +
-      textElement,
-
-    "data-toggle": textTootip ? "tooltip" : null,
+      $("<span>", {
+        text: textElement,
+        name: "link-text"
+      }).get(0).outerHTML,
+    "data-bs-toggle": textTootip ? "tooltip" : null,
     title: textTootip
   };
 
@@ -495,6 +522,100 @@ app.library.bootstrap.accordianToggleIcon = function () {
       .addClass("fas fa-minus-circle");
   });
 };
+
+//get bootstrap 5 breakpoint and handle layout
+app.library.bootstrap.getBreakPoint = function () {
+  var bsBreakPoint = null;
+  switch (true) {
+    case window.innerWidth >= 1400:
+      bsBreakPoint = "xxl"
+      break;
+    case window.innerWidth >= 1200:
+      bsBreakPoint = "xl"
+      break;
+    case window.innerWidth >= 992:
+      bsBreakPoint = "lg"
+      break;
+    case window.innerWidth >= 768:
+      bsBreakPoint = "md"
+      break;
+    case window.innerWidth >= 576:
+      bsBreakPoint = "sm"
+      break;
+    case window.innerWidth < 576:
+      bsBreakPoint = "xs"
+      break;
+    default:
+      bsBreakPoint = "xs"
+      break;
+  }
+  $("#footer").find('[name="bs-breakpoint"]').text(bsBreakPoint);
+
+  switch (bsBreakPoint) {
+    case "xs":
+    case "sm":
+    case "md":
+      //side panel for all entities
+      if (!$("#panel").is(':empty')) {
+        $("#panel").hide();
+        $("#panel-toggle").show();
+        $("#panel-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
+
+        $("#panel [name=matrix-notes] [name=notes]").find(".collapse").collapse('hide');
+      }
+      else {
+        $("#panel-toggle").hide();
+      }
+
+      //move search input
+      if ($("#data-search-row-desktop [name=search-input-group-holder]").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
+        $("#data-search-row-responsive").show();
+        $("#data-search-row-desktop [name=search-input-group-holder]").hide();
+      }
+
+      //Collapse data navigation always on small
+      $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
+
+      //if search results on page
+      if ($("#data-search-row-desktop").find("[name=search-results][name=search-results]").is(":visible")) {
+        $("#data-filter-toggle").show();
+        $("#data-filter").hide();
+        $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
+      }
+
+      //if in data views
+      if (!$("#data-dataset-selected-table").is(":empty") && !$("#data-search-row-desktop").find("[name=search-results]").is(":visible")) {
+        $("#data-filter-toggle").hide();
+      }
+
+      break;
+    default:
+      //default position for search input
+      if ($("#data-search-row-desktop [name=search-input-group-holder]").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
+        $("#data-search-row-desktop [name=search-input-group-holder]").show();
+        $("#data-search-row-responsive").hide();
+      };
+
+      $("#panel [name=matrix-notes] [name=notes]").find(".collapse").collapse('show');
+
+      //always show panel
+      $("#panel").show();
+
+      //never show toggle buttons
+      $("#panel-toggle").hide();
+      $("#data-filter-toggle").hide();
+
+      //if search results on page
+      if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && (!$("#data-search-row-desktop").find("[name=search-results-non-archived]").is(":empty") || !$("#data-search-row-desktop").find("[name=search-results-archived]").is(":empty"))) {
+        $("#data-filter").show();
+        $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
+      };
+      break;
+  }
+
+
+}
+
 //#endregion
 
 //#region Utility
@@ -659,6 +780,9 @@ app.library.utility.arrayHasDuplicate = function (items) {
   $.each(items, function (index, value) {
     itemsLowerCase.push(value.trim().toLowerCase())
   });
+  //output the duplicates in the console for information
+  var duplicates = itemsLowerCase.filter((item, index) => itemsLowerCase.indexOf(item) !== index);
+  console.log(duplicates);
   return (new Set(itemsLowerCase)).size !== itemsLowerCase.length;
 };
 

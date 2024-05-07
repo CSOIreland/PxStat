@@ -104,8 +104,8 @@ app.data.dataset.table.drawDimensions = function () {
     $("#data-dataset-table-accordion-snippet-code").empty();
     $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").show();
     $("#data-dataset-table-accordion-collapse-widget").find("[name=widget-snippet-information]").hide();
-    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('disable');
-
+    $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=link-to-wip], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('disable');
+    $("#data-dataset-table-accordion-collapse-widget").find("[name=title-value]").prop('disabled', true);
 
     //check for WIP
     if (app.data.RlsCode) {
@@ -144,6 +144,7 @@ app.data.dataset.table.drawDimensions = function () {
         dimensionContainer.find("[name=dimension-label]").html(value.label + dimensionCode);
         dimensionContainer.find("[name=dimension-count]").text(value.length);
         dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
+        dimensionContainer.find("[name=select-all]").attr("role", value.role);
         dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
         dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.metric[index]);
 
@@ -176,11 +177,13 @@ app.data.dataset.table.drawDimensions = function () {
         dimensionContainer.find("[name=dimension-label]").html(value.label + dimensionCode);
         dimensionContainer.find("[name=dimension-count]").text(value.length);
         dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
+        dimensionContainer.find("[name=select-all]").attr("role", value.role);
         dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
         dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.role.time[index]);
 
         $.each(value.id, function (variableIndex, variable) {
             var option = $('<option>', {
+                "data-position": (value.id.length - variableIndex) - 1,
                 "value": variable,
                 "data-code-true": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : "") + " (" + variable + ")",
                 "data-code-false": value.Category(variableIndex).label + (value.Category(variableIndex).unit ? " (" + value.Category(variableIndex).unit.label + ")" : ""),
@@ -213,6 +216,7 @@ app.data.dataset.table.drawDimensions = function () {
             dimensionContainer.find("[name=dimension-label]").html(value.label + dimensionCode);
             dimensionContainer.find("[name=dimension-count]").text(value.length);
             dimensionContainer.find("[name=select-all]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
+            dimensionContainer.find("[name=select-all]").attr("role", value.role);
             dimensionContainer.find("[name=sort-options]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
             dimensionContainer.find("[name=dimension-filter]").attr("idn", app.data.dataset.metadata.jsonStat.id[index]);
 
@@ -258,13 +262,25 @@ app.data.dataset.table.drawDimensions = function () {
                 if (!select.find("option[value='" + key + "']").is(':selected')) {
                     var textWithCode = thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "") + " (" + key + ")";
                     var textWithoutCode = thisDimension.Category(key).label + (thisDimension.Category(key).unit ? " (" + thisDimension.Category(key).unit.label + ")" : "");
-                    select.append($('<option>', {
-                        "value": key,
-                        "data-code-true": textWithCode,
-                        "data-code-false": textWithoutCode,
-                        "title": value,
-                        "text": !$('#data-dataset-table-code-toggle').is(':checked') ? textWithCode : textWithoutCode
-                    }));
+                    if (select.attr("role") == "time") {
+                        select.prepend($('<option>', {
+                            "value": key,
+                            "data-code-true": textWithCode,
+                            "data-code-false": textWithoutCode,
+                            "title": value,
+                            "text": !$('#data-dataset-table-code-toggle').is(':checked') ? textWithCode : textWithoutCode
+                        }));
+                    }
+                    else {
+                        select.append($('<option>', {
+                            "value": key,
+                            "data-code-true": textWithCode,
+                            "data-code-false": textWithoutCode,
+                            "title": value,
+                            "text": !$('#data-dataset-table-code-toggle').is(':checked') ? textWithCode : textWithoutCode
+                        }));
+                    }
+
                 };
             }
         });
@@ -307,6 +323,16 @@ app.data.dataset.table.drawDimensions = function () {
                 $(this).prop("selected", false);
             });
         }
+
+        if ($(this).attr("role") == "time") {
+            if (select.val().length == 0) {
+                $("#data-dataset-table-api-data-connector-content").find("[name=fluid-time]").bootstrapToggle('off').bootstrapToggle('disable');
+            }
+            else {
+                $("#data-dataset-table-api-data-connector-content").find("[name=fluid-time]").bootstrapToggle('enable');
+            }
+        }
+
         $("#data-dataset-table-result").hide();
         app.data.dataset.table.response = null;
         app.data.dataset.table.jsonStat = null;
@@ -402,6 +428,9 @@ app.data.dataset.table.drawDimensions = function () {
 
     //click on an option, refresh count
     $("#data-dataset-table-nav-content").find("[name=dimension-select]").once('change', function () {
+        if ($(this).attr("role") == "time") {
+            $("#data-dataset-table-api-data-connector-content").find("[name=fluid-time]").bootstrapToggle('enable');
+        }
         $("#data-dataset-table-result").hide();
         app.data.dataset.table.response = null;
         app.data.dataset.table.jsonStat = null;
@@ -493,11 +522,13 @@ app.data.dataset.table.buildApiParams = function () {
         //enable RESTful and PxAPIv1 tabs
         $("#data-dataset-table-api-restful-tab").removeClass("disabled");
         $("#data-dataset-table-api-pxapiv1-tab").removeClass("disabled");
+        $("#data-dataset-table-api-data-connector-tab").removeClass("disabled");
     }
     else {
         //disable RESTful and PxAPIv1 tabs
         $("#data-dataset-table-api-restful-tab").addClass("disabled");
         $("#data-dataset-table-api-pxapiv1-tab").addClass("disabled");
+        $("#data-dataset-table-api-data-connector-tab").addClass("disabled");
     }
 
     $("#data-dataset-table-api-jspnrpc-content [name=information-documentation]").html(
@@ -591,6 +622,7 @@ app.data.dataset.table.buildApiParams = function () {
         "response": {
             "format": null,
             "pivot": app.data.dataset.table.pivot.dimensionCode || null,
+            "codes": !$('#data-dataset-table-code-toggle').is(':checked')
         }
     };
 
@@ -612,6 +644,8 @@ app.data.dataset.table.buildApiParams = function () {
             pxapiv1Query.response.format = $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type') ? $("#data-dataset-table-accordion [name=format]").find('option:selected').data('frm-type').toLowerCase() : C_APP_PXAPIV1_JSONSTAT_2X;
             break;
     }
+
+    var dataConnectorQuery = $.extend(true, {}, pxapiv1Query);
 
     $.each(apiParams.dimension, function (key, value) {
         pxapiv1Query.query.push({
@@ -641,7 +675,69 @@ app.data.dataset.table.buildApiParams = function () {
 
     $("#data-dataset-table-api-pxapiv1-post-body").hide().text(JSON.stringify(pxapiv1Query, null, "\t")).fadeIn();
 
+    //data connector
+    $.each(apiParams.dimension, function (key, value) {
+        if (app.data.dataset.metadata.jsonStat.Dimension(key).role == "time") {
+            var dimensionObj = {
+                "code": key,
+                "selection": {
+                    "filter": $("#data-dataset-table-api-data-connector-content").find("[name=fluid-time]").is(':checked') ? "fluid" : "item",
+                    "values": []
+                }
+            };
 
+            if (!$("#data-dataset-table-nav-content select[idn='" + key + "'] option:selected").length) {
+                $("#data-dataset-table-nav-content select[idn='" + key + "'] option").each(function (indexTimeVariable, valueTimeVariable) {
+                    dimensionObj.selection.values.push($(this).data("position"))
+                });
+            }
+            else {//one or more time selected
+                $("#data-dataset-table-nav-content select[idn='" + key + "'] option:selected").each(function () {
+                    dimensionObj.selection.values.push(
+                        $("#data-dataset-table-api-data-connector-content").find("[name=fluid-time]").is(':checked')
+                            ? $(this).data("position")
+                            : $(this).val()
+                    )
+                });
+            }
+            dataConnectorQuery.query.push(dimensionObj);
+        }
+        else {
+            dataConnectorQuery.query.push({
+                "code": key,
+                "selection": {
+                    "filter": "item",
+                    "values": value.category.index
+                }
+            });
+        }
+    });
+
+    //fluid time is checked but no variables are selected or all variables are selected from one dimension
+    if ($.isEmptyObject(apiParams.dimension) && $("#data-dataset-table-api-data-connector-content").find("[name=fluid-time]").is(':checked')) {
+        var dimensionObj = {
+            "code": app.data.dataset.metadata.timeDimensionCode,
+            "selection": {
+                "filter": "fluid",
+                "values": []
+            }
+        };
+        $("#data-dataset-table-nav-content select[idn='" + app.data.dataset.metadata.timeDimensionCode + "'] option:selected").each(function (indexTimeVariable, valueTimeVariable) {
+            dimensionObj.selection.values.push($(this).data("position"))
+        });
+        if (dimensionObj.selection.values.length) {
+            dataConnectorQuery.query.push(dimensionObj);
+        }
+
+    }
+
+    $("#data-dataset-table-api-data-connector-get-url").hide().text(encodeURI(app.config.url.api.restful
+        + "/PxStat.Data.Cube_API.PxAPIv1"
+        + "/" + JsonQuery.params.extension.language.code
+        + "/" + app.data.dataset.metadata.jsonStat.extension.subject.code
+        + "/" + app.data.dataset.metadata.jsonStat.extension.product.code
+        + "/" + app.data.MtrCode
+        + "?query=" + JSON.stringify(dataConnectorQuery))).fadeIn();
     // Refresh the Prism highlight
     Prism.highlightAll();
 };
@@ -692,7 +788,7 @@ app.data.dataset.table.drawPivotDropdown = function () {
     $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").append(
         $("<a>", {
             "name": "pivot-option",
-            "class": "dropdown-item font-weight-bold",
+            "class": "dropdown-item fw-bold",
             "href": "#",
             "text": app.label.static["none"]
         })
@@ -723,7 +819,7 @@ app.data.dataset.table.drawPivotDropdown = function () {
             "class": "dropdown-item",
             "href": "#",
             "html": $("<i>", {
-                class: "fas fa-info-circle mr-2"
+                class: "fas fa-info-circle me-2"
             }).get(0).outerHTML + app.label.static["advanced"]
         })
     );
@@ -732,12 +828,12 @@ app.data.dataset.table.drawPivotDropdown = function () {
         e.preventDefault();
         $("#data-dataset-table-nav-content").find("[name=selected-pivot]").text($(this).text());
         app.data.dataset.table.pivot.dimensionCode = $(this).data("dimension-code") || null;
-        $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option]").removeClass("font-weight-bold");
+        $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option]").removeClass("fw-bold");
         if (!app.data.dataset.table.pivot.dimensionCode) {
-            $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option]").first().addClass("font-weight-bold");
+            $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option]").first().addClass("fw-bold");
         }
         else {
-            $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option][data-dimension-code='" + app.data.dataset.table.pivot.dimensionCode + "']").addClass("font-weight-bold");
+            $("#data-dataset-table-nav-content").find("[name=pivot-dimension-options]").find("[name=pivot-option][data-dimension-code='" + app.data.dataset.table.pivot.dimensionCode + "']").addClass("fw-bold");
         }
         app.data.dataset.table.buildApiParams();
         if (app.data.dataset.table.jsonStat) {
@@ -770,11 +866,10 @@ app.data.dataset.table.confirmHardThreshold = function (pMessage) {
     $("#data-dataset-table-confirm-hard").find('.modal-body > p').empty().html(pMessage);
 
     // Display the Modal
-    $("#data-dataset-table-confirm-hard").modal();
+    $("#data-dataset-table-confirm-hard").modal("show");
 };
 
 app.data.dataset.table.confirmSoftThreshold = function (pMessage, pCallbackMethod, pCallbackParams) {
-
     // Set the body of the Modal - Empty the container first
     $("#data-dataset-table-confirm-soft").find('.modal-body > p').empty().html(pMessage);
 
@@ -787,7 +882,7 @@ app.data.dataset.table.confirmSoftThreshold = function (pMessage, pCallbackMetho
     });
 
     // Display the Modal
-    $("#data-dataset-table-confirm-soft").modal();
+    $("#data-dataset-table-confirm-soft").modal("show");
 };
 
 app.data.dataset.table.ajax.data = function () {
@@ -924,6 +1019,14 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         $("#data-dataset-table-accordion-collapse-widget").find("[name=make-selection-message]").hide();
         $("#data-dataset-table-accordion-collapse-widget").find("[name=widget-snippet-information]").show();
         $("#data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]").bootstrapToggle('enable');
+
+        if (app.data.RlsCode) {
+            if (!app.data.isLive) {
+                $("#data-dataset-table-accordion-collapse-widget [name=link-to-wip]").bootstrapToggle('enable');
+            }
+        }
+
+        $("#data-dataset-table-accordion-collapse-widget").find("[name=title-value]").prop('disabled', false);
         $("#data-dataset-table-accordion-collapse-widget [name=custom-config]").prop("disabled", false);
         $("#data-dataset-table-accordion-collapse-widget [name=add-custom-configuration]").prop("disabled", false);
 
@@ -1027,9 +1130,26 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
             app.data.dataset.table.snippet.configuration.metadata.api.query = {};
 
             app.data.dataset.table.snippet.configuration.data.api.query.url = app.config.url.api.jsonrpc.private;
-            app.data.dataset.table.snippet.configuration.data.api.query.data = JsonQuery;
+
             app.data.dataset.table.snippet.configuration.data.api.response = {};
 
+            //if link to WIP, then make query explicit so it is always a point in time query with no additional variables added at a later date because they selected all variables in initial query
+
+            var linkToWipQuery = $.extend(true, {}, JsonQuery);
+            linkToWipQuery.params.id = [];
+            linkToWipQuery.params.dimension = {};
+
+            $("#data-dataset-table-nav-content").find("[name=dimension-containers]").find("select").each(function (index) {
+                if ($(this).val().length) {
+                    linkToWipQuery.params.id.push($(this).attr("idn"));
+                    linkToWipQuery.params.dimension[$(this).attr("idn")] = {
+                        "category": {
+                            "index": $(this).val()
+                        }
+                    };
+                };
+            });
+            app.data.dataset.table.snippet.configuration.data.api.query.data = linkToWipQuery;
         }
 
         else {
@@ -1162,7 +1282,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
         // Draw heading
         var codeSpan = $('<span>', {
             "name": "code",
-            "class": $('#data-dataset-table-code-toggle').is(':checked') ? "badge badge-pill badge-neutral mx-2 font-weight-bold d-none" : "badge badge-pill badge-neutral mx-2 font-weight-bold",
+            "class": $('#data-dataset-table-code-toggle').is(':checked') ? "badge rounded-pill bg-neutral text-dark mx-2 fw-bold d-none" : "badge rounded-pill bg-neutral text-dark mx-2 fw-bold",
             "text": data.id[i]
         }).get(0).outerHTML;
 
@@ -1195,7 +1315,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
                     default:
                         var codeSpan = $('<span>', {
                             "name": "code",
-                            "class": $('#data-dataset-table-code-toggle').is(':checked') ? "badge badge-pill badge-neutral mx-2 d-none" : "badge badge-pill badge-neutral mx-2",
+                            "class": $('#data-dataset-table-code-toggle').is(':checked') ? "badge rounded-pill bg-neutral text-dark mx-2 d-none" : "badge rounded-pill bg-neutral text-dark mx-2",
                             "text": cell
                         }).get(0).outerHTML;
                         return codeSpan + data.Dimension(data.id[i]).Category(cell).label;
@@ -1226,7 +1346,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
             tableColumns.push({
                 "data": value,
                 "type": "data",
-                "class": "text-right font-weight-bold",
+                "class": "text-end fw-bold",
                 "defaultContent": app.config.entity.data.datatable.null,
                 "render": function (cell, type, row, meta) {
                     // If pivoting by Statitic then the decimals may be different within the same row
@@ -1241,7 +1361,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
             });
             var codeSpan = $('<span>', {
                 "name": "code",
-                "class": $('#data-dataset-table-code-toggle').is(':checked') ? "badge badge-pill badge-neutral mx-2 d-none" : "badge badge-pill badge-neutral mx-2",
+                "class": $('#data-dataset-table-code-toggle').is(':checked') ? "badge rounded-pill bg-neutral text-dark mx-2 d-none" : "badge rounded-pill bg-neutral text-dark mx-2",
                 "text": value
             }).get(0).outerHTML;
 
@@ -1251,7 +1371,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
                     "html": data.Dimension(app.data.dataset.table.pivot.dimensionCode).Category(value).label
                         + (app.data.dataset.table.pivot.isMetric ? " (" + data.Dimension(app.data.dataset.table.pivot.dimensionCode).Category(value).unit.label + ")" : "")
                         + codeSpan,
-                    "class": "text-right text-light bg-primary"
+                    "class": "text-end text-light bg-primary"
                 });
 
             $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=header-row]").append(pivotHeading);
@@ -1260,7 +1380,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
         tableColumns.push({
             "data": "value",
             "type": "data",
-            "class": "text-right font-weight-bold",
+            "class": "text-end fw-bold",
             "defaultContent": app.config.entity.data.datatable.null,
             "render": function (cell, type, row, meta) {
                 return app.library.utility.formatNumber(cell, row.unit.decimals);
@@ -1270,7 +1390,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
         var valueHeading = $("<th>",
             {
                 "html": app.label.static["value"],
-                "class": "text-right text-light bg-primary"
+                "class": "text-end text-light bg-primary"
             });
         $("#data-dataset-table-nav-content").find("[name=datatable]").find("[name=header-row]").append(valueHeading);
     }
@@ -1318,7 +1438,7 @@ app.data.dataset.table.callback.drawDatatable = function () {
         app.data.dataset.table.callback.drawSnippetCode(true);
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     //scroll to top of datatable -- Data entity
 

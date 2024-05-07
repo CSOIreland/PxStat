@@ -198,7 +198,7 @@ app.keyword.product.callback.read = function (data) {
  * Draw Callback for Datatable
  */
 app.keyword.drawCallback = function () {
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   // Display  the modal "modal-update-reason" on "[name=" + C_APP_NAME_LINK_EDIT + "]" click
   $("#keyword-product-read table").find("[name=" + C_APP_NAME_LINK_EDIT + "]").once("click", function (e) {

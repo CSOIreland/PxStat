@@ -8,6 +8,7 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["tracing"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["tracing"]);
+  app.navigation.setState("#nav-link-tracing");
 
   app.tracing.ajax.readType();
   app.tracing.setDatePicker();
@@ -35,9 +36,9 @@ $(document).ready(function () {
   });
 
   // Bootstrap tooltip
-  $('[data-toggle="tooltip"]').tooltip();
+  $('[data-bs-toggle="tooltip"]').tooltip();
   //run bootstrap toggle to show/hide toggle button
-  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+  app.library.bootstrap.getBreakPoint();
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();
 

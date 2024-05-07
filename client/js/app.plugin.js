@@ -262,79 +262,6 @@ $(document).ready(function () {
 });
 
 /*******************************************************************************
-Application - Plugin - Bootstrap breakpoint
-*******************************************************************************/
-$(document).ready(function () {
-  bsBreakpoints.toggle = function (breakPoint) {
-
-    //display breakpoint in hidden div in footer
-    $("#footer").find("[name=bs-breakpoint]").text(breakPoint);
-
-    switch (breakPoint) {
-      case "xSmall":
-      case "small":
-      case "medium":
-        //side panel for all entities
-        if (!$("#panel").is(':empty')) {
-          $("#panel").hide();
-          $("#panel-toggle").show();
-          $("#panel-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
-
-          $("#panel [name=matrix-notes] [name=notes]").find(".collapse").collapse('hide');
-        }
-        else {
-          $("#panel-toggle").hide();
-        }
-
-        //move search input
-        if ($("#data-search-row-desktop [name=search-input-group-holder]").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
-          $("#data-search-row-responsive").show();
-          $("#data-search-row-desktop [name=search-input-group-holder]").hide();
-        }
-
-        //Collapse data navigation always on small
-        $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
-
-        //if search results on page
-        if ($("#data-search-row-desktop").find("[name=search-results][name=search-results]").is(":visible")) {
-          $("#data-filter-toggle").show();
-          $("#data-filter").hide();
-          $("#data-filter-toggle").find("i").removeClass().addClass("fas fa-plus-circle");
-        }
-
-        //if in data views
-        if (!$("#data-dataset-selected-table").is(":empty") && !$("#data-search-row-desktop").find("[name=search-results]").is(":visible")) {
-          $("#data-filter-toggle").hide();
-        }
-
-        break;
-      default:
-        //default position for search input
-        if ($("#data-search-row-desktop [name=search-input-group-holder]").is(":visible") || $("#data-search-row-responsive").is(":visible")) {
-          $("#data-search-row-desktop [name=search-input-group-holder]").show();
-          $("#data-search-row-responsive").hide();
-        };
-
-        $("#panel [name=matrix-notes] [name=notes]").find(".collapse").collapse('show');
-
-        //always show panel
-        $("#panel").show();
-
-        //never show toggle buttons
-        $("#panel-toggle").hide();
-        $("#data-filter-toggle").hide();
-
-        //if search results on page
-        if ($("#data-search-row-desktop").find("[name=search-results]").is(":visible") && (!$("#data-search-row-desktop").find("[name=search-results-non-archived]").is(":empty") || !$("#data-search-row-desktop").find("[name=search-results-archived]").is(":empty"))) {
-          $("#data-filter").show();
-          $("#data-navigation").find("[name=menu]").find(".navbar-collapse").collapse('hide');
-        };
-        break;
-    }
-  }
-});
-
-/*******************************************************************************
 Application - Plugin - Datatable data sorting
 *******************************************************************************/
 jQuery.extend(jQuery.fn.dataTableExt.oSort, {
@@ -348,26 +275,6 @@ jQuery.extend(jQuery.fn.dataTableExt.oSort, {
     b = b.toString().replace(app.config.entity.data.datatable.null, -9999999999).replaceAll(app.library.utility.thousandSeparator(), "").replaceAll(app.library.utility.decimalSeparator(), ".");
     return jQuery.fn.dataTableExt.oSort["natural-nohtml-desc"](a, b);
   }
-});
-
-/*******************************************************************************
-Application - Plugin - Back button detection
-*******************************************************************************/
-app.plugin.backbutton = {};
-app.plugin.backbutton.check = true;
-window.addEventListener("beforeunload", function (event) {
-  if (!app.plugin.backbutton.check)
-    return;
-
-  if (!window._avoidbeforeunload) {
-    // Cancel the event as stated by the standard.
-    event.preventDefault();
-    // Chrome requires returnValue to be set.
-    event.returnValue = '';
-  }
-
-  // reset anyway
-  window._avoidbeforeunload = false
 });
 
 
@@ -395,7 +302,7 @@ app.plugin.cookiconsent.deny = function (reload) {
 
   if (reload) {
     // Prevent back-button check
-    app.plugin.backbutton.check = false;
+
     // Force page reload in order to unload (not set at all) cookies from different domains (i.e. sharethis)
     window.location.href = window.location.pathname;
   } else {

@@ -101,8 +101,8 @@ app.release.information.render = function (data) {
     if (app.release.isModerator) {
         $("#release-information [name=rls-analytical-flag]").off("change");
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["true"],
-            off: app.label.static["false"],
+            onlabel: app.label.static["true"],
+            offlabel: app.label.static["false"],
             onstyle: "light",
             offstyle: "neutral",
             width: C_APP_TOGGLE_LENGTH
@@ -116,10 +116,10 @@ app.release.information.render = function (data) {
     else {
         $("#release-information [name=rls-analytical-flag]").off("change");
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["true"],
-            off: app.label.static["false"],
-            onstyle: "success",
-            offstyle: "warning",
+            onlabel: app.label.static["true"],
+            offlabel: app.label.static["false"],
+            onstyle: "success text-light",
+            offstyle: "warning text-dark",
             width: C_APP_TOGGLE_LENGTH
         });
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle(data.RlsAnalyticalFlag ? "on" : "off");
@@ -139,7 +139,7 @@ app.release.information.render = function (data) {
     }
 
     // Enable tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 };
 //#endregion
 

@@ -1,80 +1,124 @@
 /* Set the progress-bar height */
 
 .progress {
-  height: 40px;
+	height: 40px;
 }
 
 /* Avoid wrapping white spaces or breaking words in a button */
 
 .btn {
-  white-space: nowrap !important;
-  word-wrap: normal;
+	white-space: nowrap !important;
+	word-wrap: normal;
 }
 
 /* No decoration for disabled links */
 
 a[disabled] {
-  cursor: default;
-  text-decoration: none;
+	cursor: default;
+	text-decoration: none;
 }
 
 /* Increase font-size and padding for accessibility*/
 
 .badge {
-  font-size: 90%;
-  font-weight: normal;
-  padding: 0.5rem !important;
+	font-size: 90%;
+	font-weight: normal;
+	padding: 0.5rem !important;
 }
 
 /* Strech Buttons to fit the -sm size */
 
 @media (max-width: 576px) {
-  button.btn {
-    display: block;
-    width: 100%;
-    margin-bottom: 0.25rem !important;
-  }
+	button.btn {
+		display: block;
+		width: 100%;
+		margin-bottom: 0.25rem;
+	}
 
-  button.toggle-on {
-    width: auto;
-  }
+	.input-group button.btn {
+		width: auto;
+		margin-bottom: 0px;
+	}
+
+	button.toggle-on {
+		width: auto;
+	}
 }
 
 
 #navigation a.text-light:focus,
 #navigation a.text-light:hover {
 
-  color: #ffffff !important;
+	color: #ffffff !important;
 
 }
-
-
 
 
 /* Specific CSS for Modal Subscriber Access Login Buttons - Stretch Buttons to fit the -sm size */
 @media (min-width: 576px) {
-  #modal-subscriber-login-email .modal-footer .btn {
-    width: 100%
-  }
+	#modal-subscriber-login-email .modal-footer .btn {
+		width: 100%
+	}
 }
 
 /* Specific CSS for Modal Subscriber Access Login Buttons*/
 @media (min-width: 768px) {
-  #modal-subscriber-login-email .modal-footer .btn {
-    width: auto
-  }
+	#modal-subscriber-login-email .modal-footer .btn {
+		width: auto
+	}
 }
 
 /* Specific CSS for Modal Subscriber Access Login Buttons*/
 @media (min-width: 992px) {
-  #modal-subscriber-login-email .modal-footer .btn {
-    width: auto
-  }
+	#modal-subscriber-login-email .modal-footer .btn {
+		width: auto
+	}
 }
 
 /* Specific CSS for Modal Subscriber Access Login Buttons*/
 @media (min-width: 1200px) {
-  #modal-subscriber-login-email .modal-footer .btn {
-    width: auto
-  }
+	#modal-subscriber-login-email .modal-footer .btn {
+		width: auto
+	}
+}
+
+/*Migration from bootstrap 4 to bootstrap 5 overrides*/
+.btn-link,
+a {
+	text-decoration: none;
+}
+
+.btn-link:hover,
+a:hover {
+	text-decoration: underline;
+}
+
+a.dropdown-item:hover {
+	text-decoration: none;
+}
+
+/* .nav-item .nav-link.active {
+  background-color: #fff;
+} */
+
+.accordion-button:after {
+	display: none;
+}
+
+.accordion-button:before {
+	content: "\f056";
+	font-family: "Font Awesome 6 Free";
+	padding-right: 6px;
+	font-weight: 900;
+}
+
+.accordion-button {
+	background-color: var(--bs-card-cap-bg);
+}
+
+.accordion-button.collapsed:before {
+	content: "\f055";
+	font-family: "Font Awesome 6 Free";
+	padding-right: 3px;
+	font-weight: 900;
 }

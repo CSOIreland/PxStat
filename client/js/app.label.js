@@ -19,7 +19,7 @@ app.label.init = function () {
         targetLanguage = Cookies.getJSON(C_COOKIE_LANGUAGE);
     }
     // Reset Cookie language in case the target language fails
-    Cookies.set(C_COOKIE_LANGUAGE, app.config.language, app.config.plugin.jscookie.persistent);
+    Cookies.setJSON(C_COOKIE_LANGUAGE, app.config.language, app.config.plugin.jscookie.persistent);
     // Store the reset language for later use
     app.label.language = $.extend(true, {}, app.config.language);
 
@@ -29,14 +29,14 @@ app.label.init = function () {
     });
 
     // Attempt to merge the target language if different from the master
-    if (targetLanguage.iso.code != C_APP_MASTER_LANGUAGE) {
+    if (targetLanguage && targetLanguage.iso.code != C_APP_MASTER_LANGUAGE) {
         //fetch client language
         api.ajax.config(C_APP_URL_PXLANGUAGEPLUGINS + targetLanguage.iso.code + ".json", function (label) {
             //No need to check for server language pack. When we draw the language dropdown, we already handle this
             // Extend lable sourced form target language
             $.extend(true, app.label, label);
             // Set the target language in the cookie
-            Cookies.set(C_COOKIE_LANGUAGE, targetLanguage, app.config.plugin.jscookie.persistent);
+            Cookies.setJSON(C_COOKIE_LANGUAGE, targetLanguage, app.config.plugin.jscookie.persistent);
             // Store for later use
             app.label.language = targetLanguage;
         });

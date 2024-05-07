@@ -12,24 +12,19 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-xl-6 mb-2">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <label class="input-group-text bg-info text-light" for="inputGroupSelect01" label="mode"></label>
-                            </div>
-                            <select name="mode-select" class="custom-select">
-
+                        <div class="input-group" name="mode-select-wrapper" style="display: none;">
+                            <label class="input-group-text bg-info text-light" for="inputGroupSelect01" label="mode"></label>
+                            <select name="mode-select" class="form-select">
                             </select>
-                            <div class="input-group-append">
-                                <span class="input-group-text bg-white">
-                                    <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info" data-placement="top" data-trigger="hover" label-popover="map-mode" style="cursor: help;"></i>
-                                </span>
-                            </div>
+                            <span class="input-group-text bg-white">
+                                <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info" data-bs-placement="top" data-bs-trigger="hover" label-popover="map-mode" style="cursor: help;"></i>
+                            </span>
                         </div>
 
                     </div>
-                    <div class="col-xl-6 mb-2 text-sm-right">
+                    <div class="col-xl-6 mb-2 text-sm-end">
                         <span name="save-query-wrapper">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
                             <button name="save-query" class="btn btn-tertiary" type="button">
                                 <i class="far fa-save"></i> <span label="save-query"></span>
                             </button>
@@ -42,7 +37,7 @@
                 <div id="pxwidget-map" class="pxwidget">
                 </div>
             </div>
-            <div class="card-footer text-right">
+            <div class="card-footer text-end">
                 <a class="btn btn-primary" name="download-chart" href="#" role="button"><i class="fas fa-download"></i> <span label="download"></span></a>
             </div>
         </div>
@@ -54,97 +49,95 @@
         </div>
     </div>
 
-    <div class="accordion mt-2 col-sm-12" id="data-dataset-map-accordion">
-        <div class="card">
-            <div class="card-header" id="data-dataset-map-accordion-heading-widget">
-                <h2 class="mb-0">
-                    <button class="btn btn-link px-2" data-toggle="collapse" data-target="#data-dataset-map-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-map-accordion-collapse-widget">
-                        <i name="accordion-icon" class="fas fa-plus-circle"></i> <span label="widget"></span>
-                    </button>
-                </h2>
-            </div>
-            <div id="data-dataset-map-accordion-collapse-widget" class="collapse" aria-labelledby="data-dataset-map-accordion-heading-widget" data-parent="#data-dataset-map-accordion">
-                <div class="card-body">
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
+    <div class="accordion mt-2" id="data-dataset-map-accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="data-dataset-map-accordion-heading-widget">
+                <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-map-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-map-accordion-collapse-widget">
+                    <span label="widget"></span>
+                </button>
+            </h2>
+            <div id="data-dataset-map-accordion-collapse-widget" class="accordion-collapse collapse" aria-labelledby="data-dataset-map-accordion-heading-widget" data-bs-parent="#data-dataset-map-accordion">
+                <div class="accordion-body">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
                             <span label="auto-update"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                            <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
                             <span label="fluid-time"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                            <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0" name="link-to-wip-wrapper" style="display:none">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover-dynamic="link-to-wip" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0" name="link-to-wip-wrapper" style="display:none">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover-dynamic="link-to-wip" style="cursor: help;"></i>
                             <span label="link-to-wip"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="link-to-wip" type="checkbox" class="bootstrap-toggle" data-toggle="toggle"></input>
+                            <input name="link-to-wip" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle"></input>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
                             <span label="copyright"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="include-copyright" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                            <input name="include-copyright" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
                             <span label="link"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="include-link" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                            <input name="include-link" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
                             <span label="title"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="include-title" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                            <input name="include-title" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                             <input type="text" class="form-control mt-2" name="title-value" autocomplete="off">
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-map-borders" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0" name="include-borders-wrapper" style="display: none;">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-map-borders" style="cursor: help;"></i>
                             <span label="borders"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <input name="include-borders" type="checkbox" class="bootstrap-toggle" data-toggle="toggle" checked></input>
+                            <input name="include-borders" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex align-items-center flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-map-colour-scale" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-map-colour-scale" style="cursor: help;"></i>
                             <span label="colour-scale"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <select name="colour-scale" class="form-control">
+                            <select name="colour-scale" class="form-select">
                             </select>
                         </div>
                     </div>
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 font-weight-bold d-flex flex-row-reverse">
-                            <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" label-popover="widget-custom-json" style="cursor: help;"></i>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2 pt-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-custom-json" style="cursor: help;"></i>
                             <span label="custom-JSON"></span>
                         </div>
                         <div class="col-8 p-2">
@@ -162,14 +155,14 @@
                         </div>
                     </div>
 
-                    <div class="border-top border-right border-left row mx-0">
-                        <div class="bg-default border-right col-4 p-2 text-right font-weight-bold" label="snippet-code"></div>
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="snippet-code"></div>
                         <div class="col-8 p-0">
                             <p class="mb-0 p-2 bg-info text-light" label="widget-snippet-information"></p>
                             <pre class="line-numbers language-markup m-0"><code id="data-dataset-map-accordion-snippet-code"></code></pre>
-                            <p name="map-discalimer" style="display: none;" class="mb-0 px-2 py-1 bg-default text-right">
+                            <p name="map-discalimer" style="display: none;" class="mb-0 px-2 py-1 bg-default text-end">
                                 <small label="map-widget-disclaimer"></small>
-                                <i data-toggle="popover" class="fas fa-info-circle fa-lg text-info pl-2" data-placement="top" data-trigger="hover" style="cursor: help;"></i>
+                                <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" style="cursor: help;"></i>
                             </p>
                             <button name="copy-snippet-code" type="button" data-clipboard-target="#data-dataset-map-accordion-snippet-code" class="btn btn-outline-primary btn-sm m-2">
                                 <i class="far fa-copy"></i> <span label="copy-to-clipboard"></span>
@@ -181,8 +174,6 @@
                     </div>
 
                     <div class="border-top row mx-0"></div>
-
-
                 </div>
             </div>
         </div>
@@ -194,11 +185,11 @@
     <div name="dimension-container">
         <div class="card mb-4">
             <div class="card-header bg-default text-dark d-flex justify-content-between align-items-center p-2">
-                <span name="dimension-label" class="font-weight-bold"></span>
-                <span name="dimension-count" class="badge badge-data badge-pill bg-tertiary text-light"></span>
+                <span name="dimension-label" class="fw-bold"></span>
+                <span name="dimension-count" class="badge bg-data rounded-pill bg-tertiary text-light"></span>
             </div>
             <div class="card-body p-1">
-                <select class="custom-select" idn="" role="" disabled>
+                <select class="form-select" idn="" role="" disabled>
                 </select>
             </div>
         </div>
@@ -207,11 +198,11 @@
     <div name="dimension-container-map">
         <div class="card mb-4">
             <div class="card-header bg-primary text-light d-flex justify-content-between align-items-center p-2">
-                <span name="dimension-label" class="font-weight-bold"></span>
-                <span name="dimension-count" class="badge badge-data badge-pill bg-light text-dark"></span>
+                <span name="dimension-label" class="fw-bold"></span>
+                <span name="dimension-count" class="badge bg-data rounded-pill bg-light text-dark"></span>
             </div>
             <div class="card-body p-1">
-                <select class="custom-select" idn="" role="" disabled>
+                <select class="form-select" idn="" role="" disabled>
                 </select>
             </div>
         </div>

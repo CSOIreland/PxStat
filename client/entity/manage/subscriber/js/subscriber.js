@@ -7,6 +7,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["manage"]], [app.label.static["subscriber"]]]);
     app.navigation.setLayout(false);
     app.navigation.setTitle(app.label.static["manage"] + " - " + app.label.static["subscriber"]);
+    app.navigation.setState("#nav-link-subscriber");
+
     app.subscriber.ajax.readSubscriber();
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

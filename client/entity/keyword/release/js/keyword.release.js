@@ -11,6 +11,8 @@ $(document).ready(function () {
     app.navigation.setBreadcrumb([[app.label.static["keywords"]], [app.label.static["releases"]]]);
     app.navigation.setMetaDescription();
     app.navigation.setTitle(app.label.static["keywords"] + " - " + app.label.static["releases"]);
+    app.navigation.setState("#nav-link-keyword-release");
+
 
 
     // Load Modal
@@ -26,18 +28,20 @@ $(document).ready(function () {
     //Update DropDown Subject
     app.keyword.release.ajax.matrixReadList();
     // Toggle accordion 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
 
     $("#keyword-release-modal-create [name=acronym-toggle], #keyword-release-modal-update [name=acronym-toggle]").bootstrapToggle("destroy").bootstrapToggle({
-        on: app.label.static["true"],
-        off: app.label.static["false"],
-        onstyle: "primary",
-        offstyle: "warning",
+        onlabel: app.label.static["true"],
+        offlabel: app.label.static["false"],
+        onstyle: "success text-light",
+        offstyle: "warning text-dark",
+        height: 38,
+        style: "text-light",
         width: C_APP_TOGGLE_LENGTH
     });
 
     //run bootstrap toggle to show/hide toggle button
-    bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+    app.library.bootstrap.getBreakPoint();
 
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();

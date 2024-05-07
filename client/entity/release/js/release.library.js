@@ -299,7 +299,7 @@ app.release.renderStatus = function (data) {
   // Live Release
   if (app.release.checkStatusLive(data)) {
     return $("<span>", {
-      class: "badge badge-danger",
+      class: "badge bg-danger",
       text: app.label.static["live"]
     }).get(0).outerHTML;
   }
@@ -307,7 +307,7 @@ app.release.renderStatus = function (data) {
   // Pending Release
   if (app.release.checkStatusPending(data)) {
     return $("<span>", {
-      class: "badge badge-warning",
+      class: "badge bg-warning",
       text: app.label.static["pending-live"]
     }).get(0).outerHTML;
   }
@@ -315,7 +315,7 @@ app.release.renderStatus = function (data) {
   // Historical Release
   if (app.release.checkStatusHistorical(data)) {
     return $("<span>", {
-      class: "badge badge-dark",
+      class: "badge bg-dark",
       text: app.label.static["historical"]
     }).get(0).outerHTML;
   }
@@ -323,7 +323,7 @@ app.release.renderStatus = function (data) {
   // Work in Progress Release
   if (app.release.checkStatusWorkInProgress(data)) {
     return $("<span>", {
-      class: "badge badge-primary",
+      class: "badge bg-primary",
       text: app.label.static["work-in-progress"]
     }).get(0).outerHTML;
   }
@@ -331,7 +331,7 @@ app.release.renderStatus = function (data) {
   //Awaiting Response
   if (app.release.checkStatusAwaitingResponse(data)) {
     return $("<span>", {
-      class: "badge badge-secondary",
+      class: "badge bg-secondary",
       text: app.label.static["awaiting-response"]
     }).get(0).outerHTML;
   }
@@ -339,14 +339,14 @@ app.release.renderStatus = function (data) {
   //Awaiting Sign-off
   if (app.release.checkStatusAwaitingSignOff(data)) {
     return $("<span>", {
-      class: "badge badge-tertiary",
+      class: "badge bg-tertiary",
       text: app.label.static["awaiting-sign-off"]
     }).get(0).outerHTML;
   }
 
   // Not Available (this should never happen)
   return $("<span>", {
-    class: "badge badge-secondary",
+    class: "badge bg-secondary",
     text: app.label.static["n-a"]
   }).get(0).outerHTML;
 };

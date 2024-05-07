@@ -1,3 +1,20 @@
 /*******************************************************************************
 Custom CSS application specific
 *******************************************************************************/
+
+/* Select2 - Increase height of select2 inputs to fit better into bootstrap forms */
+#configuration-read-api-content .select2-selection--single {
+    height: 39px !important;
+}
+
+#configuration-read-api-content .select2-selection__rendered {
+    padding-top: 7px !important;
+}
+
+#configuration-read-api-content .select2-selection__clear {
+    padding-top: 0px !important;
+}
+
+#configuration-read-api-content .select2-selection__arrow {
+    top: 3px !important;
+}

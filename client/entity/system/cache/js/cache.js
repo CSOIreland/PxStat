@@ -11,11 +11,12 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["cache"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["cache"]);
+  app.navigation.setState("#nav-link-cache");
 
   app.cache.ajax.read();
 
   //reload button
-  $("#cache-read-container").find("[name='refresh-config']").once("click", function () {
+  $("#cache-read-container").find("[name='reload-cache']").once("click", function () {
     $('html, body').animate({ scrollTop: $('#cache-read-container').offset().top }, 1000);
     api.content.load("#body", "entity/system/cache/")
   });
@@ -26,7 +27,7 @@ $(document).ready(function () {
   });
 
   //run bootstrap toggle to show/hide toggle button
-  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+  app.library.bootstrap.getBreakPoint();
 
   // Translate labels language (Last to run)
   app.library.html.parseStaticLabel();

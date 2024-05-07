@@ -66,7 +66,7 @@ app.build.update.upload.callback.matrixLookup = function (data) {
  * Draw Callback for Datatable
  */
 app.build.update.upload.callback.drawCallbackDrawMatrix = function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="tooltip"]').tooltip();
     // Responsive
     $("#build-create-initiate-matrix-lookup table").DataTable().columns.adjust().responsive.recalc();
 }
@@ -97,6 +97,7 @@ app.build.update.upload.callback.drawMatrix = function (data) {
             app.build.update.upload.callback.drawCallbackDrawMatrix();
         });
         window.onresize = function () {
+            //TODO
             // Responsive
             $($.fn.dataTable.tables(true)).DataTable().columns.adjust().responsive.recalc();
         };
@@ -539,10 +540,10 @@ app.build.update.upload.validate.callback.downloadData = function (data) {
         };
         var dimension =
         {
-            "LngIsoCode": app.config.language.iso.code,
+            "LngIsoCode": app.label.language.iso.code,
 
             "Frequency": {
-                "FrqValue": $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val(),
+                "FrqValue": $("#build-update-dimension-nav-collapse-properties-" + app.label.language.iso.code + " [name=frequency-value]").val(),
                 "Period": []
             }
         }
@@ -715,10 +716,12 @@ app.build.update.upload.drawProperties = function () {
         }
 
         $("#build-update-properties [name=official-flag]").bootstrapToggle("destroy").bootstrapToggle({
-            on: app.label.static["true"],
-            off: app.label.static["false"],
-            onstyle: "success",
-            offstyle: "warning",
+            onlabel: app.label.static["true"],
+            offlabel: app.label.static["false"],
+            onstyle: "success text-light",
+            offstyle: "warning text-dark",
+            height: 38,
+            style: "text-light",
             width: C_APP_TOGGLE_LENGTH
         });
 
@@ -761,10 +764,10 @@ app.build.update.upload.drawProperties = function () {
 
         tabContent.find(".accordion").attr("id", "build-update-dimension-nav-" + lngIsoCode);
         $.each(tabContent.find("[name=dimension-collapse]"), function () {
-            $(this).find(".collapse").attr("data-parent", "#" + "build-update-dimension-nav-" + lngIsoCode);
-            $(this).find(".collapse").attr("id", "build-update-dimension-nav-collapse-" + $(this).attr("card") + "-" + lngIsoCode);
-            $(this).find(".card-header").find(".btn-link").attr("data-target", "#build-update-dimension-nav-collapse-" + $(this).attr("card") + "-" + lngIsoCode);
-            $(this).find(".card-header").find(".btn-link").attr("aria-controls", "collapse-" + $(this).attr("card"));
+            $(this).find(".accordion-collapse").attr("data-bs-parent", "#" + "build-update-dimension-nav-" + lngIsoCode);
+            $(this).find(".accordion-collapse").attr("id", "build-update-dimension-nav-collapse-" + $(this).attr("card") + "-" + lngIsoCode);
+            $(this).find(".accordion-header").find(".accordion-button").attr("data-bs-target", "#build-update-dimension-nav-collapse-" + $(this).attr("card") + "-" + lngIsoCode);
+            $(this).find(".accordion-header").find(".accordion-button").attr("aria-controls", "collapse-" + $(this).attr("card"));
         });
 
         $("#build-update-matrix-dimensions").find("[name=tab-content]").append(tabContent.get(0).outerHTML);

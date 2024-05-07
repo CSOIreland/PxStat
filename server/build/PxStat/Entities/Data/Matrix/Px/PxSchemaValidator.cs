@@ -139,8 +139,8 @@ namespace PxStat.Data.Px
             SetRuleLengthMinMax("SOURCE", 1, 256, errorMessageLenMinMax);
             SetRuleLengthMinMax("UNITS", 1, 256, errorMessageLenMinMax);  // list only with subkeys or languages
 
-            SetRuleNumericMinMax("DECIMAL", 0, 15, errorMessageNumericMinMax);
-            SetRuleNumericMinMax("DECIMALS", 0, 15, errorMessageNumericMinMax); // list with subkeys 
+            SetRuleNumericMinMax("DECIMAL", 0, 6, errorMessageNumericMinMax);
+            SetRuleNumericMinMax("DECIMALS", 0, 6, errorMessageNumericMinMax); // list with subkeys 
             SetRuleNumericMinMax("PRECISION", 1, 6, errorMessageNumericMinMax);
 
             SetRuleBoolean("OFFICIAL-STATISTICS", errorMessageBoolean);

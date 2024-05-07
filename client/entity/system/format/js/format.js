@@ -12,12 +12,13 @@ $(document).ready(function () {
   app.navigation.setBreadcrumb([[app.label.static["system"]], [app.label.static["formats"]]]);
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["system"] + " - " + app.label.static["formats"]);
+  app.navigation.setState("#nav-link-format");
 
   // Get data from API
   app.format.ajax.read();
 
   //run bootstrap toggle to show/hide toggle button
-  bsBreakpoints.toggle(bsBreakpoints.getCurrentBreakpoint());
+  app.library.bootstrap.getBreakPoint();
 
   // Last to run
   app.library.html.parseStaticLabel();
