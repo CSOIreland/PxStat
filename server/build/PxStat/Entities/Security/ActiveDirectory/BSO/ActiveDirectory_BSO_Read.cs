@@ -53,7 +53,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        internal static bool IsInActiveDirectory(ADO ado, string username)
+        internal static bool IsInActiveDirectory(IADO ado, string username)
         {
             ActiveDirectory_ADO adADO = new ActiveDirectory_ADO();
             ActiveDirectory_DTO dto = new ActiveDirectory_DTO();

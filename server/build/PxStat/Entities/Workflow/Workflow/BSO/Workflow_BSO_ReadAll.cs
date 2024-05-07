@@ -34,7 +34,7 @@ namespace PxStat.Workflow
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoWorkflow = new Workflow_ADO();
 
-            //GroupAccounts are returned as an ADO result
+            //GroupAccounts are returned as an IADO result
             ADO_readerOutput result = adoWorkflow.ReadAll(Ado, DTO, SamAccountName);
 
             if (!result.hasData)

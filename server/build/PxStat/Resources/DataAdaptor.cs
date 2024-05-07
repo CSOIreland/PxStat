@@ -1,6 +1,7 @@
 ﻿using API;
 using FluentValidation;
 using FluentValidation.Validators;
+using PxStat.Security;
 using System;
 using System.Globalization;
 
@@ -9,47 +10,47 @@ namespace PxStat.Resources
     /// <summary>
     /// Validator extension (IsOptional) 
     /// </summary>
-    public static partial class ValidatorExtensions
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TProperty"></typeparam>
-        /// <param name="ruleBuilder"></param>
-        /// <returns></returns>
-        public static IRuleBuilderOptions<T, TProperty> IsOptional<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder)
-        {
-            return ruleBuilder.SetValidator(new IsOptionalValidator());
+    //public static partial class ValidatorExtensions
+    //{
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    /// <typeparam name="T"></typeparam>
+    //    /// <typeparam name="TProperty"></typeparam>
+    //    /// <param name="ruleBuilder"></param>
+    //    /// <returns></returns>
+    //    public static IRuleBuilderOptions<T, TProperty> IsOptional<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder)
+    //    {
+    //        return ruleBuilder.SetValidator(new IsOptionalValidator());
 
-        }
-    }
+    //    }
+    //}
 
 
 
     /// <summary>
     /// Propery validator
     /// </summary>
-    internal class IsOptionalValidator : PropertyValidator
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public IsOptionalValidator() : base("")
-        {
+    //internal class IsOptionalValidator : PropertyValidator
+    //{
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    public IsOptionalValidator() : base("")
+    //    {
 
-        }
+    //    }
 
-        /// <summary>
-        /// Is Valid extension
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            return true;
-        }
-    }
+    //    /// <summary>
+    //    /// Is Valid extension
+    //    /// </summary>
+    //    /// <param name="context"></param>
+    //    /// <returns></returns>
+    //    protected override bool IsValid(PropertyValidatorContext context)
+    //    {
+    //        return true;
+    //    }
+    //}
 
     /// <summary>
     /// Class to ensure that valid values are returned from the database to application classes
@@ -117,7 +118,7 @@ namespace PxStat.Resources
         /// <returns></returns>
         static public string ConvertToString(DateTime aDateTime)
         {
-            return aDateTime.ToString(Utility.GetCustomConfig("APP_DEFAULT_DATETIME_FORMAT"));
+            return aDateTime.ToString(Configuration_BSO.GetStaticConfig ("APP_DEFAULT_DATETIME_FORMAT"));
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace PxStat.Resources
         /// <returns></returns>
         static public DateTime ConvertToDate(string aDateTime)
         {
-            return DateTime.ParseExact(aDateTime, Utility.GetCustomConfig("APP_DEFAULT_DATETIME_FORMAT"), CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(aDateTime, Configuration_BSO.GetStaticConfig("APP_DEFAULT_DATETIME_FORMAT"), CultureInfo.InvariantCulture);
 
         }
 

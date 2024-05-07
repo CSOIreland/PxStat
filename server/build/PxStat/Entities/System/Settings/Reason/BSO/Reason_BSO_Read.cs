@@ -34,7 +34,7 @@ namespace PxStat.System.Settings
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoReason = new Reason_ADO();
 
-            //Reasons are returned as an ADO result
+            //Reasons are returned as an IADO result
             ADO_readerOutput result = adoReason.Read(Ado, DTO);
 
             if (!result.hasData)

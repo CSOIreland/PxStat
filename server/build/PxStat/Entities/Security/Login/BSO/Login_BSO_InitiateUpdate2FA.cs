@@ -43,7 +43,7 @@ namespace PxStat.Security
             if (adUser?.CcnEmail != null)
             {
                 //Check if local access is available for AD users
-                if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess"))
+                if (!Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.adOpenAccess"))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
@@ -58,13 +58,13 @@ namespace PxStat.Security
                 var user = aAdo.Read(Ado, new Account_DTO_Read() { CcnUsername = DTO.CcnEmail });
                 if (!user.hasData)
                 {
-                    Response.data = JSONRPC.success;
+                    Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                     return success;
                 }
 
                 if (user.data[0].CcnEmail.Equals(DBNull.Value) || user.data[0].CcnDisplayName.Equals(DBNull.Value))
                 {
-                    Response.data = JSONRPC.success;
+                    Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                     return true;
                 }
 
@@ -77,29 +77,30 @@ namespace PxStat.Security
 
             Login_BSO lBso = new Login_BSO(Ado);
 
-            string token = Utility.GetRandomSHA256(DTO.CcnUsername);
+            
+            string token = Utility.GetSHA256(new Random().Next() + DTO.CcnUsername + DateTime.Now.Millisecond);
 
             lBso.UpdateInvitationToken2Fa(DTO.CcnUsername, token);
 
             if (token != null)
             {
                 SendEmail(new Login_DTO_Create() { CcnUsername = DTO.CcnUsername, CcnEmail = DTO.CcnEmail, LngIsoCode = DTO.LngIsoCode, CcnDisplayname = DTO.CcnDisplayname }, token, "PxStat.Security.Login_API.Update2FA");
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 success = true;
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return success;
         }
 
         private void SendEmail(Login_DTO_Create lDto, string token, string nextMethod)
         {
 
-            string url = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
+            string url = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
             string link = "<a href = " + url + ">" + Label.Get("email.body.header.anchor-text", lDto.LngIsoCode) + "</a>";
-            string subject = string.Format(Label.Get("email.subject.update-2fa", lDto.LngIsoCode), Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string subject = string.Format(Label.Get("email.subject.update-2fa", lDto.LngIsoCode), Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string to = lDto.CcnEmail;
-            string header = string.Format(Label.Get("email.body.header.update-2fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string header = string.Format(Label.Get("email.body.header.update-2fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string subHeader = string.Format(Label.Get("email.body.sub-header.update-2fa"), link);
             string footer = string.Format(Label.Get("email.body.footer", lDto.LngIsoCode), lDto.CcnDisplayname);
             List<string> list = (string.Format(Label.Get("email.body.sub-header.list-2fa", lDto.LngIsoCode)).Split('~')).ToList<string>();

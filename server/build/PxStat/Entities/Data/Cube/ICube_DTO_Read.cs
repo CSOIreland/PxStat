@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PxStat.Data
 {
-    internal interface ICube_DTO_Read
+    public interface ICube_DTO_Read
     {
         IList<Dimension> dimension { get; set; }
         Format_DTO_Read Format { get; set; }

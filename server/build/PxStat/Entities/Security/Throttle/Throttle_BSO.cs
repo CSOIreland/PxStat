@@ -1,4 +1,5 @@
 ﻿using API;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using PxStat.Subscription;
 using System;
@@ -9,36 +10,38 @@ using System.Web;
 
 namespace PxStat.Security
 {
-    internal static class Throttle_BSO
+    public static class Throttle_BSO
     {
 
 
         //Should we allow FirebaseId to be set by a DTO parameter?  -would make things easier here....
         //or maybe better idea, set it at the template level
         //also, maybe see about reading subscriptions from the cache rather than from a db read request
-        internal static bool IsThrottled(ADO Ado, HttpRequest hRequest, IRequest  request, string samAccountName = null)
+        public static bool IsThrottled(IADO Ado,  IRequest  request, string samAccountName = null)
         {
-            
+            IHeaderDictionary headers = request.requestHeaders;
             //We need MemcacheD to use this
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["API_MEMCACHED_ENABLED"]))
-                return false;
-
+            //if (!Convert.ToBoolean(ConfigurationManager.AppSettings["API_MEMCACHED_ENABLED"]))
+            //    return false;
+            
 
             int window;
             int cutoff;
             string user = null;
             bool subscribed = false;
             //Did the user send a SubscriberKey in the header of the request?
-            if (hRequest.Headers.AllKeys.Contains("SubscriberKey"))
+            if (headers.ContainsKey ("SubscriberKey"))
             {
                 //They send a SubscriberKey, but is it in our list of valid tokens?
-                var keyListCache = MemCacheD.Get_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache");
+                var keyListCache =AppServicesHelper.CacheD.Get_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache");
+                if (keyListCache == null) return false;
                 if (!keyListCache.hasData)
                 {
                     //No cache - try creating one
                     new Subscriber_BSO().RefreshSubscriberKeyCache(Ado);
-                    keyListCache = MemCacheD.Get_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache");
+                    keyListCache = AppServicesHelper.CacheD.Get_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache");
                 }
+                else return false;
 
 
                 if (keyListCache.hasData)
@@ -46,9 +49,9 @@ namespace PxStat.Security
                     //Does the request contain a valid subscription token?
                     var keyValues = keyListCache.data.ToObject<List<string>>();
 
-                    if (keyValues.Contains(hRequest.Headers.GetValues("SubscriberKey").FirstOrDefault()))
+                    if (keyValues.Contains(headers["SubscriberKey"].ToString()))
                     {
-                        user = hRequest.Headers.GetValues("SubscriberKey").FirstOrDefault();
+                        user = headers["SubscriberKey"].ToString();
                         subscribed = true;
                     }
                 }
@@ -64,21 +67,21 @@ namespace PxStat.Security
             //Different limits apply depending on whether the user is subscribed or not
             if (subscribed)
             {
-                window = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.subscribedWindowSeconds");
-                cutoff = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.subscribedCallLimit");
+                window = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "throttle.subscribedWindowSeconds");
+                cutoff = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "throttle.subscribedCallLimit");
 
             }
             else
             {
-                window = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.nonSubscribedWindowSeconds");
-                cutoff = Configuration_BSO.GetCustomConfig(ConfigType.server, "throttle.nonSubscribedCallLimit");
+                window = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "throttle.nonSubscribedWindowSeconds");
+                cutoff = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "throttle.nonSubscribedCallLimit");
                 user = request.userAgent + request.ipAddress;
             }
 
 
             //Now we check the usage for the current requester
             List<DateTime> workingList = new List<DateTime>();
-            var cache = MemCacheD.Get_BSO("PxStat.Security", "Throttle", "Read", user);
+            var cache =AppServicesHelper.CacheD.Get_BSO("PxStat.Security", "Throttle", "Read", user);
             if (cache.hasData)
             {
                 List<DateTime> userHistory = JsonConvert.DeserializeObject<List<DateTime>>(cache.data.ToString());
@@ -94,7 +97,7 @@ namespace PxStat.Security
             }
 
             workingList.Add(DateTime.Now);
-            MemCacheD.Store_BSO("PxStat.Security", "Throttle", "Read", user, workingList, default(DateTime));
+           AppServicesHelper.CacheD.Store_BSO("PxStat.Security", "Throttle", "Read", user, workingList, default(DateTime));
 
 
             return false;
@@ -106,7 +109,7 @@ namespace PxStat.Security
         /// <param name="whitelist"></param>
         /// <param name="host"></param>
         /// <returns></returns>
-        internal static bool IsNotInTheWhitelist(string[] whitelist, string host)
+        public static bool IsNotInTheWhitelist(string[] whitelist, string host)
         {
 
             // If host is null or empty, it is not in the whitelist

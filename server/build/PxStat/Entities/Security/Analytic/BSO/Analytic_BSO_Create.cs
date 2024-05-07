@@ -1,12 +1,13 @@
 ﻿using API;
 using DeviceDetectorNET;
 using DeviceDetectorNET.Cache;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Firebase.Auth;
+using Microsoft.AspNetCore.Http;
 using PxStat.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Hosting;
 
 
 namespace PxStat.Security
@@ -27,57 +28,75 @@ namespace PxStat.Security
         /// <param name="requestDTO"></param>
         /// <param name="hRequest"></param>
         /// <param name="request"></param>
-        internal static void Create(ADO Ado, dynamic requestDTO, HttpRequest hRequest, IRequest request)
+        internal static void Create(IADO Ado, dynamic requestDTO,  IRequest request)
         {
             //If this method doesn't require analytic logging then exit the function here
-            if (!MethodReader.MethodHasAttribute(request.method, "Analytic")) return;
+            if (!Resources.MethodReader.MethodHasAttribute(request.method, "Analytic")) return;
 
             Analytic_DTO aDto = new Analytic_DTO();
+            
 
 
-            if (hRequest.UserLanguages != null)
+            if(request.requestHeaders.ContainsKey("Accept-Language"))
             {
-                if (hRequest.UserLanguages.Count() > 0)
-                    if (hRequest.UserLanguages[0].Length >= 2)
-                        aDto.EnvironmentLngIsoCode = hRequest.UserLanguages[0].Substring(0, 2);
+                if (request.requestHeaders["Accept-Language"].ToString().Length>=2)
+                    aDto.EnvironmentLngIsoCode= request.requestHeaders["Accept-Language"].ToString().Substring(0, 2);
             }
+
+            if (Resources.MethodReader.DynamicHasProperty(requestDTO, "LngIsoCode"))
+            {
+                if (requestDTO.LngIsoCode != null)
+                    aDto.LngIsoCode = requestDTO.LngIsoCode;
+                else aDto.LngIsoCode = null;
+            }
+            else aDto.LngIsoCode = null;
 
             //Get a masked version of the ip address
             aDto.NltMaskedIp = getMaskedIp(request.ipAddress);
 
             //Get the matrix field from the calling DTO
-            if (MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension")) aDto.matrix = requestDTO.jStatQueryExtension.extension.Matrix;
-
+            if (Resources.MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension"))
+            {
+                aDto.matrix = requestDTO.jStatQueryExtension.extension.Matrix;
+                aDto.LngIsoCode = requestDTO.jStatQueryExtension.extension.Language.Code;
+            }
             // Get the Referer
-            aDto.NltReferer = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? null : hRequest.UrlReferrer.Host;
+            aDto.NltReferer = request.requestHeaders["Referer"].ToString();
+            string urf = "";
+            string rfr = "";
+            bool widget = false;
 
             //The m2m parameter will not be translated into a DTO property so we just read it from the request parameters if it exists
-            if (MethodReader.DynamicHasProperty(requestDTO, "m2m"))
+            if (Resources.MethodReader.DynamicHasProperty(requestDTO, "m2m") && Resources.MethodReader.DynamicHasProperty(requestDTO, "widget") && Resources.MethodReader.DynamicHasProperty(requestDTO, "user"))
             {
+                
                 aDto.NltM2m = requestDTO.m2m;
+                urf = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application");
 
+                //rfr=!request.requestHeaders.ContainsKey("Referer") ? null : request.scheme+ "://" + request.requestHeaders["Referer"].ToString();
+
+                rfr = !request.requestHeaders.ContainsKey("Referer") ? null :  request.requestHeaders["Referer"].ToString();
+
+                if (requestDTO.m2m == false && (rfr == urf || rfr + '/' == urf))
+                    requestDTO.user = true;
+                else if (requestDTO.m2m == false && rfr != urf && rfr + '/' != urf)
+                    widget = true;
+
+                aDto.NltWidget = widget;
+                aDto.NltUser = requestDTO.user;
 
             }
             else aDto.NltM2m = true;
 
-            if (MethodReader.DynamicHasProperty(requestDTO, "widget"))
-            {
-                aDto.NltWidget = requestDTO.widget;
-            }
-
-            if (MethodReader.DynamicHasProperty(requestDTO, "user"))
-            {
-                aDto.NltUser = requestDTO.user;
-            }
 
             // Get the DateTime
             aDto.NltDate = DateTime.Now;
 
 
             //Get Format information
-            if (MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension"))
+            if (Resources.MethodReader.DynamicHasProperty(requestDTO, "jStatQueryExtension"))
             {
-                if (MethodReader.DynamicHasProperty(requestDTO.jStatQueryExtension.extension.Format, "Type") && MethodReader.DynamicHasProperty(requestDTO.jStatQueryExtension.extension.Format, "Version"))
+                if (Resources.MethodReader.DynamicHasProperty(requestDTO.jStatQueryExtension.extension.Format, "Type") && Resources.MethodReader.DynamicHasProperty(requestDTO.jStatQueryExtension.extension.Format, "Version"))
                 {
                     aDto.FrmType = requestDTO.jStatQueryExtension.extension.Format.Type;
                     aDto.FrmVersion = requestDTO.jStatQueryExtension.extension.Format.Version;
@@ -140,7 +159,7 @@ namespace PxStat.Security
         /// <returns></returns>
         private static DeviceDetector GetDeviceDetector(string userAgent)
         {
-            DeviceDetectorSettings.RegexesDirectory = HostingEnvironment.MapPath(@"~\Resources\");
+            //DeviceDetectorSettings.RegexesDirectory = HostingEnvironment.MapPath(@"~\Resources\");
             var deviceDetector = new DeviceDetector(userAgent);
             deviceDetector.SetCache(new DictionaryCache());
             deviceDetector.Parse();

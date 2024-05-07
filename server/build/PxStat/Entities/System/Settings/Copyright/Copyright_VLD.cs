@@ -1,5 +1,6 @@
 ﻿using API;
 using FluentValidation;
+using PxStat.Security;
 
 namespace PxStat.System.Settings
 {
@@ -22,8 +23,8 @@ namespace PxStat.System.Settings
     {
         internal Copyright_VLD_Create()
         {
-            string urlRegex = Utility.GetCustomConfig("APP_REGEX_URL");
-            string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
+            string urlRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_URL");
+            string alphaNumericRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_ALPHA_NUMERIC");
 
             //Mandatory - CprCode
             RuleFor(f => f.CprCode).NotEmpty().Length(1, 32).WithMessage("Invalid CprCode").WithName("CprCodeValidation");
@@ -44,8 +45,8 @@ namespace PxStat.System.Settings
         internal Copyright_VLD_Update()
         {
 
-            string urlRegex = Utility.GetCustomConfig("APP_REGEX_URL");
-            string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
+            string urlRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_URL");
+            string alphaNumericRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_ALPHA_NUMERIC");
             //Mandatory - CprCodeOld
             RuleFor(f => f.CprCodeOld).NotEmpty().Length(1, 32).WithMessage("Invalid CprCodeOld").WithName("CprCodeOldValidation");
             RuleFor(f => f.CprCodeOld).Matches(alphaNumericRegex).WithMessage("Invalid CprcodeOld").WithName("CprCodeOldValidationAlphaNumeric");

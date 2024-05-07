@@ -7,20 +7,20 @@ using System.Data;
 namespace PxStat.Data
 {
     /// <summary>
-    /// ADO functions for Cube
+    /// IADO functions for Cube
     /// </summary>
     internal class Cube_ADO
     {
         /// <summary>
-        /// ADO class variable
+        /// IADO class variable
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        public Cube_ADO(ADO ado)
+        public Cube_ADO(IADO ado)
         {
             this.ado = ado;
         }
@@ -48,7 +48,7 @@ namespace PxStat.Data
                 inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode });
             }
             else
-                inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+                inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             var output = ado.ExecuteReaderProcedure("Data_Matrix_ReadDimensionRole", inputParams);
 
@@ -67,49 +67,7 @@ namespace PxStat.Data
 
         }
 
-        /// <summary>
-        /// Fill a Matrix based on available dimensions
-        /// </summary>
-        /// <param name="theMatrix"></param>
-        /// <returns></returns>
-        internal Matrix ReadCubeData(Matrix theMatrix)
-        {
-            List<KeyValuePair<string, string>> clsVrbList = new List<KeyValuePair<string, string>>();
-            foreach (var classification in theMatrix.MainSpec.Classification)
-            {
-                if (classification.ClassificationFilterWasApplied)
-                {
-                    foreach (var variable in classification.Variable)
-                    {
-                        clsVrbList.Add(new KeyValuePair<string, string>(classification.Code, variable.Code));
-                    }
 
-                }
-
-            }
-
-            List<string> sttList = new List<string>();
-            if (theMatrix.StatFilterWasApplied)
-            {
-                foreach (var statistic in theMatrix.MainSpec.Statistic)
-                {
-                    sttList.Add(statistic.Code);
-                }
-            }
-
-            List<string> prdList = new List<string>();
-            if (theMatrix.TimeFilterWasApplied)
-            {
-                foreach (var period in theMatrix.MainSpec.Frequency.Period)
-                {
-                    prdList.Add(period.Code);
-                }
-            }
-
-            theMatrix.Cells = new Matrix_ADO(ado).ReadDataByRelease(theMatrix.ReleaseCode, theMatrix.TheLanguage, clsVrbList, prdList, sttList);
-
-            return theMatrix;
-        }
 
 
         /// <summary>
@@ -122,7 +80,7 @@ namespace PxStat.Data
         {
             var inputParams = new List<ADO_inputParams>();
 
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             if (!string.IsNullOrEmpty(languageCode))
             {
@@ -157,9 +115,9 @@ namespace PxStat.Data
         internal List<dynamic> ReadTitleUpdate(DataTable dataTable)
         {
             var inputParams = new List<ADO_inputParams>();
-            IMetaData metaData = new MetaData();
+            
 
-            inputParams.Add(new ADO_inputParams { name = "@Placeholder", value = metaData.GetTitleBy() });
+            inputParams.Add(new ADO_inputParams { name = "@Placeholder", value = Configuration_BSO.GetStaticConfig("APP_PX_TITLE_BY") });
             var param = new ADO_inputParams
             {
                 name = "@MatrixMap",
@@ -180,7 +138,7 @@ namespace PxStat.Data
         {
             var inputParams = new List<ADO_inputParams>();
 
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             if (!string.IsNullOrEmpty(languageCode))
             {

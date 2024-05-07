@@ -74,30 +74,30 @@ namespace PxStat.Security
                 Response.error = Label.Get("error.create");
                 return false;
             }
-            string token = Utility.GetRandomSHA256(newId.ToString());
+            string token = Utility.GetSHA256(new Random().Next() + newId.ToString() + DateTime.Now.Millisecond);
             Login_BSO lBso = new Login_BSO(Ado);
             lBso.CreateLogin(new Login_DTO_Create() { CcnUsername = DTO.CcnUsername }, SamAccountName, null);
 
             //Check if local access is available for AD users
-            if (Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess"))
+            if (Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.adOpenAccess"))
             {
                 lBso.UpdateInvitationToken2Fa(DTO.CcnUsername, token);
 
                 SendEmail(new Login_DTO_Create() { CcnDisplayname = adDto.CcnDisplayName, CcnEmail = adDto.CcnEmail, CcnUsername = DTO.CcnUsername, LngIsoCode = DTO.LngIsoCode }, token, "PxStat.Security.Login_API.Create2FA");
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
 
         private void SendEmail(Login_DTO_Create lDto, string token, string nextMethod)
         {
 
-            string url = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
+            string url = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
             string link = "<a href = " + url + ">" + Label.Get("email.body.header.anchor-text", lDto.LngIsoCode) + "</a>";
-            string subject = string.Format(Label.Get("email.subject.setup-2fa", lDto.LngIsoCode), Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string subject = string.Format(Label.Get("email.subject.setup-2fa", lDto.LngIsoCode), Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string to = lDto.CcnEmail;
-            string header = string.Format(Label.Get("email.body.header.setup-2fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string header = string.Format(Label.Get("email.body.header.setup-2fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string subHeader = string.Format(Label.Get("email.body.sub-header.setup-2fa"), link);
             string footer = string.Format(Label.Get("email.body.footer", lDto.LngIsoCode), lDto.CcnDisplayname);
 

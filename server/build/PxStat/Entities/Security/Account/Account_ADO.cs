@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace PxStat.Security
 {
     /// <summary>
-    /// ADO classes for Account
+    /// IADO classes for Account
     /// </summary>
     internal class Account_ADO : DataAdaptor
     {
@@ -101,7 +101,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="account"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadMinimumPrivilege(ADO ado, string prvCode, bool readHigherPrivileges = false)
+        internal ADO_readerOutput ReadMinimumPrivilege(IADO ado, string prvCode, bool readHigherPrivileges = false)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>() { new ADO_inputParams() { name = "@PrvCode", value = prvCode } };
 
@@ -126,7 +126,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadReleaseApprovers(ADO ado, Account_DTO_ReadIsApprover dto)
+        internal ADO_readerOutput ReadReleaseApprovers(IADO ado, Account_DTO_ReadIsApprover dto)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             { new ADO_inputParams() { name = "@RlsCode", value = dto.RlsCode } };
@@ -152,7 +152,7 @@ namespace PxStat.Security
         /// <param name="isApprover"></param>
         /// <param name="prvCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadReleaseUsers(ADO ado, int rlsCode, bool? isApprover, string prvCode = null)
+        internal ADO_readerOutput ReadReleaseUsers(IADO ado, int rlsCode, bool? isApprover, string prvCode = null)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             { new ADO_inputParams() { name = "@RlsCode", value = rlsCode } };
@@ -183,7 +183,7 @@ namespace PxStat.Security
         /// <param name="account"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, Account_DTO_Create account, string ccnUsername, bool ccnAdFlag, bool locked = false)
+        internal int Create(IADO ado, Account_DTO_Create account, string ccnUsername, bool ccnAdFlag, bool locked = false)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -221,7 +221,7 @@ namespace PxStat.Security
         /// <param name="account"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, Account_DTO_Update account, string username)
+        internal int Update(IADO ado, Account_DTO_Update account, string username)
         {
             //Get the input parameters for database read
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
@@ -274,7 +274,7 @@ namespace PxStat.Security
         /// <param name="account"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, Account_DTO_Delete account, string ccnUsername)
+        internal int Delete(IADO ado, Account_DTO_Delete account, string ccnUsername)
         {
             //Create a list for the input parameters
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
@@ -303,7 +303,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="CcnUsername"></param>
         /// <returns></returns>
-        internal bool Exists(ADO ado, string CcnUsername)
+        internal bool Exists(IADO ado, string CcnUsername)
         {
             Account_DTO_Read dto = new Security.Account_DTO_Read();
             dto.CcnUsername = CcnUsername;
@@ -315,7 +315,7 @@ namespace PxStat.Security
             else return false;
         }
 
-        internal bool ExistsByEmail(ADO ado, string ccnEmail)
+        internal bool ExistsByEmail(IADO ado, string ccnEmail)
         {
             Account_DTO_Read dto = new Security.Account_DTO_Read();
 
@@ -333,7 +333,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="prvCode"></param>
         /// <returns></returns>
-        internal bool EnoughPrivilegesInAccounts(ADO ado, string prvCode)
+        internal bool EnoughPrivilegesInAccounts(IADO ado, string prvCode)
         {
             ADO_inputParams param = new ADO_inputParams();
             param.name = "@PrvCode";

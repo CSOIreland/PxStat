@@ -1,6 +1,8 @@
 ﻿using API;
 using Newtonsoft.Json;
 using PxStat.Data;
+using PxStat.DataStore;
+using PxStat.Resources;
 using PxStat.Template;
 
 namespace PxStat.Security
@@ -58,7 +60,7 @@ namespace PxStat.Security
             FlushAssociatedMatrixes(Ado, DTO);
             Log.Instance.Debug("Group updated: " + JsonConvert.SerializeObject(DTO));
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
             return true;
         }
@@ -68,12 +70,12 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="Ado"></param>
         /// <param name="dto"></param>
-        private void FlushAssociatedMatrixes(ADO Ado, Group_DTO_Update dto)
+        private void FlushAssociatedMatrixes(IADO Ado, Group_DTO_Update dto)
         {
-            Matrix_ADO mAdo = new Matrix_ADO(Ado);
+            DataStore_ADO mAdo = new DataStore_ADO();
 
             //Get all the matrixes for Group
-            var readGroupAccess = mAdo.ReadByGroup(dto.GrpCodeOld, Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
+            var readGroupAccess = mAdo.ReadByGroup(Ado,dto.GrpCodeOld, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
 
             if (!readGroupAccess.hasData) return;
 
@@ -81,19 +83,13 @@ namespace PxStat.Security
             //look maybe at ensuring there are no dupes (or maybe a switch to first return only live data..)
             foreach (var matrix in readGroupAccess.data)
             {
+                
+              Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.MtrCode);
+              Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.MtrCode);
 
-                //if (matrix.IsLive)
-                //{
-                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + matrix.MtrCode);
-                    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.MtrCode);
-               // }
             }
 
-            //foreach (var matrix in readGroupAccess.data)
-            //{
-            //    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + matrix.RlsCode);
-            //    MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + matrix.RlsCode);
-            //}
+
         }
     }
 }

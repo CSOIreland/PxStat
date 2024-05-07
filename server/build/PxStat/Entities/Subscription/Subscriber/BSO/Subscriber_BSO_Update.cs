@@ -44,7 +44,7 @@ namespace PxStat.Subscription
             else
             {
 
-                if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
@@ -56,7 +56,7 @@ namespace PxStat.Subscription
 
             if (ado.Update(subscriberUserId, DTO.LngIsoCode, DTO.SbrPreference))
             {
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             Log.Instance.Debug("Can't update Subscriber");

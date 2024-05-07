@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 namespace PxStat.Security
 {
-    internal class Account_BSO_CreateLocal : BaseTemplate_Create<Account_DTO_CreateLocal, Account_VLD_CreateLocal>
+    public class Account_BSO_CreateLocal : BaseTemplate_Create<Account_DTO_CreateLocal, Account_VLD_CreateLocal>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Account_BSO_CreateLocal(JSONRPC_API request) : base(request, new Account_VLD_CreateLocal())
+        public Account_BSO_CreateLocal(JSONRPC_API request) : base(request, new Account_VLD_CreateLocal())
         {
         }
 
@@ -96,8 +96,8 @@ namespace PxStat.Security
 
             Login_BSO lBso = new Login_BSO(Ado);
 
-            string token = Utility.GetRandomSHA256(newId.ToString());
-
+            string token = Utility.GetSHA256(new Random().Next() + newId.ToString() + DateTime.Now.Millisecond);
+            
 
             if (lBso.CreateLogin(lDto, SamAccountName, token))
                 SendEmail(lDto, token, "PxStat.Security.Login_API.Create1FA");
@@ -108,7 +108,7 @@ namespace PxStat.Security
             }
 
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
 
         }
@@ -117,11 +117,11 @@ namespace PxStat.Security
         private void SendEmail(Login_DTO_Create lDto, string token, string nextMethod)
         {
 
-            string url = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
+            string url = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
             string link = "<a href = " + url + ">" + Label.Get("email.body.header.anchor-text", lDto.LngIsoCode) + "</a>";
-            string subject = string.Format(Label.Get("email.subject.setup-1fa", lDto.LngIsoCode), Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string subject = string.Format(Label.Get("email.subject.setup-1fa", lDto.LngIsoCode), Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string to = lDto.CcnEmail;
-            string header = string.Format(Label.Get("email.body.header.setup-1fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string header = string.Format(Label.Get("email.body.header.setup-1fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string subHeader = string.Format(Label.Get("email.body.sub-header.setup-1fa"), link);
             string footer = string.Format(Label.Get("email.body.footer", lDto.LngIsoCode), lDto.CcnDisplayname);
 

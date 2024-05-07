@@ -29,7 +29,7 @@ namespace PxStat.Data
         protected override bool Execute()
         {
             GeoMap_ADO gAdo = new GeoMap_ADO(Ado);
-            var response = gAdo.ReadCollection(DTO.GmpCode);
+            var response = gAdo.ReadCollection(DTO.GmpCode, DTO.GlrCode);
             if (response.hasData)
                 Response.data = response.data;
             return true;

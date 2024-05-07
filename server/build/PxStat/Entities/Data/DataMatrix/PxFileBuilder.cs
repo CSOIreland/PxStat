@@ -13,7 +13,7 @@ namespace PxStat.Data
 
     public class PxFileBuilder
     {
-        public string Create(IDmatrix matrix, IMetaData metaData, string lngIsoCode)
+        public string Create(IDmatrix matrix, string lngIsoCode)
         {
             var sb = new StringBuilder();
             var baseKeywordList = new List<IPxKeywordElement>();
@@ -21,8 +21,8 @@ namespace PxStat.Data
             //Is there a statistics dimension?
             bool contVariable = (matrix.Dspecs[lngIsoCode].Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).Count()) > 0;
 
-            baseKeywordList.Add(CreatePxElement("CHARSET", metaData.GetPxDefaultCharSet()));
-            baseKeywordList.Add(CreatePxElement("AXIS-VERSION", metaData.GetPxDefaultAxisVersion()));
+            baseKeywordList.Add(CreatePxElement("CHARSET", Configuration_BSO.GetStaticConfig("APP_PX_DEFAULT_CHARSET")));
+            baseKeywordList.Add(CreatePxElement("AXIS-VERSION", Configuration_BSO.GetStaticConfig("APP_PX_DEFAULT_AXIS_VERSION")));
 
             baseKeywordList.Add(CreatePxElement("LANGUAGE", lngIsoCode));
             if (matrix.Dspecs.Count > 1)
@@ -37,10 +37,10 @@ namespace PxStat.Data
             {
                 if (matrix.Release.RlsLiveDatetimeFrom != default)
                 {
-                    baseKeywordList.Add(CreatePxElement("LAST-UPDATED", (matrix.Release.RlsLiveDatetimeFrom).ToString(Utility.GetCustomConfig("APP_PX_DATE_TIME_FORMAT"))));
+                    baseKeywordList.Add(CreatePxElement("LAST-UPDATED", (matrix.Release.RlsLiveDatetimeFrom).ToString(Configuration_BSO.GetStaticConfig("APP_PX_DATE_TIME_FORMAT"))));
                 }
             }
-            baseKeywordList.Add(CreatePxElement("OFFICIAL-STATISTICS", matrix.IsOfficialStatistic ? metaData.GetPxTrue() : metaData.GetPxFalse()));
+            baseKeywordList.Add(CreatePxElement("OFFICIAL-STATISTICS", matrix.IsOfficialStatistic ? Configuration_BSO.GetStaticConfig("APP_PX_TRUE") : Configuration_BSO.GetStaticConfig("APP_PX_FALSE")));
 
             var statDim = matrix.Dspecs[lngIsoCode].Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault();
 
@@ -82,7 +82,7 @@ namespace PxStat.Data
                 headingCount *= v.Value.Values.Count;
             }
 
-            var mainSpecDoc = new PxDocument(GetKeywordsForSpec(matrix, metaData, matrix.Dspecs[lngIsoCode], stub, heading));
+            var mainSpecDoc = new PxDocument(GetKeywordsForSpec(matrix,  matrix.Dspecs[lngIsoCode], stub, heading));
 
 
             List<PxDocument> otherSpecDocs = new List<PxDocument>();
@@ -97,7 +97,7 @@ namespace PxStat.Data
                         heading = getHeadingDefault(matrix.Dspecs[lng].Dimensions.ToList());
                         stub = getStubDefault(matrix.Dspecs[lng].Dimensions.ToList(), heading);
 
-                        otherSpecDocs.Add(new PxDocument(GetKeywordsForSpec(matrix, metaData, matrix.Dspecs[lng], stub, heading)));
+                        otherSpecDocs.Add(new PxDocument(GetKeywordsForSpec(matrix,  matrix.Dspecs[lng], stub, heading)));
                     }
                 }
             }
@@ -105,7 +105,7 @@ namespace PxStat.Data
 
             if (matrix.Cells != null)
             {
-                string defaultVal = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
+                string defaultVal = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value");
                 List<string> dataCells = new List<string>();
                 int counter = 0;
 
@@ -180,7 +180,7 @@ namespace PxStat.Data
             return precisionOrdinals;
         }
 
-        private List<IPxKeywordElement> GetKeywordsForSpec(IDmatrix matrix, IMetaData metaData, IDspec spec, Dictionary<string, PxListOfValues> stub, Dictionary<string, PxListOfValues> heading, bool forceStatisticEntry = false)
+        private List<IPxKeywordElement> GetKeywordsForSpec(IDmatrix matrix,  IDspec spec, Dictionary<string, PxListOfValues> stub, Dictionary<string, PxListOfValues> heading, bool forceStatisticEntry = false)
         {
             var keywordList = new List<IPxKeywordElement>();
 
@@ -188,7 +188,7 @@ namespace PxStat.Data
 
             string lngTag;
 
-            if (spec.Language != Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
+            if (spec.Language != Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"))
                 lngTag = spec.Language != null ? "[" + spec.Language + "]" : "";
             else
                 lngTag = "";
@@ -197,25 +197,25 @@ namespace PxStat.Data
             {
                 keywordList.Add(CreatePxElement("SUBJECT-AREA" + lngTag, !String.IsNullOrEmpty(spec.PrcValue) ? spec.PrcValue : Label.Get("default.subject-area",spec.Language)));
                 //Code is only applied for the main spec
-                if(spec.Language .Equals(Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")))
+                if(spec.Language .Equals(Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")))
                     keywordList.Add(CreatePxElement("SUBJECT-CODE" + lngTag, !String.IsNullOrEmpty(matrix.Release.PrcValue) ? matrix.Release.PrcCode.ToString() : Label.Get("default.subject-code",spec.Language))); ////
             }
             else
             {
                 keywordList.Add(CreatePxElement("SUBJECT-AREA" + lngTag, Label.Get("default.subject-area", spec.Language)));
                 //Code is only applied for the main spec
-                if (spec.Language.Equals(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")))
+                if (spec.Language.Equals(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")))
                     keywordList.Add(CreatePxElement("SUBJECT-CODE" + lngTag, Label.Get("default.subject-code", spec.Language)));
             }
 
-            keywordList.Add(CreatePxElement("DESCRIPTION" + lngTag, spec.Title)); /////
+            keywordList.Add(CreatePxElement("DESCRIPTION" + lngTag, spec.Title));
 
             if (spec.Title != null)
-                keywordList.Add(CreatePxElement("TITLE" + lngTag, spec.Title + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData,spec.Language)));
+                keywordList.Add(CreatePxElement("TITLE" + lngTag, spec.Title + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, spec.Language)));
             else
-                keywordList.Add(CreatePxElement("TITLE" + lngTag, GetContentString(spec) + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions, metaData, spec.Language)));
+                keywordList.Add(CreatePxElement("TITLE" + lngTag, GetContentString(spec) + ConvertFactory.GetDimensionValues(spec.Title, spec.Dimensions,  spec.Language)));
 
-            keywordList.Add(CreatePxElement("CONTENTS" + lngTag, spec.Contents)); ////
+            keywordList.Add(CreatePxElement("CONTENTS" + lngTag, spec.Title));
 
             //Units
             //var distinctUnits = theSpec.Statistic.Select(o => o.Unit).Distinct();
@@ -226,7 +226,7 @@ namespace PxStat.Data
             if (distinctUnits.ElementAt(0) != null)
                 keywordList.Add(CreatePxElement("UNITS" + lngTag, distinctUnits.ElementAt(0)));
             else
-                keywordList.Add(CreatePxElement("UNITS" + lngTag, Utility.GetCustomConfig("APP_PX_DEFAULT_UNITS")));
+                keywordList.Add(CreatePxElement("UNITS" + lngTag, Configuration_BSO.GetStaticConfig("APP_PX_DEFAULT_UNITS")));
 
             //Create the Stub entries
             List<string> stubs = new List<string>();
@@ -257,7 +257,7 @@ namespace PxStat.Data
             {
                 PxListOfValues px = new PxListOfValues(dim.Variables.Select(x => x.Value).ToList());
                 //use the optional false to ensure this isn't cleansed...
-                keywordList.Add(CreatePxElementUnquoted("VALUES" + lngTag, dim.Value, px.ToPxQuotedString("VALUES", Convert.ToInt32(metaData.GetPxMultilineCharLimit())),false));
+                keywordList.Add(CreatePxElementUnquoted("VALUES" + lngTag, dim.Value, px.ToPxQuotedString("VALUES", Convert.ToInt32(Configuration_BSO.GetStaticConfig("APP_PX_MULTILINE_CHAR_LIMIT"))),false));
             }
 
             //Create the Timeval
@@ -272,7 +272,7 @@ namespace PxStat.Data
             {
                 PxListOfValues plv = new PxListOfValues(dim.Variables.Select(x => x.Code).ToList());
                 KeyValuePair<string, PxListOfValues> kvp = new KeyValuePair<string, PxListOfValues>(dim.Code, plv);
-                keywordList.Add(CreatePxElementUnquoted("CODES" + lngTag, dim.Value, kvp.Value.ToPxQuotedString("CODES", Convert.ToInt32(metaData.GetPxMultilineCharLimit()))));
+                keywordList.Add(CreatePxElementUnquoted("CODES" + lngTag, dim.Value, kvp.Value.ToPxQuotedString("CODES", Convert.ToInt32(Configuration_BSO.GetStaticConfig("APP_PX_MULTILINE_CHAR_LIMIT")))));
             }
 
             //Domain

@@ -34,11 +34,7 @@ namespace PxStat.Subscription
         /// <returns></returns>
         protected override bool Execute()
         {
-            if (Common.FirebaseId == null && SamAccountName == null)
-            {
-                Response.error = Label.Get("error.authentication");
-                return false;
-            }
+
 
             using (eMail email = new eMail())
             {
@@ -52,7 +48,7 @@ namespace PxStat.Subscription
 
                 // Get user from FirebaseId
                 Subscriber_BSO sbso = new Subscriber_BSO();
-                var user = sbso.GetSubscribers(Ado, Common.FirebaseId);
+                var user = sbso.GetSubscribers(Ado);
 
                 if (user.FirstOrDefault() == null)
                 {

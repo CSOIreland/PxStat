@@ -17,6 +17,10 @@ namespace PxStat.Security
         {
         }
 
+        protected override bool HasUserToBeAuthenticated()
+        {
+            return false;
+        }
 
         override protected bool HasPrivilege()
         {
@@ -45,12 +49,14 @@ namespace PxStat.Security
                 Response.error = Label.Get("error.authentication");
                 return false;
             }
-            string token = Utility.GetRandomSHA256(user.data[0].CcnId.ToString());
+
+
+            string token = Utility.GetSHA256(new Random().Next().ToString() + user.data[0].CcnId + DateTime.Now.Millisecond);
 
             if (lBso.Update1FaTokenForUser(user.data[0].CcnUsername, token) != null)
             {
                 SendEmail(new Login_DTO_Create() { CcnUsername = user.data[0].CcnUsername, LngIsoCode = DTO.LngIsoCode, CcnEmail = user.data[0].CcnEmail, CcnDisplayname = user.data[0].CcnDisplayName }, token, "PxStat.Security.Login_API.Update1FA");
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
 
@@ -61,11 +67,11 @@ namespace PxStat.Security
         private void SendEmail(Login_DTO_Create lDto, string token, string nextMethod)
         {
 
-            string url = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
+            string url = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
             string link = "<a href = " + url + ">" + Label.Get("email.body.header.anchor-text", lDto.LngIsoCode) + "</a>";
-            string subject = string.Format(Label.Get("email.subject.update-1fa", lDto.LngIsoCode), Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string subject = string.Format(Label.Get("email.subject.update-1fa", lDto.LngIsoCode), Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string to = lDto.CcnEmail;
-            string header = string.Format(Label.Get("email.body.header.update-1fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string header = string.Format(Label.Get("email.body.header.update-1fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string subHeader = string.Format(Label.Get("email.body.sub-header.update-1fa"), link);
             string footer = string.Format(Label.Get("email.body.footer", lDto.LngIsoCode), lDto.CcnDisplayname);
 

@@ -1,6 +1,7 @@
 ﻿using API;
 using FluentValidation;
 using PxStat.Resources;
+using PxStat.Security;
 
 namespace PxStat.System.Navigation
 {
@@ -11,7 +12,7 @@ namespace PxStat.System.Navigation
     {
         public Keyword_Subject_VLD_Create()
         {
-            string regexNoWhiteSpace = Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE");
+            string regexNoWhiteSpace = Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE");
             //Mandatory- KsbValue
             RuleFor(x => x.KsbValue).NotEmpty();
             //Mandatory - SbjCode
@@ -63,7 +64,7 @@ namespace PxStat.System.Navigation
         public Keyword_Subject_VLD_Read()
         {
             //Optional - SbjCode
-            RuleFor(x => x.SbjCode).IsOptional();
+            //RuleFor(x => x.SbjCode).IsOptional();
         }
     }
 

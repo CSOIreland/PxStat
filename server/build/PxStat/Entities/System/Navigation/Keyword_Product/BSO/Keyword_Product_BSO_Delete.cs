@@ -35,7 +35,7 @@ namespace PxStat.System.Navigation
 
             //attempting to delete. The number of entities deleted are passed to the entitiesDeleted variable (this is 1 for a successful delete)
             int nDeleted = adoKeyword_Product.Delete(DTO, false);
-            Log.Instance.Debug("Delete operation finished in ADO");
+            Log.Instance.Debug("Delete operation finished in IADO");
 
             if (nDeleted == 0)
             {
@@ -44,7 +44,7 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

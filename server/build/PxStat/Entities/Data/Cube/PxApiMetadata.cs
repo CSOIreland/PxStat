@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using System.Collections.Generic;
 
 namespace PxStat.Data
@@ -11,7 +12,7 @@ namespace PxStat.Data
 
             foreach (var item in result.data)
             {
-                pList.Add(new PxApiItem() { id = item.SbjCode.ToString(), text = item.SbjValue, type = Utility.GetCustomConfig("APP_PXAPI_LIST") });
+                pList.Add(new PxApiItem() { id = item.SbjCode.ToString(), text = item.SbjValue, type = Configuration_BSO.GetStaticConfig("APP_PXAPI_LIST") });
             }
 
             return pList;
@@ -24,7 +25,7 @@ namespace PxStat.Data
 
             foreach (var item in result.data)
             {
-                pList.Add(new PxApiItem() { id = item.PrcCode.ToString(), text = item.PrcValue, type = Utility.GetCustomConfig("APP_PXAPI_LIST") });
+                pList.Add(new PxApiItem() { id = item.PrcCode.ToString(), text = item.PrcValue, type = Configuration_BSO.GetStaticConfig("APP_PXAPI_LIST") });
             }
 
             return pList;
@@ -33,10 +34,12 @@ namespace PxStat.Data
         internal List<PxApiItem> ReadCollectionAsObjectList(IResponseOutput result)
         {
             List<PxApiItem> pList = new List<PxApiItem>();
-
-            foreach (var item in result.data)
+            if (result.data != null)
             {
-                pList.Add(new PxApiItem() { id = item.MtrCode, text = item.MtrTitle, type = Utility.GetCustomConfig("APP_PXAPI_TABLE") });
+                foreach (var item in result.data)
+                {
+                    pList.Add(new PxApiItem() { id = item.MtrCode, text = item.MtrTitle, type = Configuration_BSO.GetStaticConfig("APP_PXAPI_TABLE") });
+                }
             }
 
             return pList;

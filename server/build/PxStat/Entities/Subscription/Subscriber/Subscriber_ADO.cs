@@ -5,9 +5,9 @@ namespace PxStat.Subscription
 {
     public class Subscriber_ADO
     {
-        private ADO _ado;
+        private IADO _ado;
 
-        internal Subscriber_ADO(ADO ado)
+        internal Subscriber_ADO(IADO ado)
         {
             _ado = ado;
         }

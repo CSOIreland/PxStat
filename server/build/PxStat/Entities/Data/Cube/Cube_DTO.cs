@@ -20,7 +20,7 @@ namespace PxStat.Data
         public Cube_DTO_ReadMatrixMetadata(dynamic parameters)
         {
             //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
-            if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            if (Resources.Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
             {
                 if (parameters.language != null)
                     this.language = parameters.language;
@@ -35,6 +35,7 @@ namespace PxStat.Data
                 List<string> plist = new List<string>() { "", "language", "subject", "product", "matrix" };
                 for (int i = 1; i < parameters.Count; i++)
                 {
+                    if (String.IsNullOrEmpty(parameters[i])) continue;
                     dynamic value;
                     Type type = this.GetType();
 
@@ -67,7 +68,7 @@ namespace PxStat.Data
     /// <summary>
     /// DTOs for Cube object
     /// </summary>
-    internal class Cube_DTO_ReadCollection
+    public class Cube_DTO_ReadCollection
     {
         /// <summary>
         /// ISO Language code
@@ -93,12 +94,12 @@ namespace PxStat.Data
         public Cube_DTO_ReadCollection(dynamic parameters)
         {
             //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
-            if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            if (Resources.Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
             {
                 if (parameters.language != null)
                     this.language = parameters.language;
                 else
-                    this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                    this.language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
                 if (parameters.datefrom != null)
                 {
@@ -142,7 +143,7 @@ namespace PxStat.Data
                 }
 
             }
-            if (language == null) language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            if (language == null) language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
 
     }
@@ -177,12 +178,12 @@ namespace PxStat.Data
         public Cube_DTO_ReadCollectionSummary(dynamic parameters)
         {
             //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
-            if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            if (Resources.Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
             {
                 if (parameters.language != null)
                     this.language = parameters.language;
                 else
-                    this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                    this.language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
                 if (parameters.datefrom != null)
                 {
@@ -275,7 +276,7 @@ namespace PxStat.Data
         {
             Format = new Format_DTO_Read();
             //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
-            if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            if (Resources.Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
             {
 
                 if (parameters.matrix != null)
@@ -286,7 +287,7 @@ namespace PxStat.Data
 
                 if (parameters.language != null)
                     this.language = parameters.language;
-                else this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                else this.language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
 
                 if (parameters.format != null)
@@ -295,7 +296,7 @@ namespace PxStat.Data
                     if (parameters.format.type != null)
                         Format.FrmType = parameters.format.type;
 
-                    Format.FrmDirection = API.Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
+                    Format.FrmDirection = Configuration_BSO.GetStaticConfig("APP_FORMAT_DOWNLOAD_NAME");
 
                     if (parameters.format.version != null)
                         Format.FrmVersion = parameters.format.version;
@@ -318,9 +319,9 @@ namespace PxStat.Data
                 if (parameters.Count > 2) Format.FrmType = parameters[2];
                 if (parameters.Count > 3) Format.FrmVersion = parameters[3];
                 if (parameters.Count > 4) language = parameters[4];
-                else language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                else language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
-                Format.FrmDirection = API.Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
+                Format.FrmDirection = Configuration_BSO.GetStaticConfig("APP_FORMAT_DOWNLOAD_NAME");
             }
 
 
@@ -328,12 +329,12 @@ namespace PxStat.Data
             // Default language
             if (string.IsNullOrEmpty(this.language))
             {
-                this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                this.language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             }
             // Default format
             if (string.IsNullOrEmpty(this.Format.FrmType))
             {
-                this.Format.FrmType = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
+                this.Format.FrmType = Configuration_BSO.GetStaticConfig("APP_DEFAULT_DATASET_FORMAT");
             }
 
         }
@@ -355,7 +356,7 @@ namespace PxStat.Data
     }
 
 
-    internal class Cube_DTO_ReadMetadata : ICube_DTO_Read
+    public class Cube_DTO_ReadMetadata : ICube_DTO_Read
     {
         /// <summary>
         /// Matrix Code
@@ -394,7 +395,7 @@ namespace PxStat.Data
         {
             Format = new Format_DTO_Read();
             //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
-            if (Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            if (Resources.Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
             {
 
                 if (parameters.matrix != null)
@@ -405,7 +406,7 @@ namespace PxStat.Data
 
                 if (parameters.language != null)
                     this.language = parameters.language;
-                else this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                else this.language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
 
                 if (parameters.format != null)
@@ -414,7 +415,7 @@ namespace PxStat.Data
                     if (parameters.format.type != null)
                         Format.FrmType = parameters.format.type;
 
-                    Format.FrmDirection = API.Utility.GetCustomConfig("APP_FORMAT_DOWNLOAD_NAME");
+                    Format.FrmDirection = Configuration_BSO.GetStaticConfig("APP_FORMAT_DOWNLOAD_NAME");
 
                     if (parameters.format.version != null)
                         Format.FrmVersion = parameters.format.version;
@@ -435,7 +436,7 @@ namespace PxStat.Data
             {
                 if (parameters.Count > 1) matrix = parameters[1];
                 if (parameters.Count > 2) language = parameters[2];
-                else language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                else language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
                 this.Format = new Format_DTO_Read() { FrmDirection = "DOWNLOAD", FrmType = "JSON-stat", FrmVersion = "2.0" };
 
@@ -446,12 +447,12 @@ namespace PxStat.Data
             // Default language
             if (string.IsNullOrEmpty(this.language))
             {
-                this.language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                this.language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             }
             // Default format
             if (string.IsNullOrEmpty(this.Format.FrmType))
             {
-                this.Format.FrmType = Utility.GetCustomConfig("APP_DEFAULT_DATASET_FORMAT");
+                this.Format.FrmType = Configuration_BSO.GetStaticConfig("APP_DEFAULT_DATASET_FORMAT");
             }
 
         }

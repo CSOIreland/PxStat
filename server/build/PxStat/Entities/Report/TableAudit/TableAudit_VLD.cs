@@ -10,7 +10,7 @@ namespace PxStat.Report
     /// <summary>
     /// Validator for performance read
     /// </summary>
-    internal class TableAudit_VLD_Read : AbstractValidator<TableAudit_DTO_Read>
+    public class TableAudit_VLD_Read : AbstractValidator<TableAudit_DTO_Read>
     {
 
         /// <summary>
@@ -29,21 +29,21 @@ namespace PxStat.Report
         /// This is a blank constructor. It is used for test purposes only.
         /// </summary>
         /// <param name="isTest"></param>
-        internal TableAudit_VLD_Read(bool isTest)
+        public TableAudit_VLD_Read(bool isTest)
         {
         }
 
 
-        internal TableAudit_VLD_Read()
+        public TableAudit_VLD_Read()
         {
             //DateFrom must be past DateTo
             RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom).WithMessage("End date must be the same or after start date.");
 
             // Sets the minDate to the absolute start of the day hence i.e. 00:00:00 and subtracts days from report.data-validation.minDate
-            DateTime minDate = DateTime.Today.AddDays(-Configuration_BSO.GetCustomConfig(ConfigType.global, "report.date-validation.minDate"));
+            DateTime minDate = DateTime.Today.AddDays(-Configuration_BSO.GetApplicationConfigItem (ConfigType.global, "report.date-validation.minDate"));
 
             // Sets the maxDate to the absolute start of the day hence i.e. 00:00:00 and adds days from report.data-validation.maxDate
-            DateTime maxDate = DateTime.Today.AddDays(Configuration_BSO.GetCustomConfig(ConfigType.global, "report.date-validation.maxDate"));
+            DateTime maxDate = DateTime.Today.AddDays(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "report.date-validation.maxDate"));
 
             //Mandatory - DateFrom
             RuleFor(x => x.DateFrom).NotEqual(default(DateTime)).NotEmpty().WithMessage("*Required");

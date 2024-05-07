@@ -28,13 +28,7 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
-            if (Configuration_BSO.UpdateConfigFromFiles())
-            {
-                Response.data = JSONRPC.success;
-                return true;
-            }
-            Response.error = Label.Get("error.update");
-            return false;
+            return true;
         }
     }
 }

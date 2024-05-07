@@ -51,6 +51,8 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic CreateAD(JSONRPC_API requestApi)
         {
             return new Account_BSO_CreateAD(requestApi).Create().Response;
@@ -61,6 +63,8 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic CreateLocal(JSONRPC_API requestApi)
         {
             return new Account_BSO_CreateLocal(requestApi).Create().Response;
@@ -70,6 +74,8 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Delete(JSONRPC_API requestApi)
         {
             return new Account_BSO_Delete(requestApi).Delete().Response;
@@ -80,13 +86,15 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Update(JSONRPC_API requestApi)
         {
             return new Account_BSO_Update(requestApi).Update().Response;
         }
 
 
-        //
+        [NoDemo]
         public static dynamic UpdateCurrent(JSONRPC_API requestApi)
         {
             return new Account_BSO_UpdateCurrent(requestApi).Update().Response;

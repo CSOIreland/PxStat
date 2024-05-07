@@ -14,6 +14,8 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
+        /// 
+        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_NAVIGATION_SEARCH)]
         public static dynamic Create(JSONRPC_API jsonrpcRequest)
         {
             return new Keyword_Release_BSO_Create(jsonrpcRequest).Create().Response;
@@ -34,6 +36,8 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
+        /// 
+        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_NAVIGATION_SEARCH)]
         public static dynamic Delete(JSONRPC_API jsonrpcRequest)
         {
             return new Keyword_Release_BSO_Delete(jsonrpcRequest).Delete().Response;
@@ -44,6 +48,8 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
+        /// 
+        [CacheFlush(CAS_REPOSITORY_DOMAIN_LIST = Resources.Constants.C_CAS_NAVIGATION_SEARCH)]
         public static dynamic Update(JSONRPC_API jsonrpcRequest)
         {
             return new Keyword_Release_BSO_Update(jsonrpcRequest).Update().Response;

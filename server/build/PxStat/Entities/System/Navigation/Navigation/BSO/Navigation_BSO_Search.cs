@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Data;
+using PxStat.Security;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
@@ -44,8 +45,7 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <returns></returns>
         protected override bool Execute()
-        {
-
+        {           
             Navigation_ADO adoNav = new Navigation_ADO(Ado);
             Navigation_BSO nBso = new Navigation_BSO(Ado, DTO);
             bool wordSearch = false;
@@ -58,7 +58,7 @@ namespace PxStat.System.Navigation
             //DTO.search has too much variation to use as a cache key - the search terms are formatted in the table so we don't need it any more     
             DTO.Search = "";
 
-            MemCachedD_Value cache = MemCacheD.Get_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO); //
+            MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO); //
             if (cache.hasData)
             {
                 Response.data = cache.data;
@@ -81,8 +81,14 @@ namespace PxStat.System.Navigation
             {
                 resultList.Add(group.First());
             }
+            if (wordSearch)
+            {
+                int maxResults = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "search.maximumResults");
 
-            Response.data = resultList;
+                resultList = resultList.Take(maxResults).ToList();
+            }
+
+            Response.data = resultList.OrderByDescending(x => x.Score).ThenByDescending(x => x.RlsLiveDatetimeFrom).ToList();
 
             DateTime minDateItem = default;
 
@@ -94,7 +100,7 @@ namespace PxStat.System.Navigation
             else
                 minDateItem = default;
 
-            MemCacheD.Store_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO, Response.data, minDateItem, Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+           AppServicesHelper.CacheD.Store_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO, Response.data, minDateItem, Resources.Constants.C_CAS_NAVIGATION_SEARCH);
 
             return true;
         }

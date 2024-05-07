@@ -4,7 +4,7 @@
 	[
 	{
 		"key":"API_AD_CONNECTION",
-		"value":"ldap://cso.ie",
+		"value":"ldap://domain.ext",
 		"sensitive":false,
 		"description":"AD Connection string",
 		"action":"append"

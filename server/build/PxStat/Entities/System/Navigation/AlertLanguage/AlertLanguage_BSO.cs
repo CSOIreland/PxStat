@@ -9,7 +9,7 @@ namespace PxStat.Entities.System.Navigation.AlertLanguage
     /// </summary>
     internal class AlertLanguage_BSO
     {
-        internal int CreateOrUpdate(Alert_DTO dto, ADO ado)
+        internal int CreateOrUpdate(Alert_DTO dto, IADO ado)
         {
             AlertLanguage_ADO alAdo = new AlertLanguage_ADO(ado);
             return alAdo.CreateOrUpdate(dto);

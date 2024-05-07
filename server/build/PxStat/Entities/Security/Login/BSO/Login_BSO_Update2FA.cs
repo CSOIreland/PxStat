@@ -44,13 +44,13 @@ namespace PxStat.Security
                 var user = aAdo.Read(Ado, new Account_DTO_Read() { CcnUsername = DTO.CcnEmail });
                 if (!user.hasData)
                 {
-                    Response.data = JSONRPC.success;
+                    Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                     return true;
                 }
 
                 if (user.data[0].CcnEmail.Equals(DBNull.Value) || user.data[0].CcnDisplayName.Equals(DBNull.Value))
                 {
-                    Response.data = JSONRPC.success;
+                    Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                     return true;
                 }
 

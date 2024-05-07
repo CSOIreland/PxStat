@@ -24,6 +24,7 @@ namespace PxStat.Security
         {
             Database_ADO adoDatabase = new Database_ADO();
 
+
             ADO_readerOutput result;
 
             result = adoDatabase.Read(Ado, DTO);

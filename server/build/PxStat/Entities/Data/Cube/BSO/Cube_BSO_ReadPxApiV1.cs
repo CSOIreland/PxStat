@@ -1,4 +1,8 @@
 ﻿using API;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PxStat.Data.PxApiV1;
 using PxStat.JsonQuery;
 using PxStat.Resources;
 using PxStat.Security;
@@ -6,8 +10,11 @@ using PxStat.System.Navigation;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
+using System.Web;
 
 namespace PxStat.Data
 {
@@ -16,10 +23,9 @@ namespace PxStat.Data
     {
         public IResponseOutput Read(IRequest request)
         {
-            IMetaData metaData = new MetaData();
-            IPathProvider servicePathProvider = new ServerPathProvider();
-            Configuration_BSO.GetInstance(metaData, servicePathProvider);
-            Configuration_BSO.SetConfigFromFiles();
+            
+            var lng = LanguageManager.Instance;
+
 
             var parameters = ((List<string>)request.parameters).Where(x => !string.IsNullOrWhiteSpace(x));
             int pcount = parameters.Count() - 1;
@@ -32,7 +38,7 @@ namespace PxStat.Data
                     //Get a list of all subjects - but no language was specified
                     //In that case we add the default language to the url and continue as a subject query
 
-                    request.parameters = new List<string>() { Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") };
+                    request.parameters = new List<string>() { Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") };
                     rspSbj = new Subject_BSO_Read(request).Read().Response;
                     rspSbj.response = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadSubjectsAsObjectList(rspSbj));
                     return rspSbj;
@@ -48,28 +54,88 @@ namespace PxStat.Data
                 case Constants.C_DATA_PXAPIV1_PRODUCT_QUERY:
                     //Get a list of products for a subject
                     var rspPrd = new Product_BSO_Read(request).Read().Response;
+                    if(rspPrd.data==null)
+                    {
+                        rspPrd.statusCode = HttpStatusCode.NotFound;
+                        return rspPrd;
+                    }
+                    if(rspPrd.data.Count==0)
+                    {
+                        RESTful_Output output = new();
+                        output.statusCode = HttpStatusCode.NotFound;
+                        output.data = null;
+                        return output;
+                    }
                     rspPrd.response = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadProductsAsObjectList(rspPrd));
                     return rspPrd;
 
                 case Constants.C_DATA_PXAPIV1_COLLECTION_QUERY:
                     //Get the collection
                     var rspCol = new Cube_BSO_ReadCollectionSummary(request, false).Read().Response;
+                    if(rspCol.data==null)
+                    {
+                        rspCol.statusCode = HttpStatusCode.NotFound;
+                        return rspCol;
+                    }
+                   
                     rspCol.response = Utility.JsonSerialize_IgnoreLoopingReference(meta.ReadCollectionAsObjectList(rspCol));
                     return rspCol;
                 default:
-
+                    
                     //validate the request
                     if (pcount < Constants.C_DATA_PXAPIV1_METADATA_QUERY)
                     {
                         throw new Exception(Label.Get("error.validation"));
                     }
                     //If this is a HEAD request, we just check the existence of the matrix
-                    if (!request.GetType().Equals(typeof(Head_API)))
+                    if (!request.requestType.Equals("HEAD"))
                     {
                         //Either get the metadata for the table or, if a query has been supplied, get the table data based on the query
-                        string rq = string.IsNullOrWhiteSpace(request.httpPOST) ? request.httpGET[Constants.C_JSON_STAT_QUERY_CLASS] : request.httpPOST;
+                        //string rq = (string)(string.IsNullOrWhiteSpace(request.httpPOST) ? request.httpGET[Constants.C_JSON_STAT_QUERY_CLASS] : request.httpPOST);
 
-                        if (rq == null)
+                        //This is a PxApiV1 request
+                        string rq=null;
+                        if (!String.IsNullOrEmpty(request.httpPOST))
+                        {
+                            rq = request.httpPOST;
+                        }
+                        else if (request.httpGET.Count>0)
+                        {
+                            rq = request.httpGET[0];
+                        }
+                        else
+                        {
+                            if (!request.parameters[Constants.C_DATA_PXAPIV1_METADATA_QUERY].Contains("?query="))
+                            {
+                                var rspMeta = new Cube_BSO_ReadMetadataMatrix(request, false).Read().Response;
+                                rspMeta.response =rspMeta.data==null? null: Utility.JsonSerialize_IgnoreLoopingReference(rspMeta.data);
+                                
+                                return rspMeta;
+                                
+                            }
+
+                            string pxApiParameters = request.parameters[Constants.C_DATA_PXAPIV1_METADATA_QUERY];
+
+
+                            string[] queryParameters = pxApiParameters.Split("?query=");
+                            if (queryParameters.Length < 2)
+                            {
+                                throw new Exception(Label.Get("error.validation"));
+                            }
+
+                            request.parameters[Constants.C_DATA_PXAPIV1_METADATA_QUERY] = queryParameters[0];
+
+
+                            request.parameters.Add(queryParameters[1]);
+
+
+                            string coreString = request.parameters[Constants.C_DATA_PXAPIV1_DATA_QUERY].Replace("\"", "");
+
+                            rq = HttpUtility.UrlDecode(coreString);
+                        }
+                        
+
+                        if (String.IsNullOrEmpty(rq))
                         {
                             //This is a request for metadata only
                             var rspMeta = new Cube_BSO_ReadMetadataMatrix(request, false).Read().Response;
@@ -79,11 +145,12 @@ namespace PxStat.Data
                         else
                         {
                             //This is a query and requires data to be returned
-                            return ReadPxApiV1data(request);
+                            return ReadPxApiV1data(request); 
                         }
                     }
                     else
                     {
+                        
                         return new Cube_BSO_ReadMetadataHEAD(request).Read().Response;
 
                     }
@@ -101,7 +168,8 @@ namespace PxStat.Data
             List<dynamic> collectionPrdSbjdata = new List<dynamic>();
             List<dynamic> collectionPrdSbjmeta = new List<dynamic>();
 
-            using (Cube_BSO cBso = new Cube_BSO(new ADO("defaultConnection")))
+
+            using (Cube_BSO cBso = new Cube_BSO(AppServicesHelper.StaticADO))
             {
                 collectionPrdSbjdata = cBso.ReadCollection(request.parameters[Constants.C_DATA_PXAPIV1_SUBJECT_QUERY], request.parameters[Constants.C_DATA_PXAPIV1_PRODUCT_QUERY], request.parameters[Constants.C_DATA_PXAPIV1_COLLECTION_QUERY]);
             }
@@ -113,58 +181,41 @@ namespace PxStat.Data
                 return empty;
             }
 
-            if (collectionPrdSbjdata.Where(x => x.MtrCode == request.parameters[Constants.C_DATA_PXAPIV1_METADATA_QUERY]).ToList().Count == 0)
+  
+
+            string queryString = string.IsNullOrWhiteSpace(request.httpPOST) ? (string)request.httpGET[Constants.C_JSON_STAT_QUERY_CLASS] : request.httpPOST;
+
+
+
+            dynamic queryParameters = new ExpandoObject();
+            queryParameters.queryString = queryString; ;
+            queryParameters.LngIsoCode = request.parameters[Constants.C_DATA_PXAPIV1_SUBJECT_QUERY];
+            queryParameters.MtrCode = request.parameters[Constants.C_DATA_PXAPIV1_METADATA_QUERY];
+
+
+            request.parameters = queryParameters;
+            IResponseOutput rsp = new Cube_BSO_ReadPxApiV1Bso(request).Read().Response;
+
+
+            if (rsp.error == Label.Get("error.validation"))
             {
-                var empty = new RESTful_Output();
-                empty.statusCode = HttpStatusCode.NotFound;
-                return empty;
+                rsp.response = Label.Get("error.validation");
+                rsp.statusCode = HttpStatusCode.BadRequest;
+                return rsp;
             }
 
-
-            string queryString = string.IsNullOrWhiteSpace(request.httpPOST) ? request.httpGET[Constants.C_JSON_STAT_QUERY_CLASS] : request.httpPOST;
-
-            PxApiV1Query pxapiQuery = Utility.JsonDeserialize_IgnoreLoopingReference<PxApiV1Query>(queryString);
-
-
-            Format_DTO_Read format = new Format_DTO_Read(pxapiQuery.Response.Format);
-            string pivot = pxapiQuery.Response.Pivot;
-
-
-            JsonStatQuery jsQuery = new JsonStatQuery();
-            jsQuery.Class = Constants.C_JSON_STAT_QUERY_CLASS;
-            jsQuery.Id = new List<string>();
-            jsQuery.Dimensions = new Dictionary<string, JsonQuery.Dimension>();
-            foreach (var q in pxapiQuery.Query)
+            if (rsp.error == Label.Get("error.exception"))
             {
-                jsQuery.Id.Add(q.Code);
-                jsQuery.Dimensions.Add(q.Code, new JsonQuery.Dimension() { Category = new JsonQuery.Category() { Index = q.Selection.Values.ToList<string>() } });
+                rsp.statusCode = HttpStatusCode.InternalServerError;
+                rsp.response = Label.Get("error.exception");
+                return rsp;
             }
-            jsQuery.Extension = new Dictionary<string, object>();
-
-            jsQuery.Extension.Add("matrix", request.parameters[Constants.C_DATA_PXAPIV1_METADATA_QUERY]);
-            jsQuery.Extension.Add("language", new Language() { Code = request.parameters[Constants.C_DATA_PXAPIV1_SUBJECT_QUERY], Culture = null });
-            jsQuery.Extension.Add("codes", false);
-            jsQuery.Extension.Add("format", new JsonQuery.Format() { Type = format.FrmType, Version = format.FrmVersion });
-            if (pivot != null)
+            if (rsp.data == null)
             {
-                jsQuery.Extension.Add("pivot", pivot);
+                rsp.statusCode = HttpStatusCode.NotFound;
+                return rsp;
             }
-            jsQuery.Version = Constants.C_JSON_STAT_QUERY_VERSION;
 
-
-            request.parameters = Utility.JsonSerialize_IgnoreLoopingReference(jsQuery);
-
-            //Run the request as a Json Rpc call
-            IResponseOutput rsp = new Cube_BSO_ReadDataset(request, true).Read().Response;
-
-
-            string suffix;
-            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
-            {
-                suffix = bso.GetFileSuffixForFormat(format);
-            };
-            if (suffix != null)
-                rsp.fileName = jsQuery.Extension["matrix"] + "." + DateTime.Now.ToString("yyyyMMddHHmmss") + suffix;
             return rsp;
         }
 

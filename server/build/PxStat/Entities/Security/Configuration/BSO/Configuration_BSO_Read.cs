@@ -29,12 +29,6 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
-            var global = Configuration_BSO.GetCustomConfig(ConfigType.global);
-            var server = Configuration_BSO.GetCustomConfig(ConfigType.server);
-            dynamic configuration = new ExpandoObject();
-            configuration.global = global;
-            configuration.server = server;
-            Response.data = configuration;
             return true;
         }
     }

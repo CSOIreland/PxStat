@@ -29,8 +29,8 @@ namespace PxStat.Security
         protected override bool Execute()
         {
             // flush the cache and return success
-            MemCacheD.FlushAll();
-            Response.data = JSONRPC.success;
+           AppServicesHelper.CacheD.FlushAll();
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
 
         }

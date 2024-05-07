@@ -23,6 +23,8 @@ namespace PxStat.System.Settings
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Create(JSONRPC_API requestApi)
         {
             return new Copyright_BSO_Create(requestApi).Create().Response;
@@ -32,6 +34,8 @@ namespace PxStat.System.Settings
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Update(JSONRPC_API requestApi)
         {
             return new Copyright_BSO_Update(requestApi).Update().Response;
@@ -42,6 +46,8 @@ namespace PxStat.System.Settings
         /// </summary>
         /// <param name="requestApi"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Delete(JSONRPC_API requestApi)
         {
             return new Copyright_BSO_Delete(requestApi).Delete().Response;

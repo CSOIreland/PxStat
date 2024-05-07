@@ -16,9 +16,9 @@ namespace PxStat.Data
 
         public JsonStatBuilder2_0()
         {
-            var builder = new ContainerBuilder();
-            builder.RegisterType<ADO>().As<IADO>().WithParameter("connectionName", "defaultConnection");
-            Container = builder.Build();
+            //var builder = new ContainerBuilder();
+            //builder.RegisterType<IADO>().As<IADO>().WithParameter("connectionName", "defaultConnection");
+            //Container = builder.Build();
         }
 
         public JsonStat Create(IDmatrix matrix, string lngIsoCode, bool showData = true, bool doStatus = false)
@@ -37,7 +37,7 @@ namespace PxStat.Data
 
             jsStat.Version = Version.The20;
             jsStat.Class = Class.Dataset;
-            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
+            string urlBase = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.restful") + '/' + string.Format(Configuration_BSO.GetStaticConfig("APP_RESTFUL_DATASET"), Configuration_BSO.GetStaticConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
 
             if (matrix.Release != null)
             {
@@ -45,7 +45,7 @@ namespace PxStat.Data
                     jsStat.Href = new Uri(urlBase);
             }
 
-            lngIsoCode = lngIsoCode ?? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            lngIsoCode = lngIsoCode ?? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             if (lngIsoCode != null)
             {
@@ -77,12 +77,11 @@ namespace PxStat.Data
                     jsStat.Note.Add(matrix.Release.CmmValue);
                 }
 
-                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
+                urlBase = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.restful") + '/' + string.Format(Configuration_BSO.GetStaticConfig("APP_RESTFUL_DATASET"), Configuration_BSO.GetStaticConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
 
                 List<Format_DTO_Read> formats;
-                using (var scope = Container.BeginLifetimeScope())
+                using (var ado = AppServicesHelper.StaticADO)
                 {
-                    IADO ado = scope.Resolve<IADO>();
                     using (Format_BSO fbso = new Format_BSO(ado))
                     {
                         formats = fbso.Read(new Format_DTO_Read() { FrmDirection = Format_DTO_Read.FormatDirection.DOWNLOAD.ToString() }); //make this a list of DTO's
@@ -100,7 +99,7 @@ namespace PxStat.Data
                         foreach (var f in formats)
                         {
                             if (f.FrmType != matrix.FormatType || f.FrmVersion != matrix.FormatVersion)
-                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), matrix.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.restful") + '/' + string.Format(Configuration_BSO.GetStaticConfig("APP_RESTFUL_DATASET"), Configuration_BSO.GetStaticConfig("APP_READ_DATASET_API"), matrix.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
                         }
                         jsStat.Link = link;
                     }
@@ -248,7 +247,7 @@ namespace PxStat.Data
 
                     theDimension.Link = new Link()
                     {
-                        Enclosure = new List<Enclosure>() { new Enclosure() { Href = aDimension.GeoUrl, Type = Utility.GetCustomConfig("APP_GEO_MIMETYPE") } }
+                        Enclosure = new List<Enclosure>() { new Enclosure() { Href = aDimension.GeoUrl, Type = Configuration_BSO.GetStaticConfig("APP_GEO_MIMETYPE") } }
                     };
                 }
             }

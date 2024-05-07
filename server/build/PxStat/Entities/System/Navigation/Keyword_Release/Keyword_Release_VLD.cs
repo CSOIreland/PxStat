@@ -1,5 +1,6 @@
 ﻿using API;
 using FluentValidation;
+using PxStat.Security;
 
 namespace PxStat.System.Navigation
 {
@@ -11,7 +12,7 @@ namespace PxStat.System.Navigation
 
         internal Keyword_Release_VLD_Create()
         {
-            string regexNoWhiteSpace = Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE");
+            string regexNoWhiteSpace = Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE");
             //Mandatory - RlsCode
             RuleFor(f => f.RlsCode).NotEmpty();
             //Mandatory - KrlValue

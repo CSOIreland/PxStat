@@ -37,8 +37,8 @@ namespace PxStat.Data
                 return false;
             }
 
-            MemCacheD.Remove_BSO<dynamic>("PxStat.Data", "GeoMap_RESTful", "Read", DTO.GmpCode);
-;           Response.data = JSONRPC.success;
+           AppServicesHelper.CacheD.Remove_BSO<dynamic>("PxStat.Data", "GeoMap_RESTful", "Read", DTO.GmpCode);
+;           Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

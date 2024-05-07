@@ -4,7 +4,7 @@ using API;
 namespace PxStat.Workflow
 {
     /// <summary>
-    /// ADO for Request
+    /// IADO for Request
     /// </summary>
     internal class Request_ADO
     {
@@ -13,7 +13,7 @@ namespace PxStat.Workflow
         /// </summary>
         /// <param name="ado"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, string rqsCode = null)
+        internal ADO_readerOutput Read(IADO ado, string rqsCode = null)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 

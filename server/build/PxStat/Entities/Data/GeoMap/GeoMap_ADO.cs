@@ -7,11 +7,11 @@ namespace PxStat.Data
     internal class GeoMap_ADO
     {
         /// <summary>
-        /// ADO class parameter
+        /// IADO class parameter
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
-        internal GeoMap_ADO(ADO ado)
+        internal GeoMap_ADO(IADO ado)
         {
             this.ado = ado;
         }
@@ -77,7 +77,7 @@ namespace PxStat.Data
                 {
                     new ADO_inputParams() {name ="@GmpCode",value= dto.GmpCode },
                      new ADO_inputParams() {name ="@CcnUsername",value= userName},
-                     new ADO_inputParams() {name ="@UrlStub",value= Configuration_BSO.GetCustomConfig(ConfigType.global ,"url.api.static") + "/PxStat.Data.GeoMap_API.Read/"}
+                     new ADO_inputParams() {name ="@UrlStub",value= Configuration_BSO.GetApplicationConfigItem(ConfigType.global ,"url.api.static") + "/PxStat.Data.GeoMap_API.Read/"}
                 };
 
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
@@ -88,16 +88,20 @@ namespace PxStat.Data
         }
 
 
-        internal ADO_readerOutput ReadCollection(string gmpCode = null)
+        internal ADO_readerOutput ReadCollection(string gmpCode = null, string glrCode = null)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() {name= "@UrlStub",value=Configuration_BSO.GetCustomConfig(ConfigType.global ,"url.api.static") + "/PxStat.Data.GeoMap_API.Read/"}
+                new ADO_inputParams() {name= "@UrlStub",value=Configuration_BSO.GetApplicationConfigItem(ConfigType.global ,"url.api.static") + "/PxStat.Data.GeoMap_API.Read/"}
             };
 
             if (gmpCode != null)
             {
                 inputParamList.Add(new ADO_inputParams() { name = "@GmpCode", value = gmpCode });
+            }
+            if (glrCode != null)
+            {
+                inputParamList.Add(new ADO_inputParams() { name = "@GlrCode", value = glrCode });
             }
             var reader = ado.ExecuteReaderProcedure("Data_GeoMap_ReadCollection", inputParamList);
 

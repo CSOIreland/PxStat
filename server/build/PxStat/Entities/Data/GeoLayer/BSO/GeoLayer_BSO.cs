@@ -7,7 +7,7 @@ namespace PxStat.Data
     {
         internal GeoLayer_BSO() { }
 
-        internal List<dynamic> Read(ADO ado, GeoLayer_DTO_Read dto = null)
+        internal List<dynamic> Read(IADO ado, GeoLayer_DTO_Read dto = null)
         {
             GeoLayer_ADO gAdo = new GeoLayer_ADO(ado);
             if (dto == null) dto = new GeoLayer_DTO_Read();
@@ -15,7 +15,7 @@ namespace PxStat.Data
 
         }
 
-        internal List<dynamic> Read(ADO ado, string glrCode = null, string glrName = null)
+        internal List<dynamic> Read(IADO ado, string glrCode = null, string glrName = null)
         {
             GeoLayer_ADO gAdo = new GeoLayer_ADO(ado);
             GeoLayer_DTO_Read dto = new GeoLayer_DTO_Read() { GlrCode = glrCode, GlrName = glrName };

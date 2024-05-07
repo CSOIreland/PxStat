@@ -1,0 +1,78 @@
+{
+	"class": "query",
+	"id": [
+		"STATISTIC",
+		"TLIST(M1)",
+		"C02339V02812",
+		"C03346V04033",
+		"C03341V04028",
+		"C03344V04031",
+		"C03342V04029"
+	],
+	"dimension": {
+		"STATISTIC": {
+			"category": {
+				"index": [
+					"HPM02C01"
+				]
+			}
+		},
+		"TLIST(M1)": {
+			"category": {
+				"index": [
+					"202109",
+					"202108",
+					"202107"
+				]
+			}
+		},
+		"C02339V02812": {
+			"category": {
+				"index": [
+					"11"
+				]
+			}
+		},
+		"C03346V04033": {
+			"category": {
+				"index": [
+					"01"
+				]
+			}
+		},
+		"C03341V04028": {
+			"category": {
+				"index": [
+					"01"
+				]
+			}
+		},
+		"C03344V04031": {
+			"category": {
+				"index": [
+					"-"
+				]
+			}
+		},
+		"C03342V04029": {
+			"category": {
+				"index": [
+					"01"
+				]
+			}
+		}
+	},
+	"extension": {
+		"pivot": null,
+		"codes": false,
+		"language": {
+			"code": "en"
+		},
+		"format": {
+			"type": "JSON-stat",
+			"version": "2.0"
+		},
+		"matrix": "HPM02"
+	},
+	"version": "2.0"
+}

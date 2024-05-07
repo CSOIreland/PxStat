@@ -32,47 +32,6 @@ namespace PxStat.Data
         }
 
         /// <summary>
-        /// Run a cleanup function to hard delete unwanted 
-        /// </summary>
-        private static void runDeletes()
-        {
-            ADO defaultADO = new ADO("defaultConnection");
-            ADO adoBatch = new ADO("msdbConnection");
-
-            try
-
-            {
-
-                Matrix_ADO defaultMatrixAdo = new Matrix_ADO(defaultADO);
-
-                string processName = "DataMatrixDeleteEntities_" + defaultMatrixAdo.getDbName();
-
-                if (!defaultMatrixAdo.IsProcessRunning(processName))
-                {
-
-                    Matrix_ADO mAdo = new Matrix_ADO(adoBatch);
-
-
-                    mAdo.DeleteEntities(processName);
-                    adoBatch.CloseConnection();
-                    adoBatch.Dispose();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                defaultADO.CloseConnection();
-                defaultADO.Dispose();
-                adoBatch.CloseConnection();
-                adoBatch.Dispose();
-            }
-
-        }
-
-        /// <summary>
         /// Only validates the input source
         /// </summary>
         /// <param name="jsonrpcRequest"></param>

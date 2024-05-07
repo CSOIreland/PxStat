@@ -45,7 +45,7 @@ namespace PxStat.System.Settings
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoCopyright = new Copyright_ADO();
 
-            //Copyrights are returned as an ADO result
+            //Copyrights are returned as an IADO result
             ADO_readerOutput result = adoCopyright.Read(Ado, DTO);
 
             if (!result.hasData)

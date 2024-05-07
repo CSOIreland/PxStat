@@ -4,7 +4,7 @@ using API;
 namespace PxStat.System.Settings
 {
     /// <summary>
-    /// ADO methods for Reason 
+    /// IADO methods for Reason 
     /// </summary>
     internal class Reason_ADO
     {
@@ -14,7 +14,7 @@ namespace PxStat.System.Settings
         /// <param name="ado"></param>
         /// <param name="reason"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Reason_DTO_Read reason)
+        internal ADO_readerOutput Read(IADO ado, Reason_DTO_Read reason)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -46,7 +46,7 @@ namespace PxStat.System.Settings
         /// <param name="reason"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, Reason_DTO_Create reason, string ccnUsername)
+        internal int Create(IADO ado, Reason_DTO_Create reason, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -70,7 +70,7 @@ namespace PxStat.System.Settings
             return retParam.value;
         }
 
-        internal int CreateOrUpdateReasonLanguage(ADO ado, Reason_DTO_Update reason)
+        internal int CreateOrUpdateReasonLanguage(IADO ado, Reason_DTO_Update reason)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -100,7 +100,7 @@ namespace PxStat.System.Settings
         /// <param name="reason"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, Reason_DTO_Update reason, string ccnUsername)
+        internal int Update(IADO ado, Reason_DTO_Update reason, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -129,7 +129,7 @@ namespace PxStat.System.Settings
         /// <param name="reason"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, Reason_DTO_Delete reason, string ccnUsername)
+        internal int Delete(IADO ado, Reason_DTO_Delete reason, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -154,7 +154,7 @@ namespace PxStat.System.Settings
         /// <param name="ado"></param>
         /// <param name="rsnCode"></param>
         /// <returns></returns>
-        internal bool Exists(ADO ado, string rsnCode)
+        internal bool Exists(IADO ado, string rsnCode)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {

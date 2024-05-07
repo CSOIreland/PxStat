@@ -8,7 +8,7 @@ using System.Dynamic;
 namespace PxStat.Data
 {
     /// <summary>
-    /// ADO classes for Release
+    /// IADO classes for Release
     /// </summary>
     public partial class Release_ADO : DataAdaptor
     {
@@ -32,7 +32,7 @@ namespace PxStat.Data
         /// <param name="dto"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal int Create(Release_DTO dto, string userName)
+        public int Create(Release_DTO dto, string userName)
         {
             var inputParams = new List<ADO_inputParams>()
                 {
@@ -255,8 +255,8 @@ namespace PxStat.Data
             var inputParams = new List<ADO_inputParams>();
             inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = releaseCode });
             inputParams.Add(new ADO_inputParams { name = "@CcnUsername", value = userName });
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             var reader = ado.ExecuteReaderProcedure("Data_Release_Read", inputParams);
             if (reader.hasData)
@@ -279,7 +279,7 @@ namespace PxStat.Data
             inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = rDto.RlsCode });
             inputParams.Add(new ADO_inputParams { name = "@CcnUsername", value = userName });
             inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = rDto.LngIsoCode });
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             var reader = ado.ExecuteReaderProcedure("Data_Release_Read", inputParams);
             if (reader.hasData)
@@ -296,13 +296,13 @@ namespace PxStat.Data
         /// <param name="releaseID"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal dynamic ReadID(int releaseID, string userName)
+        public dynamic ReadID(int releaseID, string userName)
         {
             var inputParams = new List<ADO_inputParams>();
             inputParams.Add(new ADO_inputParams { name = "@RlsID", value = releaseID });
             inputParams.Add(new ADO_inputParams { name = "@CcnUsername", value = userName });
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCode", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             var reader = ado.ExecuteReaderProcedure("Data_Release_Read", inputParams);
             if (reader.hasData)
@@ -318,7 +318,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="element">the dynamic object with the record from the select stm</param>
         /// <returns>a Release_DTO object</returns>
-        internal static Release_DTO GetReleaseDTO(dynamic element)
+        public static Release_DTO GetReleaseDTO(dynamic element)
         {
             if (element == null) return null;
 
@@ -465,7 +465,7 @@ namespace PxStat.Data
                 new ADO_inputParams { name = "@CcnUsername", value = userName },
                 new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode },
                 new ADO_inputParams { name = "@LngIsoCode", value = dto.LngIsoCode },
-                new ADO_inputParams{name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")}
+                new ADO_inputParams{name="@LngIsoCodeDefault",value=Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")}
 
             };
 

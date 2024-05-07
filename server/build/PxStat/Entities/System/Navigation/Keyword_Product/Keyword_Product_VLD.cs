@@ -1,5 +1,6 @@
 ﻿using API;
 using FluentValidation;
+using PxStat.Security;
 
 namespace PxStat.System.Navigation
 {
@@ -10,7 +11,7 @@ namespace PxStat.System.Navigation
     {
         public Keyword_Product_VLD_Create()
         {
-            string regexNoWhiteSpace = Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE");
+            string regexNoWhiteSpace = Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE");
             //Mandatory - KprValue
             RuleFor(x => x.KprValue).NotEmpty();
             //Mandatory - PrcCode

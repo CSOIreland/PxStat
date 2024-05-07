@@ -24,7 +24,7 @@ namespace PxStat.Entities.DBuild
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.FrqCodeTimeval != null)
                 FrqCodeTimeval = parameters.FrqCodeTimeval;
             if (parameters.FrqValueTimeval != null)

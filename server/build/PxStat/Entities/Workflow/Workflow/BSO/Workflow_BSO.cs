@@ -11,7 +11,7 @@ namespace PxStat.Workflow
 {
     internal class Workflow_BSO
     {
-        internal Workflow_DTO Populate(ADO ado, Workflow_DTO dto, string ccnUsername)
+        internal Workflow_DTO Populate(IADO ado, Workflow_DTO dto, string ccnUsername)
         {
             Workflow_ADO wAdo = new Workflow_ADO();
             ADO_readerOutput reader = wAdo.Read(ado, dto, ccnUsername, "PUBLISH");
@@ -26,7 +26,7 @@ namespace PxStat.Workflow
                 WrqExperimentalFlag = DataAdaptor.ReadBool(reader.data[0].WrqExperimentalFlag)
             };
         }
-        internal JSONRPC_Output WorkflowRequestCreate(WorkflowRequest_DTO DTO, ADO Ado, string SamAccountName)
+        internal JSONRPC_Output WorkflowRequestCreate(WorkflowRequest_DTO DTO, IADO Ado, string SamAccountName)
         {
             JSONRPC_Output response = new JSONRPC_Output();
             //Validation of parameters and user have been successful. We may now proceed to read from the database
@@ -141,7 +141,7 @@ namespace PxStat.Workflow
 
 
 
-            response.data = JSONRPC.success;
+            response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
             List<WorkflowRequest_DTO> dtoWrqList = adoWorkflowRequest.Read(Ado, DTO.RlsCode, true);
             if (dtoWrqList.Count == 1)
@@ -151,7 +151,10 @@ namespace PxStat.Workflow
                 {
                     notify.EmailRequest(dtoWrqList[0], releaseDTO, Ado);
                 }
-                catch { }
+                catch(Exception ex)
+                { 
+                Log.Instance.Error("Email failed: " + ex.Message);
+                }
             }
             else
                 Log.Instance.Error("Email failed");
@@ -166,7 +169,7 @@ namespace PxStat.Workflow
         /// <param name="ccnUsername"></param>
         /// <param name="permissionConfigItem"></param>
         /// <returns></returns>
-        internal bool HasFastrackPermission(ADO ado, string ccnUsername, int RlsCode, string workflowStage)
+        internal bool HasFastrackPermission(IADO ado, string ccnUsername, int RlsCode, string workflowStage)
         {
             ADO_readerOutput result = new Account_BSO(ado).ReadCurrentAccess(ado, ccnUsername);
             if (!result.hasData) return false;
@@ -179,16 +182,16 @@ namespace PxStat.Workflow
                 case Constants.C_SECURITY_PRIVILEGE_MODERATOR:
                     if (workflowStage.Equals("workflow.fastrack.signoff")) return false;
 
-                    if (Configuration_BSO.GetCustomConfig(ConfigType.global, workflowStage + ".approver"))
+                    if (Configuration_BSO.GetApplicationConfigItem(ConfigType.global, workflowStage + ".approver"))
                     {
                         return (this.IsModeratorApprover(ado, ccnUsername, RlsCode));
                     }
                     return false;
 
                 case Constants.C_SECURITY_PRIVILEGE_ADMINISTRATOR:
-                    return Configuration_BSO.GetCustomConfig(ConfigType.global, workflowStage + ".administrator");
+                    return Configuration_BSO.GetApplicationConfigItem(ConfigType.global, workflowStage + ".administrator");
                 case Constants.C_SECURITY_PRIVILEGE_POWER_USER:
-                    return Configuration_BSO.GetCustomConfig(ConfigType.global, workflowStage + ".poweruser");
+                    return Configuration_BSO.GetApplicationConfigItem(ConfigType.global, workflowStage + ".poweruser");
 
             }
 
@@ -196,7 +199,7 @@ namespace PxStat.Workflow
             return false;
         }
 
-        internal JSONRPC_Output WorkflowResponseCreate(WorkflowResponse_DTO DTO, ADO Ado, string SamAccountName)
+        internal JSONRPC_Output WorkflowResponseCreate(WorkflowResponse_DTO DTO, IADO Ado, string SamAccountName)
         {
             JSONRPC_Output response = new JSONRPC_Output();
             //We need to get the Request for notification purposes
@@ -291,7 +294,7 @@ namespace PxStat.Workflow
                 adoWorkflowRequest.Update(Ado, dtoRequest, SamAccountName);
             }
 
-            response.data = JSONRPC.success;
+            response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
             //Get Release 
             Release_ADO releaseAdo = new Release_ADO(Ado);
@@ -308,12 +311,14 @@ namespace PxStat.Workflow
             {
                 notify.EmailResponse(dtoWrqList[0], DTO, releaseDTO);
             }
-            catch
-            { }
+            catch(Exception ex) 
+            { 
+                Log.Instance.Error("Email error: " + ex.Message);
+            }
             return response;
         }
 
-        internal bool IsModeratorApprover(ADO Ado, string CcnUsername, int RlsCode)
+        internal bool IsModeratorApprover(IADO Ado, string CcnUsername, int RlsCode)
         {
             Account_BSO acBso = new Account_BSO();
             var adoWorkflowResponse = new WorkflowResponse_ADO();
@@ -326,7 +331,7 @@ namespace PxStat.Workflow
             return false;
         }
 
-        internal JSONRPC_Output WorkflowSignoffCreate(ADO Ado, WorkflowSignoff_DTO DTO, string SamAccountName)
+        internal JSONRPC_Output WorkflowSignoffCreate(IADO Ado, WorkflowSignoff_DTO DTO, string SamAccountName)
         {
             JSONRPC_Output response = new JSONRPC_Output();
             ADO_readerOutput moderators = new ADO_readerOutput();
@@ -348,7 +353,7 @@ namespace PxStat.Workflow
 
             //Is this awaiting signoff?
             var adoWorkflow = new Workflow_ADO();
-            ADO_readerOutput resultStatus = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode, Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
+            ADO_readerOutput resultStatus = adoWorkflow.ReadAwaitingSignoff(Ado, SamAccountName, DTO.RlsCode, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
 
             if (!resultStatus.hasData)
             {
@@ -449,7 +454,7 @@ namespace PxStat.Workflow
 
                 DTO.MtrCode = dtoRelease.MtrCode; // we need this to see which cache we must flush
 
-                response.data = JSONRPC.success;
+                response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
                 Email_BSO_NotifyWorkflow notifyReject = new Email_BSO_NotifyWorkflow();
 
@@ -457,7 +462,10 @@ namespace PxStat.Workflow
                 {
                     notifyReject.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
                 }
-                catch { }
+                catch (Exception ex) 
+                {
+                    Log.Instance.Error("Email error: " + ex.Message);
+                }
 
                 return response;
             }
@@ -847,7 +855,7 @@ namespace PxStat.Workflow
 
             DTO.MtrCode = dtoRelease.MtrCode; // we need this to see which cache we must flush
 
-            response.data = JSONRPC.success;
+            response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
 
             var sendMailThread = new Thread(() =>
@@ -857,45 +865,39 @@ namespace PxStat.Workflow
                 {
                     notify.EmailSignoff(dtoWrq, DTO, dtoRelease, moderators, powerUsers);
                 }
-                catch { }
+                catch (Exception ex)    
+                {
+                    Log.Instance.Error("Email error: " + ex.Message);
+                }
             });
 
             sendMailThread.Start();
 
             // Clean up caching
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + DTO.RlsCode);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + DTO.RlsCode);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + DTO.RlsCode);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + DTO.RlsCode);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + DTO.RlsCode);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + DTO.RlsCode);
 
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + DTO.RlsCode);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + DTO.RlsCode);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + DTO.RlsCode);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + DTO.RlsCode);
 
             if (dtoWip != null)
             {
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + dtoWip.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + dtoWip.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + dtoWip.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + dtoWip.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + dtoWip.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + dtoWip.RlsCode);
 
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + dtoWip.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + dtoWip.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + dtoWip.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + dtoWip.RlsCode);
             }
 
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
 
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
-
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
-
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
-
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI);
-
-
-
-
-
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
+            Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
+		    Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_COLLECTION_PXAPI);
             return response;
         }
     }

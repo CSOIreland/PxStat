@@ -4,20 +4,20 @@ using API;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// ADO methods of ProductLanguage
+    /// IADO methods of ProductLanguage
     /// </summary>
     public class ProductLanguage_ADO
     {
         /// <summary>
-        /// ADO class parameter
+        /// IADO class parameter
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        internal ProductLanguage_ADO(ADO ado)
+        internal ProductLanguage_ADO(IADO ado)
         {
             this.ado = ado;
         }

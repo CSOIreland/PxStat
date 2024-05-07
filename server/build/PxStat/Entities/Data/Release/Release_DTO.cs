@@ -83,7 +83,7 @@ namespace PxStat.Data
             if (parameters.LngIsoCode != null)
                 this.LngIsoCode = parameters.LngIsoCode;
             else
-                this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                this.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -95,28 +95,28 @@ namespace PxStat.Data
         /// <summary>
         /// Release Code
         /// </summary>
-        public int RlsCode { get; internal set; }
+        public int RlsCode { get; set; }
         /// <summary>
         /// Release Analytical Flag
         /// </summary>
-        public bool? RlsAnalyticalFlag { get; internal set; }
+        public bool? RlsAnalyticalFlag { get; set; }
 
 
 
         /// <summary>
         /// Product Code
         /// </summary>
-        public string PrcCode { get; internal set; }
+        public string PrcCode { get; set; }
 
         /// <summary>
         /// Comment Value
         /// </summary>
-        public string CmmValue { get; internal set; }
+        public string CmmValue { get; set; }
 
         /// <summary>
         /// Matrix Code
         /// </summary>
-        public string MtrCode { get; internal set; }
+        public string MtrCode { get; set; }
 
         /// <summary>
         /// Constructor
@@ -148,124 +148,124 @@ namespace PxStat.Data
         /// <summary>
         /// Release Code
         /// </summary>
-        public int RlsCode { get; internal set; }
+        public int RlsCode { get; set; }
 
 
         /// <summary>
         /// Release Analytical Flag
         /// </summary>
-        public bool RlsAnalyticalFlag { get; internal set; }
+        public bool RlsAnalyticalFlag { get; set; }
 
         /// <summary>
         /// Release Archive Flag
         /// </summary>
-        public bool RlsArchiveFlag { get; internal set; }
+        public bool RlsArchiveFlag { get; set; }
 
         /// <summary>
         /// Release Experimental Flag
         /// </summary>
-        public bool RlsExperimentalFlag { get; internal set; }
+        public bool RlsExperimentalFlag { get; set; }
 
         /// <summary>
         ///  End date and time of release
         /// </summary>
-        public DateTime RlsLiveDatetimeTo { get; internal set; }
+        public DateTime RlsLiveDatetimeTo { get; set; }
 
         /// <summary>
         ///Release Reservation Flag
         /// </summary>
-        public bool RlsReservationFlag { get; internal set; }
+        public bool RlsReservationFlag { get; set; }
 
         /// <summary>
         /// Release Revision number
         /// </summary>
-        public int RlsRevision { get; internal set; }
+        public int RlsRevision { get; set; }
 
         /// <summary>
         /// Release Version number
         /// </summary>
-        public int RlsVersion { get; internal set; }
+        public int RlsVersion { get; set; }
 
 
         /// <summary>
         ///  Release Exceptional Flag
         /// </summary>
-        public bool RlsExceptionalFlag { get; internal set; }
+        public bool RlsExceptionalFlag { get; set; }
 
         /// <summary>
         /// Start date and time of Release
         /// </summary>
-        public DateTime RlsLiveDatetimeFrom { get; internal set; }
+        public DateTime RlsLiveDatetimeFrom { get; set; }
 
 
         /// <summary>
         /// Group Code
         /// </summary>
-        public string GrpCode { get; internal set; }
+        public string GrpCode { get; set; }
 
         /// <summary>
         /// Matrix Code
         /// </summary>
-        public string MtrCode { get; internal set; }
+        public string MtrCode { get; set; }
 
         /// <summary>
         /// Subject Value
         /// </summary>
-        public string SbjValue { get; internal set; }
+        public string SbjValue { get; set; }
 
         /// <summary>
         /// Product value
         /// </summary>
-        public string PrcValue { get; internal set; }
+        public string PrcValue { get; set; }
 
         /// <summary>
         /// Product Code
         /// </summary>
-        public string PrcCode { get; internal set; }
+        public string PrcCode { get; set; }
 
         /// <summary>
         /// Comment Code
         /// </summary>
-        public int CmmCode { get; internal set; }
+        public int CmmCode { get; set; }
 
         /// <summary>
         /// Release Live Flag
         /// </summary>
-        public bool RlsLiveFlag { get; internal set; }
+        public bool RlsLiveFlag { get; set; }
 
         /// <summary>
         /// Group Name
         /// </summary>
-        public string GrpName { get; internal set; }
+        public string GrpName { get; set; }
 
         /// <summary>
         /// Comment Value
         /// </summary>
-        public string CmmValue { get; internal set; }
+        public string CmmValue { get; set; }
 
         /// <summary>
         /// Subject Code
         /// </summary>
-        public int SbjCode { get; internal set; }
+        public int SbjCode { get; set; }
 
         /// <summary>
         /// Group Contact Name
         /// </summary>
-        public string GrpContactName { get; internal set; }
+        public string GrpContactName { get; set; }
 
         /// <summary>
         /// Group Contact Phone
         /// </summary>
-        public string GrpContactPhone { get; internal set; }
+        public string GrpContactPhone { get; set; }
 
         /// <summary>
         /// Group Contact Email
         /// </summary>
-        public string GrpContactEmail { get; internal set; }
+        public string GrpContactEmail { get; set; }
 
-        public List<string> Reasons { get; internal set; }
+        public List<string> Reasons { get; set; }
 
-        public int MtrId { get; internal set; }
+        public int MtrId { get; set; }
         #endregion
     }
 }

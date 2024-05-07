@@ -36,14 +36,14 @@ namespace PxStat.Subscription
             if (SamAccountName == null)
             {
 
-                if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
                 }
             }
 
-            int queryThreshold = Configuration_BSO.GetCustomConfig(ConfigType.server, "subscription.query-threshold");
+            int queryThreshold = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "subscription.query-threshold");
 
             if (!IsValidBase64String(DTO.Snippet.Query.ToString()))
             {
@@ -56,7 +56,7 @@ namespace PxStat.Subscription
 
             if (userQueryId > 0)
             {
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             else if (userQueryId == -1) // Duplicate tag name

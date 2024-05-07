@@ -7,8 +7,8 @@ namespace PxStat.Security
 
     internal class Login_ADO
     {
-        ADO ado;
-        internal Login_ADO(ADO Ado)
+        IADO ado;
+        internal Login_ADO(IADO Ado)
         {
             ado = Ado;
         }

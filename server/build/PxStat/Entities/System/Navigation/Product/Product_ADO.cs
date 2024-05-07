@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// ADO methods for Product
+    /// IADO methods for Product
     /// </summary>
     internal class Product_ADO
     {
         /// <summary>
-        /// ADO class parameter
+        /// IADO class parameter
         /// </summary>
         private IADO ado;
 

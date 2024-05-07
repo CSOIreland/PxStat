@@ -53,10 +53,17 @@ namespace PxStat.Data
 
             Response.data = cBso.ReadCollection(DTO.language, DTO.subject.ToString(), DTO.product);
 
+            if(Response.data == null) 
+            {
+                return false;
+            }
+
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("Key");
             dataTable.Columns.Add("Value");
             dataTable.Columns.Add("Attribute");
+
+            
 
             foreach (var data in Response.data)
             {

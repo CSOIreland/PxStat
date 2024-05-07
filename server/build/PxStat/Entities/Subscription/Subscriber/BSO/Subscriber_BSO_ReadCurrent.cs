@@ -32,15 +32,15 @@ namespace PxStat.Subscription
         /// <returns></returns>
         protected override bool Execute()
         {
-            if (SamAccountName != null)
-            {
-                Response.error = Label.Get("error.authentication");
-                return false;
-            }
+            //if (SamAccountName != null)
+            //{
+            //    Response.error = Label.Get("error.authentication");
+            //    return false;
+            //}
 
 
-            if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
-            {
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                {
                 Response.error = Label.Get("error.authentication");
                 return false;
             }

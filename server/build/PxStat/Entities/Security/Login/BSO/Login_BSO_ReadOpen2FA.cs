@@ -61,7 +61,7 @@ namespace PxStat.Security
 
             if (lAdo.ReadOpen2Fa(DTO.CcnUsername))
             {
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             return false;

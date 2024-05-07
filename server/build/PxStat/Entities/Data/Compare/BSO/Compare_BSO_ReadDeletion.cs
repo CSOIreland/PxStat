@@ -47,8 +47,8 @@ namespace PxStat.Data
 
             dtoLeft.LngIsoCode = DTO.LngIsoCode;
 
-            IMetaData metaData = new MetaData();
-            var comparisonMatrix = dbso.CompareAddDelete(Ado, metaData, dtoRight, dtoLeft);
+            
+            var comparisonMatrix = dbso.CompareAddDelete(Ado,  dtoRight, dtoLeft);
 
             JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
             var jsonStat = jxb.Create(comparisonMatrix, comparisonMatrix.Language, true,true);

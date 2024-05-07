@@ -41,8 +41,9 @@ namespace PxStat.System.Notification
                 listToParse.Add(new eMail_KeyValuePair() { key = "{content}", value = content });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{footer}", value = footer });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
-                listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo") });
+                listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.logo") });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", lngIsoCode) });
+                listToParse.Add(new eMail_KeyValuePair() { key = "{datetime}", value = DateTime.Now.ToString("g") });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", lngIsoCode) });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", lngIsoCode) });
 
@@ -101,7 +102,7 @@ namespace PxStat.System.Notification
                     listToParse.Add(new eMail_KeyValuePair() { key = "{item3}", value = bulletPoints[3] });
                 }
 
-                listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo") });
+                listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.logo") });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", lngIsoCode) });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", lngIsoCode) });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", lngIsoCode) });

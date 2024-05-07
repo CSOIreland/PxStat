@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Template;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -17,42 +18,31 @@ namespace PxStat.Security
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            if (IsPowerUser())
+                return true;
+
+            if( IsModerator() && !String.IsNullOrEmpty(DTO.MtrCode))
+                return true;
+
+            return false;
         }
 
-        /// <summary>
-        /// Execute
-        /// </summary>
-        /// <returns></returns>
+
         protected override bool Execute()
         {
-            Analytic_ADO ado = new Analytic_ADO(Ado);
-            ADO_readerOutput outputSummary = ado.ReadFormat(DTO,SamAccountName );
-            List<nltFormat> formatList = new List<nltFormat>();
-            List<int> groupList = new List<int>();
-
-            if (outputSummary.hasData)
+            
+            MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadFormat", DTO);
+            if (cache.hasData)
             {
-                foreach (var item in outputSummary.data[0])
-                {
-                    formatList.Add(new nltFormat {FrmTypeVersion=item.FrmTypeVersion, GrpId=item.GrpId, NltCount=item.NltCount });
-                }
-                foreach (var item in outputSummary.data[1])
-                {
-                    groupList.Add(item.GrpId);
-                }
-
-                var restrictedGroupQuery = (from b in formatList
-                                            join g in groupList on b.GrpId equals g
-                                            select b).ToList();
-
-                var result = from e in restrictedGroupQuery
-                             group e by e.FrmTypeVersion into g
-                             select new { FrmTypeVersion = g.Key, NltCount = g.Sum(x => x.NltCount) };
-
-
-                Response.data = FormatData(result);
-
+                Response.data = cache.data;
+                return true;
+            }
+            Analytic_ADO ado = new Analytic_ADO(Ado);
+            List<dynamic> outputSummary = ado.ReadFormat(DTO);
+            if (outputSummary != null)
+            {
+                Response.data = FormatData(outputSummary);
+                ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "ReadFormat", DTO, Response.data, default(DateTime));
                 return true;
             }
             return false;
@@ -66,7 +56,7 @@ namespace PxStat.Security
             foreach (dynamic item in readData)
             {
 
-                itemDict.Add(item.FrmTypeVersion, item.NltCount);
+                itemDict.Add(item.FrmTypeVersion.ToString(), item.NltCount);
 
 
             }

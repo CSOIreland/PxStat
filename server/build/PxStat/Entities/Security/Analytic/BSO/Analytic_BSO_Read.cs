@@ -1,5 +1,10 @@
 ﻿using API;
+using DocumentFormat.OpenXml.Spreadsheet;
+using PxStat.System.Settings;
 using PxStat.Template;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PxStat.Security
 {
@@ -22,27 +27,38 @@ namespace PxStat.Security
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() ;
+            return true;
         }
 
-        /// <summary>
-        /// Execute
-        /// </summary>
-        /// <returns></returns>
         protected override bool Execute()
         {
-            Analytic_ADO ado = new Analytic_ADO(Ado);
-
-            ADO_readerOutput outputDetails = ado.Read(DTO);
-
-            Response.data = outputDetails.data;
-
-            if (outputDetails.hasData)
+            if (IsModerator() && String.IsNullOrEmpty(DTO.MtrCode))
             {
+                Response.error = Label.Get("error.privilege", DTO.LngIsoCode);
+                return false;
+            }
+                if (new Language_BSO().Read(DTO.LngIsoCode.ToString(), Ado) == null)
+                DTO.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+
+            MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "Read", DTO);
+            if (cache.hasData)
+            {
+                Response.data = cache.data;
                 return true;
             }
+            
+            
 
-            return false;
+            Analytic_ADO ado = new Analytic_ADO(Ado);
+            List<dynamic> outputSummary = ado.Read(DTO);
+
+            if (outputSummary != null)
+                ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "Read", DTO, outputSummary, default(DateTime));
+
+
+            Response.data = outputSummary;
+            return true;
         }
+
     }
 }

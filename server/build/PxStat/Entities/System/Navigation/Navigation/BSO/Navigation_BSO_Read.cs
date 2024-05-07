@@ -55,7 +55,7 @@ namespace PxStat.System.Navigation
             }
 
             //Read the cached value for this if it's available but only if there isn't a next release before the cache expiry time
-            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.System.Navigation", "Navigation_API", "Read", DTO);
+            MemCachedD_Value cache =AppServicesHelper.CacheD.Get_BSO<dynamic>("PxStat.System.Navigation", "Navigation_API", "Read", DTO);
 
             if (cache.hasData && nextReleaseDate >= cache.expiresAt)
             {
@@ -87,7 +87,7 @@ namespace PxStat.System.Navigation
                 }
                 Response.data = formattedOutput;
 
-                MemCacheD.Store_BSO<dynamic>("PxStat.System.Navigation", "Navigation_API", "Read", DTO, Response.data, nextReleaseDate, Resources.Constants.C_CAS_NAVIGATION_READ);
+               AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.System.Navigation", "Navigation_API", "Read", DTO, Response.data, nextReleaseDate, Resources.Constants.C_CAS_NAVIGATION_READ);
                 return true;
             }
 

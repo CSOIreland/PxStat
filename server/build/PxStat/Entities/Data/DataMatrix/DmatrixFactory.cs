@@ -17,7 +17,7 @@ namespace PxStat.Data
             this.ado = ado;
         }
 
-        public IDmatrix CreateDmatrix(IUpload_DTO dto, IMetaData metaData)
+        public IDmatrix CreateDmatrix(IUpload_DTO dto)
         {
             using (var scope = Container.BeginLifetimeScope())
             {
@@ -28,7 +28,7 @@ namespace PxStat.Data
                 var pxDocument = pxManualParser.Parse();
 
                 // Load properties from PxDocument
-                dmatrix = new Dmatrix(pxDocument, dto, ado, metaData);
+                dmatrix = new Dmatrix(pxDocument, dto, ado);
                 dmatrix.MtrInput = dto.MtrInput;
                 return dmatrix;
             }

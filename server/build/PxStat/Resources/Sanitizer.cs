@@ -1,6 +1,6 @@
 ﻿using API;
 using DocumentFormat.OpenXml.Presentation;
-using Ganss.XSS;
+using Ganss.Xss;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -60,7 +60,7 @@ namespace PxStat.Resources
                             pvalue = sanitizer.Sanitize(pvalue);
 
                             //Second iteration - remove all other tags but keep their contents
-                            sanitizer = new HtmlSanitizer(new List<string>() );
+                            sanitizer = new HtmlSanitizer();
                             sanitizer.KeepChildNodes = true;
                             pvalue=sanitizer.Sanitize(pvalue);
 

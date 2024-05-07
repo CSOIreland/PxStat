@@ -2,11 +2,12 @@
 using PxStat.Template;
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Web;
 
 namespace PxStat.Security
 {
-    internal class Login_BSO_Login : BaseTemplate_Read<Login_DTO_Login, Login_VLD_Login>
+    internal class Login_BSO_Login : BaseTemplate_Create<Login_DTO_Login, Login_VLD_Login>
     {
         /// <param name="request"></param>
         internal Login_BSO_Login(JSONRPC_API request) : base(request, new Login_VLD_Login())
@@ -45,7 +46,7 @@ namespace PxStat.Security
             dynamic adUser = adAdo.GetAdSpecificDataForEmail(DTO.CcnEmail);
 
             //Check if local access is available for AD users
-            if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess") && adUser != null)
+            if (!Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.adOpenAccess") && adUser != null)
             {
                 Response.error = Label.Get("error.authentication");
                 return false;
@@ -123,11 +124,11 @@ namespace PxStat.Security
 
             response = lBso.Validate1Fa(DTO.Lgn1Fa, user);
 
-            if (!response.hasData)
+            if (!response.hasData && !ApiServicesHelper.ApiConfiguration.Settings["API_AUTHENTICATION_TYPE"].Equals("ANONYMOUS")) 
             {
                 //No validation available via the Login table, try Active Directory
                 long lValidatePassword = sw.ElapsedMilliseconds;
-                if (!ActiveDirectory.IsPasswordValid(user, DTO.Lgn1Fa))
+                if (!AppServicesHelper.ActiveDirectory.IsPasswordValid(user, DTO.Lgn1Fa))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
@@ -155,19 +156,20 @@ namespace PxStat.Security
                 return false;
             }
 
+            
+            string sessionToken = Utility.GetSHA256(new Random().Next() + ccnId.ToString() + DateTime.Now.Millisecond);
 
-            string sessionToken = Utility.GetRandomSHA256(ccnId.ToString());
-
-            DateTime expiry = DateTime.Now.AddSeconds(Configuration_BSO.GetCustomConfig(ConfigType.global, "session.length"));
+            DateTime expiry = DateTime.Now.AddSeconds(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "session.length"));
             if (!lBso.CreateSession(sessionToken, expiry, user))
             {
                 Response.error = Label.Get("error.create");
                 return false;
             }
+      
+            string cname = ApiServicesHelper.ApiConfiguration.Settings["API_SESSION_COOKIE"];
 
-            Response.sessionCookie = new HttpCookie(API.Common.SessionCookieName) { Value = sessionToken };
-
-            Response.data = API.JSONRPC.success;
+            Response.sessionCookie = new Cookie(cname, sessionToken);
+            Response.data = API.ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             long l = sw.ElapsedMilliseconds;
             return true;
 

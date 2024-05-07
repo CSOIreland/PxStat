@@ -35,11 +35,11 @@ namespace PxStat.DBuild
         protected override bool Execute()
         {
             //This is required for validation in the Matrix code, but is not used for px build
-            Request.parameters.GrpCode = Utility.GetCustomConfig("APP_DEFAULT_GROUP");
-            Request.parameters.source = Utility.GetCustomConfig("APP_DEFAULT_SOURCE");
+            Request.parameters.GrpCode = Configuration_BSO.GetStaticConfig("APP_DEFAULT_GROUP");
+            Request.parameters.source = Configuration_BSO.GetStaticConfig("APP_DEFAULT_SOURCE");
 
             //Get the Dmatrix from the px doucment
-            if (!DTO.Signature.Equals(Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()))))
+            if (!DTO.Signature.Equals(Utility.GetMD5(Configuration_BSO.GetStaticConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()))))
             {
                 Response.error = Label.Get("error.validation");
                 return false;
@@ -60,10 +60,10 @@ namespace PxStat.DBuild
 
             //Get the basic matrix from the px data
             IDmatrix dmatrix = new Dmatrix();
-            IUpload_DTO uDto = new PxUpload_DTO() { FrqValueTimeval = DTO.FrqValueTimeval, LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"), FrqCodeTimeval = DTO.FrqCodeTimeval };
-            IMetaData metaData = new MetaData();
+            IUpload_DTO uDto = new PxUpload_DTO() { FrqValueTimeval = DTO.FrqValueTimeval, LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"), FrqCodeTimeval = DTO.FrqCodeTimeval };
+            
 
-            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument, metaData, uDto);
+            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument,  uDto);
 
             FlatTableBuilder ftb = new FlatTableBuilder();
 

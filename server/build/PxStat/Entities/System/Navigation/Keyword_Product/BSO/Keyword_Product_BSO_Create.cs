@@ -46,7 +46,7 @@ namespace PxStat.System.Navigation
                 Response.error = Label.Get("error.duplicate");
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

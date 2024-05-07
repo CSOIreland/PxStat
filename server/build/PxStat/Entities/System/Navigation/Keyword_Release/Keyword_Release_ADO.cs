@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// ADO for Keyword Release
+    /// IADO for Keyword Release
     /// </summary>
     internal class Keyword_Release_ADO
     {
@@ -23,7 +23,7 @@ namespace PxStat.System.Navigation
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Keyword_Release_DTO dto)
+        internal ADO_readerOutput Read(IADO ado, Keyword_Release_DTO dto)
         {
             ADO_readerOutput output = new ADO_readerOutput();
             var inputParams = new List<ADO_inputParams>();
@@ -68,7 +68,7 @@ namespace PxStat.System.Navigation
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, Keyword_Release_DTO dto)
+        internal int Update(IADO ado, Keyword_Release_DTO dto)
         {
             var inputParams = new List<ADO_inputParams>()
                 {
@@ -131,17 +131,17 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="Ado"></param>
         /// <param name="dt"></param>
-        internal void Create(ADO Ado, DataTable dt)
+        internal void Create(IADO Ado, DataTable dt)
         {
             //Before bulk inserting, we must map our datatable to the database table, column by column
-            var maps = new List<SqlBulkCopyColumnMapping>()
+            var maps = new List<KeyValuePair<string,string>>()
                 {
-                    new SqlBulkCopyColumnMapping("KRL_VALUE", "KRL_VALUE"),
-                    new SqlBulkCopyColumnMapping("KRL_RLS_ID", "KRL_RLS_ID"),
-                    new SqlBulkCopyColumnMapping("KRL_MANDATORY_FLAG", "KRL_MANDATORY_FLAG"),
-                    new SqlBulkCopyColumnMapping("KRL_SINGULARISED_FLAG","KRL_SINGULARISED_FLAG")
+                    new KeyValuePair<string,string>("KRL_VALUE", "KRL_VALUE"),
+                    new KeyValuePair<string,string>("KRL_RLS_ID", "KRL_RLS_ID"),
+                    new KeyValuePair<string,string>("KRL_MANDATORY_FLAG", "KRL_MANDATORY_FLAG"),
+                    new KeyValuePair<string,string>("KRL_SINGULARISED_FLAG","KRL_SINGULARISED_FLAG")
                 };
-            using (ADO bulkAdo = new ADO("defaultConnection"))
+            using (IADO bulkAdo = AppServicesHelper.StaticADO)
             {
                 bulkAdo.ExecuteBulkCopy("TD_KEYWORD_RELEASE", maps, dt, false);
             }

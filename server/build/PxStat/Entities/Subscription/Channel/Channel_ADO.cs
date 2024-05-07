@@ -6,8 +6,8 @@ namespace PxStat.Subscription
 
     internal class Channel_ADO
     {
-        ADO _ado;
-        internal Channel_ADO(ADO ado)
+        IADO _ado;
+        internal Channel_ADO(IADO ado)
         {
             _ado = ado;
         }

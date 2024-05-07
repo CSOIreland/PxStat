@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace PxStat.Security
 {
     /// <summary>
-    /// ADO classes for Trace
+    /// IADO classes for Trace
     /// </summary>
     internal class Trace_ADO
     {
@@ -14,7 +14,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="trace"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Trace_DTO_Read trace)
+        internal ADO_readerOutput Read(IADO ado, Trace_DTO_Read trace)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -58,7 +58,7 @@ namespace PxStat.Security
         /// <param name="trace"></param>
         /// <param name="inTransaction"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, Trace_DTO_Create trace)
+        internal int Create(IADO ado, Trace_DTO_Create trace)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {

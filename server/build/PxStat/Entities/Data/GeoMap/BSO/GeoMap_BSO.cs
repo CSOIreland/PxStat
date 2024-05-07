@@ -5,16 +5,16 @@ namespace PxStat.Data
 {
     internal class GeoMap_BSO : IDisposable
     {
-        ADO ado;
+        IADO ado;
 
-        internal GeoMap_BSO(ADO ado)
+        internal GeoMap_BSO(IADO ado)
         {
             this.ado = ado;
         }
 
         internal GeoMap_BSO()
         {
-            this.ado = new ADO("defaultConnection");
+            this.ado = AppServicesHelper.StaticADO;
         }
 
         internal ADO_readerOutput Read(string gmpCode)
@@ -27,7 +27,7 @@ namespace PxStat.Data
 
         public void Dispose()
         {
-            ado.Dispose();
+            ado?.Dispose();
         }
     }
 }

@@ -1,23 +1,26 @@
 ﻿using API;
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PxStat.Security
 {
     /// <summary>
-    /// ADO methods for Analytics
+    /// IADO methods for Analytics
     /// </summary>
     internal class Analytic_ADO
     {
         /// <summary>
-        /// ADO class parameter
+        /// IADO class parameter
         /// </summary>
-        ADO Ado;
+        IADO Ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        internal Analytic_ADO(ADO ado)
+        internal Analytic_ADO(IADO ado)
         {
             Ado = ado;
         }
@@ -37,7 +40,8 @@ namespace PxStat.Security
                 new ADO_inputParams() {name= "@NltM2m",value=dto.NltM2m},
                 new ADO_inputParams() {name= "@NltWidget",value=dto.NltWidget },
                 new ADO_inputParams() {name= "@NltDate",value=dto.NltDate},
-                new ADO_inputParams() {name= "@LngIsoCode",value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")},
+                new ADO_inputParams() {name= "@EnvironmentLngIsoCode",value=dto.EnvironmentLngIsoCode??Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")},
+                new ADO_inputParams() {name="@LngIsoCode",value=dto.LngIsoCode??Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")},
                 new ADO_inputParams() {name="@NltUser",value=dto.NltUser}
             };
             if (dto.NltOs != null)
@@ -51,10 +55,7 @@ namespace PxStat.Security
                 inputParamList.Add(new ADO_inputParams() { name = "@FrmType", value = dto.FrmType });
                 inputParamList.Add(new ADO_inputParams() { name = "@FrmVersion", value = dto.FrmVersion });
             }
-            if (dto.EnvironmentLngIsoCode != null)
-            {
-                inputParamList.Add(new ADO_inputParams() { name = "@EnvironmentLngIsoCode", value = dto.EnvironmentLngIsoCode });
-            }
+
 
 
             var retParam = new ADO_returnParam() { name = "return", value = 0 };
@@ -67,262 +68,296 @@ namespace PxStat.Security
 
         }
 
-        /// <summary>
-        /// Read summarised Analytic data
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal ADO_readerOutput Read(Analytic_DTO_Read dto)
+
+        internal List<dynamic> ReadForAll(Analytic_DTO_Read dto)
         {
-            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
-            {
-                new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
-            };
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
 
+            ADO_readerOutput result;
 
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode > 0)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
-            if (dto.NltInternalNetworkMask != null)
-            {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
-
-            //Call the stored procedure
-            return Ado.ExecuteReaderProcedure("Security_Analytic_Read", inputParamList);
-
-
-        }
-        /// <summary>
-        /// Read an analysis by Operating System
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal ADO_readerOutput ReadOs(Analytic_DTO_Read dto, string ccnUsername)
-        {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
                 new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
             };
 
-            if (dto.NltInternalNetworkMask != null)
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadForAll", inputParamList);
+
+
+
+            return result.data;
+
+
+
+            
+        }
+
+        internal List<dynamic> ReadBrowser(Analytic_DTO_Read dto)
+        {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
+            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
+                new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+            };
+
+            if (dto.MtrCode != null)
+                inputParamList.Add(new ADO_inputParams() { name="@MtrCode",value=dto.MtrCode});
+
+            if (dto.PrcCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
+
+            if (dto.SbjCode != default)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadBrowser", inputParamList);
+
+
+
+            return result.data;
+
+
+        }
+
+        internal List<dynamic> ReadEnvironmentLanguage(Analytic_DTO_Read dto)
+        {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
+            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+            };
+
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
             if (dto.PrcCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
-            if (dto.SbjCode > 0)
+            if (dto.SbjCode != default)
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
-            //Call the stored procedure
-            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadOs", inputParamList);
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadEnvironmentLanguage", inputParamList);
+
+
+
+            return result.data;
+
 
         }
 
-        internal ADO_readerOutput ReadEnvironmentLanguage(Analytic_DTO_Read dto, string ccnUsername)
+
+        internal List<dynamic> ReadFormat(Analytic_DTO_Read dto)
         {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
                 new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-               new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
             };
 
-            if (dto.NltInternalNetworkMask != null)
-            {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
             if (dto.PrcCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
-            if (dto.SbjCode > 0)
+            if (dto.SbjCode != default)
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
-            //Call the stored procedure
-            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadEnvironmentLanguage", inputParamList);
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadFormat", inputParamList);
+
+
+
+            return result.data;
+
 
         }
 
-        //Security_Analytic_ReadFormat
-        internal ADO_readerOutput ReadFormat(Analytic_DTO_Read dto, string ccnUsername)
+        internal List<dynamic> ReadLanguage(Analytic_DTO_Read dto)
         {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
                 new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
             };
-
-            if (dto.NltInternalNetworkMask != null)
-            {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
-
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode > 0)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
+            if (dto.PrcCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
-            //Call the stored procedure
-            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadFormat", inputParamList);
+            if (dto.SbjCode != default)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadLanguage", inputParamList);
+
+
+
+            return result.data;
+
 
         }
 
-        /// <summary>
-        /// Read an analysis by Browser
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal ADO_readerOutput ReadBrowser(Analytic_DTO_Read dto, string ccnUsername)
+        internal List<dynamic> ReadOs(Analytic_DTO_Read dto)
         {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
                 new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-               new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
             };
-
-            if (dto.NltInternalNetworkMask != null)
-            {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
-
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode > 0)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
+            if (dto.PrcCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
-            //Call the stored procedure
-            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadBrowser", inputParamList);
+            if (dto.SbjCode != default)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadOs", inputParamList);
+
+            return result.data;
         }
-        /// <summary>
-        /// Read an analysis by Date
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal ADO_readerOutput ReadTimeline(Analytic_DTO_Read dto, string ccnUsername)
+
+        internal List<dynamic> ReadReferer(Analytic_DTO_Read dto)
         {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
                 new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
             };
-
-            if (dto.NltInternalNetworkMask != null)
-            {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
 
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
-
-            if (dto.SbjCode != default(int))
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
             if (dto.PrcCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
-            //Call the stored procedure
-            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadTimeline", inputParamList);
+            if (dto.SbjCode != default)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadReferers", inputParamList);
+
+            return result.data;
         }
 
-        /// <summary>
-        /// Read an analysis by Referrer
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal ADO_readerOutput ReadReferrer(Analytic_DTO_Read dto, string ccnUsername)
+        internal List<dynamic> ReadTimeline(Analytic_DTO_Read dto)
         {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
                 new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
             };
-
-            if (dto.NltInternalNetworkMask != null)
-            {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
-
-
-            if (dto.SbjCode != default(int))
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
-            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadReferers", inputParamList);
+            if (dto.PrcCode != null)
+                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
+            if (dto.SbjCode != default)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadTimeline", inputParamList);
+
+            return result.data;
         }
 
-        /// <summary>
-        /// Read an analysis by Language of the Matrix queried
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        internal ADO_readerOutput ReadLanguage(Analytic_DTO_Read dto, string ccnUsername)
+        internal List<dynamic> Read(Analytic_DTO_Read dto)
         {
+            //For reasons of cache consistency we limit queries to days in the past
+            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
+
+            ADO_readerOutput result;
+
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
                 new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name= "@CcnUsername",value=ccnUsername}
+                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
             };
-
-            if (dto.NltInternalNetworkMask != null)
-            {
-                if (dto.NltInternalNetworkMask.Length > 0)
-                    inputParamList.Add(new ADO_inputParams() { name = "@NltInternalNetworkMask", value = dto.NltInternalNetworkMask });
-            }
 
             if (dto.MtrCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
-            if (dto.SbjCode != default(int))
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
             if (dto.PrcCode != null)
                 inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
-            return Ado.ExecuteReaderProcedure("Security_Analytic_ReadLanguage", inputParamList);
+            if (dto.SbjCode != default)
+                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
+
+            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
+                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_Read", inputParamList);
+
+            return result.data;
         }
+
     }
 }

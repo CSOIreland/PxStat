@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace PxStat.Security
 {
     /// <summary>
-    /// ADO methods for database Logging
+    /// IADO methods for database Logging
     /// </summary>
     internal class Performance_ADO
     {
@@ -16,7 +16,7 @@ namespace PxStat.Security
         /// <param name="prfDatetimeStart"></param>
         /// <param name="prfDatetimeEnd"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, DateTime prfDatetimeStart, DateTime prfDatetimeEnd)
+        internal ADO_readerOutput Read(IADO ado, DateTime prfDatetimeStart, DateTime prfDatetimeEnd)
         {
 
 
@@ -39,7 +39,7 @@ namespace PxStat.Security
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, dynamic dto, string ccnUsername)
+        internal int Delete(IADO ado, dynamic dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {

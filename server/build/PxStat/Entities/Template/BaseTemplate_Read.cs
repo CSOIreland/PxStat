@@ -6,6 +6,7 @@ using PxStat.Security;
 using System;
 using System.Net;
 using System.Web;
+using PxStat;
 
 namespace PxStat.Template
 {
@@ -13,7 +14,7 @@ namespace PxStat.Template
     /// Base Abstract class to allow for the template method pattern of Create, Read, Update and Delete objects from our model
     /// 
     /// </summary>
-    internal abstract class BaseTemplate_Read<T, V> : BaseTemplate<T, V>
+    public abstract class BaseTemplate_Read<T, V> : BaseTemplate<T, V>
     {
         /// <summary>
         /// Constructor
@@ -32,8 +33,8 @@ namespace PxStat.Template
 
             Log.Instance.Debug("Record Read");
             //If a cache DTO exists, then we have been given a directive to store the results in the cache
-            if (cDTO != null)
-                MemCacheD.Store_BSO<dynamic>(cDTO.Namespace, cDTO.ApiName, cDTO.Method, DTO, Response.data, cDTO.TimeLimit, cDTO.Cas + cDTO.Domain);
+            if (cDTO != null )
+                AppServicesHelper.CacheD.Store_BSO<dynamic>(cDTO.Namespace, cDTO.ApiName, cDTO.Method, DTO, Response.data, cDTO.TimeLimit, cDTO.Cas + cDTO.Domain);
 
         }
 
@@ -47,6 +48,7 @@ namespace PxStat.Template
 
         protected void FormatForRestful(IResponseOutput output)
         {
+            
             if (Request.GetType().Equals(typeof(RESTful_API)))
             {
 
@@ -55,45 +57,34 @@ namespace PxStat.Template
                     Response.data = RESTful.FormatRestfulError(Response, null, HttpStatusCode.NoContent, HttpStatusCode.InternalServerError);
                 }
                 else
-                    Response.statusCode = HttpStatusCode.OK;
+                  if(Response.statusCode==0) Response.statusCode = HttpStatusCode.OK;
 
                 //This is the default mimetype, may be amended before output by the calling BSO
                 if (Response.mimeType == null)
-                    Response.mimeType = Utility.GetCustomConfig("APP_JSON_MIMETYPE");
+                    Response.mimeType = Configuration_BSO.GetStaticConfig("APP_JSON_MIMETYPE");
 
-                Response.response = Response.data;
-
-
-
-                //We need to change e.g. an Excel file to a byte array
-                string data = Response.data.ToString();
-                if (data.Contains(";base64,"))
+                if (Response.data != null)
                 {
-                    var base64Splits = data.Split(new[] { ";base64," }, StringSplitOptions.None);
-                    var dataSplits = base64Splits[0].Split(new[] { "data:" }, StringSplitOptions.None);
+                    Response.response = Response.data.ToString();
 
-                    // Override MimeType & Data
-                    Response.mimeType = dataSplits[1];
-                    Response.data = base64Splits[1];
-                    Response.response = Utility.DecodeBase64ToByteArray(Response.data);
+
+
+                    //We need to change e.g. an Excel file to a byte array
+                    string data = Response.data.ToString();
+                    if (data.Contains(";base64,"))
+                    {
+                        var base64Splits = data.Split(new[] { ";base64," }, StringSplitOptions.None);
+                        var dataSplits = base64Splits[0].Split(new[] { "data:" }, StringSplitOptions.None);
+
+                        // Override MimeType & Data
+                        Response.mimeType = dataSplits[1];
+                        Response.data = base64Splits[1];
+                        Response.response = Utility.DecodeBase64ToByteArray(Response.data);
+                    }
                 }
+                
 
 
-                //if (Request.GetType().Equals(typeof(JSONRPC_API)))
-                //{
-                //string data = Response.data.ToString();
-                //if (data.Contains(";base64,"))
-                //{
-                //    var base64Splits = data.Split(new[] { ";base64," }, StringSplitOptions.None);
-                //    var dataSplits = base64Splits[0].Split(new[] { "data:" }, StringSplitOptions.None);
-
-                //    // Override MimeType & Data
-                //    Response.mimeType = dataSplits[1];
-                //    Response.data = base64Splits[1];
-
-                //}
-
-                //}
             }
         }
 
@@ -105,8 +96,16 @@ namespace PxStat.Template
         {
             try
             {
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
+                {
+                    if (!IsAdministrator())
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
                 //HEAD requests are only allowed for methods with an attribute of [AllowHEADrequest]
-                if (Request.GetType().Equals(typeof(Head_API)))
+                if (Request.method.Equals("HEAD"))
                 {
                     if (!Resources.MethodReader.MethodHasAttribute(Request.method, "AllowHEADrequest"))
                     {
@@ -141,9 +140,11 @@ namespace PxStat.Template
                             SamAccountName = user.data[0].CcnUsername;
                         }
                     }
-                    
+
                 }
-                Trace_BSO_Create.Execute(Ado, Request, SamAccountName );
+                Ado.StartTransaction();
+                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
+                Ado.CommitTransaction();
 
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams;
@@ -151,7 +152,7 @@ namespace PxStat.Template
                 //If the API has the IndividualCleanseNoHtml attribute then parameters are cleansed individually
                 //Any of these parameters whose corresponding DTO property contains the NoHtmlStrip attribute will not be cleansed of HTML tags
 
-                bool isKeyValueParameters = Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
+                bool isKeyValueParameters = Resources.Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
 
                 if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
                 {
@@ -161,18 +162,18 @@ namespace PxStat.Template
                 {
                     if (!isKeyValueParameters)
                     {
-                        cleansedParams = Cleanser.Cleanse(Request.parameters);
+                        cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
                     }
                     else
                     {
                         if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
                         {
                             dynamic dto = GetDTO(Request.parameters);
-                            cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                            cleansedParams = Resources.Cleanser.Cleanse(Request.parameters, dto);
                         }
                         else
                         {
-                            cleansedParams = Cleanser.Cleanse(Request.parameters);
+                            cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
                         }
                     }
                 }
@@ -187,7 +188,7 @@ namespace PxStat.Template
                     throw new InputFormatException();
                 }
 
-                DTO = Sanitizer.Sanitize(DTO);
+                DTO = Resources.Sanitizer.Sanitize(DTO);
 
                 DTOValidationResult = Validator.Validate(DTO);
 
@@ -205,14 +206,32 @@ namespace PxStat.Template
                 //    return this;
                 //}
 
-                //Create the analytic data if required
-                Security.Analytic_BSO_Create.Create(Ado, DTO, HttpContext.Current.Request, Request);
+
+
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "Analytic"))
+                {
+                    //Create the analytic data if required
+                    Ado.StartTransaction();
+
+                    //Test for analytic attribute is in the method (phew!)
+                    try
+                    {
+                        Security.Analytic_BSO_Create.Create(Ado, DTO, Request);
+                    }
+                    catch
+                    {
+                        Ado.RollbackTransaction();
+                    }
+
+
+                    Ado.CommitTransaction();
+                }
 
                 //See if there's a cache in the process
-                if (MethodReader.MethodHasAttribute(Request.method, "CacheRead"))
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "CacheRead"))
                 {
                     cDTO = new CacheMetadata("CacheRead", Request.method, DTO);
-                    MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>(cDTO.Namespace, cDTO.ApiName, cDTO.Method, DTO);
+                    MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO<dynamic>(cDTO.Namespace, cDTO.ApiName, cDTO.Method, DTO);
                     if (cache.hasData)
                     {
                         Response.data = cache.data;
@@ -220,22 +239,19 @@ namespace PxStat.Template
                     }
                 }
 
-
-
                 // The Actual Read should happen here by the specific class!
                 if (!Execute())
                 {
                     OnExecutionError();
                 }
-                else
+
+                if (!PostExecute())
                 {
-                    FormatForRestful(Response);
-                    OnExecutionSuccess();
+                    OnExecutionError();
                 }
 
-
-
-
+                FormatForRestful(Response);
+                OnExecutionSuccess();
                 return this;
             }
             catch (UnmatchedParametersException unmatchException)
@@ -248,7 +264,7 @@ namespace PxStat.Template
             {
                 //A FormatException error has been caught, log the error and return a message to the caller
                 Log.Instance.Error(formatException);
-                Response.error = Label.Get("error.schema");
+                Response.error = formatException.Message ?? Label.Get("error.schema");
                 return this;
             }
             catch (Exception ex)

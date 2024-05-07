@@ -1,4 +1,5 @@
 ﻿using CodeKicker.BBCode;
+using CodeKicker.BBCode.Core;
 using System;
 using System.Collections.Generic;
 
@@ -19,11 +20,13 @@ namespace PxStat.Resources
             //Set the tags that we are interested in translating
             var parser = new BBCodeParser(new[]
             {
+                // TODO this needs to be tested
                 // A newline is automatically parsed when \n is encountered. Hence [p] is not necessary.
-                new BBTag("b", "<b>", "</b>"),
-                new BBTag("i", "<i>", "</i>"),
-                new BBTag("u", "<u>", "</u>"),
-                new BBTag("url", "", "(${url})",  new BBAttribute("url", ""))
+                new BBTag("b", "<b>", "</b>", 0),
+                new BBTag("i", "<i>", "</i>", 1),
+                new BBTag("u", "<u>", "</u>", 2),
+                new BBTag("url", "", "(${url})", 3, true, BBTagClosingStyle.RequiresClosingTag,  null, false, null, false, false, true, true,
+                    new[]  { new BBAttribute("url", "") })
             });
 
             try

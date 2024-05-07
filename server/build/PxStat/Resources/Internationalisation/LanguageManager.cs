@@ -10,6 +10,10 @@ using System.Reflection;
 using System.Text;
 using ImpromptuInterface;
 using API;
+using DeviceDetectorNET;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Net;
+using System.Diagnostics;
 
 namespace PxStat.Resources
 {
@@ -52,29 +56,25 @@ namespace PxStat.Resources
         /// Load the languages from the plugins and insert them into the Languages property
         /// Locations are found in the server.config "language-resource" tag
         /// </summary>
-        private static void LoadLanguages()
+        public static void LoadLanguages(string baseDir = null)
         {
-            if(Languages == null)
-                Languages = new Dictionary<string, ILanguagePlugin>();
 
-            var baseDir= AppDomain.CurrentDomain.BaseDirectory;
+            if (Languages == null)
+                Languages = new Dictionary<string, ILanguagePlugin>();;
+            baseDir ??=Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "\\";
 
-            JArray resources = Configuration_BSO.GetCustomConfig(ConfigType.server, "language-resource");
-            foreach(var item in resources)
+            if(Configuration_BSO.serverLanguageResource != null) 
             {
-                string lngIsoCode = item["iso"].ToString();
-                if (Languages.ContainsKey(lngIsoCode))
-                    continue;
-
-                string path = baseDir + item["plugin-location"].ToString();
-                string namespaceClass = item["namespace-class"].ToString();
-                bool isLive = (bool)item["is-live"];
-                ILanguagePlugin resource = ReadLanguageResource(lngIsoCode, path, namespaceClass);
-                if(resource!=null && ! Languages.ContainsKey(lngIsoCode))
+                foreach (var item in Configuration_BSO.serverLanguageResource)
                 {
-                    resource.IsLive = isLive;
-                    Languages.Add(lngIsoCode,resource);
-                    Log.Instance.Debug("Language dll added: " + lngIsoCode + " path: " + path);
+                    ILanguagePlugin resource = ReadLanguageResource(item.ISO, baseDir + item.PLUGIN_LOCATION, item.NAMESPACE_CLASS, item.TRANSLATION_URL);
+                    resource.IsLive = item.IS_LIVE;
+                    if (resource != null && !Languages.ContainsKey(item.ISO))
+                       {
+                        resource.IsLive = resource.IsLive;
+                        Languages.Add(item.ISO, resource);
+                        Log.Instance.Debug("Language dll added: " + resource.LngIsoCode + " path: " + item.PLUGIN_LOCATION);
+                       }
                 }
             }
         }
@@ -99,13 +99,13 @@ namespace PxStat.Resources
             else
             {
                 //otherwise just return the default language and assign it as the resource for the requested language
-                var language=Languages[Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")];
+                var language=Languages[Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")];
                 language.LngIsoCode = lngIsoCode;
                 language.IsLive = true;
                 return language;
 
             }
-            
+              
         }
 
         /// <summary>
@@ -115,11 +115,19 @@ namespace PxStat.Resources
         /// <param name="path"></param>
         /// <param name="namespaceClass"></param>
         /// <returns></returns>
-        public static ILanguagePlugin ReadLanguageResource(string lngIsocode, string path,string namespaceClass)
+        public static ILanguagePlugin ReadLanguageResource(string lngIsocode, string path,string namespaceClass,string translationUrl)
         {
+            Log.Instance.Debug("Current module =" + Process.GetCurrentProcess().MainModule.FileName);
             var dll = Assembly.LoadFile(path);
             var languageType = dll.GetType(namespaceClass);
-            dynamic languageClass = Activator.CreateInstance(languageType);
+
+            string translation;
+            using (WebClient wc = new())
+            {
+                translation = wc.DownloadString(translationUrl);
+            }
+
+            dynamic languageClass = Activator.CreateInstance(languageType,translation);
 
             //Impromptu will convert the dynamic to an instance of ILanguagePlugin. Must be of the same shape!
             ILanguagePlugin lngPlugin = Impromptu.ActLike<ILanguagePlugin>(languageClass);

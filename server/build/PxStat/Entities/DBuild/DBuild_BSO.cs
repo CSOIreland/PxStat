@@ -1,5 +1,6 @@
 ﻿using API;
 using DocumentFormat.OpenXml.Office2013.Word;
+using DocumentFormat.OpenXml.Spreadsheet;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,6 +26,108 @@ namespace PxStat.DBuild
     {
         public IDmatrix refMatrix;
 
+
+        public bool AreVariablesSequential(StatDimension dimension)
+        {
+            var variableCodes = dimension.Variables.Select(x => x.Code);
+            return variableCodes.SequenceEqual(variableCodes.OrderBy(x => x));
+        }
+
+        /// <summary>
+        /// Sorts the variables of a dimension in the way specified by the sorting dictionary and adjusts the sorting of the cells accordingly
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="sorting"></param>
+        /// <param name="sortedDimensionCode"></param>
+        /// <returns></returns>
+        public IDmatrix SortVariablesInDimension(IDmatrix matrix, Dictionary<int,int> newSorting,int dimensionSequence)
+        {
+            StatDimension dimension=null;
+            //make sure the matrix contains the dimension sequence referred to in the parameters
+            foreach(var spec in matrix.Dspecs)
+            {
+                if (!spec.Value.Dimensions.Where(x => x.Sequence == dimensionSequence).Any())
+                    return matrix;
+
+                //make sure the newSorting list contains all of the existing variable sequences
+                dimension = spec.Value.Dimensions.Where(x => x.Sequence == dimensionSequence).First();
+                List<int> variableSequences= dimension.Variables.Select(x => x.Sequence).ToList();
+                if (!variableSequences.Intersect((newSorting.Values)).Count().Equals(variableSequences.Count))
+                    return matrix;
+                //Get lambdas etc in case they're not there already
+                LoadDspec(spec.Value);
+            }
+
+
+
+            //Associate the list of Cells with the current variable sorting
+            FlatTableBuilder ftb = new ();
+            List<List<IDimensionVariable>> allVariables = new();
+            int sort = -1;
+            int dimensionAbsoluteOrder = 0;
+            int counter = 0;
+            foreach (var dim in matrix.Dspecs.First().Value.Dimensions.OrderBy(x=>x.Sequence).ToList())
+            {
+                //Ensure the sequences are contigious
+                if (dim.Sequence <= sort) return matrix;
+                allVariables.Add(dim.Variables.OrderBy(x=>x.Sequence).ToList());
+                sort = dim.Sequence;
+                if (dim.Sequence == dimensionSequence) dimensionAbsoluteOrder = counter;
+                counter++;
+            }
+
+            //Get the metadata ordered correctly
+            var cartesianRaw=ftb.CartesianProduct(allVariables);
+            if (cartesianRaw.Count() == 0) return matrix;
+      
+
+            //Express this as a list of objects. The new variable sequence will be taken from the newSorting dictionary that has been passed in
+            List<cartesian> cartesianList = new();
+            counter = 0;
+            //otherDimensionOrder is a proxy for the sorting due to the dimensions that are not changing
+            //The value will increment each time the list of variables cycles by the previous lambda value
+            int otherDimensionOrder = 0;
+            foreach(var item in cartesianRaw)
+            {
+                cartesianList.Add(new cartesian() { CellSequence = counter, OtherDimensionOrder = otherDimensionOrder,VrbSequence = item.ElementAt(dimensionAbsoluteOrder).Sequence, NewVrbSequence = newSorting[item.ElementAt(dimensionAbsoluteOrder).Sequence] }) ;
+                counter++;
+
+                if (counter % dimension.PreviousLambda == 0) otherDimensionOrder++;
+            }
+
+            //Get an ordered list of cells plus their sequence number
+            List<numberedCell> numberedCells = new();
+            counter = 0;
+            foreach(var cell in matrix.Cells)
+            {
+                numberedCells.Add(new numberedCell() { CellSequence = counter, CellValue =cell });
+                counter++;
+            }
+
+            //Join the two lists 
+            var fullList = from car in cartesianList
+                           join cell in numberedCells on car.CellSequence equals cell.CellSequence
+                           select new { car.CellSequence,car.OtherDimensionOrder, car.VrbSequence, car.NewVrbSequence, cell.CellValue };
+
+            //Re-order the joined list by the new variable sequence
+            fullList =fullList.OrderBy(x=>x.NewVrbSequence).OrderBy(x=>x.OtherDimensionOrder).ToList();
+
+            //Update the metadata
+            foreach (var spec in matrix.Dspecs)
+            {
+                dimension = spec.Value.Dimensions.Where(x => x.Sequence == dimensionSequence).First();
+                foreach(var vrb in dimension.Variables)
+                {
+                    vrb.Sequence = newSorting[vrb.Sequence];
+                }
+                dimension.Variables = dimension.Variables.OrderBy(x => x.Sequence).ToList();
+            }
+
+            matrix.Cells=fullList.Select(x=>x.CellValue).ToList();
+
+            return matrix;
+        }
+
         /// <summary>
         /// Expresses a csv-like input as a List of Dictionary<string,object>
         /// Assumes the header is the first row
@@ -48,7 +151,7 @@ namespace PxStat.DBuild
                 foreach (var column in headerList)
                 {
                     if(vStringFieldNumber== hCount && String.IsNullOrWhiteSpace(item[hCount]))
-                        itemDict.Add(column, Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"));
+                        itemDict.Add(column, Configuration_BSO.GetStaticConfig("APP_PX_CONFIDENTIAL_VALUE"));
                     else
                         itemDict.Add(column, item[hCount]);
                     hCount++;
@@ -81,7 +184,7 @@ namespace PxStat.DBuild
                 foreach (var column in headerList)
                 {
                     if (vStringFieldNumber == hCount && String.IsNullOrWhiteSpace(item[hCount]))
-                        itemDict.Add(column, Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"));
+                        itemDict.Add(column, Configuration_BSO.GetStaticConfig("APP_PX_CONFIDENTIAL_VALUE"));
                     else
                     {
                         
@@ -109,7 +212,7 @@ namespace PxStat.DBuild
         /// <param name="matrix"></param>
         /// <param name="csvItem"></param>
         /// <returns></returns>
-        public Dictionary<int, dynamic> DictionaryWithOrdinal(IDmatrix matrix, List<Dictionary<string, object>> csvItems, string lngIsoCode, IMetaData metaData)
+        public Dictionary<int, dynamic> DictionaryWithOrdinal(IDmatrix matrix, List<Dictionary<string, object>> csvItems, string lngIsoCode)
         {
             Dictionary<int, int> ordinalsValues = new Dictionary<int, int>();
             List<Dictionary<string, object>> notUpdated = new List<Dictionary<string, object>>();
@@ -140,7 +243,7 @@ namespace PxStat.DBuild
 
                 item["ordinal"] = ordinal + 1;
 
-                string defaultValue = metaData.GetConfidentialValue();
+                string defaultValue = Configuration_BSO.GetStaticConfig("APP_PX_CONFIDENTIAL_VALUE");
 
                 //Check for dupes
                 if (output.ContainsKey((int)item["ordinal"]))
@@ -188,7 +291,7 @@ namespace PxStat.DBuild
             return output;
         }
 
-        public Dictionary<int, dynamic> DictionaryWithOrdinal(IDmatrix matrix, List<dlistReport> dlistReports, string lngIsoCode, IMetaData metaData)
+        public Dictionary<int, dynamic> DictionaryWithOrdinal(IDmatrix matrix, List<dlistReport> dlistReports, string lngIsoCode)
         {
             Dictionary<int, int> ordinalsValues = new Dictionary<int, int>();
             List<Dictionary<string, object>> notUpdated = new List<Dictionary<string, object>>();
@@ -221,7 +324,7 @@ namespace PxStat.DBuild
                 item.ordinal=ordinal + 1;
                 item.dlist["ordinal"] = item.ordinal;
 
-                string defaultValue = metaData.GetConfidentialValue();
+                string defaultValue = Configuration_BSO.GetStaticConfig("APP_PX_CONFIDENTIAL_VALUE"); 
 
                 //Check for dupes
                 if (output.ContainsKey((int)item.dlist["ordinal"]))
@@ -393,7 +496,7 @@ namespace PxStat.DBuild
         /// <param name="matrix"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public Dictionary<int, object> UpdateMatrixWithNewMetadata(ref IDmatrix matrix, DBuild_DTO_Update dto, IMetaData metaData, Copyright_BSO cbso, ICopyright icpr = null)
+        public Dictionary<int, object> UpdateMatrixWithNewMetadata(ref IDmatrix matrix, DBuild_DTO_Update dto, Copyright_BSO cbso, ICopyright icpr = null)
         {
             List<List<IDimensionVariable>> addedVariables = new List<List<IDimensionVariable>>();
             List<StatDimension> updateDims = new List<StatDimension>();
@@ -532,7 +635,7 @@ namespace PxStat.DBuild
             Dictionary<int, object> insertedOrdinals = new Dictionary<int, object>();
 
             if (updateDims.Count > 0 && addedVariables.Count > 0)
-                insertedOrdinals = GetListOfInsertedOrdinals(matrix, updateDims[0], addedVariables[0], metaData);
+                insertedOrdinals = GetListOfInsertedOrdinals(matrix, updateDims[0], addedVariables[0]);
 
             return insertedOrdinals;
         }
@@ -544,7 +647,7 @@ namespace PxStat.DBuild
         /// <param name="statDim"></param>
         /// <param name="newVariables"></param>
         /// <returns></returns>
-        private Dictionary<int, dynamic> GetListOfInsertedOrdinals(IDmatrix matrix, IStatDimension statDim, List<IDimensionVariable> newVariables, IMetaData metaData)
+        private Dictionary<int, dynamic> GetListOfInsertedOrdinals(IDmatrix matrix, IStatDimension statDim, List<IDimensionVariable> newVariables)
         {
             Dictionary<int, dynamic> insertedOrdinals = new Dictionary<int, dynamic>();
             var spec = matrix.Dspecs.First().Value;
@@ -558,7 +661,7 @@ namespace PxStat.DBuild
                     int startPosition = basePosition + 1 + (newVrb.Sequence - 1) * statDim.Lambda;
                     for (int j = 0; j < statDim.Lambda; j++)
                     {
-                        insertedOrdinals.Add(j + startPosition, metaData.GetConfidentialValue());
+                        insertedOrdinals.Add(j + startPosition, Configuration_BSO.GetStaticConfig("APP_PX_CONFIDENTIAL_VALUE"));
                     }
                 }
             }
@@ -625,7 +728,7 @@ namespace PxStat.DBuild
         {
             Account_ADO adoAccount = new Account_ADO();
             ADO_readerOutput result = null;
-            using (IADO ado = new ADO("defaultConnection"))
+            using (IADO ado = AppServicesHelper.StaticADO)
             {
                 result = adoAccount.Read(ado, CcnUsername);
             }
@@ -636,7 +739,7 @@ namespace PxStat.DBuild
 
             if (result.data[0].PrvCode.Equals(Constants.C_SECURITY_PRIVILEGE_MODERATOR))
             {
-                return Configuration_BSO.GetCustomConfig(ConfigType.global, "build." + BuildAction + ".moderator");
+                return Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "build." + BuildAction + ".moderator");
             }
             return true;
         }
@@ -758,8 +861,9 @@ namespace PxStat.DBuild
 
         }
 
-        public IResponseOutput BsoUpdate(IResponseOutput response, DBuild_DTO_Update DTO, IMetaData metaData, IADO ado, bool validatePxDoc = true, ICopyright cpr = null, string lngIsoCode=null)
+        public IResponseOutput BsoUpdate(IResponseOutput response, DBuild_DTO_Update DTO,  IADO ado=null, bool validatePxDoc = true, ICopyright cpr = null, string lngIsoCode=null)
         {
+            if (ado == null) ado = AppServicesHelper.StaticADO;
 
             //Parse the px document
             var pxManualParser = new PxParser.Resources.Parser.PxManualParser(DTO.MtrInput);
@@ -797,22 +901,41 @@ namespace PxStat.DBuild
                 headerData = DTO.ChangeData[0];
             }
 
-            //var dlist = this.GetInputDynamicList(DTO.ChangeData);
 
             var dlist = this.GetInitialChangeReport(DTO.ChangeData);
 
-            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument, metaData, uDto,uploads);
+            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument,  uDto,uploads);
+
+            //Sort the time dimension (along with associated data) if necessary
+            var timeDimension = dmatrix.Dspecs[dmatrix.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).First();
+
+            if (timeDimension != null)
+            {
+                if (!AreVariablesSequential(timeDimension))
+                {
+                    timeDimension.Variables = timeDimension.Variables.OrderBy(x => x.Code).ToList();
+
+                    Dictionary<int, int> sequenceDictionary = new Dictionary<int, int>();
+                    int counter = 1;
+                    foreach (var vrb in timeDimension.Variables)
+                    {
+                        sequenceDictionary.Add(vrb.Sequence, counter);
+                        counter++;
+                    }
+                    dmatrix = SortVariablesInDimension(dmatrix, sequenceDictionary, timeDimension.Sequence);
+                }
+            }
 
             //check for a dodgy csv header
 
-            if (!CustomValidations.ValidateCsvHeader(DTO, dmatrix, headerData, metaData))
+            if (!CustomValidations.ValidateCsvHeader(DTO, dmatrix, headerData))
             {
                 response.error = Label.Get("error.validation");
                 return response;
             }
 
             //Update the metadata
-            var updateOrdinals = this.UpdateMatrixWithNewMetadata(ref dmatrix, DTO, metaData, new Copyright_BSO(), cpr);
+            var updateOrdinals = this.UpdateMatrixWithNewMetadata(ref dmatrix, DTO, new Copyright_BSO(), cpr);
 
                 //Update the data
                 dmatrix.Cells = this.MergeOldAndNewCells(dmatrix, updateOrdinals);
@@ -820,20 +943,20 @@ namespace PxStat.DBuild
                 dmatrix.Dspecs[DTO.LngIsoCode].GetDimensionsAsDictionary();
 
                 //We must also get the ordindals for the csv originated cells
-                Dictionary<int, object> csvCells = this.DictionaryWithOrdinal(dmatrix, dlist, DTO.LngIsoCode, metaData);
+                Dictionary<int, object> csvCells = this.DictionaryWithOrdinal(dmatrix, dlist, DTO.LngIsoCode);
 
                 var amendedData = this.MergeBuildCells(dlist, dmatrix);
 
                 dmatrix.Cells = amendedData.Select(x=>x.value).ToList();
 
 
+
             refMatrix = dmatrix;
-            dmatrix.MetaData = metaData;
 
             // Validate the matrix we just created
-            DMatrix_VLD validator = new DMatrix_VLD(metaData, ado, lngIsoCode);
+            DMatrix_VLD validator = new DMatrix_VLD( ado, lngIsoCode);
             // Also validate in english - just for the logs
-            DMatrix_VLD dmvEn = new DMatrix_VLD(metaData, ado);
+            DMatrix_VLD dmvEn = new DMatrix_VLD( ado);
             dmvEn.Validate(dmatrix);
             var matrixValidation = validator.Validate(dmatrix);
             if (!matrixValidation.IsValid)
@@ -869,7 +992,7 @@ namespace PxStat.DBuild
             if (DTO.Format.FrmType == DatasetFormat.Px)
             {
                 PxFileBuilder pxb = new PxFileBuilder();
-                string px = pxb.Create(dmatrix, metaData, DTO.LngIsoCode);
+                string px = pxb.Create(dmatrix, DTO.LngIsoCode);
 
                 List<string> file = new List<string>
                 {
@@ -1043,21 +1166,21 @@ namespace PxStat.DBuild
         /// <param name="dto"></param>
         /// <param name="metaData"></param>
         /// <returns></returns>
-        public IDmatrix ReadDataset(PxDocument pxDocument, DBuild_DTO_Update dto, IMetaData metaData = null)
+        public IDmatrix ReadDataset(PxDocument pxDocument, DBuild_DTO_Update dto)
         {
 
 
             //Get the basic matrix from the px data
             IDmatrix dmatrix = new Dmatrix();
-            IUpload_DTO uDto = new PxUpload_DTO() { FrqValueTimeval = dto.FrqValueTimeval, LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"), FrqCodeTimeval = dto.FrqCodeTimeval };
-            metaData = metaData ?? new MetaData();
+            IUpload_DTO uDto = new PxUpload_DTO() { FrqValueTimeval = dto.FrqValueTimeval, LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"), FrqCodeTimeval = dto.FrqCodeTimeval };
+            
 
 
 
-            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument, metaData, uDto);
+            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument,  uDto);
 
             //Update the metadata
-            var updateOrdinals = this.UpdateMatrixWithNewMetadata(ref dmatrix, dto, metaData, new Copyright_BSO());
+            var updateOrdinals = this.UpdateMatrixWithNewMetadata(ref dmatrix, dto,  new Copyright_BSO());
 
             //Update the data
             dmatrix.Cells = this.MergeOldAndNewCells(dmatrix, updateOrdinals);
@@ -1065,7 +1188,7 @@ namespace PxStat.DBuild
             dmatrix.Dspecs[dto.LngIsoCode].GetDimensionsAsDictionary();
 
 
-            Dictionary<int, object> dict = this.DictionaryWithOrdinal(dmatrix, new List<Dictionary<string, object>>(), dto.LngIsoCode, metaData);
+            Dictionary<int, object> dict = this.DictionaryWithOrdinal(dmatrix, new List<Dictionary<string, object>>(), dto.LngIsoCode);
 
             var amendedData = this.MergeBuildCells(dict, dmatrix);
             dmatrix.Cells = amendedData.Select(x=>x.value).ToList();
@@ -1101,7 +1224,7 @@ namespace PxStat.DBuild
             {
                 if (cls.GeoFlag)
                 {
-                    if (!Regex.IsMatch(cls.GeoUrl, Utility.GetCustomConfig("APP_REGEX_URL")))
+                    if (!Regex.IsMatch(cls.GeoUrl, Configuration_BSO.GetStaticConfig("APP_REGEX_URL")))
                     {
 
                         spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.invalid-format", spec.Language)));
@@ -1109,14 +1232,14 @@ namespace PxStat.DBuild
                     }
                     if (formatValidationOnly) return;
                     GeoJson geoJson = new GeoJson();
-                    using (GeoMap_BSO gBso = new GeoMap_BSO(new ADO("defaultConnection")))
+                    using (GeoMap_BSO gBso = new GeoMap_BSO(AppServicesHelper.StaticADO))
                     {
                         string geoCode = cls.GeoUrl;
                         //Accept only the rightmost 32 characters
                         if (cls.GeoUrl.Length > 32)
                         {
                             geoCode = cls.GeoUrl.Substring(cls.GeoUrl.Length - 32);
-                            string baseUrl = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.static") + "/PxStat.Data.GeoMap_API.Read/";
+                            string baseUrl = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.static") + "/PxStat.Data.GeoMap_API.Read/";
                             if (!cls.GeoUrl.Substring(0, cls.GeoUrl.Length - 32).Equals(baseUrl))
                             {
                                 spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", spec.Language)));
@@ -1173,6 +1296,23 @@ namespace PxStat.DBuild
             }
         }
 
+        private IDspec LoadDspec(IDspec spec)
+        {
+            int previousLambda = 1;
+            foreach (var dim in spec.Dimensions)
+            {
+                previousLambda = previousLambda * dim.Variables.Count;
+            }
+            foreach (IStatDimension dim in spec.Dimensions)
+            {
+                dim.Lambda = previousLambda / dim.Variables.Count;
+                dim.PreviousLambda = previousLambda;
+                previousLambda = dim.Lambda;
+            }
+
+            return spec;
+        }
+
 
     }
     public class cellMerge
@@ -1189,5 +1329,18 @@ namespace PxStat.DBuild
         public bool duplicate { get; set; }
         public bool updated { get; set; }
     }
+    /*CellSequence = counter, VrbSequence = item.ElementAt(dimensionIndex).Sequence, NewVrbSequence*/
+    public class cartesian
+    {
+       public int CellSequence { get; set; }
+        public int VrbSequence { get; set; }
+        public int NewVrbSequence { get; set; }
+        public int OtherDimensionOrder { get; set; }
+    }
 
+    public class numberedCell
+    {
+        public int CellSequence { get; set; }
+        public dynamic CellValue { get; set; }
+    }
 }

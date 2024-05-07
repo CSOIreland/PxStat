@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web;
+using PxStat;
 
 namespace PxStat.JsonStatSchema
 {
@@ -37,19 +38,19 @@ namespace PxStat.JsonStatSchema
             Cube_MAP map = new Cube_MAP();
 
             //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
-            if (!Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
+            if (!Resources.Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
             {
 
                 if (parameters.Count <= Constants.C_DATA_RESTFUL_LANGUAGE)
                 {
-                    parameters.Add(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
+                    parameters.Add(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
                 }
 
                 //A trailing '/' where language should be may be picked up as a blank last parameter, so let's deal with that...
                 if (parameters.Count > Constants.C_DATA_RESTFUL_LANGUAGE)
                 {
                     if (String.IsNullOrEmpty(parameters[Constants.C_DATA_RESTFUL_LANGUAGE]))
-                        parameters[Constants.C_DATA_RESTFUL_LANGUAGE] = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                        parameters[Constants.C_DATA_RESTFUL_LANGUAGE] = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
                 }
 
                 JsonStatQuery jq = map.ReadMetadata_MapParametersToQuery(parameters);
@@ -91,18 +92,6 @@ namespace PxStat.JsonStatSchema
                 m2m = param.m2m;
             else
                 m2m = true;
-
-            var hRequest = HttpContext.Current.Request;
-            string rfr = hRequest.UrlReferrer == null || String.IsNullOrEmpty(hRequest.UrlReferrer.Host) ? null : hRequest.UrlReferrer.Scheme + "://" + hRequest.UrlReferrer.Host;
-            string urf = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application");
-
-
-            if (m2m == false && (rfr == urf || rfr + '/' == urf))
-                user = true;
-            else if (m2m == false && rfr != urf && rfr + '/' != urf)
-                widget = true;
-
-
 
 
         }

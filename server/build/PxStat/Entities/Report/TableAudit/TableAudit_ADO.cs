@@ -18,7 +18,7 @@ namespace PxStat.Report
         /// <param name="DatetimeStart"></param>
         /// <param name="DatetimeEnd"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, TableAudit_DTO_Read dto, string userName)
+        internal ADO_readerOutput Read(IADO ado, TableAudit_DTO_Read dto, string userName)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -42,7 +42,7 @@ namespace PxStat.Report
 
             inputParamList.Add(new ADO_inputParams
             {
-                name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")
+                name = "@LngIsoCode", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")
             });
 
             var reader = ado.ExecuteReaderProcedure("Report_TableAudit", inputParamList);

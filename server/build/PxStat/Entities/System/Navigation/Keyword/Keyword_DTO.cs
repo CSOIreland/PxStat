@@ -28,22 +28,21 @@ namespace PxStat.System.Navigation
                 SearchTerm = parameters.SearchTerm;
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
-            else LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            else LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
     }
 
+    /// <summary>
+    /// No constructor used - values are filled from AutoMapper
+    /// </summary>
     public class Keyword_DTO_ReadSynonym
     {
+        private string _lng;
         [LowerCase]
         public string KrlValue { get; set; }
-        public string LngIsoCode { get; set; }
 
-        public Keyword_DTO_ReadSynonym(dynamic parameters)
-        {
-            if (parameters.KrlValue != null)
-                this.KrlValue = parameters.KrlValue;
-            if (parameters.LngIsoCode != null)
-                this.LngIsoCode = parameters.LngIsoCode;
-        }
+        public string LngIsoCode { get { return _lng; } set { _lng = value ?? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"); } }
+
     }
+    
 }

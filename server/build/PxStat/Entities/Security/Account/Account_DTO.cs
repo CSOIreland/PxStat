@@ -3,7 +3,7 @@
     /// <summary>
     /// DTO class for Account Read
     /// </summary>
-    internal class Account_DTO_Read
+    public class Account_DTO_Read
     {
         #region Properties
         /// <summary>
@@ -50,7 +50,7 @@
         }
     }
 
-    internal class Account_DTO_CreateLocal
+    public class Account_DTO_CreateLocal
     {
         public string CcnEmail { get; set; }
         public string CcnDisplayName { get; set; }
@@ -77,14 +77,14 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
     }
 
     /// <summary>
     /// DTO for Account Create
     /// </summary>
-    internal class Account_DTO_Create
+    public class Account_DTO_Create
     {
         #region Properties
         /// <summary>
@@ -125,7 +125,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
         }
 
@@ -137,7 +137,7 @@
     /// <summary>
     /// DTO class for account delete
     /// </summary>
-    internal class Account_DTO_Delete
+    public class Account_DTO_Delete
     {
         /// <summary>
         /// Account username
@@ -157,7 +157,7 @@
     /// <summary>
     /// DTO class for Account update
     /// </summary>
-    internal class Account_DTO_Update
+    public class Account_DTO_Update
     {
         /// <summary>
         /// Account username
@@ -208,16 +208,16 @@
     /// <summary>
     /// DTO class for ReadIsApprover
     /// </summary>
-    internal class Account_DTO_ReadIsApprover
+    public class Account_DTO_ReadIsApprover
     {
         /// <summary>
         /// Account username
         /// </summary>
-        public string CcnUsername { get; internal set; }
+        public string CcnUsername { get;  set; }
         /// <summary>
         /// Release Code
         /// </summary>
-        public int RlsCode { get; internal set; }
+        public int RlsCode { get;  set; }
 
         /// <summary>
         /// Constructor
@@ -250,7 +250,7 @@
     {
         public string Email { get; set; }
         public string TwofactorCode { get; set; }
-        public string Password { get; internal set; }
+        public string Password { get;  set; }
 
 
         public Account_DTO_Login()

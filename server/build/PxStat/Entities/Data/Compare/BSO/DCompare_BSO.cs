@@ -11,9 +11,9 @@ using System.Linq;
 
 namespace PxStat.Data
 {
-    internal class DCompare_BSO
+    public class DCompare_BSO
     {
-        internal IDmatrix CompareAmendment(ADO Ado, IMetaData metaData, Compare_DTO_Read dtoRight, Compare_DTO_Read dtoLeft)
+        internal IDmatrix CompareAmendment(IADO Ado,  Compare_DTO_Read dtoRight, Compare_DTO_Read dtoLeft)
         {
             Release_DTO lDto = new Release_DTO();
             Release_DTO rDto = new Release_DTO();
@@ -22,17 +22,17 @@ namespace PxStat.Data
             rDto.RlsCode = dtoRight.RlsCode;
 
             DataReader dr = new DataReader();
-            var matrixLeft = dr.GetDataset(Ado, metaData, dtoLeft.LngIsoCode, lDto);
-            var matrixRight = dr.GetDataset(Ado, metaData, dtoRight.LngIsoCode, rDto);
+            var matrixLeft = dr.GetDataset(Ado, dtoLeft.LngIsoCode, lDto);
+            var matrixRight = dr.GetDataset(Ado, dtoRight.LngIsoCode, rDto);
 
             //A third matrix (the query matrix is created later from leftMatrix)
             //We need a reference version to ensure that leftMatrix is not changed by reference
-            var matrixLeftRef = dr.GetDataset(Ado, metaData, dtoLeft.LngIsoCode, lDto);
+            var matrixLeftRef = dr.GetDataset(Ado,  dtoLeft.LngIsoCode, lDto);
 
             if (matrixRight.Dspecs.Count == 0 || matrixLeftRef.Dspecs.Count == 0)
                 return null;
 
-            return CompareDmatrixAmendment(matrixLeft, matrixRight, matrixLeftRef, Ado, null, metaData);
+            return CompareDmatrixAmendment(matrixLeft, matrixRight, matrixLeftRef, Ado, null);
         }
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace PxStat.Data
         /// <param name="matrixRight"></param>
         /// <param name="confidentialString"></param>
         /// <returns></returns>
-        public IDmatrix CompareDmatrixAmendment(IDmatrix matrixLeft, IDmatrix matrixRight, IDmatrix matrixLeftRef, IADO ado = null, string confidentialString = null, IMetaData meta = null)
+        public IDmatrix CompareDmatrixAmendment(IDmatrix matrixLeft, IDmatrix matrixRight, IDmatrix matrixLeftRef, IADO ado = null, string confidentialString = null)
         {
-            DMatrix_VLD vld = new DMatrix_VLD(meta, ado);
+            DMatrix_VLD vld = new DMatrix_VLD( ado);
             var res = vld.Validate(matrixLeft);
            
             bool totalChange = false;
@@ -131,11 +131,8 @@ namespace PxStat.Data
             }
 
 
-            string confidential;
-            if (meta == null)
-                confidential = confidentialString == null ? Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value") : confidentialString;
-            else
-                confidential = meta.GetConfidentialValue();
+            string confidential = confidentialString == null ? Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value") : confidentialString;
+           
 
             var granularReport=GetGranularReport(leftQueried,rightQueried);
 
@@ -153,24 +150,26 @@ namespace PxStat.Data
         {
             
             FlatTableBuilder fb = new FlatTableBuilder();
-            
-            //express leftQueried as a DataTable
-            DataTable dtLeft = fb.GetMatrixDataTableCodesOnly(leftQueried, leftQueried.Dspecs.First().Value.Language);
-            //express rightQueried as a DataTable
-            DataTable dtRight = fb.GetMatrixDataTableCodesOnly(rightQueried, rightQueried.Dspecs.First().Value.Language);
 
-            //create a sort expression based on dimension columns and sort each datatable
-            List<string> codeList=rightQueried.Dspecs.First().Value.Dimensions.OrderBy(x => x.Sequence).Select(x => x.Code).ToList();
+            //express leftQueried as a DataTable
+            DataTable dtLeft = fb.GetMatrixDataTableCodesAndSequences(leftQueried, leftQueried.Dspecs.First().Value.Language);
+            //express rightQueried as a DataTable
+            DataTable dtRight = fb.GetMatrixDataTableCodesAndSequences(rightQueried, rightQueried.Dspecs.First().Value.Language);
+
+            //create a sort expression based on dimension columns and sort each datatable by its sequences
+
+            List<string> codeList = rightQueried.Dspecs.First().Value.Dimensions.OrderBy(x => x.Sequence).Select(x => x.Code).ToList();
+
             string sortStatement = "";
             foreach(string s in codeList)
             {
-                sortStatement =sortStatement + s +  ( s!=codeList.Last()? "," : "");
+                sortStatement =sortStatement + s + "_sequence"+  ( s!=codeList.Last()? "," : "");
             }
             //Apply sort
-            dtLeft.DefaultView.Sort=sortStatement;
-            dtRight.DefaultView.Sort = sortStatement;
+            dtLeft.DefaultView.Sort = sortStatement + " ASC";
+            dtRight.DefaultView.Sort = sortStatement + " ASC";
 
-            dtLeft=dtLeft.DefaultView.ToTable();
+            dtLeft =dtLeft.DefaultView.ToTable();
             dtRight = dtRight.DefaultView.ToTable();
 
             List<objectId> leftObjectIds = new List<objectId>();
@@ -228,7 +227,7 @@ namespace PxStat.Data
         }
 
 
-        internal IDmatrix CompareDmatrixAddDelete(IDmatrix matrixLeft, IDmatrix matrixRight, string lngIsoCode, string confidentialString = null)
+        public IDmatrix CompareDmatrixAddDelete(IDmatrix matrixLeft, IDmatrix matrixRight, string lngIsoCode, string confidentialString = null)
         {
 
             DataReader dr = new DataReader();
@@ -288,7 +287,7 @@ namespace PxStat.Data
             List<bool> report = new List<bool>();
 
             int counter = 0;
-            string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
+            string confidential = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value");
             foreach (var cell in matrixLeft.Cells)
             {
                 //If there are no periods in common then nothing could have been amended.
@@ -299,9 +298,7 @@ namespace PxStat.Data
                 }
                 else
                 {
-                    //if (cell.Equals(DBNull.Value)) cell = confidential;
-                    //if (matrixRight.Cells.ElementAt(counter).Equals(DBNull.Value)) matrixRight.Cells.ElementAt(counter).TdtValue = confidential;
-
+                    
                     try
                     {
                         if (!cell.Equals(matrixRight.Cells.ElementAt(counter)))
@@ -368,7 +365,7 @@ namespace PxStat.Data
             return report;
         }
 
-        internal IDmatrix CompareAddDelete(IADO Ado, IMetaData metaData, Compare_DTO_Read dtoRight, Compare_DTO_Read dtoLeft)
+        internal IDmatrix CompareAddDelete(IADO Ado,  Compare_DTO_Read dtoRight, Compare_DTO_Read dtoLeft)
         {
 
             Release_DTO lDto = new Release_DTO();
@@ -378,11 +375,11 @@ namespace PxStat.Data
             rDto.RlsCode = dtoRight.RlsCode;
 
             DataReader dr = new DataReader();
-            var matrixLeft = dr.GetDataset(Ado, metaData, dtoLeft.LngIsoCode, lDto);
-            var matrixRight = dr.GetDataset(Ado, metaData, dtoRight.LngIsoCode, rDto);
+            var matrixLeft = dr.GetDataset(Ado,  dtoLeft.LngIsoCode, lDto);
+            var matrixRight = dr.GetDataset(Ado,  dtoRight.LngIsoCode, rDto);
 
 
-            return CompareDmatrixAddDelete(matrixLeft, matrixRight, dtoRight.LngIsoCode, Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE"));
+            return CompareDmatrixAddDelete(matrixLeft, matrixRight, dtoRight.LngIsoCode, Configuration_BSO.GetStaticConfig("APP_PX_CONFIDENTIAL_VALUE"));
         }
 
         private List<bool> GetAmendedList(Dspec spec)

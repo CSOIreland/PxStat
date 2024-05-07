@@ -16,7 +16,7 @@ namespace PxStat.Security.Logging
         /// <param name="lggDatetimeStart"></param>
         /// <param name="lggDatetimeEnd"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, DateTime lggDatetimeStart, DateTime lggDatetimeEnd)
+        internal ADO_readerOutput Read(IADO ado, DateTime lggDatetimeStart, DateTime lggDatetimeEnd)
         {
 
 

@@ -5,21 +5,21 @@ namespace PxStat.Security
 {
     internal class Login_BSO : IDisposable
     {
-        ADO ado;
+        IADO ado;
 
         internal Login_BSO()
         {
-            ado = new ADO("defaultConnection");
+            ado = AppServicesHelper.StaticADO;
         }
 
-        internal Login_BSO(ADO Ado)
+        internal Login_BSO(IADO Ado)
         {
             ado = Ado;
         }
 
         public void Dispose()
         {
-            ado.Dispose();
+           ado?.Dispose();
         }
 
         internal bool Update1FA(Login_DTO_Create1FA dto, string NewToken)
@@ -82,7 +82,7 @@ namespace PxStat.Security
 
                 Body = Label.Get("email.body.account-reset", dto.LngIsoCode);
                 Subject = Label.Get("email.subject.account-reset", dto.LngIsoCode);
-                InvitationUrl = "[url=" + Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + Utility.GetCustomConfig("APP_COOKIELINK_INVITATION_1FA") + '/' + dto.CcnUsername + '/' + token + "]" + "[/url]";
+                InvitationUrl = "[url=" + Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") + Configuration_BSO.GetStaticConfig("APP_COOKIELINK_INVITATION_1FA") + '/' + dto.CcnUsername + '/' + token + "]" + "[/url]";
 
 
                 Body = Body + Environment.NewLine + InvitationUrl;
@@ -136,13 +136,13 @@ namespace PxStat.Security
             return lAdo.CreateSession(LgnSession, expiry, CcnUsername); ;
         }
 
-        internal static void ExtendSession(ADO extendAdo ,string CcnUsername)
+        internal static void ExtendSession(IADO extendAdo ,string CcnUsername)
         {
             
             try
             {
 
-                DateTime expiry = DateTime.Now.AddSeconds(Configuration_BSO.GetCustomConfig(ConfigType.global, "session.length"));
+                DateTime expiry = DateTime.Now.AddSeconds(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "session.length"));
 
                 Login_ADO lAdo = new Login_ADO(extendAdo);
 

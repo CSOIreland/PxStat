@@ -3,6 +3,7 @@ using PxStat.Template;
 
 namespace PxStat.Subscription
 {
+   
     internal class Subscriber_BSO_Create : BaseTemplate_Create<Subscriber_DTO_Create, Subscriber_VLD_Create>
     {
         /// <summary>
@@ -37,8 +38,7 @@ namespace PxStat.Subscription
                 return false;
             }
 
-
-            if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+            if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
             {
                 Response.error = Label.Get("error.authentication");
                 return false;
@@ -51,7 +51,7 @@ namespace PxStat.Subscription
             {
                 //Calling GetSubscribers with readCache=false will cause the cache to be refreshed to include the new user
                 bso.GetSubscribers(Ado, null, false);
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             Log.Instance.Debug("Can't create Subscription");

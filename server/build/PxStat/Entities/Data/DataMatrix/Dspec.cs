@@ -113,22 +113,25 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="doc"></param>
         /// <param name="domain"></param>
-        public Dspec(IDocument doc, ICollection<KeyValuePair<string, ICollection<string>>> domain, IUpload_DTO uploadDto, IMetaData metaData)
+        public Dspec(IDocument doc, ICollection<KeyValuePair<string, ICollection<string>>> domain, IUpload_DTO uploadDto)
         {
             this.UploadDto = uploadDto;
-            SetMultipleLanguagesPropertiesFromPxDocument(doc, ConvertFactory.Convert(domain), null, metaData);
+            SetMultipleLanguagesPropertiesFromPxDocument(doc, ConvertFactory.Convert(domain), null, null);
         }
 
         /// <summary>
-        /// Constructor based on px document, domain and language code
+        /// Constructor for secondary languages
         /// </summary>
         /// <param name="doc"></param>
         /// <param name="domain"></param>
         /// <param name="otherlanguage"></param>
-        public Dspec(IDocument doc, ICollection<KeyValuePair<string, ICollection<string>>> domain, string otherlanguage, IUpload_DTO uploadDto, IMetaData metaData)
+        /// <param name="uploadDto"></param>
+        /// <param name="metaData"></param>
+        /// <param name="mainSpec"></param>        
+        public Dspec(IDocument doc, ICollection<KeyValuePair<string, ICollection<string>>> domain, string otherlanguage, IUpload_DTO uploadDto, Dspec mainSpec)
         {
             this.UploadDto = uploadDto;
-            SetMultipleLanguagesPropertiesFromPxDocument(doc, ConvertFactory.Convert(domain), otherlanguage, metaData);
+            SetMultipleLanguagesPropertiesFromPxDocument(doc, ConvertFactory.Convert(domain), otherlanguage, mainSpec);
         }
 
 
@@ -219,7 +222,7 @@ namespace PxStat.Data
 
         private void ValidateMappingData(IList<KeyValuePair<string, IList<IPxSingleElement>>> maps, string language)
         {
-            if (language == null) language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            if (language == null) language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             foreach (var map in maps)
             {
                 foreach (var val in map.Value)
@@ -245,11 +248,11 @@ namespace PxStat.Data
         /// <param name="units"></param>
         /// <param name="precisions"></param>
         /// <returns></returns>
-        private StatDimension GetStatisticalDimension(IDocument doc, string language, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes, IList<KeyValuePair<string, IList<IPxSingleElement>>> units, IList<KeyValuePair<string, IList<IPxSingleElement>>> precisions, IMetaData metaData)
+        private StatDimension GetStatisticalDimension(IDocument doc, string language, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes, IList<KeyValuePair<string, IList<IPxSingleElement>>> units, IList<KeyValuePair<string, IList<IPxSingleElement>>> precisions)
         {
             var statDimension = new StatDimension();
             statDimension.Role = Constants.C_DATA_DIMENSION_ROLE_STATISTIC;
-            statDimension.Code = metaData.GetCsvStatistic();
+            statDimension.Code = Configuration_BSO.GetStaticConfig("APP_CSV_STATISTIC");
             statDimension.Sequence = Sequence;
             Sequence++;
 
@@ -293,7 +296,7 @@ namespace PxStat.Data
                 // if there is only one statistical dimension we have no subkeys
                 var unit = doc.GetStringElementValue("UNITS", language);
                 statDimension.Value = Label.Get("default.statistic");// Contents;
-                statDimension.Code = metaData.GetCsvStatistic(); //this.MatrixCode;
+                statDimension.Code = Configuration_BSO.GetStaticConfig("APP_CSV_STATISTIC");//this.MatrixCode;
                 DimensionVariable dimensionVariable = new DimensionVariable();
                 dimensionVariable.Code = this.MatrixCode;
                 dimensionVariable.Value = Contents;
@@ -494,9 +497,9 @@ namespace PxStat.Data
         /// <param name="result"></param>
         /// <param name="dimensionValues"></param>
         /// <param name="maps"></param>
-        private void LoopClassifications(IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes, ICollection<StatDimension> result, IEnumerable<string> dimensionValues, IList<KeyValuePair<string, IList<IPxSingleElement>>> maps)
+        /// <param name="mainSpec"></param>
+        private void LoopClassifications(IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes, ICollection<StatDimension> result, IEnumerable<string> dimensionValues, IList<KeyValuePair<string, IList<IPxSingleElement>>> maps, Dspec mainSpec)
         {
-            //We need this to ensure classification codes do not coincidentally end up calculating the same code:
             int dimensionCounter = 0;
 
             foreach (var value in dimensionValues)
@@ -567,16 +570,39 @@ namespace PxStat.Data
                 //If there's no code, get one based on the hash of the classification plus its variable
                 if (code.Length == 0)
                 {
-                    dimensionCounter++;
-                    int hash = statDimension.GetHashCode();
-                    foreach (var vrb in statDimension.Variables)
-                        hash = hash ^ vrb.Code.GetHashCode();
-                    statDimension.Code = Utility.GetMD5(hash.ToString()) + dimensionCounter.ToString();
+                    if (mainSpec == null)
+                    {
+                        int hash = statDimension.GetHashCode();
+                        foreach (var vrb in statDimension.Variables)
+                            hash = hash ^ vrb.Code.GetHashCode();
+                        statDimension.Code = Utility.GetMD5(hash.ToString());
+                    }
+                    else
+                    {
+                        // Get the code from the main specification dimension
+                        StatDimension dimension =  GetStatDimension(mainSpec.Dimensions, dimensionCounter);
+                        statDimension.Code = dimension.Code;
+                        statDimension.Sequence = dimension.Sequence;
+                        result.Add(statDimension);
+                        dimensionCounter++;
+                        continue;
+                    }
                 }
                 statDimension.Sequence = Sequence;
                 Sequence++;
                 result.Add(statDimension);
             }
+        }
+
+        public StatDimension GetStatDimension(ICollection<StatDimension> dimensions, int dimensionCounter)
+        {
+            IEnumerable<StatDimension> classificationQuery =
+                from dimension in dimensions
+                where dimension.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_CLASSIFICATION)
+                orderby dimension.Sequence ascending
+                select dimension;
+
+            return classificationQuery.ToArray()[dimensionCounter];
         }
 
         /// <summary>
@@ -610,9 +636,10 @@ namespace PxStat.Data
         /// <param name="headings"></param>
         /// <param name="contents"></param>
         /// <param name="maps"></param>
+        /// <param name="mainSpec"></param>
         /// <returns></returns>
         internal ICollection<StatDimension> GetClassificationDimensions(IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, IList<KeyValuePair<string, IList<IPxSingleElement>>> codes,
-            IList<IPxSingleElement> stubs, IList<IPxSingleElement> headings, string contents, IList<KeyValuePair<string, IList<IPxSingleElement>>> maps, StatDimension frequencyDimension)
+            IList<IPxSingleElement> stubs, IList<IPxSingleElement> headings, string contents, IList<KeyValuePair<string, IList<IPxSingleElement>>> maps, StatDimension frequencyDimension, Dspec mainSpec)
         {
             ICollection<StatDimension> result = new List<StatDimension>();
 
@@ -647,7 +674,7 @@ namespace PxStat.Data
             dimensionValues.RemoveAll(v => v == ContentVariable);// || v == contents);
 
 
-            LoopClassifications(domain, codes, result, dimensionValues, maps);
+            LoopClassifications(domain, codes, result, dimensionValues, maps, mainSpec);
 
             // if we have no dimensions we mock up a default dimension
             if (result.Count == 0)
@@ -709,7 +736,7 @@ namespace PxStat.Data
         /// <param name="doc"></param>
         /// <param name="domain"></param>
         /// <param name="language" - this is the language of the Specification></param>
-        private void SetMultipleLanguagesPropertiesFromPxDocument(IDocument doc, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string language, IMetaData metaData)
+        private void SetMultipleLanguagesPropertiesFromPxDocument(IDocument doc, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string language, Dspec mainSpec)
         {
             string proposedLanguage = doc.GetStringValueIfExist("LANGUAGE");
             if (!String.IsNullOrEmpty(language))
@@ -781,7 +808,7 @@ namespace PxStat.Data
             var headings = doc.GetListOfElementsIfExist("HEADING", language);
 
             // get the Statistical Products, Time and Dimensions
-            var statDimension = GetStatisticalDimension(doc, language, codes, units, precisions, metaData);
+            var statDimension = GetStatisticalDimension(doc, language, codes, units, precisions);
 
             // statDimension.Code = statDimension.Code != null ? statDimension.Code : metaData.GetCsvStatistic();
             Dimensions.Add(statDimension);
@@ -836,7 +863,7 @@ namespace PxStat.Data
                 }
             }
 
-            var classificationDimensions = GetClassificationDimensions(domain, codes, stubs, headings, Contents, maps, frequencyDimension);
+            var classificationDimensions = GetClassificationDimensions(domain, codes, stubs, headings, Contents, maps, frequencyDimension, mainSpec);
             foreach (var dimension in classificationDimensions)
             {
                 Dimensions.Add(dimension);
@@ -891,12 +918,13 @@ namespace PxStat.Data
             List<string> dimCodes = new List<string>();
             List<string> dimValues = new List<string>();
             List<StatDimension> orderedDimensions = new List<StatDimension>();
-            int sequence = 1;
+            int sequence = 0;
 
             //If there's an implied statistic dimension, it gets a sequence of 1
             var dimStatistic = dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_STATISTIC)).FirstOrDefault();
             if (dimStatistic.Variables.Count == 1 )
             {
+                sequence++;
                 List<string> stubsList = stub.Select(x => x.ToPxValue()).ToList();
                 List<string>headingsList=heading.Select(x=>x.ToPxValue()).ToList();
                 if (!stubsList.Contains(dimStatistic.Value) && !headingsList.Contains(dimStatistic.Value))
@@ -914,7 +942,6 @@ namespace PxStat.Data
                 nextDim.Sequence = ++sequence;
                 dimCodes.Add(nextDim.Code);
                 dimValues.Add(nextDim.Value);
-               // orderedDimensions.Add(nextDim);
             }
 
             foreach (var h in heading)
@@ -923,7 +950,6 @@ namespace PxStat.Data
                 nextDim.Sequence = ++sequence;
                 dimCodes.Add(nextDim.Code);
                 dimValues.Add(nextDim.Value);
-                //orderedDimensions.Add(nextDim);
             }
 
             
@@ -995,7 +1021,7 @@ namespace PxStat.Data
         }
 
 
-        public Dspec GetDspecFromPxDocument(IDocument doc, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string language, IMetaData metaData)
+        public Dspec GetDspecFromPxDocument(IDocument doc, IList<KeyValuePair<string, IList<IPxSingleElement>>> domain, string language, Dspec mainSpec)
         {
             Dspec dspec = new Dspec(this.UploadDto);
             string proposedLanguage = doc.GetStringValueIfExist("LANGUAGE");
@@ -1077,13 +1103,13 @@ namespace PxStat.Data
 
 
             // get the Statistical Products, Time and Dimensions
-            var statDimension = dspec.GetStatisticalDimension(doc, language, codes, units, precisions, metaData);
+            var statDimension = dspec.GetStatisticalDimension(doc, language, codes, units, precisions);
 
-            statDimension.Code = statDimension.Code != null ? statDimension.Code : metaData.GetCsvStatistic();
+            statDimension.Code = statDimension.Code != null ? statDimension.Code : Configuration_BSO.GetStaticConfig("APP_CSV_STATISTIC");
             if (ContentVariable != null)
             {
                 statDimension.Value = ContentVariable;
-                statDimension.Code = metaData.GetCsvStatistic();
+                statDimension.Code = Configuration_BSO.GetStaticConfig("APP_CSV_STATISTIC");
             }
             dspec.Dimensions.Add(statDimension);
 
@@ -1142,7 +1168,7 @@ namespace PxStat.Data
                 }
             }
 
-            var classificationDimensions = dspec.GetClassificationDimensions(domain, codes, stubs, headings, dspec.Contents, maps, frequencyDimension);
+            var classificationDimensions = dspec.GetClassificationDimensions(domain, codes, stubs, headings, dspec.Contents, maps, frequencyDimension, mainSpec);
             foreach (var dimension in classificationDimensions)
             {
                 dspec.Dimensions.Add(dimension);
@@ -1192,7 +1218,7 @@ namespace PxStat.Data
                 if (cls.GeoFlag)
                 {
                     //validate that the map has a well formed url
-                    if (!Regex.IsMatch(cls.GeoUrl, Utility.GetCustomConfig("APP_REGEX_URL")))
+                    if (!Regex.IsMatch(cls.GeoUrl, Configuration_BSO.GetStaticConfig("APP_REGEX_URL")))
                     {
                         if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
                         this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.invalid-format", this.Language)));
@@ -1219,14 +1245,14 @@ namespace PxStat.Data
                     }
 
                     GeoJson geoJson = new GeoJson();
-                    using (GeoMap_BSO gBso = new GeoMap_BSO(new ADO("defaultConnection")))
+                    using (GeoMap_BSO gBso = new GeoMap_BSO(AppServicesHelper.StaticADO))
                     {
                         string geoCode = cls.GeoUrl;
                         //Accept only the rightmost 32 characters
                         if (cls.GeoUrl.Length > 32)
                         {
                             geoCode = cls.GeoUrl.Substring(cls.GeoUrl.Length - 32);
-                            string baseUrl = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.static") + "/PxStat.Data.GeoMap_API.Read/";
+                            string baseUrl = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.static") + "/PxStat.Data.GeoMap_API.Read/";
                             if (!cls.GeoUrl.Substring(0, cls.GeoUrl.Length - 32).Equals(baseUrl))
                             {
                                 if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
@@ -1238,7 +1264,7 @@ namespace PxStat.Data
                         var mapData = gBso.Read(geoCode);
                         if (mapData != null)
                         {
-                            if(mapData.data.Count==0)
+                            if (mapData.data.Count == 0)
                             {
                                 if (this.ValidationErrors == null) this.ValidationErrors = new List<ValidationFailure>();
                                 this.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", this.Language)));
@@ -1253,6 +1279,7 @@ namespace PxStat.Data
                             return;
 
                         }
+                        
                     }
                 }
             }

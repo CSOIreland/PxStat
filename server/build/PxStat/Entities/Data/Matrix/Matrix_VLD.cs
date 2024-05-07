@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace PxStat.Data
-{
+{/*
     internal class Matrix_VLD : AbstractValidator<Matrix>
     {
         internal Matrix_VLD()
@@ -59,7 +59,7 @@ namespace PxStat.Data
 
             //Frequency code must be one of the ones defined in STATIC
             List<string> validCodes = new List<string>();
-            foreach (string str in Utility.GetCustomConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList<string>())
+            foreach (string str in Configuration_BSO.GetStaticConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList<string>())
             {
                 if (str != null)
                 {
@@ -85,16 +85,7 @@ namespace PxStat.Data
             return dupes.Count > 0;
         }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    internal class Matrix_VLD_ReadCodeList : AbstractValidator<Matrix_DTO_Read>
-    {
-        public Matrix_VLD_ReadCodeList()
-        {
 
-        }
-    }
 
     internal class Matrix_VLD_ReadByProduct : AbstractValidator<Matrix_DTO_ReadByProduct>
     {
@@ -194,7 +185,7 @@ namespace PxStat.Data
             RuleFor(x => x.Signature).NotEmpty();
         }
     }
-
+    */
     /// <summary>
     /// 
     /// </summary>
@@ -205,6 +196,89 @@ namespace PxStat.Data
             RuleFor(x => x.DateFrom).NotEmpty();
             RuleFor(x => x.DateTo).NotEmpty();
             RuleFor(f => f.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class Matrix_VLD_ReadCodeList : AbstractValidator<Matrix_DTO_Read>
+    {
+        public Matrix_VLD_ReadCodeList()
+        {
+
+        }
+    }
+
+    internal class Matrix_VLD_ReadByProduct : AbstractValidator<Matrix_DTO_ReadByProduct>
+    {
+        public Matrix_VLD_ReadByProduct()
+        {
+            RuleFor(x => x.PrcCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
+    internal class Matrix_VLD_ReadByLanguage : AbstractValidator<Matrix_DTO_ReadByLanguage>
+    {
+        public Matrix_VLD_ReadByLanguage()
+        {
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
+    internal class Matrix_VLD_ReadByGroup : AbstractValidator<Matrix_DTO_ReadByGroup>
+    {
+        public Matrix_VLD_ReadByGroup()
+        {
+            RuleFor(x => x.GrpCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
+        }
+    }
+    internal class Matrix_VLD_ReadByGeoMap : AbstractValidator<Matrix_DTO_ReadByGeoMap>
+    {
+        public Matrix_VLD_ReadByGeoMap()
+        {
+            RuleFor(x => x.GmpCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class Matrix_VLD_Read : AbstractValidator<Matrix_DTO_Read>
+    {
+        public Matrix_VLD_Read()
+        {
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+            RuleFor(x => x.RlsCode).NotEmpty().GreaterThan(0);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PxUploadValidator : AbstractValidator<PxUpload_DTO>
+    {
+        public PxUploadValidator()
+        {
+            RuleFor(x => x.MtrInput).NotEmpty();
+            RuleFor(x => x.GrpCode).NotEmpty();
+            RuleFor(x => x.FrqValueTimeval).Length(1, 256).When(x => !string.IsNullOrEmpty(x.FrqValueTimeval));
+            RuleFor(x => x.FrqCodeTimeval).Length(1, 256).When(x => !string.IsNullOrEmpty(x.FrqCodeTimeval));
+            RuleFor(x => x.LngIsoCode.Length).Equal(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
+            RuleFor(x => x).Must(Security.CustomValidations.CheckGroupExists).WithMessage("Group does not exist");
+        }
+    }
+
+    internal class Matrix_VLD_ReadByCopyright : AbstractValidator<Matrix_DTO_ReadByCopyright>
+    {
+        public Matrix_VLD_ReadByCopyright()
+        {
+            RuleFor(x => x.CprCode).NotEmpty().Length(0, 32);
+            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
         }
     }
 }

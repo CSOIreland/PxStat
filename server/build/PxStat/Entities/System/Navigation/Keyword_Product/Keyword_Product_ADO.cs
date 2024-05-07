@@ -6,20 +6,20 @@ using System.Data.SqlClient;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// ADO class for Keyword Product
+    /// IADO class for Keyword Product
     /// </summary>
     internal class Keyword_Product_ADO
     {
         /// <summary>
-        /// ADO class variable
+        /// IADO class variable
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor 
         /// </summary>
         /// <param name="ado"></param>
-        public Keyword_Product_ADO(ADO ado)
+        public Keyword_Product_ADO(IADO ado)
         {
             this.ado = ado;
         }
@@ -59,13 +59,13 @@ namespace PxStat.System.Navigation
         internal void Create(DataTable dt)
         {
             //Before bulk inserting, we must map our datatable to the database table, column by column
-            var maps = new List<SqlBulkCopyColumnMapping>()
+            var maps = new List<KeyValuePair<string,string>>()
                 {
-                    new SqlBulkCopyColumnMapping("KPR_VALUE", "KPR_VALUE"),
-                    new SqlBulkCopyColumnMapping("KPR_PRC_ID", "KPR_PRC_ID"),
-                    new SqlBulkCopyColumnMapping("KPR_MANDATORY_FLAG", "KPR_MANDATORY_FLAG")
+                    new KeyValuePair<string,string>("KPR_VALUE", "KPR_VALUE"),
+                    new KeyValuePair<string,string>("KPR_PRC_ID", "KPR_PRC_ID"),
+                    new KeyValuePair<string,string>("KPR_MANDATORY_FLAG", "KPR_MANDATORY_FLAG")
                 };
-            using (ADO bulkAdo = new ADO("defaultConnection"))
+            using (IADO bulkAdo = AppServicesHelper.StaticADO)
             {
                 bulkAdo.ExecuteBulkCopy("TD_KEYWORD_PRODUCT", maps, dt, false);
             }

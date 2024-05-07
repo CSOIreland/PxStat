@@ -39,7 +39,7 @@ namespace PxStat.Data
             }
 
             ////See if this request has cached data
-            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", DTO);
+            MemCachedD_Value cache =AppServicesHelper.CacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", DTO);
 
             if (cache.hasData)
             {

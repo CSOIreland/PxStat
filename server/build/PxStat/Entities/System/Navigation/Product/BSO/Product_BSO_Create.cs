@@ -36,7 +36,7 @@ namespace PxStat.System.Navigation
             var adoProduct = new Product_ADO(Ado);
 
             //You can only create a product in the default Language
-            DTO.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            DTO.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             //Duplicate product names aren't allowed, so we check first
             if (adoProduct.Exists(DTO.PrcValue, DTO.SbjCode) || adoProduct.ExistsCode(DTO.PrcCode))
@@ -56,7 +56,7 @@ namespace PxStat.System.Navigation
             Keyword_Product_BSO_Mandatory keyBso = new Keyword_Product_BSO_Mandatory();
             keyBso.Create(Ado, DTO, newId);
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
             return true;
         }

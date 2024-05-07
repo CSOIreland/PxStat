@@ -1,8 +1,10 @@
 ﻿using API;
 using Enyim.Caching.Memcached;
+using Microsoft.Extensions.Configuration;
 using PxStat.Template;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
@@ -34,26 +36,21 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
-            string webconfig = AppDomain.CurrentDomain.BaseDirectory + "Web.config";
-            // To get the memcached server data from web.config because not part of appsettings
-            XDocument config = XDocument.Load(webconfig);
+            int port = AppServicesHelper.AppSettings.GetValue<int>("enyimMemcached:Servers:0:Port");
+            string address = AppServicesHelper.AppSettings.GetValue<string>("enyimMemcached:Servers:0:Address");
 
-            var port = config.Descendants("enyim.com")?.Descendants("servers")?.Descendants("add")?.Attributes("port");
-
-            var address = config.Descendants("enyim.com")?.Descendants("servers")?.Descendants("add")?.Attributes("address");
-
-            ServerStats stats = MemCacheD.GetStats();
+            ServerStats stats = AppServicesHelper.CacheD.GetStats();
 
             if (stats == null) return false;
 
             Dictionary<string, string> result = new Dictionary<string, string>();
 
-            if (!(port == null || address == null))//if port or address are null return false otherwise get the stats of the first server
+            if (!(port == 0 || address == null))//if port or address are 0 or null return false otherwise get the stats of the first server
             {
                 for (int i = 0; i < Enum.GetNames(typeof(StatItem)).Length; i++)
                 {
                     // takes first item from each of address and port
-                    var value = stats.GetRaw(new IPEndPoint(IPAddress.Parse(address.First().Value.ToString()), Int32.Parse(port.First().Value)), (StatItem)i);
+                    var value = stats.GetRaw(new IPEndPoint(IPAddress.Parse(address), port), (StatItem)i); 
                     string key = ((StatItem)i).ToString();
                     result.Add(key, value);
                 }

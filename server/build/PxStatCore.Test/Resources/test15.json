@@ -1,0 +1,375 @@
+﻿{
+	"organisation": "Central Statistics Office",
+	"corsDomain": "",
+	"url": {
+		"configuration": {
+			"global": "",
+			"server": ""
+		},
+		"api": {
+			"jsonrpc": {
+				"public": "",
+				"private": ""
+			}
+		}
+	},
+	"template": {
+		"footer": {
+			"contact": {
+				"address": "",
+				"phone": "",
+				"email": ""
+			},
+			"social": [
+				{
+					"label": "follow-us-youtube",
+					"icon": "fab fa-youtube",
+					"url": "https//www.youtube.com/user/CSOIrelandMedia"
+				},
+				{
+					"label": "follow-us-twitter",
+					"icon": "fab fa-twitter",
+					"url": "https//twitter.com/csoIreland"
+				},
+				{
+					"label": "like-us-facebook",
+					"icon": "fab fa-facebook",
+					"url": "https://www.facebook.com/CSOIreland"
+				},
+				{
+					"label": "follow-us-instagram",
+					"icon": "fab fa-github",
+					"url": "https://www.instagram.com/csoireland/"
+				},
+				{
+					"label": "follow-us-linkedin",
+					"icon": "fab fa-linkedin-in",
+					"url": "https://ie.linkedin.com/company/csoireland"
+				},
+				{
+					"label": "follow-us-github",
+					"icon": "fab fa-github",
+					"url": "https://github.com/CSOIreland/PxStat"
+				}
+			],
+			"links": [
+				{
+					"text": "test.ie",
+					"url": ""
+				}
+			],
+			"watermark": {
+				"src": "https://cdn.test.ie/static/img/cso_logo_white_transparent.png",
+				"alt": "test.ie",
+				"url": ""
+			}
+		}
+	},
+	"mask": {
+		"datetime": {
+			"ajax": "YYYY-MM-DDTHH:mm:ss",
+			"display": "DD/MM/YYYY HH:mm:ss",
+			"file": "YYYYMMDDTHHMMss",
+			"dateRangePicker": "DD/MM/YYYY HH:mm"
+		},
+		"date": {
+			"ajax": "YYYY-MM-DD",
+			"display": "DD/MM/YYYY",
+			"dateRangePicker": "DD/MM/YYYY"
+		},
+		"time": {
+			"display": "HH:mm:ss"
+		}
+	},
+	"transfer": {
+		"timeout": 3600000,
+		"threshold": {
+			"soft": 1048576,
+			"hard": 1073741824
+		},
+		"unitsPerSecond": {
+			"PxStat.Build.Build_API.Validate": 250000,
+			"PxStat.Build.Build_API.Read": 250000,
+			"PxStat.Build.Build_API.ReadTemplate": 250000,
+			"PxStat.Build.Build_API.ReadDataset": 250000,
+			"PxStat.Build.Build_API.Update": 40000,
+			"PxStat.Data.Matrix_API.Validate": 500000,
+			"PxStat.Data.Matrix_API.Create": 700000,
+			"PxStat.Data.GeoMap_API.Validate": 500000
+		}
+	},
+	"entity": {
+		"data": {
+			"datatable": {
+				"length": 100,
+				"null": ".."
+			},
+			"threshold": {
+				"soft": 1000,
+				"hard": 1000000
+			},
+			"pagination": 10,
+			"lastUpdatedTables": {
+				"defaultPageLength": 10,
+				"defaultNumDaysFrom": 6
+			},
+			"chartJs": {
+				"chart": {
+					"enabled": true
+				},
+				"map": {
+					"enabled": true
+				}
+			},
+			"snippet": null,
+			"properties": {
+				"archive": "",
+				"underReservation": "",
+				"experimental": ""
+			}
+		},
+		"map": {
+			"baseMap": {
+				"leaflet": [
+					{
+						"url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+						"options": {
+							"attribution": "&copy; <a target=\"_blank\" href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
+						}
+					}
+				],
+				"esri": [
+					{
+						"url": "https:utility.arcgis.com/usrsvcs/servers/88f1db9e4ae04df69e499223b8295843/rest/services/MapGeniePremiumWM/MapServer"
+					}
+				]
+			}
+		},
+		"build": {
+			"threshold": {
+				"soft": 1000000,
+				"geoJson": 3145728
+			},
+			"geoJsonLookup": {
+				"enabled": true,
+				"href": ""
+			}
+		},
+		"openAccess": {
+			"recaptcha": {
+				"siteKey": "6LdA3AgaAAAAACxmAlIEne89MlAZ4iLR44YSPX9q"
+			},
+			"authenticator": ""
+		},
+		"release": {
+			"comparison": {
+				"threshold": {
+					"soft": 1048576
+				},
+				"differenceClass": "table-danger"
+			}
+		},
+		"analytic": {
+			"dateRangePicker": 7
+		}
+	},
+	"plugin": {
+		"sharethis": {
+			"enabled": true,
+			"apiURL": "https://platform-api.sharethis.com/js/sharethis.js#property={0}&product=inline-share-buttons",
+			"apiKey": "5a532ce70f300f0013e833cd"
+		},
+		"jscookie": {
+			"session": {
+				"path": "/",
+				"secure": "true"
+			},
+			"persistent": {
+				"path": "/",
+				"secure": "true",
+				"expires": 365
+			}
+		},
+		"datatable": {
+			"lengthMenu": [
+				[
+					10,
+					25,
+					50,
+					100,
+					-1
+				],
+				[
+					10,
+					25,
+					50,
+					100,
+					"All"
+				]
+			],
+			"responsive": true,
+			"fixedHeader": true,
+			"dom": "fltip",
+			"deferRender": true
+		},
+		"chartJs": {
+			"chart": {
+				"options": {
+					"responsive": true,
+					"maintainAspectRatio": false,
+					"title": {
+						"display": true,
+						"text": []
+					},
+					"tooltips": {
+						"mode": "index",
+						"callbacks": {
+							"label": null
+						}
+					},
+					"hover": {
+						"mode": "nearest",
+						"intersect": true
+					},
+					"scales": {
+						"xAxes": [
+							{
+								"ticks": {
+									"beginAtZero": false,
+									"maxTicksLimit": null
+								},
+								"gridLines": {
+									"display": false
+								},
+								"scaleLabel": {
+									"display": false,
+									"labelString": null
+								}
+							}
+						],
+						"yAxes": [
+							{
+								"display": true,
+								"position": "left",
+								"id": null,
+								"ticks": {
+									"beginAtZero": false
+								},
+								"callback": null,
+								"scaleLabel": {
+									"display": false,
+									"labelString": null
+								}
+							}
+						]
+					},
+					"plugins": {
+						"stacked100": {
+							"enable": false
+						},
+						"colorschemes": {
+							"scheme": null
+						}
+					},
+					"legend": {
+						"display": true,
+						"position": "bottom"
+					},
+					"elements": {
+						"line": {
+							"tension": 0.4
+						}
+					}
+				},
+				"colours": [
+					"#405381",
+					"#5BC1A5",
+					"#FCBE72",
+					"#0091AB",
+					"#90989F",
+					"#3D5999",
+					"#C6CC5C",
+					"#579599",
+					"#FBAA34",
+					"#007780",
+					"#B9BEC3",
+					"#00AF86",
+					"#6BC2C2",
+					"#00758C",
+					"#FCB053",
+					"#6A7794",
+					"#A3CCC1",
+					"#F68B58",
+					"#36A0B3"
+				]
+			}
+		},
+		"subscriber": {
+			"enabled": true,
+			"firebase": {
+				"config": {
+					"apiKey": "AIzaSyAtvF9OeXitlNQtCMQ45mGOTRaeUvmoxa4",
+					"authDomain": "dev-data-2beba.firebaseapp.com",
+					"projectId": "dev-data-2beba",
+					"storageBucket": "dev-data-2beba.appspot.com",
+					"messagingSenderId": "775338402719",
+					"appId": "1:775338402719:web:380f590988b6bcc34ed3aa"
+				},
+				"providers": {
+					"emailPassword": true,
+					"google": true,
+					"facebook": true,
+					"gitHub": true,
+					"twitter": true
+				}
+			}
+		},
+		"leaflet": {
+			"colourScale": [
+				{
+					"value": "red",
+					"name": "red"
+				},
+				{
+					"value": "yellow",
+					"name": "yellow"
+				},
+				{
+					"value": "blue",
+					"name": "blue"
+				},
+				{
+					"value": "darkorange",
+					"name": "orange"
+				},
+				{
+					"value": "darkviolet",
+					"name": "violet"
+				}
+			],
+			"mode": [
+				{
+					"value": "q",
+					"label": "quantile"
+				},
+				{
+					"value": "e",
+					"label": "equidistant"
+				},
+				{
+					"value": "k",
+					"label": "k-means"
+				}
+			],
+			"baseMap": {
+				"leaflet": [],
+				"esri": [
+					{
+						"url": "https:utility.arcgis.com/usrsvcs/servers/88f1db9e4ae04df69e499223b8295843/rest/services/MapGeniePremiumWM/MapServer",
+						"disclaimer": "You can use the OSi basemap layer only in conjunction with the CSO map widgets, all other rights are reserved by OSi."
+					}
+				]
+			}
+		}
+	}
+}

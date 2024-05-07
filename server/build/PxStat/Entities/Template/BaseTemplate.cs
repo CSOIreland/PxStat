@@ -15,28 +15,28 @@ namespace PxStat.Template
     /// Base Abstract class to allow for the template method pattern of Create, Read, Update and Delete objects from our model
     /// 
     /// </summary>
-    internal abstract class BaseTemplate<T, V>
+    public abstract class BaseTemplate<T, V>
     {
         #region Properties
         /// <summary>
-        /// ADO variable
+        /// IADO variable
         /// </summary>
-        protected ADO Ado { get; }
+        public IADO Ado { get; }
 
         /// <summary>
         /// Cache related metadata
         /// </summary>
-        protected CacheMetadata cDTO { get; set; }
+        public CacheMetadata cDTO { get; set; }
 
         /// <summary>
         /// Account username
         /// </summary>
-        protected string SamAccountName { get; set; }
+        public string SamAccountName { get; set; }
 
         /// <summary>
         /// Request passed into the API
         /// </summary>
-        protected IRequest Request { get; }
+        public IRequest Request { get; }
 
         /// <summary>
         /// Response passed back by API
@@ -69,13 +69,13 @@ namespace PxStat.Template
         /// </summary>
         /// <param name="request"></param>
         /// <param name="validator"></param>
-        protected BaseTemplate(IRequest request, IValidator<T> validator)
+        public  BaseTemplate(IRequest request, IValidator<T> validator)
         {
-            IMetaData metaData = new MetaData();
-            IPathProvider servicePathProvider = new ServerPathProvider();
-            Configuration_BSO.GetInstance(metaData, servicePathProvider);
-            Configuration_BSO.SetConfigFromFiles();
-            Ado = new ADO("defaultConnection");
+     
+            
+
+            Ado = AppServicesHelper.StaticADO;
+            
 
 
             if (ActiveDirectory.IsAuthenticated(request.userPrincipal))
@@ -84,22 +84,21 @@ namespace PxStat.Template
             }
 
             Request = request;
-            if (Request.GetType().Equals(typeof(Head_API)))
+            if (Request.method.Equals("HEAD"))
             {
-                Response = new Head_Output();
+                Response = new RESTful_Output();
             }
             else
                 Response = new JSONRPC_Output();
             Validator = validator;
 
 
-
-            var lng=LanguageManager.Instance;
+            
 
         }
 
         /// <summary>
-        /// Dispose of the ADO for connection tidy-up
+        /// Dispose of the IADO for connection tidy-up
         /// </summary>
         protected void Dispose()
         {
@@ -112,7 +111,7 @@ namespace PxStat.Template
 
             }
 
-            // Dispose the ADO
+            // Dispose the IADO
             Ado.Dispose();
 
             // To be reviewed... 
@@ -208,6 +207,11 @@ namespace PxStat.Template
             return false;
         }
 
+        public virtual bool PostExecute()
+        {
+            return true;
+        }
+
         #region Abstract methods.
         // These methods must be overriden.
         abstract protected bool Execute();
@@ -219,33 +223,37 @@ namespace PxStat.Template
         /// <returns></returns>
         virtual protected T GetDTO(dynamic parameters = null)
         {
+            dynamic copyParams;
             try
             {
-                //if (Request.GetType().Equals(typeof(JSONRPC_API)))
-                //{
-                if (parameters != null)
-                {
-                    return (T)Activator.CreateInstance(typeof(T), parameters);
-
-                }
-                else return (T)Activator.CreateInstance(typeof(T), Request.parameters);
-                //}
-                //else
-                //{
-                //    return (T)Activator.CreateInstance(typeof(T), Request);
-                //}
+                // Mapster would be better but autmapper used in HSM
+                copyParams = parameters ?? Request.parameters;
+                //ExpandoObject? mappedParamers = ((JObject)copyParams).ToObject<ExpandoObject>();
+                return AutoMap.Mapper.Map<T>(copyParams);
             }
             catch (Exception ex)
             {
+                Log.Instance.ErrorFormat("GetDTO error for {0}", typeof(T));
                 if (ex.InnerException != null)
                 {
                     if (ex.InnerException is FormatException)
                     {
                         throw ex.InnerException;
                     }
+                    else
+                    {
+                        Log.Instance.Error(ex.InnerException);
+                    }
+                }
+                else
+                {
+                    // throw ex;
+                    return parameters != null ?
+                    (T)Activator.CreateInstance(typeof(T), parameters) :
+                    (T)Activator.CreateInstance(typeof(T), Request.parameters);
                 }
 
-                throw ex;
+                throw;
             }
         }
 
@@ -367,31 +375,34 @@ namespace PxStat.Template
 
                 if (Request.sessionCookie != null)
                 {
-
-
-                    //Does the cookie correspond with a live token for a user? If so then return the user.
-
-
-                    ADO_readerOutput user;
-                    using (Login_BSO lBso = new Login_BSO())
+                    if (!String.IsNullOrEmpty(Request.sessionCookie.Value))
                     {
-                        user = lBso.ReadBySession(Request.sessionCookie.Value);
-                        if (!user.hasData)
-                        {
 
-                            Response.error = Label.Get("error.authentication"); ;
-                            return false;
-                        }
-                        else
+                        //Does the cookie correspond with a live token for a user? If so then return the user.
+
+
+                        ADO_readerOutput user;
+                        using (Login_BSO lBso = new Login_BSO())
                         {
-                            SamAccountName = user.data[0].CcnUsername;
-                            if (!HasUserPrivilege()) return false;
+                            user = lBso.ReadBySession(Request.sessionCookie.Value);
+                            if (!user.hasData)
+                            {
+
+                                Response.error = Label.Get("error.authentication"); ;
+                                return false;
+                            }
+                            else
+                            {
+                                SamAccountName = user.data[0].CcnUsername;
+                                if (!HasUserPrivilege()) return false;
+                            }
                         }
+
+
+
+                        AuthenticationType = AuthenticationType.local;
                     }
-
-
-
-                    AuthenticationType = AuthenticationType.local;
+                    else return false;
                 }
                 else
                 {

@@ -4,7 +4,7 @@ using API;
 namespace PxStat.Workflow
 {
     /// <summary>
-    /// ADO for WorkflowSignoff
+    /// IADO for WorkflowSignoff
     /// </summary>
     internal class WorkflowSignoff_ADO
     {
@@ -15,7 +15,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, WorkflowSignoff_DTO dto, string ccnUsername)
+        internal int Create(IADO ado, WorkflowSignoff_DTO dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {

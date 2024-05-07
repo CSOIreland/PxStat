@@ -46,7 +46,7 @@ namespace PxStat.Security
                     return false;
                 }
                 //Check if AD local access is allowed
-                if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "security.adOpenAccess") && adResult != null)
+                if (!Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.adOpenAccess") && adResult != null)
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;

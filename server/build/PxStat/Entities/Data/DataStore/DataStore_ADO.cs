@@ -1,4 +1,6 @@
 ﻿using API;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
@@ -35,7 +37,7 @@ namespace PxStat.DataStore
                     new KeyValuePair<string, string>("KRL_MANDATORY_FLAG", "KRL_MANDATORY_FLAG"),
                     new KeyValuePair<string, string>("KRL_SINGULARISED_FLAG","KRL_SINGULARISED_FLAG")
                 };
-            using (ADO bulkAdo = new ADO("defaultConnection"))
+            using (IADO bulkAdo = AppServicesHelper.StaticADO)
             {
                 bulkAdo.ExecuteBulkCopy("TD_KEYWORD_RELEASE", maps, dt, false);
             }
@@ -94,7 +96,7 @@ namespace PxStat.DataStore
             };
             if (cacheLifetime < 0) return ado.ExecuteReaderProcedure("Data_Matrix_ReadSingleField", inputParams);
 
-            var cache = MemCacheD.Get_ADO("PxStat.DataStore", "Data_Matrix_ReadSingleField", inputParams);
+            var cache =AppServicesHelper.CacheD.Get_ADO("PxStat.DataStore", "Data_Matrix_ReadSingleField", inputParams);
             ADO_readerOutput result;
             if (!cache.hasData)
             {
@@ -105,15 +107,32 @@ namespace PxStat.DataStore
             {
                 result = cache.data;
             }
-            MemCacheD.Store_ADO<dynamic>("PxStat.DataStore", "Data_Matrix_ReadSingleField", inputParams, result.data, (DateTime)default);
+           AppServicesHelper.CacheD.Store_ADO<dynamic>("PxStat.DataStore", "Data_Matrix_ReadSingleField", inputParams, result.data, (DateTime)default);
             return result;
+        }
+
+        /// <summary>
+        ///  Get a list of Matrix codes based on rights of user groups
+        /// </summary>
+        /// <param name="prcCode"></param>
+        /// <returns></returns>
+        internal ADO_readerOutput ReadByGroup(IADO ado,string grpCode, string lngIsoCode)
+        {
+            var inputParams = new List<ADO_inputParams>() {
+                new ADO_inputParams { name = "@GrpCode", value = grpCode },
+                new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode },
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code") }
+
+            };
+
+            return ado.ExecuteReaderProcedure("Data_Matrix_ReadByGroup", inputParams);
         }
 
         internal List<dynamic> ReadCollectionMetadata(IADO ado, string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
         {
             var inputParams = new List<ADO_inputParams>();
 
-            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") });
+            inputParams.Add(new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             if (!string.IsNullOrEmpty(languageCode))
             {
@@ -146,11 +165,12 @@ namespace PxStat.DataStore
 
         internal ADO_readerOutput DataMatrixReadLive(IADO ado, string mtrCode, string lngIsoCode)
         {
-
+            string defaultLngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             var inputParams = new List<ADO_inputParams>()
             {
                 new ADO_inputParams(){ name="@MtrCode",value=mtrCode},
-                new ADO_inputParams(){ name="@LngIsoCode",value=lngIsoCode}
+                new ADO_inputParams(){ name="@LngIsoCode",value=lngIsoCode},
+                new ADO_inputParams(){name ="@LngIsoCodeDefault", value=defaultLngIsoCode }
             };
             return ado.ExecuteReaderProcedure("Data_Matrix_Read_Live", inputParams);
 
@@ -171,5 +191,30 @@ namespace PxStat.DataStore
 
         }
 
+        internal string getDbName()
+        {
+            return new SqlConnection(ApiServicesHelper.Configuration.GetConnectionString(ApiServicesHelper.ADOSettings.API_ADO_DEFAULT_CONNECTION)).Database;
+        }
+
+        /// <summary>
+        /// Soft deletes a Matrix
+        /// </summary>
+        /// <param name="rlsCode"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        internal int Delete(IADO ado,int rlsCode, string userName)
+        {
+            var inputParams = new List<ADO_inputParams>()
+                {
+                    new ADO_inputParams() {name ="@RlsCode",value= rlsCode},
+                    new ADO_inputParams() {name ="@CcnUsername",value= userName}
+                };
+
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+
+            ado.ExecuteNonQueryProcedure("Data_Matrix_Delete", inputParams, ref returnParam);
+
+            return Resources.DataAdaptor.ReadInt(returnParam.value);
+        }
     }
 }

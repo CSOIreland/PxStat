@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Data;
+using PxStat.Security;
 using PxStat.Template;
 using System.Collections.Generic;
 
@@ -42,15 +43,15 @@ namespace PxStat.DBuild
             }
 
 
-            if (!DTO.Signature.Equals(Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()))))
+            if (!DTO.Signature.Equals(Utility.GetMD5(Configuration_BSO.GetStaticConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()))))
             {
                 Response.error = Label.Get("error.validation", DTO.LngIsoCode);
                 return false;
             }
 
 
-            var metaData = new MetaData();
-            Response = dbso.BsoUpdate(Response, DTO, metaData, Ado, true, null, DTO.LngIsoCode);
+            
+            Response = dbso.BsoUpdate(Response, DTO,  Ado, true, null, DTO.LngIsoCode);
             return Response.error != null;
         }
 

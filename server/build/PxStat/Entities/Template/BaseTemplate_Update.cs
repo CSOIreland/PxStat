@@ -28,10 +28,10 @@ namespace PxStat.Template
         {
             Log.Instance.Debug("Record updated");
             //See if there's a cache in the process. If so then we need to flush the cache.
-            if (MethodReader.MethodHasAttribute(Request.method, "CacheFlush"))
+            if (Resources.MethodReader.MethodHasAttribute(Request.method, "CacheFlush"))
             {
                 cDTO = new CacheMetadata("CacheFlush", Request.method, DTO);
-                foreach (Cas cas in cDTO.CasList) MemCacheD.CasRepositoryFlush(cas.CasRepository + cas.Domain);
+                foreach (Cas cas in cDTO.CasList)Cas.RunCasFlush(cas.CasRepository + cas.Domain);
 
             }
         }
@@ -51,7 +51,7 @@ namespace PxStat.Template
         public BaseTemplate_Update<T, V> Update()
         {
             //HEAD requests are not allowed on action queries
-            if (Request.GetType().Equals(typeof(Head_API)))
+            if (Request.method.Equals("HEAD"))
             {
                 OnAuthenticationFailed();
                 return this;
@@ -59,6 +59,14 @@ namespace PxStat.Template
 
             try
             {
+                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
+                {
+                    if (!IsAdministrator())
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
 
                 // first of all, we check if user has the right to perform this operation!
                 if (HasUserToBeAuthenticated())
@@ -89,8 +97,7 @@ namespace PxStat.Template
 
                 }
 
-                //Create the trace now that we're sure we have a SamAccountName if it exists
-                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
+                
 
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams;
@@ -107,7 +114,7 @@ namespace PxStat.Template
                 //    cleansedParams = Cleanser.Cleanse(Request.parameters);
                 //}
 
-                bool isKeyValueParameters = Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
+                bool isKeyValueParameters = Resources.Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
 
                 if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
                 {
@@ -117,18 +124,18 @@ namespace PxStat.Template
                 {
                     if (!isKeyValueParameters)
                     {
-                        cleansedParams = Cleanser.Cleanse(Request.parameters);
+                        cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
                     }
                     else
                     {
                         if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
                         {
                             dynamic dto = GetDTO(Request.parameters);
-                            cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
+                            cleansedParams = Resources.Cleanser.Cleanse(Request.parameters, dto);
                         }
                         else
                         {
-                            cleansedParams = Cleanser.Cleanse(Request.parameters);
+                            cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
                         }
                     }
                 }
@@ -142,7 +149,7 @@ namespace PxStat.Template
                     throw new InputFormatException();
                 }
 
-                DTO = Sanitizer.Sanitize(DTO);
+                DTO = Resources.Sanitizer.Sanitize(DTO);
 
                 DTOValidationResult = Validator.Validate(DTO);
 
@@ -154,23 +161,22 @@ namespace PxStat.Template
 
                 Ado.StartTransaction();
 
+                //Create the trace now that we're sure we have a SamAccountName if it exists
+                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
+
                 // The Actual Creation should happen here by the specific class!
                 if (!Execute())
                 {
-
                     Ado.RollbackTransaction();
                     OnExecutionError();
                 }
-                else
+                Ado.CommitTransaction();
+
+                if (!PostExecute())
                 {
-
-                    Ado.CommitTransaction();
-                    OnExecutionSuccess();
+                    OnExecutionError();
                 }
-
-
-
-
+                OnExecutionSuccess();
                 return this;
             }
             catch (FormatException formatException)
@@ -178,7 +184,7 @@ namespace PxStat.Template
                 //An error has been caught, rollback the transaction, log the error and return a message to the caller
                 Ado.RollbackTransaction();
                 Log.Instance.Error(formatException);
-                Response.error = Label.Get("error.schema");
+                Response.error = formatException.Message ?? Label.Get("error.schema");
                 return this;
             }
             catch (InputFormatException inputError)

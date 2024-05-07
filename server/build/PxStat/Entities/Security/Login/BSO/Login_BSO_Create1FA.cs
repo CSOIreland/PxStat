@@ -54,8 +54,8 @@ namespace PxStat.Security
                 return false;
             }
 
-
-            string newToken = Utility.GetRandomSHA256(userdata.data[0].CcnId.ToString());
+            
+            string newToken = Utility.GetSHA256(new Random().Next() + userdata.data[0].CcnId.ToString() + DateTime.Now.Millisecond);
 
             DTO.CcnEmail = userdata.data[0].CcnEmail;
             DTO.CcnUsername = userdata.data[0].CcnUsername;
@@ -79,7 +79,7 @@ namespace PxStat.Security
                 {
                     SendEmail(new Login_DTO_Create() { CcnUsername = DTO.CcnUsername, LngIsoCode = DTO.LngIsoCode, CcnEmail = DTO.CcnEmail, CcnDisplayname = userdata.data[0].CcnDisplayName }, newToken, "PxStat.Security.Login_API.Create2FA");
                 }
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 success = true;
             }
             else
@@ -95,11 +95,11 @@ namespace PxStat.Security
         private void SendEmail(Login_DTO_Create lDto, string token, string nextMethod)
         {
 
-            string url = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
+            string url = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") + "?method=" + nextMethod + "&email=" + lDto.CcnEmail + '&' + "name=" + Uri.EscapeUriString(lDto.CcnDisplayname) + '&' + "token=" + token;
             string link = "<a href = " + url + ">" + Label.Get("email.body.header.anchor-text", lDto.LngIsoCode) + "</a>";
-            string subject = string.Format(Label.Get("email.subject.setup-2fa", lDto.LngIsoCode), Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string subject = string.Format(Label.Get("email.subject.setup-2fa", lDto.LngIsoCode), Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string to = lDto.CcnEmail;
-            string header = string.Format(Label.Get("email.body.header.setup-2fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"));
+            string header = string.Format(Label.Get("email.body.header.setup-2fa", lDto.LngIsoCode), lDto.CcnDisplayname, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"));
             string subHeader = string.Format(Label.Get("email.body.sub-header.setup-2fa"), link);
             string footer = string.Format(Label.Get("email.body.footer", lDto.LngIsoCode), lDto.CcnDisplayname);
 

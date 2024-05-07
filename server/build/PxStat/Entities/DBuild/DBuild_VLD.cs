@@ -3,6 +3,7 @@ using FluentValidation;
 using PxStat.Data;
 using PxStat.Entities.DBuild;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Settings;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +17,14 @@ namespace PxStat.DBuild
         {
             RuleFor(x => x.MtrInput).NotEmpty().WithMessage("Matrix data must not be empty");
             RuleFor(x => x.MtrCode).Length(1, 20).When(f => !string.IsNullOrEmpty(f.MtrCode)).WithMessage("Matrix code must not be empty");
-            RuleFor(x => x.MtrCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
+            RuleFor(x => x.MtrCode).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(x => x.CprCode).Length(1, 20).When(f => !string.IsNullOrEmpty(f.CprCode)).WithMessage("Copyright code must not be empty");
-            RuleFor(x => x.CprCode).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
+            RuleFor(x => x.CprCode).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
 
             RuleFor(x => x).Must(CustomValidations.SpecsNotRepeated).WithMessage("One or spec structures have been repeated");
             RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
             RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
-            RuleFor(f => f.FrqCodeTimeval).Matches(Utility.GetCustomConfig("APP_REGEX_NO_WHITESPACE"));
+            RuleFor(f => f.FrqCodeTimeval).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
 
             RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
             RuleFor(f => f).Must(CustomValidations.FormatExists).WithMessage("Requested format/version not found in the system");
@@ -41,22 +42,16 @@ namespace PxStat.DBuild
 
     public class DSpec_VLD_Update : AbstractValidator<DSpec_DTO>
     {
-        public DSpec_VLD_Update(IMetaData metaData = null)
+        public DSpec_VLD_Update()
         {
-            if (metaData == null)
+            
                 RuleFor(f => f.MtrTitle).Must(CustomValidations.ValidateIgnoreEscapeChars).WithMessage("Invalid MtrTitle");
-            else
-                RuleFor(f => f.MtrTitle).Must(x => ValidateIgnoreEscapeCharsLocal(x, metaData)).WithMessage("Invalid MtrTitle");
+           
 
             RuleFor(f => f.MtrTitle).NotEmpty().Length(1, 256);
-            //if (metaData == null)
-            //    RuleFor(f => f.MtrNote).Must(CustomValidations.ValidateIgnoreEscapeChars).WithMessage("Invalid MtrNote");
-            //else
-            //    RuleFor(f => f.MtrNote).Must(x => ValidateIgnoreEscapeCharsLocal(x, metaData)).WithMessage("Invalid MtrNote");
-            if (metaData == null)
+           
                 RuleFor(f => f.ContentVariable).Must(CustomValidations.ValidateIgnoreEscapeChars).When(f => !string.IsNullOrEmpty(f.ContentVariable)).WithMessage("Invalid ContentVariable");
-            else
-                RuleFor(f => f.ContentVariable).Must(x => ValidateIgnoreEscapeCharsLocal(x, metaData)).When(f => !string.IsNullOrEmpty(f.ContentVariable)).WithMessage("Invalid ContentVariable");
+
 
             RuleFor(x => x).Must(CustomValidations.PeriodsNotRepeated).WithMessage("Periods repeated in request");
 
@@ -65,11 +60,7 @@ namespace PxStat.DBuild
 
         }
 
-        static bool ValidateIgnoreEscapeCharsLocal(string readString, IMetaData metaData)
-        {
 
-            return Regex.IsMatch(Regex.Escape(readString), metaData.GetBuildRegexForbiddenChars());
-        }
 
     }
 
@@ -100,7 +91,7 @@ namespace PxStat.DBuild
 
     public static class CustomValidations
     {
-        public static bool ValidateCsvHeader(DBuild_DTO_Update dto, IDmatrix dmatrix, List<string> headList, IMetaData metaData)
+        public static bool ValidateCsvHeader(DBuild_DTO_Update dto, IDmatrix dmatrix, List<string> headList)
         {
             if (dto.ChangeData == null) return true;
             if (dto.ChangeData.Count == 0) return true;
@@ -109,7 +100,7 @@ namespace PxStat.DBuild
             //header contains something that is not a dimension code for the matrix?
             foreach (string heading in headList)
             {
-                if (!codeDimensionList.Contains(heading) && !heading.Equals(metaData.GetAppCsvValue()) && !heading.Equals(metaData.GetAppCsvUnit()))
+                if (!codeDimensionList.Contains(heading) && !heading.Equals(Configuration_BSO.GetStaticConfig("APP_CSV_VALUE")) && !heading.Equals(Configuration_BSO.GetStaticConfig("APP_CSV_UNIT")))
                 {
                     Log.Instance.Error($"Invalid CSV header item: {heading}");
                     return false;
@@ -145,7 +136,7 @@ namespace PxStat.DBuild
         internal static bool FormatExists(Format_DTO_Read dto)
         {
             bool exists = false;
-            using (ADO ado = new ADO("defaultconnection"))
+            using (IADO ado = AppServicesHelper.StaticADO)
 
             {
                 Format_ADO adoFormat = new Format_ADO();
@@ -206,7 +197,8 @@ namespace PxStat.DBuild
         internal static bool ValidateIgnoreEscapeChars(string readString)
         {
             if (readString == null) return true;
-            return Regex.IsMatch(Regex.Escape(readString), Utility.GetCustomConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS"));
+
+            return Regex.IsMatch(readString, Configuration_BSO.GetStaticConfig("APP_BUILD_REGEX_FORBIDDEN_CHARS"));
 
         }
 
@@ -236,7 +228,7 @@ namespace PxStat.DBuild
         internal static bool FormatExists(DBuild_DTO_Update dto)
         {
             bool exists = false;
-            using (IADO Ado = new ADO("defaultconnection"))
+            using (IADO Ado = AppServicesHelper.StaticADO)
             {
                 Format_ADO adoFormat = new Format_ADO();
                 Format_DTO_Read dtoFormat = new Format_DTO_Read();
@@ -250,20 +242,20 @@ namespace PxStat.DBuild
 
         internal static bool SignatureMatch(DBuild_DTO_Update dto)
         {
-            var signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(dto.GetSignatureDTO()));
+            var signature = Utility.GetMD5(Configuration_BSO.GetStaticConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(dto.GetSignatureDTO()));
             return (signature == dto.Signature);
         }
 
         internal static bool SignatureMatch(DBuild_DTO_ReadTemplate dto)
         {
-            var signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(dto.GetSignatureDTO()));
+            var signature = Utility.GetMD5(Configuration_BSO.GetStaticConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(dto.GetSignatureDTO()));
             return (signature == dto.Signature);
         }
         //
 
         internal static bool SignatureMatch(DBuild_DTO_Read dto)
         {
-            var signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(dto.GetSignatureDTO()));
+            var signature = Utility.GetMD5(Configuration_BSO.GetStaticConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(dto.GetSignatureDTO()));
             return (signature == dto.Signature);
         }
 
@@ -395,30 +387,29 @@ namespace PxStat.DBuild
 
 
 
-    internal class DBuild_VLD_Create : AbstractValidator<DBuild_DTO_Create>
+    public class DBuild_VLD_Create : AbstractValidator<DBuild_DTO_Create>
     {
         /// <summary>
         /// Top level validator
         /// </summary>
-        internal DBuild_VLD_Create(IMetaData metadata)
+        public DBuild_VLD_Create()
         {
             RuleFor(f => f.MtrCode).NotEmpty().Length(1, 20);
-            RuleFor(f => f.MtrCode).Matches(metadata.GetRegexNoWhitespace());
+            RuleFor(f => f.MtrCode).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.CprCode).NotEmpty().Length(1, 32);
-            RuleFor(f => f.CprCode).Matches(metadata.GetRegexNoWhitespace());
+            RuleFor(f => f.CprCode).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.FrqCode).NotEmpty().Length(1, 256);
-            RuleFor(f => f.FrqCode).Matches(metadata.GetRegexNoWhitespace());
+            RuleFor(f => f.FrqCode).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
             RuleFor(f => f.LngIsoCode).NotEmpty().Matches("^[a-z]{2}$");
             RuleFor(f => f.Elimination).NotEmpty().WithMessage("Elimination object not supplied in request");
 
             RuleFor(f => f.Dspecs).Must(CustomValidations.SpecsAreValid).WithMessage("Invalid Dimensions");
             RuleFor(f => f.Dspecs).Must(CustomValidations.LanguagesUnique).WithMessage("Non unique language");
             RuleFor(f => f).Must(CustomValidations.MainLanguageRepresented).WithMessage("Main language not contained in any dimension");
-            RuleForEach(f => f.Dspecs).SetValidator(x => new DSpec_VLD_Update(metadata));
+            RuleForEach(f => f.Dspecs).SetValidator(x => new DSpec_VLD_Update());
             RuleFor(f => f.Format.FrmType).NotEmpty().Length(1, 32);
             RuleFor(f => f.Format.FrmVersion).NotEmpty().Length(1, 32);
-            if (!metadata.IsTest())
-                RuleFor(f => f.Format).Must(CustomValidations.FormatExists).WithMessage("Requested format/version/direction not found in the system");
+           
             RuleFor(f => f.Format).NotEmpty();
 
 

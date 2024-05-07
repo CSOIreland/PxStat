@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using PxStat;
 
 namespace PxStat.Security
 {
@@ -6,7 +7,7 @@ namespace PxStat.Security
     {
         public string MapPath(string path)
         {
-            return HttpContext.Current.Server.MapPath(path);
+            return HttpContextHelper.Current.Server.MapPath(path);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace PxStat.System.Navigation
         /// <param name="dto"></param>
         /// <param name="Ado"></param>
         /// <returns></returns>
-        internal int CreateOrUpdate(Theme_DTO_Update dto, ADO Ado)
+        internal int CreateOrUpdate(Theme_DTO_Update dto, IADO Ado)
         {
             ThemeLanguage_DTO themeLanguageDTO = new ThemeLanguage_DTO
             {

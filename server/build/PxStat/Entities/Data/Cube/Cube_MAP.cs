@@ -55,7 +55,7 @@ namespace PxStat.Data
         internal dynamic ReadMetadata_MapParameters(dynamic restfulParameters)
         {
             Format_DTO_Read format;
-            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
+            using (Format_BSO bso = new Format_BSO(AppServicesHelper.StaticADO))
             {
                 format = bso.Read(new Format_DTO_Read() { FrmType = Constants.C_SYSTEM_JSON_STAT_NAME, FrmDirection = Format_DTO_Read.FormatDirection.DOWNLOAD.ToString() }).FirstOrDefault();
             }
@@ -182,9 +182,9 @@ namespace PxStat.Data
 
             extension.matrix = restfulParameters[1];
 
-            extension.language = restfulParameters.Count >= 5 ? new { code = restfulParameters[4] } : new { code = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") };
+            extension.language = restfulParameters.Count >= 5 ? new { code = restfulParameters[4] } : new { code = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") };
 
-            if (((string)extension.language.code).Length == 0) extension.language = new { code = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") };
+            if (((string)extension.language.code).Length == 0) extension.language = new { code = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") };
 
 
             extension.format = new { type = restfulParameters[2], version = restfulParameters[3] };
@@ -206,7 +206,7 @@ namespace PxStat.Data
 
 
             string suffix;
-            using (Format_BSO bso = new Format_BSO(new ADO("defaultConnection")))
+            using (Format_BSO bso = new Format_BSO(AppServicesHelper.StaticADO))
             {
                 this.MimeType = bso.GetMimetypeForFormat(new Format_DTO_Read() { FrmType = restfulParameters[2], FrmVersion = restfulParameters[3] });
 

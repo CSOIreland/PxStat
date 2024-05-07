@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace PxStat.System.Settings
 {
     /// <summary>
-    /// ADO for Format
+    /// IADO for Format
     /// </summary>
     internal class Format_ADO
     {

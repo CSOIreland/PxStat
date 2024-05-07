@@ -47,13 +47,15 @@ namespace PxStat.System.Settings
             if (nDeleted == 0)
             {
                 Log.Instance.Debug("Can't delete Language");
-                Ado.RollbackTransaction();
                 Response.error = Label.Get("error.delete");
                 return false;
             }
+            return true;
+        }
 
-            Ado.CommitTransaction();
-            Response.data = JSONRPC.success;
+        public override bool PostExecute()
+        {
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

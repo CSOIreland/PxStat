@@ -32,7 +32,7 @@ namespace PxStat.Security
     {
         internal Login_VLD_Create2FA()
         {
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
             RuleFor(x => x.CcnEmail).Matches(emailRegex);
             RuleFor(x => x.LgnToken2Fa).NotEmpty();
         }
@@ -69,7 +69,7 @@ namespace PxStat.Security
     {
         internal Login_VLD_InitiateUpdate1Fa()
         {
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
             RuleFor(x => x.CcnEmail).Matches(emailRegex);
             RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode)).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
         }
@@ -109,7 +109,7 @@ namespace PxStat.Security
     {
         internal Login_VLD_ReadOpen1FA()
         {
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
             RuleFor(x => x.CcnEmail).Matches(emailRegex);
         }
     }
@@ -118,7 +118,7 @@ namespace PxStat.Security
     {
         internal Login_VLD_ReadOpen2FA()
         {
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
             RuleFor(x => x.CcnEmail).Matches(emailRegex);
         }
     }
@@ -128,8 +128,8 @@ namespace PxStat.Security
         internal Login_VLD_Create1FA()
         {
             RuleFor(x => x.Captcha).NotEmpty();
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
-            string passwordRegex = Configuration_BSO.GetCustomConfig(ConfigType.global, "regex.password");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
+            string passwordRegex = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "regex.password");
             RuleFor(x => x.CcnEmail).NotEmpty().Matches(emailRegex).WithMessage("Invalid email");
             //RuleFor(f => f.Lgn1FA).NotEmpty().MinimumLength(8).WithMessage("Invalid password").WithName("1FAValidation");
             RuleFor(f => f.LgnToken1Fa).NotEmpty();
@@ -144,8 +144,8 @@ namespace PxStat.Security
     {
         internal Login_VLD_Update1FA()
         {
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
-            string passwordRegex = Configuration_BSO.GetCustomConfig(ConfigType.global, "regex.password");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
+            string passwordRegex = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "regex.password");
             RuleFor(f => f.Lgn1Fa).NotEmpty().MinimumLength(8).WithMessage("Invalid password").WithName("1FAValidation");
             RuleFor(f => f.LgnToken1Fa).NotEmpty();
             RuleFor(f => f.Lgn1Fa).Matches(passwordRegex);
@@ -160,7 +160,7 @@ namespace PxStat.Security
 
         internal Login_VLD_Login_InitiateForgotten1Fa()
         {
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
             RuleFor(x => x.CcnEmail).NotEmpty().Matches(emailRegex).WithMessage("Invalid email");
             RuleFor(x => x.Captcha).NotEmpty();
             RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode)).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
@@ -180,7 +180,7 @@ namespace PxStat.Security
         internal Login_VLD_Login()
         {
             RuleFor(x => x.Lgn1Fa).NotEmpty();
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
             RuleFor(x => x.CcnEmail).NotEmpty().Matches(emailRegex).WithMessage("Invalid email");
             RuleFor(x => x.Totp).NotEmpty();
             RuleFor(x => x.Captcha).NotEmpty();
@@ -191,7 +191,7 @@ namespace PxStat.Security
     {
         internal Login_VLD_InitiateForgotten2FA()
         {
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO .GetStaticConfig("APP_REGEX_EMAIL");
             RuleFor(x => x.CcnEmail).NotEmpty().Matches(emailRegex).WithMessage("Invalid email");
             RuleFor(x => x.Captcha).NotEmpty();
             RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode)).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");

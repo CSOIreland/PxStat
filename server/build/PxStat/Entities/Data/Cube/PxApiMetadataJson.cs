@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using static PxStat.Data.Matrix;
 
 namespace PxStat.Data
 {
@@ -59,6 +58,7 @@ namespace PxStat.Data
     {
         internal PxApiMetadataJsonDmatrix GetApiMetadata(IDmatrix dmatrix, string LngIsoCode)
         {
+            if (!dmatrix.Dspecs.ContainsKey(LngIsoCode)) return null;
             Dspec theSpec = dmatrix.Dspecs[LngIsoCode];
 
 
@@ -85,50 +85,6 @@ namespace PxStat.Data
 
             return json;
         }
-        internal PxApiMetadataJson GetApiMetadata(Matrix theMatrix, string LngIsoCode)
-        {
-            Specification theSpec = theMatrix.GetSpecFromLanguage(LngIsoCode);
 
-
-            PxApiMetadataJson json = new PxApiMetadataJson();
-            json.Title = theSpec.Title;
-
-            json.Variables = new List<Variable>();
-
-            Variable statVariable = new Variable() { Code = theSpec.ContentVariable, Text = theSpec.Title };
-            statVariable.Values = new List<string>();
-            statVariable.valueTexts = new List<string>();
-            foreach (var stat in theSpec.Statistic)
-            {
-                statVariable.Values.Add(stat.Code);
-                statVariable.valueTexts.Add(stat.Value);
-            }
-            json.Variables.Add(statVariable);
-
-            Variable perVariable = new Variable() { Code = theSpec.Frequency.Code, Text = theSpec.Frequency.Value };
-            perVariable.Values = new List<string>();
-            perVariable.valueTexts = new List<string>();
-            foreach (var period in theSpec.Frequency.Period)
-            {
-                perVariable.Values.Add(period.Code);
-                perVariable.valueTexts.Add(period.Value);
-            }
-            json.Variables.Add(perVariable);
-
-            foreach (var cls in theSpec.Classification)
-            {
-                Variable clsVariable = new Variable() { Code = cls.Code, Text = cls.Value };
-                clsVariable.Values = new List<string>();
-                clsVariable.valueTexts = new List<string>();
-                foreach (var v in cls.Variable)
-                {
-                    clsVariable.Values.Add(v.Code);
-                    clsVariable.valueTexts.Add(v.Value);
-                }
-                json.Variables.Add(clsVariable);
-            }
-
-            return json;
-        }
     }
 }

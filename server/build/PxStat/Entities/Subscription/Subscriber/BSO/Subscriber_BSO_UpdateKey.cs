@@ -43,7 +43,7 @@ namespace PxStat.Subscription
             else
             {
 
-                if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
                 {
                     Response.error = Label.Get("error.authentication", DTO.LngIsoCode);
                     return false;
@@ -56,7 +56,7 @@ namespace PxStat.Subscription
             string newKey = sBso.GetSubscriberKey(DTO.Uid);
             if (ado.UpdateKey(DTO.Uid, newKey))
             {
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             Log.Instance.Debug("Can't update Subscriber Key");

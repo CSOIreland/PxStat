@@ -52,7 +52,7 @@ namespace PxStat.Data
         public string Language { get; set; }
         //A list of boolean values corresponding exactly to Cells. Indicates if they are amended data cells.
         public List<bool> ComparisonReport { get; set; }
-        public IMetaData MetaData { get; set; }
+       
 
         /// <summary>
         /// Px Document Dmatrix Constructor
@@ -61,9 +61,8 @@ namespace PxStat.Data
         /// <param name="dto"></param>
         /// <param name="ado"></param>
         /// <param name="utility"></param>        
-        public Dmatrix(IDocument document, IUpload_DTO dto, IADO ado, IMetaData metaData)
+        public Dmatrix(IDocument document, IUpload_DTO dto, IADO ado)
         {
-            MetaData = metaData;
             LoadMatrixPropertiesFromPxDocument(document, dto, ado);
         }
 
@@ -80,7 +79,7 @@ namespace PxStat.Data
         /// <param name="metaData"></param>
         public void LoadMatrixPropertiesFromPxDocument(IDocument document, IUpload_DTO dto, IADO ado)
         {
-            FormatType = MetaData.GetFormatType();
+            FormatType = Configuration_BSO.GetStaticConfig("APP_PX_DEFAULT_FORMAT");
 
             // The Matrix Code identifies the data cube
             Code = document.GetStringElementValue("MATRIX");
@@ -94,9 +93,9 @@ namespace PxStat.Data
 
             string officialStat = document.GetStringValueIfExist("OFFICIAL-STATISTICS");
             if (string.IsNullOrEmpty(officialStat))
-                IsOfficialStatistic = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.officialStatistics");
+                IsOfficialStatistic = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "dataset.officialStatistics");
             else
-                IsOfficialStatistic = officialStat.ToUpper() == MetaData.GetIsOfficialStatistic();
+                IsOfficialStatistic = officialStat.ToUpper() == Configuration_BSO.GetStaticConfig("APP_PX_TRUE"); ;
 
             // The data, common to all the different languages
             Cells = document.GetData("DATA");
@@ -109,10 +108,10 @@ namespace PxStat.Data
 
             if (String.IsNullOrEmpty(Language))
             {
-                Language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                Language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             }
             Dspecs = new Dictionary<string, Dspec>();
-            var mainSpec = new Dspec(document, ConvertFactory.Convert(domain), dto, MetaData)
+            var mainSpec = new Dspec(document, ConvertFactory.Convert(domain), dto)
             {
                 Language = Language
             };
@@ -125,7 +124,7 @@ namespace PxStat.Data
                 var otherLanguages = Languages.Where(t => t != Language).Select(t => t);
                 foreach (var otherlanguage in otherLanguages)
                 {
-                    Dspecs.Add(otherlanguage, new Dspec(document, ConvertFactory.Convert(domain), otherlanguage, dto, MetaData));
+                    Dspecs.Add(otherlanguage, new Dspec(document, ConvertFactory.Convert(domain), otherlanguage, dto, mainSpec));
                 }
             }
             else
@@ -135,10 +134,10 @@ namespace PxStat.Data
             }
         }
 
-        public IDmatrix GetDmatrixFromPxDocument(IDocument document, IMetaData metaData, IUpload_DTO uploadDto,List<PxUpload_DTO> specUploads =null)
+        public IDmatrix GetDmatrixFromPxDocument(IDocument document,  IUpload_DTO uploadDto,List<PxUpload_DTO> specUploads =null)
         {
             Dmatrix dmatrix = new Dmatrix();
-            dmatrix.FormatType = metaData.GetFormatType();
+            dmatrix.FormatType = Configuration_BSO.GetStaticConfig("APP_PX_DEFAULT_FORMAT");
 
             // The Matrix Code identifies the data cube
             dmatrix.Code = document.GetStringElementValue("MATRIX");
@@ -146,19 +145,17 @@ namespace PxStat.Data
             dmatrix.Copyright.CprValue = document.GetStringElementValue("SOURCE");
             Copyright_BSO cBso = new Copyright_BSO();
 
-            if (metaData.IsTest())
-                dmatrix.Copyright = metaData.GetCopyright();
-            else
-                dmatrix.Copyright = cBso.ReadFromValue(dmatrix.Copyright.CprValue);
+            
+            dmatrix.Copyright = cBso.ReadFromValue(dmatrix.Copyright.CprValue);
 
             // As the Px Document represents a px file, this represents the version of the px format specification, typically a year where the format was introduced
             dmatrix.FormatVersion = document.GetStringElementValue("AXIS-VERSION");
 
             string officialStat = document.GetStringValueIfExist("OFFICIAL-STATISTICS");
             if (string.IsNullOrEmpty(officialStat))
-                dmatrix.IsOfficialStatistic = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.officialStatistics");
+                dmatrix.IsOfficialStatistic = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "dataset.officialStatistics");
             else
-                dmatrix.IsOfficialStatistic = officialStat.ToUpper() == metaData.GetIsOfficialStatistic();
+                dmatrix.IsOfficialStatistic = officialStat.ToUpper().Equals("YES");
 
             // The data, common to all the different languages
             dmatrix.Cells = (document.GetData("DATA")).Select(x => x.Value).ToList();
@@ -171,13 +168,13 @@ namespace PxStat.Data
 
             if (String.IsNullOrEmpty(dmatrix.Language))
             {
-                dmatrix.Language = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                dmatrix.Language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             }
             dmatrix.Languages = document.GetListOfStringValuesIfExist("LANGUAGES");
             this.Languages = dmatrix.Languages;
             dmatrix.Dspecs = new Dictionary<string, Dspec>();
             //var mainSpec = new Dspec(document, ConvertFactory.Convert(domain), dto, MetaData);
-            var mainSpec = new Dspec(uploadDto).GetDspecFromPxDocument(document, domain, null, metaData);
+            var mainSpec = new Dspec(uploadDto).GetDspecFromPxDocument(document, domain, null, null);
 
             mainSpec.Language = dmatrix.Language;
             dmatrix.Dspecs.Add(mainSpec.Language, mainSpec);
@@ -200,7 +197,7 @@ namespace PxStat.Data
                             uploadDto.FrqCodeTimeval = thisSpecUpload.FrqCodeTimeval ?? uploadDto.FrqCodeTimeval ;
                         }
                     }
-                    dmatrix.Dspecs.Add(otherlanguage, new Dspec(uploadDto).GetDspecFromPxDocument(document, domain, otherlanguage, metaData));
+                    dmatrix.Dspecs.Add(otherlanguage, new Dspec(uploadDto).GetDspecFromPxDocument(document, domain, otherlanguage, mainSpec));
                 }
             }
             else

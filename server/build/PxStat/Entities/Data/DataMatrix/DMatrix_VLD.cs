@@ -15,9 +15,9 @@ namespace PxStat.Data
     public class DMatrix_VLD : AbstractValidator<IDmatrix>
     {
         readonly string _lng;
-        public DMatrix_VLD(IMetaData metaData, IADO ado=null, string language=null)
+        public DMatrix_VLD(IADO ado=null, string language=null)
         {
-            _lng = language ?? metaData.GetDefaultCodingLanguage();
+            _lng = language ?? Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code");
 
             RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage(x=>Label.Get("px.build.code-empty",_lng));
             RuleFor(x => x.Copyright).NotNull().NotEmpty().WithMessage(x=>Label.Get("px.build.copyright-empty",_lng));
@@ -35,7 +35,7 @@ namespace PxStat.Data
 
             When(x => x.Dspecs != null, () =>
            {
-               RuleForEach(x => x.Dspecs.Values).NotNull().When(x => x.Dspecs != null).SetValidator(new Dspec_VLD(metaData, ado, _lng));
+               RuleForEach(x => x.Dspecs.Values).NotNull().When(x => x.Dspecs != null).SetValidator(new Dspec_VLD( ado, _lng));
            });
             When(x => x.Dspecs?.Count > 1, () =>
                  {
@@ -46,12 +46,10 @@ namespace PxStat.Data
 
         public bool CopyrightExists(IDmatrix matrix)
         {
-            //If this is being run as a unit test, we don't want to try to go to the data store
-            if(matrix.MetaData!=null)
-                if (matrix.MetaData.IsTest()) return true;
-
-            if (matrix.Copyright.CprValue == null) return false;
-            using (IADO ado = new ADO("defaultConnection"))
+            
+            
+            if (matrix.Copyright?.CprValue == null) return false;
+            using (IADO ado = AppServicesHelper.StaticADO)
             {
                 Copyright_ADO cAdo = new Copyright_ADO();
                 var readCpr=cAdo.Read(ado, new Copyright_DTO_Read() { CprValue = matrix.Copyright.CprValue });
@@ -158,9 +156,9 @@ namespace PxStat.Data
         readonly string _lng;
         private IADO ado;
 
-        public Dspec_VLD(IMetaData metaData, IADO ado=null, string language=null)
+        public Dspec_VLD( IADO ado=null, string language=null)
         {
-            _lng = language ?? metaData.GetDefaultCodingLanguage();
+            _lng = language ?? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             this.ado = ado;
 
             RuleFor(x => x.Title).NotNull().NotEmpty().WithMessage(x => String.Format(Label.Get("px.build.no-spec-title", _lng),_lng));
@@ -176,17 +174,17 @@ namespace PxStat.Data
             RuleFor(x => x).Must(DimensionsAreOrdered).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.dimension-sequence", _lng), _lng));
             RuleFor(x=>x).Must(LanguageMustExist).WithMessage((IDspec, x) => String.Format(Label.Get("px.build.language-not-exist", _lng), _lng));
 
-            RuleForEach(x => x.Dimensions).SetValidator(new Dimension_VLD(metaData, _lng)).WithMessage(x=>Label.Get("px.build.dimension-error", _lng));
+            RuleForEach(x => x.Dimensions).SetValidator(new Dimension_VLD( _lng)).WithMessage(x=>Label.Get("px.build.dimension-error", _lng));
         }
 
         public bool LanguageMustExist(IDspec spec)
         {
-            if (ado == null)
+
+            using(IADO tADO = AppServicesHelper.StaticADO)
             {
-                return false;
+                Language_ADO langAdo = new Language_ADO(tADO);
+                return langAdo.Exists(spec.Language);
             }
-            Language_ADO lAdo = new Language_ADO(ado);
-            return lAdo.Exists(spec.Language);
         }
 
         /// <summary>
@@ -278,16 +276,16 @@ namespace PxStat.Data
     public class Dimension_VLD : AbstractValidator<IStatDimension>
     {
         readonly string _lng;
-        public Dimension_VLD(IMetaData metaData, string language=null)
+        public Dimension_VLD( string language=null)
         {
-            _lng = language ?? metaData.GetDefaultCodingLanguage();
+            _lng = language ?? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             RuleFor(x => x.Variables.Count).GreaterThan(0).When(x => x.Variables != null).WithMessage(x=>String.Format(Label.Get("px.build.no-variables", _lng), x.Code));
 
             RuleFor(x => x.Variables.Count).GreaterThan(0).When(x => x.Variables != null).WithMessage(x => String.Format(Label.Get("px.build.no-variables", _lng), x.Code));
             RuleFor(x => x.Variables).NotEmpty().NotNull().WithMessage(x => String.Format(Label.Get("px.build.missing-variable", _lng), x.Code));
             RuleFor(x => x.Role).NotNull().NotEmpty().WithMessage(x => String.Format(Label.Get("px.build.dimension-no-role", _lng), x.Code));
-            RuleForEach(x => x.Variables).SetValidator(new DimensionVariable_VLD(metaData, _lng)).WithMessage(Label.Get("px.build.variable-error", _lng));
+            RuleForEach(x => x.Variables).SetValidator(new DimensionVariable_VLD( _lng)).WithMessage(Label.Get("px.build.variable-error", _lng));
             RuleFor(x => x).Must(DimensionVariablesAreOrdered).WithMessage(x => String.Format(Label.Get("px.build.variable-sequence", _lng), x.Code));
             RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage(Label.Get("px.build.dimension-code-empty", _lng));
             RuleFor(x => x.Value).NotNull().NotEmpty().WithMessage(Label.Get("px.build.dimension-value-empty", _lng));
@@ -322,9 +320,9 @@ namespace PxStat.Data
     public class DimensionVariable_VLD : AbstractValidator<IDimensionVariable>
     {
         readonly string _lng;
-        public DimensionVariable_VLD(IMetaData metaData, string language=null)
+        public DimensionVariable_VLD( string language=null)
         {
-            _lng = language ?? metaData.GetDefaultCodingLanguage();
+            _lng = language ?? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             RuleFor(x => x.Code).NotNull().NotEmpty().WithMessage(Label.Get("px.build.no-variable-code", _lng));
             RuleFor(x => x.Value).NotNull().NotEmpty().WithMessage(Label.Get("px.build.no-variable-value", _lng));

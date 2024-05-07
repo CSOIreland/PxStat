@@ -1,7 +1,9 @@
 ﻿using API;
 using PxStat.Template;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace PxStat.Security
 {/// <summary>
@@ -22,7 +24,13 @@ namespace PxStat.Security
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            if (IsPowerUser())
+                return true;
+
+            if (IsModerator() && !String.IsNullOrEmpty(DTO.MtrCode))
+                return true;
+
+            return false;
         }
 
         /// <summary>
@@ -31,12 +39,19 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
-
-            Analytic_ADO ado = new Analytic_ADO(Ado);
-            ADO_readerOutput outputSummary = ado.ReadEnvironmentLanguage(DTO,SamAccountName );
-            if (outputSummary.hasData)
+            
+            MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadEnvironmentLanguage", DTO);
+            if (cache.hasData)
             {
-                Response.data = FormatData(outputSummary.data);
+                Response.data = cache.data;
+                return true;
+            }
+            Analytic_ADO ado = new Analytic_ADO(Ado);
+            List<dynamic> outputSummary = ado.ReadEnvironmentLanguage(DTO);
+            if (outputSummary != null)
+            {
+                Response.data = FormatData(outputSummary);
+                ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "ReadEnvironmentLanguage", DTO, Response.data, default(DateTime));
                 return true;
             }
             return false;
@@ -51,20 +66,12 @@ namespace PxStat.Security
         {
             dynamic output = new ExpandoObject();
             var itemDict = output as IDictionary<string, object>;
-            int limit = Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.read-environment-language-limit");
-            int counter = 1;
-            int otherSum = 0;
+
+
             foreach (dynamic item in readData)
             {
-                if (counter < limit)
-                {
-                    itemDict.Add(item.NltLanguage == "-" ? Label.Get("analytic.unknown", DTO.LngIsoCode) : item.NltLanguage, item.LngCount);
-                }
-                else otherSum = otherSum + item.LngCount;
-                counter++;
+                itemDict.Add(item.nltLngIsoCode.ToString(), item.lngCount);
             }
-
-            if (otherSum > 0) itemDict.Add(Label.Get("analytic.others", DTO.LngIsoCode), otherSum);
             return output;
         }
     }

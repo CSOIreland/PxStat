@@ -55,7 +55,7 @@ namespace PxStat.System.Settings
                 return true;
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

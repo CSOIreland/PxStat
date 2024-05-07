@@ -11,6 +11,7 @@ namespace PxStat.Subscription
         /// <param name="request"></param>
         internal Subscriber_BSO_Logout(JSONRPC_API request) : base(request, new Subscriber_VLD_Logout())
         {
+            
         }
 
 
@@ -42,12 +43,12 @@ namespace PxStat.Subscription
             else
             {
 
-                if (!API.Firebase.Logout(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Logout(DTO.Uid, DTO.AccessToken))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
                 }
-                Response.data = Response.data = JSONRPC.success;
+                Response.data = Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
 

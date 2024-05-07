@@ -1,5 +1,6 @@
 ﻿using API;
 using FluentValidation;
+using PxStat.Security;
 
 namespace PxStat.System.Settings
 {
@@ -24,7 +25,7 @@ namespace PxStat.System.Settings
     {
         internal Reason_VLD_Create()
         {
-            string alphaNumericRegex = Utility.GetCustomConfig("APP_REGEX_ALPHA_NUMERIC");
+            string alphaNumericRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_ALPHA_NUMERIC");
             //Mandatory - RsnCode
             RuleFor(f => f.RsnCode).NotEmpty().Length(1, 32).WithMessage("Invalid Rsn code").WithName("ReasonCodeValidation");
             RuleFor(f => f.RsnCode).Matches(alphaNumericRegex).WithMessage("Invalid Rsn code").WithName("ReasonCodeValidationAlphaNumeric");

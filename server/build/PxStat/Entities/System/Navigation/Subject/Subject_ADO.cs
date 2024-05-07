@@ -5,12 +5,12 @@ using System.Collections.Generic;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// ADO class for Subject
+    /// IADO class for Subject
     /// </summary>
     internal class Subject_ADO
     {
         /// <summary>
-        /// ADO class parameter
+        /// IADO class parameter
         /// </summary>
         private IADO ado;
 
@@ -97,7 +97,7 @@ namespace PxStat.System.Navigation
             if (dto.LngIsoCode != null)
                 inputParams.Add(new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode });
             else
-                inputParams.Add(new ADO_inputParams() { name = "@LngIsoCode", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")});
+                inputParams.Add(new ADO_inputParams() { name = "@LngIsoCode", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")});
 
             var reader = ado.ExecuteReaderProcedure("System_Navigation_Subject_Read", inputParams);
 

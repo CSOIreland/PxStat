@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace PxStat.Workflow
 {
     /// <summary>
-    /// ADO for Workflow
+    /// IADO for Workflow
     /// </summary>
     internal class Workflow_ADO
     {
@@ -16,7 +16,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadAll(ADO ado, dynamic dto, string ccnUsername)
+        internal ADO_readerOutput ReadAll(IADO ado, dynamic dto, string ccnUsername)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -40,12 +40,12 @@ namespace PxStat.Workflow
         /// <param name="ado"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadWorkInProgress(ADO ado, string userName, string lngIsoCode)
+        internal ADO_readerOutput ReadWorkInProgress(IADO ado, string userName, string lngIsoCode)
         {
             var inputParams = new List<ADO_inputParams>() {
                 new ADO_inputParams { name = "@CcnUsername", value = userName } ,
                 new ADO_inputParams { name = "@LngIsoCode", value = lngIsoCode  },
-                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
+                new ADO_inputParams { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code") }
             };
 
             var reader = ado.ExecuteReaderProcedure("Workflow_ReadWorkInProgress", inputParams);
@@ -60,7 +60,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Workflow_DTO dto, string ccnUsername, string rqsCode = null)
+        internal ADO_readerOutput Read(IADO ado, Workflow_DTO dto, string ccnUsername, string rqsCode = null)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -102,7 +102,7 @@ namespace PxStat.Workflow
         /// <param name="ccnUsername"></param>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadAwaitingResponse(ADO ado, string ccnUsername, int rlsCode, string lngIsoCode)
+        internal ADO_readerOutput ReadAwaitingResponse(IADO ado, string ccnUsername, int rlsCode, string lngIsoCode)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -110,7 +110,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")},
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")},
             };
 
             if (rlsCode != default(int))
@@ -127,7 +127,7 @@ namespace PxStat.Workflow
             return output;
         }
 
-        internal ADO_readerOutput ReadLive(ADO ado, string ccnUsername, Workflow_DTO dto)
+        internal ADO_readerOutput ReadLive(IADO ado, string ccnUsername, Workflow_DTO dto)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -135,7 +135,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= dto.LngIsoCode },
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")}
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")}
             };
 
             if (dto.RlsCode != default(int))
@@ -153,7 +153,7 @@ namespace PxStat.Workflow
             return output;
         }
 
-        internal ADO_readerOutput ReadPendingLive(ADO ado, string ccnUsername, Workflow_DTO dto)
+        internal ADO_readerOutput ReadPendingLive(IADO ado, string ccnUsername, Workflow_DTO dto)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -161,7 +161,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= dto.LngIsoCode },
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")}
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")}
             };
 
             if (dto.RlsCode != default(int))
@@ -186,7 +186,7 @@ namespace PxStat.Workflow
         /// <param name="ccnUsername"></param>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadAwaitingSignoff(ADO ado, string ccnUsername, int rlsCode, string lngIsoCode)
+        internal ADO_readerOutput ReadAwaitingSignoff(IADO ado, string ccnUsername, int rlsCode, string lngIsoCode)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -194,7 +194,7 @@ namespace PxStat.Workflow
             {
                 new ADO_inputParams() {name ="@CcnUsername",value= ccnUsername},
                 new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
-                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code")}
+                new ADO_inputParams() {name ="@LngIsoCodeDefault",value= Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code")}
 
             };
 
@@ -220,7 +220,7 @@ namespace PxStat.Workflow
         /// <param name="rlsCode"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadHistory(ADO ado, int rlsCode, string userName)
+        internal ADO_readerOutput ReadHistory(IADO ado, int rlsCode, string userName)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 

@@ -2999,11 +2999,41 @@ namespace PxStat.Data
                         var mapData = gBso.Read(geoCode);
                         if (mapData != null)
                         {
-                            if (mapData.data.Count == 0)
+                            try
+                            {
+                                geoJson = JsonConvert.DeserializeObject<GeoJson>(mapData.data[0].GmpGeoJson);
+                            }
+                            catch
                             {
                                 if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
-                                spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.not-found", spec.Language)));
+                                spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.json-parse", spec.Language)));
                                 return;
+                            }
+                            foreach (var feature in geoJson.Features)
+                            {
+                                if (!feature.Properties.ContainsKey("code"))
+                                {
+                                    if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                                    spec.ValidationErrors.Add(new ValidationFailure("GeoJson", Label.Get("error.geomap.code-tag", spec.Language)));
+                                    return;
+                                }
+                            }
+                            foreach (var vrb in cls.Variable)
+                            {
+
+                                //if (!vrb.EliminationFlag)
+
+                                //{
+                                //    if (geoJson.Features.Where(x => x.Properties["code"] == vrb.Code).Count() == 0)
+                                //    {
+                                //        if (spec.ValidationErrors == null) spec.ValidationErrors = new List<ValidationFailure>();
+                                //        spec.ValidationErrors.Add(new ValidationFailure("GeoJson", String.Format(Label.Get("error.geomap.unmapped-variable", spec.Language), vrb.Code)));
+                                //        return;
+
+                                //    }
+                                //}
+
+
                             }
                         }
                         else
@@ -4348,30 +4378,17 @@ namespace PxStat.Data
     {
         public string PrcCode { get; internal set; }
         public string LngIsoCode { get; internal set; }
-        public bool AssociatedOnly { get; internal set; }
+
+
 
         public Matrix_DTO_ReadByProduct(dynamic parameters)
         {
             if (parameters.PrcCode != null)
-            {
                 PrcCode = parameters.PrcCode;
-            }
             if (parameters.LngIsoCode != null)
-            {
                 LngIsoCode = parameters.LngIsoCode;
-            }
             else
-            {
                 LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
-            }
-            if (parameters.AssociatedOnly != null)
-            {
-                AssociatedOnly = parameters.AssociatedOnly;
-            } 
-            else
-            {
-                AssociatedOnly = false;
-            }
         }
     }
 

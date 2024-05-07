@@ -16,7 +16,7 @@ namespace PxStat.System.Notification
         /// </summary>
         /// <param name="requestDTO"></param>
         /// <param name="releaseDTO"></param>
-        internal void EmailRequest(WorkflowRequest_DTO requestDTO, Release_DTO releaseDTO, ADO ado)
+        internal void EmailRequest(WorkflowRequest_DTO requestDTO, Release_DTO releaseDTO, IADO ado)
         {
             eMail email = new eMail();
 
@@ -44,7 +44,7 @@ namespace PxStat.System.Notification
             String subject = string.Format(Label.Get("email.subject.request-create"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
             String body = string.Format(Label.Get("email.body.request-create"), rqsvalue, releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseUrl, requestDTO.RequestAccount.CcnEmail, requestDTO.RequestAccount.CcnUsername, requestDTO.RequestAccount.CcnDisplayName);
 
-            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), subject, body);
+            sendMail(email, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"), subject, body);
 
             email.Dispose();
         }
@@ -104,7 +104,7 @@ namespace PxStat.System.Notification
             }
 
 
-            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), subject, body);
+            sendMail(email, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"), subject, body);
             email.Dispose();
         }
 
@@ -152,7 +152,7 @@ namespace PxStat.System.Notification
 
                     break;
             }
-            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), subject, body);
+            sendMail(email, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"), subject, body);
             email.Dispose();
         }
 
@@ -171,14 +171,15 @@ namespace PxStat.System.Notification
 
             listToParse.Add(new eMail_KeyValuePair() { key = "{title}", value = title });
             listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "title") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{reason}", value = Label.Get("workflow.reason", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.logo") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{datetime}", value = DateTime.Now.ToString("g") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{reason}", value = Label.Get("workflow.reason", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
 
             email.Subject = subject;
             email.Body = email.ParseTemplate(Properties.Resources.template_NotifyWorkflow, listToParse);
@@ -195,29 +196,33 @@ namespace PxStat.System.Notification
         {
 
             List<string> emails = new List<string>();
-            ADO ado = new ADO("defaultConnection");
-            try
-
+            using (IADO ado = AppServicesHelper.StaticADO)
             {
-                ActiveDirectory_ADO adAdo = new ActiveDirectory_ADO();
-                adAdo.MergeAdToUsers(ref users);
+                try
+
+                {
+                    ActiveDirectory_ADO adAdo = new ActiveDirectory_ADO();
+                    adAdo.MergeAdToUsers(ref users);
 
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                ado.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                }
             }
 
             foreach (var v in users.data)
             {
                 //Only send mails if the user notification flag is set in their profile
                 if ((bool)v.CcnNotificationFlag)
-                    emails.Add(v.CcnEmail.ToString());
+                {
+                    if (v.CcnEmail != null)
+                        emails.Add(v.CcnEmail.ToString());
+                }
             }
             return emails;
         }
@@ -229,7 +234,7 @@ namespace PxStat.System.Notification
         /// <returns></returns>
         private string getReleaseUrl(Release_DTO dto)
         {
-            return "[url=" + Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") + Utility.GetCustomConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + " " + dto.RlsVersion.ToString() + "." + dto.RlsRevision.ToString() + "[/url]";
+            return "[url=" + Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") + Configuration_BSO.GetStaticConfig("APP_COOKIELINK_RELEASE") + '/' + dto.RlsCode.ToString() + "]" + Label.Get("static.release") + " " + dto.RlsVersion.ToString() + "." + dto.RlsRevision.ToString() + "[/url]";
         }
 
     }

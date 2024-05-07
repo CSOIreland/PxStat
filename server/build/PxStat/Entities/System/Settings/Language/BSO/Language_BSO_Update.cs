@@ -39,15 +39,17 @@ namespace PxStat.System.Settings
             if (nUpdated == 0)
             {
                 Log.Instance.Debug("No record has been updated");
-                Ado.RollbackTransaction();
                 Response.error = Label.Get("error.update");
                 return false;
             }
 
             Log.Instance.Debug("Language updated: " + JsonConvert.SerializeObject(DTO));
-            Ado.CommitTransaction();
-            Response.data = JSONRPC.success;
+            return true;
+        }
 
+        public override bool PostExecute()
+        {
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using API;
 using Newtonsoft.Json;
+using PxStat.Security;
 using System;
 
 namespace PxStat.Data
@@ -41,8 +42,8 @@ namespace PxStat.Data
 
             if (parameters.GlrCode != null)
                 GlrCode = parameters.GlrCode;
-
-            GmpCode = Utility.GetRandomSHA256(Utility.GetCustomConfig("APP_SALSA"));
+            
+            GmpCode = Utility.GetSHA256(new Random().Next() + Configuration_BSO.GetStaticConfig("APP_SALSA") + DateTime.Now.Millisecond);
 
         }
     }
@@ -83,10 +84,17 @@ namespace PxStat.Data
     public class GeoMap_DTO_ReadCollection
     {
         public string GmpCode { get; set; }
+
+        public string GlrCode { get; set; }
+
         public GeoMap_DTO_ReadCollection(dynamic parameters)
         {
             if (parameters.GmpCode != null)
                 GmpCode = parameters.GmpCode;
+            if (parameters.GlrCode != null)
+            {
+                GlrCode = parameters.GlrCode;
+            }               
         }
     }
 

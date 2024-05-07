@@ -50,7 +50,7 @@ namespace PxStat.Subscription
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -92,12 +92,17 @@ namespace PxStat.Subscription
     {
         public string Uid { get; set; }
         public string AccessToken { get; set; }
+        public string LngIsoCode { get; set; }
         public Subscription_DTO_TableSubscriptionReadCurrent(dynamic parameters)
         {
             if (parameters.Uid != null)
                 Uid = parameters.Uid;
             if (parameters.AccessToken != null)
                 AccessToken = parameters.AccessToken;
+            if (parameters.LngIsoCode != null)
+                LngIsoCode = parameters.LngIsoCode;
+            else
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"); 
         }
     }
 
@@ -130,7 +135,7 @@ namespace PxStat.Subscription
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
         }
     }

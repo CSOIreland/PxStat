@@ -1,0 +1,89 @@
+﻿{
+  "title": "",
+  "language": {
+    "iso": {
+      "code": "en",
+      "name": "English"
+    },
+    "culture": "en-ie"
+  },
+  "url": {
+    "api": {
+      "restful": "",
+      "static": ""
+    },
+    "logo": "https://cdn.test.ie/static/img/cso_logo_312_x_108_96dpi.png",
+    "application": ""
+  },
+  "dataset": {
+    "officialStatistics": true,
+    "download": {
+      "threshold": {
+        "csv": 1048573,
+        "xlsx": 1048575
+      }
+    }
+  },
+  "regex": {
+    "phone": {
+      "pattern": "^(\\(\\+\\d{1,3}\\) \\d+ \\d+ \\d+)$",
+      "placeholder": "(+353) 21 452 2253"
+    },
+    "password": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\\W]).{8,}$",
+    "matrix-name": "^[A-Z0-9]+$",
+    "product-code": "^[a-zA-Z0-9]+$"
+  },
+  "workflow": {
+    "embargo": {
+      "time": "24:60:60",
+      "day": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "fastrack": {
+      "response": {
+        "approver": true,
+        "poweruser": true,
+        "administrator": false
+      },
+      "signoff": {
+        "poweruser": true,
+        "administrator": false
+      }
+    },
+    "release": {
+      "reasonRequired": true
+    }
+  },
+  "build": {
+    "create": {
+      "moderator": false
+    },
+    "update": {
+      "moderator": true
+    },
+    "import": {
+      "moderator": true
+    }
+  },
+  "session": {
+    "length": 1200
+  },
+  "security": {
+    "adOpenAccess": false,
+    "demo": false
+  },
+  "search": {
+    "maximumResults": 101
+  },
+  "report": {
+    "date-validation": {
+      "minDate": 365,
+      "maxDate": -1
+    }
+  }
+}

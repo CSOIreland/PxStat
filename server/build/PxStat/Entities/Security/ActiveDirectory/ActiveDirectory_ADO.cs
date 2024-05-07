@@ -13,6 +13,9 @@ namespace PxStat.Security
     internal class ActiveDirectory_ADO
     {
 
+
+       
+
         /// <summary>
         /// Returns the entire Active Directory list if no CcnUsername parameter is supplied
         /// Otherwise return the AD entry for the specified user
@@ -20,7 +23,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        internal static List<ActiveDirectory_DTO> Read(ADO ado, dynamic parameters)
+        internal static List<ActiveDirectory_DTO> Read(IADO ado, dynamic parameters)
         {
             List<ActiveDirectory_DTO> readList = new List<ActiveDirectory_DTO>();
 
@@ -31,7 +34,9 @@ namespace PxStat.Security
             if (!string.IsNullOrEmpty(parameters.CcnUsername)) // we are searching for one user
             {
                 dynamic readAD;
-                readAD = ActiveDirectory.Search(parameters.CcnUsername);
+                if (!ApiServicesHelper.ApiConfiguration.Settings["API_AUTHENTICATION_TYPE"].Equals("ANONYMOUS"))
+                    readAD = AppServicesHelper.ActiveDirectory.Search(parameters.CcnUsername);
+                else readAD = null;
                 if (readAD == null)
                 {
                     return readList;
@@ -45,7 +50,10 @@ namespace PxStat.Security
             }
 
             // List all users
-            adDirectory = ActiveDirectory.List();
+            if (!ApiServicesHelper.ApiConfiguration.Settings["API_AUTHENTICATION_TYPE"].Equals("ANONYMOUS"))
+                adDirectory = AppServicesHelper.ActiveDirectory.List();
+            else
+                adDirectory = new Dictionary<string,dynamic>();
 
             foreach (KeyValuePair<string, dynamic> pair in adDirectory)
             {
@@ -65,8 +73,8 @@ namespace PxStat.Security
         /// <param name="Ado"></param>
         /// <param name="accountDto"></param>
         /// <returns></returns>
-        //internal ActiveDirectory_DTO GetUser(ADO Ado, Account_DTO_Create accountDto)
-        internal ActiveDirectory_DTO GetUser<T>(ADO Ado, T accountDto)
+        //internal ActiveDirectory_DTO GetUser(IADO Ado, Account_DTO_Create accountDto)
+        internal ActiveDirectory_DTO GetUser<T>(IADO Ado, T accountDto)
         {
             List<ActiveDirectory_DTO> result = Read(Ado, accountDto);
             ActiveDirectory_DTO adDTO = new ActiveDirectory_DTO();
@@ -82,7 +90,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="users"></param>
         /// <returns></returns>
-        internal void MergeGroupsToUsers(ADO ado, ref ADO_readerOutput resultUsers)
+        internal void MergeGroupsToUsers(IADO ado, ref ADO_readerOutput resultUsers)
         {
 
             GroupAccount_ADO adoGroupAccount = new GroupAccount_ADO();
@@ -124,7 +132,10 @@ namespace PxStat.Security
             IDictionary<string, dynamic> adDirectory;
 
             // List all users
-            adDirectory = ActiveDirectory.List();
+            if (!ApiServicesHelper.ApiConfiguration.Settings["API_AUTHENTICATION_TYPE"].Equals("ANONYMOUS"))
+                adDirectory = AppServicesHelper.ActiveDirectory.List();
+            else
+                adDirectory = new Dictionary<string, dynamic>();
 
             dynamic result = new ExpandoObject();
             var foundUser = adDirectory.Where(x => String.Equals(x.Value.EmailAddress.ToString(), email, StringComparison.CurrentCultureIgnoreCase));
@@ -153,7 +164,10 @@ namespace PxStat.Security
             IDictionary<string, dynamic> adDirectory;
 
             // List all users
-            adDirectory = ActiveDirectory.List();
+            if (!ApiServicesHelper.ApiConfiguration.Settings["API_AUTHENTICATION_TYPE"].Equals("ANONYMOUS"))
+                adDirectory = AppServicesHelper.ActiveDirectory.List();
+            else
+                adDirectory = new Dictionary<string, dynamic>();
 
             foreach (var user in result.data)
             {
@@ -168,7 +182,7 @@ namespace PxStat.Security
                     if (!((IDictionary<string, Object>)user).ContainsKey("CcnDisplayName"))
 
                         user.CcnDisplayName = null;
-                    if (user.CcnUsername != null && Regex.IsMatch(user.CcnUsername, Utility.GetCustomConfig("APP_REGEX_EMAIL")))
+                    if (user.CcnUsername != null && Regex.IsMatch(user.CcnUsername, Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL")))
                         user.CcnEmail = user.CcnUsername;
                     else
                         user.CcnEmail = null;

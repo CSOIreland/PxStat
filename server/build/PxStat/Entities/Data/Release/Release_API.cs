@@ -39,7 +39,7 @@ namespace PxStat.Data
 
         public static dynamic ReadHasWipForLive(JSONRPC_API jsonrpcRequest)
         {
-            return new Release_BSO_ReadWipForLive(jsonrpcRequest).Read().Response;
+            return new Release_BSO_ReadWipForLive(jsonrpcRequest).Create().Response;
         }
 
 

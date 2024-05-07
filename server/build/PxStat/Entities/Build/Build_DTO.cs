@@ -414,20 +414,7 @@ namespace PxStat.Build
         {
         }
 
-        /// <summary>
-        /// Gets the specific dto dimension for a language
-        /// </summary>
-        /// <param name="lngIsoCode"></param>
-        /// <returns></returns>
-        internal Dimension_DTO getDimensionForLanguage(string lngIsoCode)
-        {
-            foreach (Dimension_DTO dim in this.Dimension)
-            {
-                if (dim.LngIsoCode == lngIsoCode)
-                    return dim;
-            }
-            return null;
-        }
+
     }
 
 

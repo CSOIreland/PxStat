@@ -47,8 +47,8 @@ namespace PxStat.Data
             if (dtoRight.RlsCode == 0) return false;
             dtoRight.LngIsoCode = DTO.LngIsoCode;
  
-            IMetaData metaData = new MetaData();    
-            IDmatrix comparisonMatrix = dbso.CompareAddDelete(Ado, metaData, dtoRight, dtoLeft);
+              
+            IDmatrix comparisonMatrix = dbso.CompareAddDelete(Ado,  dtoRight, dtoLeft);
 
 
             JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();

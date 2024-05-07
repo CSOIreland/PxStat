@@ -82,7 +82,7 @@ namespace PxStat.System.Settings
 
 
             string mtype = "";
-            using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+            using (Format_BSO fbso = new Format_BSO(AppServicesHelper.StaticADO))
             {
                 mtype = fbso.GetMimetypeForFormat(this);
             };

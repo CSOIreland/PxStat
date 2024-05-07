@@ -11,9 +11,5 @@ namespace PxStat.Security
         {
             return new Database_BSO_Read(jsonrpcRequest).Read().Response;
         }
-        public static dynamic Update(JSONRPC_API requestApi)
-        {
-            return new Database_BSO_Update(requestApi).Read().Response;
-        }
     }
 }

@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using XLsxHelper;
-using static PxStat.Data.Matrix;
 
 
 namespace PxStat.Resources
@@ -28,13 +27,12 @@ namespace PxStat.Resources
         internal string GetCsv(List<List<XlsxValue>> rowLists, string quote = "", CultureInfo ci = null)
         {
 
-            string lngIsoCode = Utility.GetUserAcceptLanguage();
-
+            
             //This will be language dependent
             string sep = Label.Get("default.csv.separator");
 
-            if (String.IsNullOrEmpty(lngIsoCode))
-                lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            
+            string lngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             StringBuilder sb = new StringBuilder();
 

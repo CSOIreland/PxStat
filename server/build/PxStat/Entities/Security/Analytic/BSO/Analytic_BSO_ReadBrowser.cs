@@ -2,7 +2,9 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Vml;
 using PxStat.Template;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 
@@ -26,7 +28,13 @@ namespace PxStat.Security
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            if (IsPowerUser())
+                return true;
+
+            if (IsModerator() && !String.IsNullOrEmpty(DTO.MtrCode))
+                return true;
+
+            return false;
         }
 
         /// <summary>
@@ -35,32 +43,21 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
-            Analytic_ADO ado = new Analytic_ADO(Ado);
-            ADO_readerOutput outputSummary = ado.ReadBrowser(DTO,SamAccountName );
-            List<int> groupList = new List<int>();
-            List<nltBrowser> browserList = new List<nltBrowser>();
-            if (outputSummary.hasData)
+            
+            Stopwatch sw= Stopwatch.StartNew();
+            MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadBrowser", DTO);
+            if (cache.hasData)
             {
-                
-                foreach(var item in outputSummary.data[0])
-                {
-                    browserList.Add(new nltBrowser { NltBrowser=item.NltBrowser, GrpId=item.GrpId,Counter=item.Counter });
-                }
-                foreach (var item in outputSummary.data[1]) 
-                {
-                    groupList.Add(item.GrpId);
-                }
-
-                var restrictedGroupQuery = (from b in browserList
-                        join g in groupList on b.GrpId equals g
-                        select b).ToList();
-
-               var result= from e in restrictedGroupQuery
-                group e by e.NltBrowser into g
-                select new { NltBrowser=g.Key,NltCount=g.Sum(x=>x.Counter)};
-                
-
-                Response.data = FormatData(result);
+                Response.data = cache.data;
+                return true;
+            }
+            Analytic_ADO ado = new Analytic_ADO(Ado);
+            List<dynamic> outputSummary = ado.ReadBrowser(DTO);
+            if (outputSummary != null)
+            {
+                Response.data =  FormatData(outputSummary);
+                ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "ReadBrowser", DTO, Response.data, default(DateTime));
+                sw.Stop();
                 return true;
             }
             return false;
@@ -75,14 +72,14 @@ namespace PxStat.Security
         {
             dynamic output = new ExpandoObject();
             var itemDict = output as IDictionary<string, object>;
-            int limit = Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.read-browser-item-limit");
+            int limit = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "analytic.read-browser-item-limit");
             int counter = 1;
             int otherSum = 0;
             foreach (dynamic item in readData)
             {
                 if (counter < limit)
                 {
-                    itemDict.Add(item.NltBrowser == "-" ? Label.Get("analytic.unknown", DTO.LngIsoCode) : item.NltBrowser, item.NltCount);
+                    itemDict.Add(item.NltBrowser.ToString() == "-" ? Label.Get("analytic.unknown", DTO.LngIsoCode) : item.NltBrowser.ToString(), item.NltCount);
                 }
                 else otherSum = otherSum + item.NltCount;
                 counter++;

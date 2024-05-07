@@ -6,7 +6,7 @@ using System.Data;
 namespace PxStat.Security
 {
     /// <summary>
-    /// ADO classes for GroupAccount
+    /// IADO classes for GroupAccount
     /// </summary>
     internal class GroupAccount_ADO
     {
@@ -21,7 +21,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="groupAccount"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, GroupAccount_DTO_Read groupAccount)
+        internal ADO_readerOutput Read(IADO ado, GroupAccount_DTO_Read groupAccount)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -57,7 +57,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="groups"></param>
         /// <returns></returns>
-        internal ADO_readerOutput ReadMultiple(ADO ado, List<string> groups)
+        internal ADO_readerOutput ReadMultiple(IADO ado, List<string> groups)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 
@@ -108,7 +108,7 @@ namespace PxStat.Security
         /// <param name="groupAccount"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, GroupAccount_DTO_Update groupAccount, string ccnUsername)
+        internal int Update(IADO ado, GroupAccount_DTO_Update groupAccount, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -138,7 +138,7 @@ namespace PxStat.Security
         /// <param name="groupAccount"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, GroupAccount_DTO_Create groupAccount, string ccnUsername)
+        internal int Create(IADO ado, GroupAccount_DTO_Create groupAccount, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -167,7 +167,7 @@ namespace PxStat.Security
         /// <param name="groupAccount"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, GroupAccount_DTO_Delete groupAccount, string ccnUsername)
+        internal int Delete(IADO ado, GroupAccount_DTO_Delete groupAccount, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -196,7 +196,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal bool Exists(ADO ado, string ccnUsername, string grpCode)
+        internal bool Exists(IADO ado, string ccnUsername, string grpCode)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {

@@ -46,8 +46,7 @@ namespace PxStat.Data
 
             dtoRight.LngIsoCode = DTO.LngIsoCode;
 
-            IMetaData metaData = new MetaData();
-            var comparisonMatrix = bso.CompareAmendment(Ado, metaData, dtoLeft, dtoRight);
+            var comparisonMatrix = bso.CompareAmendment(Ado,  dtoLeft, dtoRight);
 
 
 

@@ -35,7 +35,7 @@ namespace PxStat.Subscription
             if (SamAccountName == null)
             {
 
-                if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
@@ -43,7 +43,7 @@ namespace PxStat.Subscription
             }
 
             Subscription_ADO sAdo = new Subscription_ADO(Ado);
-            var response = sAdo.TableReadCurrent(DTO.Uid, SamAccountName);
+            var response = sAdo.TableReadCurrent(DTO.LngIsoCode,DTO.Uid, SamAccountName);
 
             if (response.hasData)
             {

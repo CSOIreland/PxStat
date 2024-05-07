@@ -16,14 +16,14 @@ namespace PxStat.System.Navigation
         /// <param name="Ado"></param>
         /// <param name="productDto"></param>
         /// <param name="productID"></param>
-        internal void Create(ADO Ado, Product_DTO productDto, int productID)
+        internal void Create(IADO Ado, Product_DTO productDto, int productID)
         {
             //If there is no direct means of finding out which langauge the product name uses,
             // we take a default language from the settings
             string LngIsoCode;
 
             if (productDto.LngIsoCode == null)
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             else
                 LngIsoCode = productDto.LngIsoCode;
 
@@ -51,7 +51,7 @@ namespace PxStat.System.Navigation
         /// <param name="dto"></param>
         /// <param name="mandatoryOnly"></param>
         /// <returns></returns>
-        internal int Delete(ADO Ado, Product_DTO dto, bool? mandatoryOnly = null)
+        internal int Delete(IADO Ado, Product_DTO dto, bool? mandatoryOnly = null)
         {
             Keyword_Product_ADO kpAdo = new Keyword_Product_ADO(Ado);
             Keyword_Product_DTO kpDto = new Keyword_Product_DTO();

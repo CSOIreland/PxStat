@@ -35,7 +35,7 @@ namespace PxStat.Security
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoTrace = new Trace_ADO();
 
-            //Traces are returned as an ADO result
+            //Traces are returned as an IADO result
             ADO_readerOutput result = adoTrace.Read(Ado, DTO);
 
             if (!result.hasData)

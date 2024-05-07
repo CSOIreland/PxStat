@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// ADO for Alerts
+    /// IADO for Alerts
     /// </summary>
     internal class Alert_ADO
     {
@@ -15,7 +15,7 @@ namespace PxStat.System.Navigation
         /// <param name="dto"></param>
         /// <param name="readLiveOnly"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Alert_DTO dto, bool readLiveOnly)
+        internal ADO_readerOutput Read(IADO ado, Alert_DTO dto, bool readLiveOnly)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -39,7 +39,7 @@ namespace PxStat.System.Navigation
         /// <param name="dto"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, Alert_DTO dto, string userName)
+        internal int Create(IADO ado, Alert_DTO dto, string userName)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -64,7 +64,7 @@ namespace PxStat.System.Navigation
         /// <param name="dto"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, Alert_DTO dto, string userName)
+        internal int Update(IADO ado, Alert_DTO dto, string userName)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -90,7 +90,7 @@ namespace PxStat.System.Navigation
         /// <param name="dto"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, Alert_DTO dto, string userName)
+        internal int Delete(IADO ado, Alert_DTO dto, string userName)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {

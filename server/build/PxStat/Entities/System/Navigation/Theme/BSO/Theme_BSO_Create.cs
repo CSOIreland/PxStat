@@ -33,7 +33,7 @@ namespace PxStat.System.Navigation
             var adoTheme = new Theme_ADO(Ado);
 
             //You can only create a theme in the default Language
-            DTO.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            DTO.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             //We can't allow duplicate named Themes, so we must check first
             if (adoTheme.Exists(new Theme_DTO_Read() { LngIsoCode = DTO.LngIsoCode, ThmValue = DTO.ThmValue }))
@@ -50,7 +50,7 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

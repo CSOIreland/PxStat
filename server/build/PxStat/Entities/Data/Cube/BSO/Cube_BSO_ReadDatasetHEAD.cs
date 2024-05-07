@@ -50,7 +50,7 @@ namespace PxStat.Data
             if (DTO.jStatQueryExtension.extension.Format != null)
             {
                 Format_DTO_Read format = new Format_DTO_Read() { FrmType = DTO.jStatQueryExtension.extension.Format.Type, FrmVersion = DTO.jStatQueryExtension.extension.Format.Version, FrmDirection = Format_DTO_Read.FormatDirection.DOWNLOAD.ToString() };
-                using (ADO fAdo = new ADO("defaultConnection"))
+                using (IADO fAdo = AppServicesHelper.StaticADO)
                 {
                     Format_ADO fa = new Format_ADO();
                     if (!fa.Read(fAdo, format).hasData)
@@ -59,14 +59,14 @@ namespace PxStat.Data
                         Response.mimeType = null;
                         return false;
                     }
-                    using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+                    using (Format_BSO fbso = new Format_BSO(AppServicesHelper.StaticADO))
                     {
                         Response.mimeType = fbso.GetMimetypeForFormat(format);
                     };
                 }
             }
 
-            using (ADO ado = new ADO("defaultConnection"))
+            using (IADO ado = AppServicesHelper.StaticADO)
             {
                 DataStore_ADO dAdo = new DataStore_ADO();
                 if (!(dAdo.DataMatrixReadLive(ado, DTO.jStatQueryExtension.extension.Matrix, DTO.jStatQueryExtension.extension.Language.Code).hasData))
@@ -79,6 +79,7 @@ namespace PxStat.Data
 
 
             Response.statusCode = HttpStatusCode.OK;
+            Response.response = "";
             return true;
         }
 

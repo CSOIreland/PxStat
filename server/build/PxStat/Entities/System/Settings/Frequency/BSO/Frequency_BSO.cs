@@ -1,5 +1,7 @@
 ﻿using API;
 using PxStat.Data;
+using PxStat.Security;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace PxStat.System.Settings
     {
         internal List<string> ReadAll()
         {
-            List<string> configList = Utility.GetCustomConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList();
+            List<string> configList = Configuration_BSO.GetStaticConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList();
             List<string> frqList = new List<string>();
             foreach (var v in configList)
             {
@@ -25,19 +27,6 @@ namespace PxStat.System.Settings
             return frqList;
         }
 
-        internal List<string> ReadAll(IMetaData metaData)
-        {
-            List<string> configList = metaData.GetFrequencyCodes().Split(',').ToList();
-            List<string> frqList = new List<string>();
-            foreach (var v in configList)
-            {
-                string[] item = v.Split('/');
-                if (item.Length < 2) return null;
-                frqList.Add(item[0]);
-            }
-
-            return frqList;
-        }
         /// <summary>
         /// Read Frequency value from Frequency Code
         /// </summary>
@@ -45,7 +34,8 @@ namespace PxStat.System.Settings
         /// <returns></returns>
         internal Frequency_DTO Read(string FrqCode)
         {
-            List<string> configList = Utility.GetCustomConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList();
+            string[] items=( Configuration_BSO.GetStaticConfig("APP_PX_FREQUENCY_CODES")).Split(',');
+            List<string> configList = items.ToList<string>();
             Frequency_DTO dto = new Frequency_DTO(); ;
             foreach (var v in configList)
             {

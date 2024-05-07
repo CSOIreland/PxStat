@@ -2,15 +2,15 @@
 
 namespace PxStat.Data
 {
-    public class PxApiV1
-    {
-        [JsonProperty("query", Required = Required.Always)]
-        public Query[] Query { get; set; }
+    //public class PxApiV1
+    //{
+    //    [JsonProperty("query", Required = Required.Always)]
+    //    public Query[] Query { get; set; }
 
-        [JsonProperty("response", Required = Required.Always)]
-        public Response Response { get; set; }
+    //    [JsonProperty("response", Required = Required.Always)]
+    //    public Response Response { get; set; }
 
-    }
+    //}
     public class Query
     {
         [JsonProperty("code", Required = Required.Always)]

@@ -15,7 +15,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
 
         }
@@ -37,7 +37,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -60,7 +60,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.Captcha != null)
                 Captcha = parameters.Captcha;
             if (parameters.CcnEmail != null)
@@ -87,7 +87,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -123,7 +123,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
     }
 
@@ -141,7 +141,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
 
 
@@ -204,7 +204,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.CcnUsername != null)
                 CcnUsername = parameters.CcnUsername;
         }
@@ -240,7 +240,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.Captcha != null)
                 Captcha = parameters.Captcha;
             if (parameters.CcnEmail != null)
@@ -265,7 +265,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
         }
 
@@ -302,7 +302,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.Captcha != null)
                 Captcha = parameters.Captcha;
 
@@ -360,7 +360,7 @@
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
         }
 

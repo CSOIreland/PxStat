@@ -7,19 +7,20 @@ using System;
 using System.Net;
 using System.Web;
 using static PxStat.System.Settings.Format_DTO_Read;
+using PxStat;
 
 namespace PxStat.Data
 {
     /// <summary>
     /// Read the Cube metadata for a live release
     /// </summary>
-    internal class Cube_BSO_ReadMetadata : BaseTemplate_Read<Cube_DTO_ReadMetadata, Cube_VLD_ReadMetadata>
+    public class Cube_BSO_ReadMetadata : BaseTemplate_Read<Cube_DTO_ReadMetadata, Cube_VLD_ReadMetadata>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Cube_BSO_ReadMetadata(IRequest request) : base(request, new Cube_VLD_ReadMetadata())
+        public Cube_BSO_ReadMetadata(IRequest request) : base(request, new Cube_VLD_ReadMetadata())
         {
 
         }
@@ -54,7 +55,7 @@ namespace PxStat.Data
                 return false;
             }
             ////See if this request has cached data
-            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", DTO);
+            MemCachedD_Value cache =AppServicesHelper.CacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", DTO);
             if (cache.hasData)
             {
                 Response.data = cache.data;
@@ -62,16 +63,20 @@ namespace PxStat.Data
             }
 
             // Get whitelist
-            string[] whitelist = Configuration_BSO.GetCustomConfig(ConfigType.server, "whitelist");
+            string[] whitelist = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "whitelist");
 
             // Get host 
-            var hRequest = HttpContext.Current.Request;
-            string host = hRequest.Url.Host;
+            string host = "";
+            if (Request.requestHeaders.ContainsKey("Host"))
+            {
+                host = Request.requestHeaders["Host"].ToString();
+            }
 
-            // Check if host is not in the whitelist and the request is throttled
-            if (Throttle_BSO.IsNotInTheWhitelist(whitelist, host) && Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
+            ////// Check if host is not in the whitelist and the request is throttled
+            if (Throttle_BSO.IsNotInTheWhitelist(whitelist, host) && Throttle_BSO.IsThrottled(Ado, Request, SamAccountName))
             {
                 Log.Instance.Debug("Request throttled");
+                Response.statusCode = HttpStatusCode.Forbidden;
                 Response.error = Label.Get("error.throttled");
             }
 
@@ -130,19 +135,19 @@ namespace PxStat.Data
             if (isLive)
             {
                 if (theReleaseDto.RlsLiveDatetimeTo != default)
-                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.Code);
+                   AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeTo, Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.Code);
                 else
-                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.Code);
+                   AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadMetadata", theCubeDTO, theResponse.data, new DateTime(), Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + matrix.Code);
             }
             else
             {
                 if (theReleaseDto.RlsLiveDatetimeFrom > DateTime.Now)
                 {
-                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeFrom, Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theReleaseDto.RlsCode);
+                   AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", theCubeDTO, theResponse.data, theReleaseDto.RlsLiveDatetimeFrom, Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theReleaseDto.RlsCode);
                 }
                 else
                 {
-                    MemCacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", theCubeDTO, theResponse.data, default(DateTime), Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theReleaseDto.RlsCode);
+                   AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadPreMetadata", theCubeDTO, theResponse.data, default(DateTime), Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + theReleaseDto.RlsCode);
                 }
             }
             return true;

@@ -1,12 +1,13 @@
 ﻿using API;
+using PxStat.Security;
 using System.Collections.Generic;
 
 namespace PxStat.Subscription
 {
     internal class Subscription_ADO
     {
-        ADO _ado;
-        internal Subscription_ADO(ADO ado)
+        IADO _ado;
+        internal Subscription_ADO(IADO ado)
         {
             _ado = ado;
         }
@@ -172,7 +173,7 @@ namespace PxStat.Subscription
 
         }
 
-        internal ADO_readerOutput TableReadCurrent(string subscriberUserId = null, string ccnUsername = null)
+        internal ADO_readerOutput TableReadCurrent(string lngIsoCodePreferred, string subscriberUserId = null, string ccnUsername = null)
         {
             if (subscriberUserId == null && ccnUsername == null) return null;
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>();
@@ -185,6 +186,8 @@ namespace PxStat.Subscription
             {
                 inputParamList.Add(new ADO_inputParams() { name = "@CcnUsername", value = ccnUsername });
             }
+            inputParamList.Add(new ADO_inputParams() { name = "@LngIsoCode", value = lngIsoCodePreferred });
+            inputParamList.Add(new ADO_inputParams() { name = "@LngIsoCodeDefault", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") });
 
             return _ado.ExecuteReaderProcedure("Subscription_Table_Subscription_ReadCurrent", inputParamList);
         }

@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 using PxStat.Security;
 using PxStat.Template;
 
@@ -43,7 +44,7 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
-            if (DTO.LngIsoCode != Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
+            if (DTO.LngIsoCode != Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"))
             {
                 SubjectLanguage_BSO subjectLanguageBso = new SubjectLanguage_BSO();
                 nUpdatedSubjectId = subjectLanguageBso.CreateOrUpdate(DTO, Ado);
@@ -76,10 +77,10 @@ namespace PxStat.System.Navigation
             kbBso.Create(Ado, DTO, nUpdatedSubjectId);
 
             //Reset the relevant caches
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
             return true;
         }

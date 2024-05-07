@@ -29,9 +29,10 @@ namespace PxStat.Subscription
         /// <returns></returns>
         protected override bool Execute()
         {
+
             Subscriber_BSO sbso = new Subscriber_BSO();
             var response = sbso.GetSubscribers(Ado, DTO.Uid);
-
+               
             // Remove d from response if the email and display name are null 
             foreach (var d in response.ToList())
             {

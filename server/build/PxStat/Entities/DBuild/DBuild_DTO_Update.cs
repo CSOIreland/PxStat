@@ -105,7 +105,7 @@ namespace PxStat.DBuild
 
 
 
-            this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            this.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
 
 
@@ -115,7 +115,7 @@ namespace PxStat.DBuild
             else
             {
  
-                this.MtrOfficialFlag = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.officialStatistics");
+                this.MtrOfficialFlag = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "dataset.officialStatistics");
             }
 
             if (parameters.MtrCode != null)
@@ -256,6 +256,10 @@ namespace PxStat.DBuild
             {
                 Map = JsonConvert.DeserializeObject<Dictionary<string, string>>(parameters.Map.ToString());
             }
+        }
+
+        public DBuild_DTO_Update()
+        {
         }
 
         public Signature_DTO GetSignatureDTO()
@@ -553,12 +557,12 @@ namespace PxStat.DBuild
         /// <summary>
         /// 
         /// </summary>
-        public List<ClassificationRecordDTO_Create> Classifications { get; set; }
+        //public List<ClassificationRecordDTO_Create> Classifications { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public List<StatisticalRecordDTO_Create> Statistics { get; set; }
+       // public List<StatisticalRecordDTO_Create> Statistics { get; set; }
 
         /// <summary>
         /// 
@@ -574,6 +578,8 @@ namespace PxStat.DBuild
         /// 
         /// </summary>
         /// <param name="dim"></param>
+   
+        /*
         public Dimension_DTO(dynamic dim)
         {
             if (dim.FrqCode != null)
@@ -656,7 +662,7 @@ namespace PxStat.DBuild
                 }
             }
         }
-
+        */
     }
 
     public class Signature_DTO

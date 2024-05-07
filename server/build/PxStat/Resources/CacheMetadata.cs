@@ -1,50 +1,53 @@
-﻿using System;
+﻿using API;
+using PxStat.Security;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace PxStat.Resources
 {
     /// <summary>
     /// A container for cache related metadata.
     /// </summary>
-    internal class CacheMetadata
+    public class CacheMetadata
     {
         #region Properties
         /// <summary>
         /// Namespace
         /// </summary>
-        internal string Namespace { get; set; }
+        public string Namespace { get; set; }
 
         /// <summary>
         /// API name
         /// </summary>
-        internal string ApiName { get; set; }
+        public string ApiName { get; set; }
 
         /// <summary>
         /// Method
         /// </summary>
-        internal string Method { get; set; }
+        public string Method { get; set; }
 
         /// <summary>
         /// CAS - i.e. storage location for cache
         /// </summary>
-        internal string Cas { get; set; } = "";
+        public string Cas { get; set; } = "";
 
         /// <summary>
         /// Domain
         /// </summary>
-        internal string Domain { get; set; } = "";
+        public string Domain { get; set; } = "";
 
         /// <summary>
         /// Cache time limit
         /// </summary>
-        internal DateTime TimeLimit { get; set; } = new DateTime();
+        public DateTime TimeLimit { get; set; } = new DateTime();
 
         /// <summary>
         /// List of CAS objects
         /// </summary>
-        internal List<Cas> CasList { get; set; }
+        public List<Cas> CasList { get; set; }
 
         /// <summary>
         /// CAS Domain
@@ -58,7 +61,7 @@ namespace PxStat.Resources
         /// <param name="attributeName"></param>
         /// <param name="method"></param>
         /// <param name="dto"></param>
-        internal CacheMetadata(string attributeName, string method, dynamic dto)
+        public CacheMetadata(string attributeName, string method, dynamic dto)
         {
             //Find the namespace and method from the full method string
             List<string> parts = method.Split('.').ToList<string>();
@@ -135,17 +138,30 @@ namespace PxStat.Resources
     /// <summary>
     /// A class to act as a holder for Cas/domain pairs
     /// </summary>
-    internal class Cas
+    public class Cas
     {
-        internal string CasRepository { get; set; }
-        internal string Domain { get; set; }
-        internal Cas(string casRepository, string domain)
+        public string CasRepository { get; set; }
+        public string Domain { get; set; }
+        public Cas(string casRepository, string domain)
         {
             CasRepository = casRepository;
             Domain = domain;
         }
 
-        internal Cas() { }
+        public Cas() { }
+
+        public static void RunCasFlush(string repository)
+        {
+           // bool enabled= Convert.ToBoolean(AppServicesHelper.ApiConfiguration.Settings["API_MEMCACHED_ENABLED"]);
+           // if(!enabled) { return; }
+
+            if (!AppServicesHelper.CacheD.CasRepositoryFlush(repository )) 
+            {
+                Thread.Sleep(1000);
+                if (!AppServicesHelper.CacheD.CasRepositoryFlush(repository))
+                    throw new IncompleteCasFlush();
+            }
+        }
 
     }
 }

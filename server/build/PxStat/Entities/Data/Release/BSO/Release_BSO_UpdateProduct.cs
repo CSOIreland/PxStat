@@ -1,4 +1,6 @@
 ﻿using API;
+using PxStat.Resources;
+using PxStat.System.Navigation;
 using PxStat.Template;
 
 namespace PxStat.Data
@@ -30,7 +32,27 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
+            var adoProduct = new Product_ADO(Ado);
+
+            //Check if the product exists
+
+            if (!adoProduct.ExistsCode(DTO.PrcCode))
+            {
+                Response.error = Label.Get("error.update");
+                return false;
+
+            }
+
+            //Check if the Release exists
+
             Release_ADO adoRelease = new Release_ADO(Ado);
+
+            if (adoRelease.Read(DTO.RlsCode, SamAccountName) == null)
+            {
+                Response.error = Label.Get("error.update");
+                return false;
+            }
+            
 
 
             Release_DTO dtoRelease = Release_ADO.GetReleaseDTO(adoRelease.Read(DTO.RlsCode, SamAccountName));
@@ -38,10 +60,10 @@ namespace PxStat.Data
             DTO.MtrCode = dtoRelease.MtrCode;
 
             //We can do this now because the MtrCode is available to us
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_READ);
             int updated = adoRelease.Update(dtoRelease, SamAccountName);
             if (updated == 0)
             {
@@ -49,7 +71,7 @@ namespace PxStat.Data
                 Response.error = Label.Get("error.update");
                 return false;
             }
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

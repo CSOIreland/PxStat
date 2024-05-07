@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using FluentValidation.Results;
 using API;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PxStat.System.Settings
 {
@@ -13,6 +14,7 @@ namespace PxStat.System.Settings
     [AllowAPICall]
     public class Language_API
     {
+        
         /// <summary>
         /// Returns the list of languages for a release code
         /// </summary>
@@ -22,6 +24,7 @@ namespace PxStat.System.Settings
         {
             return new Language_BSO_ReadListByRelease(jsonrpcRequest).Read().Response;
         }
+        
 
         /// <summary>
         /// The Read method is used to return one or more Languages.
@@ -35,7 +38,7 @@ namespace PxStat.System.Settings
         {
             return new Language_BSO_Read(requestApi).Read().Response;
         }
-
+      
         /// <summary>
         /// The Create method must receive LngIsoCode and LngIsoName as parameters
         /// This has restricted access to Aministrator or Power User only.
@@ -86,6 +89,6 @@ namespace PxStat.System.Settings
             return new Language_BSO_CheckIsLngIsoCode(requestApi).Read().Response;
         }
 
-
+        
     }
 }

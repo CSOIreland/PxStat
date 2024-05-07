@@ -7,7 +7,7 @@ using System;
 namespace PxStat.Data
 {
     /// <summary>
-    /// ADO classes for associationDto
+    /// IADO classes for associationDto
     /// </summary>
     internal class ReleaseProductAssocaition_ADO
     {
@@ -18,7 +18,7 @@ namespace PxStat.Data
         /// <param name="dto"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, ReleaseProduct_DTO_Read dto, string userName)
+        internal ADO_readerOutput Read(IADO ado, ReleaseProduct_DTO_Read dto, string userName)
         {
             ADO_readerOutput output = new ADO_readerOutput();
             List<ADO_inputParams> paramList = new List<ADO_inputParams>();
@@ -37,7 +37,7 @@ namespace PxStat.Data
         /// <param name="dto"></param>
 
         /// <returns></returns>
-        internal int Create(ADO ado, ReleaseProduct_DTO_Create dto, string username)
+        internal int Create(IADO ado, ReleaseProduct_DTO_Create dto, string username)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -64,7 +64,7 @@ namespace PxStat.Data
         /// <param name="associationDto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, ReleaseProductAssociation_DTO_Delete associationDto, string username)
+        internal int Delete(IADO ado, ReleaseProductAssociation_DTO_Delete associationDto, string username)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -91,7 +91,7 @@ namespace PxStat.Data
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal bool Exists(ADO ado, ReleaseProduct_DTO_Create dto)
+        internal bool Exists(IADO ado, ReleaseProduct_DTO_Create dto)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {

@@ -3,35 +3,10 @@ using System.Collections.Generic;
 namespace PxStat.System.Settings
 {
     /// <summary>
-    /// ADO class for Copyright
+    /// IADO class for Copyright
     /// </summary>
     internal class Copyright_ADO
     {
-        /// <summary>
-        /// Reads a Copyright
-        /// </summary>
-        /// <param name="ado"></param>
-        /// <param name="copyright"></param>
-        /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Copyright_DTO_Read copyright)
-        {
-            ADO_readerOutput output = new ADO_readerOutput();
-
-            List<ADO_inputParams> paramList = new List<ADO_inputParams>();
-            if (!string.IsNullOrEmpty(copyright.CprCode))
-                paramList.Add(new ADO_inputParams() { name = "@CprCode", value = copyright.CprCode });
-
-            if (!string.IsNullOrEmpty(copyright.CprValue))
-                paramList.Add(new ADO_inputParams() { name = "@CprValue", value = copyright.CprValue });
-
-
-            //Call the stored procedure
-            output = ado.ExecuteReaderProcedure("System_Settings_Copyright_Read", paramList);
-
-            //return the list of entities that have been found
-            return output;
-        }
-
         /// <summary>
         /// Reads a Copyright
         /// </summary>
@@ -57,6 +32,8 @@ namespace PxStat.System.Settings
             return output;
         }
 
+
+
         /// <summary>
         /// Creates a Copyright
         /// </summary>
@@ -64,7 +41,7 @@ namespace PxStat.System.Settings
         /// <param name="copyright"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, Copyright_DTO_Create copyright, string ccnUsername)
+        internal int Create(IADO ado, Copyright_DTO_Create copyright, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -93,7 +70,7 @@ namespace PxStat.System.Settings
         /// <param name="copyright"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, Copyright_DTO_Update copyright, string ccnUsername)
+        internal int Update(IADO ado, Copyright_DTO_Update copyright, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -123,7 +100,7 @@ namespace PxStat.System.Settings
         /// <param name="copyright"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, Copyright_DTO_Delete copyright, string ccnUsername)
+        internal int Delete(IADO ado, Copyright_DTO_Delete copyright, string ccnUsername)
         {
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
@@ -149,7 +126,7 @@ namespace PxStat.System.Settings
         /// <param name="ado"></param>
         /// <param name="cprCode"></param>
         /// <returns></returns>
-        internal bool Exists(ADO ado, string cprCode)
+        internal bool Exists(IADO ado, string cprCode)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {
@@ -174,7 +151,7 @@ namespace PxStat.System.Settings
         /// <param name="ado"></param>
         /// <param name="cprCode"></param>
         /// <returns></returns>
-        internal bool IsInUse(ADO ado, string cprCode)
+        internal bool IsInUse(IADO ado, string cprCode)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {

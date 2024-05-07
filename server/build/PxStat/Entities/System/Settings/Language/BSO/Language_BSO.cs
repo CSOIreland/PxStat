@@ -14,34 +14,34 @@ namespace PxStat.System.Settings
         /// </summary>
         /// <param name="lngIsoCode"></param>
         /// <returns></returns>
-        internal Language_DTO_Create Read(string lngIsoCode)
+        internal Language_DTO_Create Read(string lngIsoCode,IADO Ado=null)
         {
-            ADO Ado = new ADO("defaultConnection");
-            try
-            {
-                Language_DTO_Create dto = new Language_DTO_Create();
 
-                Language_ADO lAdo = new Language_ADO(Ado);
-                Language_DTO_Read readDTO = new Language_DTO_Read();
-                readDTO.LngIsoCode = lngIsoCode;
-                var retval = lAdo.Read(readDTO);
-                if (retval.hasData)
+            if(Ado!=null) return ReadAdo(lngIsoCode, Ado);
+            else
+                using (IADO ado= AppServicesHelper.StaticADO) 
                 {
-                    dto.LngIsoCode = lngIsoCode;
-                    dto.LngIsoName = retval.data[0].LngIsoName;
+                    return ReadAdo(lngIsoCode, ado);
                 }
 
-                return dto;
-            }
-            catch (Exception ex)
+
+        }
+
+        private Language_DTO_Create ReadAdo(string lngIsoCode, IADO Ado)
+        {
+            Language_DTO_Create dto = new Language_DTO_Create();
+
+            Language_ADO lAdo = new Language_ADO(Ado);
+            Language_DTO_Read readDTO = new Language_DTO_Read();
+            readDTO.LngIsoCode = lngIsoCode;
+            var retval = lAdo.Read(readDTO);
+            if (retval.hasData)
             {
-                throw ex;
-            }
-            finally
-            {
-                Ado.Dispose();
+                dto.LngIsoCode = lngIsoCode;
+                dto.LngIsoName = retval.data[0].LngIsoName;
             }
 
+            return dto;
         }
     }
 }

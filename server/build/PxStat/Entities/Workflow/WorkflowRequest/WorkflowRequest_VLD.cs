@@ -46,25 +46,23 @@ namespace PxStat.Workflow
 
         private bool HasReasonToPublish(WorkflowRequest_DTO dto)
         {
-            if (!Configuration_BSO.GetCustomConfig(ConfigType.global, "workflow.release.reasonRequired")) return true;
+            if (!Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "workflow.release.reasonRequired")) return true;
             if (dto.RqsCode != "PUBLISH") return true;
 
             ReasonRelease_ADO rrAdo = new ReasonRelease_ADO();
-            ADO ado = new ADO("defaultConnection");
-            try
+            using (IADO ado = AppServicesHelper.StaticADO)
             {
-                if (!rrAdo.Read(ado, new ReasonRelease_DTO_Read() { RlsCode = dto.RlsCode, LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") }).hasData)
+                try
                 {
-                    return false;
+                    if (!rrAdo.Read(ado, new ReasonRelease_DTO_Read() { RlsCode = dto.RlsCode, LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") }).hasData)
+                    {
+                        return false;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                ado.Dispose();
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
 
 
@@ -115,7 +113,7 @@ namespace PxStat.Workflow
 
             if (isExceptional) return true;
 
-            int[] days = Configuration_BSO.GetCustomConfig(ConfigType.global, "workflow.embargo.day");
+            int[] days = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "workflow.embargo.day");
 
             if (days.Contains((int)dto.WrqDatetime.DayOfWeek)) return true;
             return false;
@@ -130,7 +128,7 @@ namespace PxStat.Workflow
         {
             bool isExceptional = dto.WrqExceptionalFlag.HasValue && dto.WrqExceptionalFlag.Value;
 
-            DateTime etime = DateTime.ParseExact(Configuration_BSO.GetCustomConfig(ConfigType.global, "workflow.embargo.time"), "HH:mm:ss",
+            DateTime etime = DateTime.ParseExact(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "workflow.embargo.time"), "HH:mm:ss",
                                         CultureInfo.InvariantCulture);
 
             return (etime.Hour == dto.WrqDatetime.Hour && etime.Minute == dto.WrqDatetime.Minute && etime.Second == dto.WrqDatetime.Second);

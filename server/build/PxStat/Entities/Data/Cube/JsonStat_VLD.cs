@@ -1,6 +1,7 @@
 ﻿using API;
 using FluentValidation;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Settings;
 
 namespace PxStat.JsonStatSchema
@@ -11,7 +12,7 @@ namespace PxStat.JsonStatSchema
         {
             string query = Constants.C_JSON_STAT_QUERY_CLASS;
             string version = Constants.C_JSON_STAT_QUERY_VERSION;
-            string cultureRegex = Utility.GetCustomConfig("APP_LANGUAGE_CULTURE");
+            string cultureRegex = Configuration_BSO.GetStaticConfig("APP_LANGUAGE_CULTURE");
             RuleFor(x => x.jStatQuery.Class.Equals(query));
             RuleFor(x => x.jStatQuery.Version.Equals(version));
 
@@ -38,7 +39,7 @@ namespace PxStat.JsonStatSchema
         {
             string query = Constants.C_JSON_STAT_QUERY_CLASS;
             string version = Constants.C_JSON_STAT_QUERY_VERSION;
-            string cultureRegex = Utility.GetCustomConfig("APP_LANGUAGE_CULTURE");
+            string cultureRegex = Configuration_BSO.GetStaticConfig("APP_LANGUAGE_CULTURE");
             RuleFor(x => x.jStatQuery.Class.Equals(query));
             RuleFor(x => x.jStatQuery.Version.Equals(version));
 
@@ -62,7 +63,7 @@ namespace PxStat.JsonStatSchema
     {
         internal JsonStatPreQuery_VLD()
         {
-            string cultureRegex = Utility.GetCustomConfig("APP_LANGUAGE_CULTURE");
+            string cultureRegex = Configuration_BSO.GetStaticConfig("APP_LANGUAGE_CULTURE");
             string query = Constants.C_JSON_STAT_QUERY_CLASS;
             string version = Constants.C_JSON_STAT_QUERY_VERSION;
             RuleFor(x => x.jStatQuery.Class.Equals(query));
@@ -89,7 +90,7 @@ namespace PxStat.JsonStatSchema
     {
         internal JsonStatExtension_VLD()
         {
-            string cultureRegex = Utility.GetCustomConfig("APP_LANGUAGE_CULTURE");
+            string cultureRegex = Configuration_BSO.GetStaticConfig("APP_LANGUAGE_CULTURE");
             RuleFor(x => x.Matrix).NotNull().Length(0, 20);
             RuleFor(x => x.Language).NotNull();
             RuleFor(x => x.Language.Code.Length.Equals(2));

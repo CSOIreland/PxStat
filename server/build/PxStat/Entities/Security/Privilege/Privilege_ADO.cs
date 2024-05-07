@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace PxStat.Security
 {
     /// <summary>
-    /// ADO methods for Privilege
+    /// IADO methods for Privilege
     /// </summary>
     internal class Privilege_ADO
     {
@@ -19,7 +19,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="privilege"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Privilege_DTO privilege)
+        internal ADO_readerOutput Read(IADO ado, Privilege_DTO privilege)
         {
             ADO_readerOutput output = new ADO_readerOutput();
 

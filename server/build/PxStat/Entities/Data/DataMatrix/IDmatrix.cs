@@ -29,7 +29,7 @@ namespace PxStat.Data
         string Units { get; set; }
         List<bool> ComparisonReport { get; set; }
         string Language { get; set; }
-        IDmatrix GetDmatrixFromPxDocument(IDocument document, IMetaData metaData, IUpload_DTO uploadDto,List<PxUpload_DTO> dspecs=null);
-        IMetaData MetaData { get; set; }
+        IDmatrix GetDmatrixFromPxDocument(IDocument document,  IUpload_DTO uploadDto,List<PxUpload_DTO> dspecs=null);
+      
     }
 }

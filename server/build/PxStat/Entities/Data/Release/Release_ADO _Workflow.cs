@@ -8,7 +8,7 @@ using System.Linq;
 namespace PxStat.Data
 {
     /// <summary>
-    /// ADO methods for Release
+    /// IADO methods for Release
     /// </summary>
     public partial class Release_ADO : DataAdaptor
     {
@@ -17,7 +17,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="releaseCode"></param>
         /// <returns></returns>
-        internal dynamic ReadLiveNow(int releaseCode)
+        public dynamic ReadLiveNow(int releaseCode)
         {
             return ReadLiveNow(releaseCode, null, null);
         }
@@ -27,7 +27,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="matrixCode"></param>
         /// <returns></returns>
-        internal dynamic ReadLiveNow(string matrixCode, string languageIsoCode)
+        public dynamic ReadLiveNow(string matrixCode, string languageIsoCode)
         {
             return ReadLiveNow(0, matrixCode, languageIsoCode);
 
@@ -39,7 +39,7 @@ namespace PxStat.Data
         /// <param name="releaseCode"></param>
         /// <param name="matrixCode"></param>
         /// <returns></returns>
-        internal dynamic ReadLiveNow(int releaseCode, string matrixCode, string languageIsoCode)
+        public dynamic ReadLiveNow(int releaseCode, string matrixCode, string languageIsoCode)
         {
             var paramList = new List<ADO_inputParams>();
 
@@ -75,7 +75,7 @@ namespace PxStat.Data
 
                     var vDefault =
                     from x in output.data
-                    where x.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")
+                    where x.LngIsoCode == Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")
                     select x;
 
                     if (vDefault.ToList().Count > 0)
@@ -92,7 +92,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="releaseCode"></param>
         /// <returns></returns>
-        internal dynamic ReadLivePrevious(int releaseCode)
+        public dynamic ReadLivePrevious(int releaseCode)
         {
             var paramList = new List<ADO_inputParams>();
             paramList.Add(new ADO_inputParams { name = "@RlsCode", value = releaseCode });
@@ -112,7 +112,7 @@ namespace PxStat.Data
         /// <param name="dto"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal int Update(Release_DTO dto, string userName)
+        public int Update(Release_DTO dto, string userName)
         {
             if (dto.RlsLiveDatetimeFrom == default) dto.RlsLiveFlag = false;
 
@@ -156,7 +156,7 @@ namespace PxStat.Data
         /// <param name="rlsCode"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal int Delete(int rlsCode, string userName)
+        public int Delete(int rlsCode, string userName)
         {
             var paramList = new List<ADO_inputParams>();
             paramList.Add(new ADO_inputParams() { name = "@CcnUsername", value = userName });
@@ -177,7 +177,7 @@ namespace PxStat.Data
         /// <param name="ado"></param>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal bool IsWip(int rlsCode)
+        public bool IsWip(int rlsCode)
         {
             if (rlsCode == 0) return false;
 
@@ -191,7 +191,7 @@ namespace PxStat.Data
             return Convert.ToBoolean(returnParam.value);
         }
 
-        internal bool IsHistorical(int rlsCode)
+        public bool IsHistorical(int rlsCode)
         {
             if (rlsCode == 0) return false;
 
@@ -210,7 +210,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal bool IsLiveNow(int rlsCode)
+        public bool IsLiveNow(int rlsCode)
         {
             if (rlsCode == 0) return false;
 
@@ -228,7 +228,7 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal bool HasPrevious(int rlsCode)
+        public bool HasPrevious(int rlsCode)
         {
             if (rlsCode == 0) return false;
 
@@ -247,7 +247,7 @@ namespace PxStat.Data
         /// <param name="ado"></param>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal bool IsLiveNext(int rlsCode)
+        public bool IsLiveNext(int rlsCode)
         {
             if (rlsCode == 0) return false;
 

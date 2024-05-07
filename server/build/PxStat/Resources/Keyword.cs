@@ -8,15 +8,7 @@ namespace PxStat
         internal dynamic keywordInstance { get; set; }
 
 
-        internal Keyword(string lngIsoCode)
-        {
-            keywordInstance = Keyword_BSO_ResourceFactory.GetKeyword(lngIsoCode);
-        }
 
-        internal Keyword(string lngIsoCode, Dictionary<string, dynamic> kwords)
-        {
-            keywordInstance = Keyword_BSO_ResourceFactory.GetKeyword(lngIsoCode, kwords);
-        }
 
 
         internal string Get(string keyword)

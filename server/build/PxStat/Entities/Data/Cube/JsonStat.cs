@@ -400,7 +400,7 @@ namespace PxStat.Data
                 return new ValueElement { String = null };
             else if (double.TryParse(String, out result))
                 return new ValueElement { Double = result };
-            else if (String.Equals(Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value"))) return new ValueElement { String = null };
+            else if (String.Equals(Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value"))) return new ValueElement { String = null };
             else if (String.Contains("\""))
             {
                 String = String.Replace("\"", String.Empty);
@@ -934,5 +934,51 @@ namespace PxStat.Data
         /// VersionConverter
         /// </summary>
         public static readonly VersionConverter Singleton = new VersionConverter();
+    }
+
+    /// <summary>
+    /// Link
+    /// </summary>
+    public partial class Link
+    {
+        [JsonProperty("enclosure", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<Enclosure> Enclosure { get; set; }
+        [JsonProperty("alternate", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<Alternate> Alternate { get; set; }
+    }
+
+
+
+    /// <summary>
+    /// Enclosure
+    /// </summary>
+    public partial class Enclosure
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("type", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Type { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("href", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Href { get; set; }
+    }
+
+    public partial class Alternate
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("type", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Type { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("href", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Href { get; set; }
     }
 }

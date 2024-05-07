@@ -28,7 +28,7 @@ namespace PxStat.Security
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var v = new Login_BSO_Login(requestApi).Read().Response;
+            var v = new Login_BSO_Login(requestApi).Create().Response;
             sw.Stop();
             Log.Instance.Debug("Login elapsed milliseconds: " + sw.ElapsedMilliseconds);
             return v;

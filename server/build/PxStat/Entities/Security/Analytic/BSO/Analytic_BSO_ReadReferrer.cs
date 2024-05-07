@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Template;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -24,40 +25,30 @@ namespace PxStat.Security
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            return IsPowerUser() || IsModerator();
+            if (IsPowerUser())
+                return true;
+
+            if (IsModerator() && !String.IsNullOrEmpty(DTO.MtrCode))
+                return true;
+
+            return false;
         }
 
-        /// <summary>
-        /// Execute
-        /// </summary>
-        /// <returns></returns>
+
         protected override bool Execute()
         {
-            Analytic_ADO ado = new Analytic_ADO(Ado);
-            ADO_readerOutput outputSummary = ado.ReadReferrer(DTO, SamAccountName );
-            List<nltReferer> refList = new List<nltReferer>();
-            List<int> groupList = new List<int>();
-            if (outputSummary.hasData)
+            MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadReferrer", DTO);
+            if (cache.hasData)
             {
-                foreach (var item in outputSummary.data[0])
-                {
-                    refList.Add(new nltReferer { NltReferer = item.NltReferer, GrpId = item.GrpId, nltCount = item.nltCount });
-                }
-                foreach (var item in outputSummary.data[1])
-                {
-                    groupList.Add(item.GrpId);
-                }
-
-                var restrictedGroupQuery = (from b in refList
-                                            join g in groupList on b.GrpId equals g
-                                            select b).ToList();
-
-                var result = from e in restrictedGroupQuery
-                             group e by e.NltReferer into g
-                             select new { NltReferer = g.Key, NltCount = g.Sum(x => x.nltCount) };
-
-
-                Response.data = FormatData(result);
+                Response.data = cache.data;
+                return true;
+            }
+            Analytic_ADO ado = new Analytic_ADO(Ado);
+            List<dynamic> outputSummary = ado.ReadReferer(DTO);
+            if (outputSummary != null)
+            {
+                Response.data = FormatData(outputSummary);
+                ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "ReadReferrer", DTO, Response.data, default(DateTime));
                 return true;
             }
             return false;
@@ -72,22 +63,24 @@ namespace PxStat.Security
         {
             dynamic output = new ExpandoObject();
             var itemDict = output as IDictionary<string, object>;
-            int limit = Configuration_BSO.GetCustomConfig(ConfigType.server, "analytic.read-referrer-item-limit");
+            int limit = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "analytic.read-referrer-item-limit");
             int counter = 1;
             int otherSum = 0;
 
+            string unknown = Label.Get("analytic.unknown");
+            string others = Label.Get("analytic.others");
             foreach (dynamic item in readData)
             {
 
                 if (counter < limit)
                 {
-                    itemDict.Add(item.NltReferer == "-" ? Label.Get("analytic.unknown", DTO.LngIsoCode) : item.NltReferer, item.NltCount);
+                    itemDict.Add(item.NltReferer.ToString() == "-" ? unknown : item.NltReferer.ToString(), item.NltCount);
                 }
                 else otherSum = otherSum + item.NltCount;
                 counter++;
             }
 
-            if (otherSum > 0) itemDict.Add(Label.Get("analytic.unknown", DTO.LngIsoCode), otherSum);
+            if (otherSum > 0) itemDict.Add(others, otherSum);
 
             return output;
         }

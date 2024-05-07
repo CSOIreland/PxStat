@@ -3,7 +3,6 @@ using PxStat.Resources;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Design.PluralizationServices;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;

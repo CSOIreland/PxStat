@@ -208,27 +208,5 @@ namespace PxStat.Data.Px
         }
 
     }
-    /// <summary>
-    /// Validator specifically for Build
-    /// </summary>
-    class PxSettingsValidatorBuild : AbstractValidator<Matrix>
-    {
-        /// <summary>
-        /// class variable
-        /// </summary>
-        private ADO ado;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="ado"></param>
-        internal PxSettingsValidatorBuild(ADO ado)
-        {
-            this.ado = ado;
-            RuleFor(x => x.FormatVersion).Must(v => Matrix.AxisVersionIsSupported(ado, Resources.Constants.C_SYSTEM_PX_NAME, v)).WithMessage((string)Label.Get("px.setting.axisversion-invalid"));
-            RuleFor(x => x.OtherLanguageSpec).HaveSupportedSources(ado).When(x => x.OtherLanguageSpec != null && x.OtherLanguageSpec.Count > 0).WithMessage((string)Label.Get("px.setting.sources-invalid"));
-            RuleFor(x => x.TheLanguage).Must(lang => Matrix.LanguageIsSupported(ado, lang)).When(x => x.Languages == null || x.Languages.Count == 0).WithMessage((string)Label.Get("px.setting.language-invalid"));
-            RuleFor(x => x.Languages).HaveSupportedLanguages(ado).When(x => x.Languages != null && x.Languages.Count > 0).WithMessage((string)Label.Get("px.setting.languages-invalid"));
-        }
-    }
 }

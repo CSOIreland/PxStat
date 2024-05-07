@@ -58,6 +58,7 @@ namespace PxStat.Security
         public string FrmType { get; set; }
         public string FrmVersion { get; set; }
         public string EnvironmentLngIsoCode { get; set; }
+        public string LngIsoCode { get; set; }
 
         #endregion
     }
@@ -125,7 +126,7 @@ namespace PxStat.Security
             if (parameters.DateTo != null)
             {
                 DateTo = parameters.DateTo;
-                DateTo = DateTo.Date;
+                DateTo = DateTo.Date;               
             }
             if (parameters.SbjCode != null)
                 SbjCode = parameters.SbjCode;
@@ -133,22 +134,20 @@ namespace PxStat.Security
                 PrcCode = parameters.PrcCode;
             if (parameters.ExcludeInternal != null)
                 ExcludeInternal = parameters.ExcludeInternal;
-            if (parameters.MtrCode != null)
-                MtrCode = parameters.MtrCode;
-            if (parameters.NltInternalNetworkMask != null)
+            if (parameters.NltInternalNetworkMask!=null)
                 NltInternalNetworkMask = parameters.NltInternalNetworkMask;
             if (parameters.LngIsoCode != null)
-            {
-                if (new Language_BSO().Read((string)parameters.LngIsoCode) != null)
-                    LngIsoCode = parameters.LngIsoCode;
-                else LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
-            }
-            else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = parameters.LngIsoCode;
+            else LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+            
+
             if (parameters.FrmType != null)
                 FrmType = parameters.FrmType;
             if (parameters.FrmVersion != null)
                 FrmVersion = parameters.FrmVersion;
+
+            if(parameters.MtrCode!=null)
+                MtrCode = parameters.MtrCode;   
         }
     }
 }

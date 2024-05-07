@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 
 namespace PxStat.System.Settings
@@ -36,11 +37,13 @@ namespace PxStat.System.Settings
         /// <returns></returns>
         protected override bool Execute()
         {
+
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoLanguage = new Language_ADO(Ado);
 
-            //Languages are returned as an ADO result
+            //Languages are returned as an IADO result
             ADO_readerOutput result = adoLanguage.Read(DTO);
+
 
             if (!result.hasData)
             {

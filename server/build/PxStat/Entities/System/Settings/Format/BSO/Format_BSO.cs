@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Resources;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 
@@ -39,26 +40,45 @@ namespace PxStat.System.Settings
 
         internal string GetMimetypeForFormat(Format_DTO_Read format)
         {
-            if (format.FrmType == Constants.C_SYSTEM_JSON_STAT_NAME) return Utility.GetCustomConfig("APP_JSON_MIMETYPE");
-            if (format.FrmType == Constants.C_SYSTEM_XLSX_NAME) return Utility.GetCustomConfig("APP_XLSX_MIMETYPE");
-            if (format.FrmType == Constants.C_SYSTEM_CSV_NAME) return Utility.GetCustomConfig("APP_CSV_MIMETYPE");
-            if (format.FrmType == Constants.C_SYSTEM_PX_NAME) return Utility.GetCustomConfig("APP_PX_MIMETYPE");
-            if (format.FrmType == Constants.C_SYSTEM_SDMX_NAME) return Utility.GetCustomConfig("APP_XML_MIMETYPE");
+            if (format.FrmType == Constants.C_SYSTEM_JSON_STAT_NAME) return Configuration_BSO.GetStaticConfig("APP_JSON_MIMETYPE");
+            if (format.FrmType == Constants.C_SYSTEM_XLSX_NAME) return Configuration_BSO.GetStaticConfig("APP_XLSX_MIMETYPE");
+            if (format.FrmType == Constants.C_SYSTEM_CSV_NAME) return Configuration_BSO.GetStaticConfig("APP_CSV_MIMETYPE");
+            if (format.FrmType == Constants.C_SYSTEM_PX_NAME) return Configuration_BSO.GetStaticConfig("APP_PX_MIMETYPE");
+            if (format.FrmType == Constants.C_SYSTEM_SDMX_NAME) return Configuration_BSO.GetStaticConfig("APP_XML_MIMETYPE");
             return null;
         }
 
         internal string GetFileSuffixForFormat(Format_DTO_Read format)
         {
-            if (format.FrmType == Constants.C_SYSTEM_XLSX_NAME) return Utility.GetCustomConfig("APP_XLSX_FILE_SUFFIX");
-            if (format.FrmType == Constants.C_SYSTEM_CSV_NAME) return Utility.GetCustomConfig("APP_CSV_FILE_SUFFIX");
-            if (format.FrmType == Constants.C_SYSTEM_PX_NAME) return Utility.GetCustomConfig("APP_PX_FILE_SUFFIX");
-            if (format.FrmType == Constants.C_SYSTEM_SDMX_NAME) return Utility.GetCustomConfig("APP_SDMX_FILE_SUFFIX");
+            if (format.FrmType == Constants.C_SYSTEM_XLSX_NAME) return Configuration_BSO.GetStaticConfig("APP_XLSX_FILE_SUFFIX");
+            if (format.FrmType == Constants.C_SYSTEM_CSV_NAME) return Configuration_BSO.GetStaticConfig("APP_CSV_FILE_SUFFIX");
+            if (format.FrmType == Constants.C_SYSTEM_PX_NAME) return Configuration_BSO.GetStaticConfig("APP_PX_FILE_SUFFIX");
+            if (format.FrmType == Constants.C_SYSTEM_SDMX_NAME) return Configuration_BSO.GetStaticConfig("APP_SDMX_FILE_SUFFIX");
+            return null;
+        }
+
+        internal string GetMimetypeForFormat(string format)
+        {
+            if (format.ToUpper() == Constants.C_SYSTEM_JSON_STAT_NAME) return Configuration_BSO.GetStaticConfig("APP_JSON_MIMETYPE");
+            if (format.ToUpper() == Constants.C_SYSTEM_XLSX_NAME) return Configuration_BSO.GetStaticConfig("APP_XLSX_MIMETYPE");
+            if (format.ToUpper() == Constants.C_SYSTEM_CSV_NAME) return Configuration_BSO.GetStaticConfig("APP_CSV_MIMETYPE");
+            if (format.ToUpper() == Constants.C_SYSTEM_PX_NAME) return Configuration_BSO.GetStaticConfig("APP_PX_MIMETYPE");
+            if (format.ToUpper() == Constants.C_SYSTEM_SDMX_NAME) return Configuration_BSO.GetStaticConfig("APP_XML_MIMETYPE");
+            return null;
+        }
+
+        internal string GetFileSuffixForFormat(string format)
+        {
+            if (format.ToUpper() == Constants.C_SYSTEM_XLSX_NAME) return Configuration_BSO.GetStaticConfig("APP_XLSX_FILE_SUFFIX");
+            if (format.ToUpper() == Constants.C_SYSTEM_CSV_NAME) return Configuration_BSO.GetStaticConfig("APP_CSV_FILE_SUFFIX");
+            if (format.ToUpper() == Constants.C_SYSTEM_PX_NAME) return Configuration_BSO.GetStaticConfig("APP_PX_FILE_SUFFIX");
+            if (format.ToUpper() == Constants.C_SYSTEM_SDMX_NAME) return Configuration_BSO.GetStaticConfig("APP_SDMX_FILE_SUFFIX");
             return null;
         }
 
         public void Dispose()
         {
-            ado.Dispose();
+           ado?.Dispose();
         }
     }
 }

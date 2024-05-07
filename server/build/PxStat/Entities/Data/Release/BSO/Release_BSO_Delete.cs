@@ -1,4 +1,6 @@
 ﻿using API;
+using PxStat.DataStore;
+using PxStat.Resources;
 using PxStat.System.Navigation;
 
 namespace PxStat.Data
@@ -15,12 +17,12 @@ namespace PxStat.Data
         /// <param name="rlsCode"></param>
         /// <param name="userName"></param>
         /// <returns></returns>
-        internal int Delete(ADO Ado, int rlsCode, string userName, bool mandatoryKeywordsOnly)
+        internal int Delete(IADO Ado, int rlsCode, string userName, bool mandatoryKeywordsOnly)
         {
 
-            Matrix_ADO adoMatrix = new Matrix_ADO(Ado);
+            DataStore_ADO  adoMatrix = new DataStore_ADO();
 
-            int deleted = adoMatrix.Delete(rlsCode, userName);
+            int deleted = adoMatrix.Delete(Ado,rlsCode, userName);
 
             Keyword_Release_ADO adoKeywordRelease = new Keyword_Release_ADO();
 
@@ -33,7 +35,7 @@ namespace PxStat.Data
             if (deleted > 0)
             {
                 //Flush the cache for search - it's now out of date
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+               Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
             }
             return deleted;
         }

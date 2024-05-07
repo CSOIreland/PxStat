@@ -53,7 +53,7 @@ namespace PxStat.Subscription
             {
                 //The subscriber is attempting to delete themselves
 
-                if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
@@ -68,14 +68,19 @@ namespace PxStat.Subscription
             if (bso.Delete(Ado, subscriberUserId))
             {
                 //Delete the user also from Firebase
-                API.Firebase.DeleteUser(subscriberUserId);
+                if(!AppServicesHelper.Firebase.DeleteUser(subscriberUserId))
+                {
+                    Log.Instance.Debug("Can't delete Subscriber");
+                    Response.error = Label.Get("error.delete");
+                    return false;
+                }
 
                 //Refresh the cache of subscriber keys (for throttling)
                 new Subscriber_BSO().RefreshSubscriberKeyCache(Ado);
 
                 //Refresh the cache of subscribers (for reading)
                 bso.GetSubscribers(Ado, null, false);
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             Log.Instance.Debug("Can't delete Subscriber");

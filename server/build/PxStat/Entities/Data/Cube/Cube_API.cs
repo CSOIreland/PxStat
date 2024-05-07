@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using PxStat.JsonQuery;
 using PxStat.Resources;
+using PxStat.System.Settings;
 using System.Net;
 
 namespace PxStat.Data
@@ -16,6 +17,7 @@ namespace PxStat.Data
     {
         [Analytic]
         [AllowHEADrequest]
+        [NoCleanseDto]
         public static dynamic PxAPIv1(IRequest restfulRequest)
         {
             return new Cube_BSO_ReadPxApiV1().Read(restfulRequest);
@@ -42,15 +44,18 @@ namespace PxStat.Data
             //For RESTful requests...
             //A pre-validation. If a validation problem is found then an output containing the error will be created and returned immediately
             //The validation rules depend on PxStat, hence they are asserted here
-            if (request.GetType().Equals(typeof(RESTful_API)))
+
+            if (request.requestType.Equals("HEAD"))
+            {
+                return new Cube_BSO_ReadDatasetHEAD(request).Read().Response;
+            }
+
+            else if(request.GetType().Equals(typeof(RESTful_API)))
             {
                 var vldOutput = ValidateRest<Cube_VLD_REST_ReadDataset>(request, new Cube_VLD_REST_ReadDataset());
                 if (vldOutput != null) return vldOutput;
             }
-            else if (request.GetType().Equals(typeof(Head_API)))
-            {
-                return new Cube_BSO_ReadDatasetHEAD(request).Read().Response;
-            }
+             
             return new Cube_BSO_ReadDataset(request).Read().Response;
         }
 
@@ -131,7 +136,6 @@ namespace PxStat.Data
         {
             return new Cube_BSO_ReadCollection(jsonrpcRequest, true).Read().Response;
         }
-
 
     }
 

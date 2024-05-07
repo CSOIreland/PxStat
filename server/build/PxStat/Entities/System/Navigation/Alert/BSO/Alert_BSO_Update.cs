@@ -37,7 +37,7 @@ namespace PxStat.System.Navigation
 
             int updated = 0;
 
-            if (DTO.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
+            if (DTO.LngIsoCode == Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"))
             {
                 updated = adoAlert.Update(Ado, DTO, SamAccountName);
             }
@@ -55,7 +55,7 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
 

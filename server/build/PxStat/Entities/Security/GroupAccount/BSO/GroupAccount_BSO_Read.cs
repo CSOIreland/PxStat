@@ -34,7 +34,7 @@ namespace PxStat.Security
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoGroupAccount = new GroupAccount_ADO();
 
-            //GroupAccounts are returned as an ADO result
+            //GroupAccounts are returned as an IADO result
             ADO_readerOutput result = adoGroupAccount.Read(Ado, DTO);
 
             if (!result.hasData)

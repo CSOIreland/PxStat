@@ -22,7 +22,7 @@ namespace PxStat.System.Navigation
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.ThmValue != null)
                 ThmValue = parameters.ThmValue;
         }
@@ -40,7 +40,7 @@ namespace PxStat.System.Navigation
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.ThmCode != null)
                 ThmCode = parameters.ThmCode;
             if (parameters.ThmValue != null)
@@ -64,7 +64,7 @@ namespace PxStat.System.Navigation
             if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             if (parameters.ThmCode != null)
                 ThmCode = parameters.ThmCode;
             if (parameters.ThmValue != null)

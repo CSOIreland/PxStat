@@ -6,13 +6,13 @@ namespace PxStat.Security
     /// <summary>
     /// Read an account
     /// </summary>
-    internal class Account_BSO_Read : BaseTemplate_Read<Account_DTO_Read, Account_VLD_Read>
+    public class Account_BSO_Read : BaseTemplate_Read<Account_DTO_Read, Account_VLD_Read>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Account_BSO_Read(JSONRPC_API request) : base(request, new Account_VLD_Read())
+        public Account_BSO_Read(JSONRPC_API request) : base(request, new Account_VLD_Read())
         {
         }
         /// <summary>
@@ -32,7 +32,7 @@ namespace PxStat.Security
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoAccount = new Account_ADO();
 
-            //Accounts are returned as an ADO result
+            //Accounts are returned as an IADO result
             ADO_readerOutput result = adoAccount.Read(Ado, DTO);
 
 

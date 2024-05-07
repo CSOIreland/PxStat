@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 using PxStat.Template;
 
 
@@ -39,8 +40,8 @@ namespace PxStat.Data
             DTO.MtrCode = dtoRelease.MtrCode;
 
             //We can do this now because the MtrCode is available to us
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_DATASET + DTO.MtrCode);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_METADATA + DTO.MtrCode);
 
             bool historicalTest = adoRelease.IsHistorical(DTO.RlsCode);
             int updated = 0;
@@ -64,7 +65,7 @@ namespace PxStat.Data
                 Response.error = Label.Get("error.update");
                 return false;
             }
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

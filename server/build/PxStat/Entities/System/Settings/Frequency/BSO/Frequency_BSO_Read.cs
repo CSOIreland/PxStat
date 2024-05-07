@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Security;
 using PxStat.Template;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -33,7 +34,7 @@ namespace PxStat.System.Settings
         /// <returns></returns>
         protected override bool Execute()
         {
-            List<string> configList = Utility.GetCustomConfig("APP_PX_FREQUENCY_CODES").Split(',').ToList();
+            List<string> configList = new List<string>(Configuration_BSO.GetStaticConfig("APP_PX_FREQUENCY_CODES").Split(','));
             List<dynamic> configs = new List<dynamic>();
             foreach (var v in configList)
             {

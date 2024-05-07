@@ -4,7 +4,7 @@ using API;
 namespace PxStat.Workflow
 {
     /// <summary>
-    /// ADO methods for Comment
+    /// IADO methods for Comment
     /// </summary>
     internal class Comment_ADO
     {
@@ -15,7 +15,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, dynamic dto, string ccnUsername)
+        internal int Create(IADO ado, dynamic dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -38,7 +38,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, dynamic dto, string ccnUsername)
+        internal int Update(IADO ado, dynamic dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -62,7 +62,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, dynamic dto, string ccnUsername)
+        internal int Delete(IADO ado, dynamic dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {

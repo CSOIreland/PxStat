@@ -2,7 +2,7 @@
 using PxStat.Resources;
 using System.Collections.Generic;
 
-namespace PxStat.Data
+namespace PxStat.Data.PxApiV1
 {
     public class PxApiV1Query
     {

@@ -17,7 +17,7 @@ namespace PxStat.Data
             var jsStat = new JsonStatV1_1();
 
             jsStat.Class = Class.Dataset;
-            string urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
+            string urlBase = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.restful") + '/' + string.Format(Configuration_BSO.GetStaticConfig("APP_RESTFUL_DATASET"), Configuration_BSO.GetStaticConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
             if (matrix.Release != null)
             {
                 if (matrix.Release.RlsLiveFlag && matrix.Release.RlsLiveDatetimeFrom < DateTime.Now)
@@ -48,10 +48,10 @@ namespace PxStat.Data
                     jsStat.Note.Add(matrix.Release.CmmValue);
                 }
 
-                urlBase = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
+                urlBase = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.restful") + '/' + string.Format(Configuration_BSO.GetStaticConfig("APP_RESTFUL_DATASET"), Configuration_BSO.GetStaticConfig("APP_READ_DATASET_API"), matrix.Code, matrix.FormatType, matrix.FormatVersion, spec.Language);
 
                 List<Format_DTO_Read> formats;
-                using (Format_BSO fbso = new Format_BSO(new ADO("defaultConnection")))
+                using (Format_BSO fbso = new Format_BSO(AppServicesHelper.StaticADO))
                 {
                     formats = fbso.Read(new Format_DTO_Read() { FrmDirection = Format_DTO_Read.FormatDirection.DOWNLOAD.ToString() }); //make this a list of DTO's
                 }
@@ -65,7 +65,7 @@ namespace PxStat.Data
                         foreach (var f in formats)
                         {
                             if (f.FrmType != matrix.FormatType || f.FrmVersion != matrix.FormatVersion)
-                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.api.restful") + '/' + string.Format(Utility.GetCustomConfig("APP_RESTFUL_DATASET"), Utility.GetCustomConfig("APP_READ_DATASET_API"), matrix.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
+                                link.Alternate.Add(new Alternate() { Href = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.api.restful") + '/' + string.Format(Configuration_BSO.GetStaticConfig("APP_RESTFUL_DATASET"), Configuration_BSO.GetStaticConfig("APP_READ_DATASET_API"), matrix.Code, f.FrmType, f.FrmVersion, spec.Language), Type = f.FrmMimetype });
                         }
                         jsStat.Link = link;
                     }
@@ -185,7 +185,7 @@ namespace PxStat.Data
 
                     theDimension.Link = new Link()
                     {
-                        Enclosure = new List<Enclosure>() { new Enclosure() { Href = aDimension.GeoUrl, Type = Utility.GetCustomConfig("APP_GEO_MIMETYPE") } }
+                        Enclosure = new List<Enclosure>() { new Enclosure() { Href = aDimension.GeoUrl, Type = Configuration_BSO.GetStaticConfig("APP_GEO_MIMETYPE") } }
                     };
                 }
 

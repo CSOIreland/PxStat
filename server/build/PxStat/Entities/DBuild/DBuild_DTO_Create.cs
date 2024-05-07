@@ -83,13 +83,13 @@ namespace PxStat.DBuild
         public DBuild_DTO_Create(dynamic parameters)
         {
 
-            this.LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            this.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             if (parameters.MtrOfficialFlag != null)
                 this.MtrOfficialFlag = parameters.MtrOfficialFlag;
             else
             {
-                this.MtrOfficialFlag = Configuration_BSO.GetCustomConfig(ConfigType.global, "dataset.officialStatistics");
+                this.MtrOfficialFlag = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "dataset.officialStatistics");
             }
 
             if (parameters.MtrCode != null)

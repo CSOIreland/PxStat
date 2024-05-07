@@ -1,23 +1,32 @@
 ﻿using API;
+using Microsoft.Extensions.Configuration;
 using PxParser.Resources.Parser;
 using PxStat.Build;
 using PxStat.DataStore;
+using PxStat.DBuild;
 using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Navigation;
 using PxStat.Template;
 using PxStat.Workflow;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Linq;
 
 namespace PxStat.Data
 {
     /// <summary>
     /// Class for creating a Matrix from a file upload
     /// </summary>
-    internal class Matrix_BSO_Create : BaseTemplate_Create<PxUpload_DTO, PxUploadValidator>
+    public class Matrix_BSO_Create : BaseTemplate_Create<PxUpload_DTO, PxUploadValidator>
     {
+        /// <summary>
+        /// latestRelease
+        /// </summary>
+        private Release_DTO latestRelease;
+
         /// <summary>
         /// class variable
         /// </summary>
@@ -38,7 +47,7 @@ namespace PxStat.Data
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Matrix_BSO_Create(JSONRPC_API request) : base(request, new PxUploadValidator())
+        public Matrix_BSO_Create(JSONRPC_API request) : base(request, new PxUploadValidator())
         {
             matrixAdo = new Matrix_ADO(Ado);
             releaseAdo = new Release_ADO(Ado);
@@ -70,7 +79,7 @@ namespace PxStat.Data
             Stopwatch swMatrix = new Stopwatch();
             swMatrix.Start();
 
-            var signature = Utility.GetMD5(Utility.GetCustomConfig("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()));
+            var signature = Utility.GetMD5(Configuration_BSO.GetStaticConfig ("APP_SALSA") + Utility.JsonSerialize_IgnoreLoopingReference(DTO.GetSignatureDTO()));
             if (signature != DTO.Signature)
             {
                 Response.error = Label.Get("error.validation");
@@ -80,14 +89,14 @@ namespace PxStat.Data
       
             // Create the matrix from the Matrix Factory
             DmatrixFactory dmatrixFactory = new DmatrixFactory(Ado);
-            IMetaData metaData = new MetaData();
-            IDmatrix matrix = dmatrixFactory.CreateDmatrix(DTO, metaData);
+           
+            IDmatrix matrix = dmatrixFactory.CreateDmatrix(DTO);
 
 
             Matrix_BSO mBso = new Matrix_BSO(Ado);
 
             // Check if a WIP Release already exists for the Matrix to Upload
-            var latestRelease = mBso.GetLatestRelease(matrix);
+            latestRelease = mBso.GetLatestRelease(matrix);
             if (latestRelease != null && !DTO.Overwrite && releaseAdo.IsWip(latestRelease.RlsCode)) //
             {
                 Group_DTO_Create dtoGroup = this.GetGroup(DTO.GrpCode);
@@ -116,21 +125,67 @@ namespace PxStat.Data
                 return false;
             }
 
+
+            var newAdo= new ADO("defaultConnection");
+            
             //Check if the matrix code is locked in the dataset table
-            using (DatasetAdo dAdo = new DatasetAdo(new ADO("defaultConnection")))
+            using (DatasetAdo dAdo = new DatasetAdo(newAdo))
             {
-                ADO_readerOutput dResult = dAdo.ReadDatasetLocked(matrix.Code);
-                if (dResult.hasData)
+               
+               
+                try
                 {
-                    DateTime lockedTime = dResult.data[0].DttDatetimeLocked.Equals(DBNull.Value) ? default : (DateTime)dResult.data[0].DttDatetimeLocked;
-                    if (lockedTime.AddMinutes(Configuration_BSO.GetCustomConfig(ConfigType.server, "release.lockTimeMinutes")) > DateTime.Now)
+                    newAdo.StartTransaction();
+                    ADO_readerOutput dResult = dAdo.ReadDatasetLocked(matrix.Code);
+                    if (dResult.hasData)
                     {
-                        Response.error = Label.Get("error.release.locked", DTO.LngIsoCode);
-                        return false;
+                        DateTime lockedTime = dResult.data[0].DttDatetimeLocked.Equals(DBNull.Value) ? default : (DateTime)dResult.data[0].DttDatetimeLocked;
+                        if (lockedTime.AddMinutes(Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "release.lockTimeMinutes")) > DateTime.Now)
+                        {
+                            Response.error = Label.Get("error.release.locked", DTO.LngIsoCode);
+                            return false;
+                        }
                     }
+                    dAdo.DatasetLockUpdate(matrix.Code, DateTime.Now);
+                    newAdo.CommitTransaction();
                 }
-                dAdo.DatasetLockUpdate(matrix.Code, DateTime.Now);
+                catch  { 
+                    newAdo.RollbackTransaction();
+                    throw;
+                }
+                
             }
+
+
+            //Sort the time dimension variables by default. Bring the data values with you!
+
+            //Do the time dimensions need sorting? (and hence the related datapoints)
+            var timeDimension = matrix.Dspecs[matrix.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).First();
+
+            if (timeDimension != null)
+            {
+                DBuild_BSO bid = new DBuild_BSO();
+                if (!bid.AreVariablesSequential(timeDimension))
+                {
+                    timeDimension.Variables = timeDimension.Variables.OrderBy(x => x.Code).ToList();
+
+                    Dictionary<int, int> sequenceDictionary = new Dictionary<int, int>();
+                    int counter = 1;
+                    foreach (var vrb in timeDimension.Variables)
+                    {
+                        sequenceDictionary.Add(vrb.Sequence, counter);
+                        counter++;
+                    }
+                    matrix = bid.SortVariablesInDimension(matrix, sequenceDictionary, timeDimension.Sequence);
+                }
+            }
+            else
+            {
+
+                Response.error = Label.Get("error.invalid", DTO.LngIsoCode);
+                return false;
+            }
+
 
             int releaseId;
             if (latestRelease != null)
@@ -149,34 +204,37 @@ namespace PxStat.Data
 
                     matrixAdo.Delete(latestRelease.RlsCode, SamAccountName);
                 }
-
-                // Clean up caching
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + latestRelease.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + latestRelease.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + latestRelease.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + latestRelease.RlsCode);
-                MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + latestRelease.RlsCode);
             }
             else
             {
                 releaseId = mBso.CreateRelease(matrix, 0, 1, DTO.GrpCode, SamAccountName);
             }
 
+            newAdo=new ADO("defaultConnection");
+            newAdo.StartTransaction();
             // Update the lock on the matrix code in the dataset table
-            using (DatasetAdo dAdo = new DatasetAdo(new ADO("defaultConnection")))
+            using (DatasetAdo dAdo = new DatasetAdo(newAdo))
             {
-                dAdo.DatasetLockUpdate(matrix.Code, default);
+                try
+                {
+                    dAdo.DatasetLockUpdate(matrix.Code, default);
+                    newAdo.CommitTransaction();
+                }
+                catch
+                {
+                    newAdo.RollbackTransaction();
+                    throw;
+                }
             }
 
             Stopwatch swLoad = new Stopwatch();
             swLoad.Start();
-            Release_BSO rBso = new Release_BSO(Ado);
 
             // Write matrix and associated metaData to the database
             IDataWriter dataWriter = new DataWriter();
             dataWriter.CreateAndLoadDataField(Ado, matrix, SamAccountName, releaseId);
             dataWriter.CreateAndLoadMetadata(Ado, matrix);
-            Keyword_Release_BSO_CreateMandatory krBSO = new Keyword_Release_BSO_CreateMandatory();
+            Keyword_Release_BSO_CreateMandatory krBSO = new();
 
 
 
@@ -187,7 +245,21 @@ namespace PxStat.Data
             swLoad.Stop();
             Log.Instance.Info(string.Format("matrix loaded in db in {0} ms", Math.Round((double)swLoad.ElapsedMilliseconds)));
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];// JSONRPC.success;
+            return true;
+        }
+
+        public override bool PostExecute()
+        {
+            if (latestRelease != null)
+            {
+                // Clean up caching
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_ADDITION + latestRelease.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_DELETION + latestRelease.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_COMPARE_READ_AMENDMENT + latestRelease.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_DATASET + latestRelease.RlsCode);
+                Cas.RunCasFlush(Resources.Constants.C_CAS_DATA_CUBE_READ_PRE_METADATA + latestRelease.RlsCode);
+            }
             return true;
         }
 

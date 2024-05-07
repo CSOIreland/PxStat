@@ -32,7 +32,7 @@ namespace PxStat.Workflow
     /// - If no LivePrevious is found then return an error.
     /// - If the request release is any other status, output an error.
     /// </summary>
-    class WorflowSignoff_BSO_Create : BaseTemplate_Create<WorkflowSignoff_DTO, WorkflowSignoff_VLD_Create>
+    class WorkflowSignoff_BSO_Create : BaseTemplate_Create<WorkflowSignoff_DTO, WorkflowSignoff_VLD_Create>
     {
 
 
@@ -42,7 +42,7 @@ namespace PxStat.Workflow
         /// <param name="request"></param>
         /// 
 
-        internal WorflowSignoff_BSO_Create(JSONRPC_API request) : base(request, new WorkflowSignoff_VLD_Create())
+        internal WorkflowSignoff_BSO_Create(JSONRPC_API request) : base(request, new WorkflowSignoff_VLD_Create())
         {
         }
 

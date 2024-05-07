@@ -4,7 +4,7 @@ using System.Dynamic;
 
 namespace PxStat.Data
 {
-    internal class Matrix_BSO_ReadByGeoMap : BaseTemplate_Read<Marix_DTO_ReadByGeoMap, Matrix_VLD_ReadByGeoMap>
+    internal class Matrix_BSO_ReadByGeoMap : BaseTemplate_Read<Matrix_DTO_ReadByGeoMap, Matrix_VLD_ReadByGeoMap>
     {
         internal Matrix_BSO_ReadByGeoMap(JSONRPC_API request) : base(request, new Matrix_VLD_ReadByGeoMap())
         {

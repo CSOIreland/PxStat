@@ -39,7 +39,7 @@ namespace PxStat
                 requestedLanguage = Resources.LanguageManager.GetLanguage(lngIsoCode);
 
             if (defaultLanguage == null)
-                defaultLanguage = Resources.LanguageManager.GetLanguage(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
+                defaultLanguage = Resources.LanguageManager.GetLanguage(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
 
             var dict = requestedLanguage.GetLabelValues();
             return ProcessGet(path,dict,lngIsoCode);
@@ -47,7 +47,7 @@ namespace PxStat
         public static string Get(string path)
         {
             if (defaultLanguage == null)
-                defaultLanguage = Resources.LanguageManager.GetLanguage(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
+                defaultLanguage = Resources.LanguageManager.GetLanguage(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
             return Get(path, defaultLanguage.LngIsoCode);
         }
         private static string ProcessGet(string label, dynamic dictionary,string lngIsoCode)
@@ -65,7 +65,7 @@ namespace PxStat
                     else
                     // Label not found, return the Label parameter for feedback
                     {
-                        if(lngIsoCode!= Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))
+                        if(lngIsoCode!= Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"))
                         {
                             dictionary =defaultLanguage.GetLabelValues();
                             return ProcessGet(label, dictionary, defaultLanguage.LngIsoCode);

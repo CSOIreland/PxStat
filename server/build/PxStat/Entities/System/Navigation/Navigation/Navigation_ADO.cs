@@ -7,20 +7,20 @@ using System.Data;
 namespace PxStat.System.Navigation
 {
     /// <summary>
-    /// ADO for Navigation methods
+    /// IADO for Navigation methods
     /// </summary>
     internal class Navigation_ADO
     {
         /// <summary>
-        /// Class variable ADO
+        /// Class variable IADO
         /// </summary>
-        ADO ado;
+        IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="Ado"></param>
-        internal Navigation_ADO(ADO Ado)
+        internal Navigation_ADO(IADO Ado)
         {
             ado = Ado;
         }
@@ -35,7 +35,7 @@ namespace PxStat.System.Navigation
             var inputParams = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name="@LngIsoCode",value=dto.LngIsoCode  },
-                new ADO_inputParams() {name="@LngIsoCodeDefault",value=Configuration_BSO.GetCustomConfig(ConfigType.global,"language.iso.code") }
+                new ADO_inputParams() {name="@LngIsoCodeDefault",value=Configuration_BSO.GetApplicationConfigItem(ConfigType.global,"language.iso.code") }
             };
 
             return ado.ExecuteReaderProcedure("System_Navigation_Navigation_Read", inputParams);
@@ -174,7 +174,7 @@ namespace PxStat.System.Navigation
             List<ADO_inputParams> paramList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() { name = "@LngIsoCode", value = lngIsoCode },
-                new ADO_inputParams() { name = "@DefaultLngIsoCode", value = Configuration_BSO.GetCustomConfig( ConfigType.global,"language.iso.code") }
+                new ADO_inputParams() { name = "@DefaultLngIsoCode", value = Configuration_BSO.GetApplicationConfigItem( ConfigType.global,"language.iso.code") }
             };
 
             ADO_inputParams param = new ADO_inputParams() { name = "@Result", value = dtMatrixResults };

@@ -16,7 +16,7 @@ namespace PxStat.Workflow
         /// <returns></returns>
         public static dynamic Read(JSONRPC_API jsonrpcRequest)
         {
-            return new Request_BSO_Read(jsonrpcRequest).Read().Response;
+            return new Request_BSO_Read(jsonrpcRequest).Create().Response;
         }
     }
 }

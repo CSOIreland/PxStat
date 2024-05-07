@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 using PxStat.Template;
 
 namespace PxStat.System.Navigation
@@ -35,19 +36,32 @@ namespace PxStat.System.Navigation
 
             //attempting to delete. The number of entities deleted are passed to the entitiesDeleted variable (this is 1 for a successful delete)
             int nDeleted = adoProduct.Delete(DTO, SamAccountName);
-            Log.Instance.Debug("Delete operation finished in ADO");
+            Log.Instance.Debug("Delete operation finished in IADO");
 
-            if (nDeleted == 0)
+            if (nDeleted <= 0)
             {
-                Log.Instance.Debug("No record found for delete request");
+                switch (nDeleted)
+                {
+                    case 0:
+                        Log.Instance.Debug("No record found for delete request");
+                        break;
+                    case -1:
+                        Log.Instance.Debug("Product is being used in a Release");
+                        break;
+                    case -2:
+                        Log.Instance.Debug("Product is associated with a Release");
+                        break;
+                    default:
+                        break;
+                }
                 Response.error = Label.Get("error.delete");
                 return false;
             }
 
             //Flush the cache for search - it's now out of date
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
             return true;
         }

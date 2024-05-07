@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.DataStore;
+using PxStat.Security;
 using PxStat.Template;
 using System.Net;
 
@@ -44,7 +45,7 @@ namespace PxStat.Data
         protected override bool Execute()
         {
 
-            using (ADO ado = new ADO("defaultConnection"))
+            using (IADO ado = AppServicesHelper.StaticADO)
             {
                 DataStore_ADO dAdo = new DataStore_ADO();
                 if (!(dAdo.DataMatrixReadLive(ado, DTO.matrix, DTO.language).hasData))
@@ -56,7 +57,7 @@ namespace PxStat.Data
             }
 
 
-            Response.mimeType = Utility.GetCustomConfig("APP_JSON_MIMETYPE");
+            Response.mimeType = Configuration_BSO.GetStaticConfig("APP_JSON_MIMETYPE");
             Response.statusCode = HttpStatusCode.OK;
             return true;
         }

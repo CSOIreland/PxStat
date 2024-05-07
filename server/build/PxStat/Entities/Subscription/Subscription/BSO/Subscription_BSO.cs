@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace PxStat.Subscription
 {
-    internal class Subscription_BSO
+    public class Subscription_BSO
     {
 
-        internal dynamic TableRead(ADO ado, string tsbTable = null)
+        public dynamic TableRead(IADO ado, string tsbTable = null)
         {
             Subscription_ADO sAdo = new Subscription_ADO(ado);
             var subscriptions = sAdo.TableRead(tsbTable);
@@ -18,7 +18,7 @@ namespace PxStat.Subscription
 
         }
 
-        internal dynamic ChannelRead(ADO ado, string lngIsoCode, string chnCode = null, bool singleLanguage = false)
+        public dynamic ChannelRead(IADO ado, string lngIsoCode, string chnCode = null, bool singleLanguage = false)
         {
             Subscription_ADO sAdo = new Subscription_ADO(ado);
             var subscriptions = sAdo.ChannelRead(lngIsoCode, chnCode, null, singleLanguage);
@@ -28,11 +28,17 @@ namespace PxStat.Subscription
 
         }
 
-        private dynamic MergeUsers(List<dynamic> subscriptionsData)
+        private List<dynamic> MergeUsers(List<dynamic> subscriptionsData)
         {
-            var adUsers = ActiveDirectory.List();
+            IDictionary<string, dynamic> adUsers = new Dictionary<string, dynamic>();
+            if (!ApiServicesHelper.ApiConfiguration.Settings["API_AUTHENTICATION_TYPE"].Equals("ANONYMOUS"))
+            {
+                adUsers = AppServicesHelper.ActiveDirectory.List();
+            }
 
-            IDictionary<string, dynamic> fbUsers = API.Firebase.GetAllUsers();
+            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers();
+            if (fbUsers != null) fbUsers = new Dictionary<string, dynamic>();
+            else return subscriptionsData;
 
             foreach (var s in subscriptionsData)
             {
@@ -45,11 +51,16 @@ namespace PxStat.Subscription
                     if (!s.CcnUsername.Equals(DBNull.Value))
                     {
                         string adEntry = adUsers.Keys.Where(x => x.Equals(s.CcnUsername, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                        var ad = adUsers[adEntry];
-                        if (ad != null)
+
+                        if (adEntry != null)
                         {
-                            email = ad.EmailAddress;
-                            name = ad.GivenName + " " + ad.Surname;
+                            var ad = adUsers[adEntry];
+
+                            if (ad != null)
+                            {
+                                email = ad.EmailAddress;
+                                name = ad.GivenName + " " + ad.Surname;
+                            }
                         }
                     }
                     else if (!s.SbrUserId.Equals(DBNull.Value))
@@ -74,7 +85,7 @@ namespace PxStat.Subscription
                 }
             }
 
-            return subscriptionsData.Where(x => !String.IsNullOrEmpty(x.CcnEmail));
+            return subscriptionsData.Where(x => !String.IsNullOrEmpty(x.CcnEmail)).ToList();
         }
     }
 

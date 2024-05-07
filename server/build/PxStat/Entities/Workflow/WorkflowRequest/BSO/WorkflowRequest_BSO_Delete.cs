@@ -36,7 +36,7 @@ namespace PxStat.Workflow
 
             Workflow_ADO wfAdo = new Workflow_ADO();
 
-            ADO_readerOutput output = wfAdo.ReadAwaitingResponse(Ado, SamAccountName, DTO.RlsCode, Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"));
+            ADO_readerOutput output = wfAdo.ReadAwaitingResponse(Ado, SamAccountName, DTO.RlsCode, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
             if (!output.hasData)
             {
                 Log.Instance.Debug("No valid AwaitingResponse workflow found for RlsCode " + DTO.RlsCode);
@@ -53,7 +53,7 @@ namespace PxStat.Workflow
                 return false;
             }
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

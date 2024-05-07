@@ -9,7 +9,7 @@ namespace PxStat.Report
     /// <summary>
     /// DTO for TableAudit read
     /// </summary>
-    internal class TableAudit_DTO_Read
+    public class TableAudit_DTO_Read
     {
         /// <summary>
         /// Date and time of first performance entry

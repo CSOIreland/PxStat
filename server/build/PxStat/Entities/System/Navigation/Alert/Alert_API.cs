@@ -33,6 +33,8 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Create(JSONRPC_API jsonrpcRequest)
         {
             return new Alert_BSO_Create(jsonrpcRequest).Create().Response;
@@ -43,6 +45,8 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Update(JSONRPC_API jsonrpcRequest)
         {
             return new Alert_BSO_Update(jsonrpcRequest).Update().Response;
@@ -53,6 +57,8 @@ namespace PxStat.System.Navigation
         /// </summary>
         /// <param name="jsonrpcRequest"></param>
         /// <returns></returns>
+        /// 
+        [NoDemo]
         public static dynamic Delete(JSONRPC_API jsonrpcRequest)
         {
             return new Alert_BSO_Delete(jsonrpcRequest).Delete().Response;

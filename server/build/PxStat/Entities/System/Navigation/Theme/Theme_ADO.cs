@@ -6,15 +6,15 @@ namespace PxStat.System.Navigation
     public class Theme_ADO
     {
         /// <summary>
-        /// ADO class parameter
+        /// IADO class parameter
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        public Theme_ADO(ADO ado)
+        public Theme_ADO(IADO ado)
         {
             this.ado = ado;
         }

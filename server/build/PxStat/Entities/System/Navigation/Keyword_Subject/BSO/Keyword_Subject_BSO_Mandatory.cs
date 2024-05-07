@@ -10,11 +10,11 @@ namespace PxStat.System.Navigation
     /// </summary>
     internal class Keyword_Subject_BSO_Mandatory
     {
-        internal void Create(ADO Ado, Subject_DTO subjectDto, int subjectID)
+        internal void Create(IADO Ado, Subject_DTO subjectDto, int subjectID)
         {
             //There is no direct means of finding out which langauge the product name uses,
             // so we take a default language from the settings
-            string languageCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            string languageCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             //Create the table that will be bulk inserted
             DataTable dt = new DataTable();
@@ -41,7 +41,7 @@ namespace PxStat.System.Navigation
         /// <param name="subjectDto"></param>
         /// <param name="mandatoryOnly"></param>
         /// <returns></returns>
-        internal int Delete(ADO Ado, Subject_DTO subjectDto, bool? mandatoryOnly = null)
+        internal int Delete(IADO Ado, Subject_DTO subjectDto, bool? mandatoryOnly = null)
         {
             Keyword_Subject_ADO ksAdo = new Keyword_Subject_ADO(Ado);
             Keyword_Subject_DTO ksDto = new Keyword_Subject_DTO();

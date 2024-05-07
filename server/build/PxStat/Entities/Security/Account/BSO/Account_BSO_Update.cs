@@ -98,8 +98,8 @@ namespace PxStat.Security
                 }
             }
             //If this user is cached then we must remove it because the data is now out of date
-            MemCacheD.Remove_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", DTO.CcnUsername);
-            Response.data = JSONRPC.success;
+           AppServicesHelper.CacheD.Remove_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", DTO.CcnUsername);
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
 

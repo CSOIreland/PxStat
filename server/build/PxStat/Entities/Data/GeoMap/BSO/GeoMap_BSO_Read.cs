@@ -16,17 +16,18 @@ namespace PxStat.Data
 
 
             ////See if this request has cached data
-            MemCachedD_Value cache = MemCacheD.Get_BSO<dynamic>("PxStat.Data", "GeoMap_BSO_Read", "Read", staticRequest.parameters[1]);
+           
+             MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO<dynamic>("PxStat.Data", "GeoMap_BSO_Read", "Read", staticRequest.parameters[1]);
 
             if (cache.hasData)
             {
-                output.response = cache.data;
+                output.response = (string)cache.data;
                 output.statusCode = HttpStatusCode.OK;
                 return output;
 
             }
 
-            using (GeoMap_BSO bso = new GeoMap_BSO(new ADO("defaultConnection")))
+            using (GeoMap_BSO bso = new GeoMap_BSO(AppServicesHelper.StaticADO))
             {
                 try
                 {
@@ -34,10 +35,13 @@ namespace PxStat.Data
                     if (dataRead.hasData)
                     {
                         output.statusCode = HttpStatusCode.OK;
-                        GeoJson readGeoJson = JsonConvert.DeserializeObject<GeoJson>(dataRead.data[0].GmpGeoJson);
-                        MemCacheD.Store_BSO("PxStat.Data", "GeoMap_BSO_Read", "Read", staticRequest.parameters[1], readGeoJson, default(DateTime));
+                        var readGeoJson = Utility.JsonSerialize_IgnoreLoopingReference(JsonConvert.DeserializeObject<GeoJson>(dataRead.data[0].GmpGeoJson));
+                       AppServicesHelper.CacheD.Store_BSO("PxStat.Data", "GeoMap_BSO_Read", "Read", staticRequest.parameters[1], readGeoJson, default(DateTime));
 
-                        output.response = Utility.JsonSerialize_IgnoreLoopingReference(JsonConvert.DeserializeObject<GeoJson>(dataRead.data[0].GmpGeoJson));
+
+                        output.response = readGeoJson;
+
+                        //output.response = dataRead.data[0].GmpGeoJson;
                     }
                     else
                     {

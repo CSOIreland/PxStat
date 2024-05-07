@@ -85,4 +85,9 @@ namespace PxStat
         public virtual string CAS_REPOSITORY_DOMAIN_LIST { get; set; }
         public virtual string DOMAIN { get; set; }
     }
+
+    /// <summary>
+    /// Method not allowed for PowerUsers and below if the security.demo flag is set in the global config
+    /// </summary>
+    internal class NoDemo : Attribute { }
 }

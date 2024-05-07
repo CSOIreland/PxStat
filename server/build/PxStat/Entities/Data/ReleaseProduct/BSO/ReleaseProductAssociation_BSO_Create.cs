@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 using PxStat.Template;
 
 namespace PxStat.Data
@@ -36,23 +37,34 @@ namespace PxStat.Data
 
             // Create the Release Product association - and retrieve the newly created Id
             int newId = adoReleaseProduct.Create(Ado, DTO, SamAccountName);
-            if (newId == 0)
+
+            switch (newId)
             {
-                Log.Instance.Debug("Cannot create the Release Product association because the is no core Product associated with the Release");
-                Response.error = Label.Get("error.create");
-                return false;
-            }
-            if (newId == -1)
-            {
-                Log.Instance.Debug("Cannot create Release Product association because the Product is already associated with the Release");
-                Response.error = Label.Get("error.duplicate");
-                return false;
+                case -3:
+                    Log.Instance.Debug("Cannot create the Release Product association because the Release Code does not exist");
+                    Response.error = Label.Get("error.create");
+                    return false;
+
+                case -2:
+                    Log.Instance.Debug("Cannot create the Release Product association because the Product Code does not exist");
+                    Response.error = Label.Get("error.create");
+                    return false;
+
+                case -1:
+                    Log.Instance.Debug("Cannot create Release Product association because the Product is already associated with the Release");
+                    Response.error = Label.Get("error.duplicate");
+                    return false;
+
+                case 0:
+                    Log.Instance.Debug("Cannot create the Release Product association because the is no core Product associated with the Release");
+                    Response.error = Label.Get("error.create");
+                    return false;
             }
 
             //Flush the cache for search 
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

@@ -4,22 +4,21 @@ using System.Linq;
 
 namespace PxStat.Security
 {
-    internal enum AuthenticationType { none, local, windows }
-    internal class Account_BSO : IDisposable
+    public enum AuthenticationType { none, local, windows }
+    public class Account_BSO : IDisposable
     {
-        ADO ado;
+        IADO ado;
 
         public void Dispose()
         {
-            if (ado != null)
-                ado.Dispose();
+           
         }
-        internal Account_BSO(ADO aDO)
+        public Account_BSO(IADO aDO)
         {
             ado = aDO;
         }
 
-        internal Account_BSO()
+        public Account_BSO()
         { }
         /// <summary>
         /// Get a list of users connected to this release with a number of filter options
@@ -28,22 +27,20 @@ namespace PxStat.Security
         /// <param name="isApprover"></param>
         /// <param name="prvCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput getReleaseUsers(int rlsCode, bool? isApprover, string prvCode = null)
+        public ADO_readerOutput getReleaseUsers(int rlsCode, bool? isApprover, string prvCode = null)
         {
-            ado = new ADO("defaultConnection");
-            try
+            using (ado = AppServicesHelper.StaticADO)
             {
-                Account_ADO aAdo = new Account_ADO();
-                var result = aAdo.ReadReleaseUsers(ado, rlsCode, isApprover, prvCode);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                ado.Dispose();
+                try
+                {
+                    Account_ADO aAdo = new Account_ADO();
+                    var result = aAdo.ReadReleaseUsers(ado, rlsCode, isApprover, prvCode);
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 
@@ -53,29 +50,27 @@ namespace PxStat.Security
         /// </summary>
         /// <param name="prvCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput getUsersOfPrivilege(string prvCode)
+        public ADO_readerOutput getUsersOfPrivilege(string prvCode)
         {
-            ado = new ADO("defaultConnection");
-            try
+            using (ado = AppServicesHelper.StaticADO)
             {
+                try
+                {
 
-                Account_ADO aAdo = new Account_ADO();
-                var result = aAdo.ReadMinimumPrivilege(ado, prvCode);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                ado.Dispose();
+                    Account_ADO aAdo = new Account_ADO();
+                    var result = aAdo.ReadMinimumPrivilege(ado, prvCode);
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 
 
 
-        internal ADO_readerOutput ReadCurrentAccess(ADO Ado, string ccnUsername)
+        public ADO_readerOutput ReadCurrentAccess(IADO Ado, string ccnUsername)
         {
 
 
@@ -87,7 +82,7 @@ namespace PxStat.Security
             {
 
                 // Set the cache based on the data returned
-                MemCacheD.Store_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", ccnUsername, result.data, new DateTime());
+               AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", ccnUsername, result.data, new DateTime());
 
                 return result;
             }
@@ -96,7 +91,7 @@ namespace PxStat.Security
             return result;
         }
 
-        internal bool IsModerator(ADO ado, string ccnUsername)
+        public bool IsModerator(IADO ado, string ccnUsername)
         {
             Account_ADO accountAdo = new Account_ADO();
             Account_DTO_Read dto = new Account_DTO_Read();
@@ -112,7 +107,7 @@ namespace PxStat.Security
             }
         }
 
-        internal bool IsAdministrator(ADO ado, string ccnUsername)
+        public bool IsAdministrator(IADO ado, string ccnUsername)
         {
             if (ccnUsername == null) return false;
             Account_ADO accountAdo = new Account_ADO();
@@ -138,7 +133,7 @@ namespace PxStat.Security
         /// <returns></returns>
 
 
-        internal bool IsRegistered(ADO ado, string ccnUsername)
+        public bool IsRegistered(IADO ado, string ccnUsername)
         {
             Account_ADO accountAdo = new Account_ADO();
             Account_DTO_Read dto = new Account_DTO_Read();
@@ -153,7 +148,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
         /// <param name="username"></param>
         /// <returns></returns>
-        internal bool IsPowerUser(ADO ado, string ccnUsername)
+        public bool IsPowerUser(IADO ado, string ccnUsername)
         {
             Account_ADO accountAdo = new Account_ADO();
             Account_DTO_Read dto = new Account_DTO_Read();

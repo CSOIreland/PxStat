@@ -13,7 +13,7 @@ namespace PxStat.System.Navigation
         /// <param name="dto"></param>
         /// <param name="Ado"></param>
         /// <returns></returns>
-        internal int CreateOrUpdate(Subject_DTO dto, ADO Ado)
+        internal int CreateOrUpdate(Subject_DTO dto, IADO Ado)
         {
             SubjectLanguage_DTO subjectLanguageDTO = new SubjectLanguage_DTO();
             subjectLanguageDTO.SlgValue = dto.SbjValue;

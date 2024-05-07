@@ -1,5 +1,7 @@
 ﻿using API;
 using PxStat.Resources;
+using System;
+using System.Text.RegularExpressions;
 
 namespace PxStat.Security
 {
@@ -16,7 +18,7 @@ namespace PxStat.Security
         /// <param name="request"></param>
         /// <param name="inTransaction"></param>
         /// <returns></returns>
-        internal static int Execute(ADO ado, IRequest request,string ccnUsername=null)
+        internal static int Execute(IADO ado, IRequest request,string ccnUsername=null)
         {
             //Check in case the NoTrace attribute is set for the requested API method
             //If so, don't proceed with the trace.
@@ -33,7 +35,7 @@ namespace PxStat.Security
 
             if (dto.CcnUsername == null)
             {
-                if(MethodReader.DynamicHasProperty(request.parameters,"CcnUsername"))
+                if(Resources.MethodReader.DynamicHasProperty(request.parameters,"CcnUsername"))
                     dto.CcnUsername = request.parameters.CcnUsername;
                 if (dto.CcnUsername == null && ccnUsername != null)
                     dto.CcnUsername = ccnUsername;
@@ -41,7 +43,8 @@ namespace PxStat.Security
 
             dto.TrcIp = request.ipAddress;
             dto.TrcMethod = request.method;
-            dto.TrcParams = JSONRPC.MaskParameters(request.parameters.ToString());
+            
+            dto.TrcParams = MaskParameters(Utility.JsonSerialize_IgnoreLoopingReference(request.parameters));
             dto.TrcUseragent = request.userAgent;
 
             int created = tAdo.Create(ado, dto);
@@ -50,6 +53,27 @@ namespace PxStat.Security
                 Log.Instance.Debug("Can't create trace");
             }
             return created;
+        }
+
+
+        public static string MaskParameters(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return "";
+            }
+            // Init the output
+            string output = input;
+
+            // Loop trough the parameters to maskAPI_JSONRPC_MASK_PARAMETERS
+            foreach (var param in Configuration_BSO.GetStaticConfig("API_JSONRPC_MASK_PARAMETERS").Split(','))
+            {
+                // https://stackoverflow.com/questions/171480/regex-grabbing-values-between-quotation-marks
+                Log.Instance.Info("Masked parameter: " + param);
+                output = Regex.Replace(output, "\"" + param + "\"\\s*:\\s*\"(.*?[^\\\\])\"", "\"" + param + "\": \"********\"", RegexOptions.IgnoreCase);
+            }
+
+            return output;
         }
     }
 }

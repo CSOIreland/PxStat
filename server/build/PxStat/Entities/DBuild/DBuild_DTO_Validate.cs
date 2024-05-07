@@ -27,7 +27,7 @@ namespace PxStat.DBuild
             if(parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode; 
             else
-                LngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
         }
         internal Signature_DTO GetSignatureDTO()
         {

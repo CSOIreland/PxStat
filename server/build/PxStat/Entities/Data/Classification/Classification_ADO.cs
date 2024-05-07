@@ -11,15 +11,15 @@ namespace PxStat.Data
     internal class Classification_ADO
     {
         /// <summary>
-        /// ADO class variable
+        /// IADO class variable
         /// </summary>
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        public Classification_ADO(ADO ado)
+        public Classification_ADO(IADO ado)
         {
             this.ado = ado;
         }

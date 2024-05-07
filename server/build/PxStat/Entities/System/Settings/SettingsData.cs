@@ -14,7 +14,7 @@ namespace PxStat.System.Settings
         /// <param name="ado"></param>
         /// <param name="copyrightValue"></param>
         /// <returns></returns>
-        static public IList<Copyright> ReadCopyrightRecord(ADO ado, string copyrightValue)
+        static public IList<Copyright> ReadCopyrightRecord(IADO ado, string copyrightValue)
         {
 
             var inputParams = new List<ADO_inputParams>()
@@ -45,7 +45,7 @@ namespace PxStat.System.Settings
         /// <param name="frmType"></param>
         /// <param name="frmVersion"></param>
         /// <returns></returns>
-        static public IList<Format> ReadFormatRecord(ADO ado, string frmType, string frmVersion = null)
+        static public IList<Format> ReadFormatRecord(IADO ado, string frmType, string frmVersion = null)
         {
             var inputParams = new List<ADO_inputParams>()
                 {

@@ -6,13 +6,13 @@ namespace PxStat.Security
     /// <summary>
     /// Delete an account
     /// </summary>
-    internal class Account_BSO_Delete : BaseTemplate_Delete<Account_DTO_Delete, Account_VLD_Delete>
+    public class Account_BSO_Delete : BaseTemplate_Delete<Account_DTO_Delete, Account_VLD_Delete>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        internal Account_BSO_Delete(JSONRPC_API request) : base(request, new Account_VLD_Delete())
+        public Account_BSO_Delete(JSONRPC_API request) : base(request, new Account_VLD_Delete())
         {
         }
 
@@ -86,9 +86,9 @@ namespace PxStat.Security
             }
 
             //If this user is cached then we must remove the cache entry as well
-            MemCacheD.Remove_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", DTO.CcnUsername);
+           AppServicesHelper.CacheD.Remove_BSO<dynamic>("PxStat.Security", "Account_API", "ReadCurrentAccesss", DTO.CcnUsername);
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using API;
 using PxStat.Template;
 using System;
+using System.Net;
 using System.Web;
 
 namespace PxStat.Security
@@ -28,10 +29,12 @@ namespace PxStat.Security
         {
             Login_ADO lAdo = new Login_ADO(Ado);
             if (Request.sessionCookie != null)
+            {
                 lAdo.Logout(Request.sessionCookie.Value);
-
-            Response.sessionCookie = new HttpCookie(API.Common.SessionCookieName) { Expires = DateTime.Now };
-            Response.data = JSONRPC.success;
+                if(!String.IsNullOrEmpty(Request.sessionCookie.Name))
+                    Response.sessionCookie = new Cookie(Request.sessionCookie.Name, "") { Expires = DateTime.Now };
+            }
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
 
         }

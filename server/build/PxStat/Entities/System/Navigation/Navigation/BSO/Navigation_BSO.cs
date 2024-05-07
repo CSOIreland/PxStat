@@ -14,8 +14,8 @@ namespace PxStat.System.Navigation
     {
         Navigation_DTO_Search DTO;
         int searchTermCount;
-        ADO Ado;
-        internal Navigation_BSO(ADO ado, Navigation_DTO_Search dto)
+        IADO Ado;
+        internal Navigation_BSO(IADO ado, Navigation_DTO_Search dto)
         {
             DTO = dto;
             Ado = ado;
@@ -138,7 +138,7 @@ namespace PxStat.System.Navigation
 
 
 
-            int maxResults = Configuration_BSO.GetCustomConfig(ConfigType.global, "search.maximumResults");
+            //  int maxResults = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "search.maximumResults");
 
             //If there are dupes then only use the higher score
             var grouped = dt.AsEnumerable()
@@ -148,7 +148,7 @@ namespace PxStat.System.Navigation
                                      {
                                          grp.Key,
                                          Attribute = grp.Max(e => e.Field<int>("Attribute"))
-                                     }).OrderByDescending(x => x.Attribute).ThenBy(x => x.Key).Take(maxResults);
+                                     }).OrderByDescending(x => x.Attribute).ThenBy(x => x.Key);//.Take(maxResults);
 
 
 
@@ -201,7 +201,7 @@ namespace PxStat.System.Navigation
             var uniqueSearch = rlist.GroupBy(x => new { x.Matrix, x.SearchTerm }).Select(x => new { x.Key.Matrix, x.Key.SearchTerm, score = x.Max(e => e.Attribute) });
 
             //get the results of the previous grouping but with a count of how many times it occurs
-            var groups = uniqueSearch.GroupBy(x => new { x.Matrix }).Select(x => new { x.Key.Matrix, mcount = x.Count(), score = x.Max(e => e.score) });
+            var groups = uniqueSearch.GroupBy(x => new { x.Matrix }).Select(x => new { x.Key.Matrix, mcount = x.Count(), score = x.Sum(e => e.score) });
 
             //if our count equals the number of unique search words then we have found full matches for each search word
             return groups.Where(x => x.mcount == wcount);
@@ -218,10 +218,10 @@ namespace PxStat.System.Navigation
             //https://riptutorial.com/csharp/example/17012/groupby-sum-and-count
 
             //get unique groupings of Matrix code and search word, along with max score  
-            var uniqueSearch = rlist.GroupBy(x => new { x.Matrix, x.SearchTerm }).Select(x => new { x.Key.Matrix, x.Key.SearchTerm, score = x.Max(e => e.Attribute) });
+            var uniqueSearch = rlist.GroupBy(x => new { x.Matrix, x.Lemma }).Select(x => new { x.Key.Matrix, x.Key.Lemma, score = x.Max(e => e.Attribute) });
 
             //get the results of the previous grouping but with a count of how many times it occurs
-            var groups = uniqueSearch.GroupBy(x => new { x.Matrix }).Select(x => new { x.Key.Matrix, mcount = x.Count(), score = x.Max(e => e.score) });
+            var groups = uniqueSearch.GroupBy(x => new { x.Matrix }).Select(x => new { x.Key.Matrix, mcount = x.Count(), score = x.Sum(e => e.score) });
 
             //if our count equals the number of unique search words then we have found at least some synonym matches for each search word
             return groups.Where(x => x.mcount == wcount);
@@ -236,9 +236,9 @@ namespace PxStat.System.Navigation
         private List<RawSearchResult> GetRawWordSearchResults(dynamic raw)
         {
             List<RawSearchResult> rList = new List<RawSearchResult>();
-            int multiplierKrl = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.release_word_multiplier");
-            int multiplierKsb = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.subject_word_multiplier");
-            int multiplierKpr = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.product_word_multiplier");
+            int multiplierKrl = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "search.release_word_multiplier");
+            int multiplierKsb = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "search.subject_word_multiplier");
+            int multiplierKpr = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "search.product_word_multiplier");
             int multiplier;
 
             foreach (var r in raw)
@@ -306,8 +306,8 @@ namespace PxStat.System.Navigation
             dt.Columns.Add("Value");
             dt.Columns.Add("Attribute");
 
-            int searchSynonymMult = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.synonym-multiplier");
-            int searchWordMult = Configuration_BSO.GetCustomConfig(ConfigType.server, "search.search-word-multiplier");
+            int searchSynonymMult = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "search.synonym-multiplier");
+            int searchWordMult = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "search.search-word-multiplier");
 
             ILanguagePlugin language = Resources.LanguageManager.GetLanguage(DTO.LngIsoCode);
             List<Synonym> synList = new List<Synonym>();
@@ -325,12 +325,12 @@ namespace PxStat.System.Navigation
                     }
                 }
 
-                foreach(var item in synList)
+                foreach (var item in sList)
                 {
                     var row = dt.NewRow();
-                    row["Key"] = item.lemma;
-                    row["Value"] = item.match;
-                    row["Attribute"] = searchSynonymMult;
+                    row["Key"] = word;
+                    row["Value"] = item;
+                    row["Attribute"] = word.ToUpper().Equals(item.ToUpper()) ? searchWordMult : searchSynonymMult;
                     dt.Rows.Add(row);
                 }
 
@@ -340,7 +340,7 @@ namespace PxStat.System.Navigation
                     var row = dt.NewRow();
                     row["Key"] = syn.lemma;
                     row["Value"] = syn.match;
-                    row["Attribute"] = searchWordMult;
+                    row["Attribute"] = syn.lemma.ToUpper().Equals(syn.match.ToUpper()) ? searchWordMult : searchSynonymMult;
                     dt.Rows.Add(row);
                 }
 
@@ -395,7 +395,7 @@ namespace PxStat.System.Navigation
                 foreach (var cls in rlsCls)
                 {
                     dynamic RlsCls = new ExpandoObject();
-                    string readLanguage = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                    string readLanguage = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
                     //If this classification exists in the requested language, return it, otherwise return it in the default language
                     if ((classifications.Where(x => (x.RlsCode == release.RlsCode && x.LngIsoCode == DTO.LngIsoCode)).Count() > 0))
                     {
@@ -434,7 +434,7 @@ namespace PxStat.System.Navigation
                 // We need to conditionally display our results depending on the preferred language
                 //Either this matrix exists in our preferred language..
                 //..Or else it doesn't exist in our preferred language but a version exists in the default language
-                if (release.LngIsoCode == lngIsoCode || (release.LngIsoCode == Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") && !existsInPreferredLangauge))
+                if (release.LngIsoCode == lngIsoCode || (release.LngIsoCode == Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") && !existsInPreferredLangauge))
                 {
                     outList.Add(rel);
                 }

@@ -58,11 +58,11 @@ namespace PxStat.System.Notification
 
             if (!readGroupAccounts.hasData && !readPowerUsers.hasData)
             {
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 Log.Instance.Debug("No email addresses found");
                 return true;
             }
-            string emailRegex = Utility.GetCustomConfig("APP_REGEX_EMAIL");
+            string emailRegex = Configuration_BSO.GetStaticConfig("APP_REGEX_EMAIL");
 
             foreach (var user in readGroupAccounts.data)
             {
@@ -88,9 +88,9 @@ namespace PxStat.System.Notification
             email.Subject = DTO.Subject;
             email.Body = DTO.Body;
 
-            sendMail(email, Configuration_BSO.GetCustomConfig(ConfigType.global, "title"), DTO.Subject, DTO.Body);
+            sendMail(email, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title"), DTO.Subject, DTO.Body);
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
 
@@ -113,13 +113,13 @@ namespace PxStat.System.Notification
             listToParse.Add(new eMail_KeyValuePair() { key = "{title}", value = title });
             listToParse.Add(new eMail_KeyValuePair() { key = "{subject}", value = subject });
             listToParse.Add(new eMail_KeyValuePair() { key = "{body}", value = body });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{received-by}", value = string.Format(Label.Get("label.timezone", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")), grouplist) });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "title") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.application") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetCustomConfig(ConfigType.global, "url.logo") });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
-            listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{received-by}", value = string.Format(Label.Get("label.timezone", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")), grouplist) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_name}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "title") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{website_url}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.application") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{image_source}", value = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "url.logo") });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{datetime_label}", value = Label.Get("label.date-time", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
+            listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
 
 
             email.Subject = subject;

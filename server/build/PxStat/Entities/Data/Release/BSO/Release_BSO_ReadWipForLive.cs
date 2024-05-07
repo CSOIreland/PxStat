@@ -3,7 +3,7 @@ using PxStat.Template;
 
 namespace PxStat.Data
 {
-    internal class Release_BSO_ReadWipForLive : BaseTemplate_Read<Release_DTO_ReadWipForLive, Release_VLD_ReadWipForLive>
+    internal class Release_BSO_ReadWipForLive : BaseTemplate_Create<Release_DTO_ReadWipForLive, Release_VLD_ReadWipForLive>
     {
         /// <summary>
         /// Constructor

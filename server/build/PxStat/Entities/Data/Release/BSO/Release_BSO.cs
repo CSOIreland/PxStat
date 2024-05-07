@@ -5,15 +5,14 @@ namespace PxStat.Data
 {
     internal class Release_BSO : IDisposable
     {
-        private ADO _ado;
-        internal Release_BSO(ADO ado)
+        private IADO _ado;
+        internal Release_BSO(IADO ado)
         {
             _ado = ado;
         }
 
         public void Dispose()
         {
-            _ado.Dispose();
         }
 
         internal bool IsLiveWithWip(int rlsCode, string samAccountName)

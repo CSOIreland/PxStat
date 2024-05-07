@@ -359,7 +359,7 @@ namespace PxParser.Resources.Parser
 
             if (!keys.Any())
             {
-                throw new Exception(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
+                throw new FormatException(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
             }
             return keys;
         }
@@ -435,7 +435,7 @@ namespace PxParser.Resources.Parser
             var keys = pxDoc.Keywords.Where(k => k.Key.Identifier == keywordIdentifier && (String.IsNullOrEmpty(language) || k.Key.Language == language));
             if (!keys.Any())
             {
-                throw new Exception(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
+                throw new FormatException(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
             }
             return keys;
         }
@@ -454,7 +454,7 @@ namespace PxParser.Resources.Parser
 
             if (!keys.Any())
             {
-                throw new Exception(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
+                throw new FormatException(string.Format(Label.Get("px.schema.key-not-found"), keywordIdentifier, language));
             }
             return keys;
         }

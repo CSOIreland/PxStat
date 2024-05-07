@@ -21,7 +21,7 @@ namespace PxStat.DataStore
 
             Matrix_IADO mAdo = new Matrix_IADO(ado);
             Dspec dspec = new Dspec();
-            string defaultLanguage = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            string defaultLanguage = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
             var valuePresent = matrix.Dspecs.TryGetValue(defaultLanguage, out dspec);
 
             // Create the DMatrix for the default language

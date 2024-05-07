@@ -20,8 +20,8 @@ namespace PxStat.Data
         {
             DataTable dt = new DataTable();
 
-            lngIsoCode = lngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : lngIsoCode;
-
+            lngIsoCode = lngIsoCode == null || !matrix.Dspecs.ContainsKey(lngIsoCode) ? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") : lngIsoCode;
+            
             Dspec theSpec = matrix.Dspecs[lngIsoCode];
 
             foreach (var dimension in theSpec.Dimensions)
@@ -29,8 +29,6 @@ namespace PxStat.Data
                 if (viewCodes)
                 {
                     var code = dimension.Code;
-                    //if (dimension.Code.ToUpper().Equals(dimension.Value.ToUpper()))
-                    //    code = dimension.Code + Label.Get("default.csv.code");
                     dt.Columns.Add(code);
 
 
@@ -47,7 +45,7 @@ namespace PxStat.Data
 
 
             dt.Columns.Add(Label.Get("xlsx.unit", lngIsoCode));
-            dt.Columns.Add(Label.Get("xlsx.value", lngIsoCode));
+            dt.Columns.Add(Label.Get("xlsx.value", lngIsoCode), typeof(double));
 
 
 
@@ -79,7 +77,7 @@ namespace PxStat.Data
                     i++;
                 }
 
-                string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
+                string confidential = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value");
                 foreach (var dataPoint in cjoin)
                 {
                     int col = -1;
@@ -101,8 +99,16 @@ namespace PxStat.Data
 
                     string val = cell.ToString();
 
+                    if(Double.TryParse(val, out double result))
+                    {
+                        dr[++col] = val;
+                    }
+                    else 
+                    {
+                        dr[++col] = DBNull.Value;
 
-                    dr[++col] = val == confidential ? DBNull.Value : cell.ToString();
+                    }
+                    
 
 
 
@@ -118,11 +124,11 @@ namespace PxStat.Data
             return dt;
         }
 
-        internal DataTable GetMatrixDataTableCodesOnly(IDmatrix matrix, string lngIsoCode = null, bool indicateBlankSymbols = true, bool headerOnly = false)
+        public DataTable GetMatrixDataTableCodesOnly(IDmatrix matrix, string lngIsoCode = null, bool indicateBlankSymbols = true, bool headerOnly = false)
         {
             DataTable dt = new DataTable();
 
-            lngIsoCode = lngIsoCode == null ? Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code") : lngIsoCode;
+            lngIsoCode = lngIsoCode == null ? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") : lngIsoCode;
 
             Dspec theSpec = matrix.Dspecs[lngIsoCode];
 
@@ -168,7 +174,7 @@ namespace PxStat.Data
                         i++;
                     }
 
-                    string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
+                    string confidential = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value");
                     foreach (var dataPoint in cjoin)
                     {
                         int col = -1;
@@ -204,11 +210,102 @@ namespace PxStat.Data
             return dt;
         }
 
+        public DataTable GetMatrixDataTableCodesAndSequences(IDmatrix matrix, string lngIsoCode = null, bool indicateBlankSymbols = true, bool headerOnly = false)
+        {
+            DataTable dt = new DataTable();
+
+            lngIsoCode = lngIsoCode == null ? Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code") : lngIsoCode;
+
+            Dspec theSpec = matrix.Dspecs[lngIsoCode];
+
+            foreach (var vrb in theSpec.Dimensions)
+            {
+
+                dt.Columns.Add(vrb.Code);
+                dt.Columns.Add(vrb.Code + "_sequence",typeof(int));
+
+            }
+
+
+            dt.Columns.Add(Label.Get("xlsx.value", lngIsoCode));
+
+
+            if (!headerOnly)
+            {
+
+                IEnumerable<ValueElement> cells;
+                int cellCounter = 0;
+
+                cells = matrix.Cells.Select(c => (ValueElement)c);
+
+                List<List<IDimensionVariable>> dlist = new List<List<IDimensionVariable>>();
+                foreach (var m in theSpec.Dimensions)
+                    dlist.Add(m.Variables);
+
+                var cjoin = CartesianProduct(dlist);
+
+
+
+                if (cells.Count() > 0)
+
+                {
+                    List<dynamic> Cells = matrix.Cells.ToList();
+
+                    Dictionary<int, dynamic> dCells = new Dictionary<int, dynamic>();
+
+                    int i = 0;
+                    foreach (var cell in Cells)
+                    {
+                        dCells.Add(i, cell);
+                        i++;
+                    }
+
+                    string confidential = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value");
+                    foreach (var dataPoint in cjoin)
+                    {
+                        int col = -1;
+                        DataRow dr = dt.NewRow();
+
+
+                        foreach (var dim in dataPoint)
+                        {
+                            dr[++col] = dim.Code;
+                            dr[++col] = dim.Sequence;
+                        }
+
+
+                        dynamic cell = dCells[cellCounter];
+
+                        string emptyValue = indicateBlankSymbols ? confidential : "";
+
+                        string val = cell.ToString();
+
+
+                        dr[++col] = val == confidential ? DBNull.Value : cell.ToString();
+
+
+
+                        cellCounter++;
+
+                        dt.Rows.Add(dr);
+                    }
+
+                }
+
+            }
+
+            return dt;
+        }
+
         internal string GetXlsx(IDmatrix theMatrix, string lngIsoCode, CultureInfo ci = null, string pivot = null, bool viewCodes = true)
         {
+            Dspec spec;
 
-
-            Dspec spec = theMatrix.Dspecs[lngIsoCode];
+            if (!theMatrix.Dspecs.ContainsKey(lngIsoCode)) 
+            {
+                lngIsoCode=Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+            }
+            spec = theMatrix.Dspecs[lngIsoCode];
 
 
             XlsxClosedXL xcl = new XlsxClosedXL();
@@ -245,6 +342,7 @@ namespace PxStat.Data
             documentStream = InsertTableAndPivotSheet(documentStream, GetMatrixDataTableCodesAndLabels(theMatrix, lngIsoCode, false, 1, viewCodes), Label.Get("xlsx.pivoted", lngIsoCode), pivot, Label.Get("xlsx.unpivoted", lngIsoCode), Label.Get("xlsx.value", lngIsoCode), Label.Get("xlsx.unit", lngIsoCode), spec);
 
             //Test option...get a local version of the xlsx file
+            
             //SaveToFile(@"C:\nok\Schemas\" + theMatrix.Code + ".xlsx", documentStream);
 
             //return the serialized version of the spreadsheet
@@ -267,44 +365,26 @@ namespace PxStat.Data
             //First we find the values column
             var header = sheet.Rows(1, 1);
 
-            string valueColumnLetter = "";
-            foreach (IXLRow row in header)
-            {
-                foreach (var cell in row.CellsUsed())
-                {
-                    if (cell.Value.Equals(valueField))
-                    {
-                        valueColumnLetter = cell.WorksheetColumn().ColumnLetter();
-                    }
-                }
-            }
-            var valColumn = sheet.Column(valueColumnLetter);
-            //Next we iterate through all used cells on the value column and change the DataType to number if the data is numeric
-            if (valColumn != null)
-            {
-                foreach (IXLCell cell in valColumn.CellsUsed())
-                {
-                    if (DataAdaptor.IsNumeric(cell.Value.ToString()))
-                    {
-                        cell.DataType = XLDataType.Number;
-                    }
-                }
-            }
+
 
             // Add a new sheet for our pivot table
             var ptSheet = workbook.Worksheets.Add(pivotTableName);
 
             var pt = ptSheet.PivotTables.Add(pivotTableName, ptSheet.Cell(1, 1), table.AsRange());
 
-            //var pivotDimensionName = theSpec.Dimensions.Where(x => x.Code.Equals(pivotDimension)).FirstOrDefault().Value;
-            // The columns will be the months
+            //List<string> columnNames = new ();
+            //foreach(var col in dt.Columns)
+            //{
+            //    if (!col.ToString().Equals(pivotDimension) && !col.ToString().Equals(valueField) && !col.ToString().Equals(unitField) && ! pt.RowLabels.Contains(col.ToString()))
+            //        pt.RowLabels.Add(col.ToString());
+            //}
             if (pivotDimension != null)
             {
-                //var pivotDimensionName = theSpec.Dimensions.Where(x => x.Code.Equals(pivotDimension)).FirstOrDefault().Value;
-                //pt.ColumnLabels.Add(pivotDimensionName);
+  
                 pt.ColumnLabels.Add(pivotDimension);
 
             }
+            
 
             List<string> clsNames = new List<string>();
             foreach (var cls in theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_CLASSIFICATION))
@@ -320,7 +400,7 @@ namespace PxStat.Data
                 {
                     //Only value fields in the pivot, not codes!
 
-                    if (GetDimensionNameFromColumnName(col.ColumnName) == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault().Value || col.ColumnName == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_TIME).FirstOrDefault().Value || clsNames.Contains(col.ColumnName))
+                    //if (GetDimensionNameFromColumnName(col.ColumnName) == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_STATISTIC).FirstOrDefault().Value || col.ColumnName == theSpec.Dimensions.Where(x => x.Role == Constants.C_DATA_DIMENSION_ROLE_TIME).FirstOrDefault().Value || clsNames.Contains(col.ColumnName))
                         pt.RowLabels.Add(col.ColumnName);
                 }
             }
@@ -481,7 +561,7 @@ namespace PxStat.Data
 
             if (matrix.Cells.Count() > 0)
             {
-                string confidential = Configuration_BSO.GetCustomConfig(ConfigType.server, "px.confidential-value");
+                string confidential = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "px.confidential-value");
                 foreach (var dataRow in pivotJoin)
                 {
                     int col = -1;
@@ -605,21 +685,22 @@ namespace PxStat.Data
             return cells;
         }
 
-        internal string GetCsv(DataTable dt, string quote = "", CultureInfo ci = null, bool showConfidential = false)
+        public string GetCsv(DataTable dt, string quote = "", CultureInfo ci = null, bool showConfidential = false)
         {
 
-            string lngIsoCode = Utility.GetUserAcceptLanguage();
+            string lngIsoCode;// = Utility.GetUserAcceptLanguage();
 
             //This will be language dependent
             string sep = Label.Get("default.csv.separator");
 
-            if (String.IsNullOrEmpty(lngIsoCode))
-                lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+            //if (String.IsNullOrEmpty(lngIsoCode))
+                lngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             StringBuilder sb = new StringBuilder();
 
             string headerText = "";
             int headerCounter = 1;
+            
             foreach (DataColumn col in dt.Columns)
             {
 
@@ -630,7 +711,7 @@ namespace PxStat.Data
             sb.AppendLine(headerText);
 
             string confidentialValue = "";
-            if (showConfidential) confidentialValue = Utility.GetCustomConfig("APP_PX_CONFIDENTIAL_VALUE");
+            if (showConfidential) confidentialValue = Configuration_BSO.GetStaticConfig("APP_PX_CONFIDENTIAL_VALUE");
             
             foreach (DataRow row in dt.Rows)
             {
@@ -640,7 +721,7 @@ namespace PxStat.Data
                 {
 
                     //check if we need to reformat this by language
-                    string word = row[i].Equals(DBNull.Value) ? confidentialValue : (string)row[i];
+                    string word = row[i].Equals(DBNull.Value) ? confidentialValue : Convert.ToString( row[i]);
 
                     //Doubles will vary by language. However, this should only be applied to the last column, i.e. the VALUE
                     if (Double.TryParse(word, out double result) && i.Equals(dt.Columns.Count - 1))
@@ -649,7 +730,7 @@ namespace PxStat.Data
                         word = result.ToString(ci != null ? ci : CultureInfo.CreateSpecificCulture(lngIsoCode));
                     }
 
-                    line = line + quote + word + quote + (i < (dt.Columns.Count - 1) ? sep : "");
+                    line = line + quote + word + quote + (i < (dt.Columns.Count - 1) ? sep : "" ) ;
 
 
                 }

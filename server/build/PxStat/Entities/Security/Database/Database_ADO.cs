@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Data;
+using PxStat.DataStore;
 using System;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace PxStat.Security
         /// <param name="ado"></param>
 
         /// <returns></returns>
-        internal ADO_readerOutput Read(ADO ado, Database_DTO_Read databaseParam)
+        internal ADO_readerOutput Read(IADO ado, Database_DTO_Read databaseParam)
         {
 
 
@@ -47,44 +48,5 @@ namespace PxStat.Security
             return reader;
 
         }
-        internal void UpdateIndexes(ADO ado)
-        {
-
-
-            ADO adoBatch = new ADO("msdbConnection");
-
-            Matrix_ADO m = new Matrix_ADO(ado);
-            string dbName = m.getDbName();
-
-            string processName = "DataMatrixUpdateIndexes_" + dbName;
-
-            var inputParams = new List<ADO_inputParams>()
-                {
-                    new ADO_inputParams() {name ="@job_name",value=processName }
-                };
-
-            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
-            if (!m.IsProcessRunning(processName))
-            {
-
-                try
-                {
-                    adoBatch.ExecuteNonQueryProcedure("sp_start_job", inputParams, ref returnParam);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    adoBatch.CloseConnection();
-                    adoBatch.Dispose();
-                }
-            }
-
-
-
-        }
-
     }
 }

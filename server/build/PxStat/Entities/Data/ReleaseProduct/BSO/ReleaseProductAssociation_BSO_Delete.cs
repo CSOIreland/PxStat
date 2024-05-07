@@ -1,4 +1,5 @@
 ﻿using API;
+using PxStat.Resources;
 using PxStat.Template;
 
 namespace PxStat.Data
@@ -41,9 +42,9 @@ namespace PxStat.Data
             }
 
             //Flush the cache for search - it's now out of date
-            MemCacheD.CasRepositoryFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
+           Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
 
-            Response.data = JSONRPC.success;
+            Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
             return true;
         }
     }

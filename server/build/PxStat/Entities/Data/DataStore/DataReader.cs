@@ -1,8 +1,10 @@
 ﻿using API;
 using Autofac;
 using PxStat.Data;
+using PxStat.JsonQuery;
 using PxStat.JsonStatSchema;
 using PxStat.Resources;
+using PxStat.Security;
 using PxStat.System.Navigation;
 using System;
 using System.Collections.Generic;
@@ -25,9 +27,9 @@ namespace PxStat.DataStore
 
         public DataReader()
         {
-            var builder = new ContainerBuilder();
-            builder.RegisterType<ADO>().As<IADO>().WithParameter("connectionName", "defaultConnection");
-            Container = builder.Build();
+            //var builder = new ContainerBuilder();
+            //builder.RegisterType<IADO>().As<IADO>().WithParameter("connectionName", "defaultConnection");
+            //Container = builder.Build();
         }
 
         /// <summary>
@@ -37,14 +39,14 @@ namespace PxStat.DataStore
         /// <param name="query"></param>
         /// <param name="rDto"></param>
         /// <returns></returns>
-        public IDmatrix QueryDataset(IADO ado, IMetaData metaData, CubeQuery_DTO query, Release_DTO rDto)
+        public IDmatrix QueryDataset(IADO ado,  CubeQuery_DTO query, Release_DTO rDto)
         {
             _ado = ado;
             _lngIsoCode = query.jStatQueryExtension.extension.Language.Code;
             IDmatrix matrix = new MatrixFactory().Get(ado, rDto);
 
             //Load the matrix from the data and metaData
-            ReadDmatrix(ref matrix, ado, metaData, matrix.Release, _lngIsoCode);
+            ReadDmatrix(ref matrix, ado,  matrix.Release, _lngIsoCode);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -104,25 +106,25 @@ namespace PxStat.DataStore
         /// <param name="ado"></param>
         /// <param name="queryMatrix"></param>
         /// <returns></returns>
-        public IDmatrix QueryDataset(IADO ado, IMetaData metaData, IDmatrix queryMatrix, string queryLngIsoCode)
+        public IDmatrix QueryDataset(IADO ado,  IDmatrix queryMatrix, string queryLngIsoCode)
         {
             IDmatrix matrix = new MatrixFactory().Get(ado, queryMatrix.Release);
 
             //Load the matrix from the data and metaData
-            ReadDmatrix(ref matrix, ado, metaData, matrix.Release, queryLngIsoCode);
+            ReadDmatrix(ref matrix, ado,  matrix.Release, queryLngIsoCode);
 
             //Run the query against the matrix
             IDmatrix queriedMatrix = RunFractalQuery(matrix, queryMatrix.Dspecs[queryLngIsoCode]);
             return matrix;
         }
 
-        public IDmatrix GetDataset(IADO ado, IMetaData metaData, string lngIsoCode, Release_DTO rDto)
+        public IDmatrix GetDataset(IADO ado,  string lngIsoCode, Release_DTO rDto)
         {
             _ado = ado;
             IDmatrix matrix = new MatrixFactory().Get(ado, rDto);
 
             //Load the matrix from the data and metaData
-            ReadDmatrix(ref matrix, ado, metaData, matrix.Release, lngIsoCode);
+            ReadDmatrix(ref matrix, ado,  matrix.Release, lngIsoCode);
             return matrix;
         }
 
@@ -193,6 +195,28 @@ namespace PxStat.DataStore
             return matrix;
         }
 
+
+        public IDmatrix RunFractalQueryMetadata(IDmatrix matrix, PxApiV1_DTO query)
+        {
+            if (_spec == null) _spec = matrix.Dspecs[matrix.Language];
+            //For each dimension, what variables are being queried? The result is stored in the QueryDimensionOrdinals
+            //property of each dimension
+            ApplyQueryToDimensions(ref _spec, query);
+
+            //For each dimension, what ordinals of Cells would be selected if only that dimension was being queried?
+            Parallel.ForEach(_spec.Dimensions, dim =>
+            {
+                dim.QualifyingOrdinals = GetQualifyingOrdinals(dim, matrix.Cells.Count);
+                List<IDimensionVariable> queriedVariableList = new List<IDimensionVariable>();
+                foreach (int s in dim.QueryDimensionOrdinals)
+                    queriedVariableList.Add(dim.Variables[s - 1]);
+                //We can also take the opportunity to amend the dimension to make it correspond to the query:
+                dim.Variables = queriedVariableList;
+            });
+
+            return matrix;
+        }
+
         public IDmatrix RunFractalQueryMetadata(IDmatrix matrix, CubeQuery_DTO query)
         {
             if (_spec == null) _spec = matrix.Dspecs[matrix.Language];
@@ -214,6 +238,60 @@ namespace PxStat.DataStore
             return matrix;
         }
 
+        public IDmatrix RunFractalQuery(IDmatrix matrix, PxApiV1_DTO query)
+        {
+            if (_spec == null) _spec = matrix.Dspecs[matrix.Language];
+            ApplyQueryToDimensions(ref _spec, query);
+            //For each dimension, what ordinals of Cells would be selected if only that dimension was being queried?
+            Parallel.ForEach(_spec.Dimensions, dim =>
+            {
+                dim.QualifyingOrdinals = GetQualifyingOrdinals(dim, matrix.Cells.Count);
+                List<IDimensionVariable> queriedVariableList = new List<IDimensionVariable>();
+                foreach (int s in dim.QueryDimensionOrdinals)
+                    queriedVariableList.Add(dim.Variables[s - 1]);
+                //We can also take the opportunity to amend the dimension to make it correspond to the query:
+                dim.Variables = queriedVariableList;
+            });
+
+            //for debugging:
+            //foreach(var dim in _spec.Dimensions)
+            //{
+            //    dim.QualifyingOrdinals = GetQualifyingOrdinals(dim, matrix.Cells.Count);
+            //    List<IDimensionVariable> queriedVariableList = new List<IDimensionVariable>();
+            //    foreach (int s in dim.QueryDimensionOrdinals)
+            //        queriedVariableList.Add(dim.Variables[s - 1]);
+            //    //We can also take the opportunity to amend the dimension to make it correspond to the query:
+            //    dim.Variables = queriedVariableList;
+            //}
+            //Now do a linq join of the QueryDimensionOrdinals properties of each dimension
+            //This will result in a list of Cells ordinals that correspond to the query
+
+
+            var selectedCells = GetJoinedQueriedOrdinals(matrix);
+            List<dynamic> filteredCells = new List<dynamic>();
+
+
+            //Express the matrix cells as a list of ordered objects
+            var sequenceCells = from pair in matrix.Cells.ToList().Select((value, index) => new { value, index })
+                                select new SequencedCell() { Sequence = pair.index, Value = pair.value };
+
+
+            //Get the cells corresponding to the selecte sequences
+            var output = from sCell in sequenceCells
+                         join cell in selectedCells
+                         on sCell.Sequence equals cell
+                         orderby sCell.Sequence
+                         select new
+                         {
+                             sCell.Value
+                         };
+
+
+            matrix.Cells = output.Select(x => x.Value).ToList();
+
+
+            return matrix;
+        }
 
         /// <summary>
         /// Run fractal query using another matrix as query metaData
@@ -425,6 +503,139 @@ namespace PxStat.DataStore
             return qualifyingOrdinals;
         }
 
+        private void ApplyQueryToDimensions(ref IDspec spec, PxApiV1_DTO query)
+        {
+
+            Parallel.ForEach(spec.Dimensions, d =>
+            {
+                var queryItem = query.jsonStatQueryPxApiV1.Query.Where(x => x.Code.Equals(d.Code)).FirstOrDefault();
+                if (queryItem != null)
+                {
+                    d.QueryDimensionOrdinals = new List<int>();
+                    // There is a query defined for this dimension
+                    List<dynamic> itemStringList = new List<dynamic>();
+
+
+                    if (queryItem.Selection.Filter.Equals(JsonStatQueryPxApiV1Filter.item))
+                        itemStringList = queryItem.Selection.Values;
+                    else if (queryItem.Selection.Filter.Equals(JsonStatQueryPxApiV1Filter.top))
+                        itemStringList = GetItemListFromTop(d, queryItem);
+                    else if (queryItem.Selection.Filter.Equals(JsonStatQueryPxApiV1Filter.fluid))
+                        itemStringList = GetItemListFromFluid(d, queryItem);
+                    else
+                        throw new Exception(Label.Get("error.validation"));
+
+                    //Convert these to a list of integers
+                    //If the list of integers is empty, we presume that all items for the dimension are required (same as not specifying the dim code in the query)
+                    if (itemStringList.Count > 0)
+                    {
+                        foreach (var item in itemStringList)
+                        {
+                            //if a valid variable is found in the query then add it, otherwise ignore
+                            if (d.Variables.Where(x => x.Code == item).Count() > 0)
+                                d.QueryDimensionOrdinals.Add((d.Variables.Where(x => x.Code == item).FirstOrDefault().Sequence));
+
+                        }
+                    }
+                    else d.QueryDimensionOrdinals = d.Variables.Select(x => x.Sequence).ToList();
+                }
+                else
+                    d.QueryDimensionOrdinals = d.Variables.Select(x => x.Sequence).ToList();
+
+                //ordinals may or may not have been added according to their sequence, so we must sort them
+                d.QueryDimensionOrdinals.Sort();
+            });
+
+            //Keep the following code for debugging
+
+            //foreach (var d in spec.Dimensions)
+            //{
+            //    var queryItem = query.jsonStatQueryPxApiV1.Query.Where(x => x.Code.Equals(d.Code)).FirstOrDefault();
+            //    if (queryItem != null)
+            //    {
+            //        d.QueryDimensionOrdinals = new List<int>();
+            //        // There is a query defined for this dimension
+            //        List<dynamic> itemStringList = new List<dynamic>();
+
+
+            //        if (queryItem.Selection.Filter.Equals(JsonStatQueryPxApiV1Filter.item))
+            //            itemStringList = queryItem.Selection.Values;
+            //        else if (queryItem.Selection.Filter.Equals(JsonStatQueryPxApiV1Filter.top))
+            //            itemStringList = GetItemListFromTop(d, queryItem);
+            //        else if (queryItem.Selection.Filter.Equals(JsonStatQueryPxApiV1Filter.fluid))
+            //            itemStringList = GetItemListFromFluid(d, queryItem);
+            //        else
+            //            throw new Exception(Label.Get("error.validation"));
+
+            //        //Convert these to a list of integers
+            //        //If the list of integers is empty, we presume that all items for the dimension are required (same as not specifying the dim code in the query)
+            //        if (itemStringList.Count > 0)
+            //        {
+            //            foreach (var item in itemStringList)
+            //            {
+            //                //if a valid variable is found in the query then add it, otherwise ignore
+            //                if (d.Variables.Where(x => x.Code == item).Count() > 0)
+            //                    d.QueryDimensionOrdinals.Add((d.Variables.Where(x => x.Code == item).FirstOrDefault().Sequence));
+
+            //            }
+            //        }
+            //        else d.QueryDimensionOrdinals = d.Variables.Select(x => x.Sequence).ToList();
+            //    }
+            //    else
+            //        d.QueryDimensionOrdinals = d.Variables.Select(x => x.Sequence).ToList();
+
+            //    //ordinals may or may not have been added according to their sequence, so we must sort them
+            //    d.QueryDimensionOrdinals.Sort();
+
+            //}
+        }
+
+        private List<dynamic> GetItemListFromTop(StatDimension dim, JsonStatPxApiV1Query queryItem)
+        {
+            if (queryItem.Selection.Values.Count == 0) return dim.Variables.Select(x => x.Code).ToList<dynamic>();
+
+            int counter = (int)queryItem.Selection.Values[0];
+
+            List<IDimensionVariable> itemList = new List<IDimensionVariable>();
+            //If this is a time dimension, "top" means the most recent dates, so...
+            if (dim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME))
+                itemList = dim.Variables.OrderByDescending(x => x.Sequence).ToList();
+            else
+                itemList = dim.Variables;
+
+            var list = (from v in itemList
+                        select v.Code).Take(counter);
+
+            dim.Variables = dim.Variables.OrderBy(x => x.Sequence).ToList();
+
+            return list.Select(x => x.ToString()).ToList<dynamic>();
+        }
+
+        private List<dynamic> GetItemListFromFluid(StatDimension dim, JsonStatPxApiV1Query queryItem)
+        {
+            if (queryItem.Selection.Values.Count == 0) return dim.Variables.Select(x => x.Code).ToList<dynamic>();
+            List<IDimensionVariable> itemList = new List<IDimensionVariable>();
+            List<IDimensionVariable> fluidList = new List<IDimensionVariable>();
+
+            //If this is a time dimension, "fluid" counts from the most recent dates, so...
+            if (dim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME))
+                itemList = dim.Variables.OrderByDescending(x => x.Sequence).ToList();
+            else
+                itemList = dim.Variables;
+
+            foreach (int val in queryItem.Selection.Values)
+            {
+                if (val < dim.Variables.Count && !fluidList.Contains(itemList[val]))
+                {
+                    fluidList.Add(itemList[val]);
+                }
+            }
+
+            dim.Variables = dim.Variables.OrderBy(x => x.Sequence).ToList();
+
+            return fluidList.Select(x => x.Code).ToList<dynamic>(); ;
+        }
+
         /// <summary>
         /// Converts the query item entries for each dimension from an array of codes to an array of ordinals
         /// </summary>
@@ -560,12 +771,12 @@ namespace PxStat.DataStore
             //}
         }
 
-        public IDmatrix GetNonLiveData(IADO ado, IMetaData metaData, string lngIsoCode, Release_DTO rDto)
+        public IDmatrix GetNonLiveData(IADO ado, string lngIsoCode, Release_DTO rDto)
         {
             DataStore_ADO dAdo = new DataStore_ADO();
-            IDmatrix matrix = ReadReleaseDmatrix(ado, metaData, rDto, lngIsoCode);
+            IDmatrix matrix = ReadReleaseDmatrix(ado, rDto, lngIsoCode);
             matrix.Release.RlsCode = rDto.RlsCode;
-            matrix.CreatedDateString = rDto.RlsLiveDatetimeFrom.ToString(metaData.GetPxDataTimeFormat());
+            matrix.CreatedDateString = rDto.RlsLiveDatetimeFrom.ToString(Configuration_BSO.GetStaticConfig("APP_PX_DATE_TIME_FORMAT"));
             matrix.CreatedDateTime = rDto.RlsLiveDatetimeFrom;
 
 
@@ -573,25 +784,25 @@ namespace PxStat.DataStore
             return matrix;
         }
 
-        public IDmatrix GetLiveData(IADO ado, IMetaData metaData, string mtrCode, string lngIsoCode, Release_DTO rDto)
+        public IDmatrix GetLiveData(IADO ado,  string mtrCode, string lngIsoCode, Release_DTO rDto)
         {
 
             DataStore_ADO dAdo = new DataStore_ADO();
             IDmatrix matrix = ReadLiveDataset(mtrCode, lngIsoCode, rDto);
             matrix.Release.RlsCode = rDto.RlsCode;
-            matrix.CreatedDateString = rDto.RlsLiveDatetimeFrom.ToString(metaData.GetPxDataTimeFormat());
+            matrix.CreatedDateString = rDto.RlsLiveDatetimeFrom.ToString(Configuration_BSO.GetStaticConfig("APP_PX_DATE_TIME_FORMAT"));
             matrix.CreatedDateTime = rDto.RlsLiveDatetimeFrom;
 
             return matrix;
         }
 
-        private IDmatrix ReadReleaseDmatrix(IADO ado, IMetaData metaData, Release_DTO releaseDto, string lngIsoCode)
+        private IDmatrix ReadReleaseDmatrix(IADO ado,  Release_DTO releaseDto, string lngIsoCode)
         {
             IDmatrix dmatrix = new DmatrixFactory().CreateDmatrix();
 
             // start by reading the Matrix for tha release and language
             dmatrix.Release = releaseDto;
-            dmatrix.CreatedDateString = releaseDto.RlsLiveDatetimeFrom.ToString(metaData.GetPxDataTimeFormat());
+            dmatrix.CreatedDateString = releaseDto.RlsLiveDatetimeFrom.ToString(Configuration_BSO.GetStaticConfig("APP_PX_DATE_TIME_FORMAT"));
             dmatrix.CreatedDateTime = releaseDto.RlsLiveDatetimeFrom;
 
             DataStore_ADO dAdo = new DataStore_ADO();
@@ -623,7 +834,7 @@ namespace PxStat.DataStore
             {
                 var dbMatrixData = dAdo.GetFieldDataForMatrix(ado, dmatrix.Id);
                 dmatrix.Cells = (List<dynamic>)new MatrixFactory().DeserializeData(dbMatrixData);
-                // dmatrix.Decimals = (short)dbMatrixData.data[0].MtdDecimal;
+               
             }
 
             dmatrix.Dspecs = new Dictionary<string, Dspec>();
@@ -637,7 +848,7 @@ namespace PxStat.DataStore
             spec.MatrixId = dmatrix.Id;
             if (dmatrixData.data[0].MtrNote != null)
             {
-                if (Cleanser.TryCast<List<string>>(dmatrixData.data[0].MtrNote, out List<string> result))
+                if (Resources.Cleanser.TryCast<List<string>>(dmatrixData.data[0].MtrNote, out List<string> result))
                 {
                     spec.Notes = result;
                 }
@@ -650,7 +861,7 @@ namespace PxStat.DataStore
             spec.Source = dmatrix.Copyright.CprValue;
             spec.Title = dmatrixData.data[0].MtrTitle;
 
-            spec.ContentVariable = Utility.GetCustomConfig("APP_CSV_STATISTIC");
+            spec.ContentVariable = Configuration_BSO.GetStaticConfig("APP_CSV_STATISTIC");
 
             //Get the language appropriate version of the Product Value for this spec
             if (dmatrix.Release?.PrcCode != null)
@@ -729,11 +940,11 @@ namespace PxStat.DataStore
         }
 
 
-        private void ReadDmatrix(ref IDmatrix dmatrix, IADO ado, IMetaData metaData, Release_DTO releaseDto, string lngIsoCode)
+        private void ReadDmatrix(ref IDmatrix dmatrix, IADO ado,  Release_DTO releaseDto, string lngIsoCode)
         {
             // start by reading the Matrx for tha release and language
             dmatrix.Release.RlsCode = releaseDto.RlsCode;
-            dmatrix.CreatedDateString = releaseDto.RlsLiveDatetimeFrom.ToString(metaData.GetPxDataTimeFormat());
+            dmatrix.CreatedDateString = releaseDto.RlsLiveDatetimeFrom.ToString(Configuration_BSO.GetStaticConfig("APP_PX_DATE_TIME_FORMAT"));
             dmatrix.CreatedDateTime = releaseDto.RlsLiveDatetimeFrom;
 
             DataStore_ADO dAdo = new DataStore_ADO();
@@ -918,9 +1129,9 @@ namespace PxStat.DataStore
 
             if (rDto != null)
             {
-                using (var ado = new ADO("defaultConnection"))
+                using (var Ado = AppServicesHelper.StaticADO)
                 {
-                    var reasons = new ReasonRelease_ADO().Read(ado, new ReasonRelease_DTO_Read() { RlsCode = rDto.RlsCode, LngIsoCode = lngIsoCode });
+                    var reasons = new ReasonRelease_ADO().Read(Ado, new ReasonRelease_DTO_Read() { RlsCode = rDto.RlsCode, LngIsoCode = lngIsoCode });
                     if (reasons.hasData)
                     {
                         foreach (var r in reasons.data)
@@ -934,9 +1145,9 @@ namespace PxStat.DataStore
 
             ADO_readerOutput output = null;
 
-            using (var scope = Container.BeginLifetimeScope())
+            using (var ado = AppServicesHelper.StaticADO)
             {
-                var ado = scope.Resolve<IADO>();
+                
                 output = dAdo.DataMatrixReadLive(ado, mtrCode, lngIsoCode);
 
             }
@@ -976,13 +1187,13 @@ namespace PxStat.DataStore
             spec.Source = matrix.Copyright.CprValue;
             spec.Title = output.data[0].MtrTitle;
 
-            spec.ContentVariable = Utility.GetCustomConfig("APP_CSV_STATISTIC");
+            spec.ContentVariable = Configuration_BSO.GetStaticConfig("APP_CSV_STATISTIC");
 
             if (matrix.Release?.PrcCode != null)
             {
-                using (var ado = new ADO("defaultConnection"))
+                using (var Ado = AppServicesHelper.StaticADO)
                 {
-                    Product_ADO pAdo = new Product_ADO(ado);
+                    Product_ADO pAdo = new Product_ADO(Ado);
                     Product_DTO pDTO = new Product_DTO() { LngIsoCode = spec.Language, PrcCode = matrix.Release.PrcCode };
                     var pResult = pAdo.Read(pDTO);
                     if(pResult.Count>0)
@@ -994,9 +1205,9 @@ namespace PxStat.DataStore
 
             if(matrix.Release?.SbjCode !=null)
             {
-                using (var ado=new ADO("defaultConnection"))
+                using (var Ado=AppServicesHelper.StaticADO)
                 {
-                    Subject_ADO sAdo = new Subject_ADO(ado);
+                    Subject_ADO sAdo = new Subject_ADO(Ado);
                     Subject_DTO sDTO = new Subject_DTO() { LngIsoCode = spec.Language, SbjCode = matrix.Release.SbjCode };
                     var sResult = sAdo.Read(sDTO);
                     if(sResult.Count>0)
@@ -1007,21 +1218,20 @@ namespace PxStat.DataStore
                 }
             }
 
-                using (var scope = Container.BeginLifetimeScope())
+                using (var Ado=AppServicesHelper.StaticADO)
             {
-                var ado = scope.Resolve<IADO>();
                 int previousLambda = 0;
                 if (!metadataOnly)
                 {
                     if (matrix.Cells == null)
                     {
-                        var dbMatrixData = dAdo.GetFieldDataForMatrix(ado, matrix.Id);
+                        var dbMatrixData = dAdo.GetFieldDataForMatrix(Ado, matrix.Id);
                         matrix.Cells = (List<dynamic>)new MatrixFactory().DeserializeData(dbMatrixData);
                         // dmatrix.Decimals = (short)dbMatrixData.data[0].MtdDecimal;
                     }
                     previousLambda = matrix.Cells.Count;
                 }
-                var dbDimensions = dAdo.GetDimensionsForMatrix(ado, matrix.Id);
+                var dbDimensions = dAdo.GetDimensionsForMatrix(Ado, matrix.Id);
 
                 if (dbDimensions.hasData)
                 {
@@ -1041,7 +1251,7 @@ namespace PxStat.DataStore
                             Variables = new List<IDimensionVariable>()
                         };
 
-                        var dbVariables = dAdo.GetItemsForDimension(ado, statDim.Id);
+                        var dbVariables = dAdo.GetItemsForDimension(Ado, statDim.Id);
                         if (dbVariables.hasData)
                             foreach (var vrb in dbVariables.data)
                             {
@@ -1065,7 +1275,7 @@ namespace PxStat.DataStore
                 }
 
             }
-            matrix.Dspecs.Add(lngIsoCode, (Dspec)spec);
+            matrix.Dspecs.Add(spec.Language, (Dspec)spec);
             return matrix;
         }
 
@@ -1077,7 +1287,7 @@ namespace PxStat.DataStore
 
             ADO_readerOutput output = null;
 
-            using (var ado = new ADO("defaultConnection"))
+            using (var ado = AppServicesHelper.StaticADO)
             {
                 var reasons = new ReasonRelease_ADO().Read(ado, new ReasonRelease_DTO_Read() { RlsCode = rDto.RlsCode, LngIsoCode = lngIsoCode });
                 if (reasons.hasData)
@@ -1090,9 +1300,8 @@ namespace PxStat.DataStore
                 }
             }
 
-            using (var scope = Container.BeginLifetimeScope())
+            using (var ado=AppServicesHelper.StaticADO)
             {
-                var ado = scope.Resolve<IADO>();
                 output = dAdo.DataMatrixRead(ado, rDto.RlsCode, lngIsoCode, ccnUsername);
 
             }
@@ -1125,7 +1334,7 @@ namespace PxStat.DataStore
             spec.MatrixId = matrix.Id;
             if (output.data[0].MtrNote != null)
             {
-                if (Cleanser.TryCast<List<string>>(output.data[0].MtrNote, out List<string> result))
+                if (Resources.Cleanser.TryCast<List<string>>(output.data[0].MtrNote, out List<string> result))
                 {
                     spec.Notes = result;
                 }
@@ -1135,11 +1344,11 @@ namespace PxStat.DataStore
             spec.Source = matrix.Copyright.CprValue;
             spec.Title = output.data[0].MtrTitle;
 
-            spec.ContentVariable = Utility.GetCustomConfig("APP_CSV_STATISTIC");
+            spec.ContentVariable = Configuration_BSO.GetStaticConfig("APP_CSV_STATISTIC");
 
             if (matrix.Release?.PrcCode != null)
             {
-                using (var ado = new ADO("defaultConnection"))
+                using (var ado = AppServicesHelper.StaticADO)
                 {
                     Product_ADO pAdo = new Product_ADO(ado);
                     Product_DTO pDTO = new Product_DTO() { LngIsoCode = spec.Language, PrcCode = matrix.Release.PrcCode };
@@ -1153,7 +1362,7 @@ namespace PxStat.DataStore
 
             if(matrix.Release?.SbjCode!=null)
             {
-                using (var ado=new ADO("defaultConnection"))
+                using (var ado=AppServicesHelper.StaticADO)
                 {
                     Subject_ADO sAdo = new Subject_ADO(ado);
                     Subject_DTO sDTO = new Subject_DTO() { LngIsoCode = spec.Language, SbjCode = matrix.Release.SbjCode };
@@ -1166,9 +1375,8 @@ namespace PxStat.DataStore
 
             }
 
-            using (var scope = Container.BeginLifetimeScope())
+            using (var ado=AppServicesHelper.StaticADO)
             {
-                var ado = scope.Resolve<IADO>();
                 int previousLambda = 0;
                 if (!metadataOnly)
                 {

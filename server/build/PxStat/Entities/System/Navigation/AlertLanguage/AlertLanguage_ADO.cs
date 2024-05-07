@@ -6,17 +6,17 @@ using System.Collections.Generic;
 namespace PxStat.Entities.System.Navigation.AlertLanguage
 {
     /// <summary>
-    /// ADO functions for other language versions of alerts
+    /// IADO functions for other language versions of alerts
     /// </summary>
     internal class AlertLanguage_ADO
     {
-        private ADO ado;
+        private IADO ado;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="ado"></param>
-        internal AlertLanguage_ADO(ADO ado)
+        internal AlertLanguage_ADO(IADO ado)
         {
             this.ado = ado;
         }

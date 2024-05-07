@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace PxStat.Workflow
 {
     /// <summary>
-    /// ADO for Workflow Response
+    /// IADO for Workflow Response
     /// </summary>
     internal class WorkflowResponse_ADO
     {
@@ -15,7 +15,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, WorkflowResponse_DTO dto, string ccnUsername)
+        internal int Create(IADO ado, WorkflowResponse_DTO dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -41,7 +41,7 @@ namespace PxStat.Workflow
         /// <param name="isApprover"></param>
         /// <param name="rlsCode"></param>
         /// <returns></returns>
-        internal ADO_readerOutput GetApproverAccess(ADO ado, string user, bool isApprover, int rlsCode = default(int))
+        internal ADO_readerOutput GetApproverAccess(IADO ado, string user, bool isApprover, int rlsCode = default(int))
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -61,7 +61,7 @@ namespace PxStat.Workflow
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal bool IsInUse(ADO ado, dynamic dto)
+        internal bool IsInUse(IADO ado, dynamic dto)
         {
             var inputParams = new List<ADO_inputParams>()
             {

@@ -8,7 +8,7 @@ namespace PxStat.Build
 {
     internal class Build_ADO
     {
-        internal int CreateDimensionDb(ADO ado, StatDimension dim)
+        internal int CreateDimensionDb(IADO ado, StatDimension dim)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -36,51 +36,8 @@ namespace PxStat.Build
             return retParam.value;
         }
 
-        internal int CreateDimensionDb(IADO ado, StatDimension dimension)
-        {
-            var inputParams = new List<ADO_inputParams>()
-            {
-                new ADO_inputParams(){ name="@MdmSequence",value=dimension.Sequence },
-                new ADO_inputParams(){ name ="@MdmCode", value=dimension.Code },
-                new ADO_inputParams(){  name="@MdmValue", value=dimension.Value},
-                new ADO_inputParams(){ name="@MtrId", value=dimension.MatrixId},
-                new ADO_inputParams(){ name="@DmrValue", value=dimension.Role },
-                new ADO_inputParams(){ name="@MdmGeoFlag", value=dimension.GeoFlag}
 
 
-            };
-            if (dimension.GeoUrl != null)
-                inputParams.Add(new ADO_inputParams() { name = "@MdmGeoUrl", value = dimension.GeoUrl });
-
-            // A return parameter is required for the operation
-            ADO_returnParam retParam = new ADO_returnParam();
-            retParam.name = "return";
-            retParam.value = 0;
-
-            //Attempting to create the new entity
-            ado.ExecuteNonQueryProcedure("Data_Matrix_Dimension_Create", inputParams, ref retParam);
-
-            //Assign the returned value for checking and output
-            return retParam.value;
-        }
-
-        internal void UploadDimensionItems(ADO ado, DataTable dt)
-        {
-
-
-            var maps = new List<SqlBulkCopyColumnMapping>()
-                {
-                new SqlBulkCopyColumnMapping("DMT_CODE", "DMT_CODE"),
-                    new SqlBulkCopyColumnMapping("DMT_VALUE", "DMT_VALUE"),
-                    new SqlBulkCopyColumnMapping("DMT_SEQUENCE", "DMT_SEQUENCE"),
-                    new SqlBulkCopyColumnMapping("DMT_MDM_ID", "DMT_MDM_ID")
-                };
-            using (ADO bulkAdo = new ADO("defaultConnection"))
-            {
-                bulkAdo.ExecuteBulkCopy("TD_DIMENSION_ITEM", maps, dt, true);
-            }
-
-        }
 
         internal void UploadDimensionItems(IADO ado, DataTable dt)
         {
@@ -95,7 +52,7 @@ namespace PxStat.Build
             ado.ExecuteBulkCopy("TD_DIMENSION_ITEM", maps, dt, true);
         }
 
-        internal ADO_readerOutput GetMatrixDetails(ADO ado, int rlsCode, string lngIsoCode)
+        internal ADO_readerOutput GetMatrixDetails(IADO ado, int rlsCode, string lngIsoCode)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -106,7 +63,7 @@ namespace PxStat.Build
             return ado.ExecuteReaderProcedure("Data_Matrix_Release_Read", inputParams);
         }
 
-        internal ADO_readerOutput GetDimensionsForMatrix(ADO ado, int mtrId)
+        internal ADO_readerOutput GetDimensionsForMatrix(IADO ado, int mtrId)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -117,7 +74,7 @@ namespace PxStat.Build
             return ado.ExecuteReaderProcedure("Data_Matrix_ReadDimensions", inputParams);
         }
 
-        internal ADO_readerOutput GetItemsForDimension(ADO ado, int mdmId)
+        internal ADO_readerOutput GetItemsForDimension(IADO ado, int mdmId)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -127,7 +84,7 @@ namespace PxStat.Build
             return ado.ExecuteReaderProcedure("Data_Matrix_ReadDimensionItems", inputParams);
         }
 
-        internal IEnumerable<double> GetFieldDataForMatrix(ADO ado, int mtrId)
+        internal IEnumerable<double> GetFieldDataForMatrix(IADO ado, int mtrId)
         {
             //{
             //    var inputParams = new List<ADO_inputParams>()

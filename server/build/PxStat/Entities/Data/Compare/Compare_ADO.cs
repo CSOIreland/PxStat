@@ -5,7 +5,7 @@ using System.Linq;
 namespace PxStat.Data
 {
     /// <summary>
-    /// ADO for Compare
+    /// IADO for Compare
     /// </summary>
     internal class Compare_ADO
     {

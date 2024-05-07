@@ -21,7 +21,8 @@ namespace PxStat.Data
             ICollection<KeyValuePair<string, ICollection<string>>> result =
                 new List<KeyValuePair<string, ICollection<string>>>();
 
-            if (value == null) {
+            if (value == null) 
+            {
                 return result;
             }
 
@@ -61,18 +62,18 @@ namespace PxStat.Data
             return result;
         }
 
-        public static List<KeyValuePair<string, string>> Convert(List<SqlBulkCopyColumnMapping> value)
-        {
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
-            foreach (var item in value)
-            {
-                KeyValuePair<string, string> keyValuePair =
-                    new KeyValuePair<string, string>(item.SourceColumn, item.DestinationColumn);
-                result.Add((keyValuePair));
-            }
+        //public static List<KeyValuePair<string, string>> Convert(List<SqlBulkCopyColumnMapping> value)
+        //{
+        //    List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+        //    foreach (var item in value)
+        //    {
+        //        KeyValuePair<string, string> keyValuePair =
+        //            new KeyValuePair<string, string>(item.SourceColumn, item.DestinationColumn);
+        //        result.Add((keyValuePair));
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// Get the values from the dimensions with role CLASSIFICATION and TIME and comma separate them in a string
@@ -80,7 +81,7 @@ namespace PxStat.Data
         /// <param name="title"></param>
         /// <param name="dimensions"></param>
         /// <returns></returns>
-        public static string GetDimensionValues(string title, ICollection<StatDimension> dimensions, IMetaData metaData,string lngIsoCode=null)
+        public static string GetDimensionValues(string title, ICollection<StatDimension> dimensions, string lngIsoCode=null)
         {
             if (dimensions.Count == 0)
             {
@@ -88,7 +89,7 @@ namespace PxStat.Data
             }
 
             if (lngIsoCode == null)
-                lngIsoCode = Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code");
+                lngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             List<string> dims = new List<string>();
             List<string> times = new List<string>();
@@ -116,7 +117,7 @@ namespace PxStat.Data
             }
 
             StringBuilder sb = new StringBuilder();
-            string separator = " " + metaData.GetTitleBy() + " ";
+            string separator = " " + Configuration_BSO.GetStaticConfig("APP_PX_TITLE_BY") + " ";
 
             if (dims.Count == 1)
             {

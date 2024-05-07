@@ -34,7 +34,7 @@ namespace PxStat.Subscription
             if (SamAccountName == null)
             {
 
-                if (!API.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
@@ -44,7 +44,7 @@ namespace PxStat.Subscription
 
             if (ado.ChannelDelete(DTO.ChnCode, DTO.Uid, SamAccountName))
             {
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             Log.Instance.Debug("Can't delete Subscription");

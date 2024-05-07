@@ -1,4 +1,5 @@
 ﻿using API;
+using DocumentFormat.OpenXml.Wordprocessing;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 
 namespace PxStat.Workflow
 {
+
     /// <summary>
     /// 
     /// </summary>
@@ -18,7 +20,7 @@ namespace PxStat.Workflow
         /// <param name="RlsCode"></param>
         /// <param name="CurrentFlag"></param>
         /// <returns></returns>
-        internal List<WorkflowRequest_DTO> Read(ADO ado, int RlsCode, bool? CurrentFlag = null)
+        internal List<WorkflowRequest_DTO> Read(IADO ado, int RlsCode, bool? CurrentFlag = null)
         {
             var inputParams = new List<ADO_inputParams>();
 
@@ -41,30 +43,55 @@ namespace PxStat.Workflow
                 //This may be a local user...
                 if (requestUser.CcnUsername == null)
                 {
-                    Account_ADO account_ADO = new Account_ADO();
-                    var ac = account_ADO.Read(ado, ReadString(element.CcnUsername));
-                    if (ac.hasData)
-                        requestUser = new Security.ActiveDirectory_DTO() { CcnUsername = ac.data[0].CcnUsername, CcnDisplayName = ac.data[0].CcnDisplayName, CcnEmail = ac.data[0].CcnEmail };
+                    requestUser = GetRequestUser(ado, element, requestUser);
                 }
-
-                resultList.Add(
-                    new WorkflowRequest_DTO()
-                    {
-                        WrqDatetime = ReadDateTime(element.WrqDatetime),
-                        WrqExceptionalFlag = ReadBool(element.WrqExceptionalFlag),
-                        WrqReservationFlag = ReadBool(element.WrqReservationFlag),
-                        WrqArchiveFlag = ReadBool(element.WrqArchiveFlag),
-                        WrqExperimentalFlag = ReadBool(element.WrqExperimentalFlag),
-                        WrqCurrentFlag = ReadBool(element.WrqCurrentFlag),
-                        RqsCode = ReadString(element.RqsCode),
-                        RqsValue = ReadString(element.RqsValue),
-                        RequestAccount = requestUser
-                    }
-
-                    );
+                if (requestUser != null)
+                {
+                    resultList.Add(
+                         new WorkflowRequest_DTO()
+                         {
+                             WrqDatetime = ReadDateTime(element.WrqDatetime),
+                             WrqExceptionalFlag = ReadBool(element.WrqExceptionalFlag),
+                             WrqReservationFlag = ReadBool(element.WrqReservationFlag),
+                             WrqArchiveFlag = ReadBool(element.WrqArchiveFlag),
+                             WrqExperimentalFlag = ReadBool(element.WrqExperimentalFlag),
+                             WrqCurrentFlag = ReadBool(element.WrqCurrentFlag),
+                             RqsCode = ReadString(element.RqsCode),
+                             RqsValue = ReadString(element.RqsValue),
+                             RequestAccount = requestUser
+                         }
+                     );
+                }
 
             }
             return resultList;
+        }
+
+        /// <summary>
+        /// Get the request user
+        /// </summary>
+        /// <param name="ado"></param>
+        /// <param name="element"></param>
+        /// <param name="requestUser"></param>
+        /// <returns></returns>
+        public ActiveDirectory_DTO GetRequestUser(IADO ado, dynamic element, ActiveDirectory_DTO requestUser)
+        {
+            Account_ADO account_ADO = new Account_ADO();
+            var ac = account_ADO.Read(ado, ReadString(element.CcnUsername));
+            if (ac.hasData)
+            {
+                if (!((IDictionary<string, object>)ac.data[0]).ContainsKey("CcnUsername"))
+                {
+                    // This is an edge case. It will only happen if the account of the original creator of the workflow
+                    // has been removed from the database, before the workflow has been released 
+                    Log.Instance.Error("User is not an AD User");
+                    return null;
+                }
+                var displayName = (ac.data[0].CcnDisplayName.Equals( DBNull.Value)) ? "" : ac.data[0].CcnDisplayName;
+                var email = (ac.data[0].CcnEmail.Equals(DBNull.Value)) ? "" : ac.data[0].CcnEmail;
+                requestUser = new Security.ActiveDirectory_DTO() { CcnUsername = ac.data[0].CcnUsername, CcnDisplayName = displayName, CcnEmail = email };
+            }
+            return requestUser;
         }
 
         /// <summary>
@@ -74,7 +101,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Create(ADO ado, WorkflowRequest_DTO dto, string ccnUsername)
+        internal int Create(IADO ado, WorkflowRequest_DTO dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -111,7 +138,7 @@ namespace PxStat.Workflow
         /// <param name="dto"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Update(ADO ado, WorkflowRequest_DTO_Update dto, string ccnUsername)
+        internal int Update(IADO ado, WorkflowRequest_DTO_Update dto, string ccnUsername)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -150,7 +177,7 @@ namespace PxStat.Workflow
         /// <param name="ado"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        internal bool IsCurrent(ADO ado, int rlsCode)
+        internal bool IsCurrent(IADO ado, int rlsCode)
         {
             var inputParams = new List<ADO_inputParams>()
             {
@@ -174,7 +201,7 @@ namespace PxStat.Workflow
         /// <param name="rlsCode"></param>
         /// <param name="ccnUsername"></param>
         /// <returns></returns>
-        internal int Delete(ADO ado, int rlsCode, string ccnUsername)
+        internal int Delete(IADO ado, int rlsCode, string ccnUsername)
         {
             //Only allow a delete if there is no response for the workflow (that's been checked in the BSO)
             //Workflow_WorkflowRequest_Delete @CcnUsername VARCHAR(256),@RlsCode INT

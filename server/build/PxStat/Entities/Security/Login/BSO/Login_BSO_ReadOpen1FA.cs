@@ -27,7 +27,7 @@ namespace PxStat.Security
             Login_ADO lAdo = new Login_ADO(Ado);
             if (lAdo.ReadOpen1Fa(DTO.CcnEmail))
             {
-                Response.data = JSONRPC.success;
+                Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                 return true;
             }
             return false;

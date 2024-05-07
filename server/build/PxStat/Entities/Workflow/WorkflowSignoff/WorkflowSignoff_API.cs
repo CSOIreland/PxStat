@@ -19,7 +19,7 @@ namespace PxStat.Workflow
 
         public static dynamic Create(JSONRPC_API requestApi)
         {
-            return new WorflowSignoff_BSO_Create(requestApi).Create().Response;
+            return new WorkflowSignoff_BSO_Create(requestApi).Create().Response;
         }
 
     }

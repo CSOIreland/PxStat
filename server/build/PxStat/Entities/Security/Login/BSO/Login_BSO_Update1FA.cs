@@ -54,7 +54,7 @@ namespace PxStat.Security
 
                 if (lBso.Update1FA(new Login_DTO_Create1FA() { LgnToken1Fa = DTO.LgnToken1Fa, Lgn1Fa = DTO.Lgn1Fa, CcnEmail = DTO.CcnEmail }, DTO.LgnToken1Fa))
                 {
-                    Response.data = JSONRPC.success;
+                    Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
                     return true;
                 }
 

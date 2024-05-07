@@ -19,7 +19,7 @@ namespace PxStat.System.Settings
         {
 
 
-            using (IADO ado = new ADO("defaultConnection"))
+            using (IADO ado = AppServicesHelper.StaticADO)
             {
                 Copyright_DTO_Create dto = new Copyright_DTO_Create();
 
@@ -40,32 +40,31 @@ namespace PxStat.System.Settings
 
         internal Copyright_DTO_Create ReadFromValue(string CprValue)
         {
-            ADO Ado = new ADO("defaultConnection");
-            try
+            using (IADO Ado = AppServicesHelper.StaticADO)
             {
-                Copyright_DTO_Create dto = new Copyright_DTO_Create();
-
-                Copyright_ADO cAdo = new Copyright_ADO();
-                Copyright_DTO_Read readDTO = new Copyright_DTO_Read();
-                readDTO.CprValue = CprValue;
-                var retval = cAdo.Read(Ado, readDTO);
-                if (retval.hasData)
+                try
                 {
-                    dto.CprCode = retval.data[0].CprCode;
-                    dto.CprValue = CprValue;
-                    dto.CprUrl = retval.data[0].CprUrl;
-                }
+                    Copyright_DTO_Create dto = new Copyright_DTO_Create();
 
-                return dto;
+                    Copyright_ADO cAdo = new Copyright_ADO();
+                    Copyright_DTO_Read readDTO = new Copyright_DTO_Read();
+                    readDTO.CprValue = CprValue;
+                    var retval = cAdo.Read(Ado, readDTO);
+                    if (retval.hasData)
+                    {
+                        dto.CprCode = retval.data[0].CprCode;
+                        dto.CprValue = CprValue;
+                        dto.CprUrl = retval.data[0].CprUrl;
+                    }
+
+                    return dto;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                Ado.Dispose();
-            }
+            
         }
 
         internal Copyright_DTO_Create ReadFromValue(string CprValue, IADO ado)

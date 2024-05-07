@@ -1,7 +1,9 @@
 ﻿using API;
+using PxStat.Security;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Linq;
 
 namespace PxStat.Subscription
@@ -9,7 +11,7 @@ namespace PxStat.Subscription
     /// <summary>
     /// 
     /// </summary>
-    internal class Subscriber_BSO
+    public class Subscriber_BSO
     {
         /// <summary>
         /// Reads one or all subscribers
@@ -20,30 +22,34 @@ namespace PxStat.Subscription
         /// <param name="userId"></param>
         /// <param name="readCache"></param>
         /// <returns></returns>
-        internal List<dynamic> GetSubscribers(ADO ado, string userId = null, bool? readCache = true)
+        public List<dynamic> GetSubscribers(IADO ado, string userId = null, bool? readCache = true)
         {
-
-
 
             //We may also read the subscriber data from the cache under certain circumstances
             if ((bool)readCache && userId == null)
             {
 
-                var subs = MemCacheD.Get_BSO("PxStat.Subscription", "Subscriber_BSO", "GetSubscribers", "GetSubscribers");
+                var subs =AppServicesHelper.CacheD.Get_BSO("PxStat.Subscription", "Subscriber_BSO", "GetSubscribers", "GetSubscribers");
                 if (subs.hasData)
                 {
                     return subs.data.ToObject<List<dynamic>>(); ;
                 }
             }
+            
 
-
-            IDictionary<string, dynamic> fbUsers = API.Firebase.GetAllUsers();
+            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers();
+            if(fbUsers==null)   fbUsers = new Dictionary<string, dynamic>();
             Subscriber_ADO sAdo = new Subscriber_ADO(ado);
 
 
             var subscribers = sAdo.Read(userId);
-            var adUsers = ActiveDirectory.List();
 
+            IDictionary<string, dynamic> adUsers = new Dictionary<string, dynamic>();
+            if (!ApiServicesHelper.ApiConfiguration.Settings["API_AUTHENTICATION_TYPE"].Equals("ANONYMOUS"))
+            {
+                adUsers = AppServicesHelper.ActiveDirectory.List();
+            }
+            
             foreach (var s in subscribers.data)
             {
 
@@ -83,13 +89,13 @@ namespace PxStat.Subscription
                 }
             }
             if (userId == null && subscribers.data.Count > 0)
-                MemCacheD.Store_BSO("PxStat.Subscription", "Subscriber_BSO", "GetSubscribers", "GetSubscribers", subscribers.data, DateTime.Now.AddHours(24));
+               AppServicesHelper.CacheD.Store_BSO("PxStat.Subscription", "Subscriber_BSO", "GetSubscribers", "GetSubscribers", subscribers.data, DateTime.Now.AddHours(24));
 
             return subscribers.data;
 
         }
 
-        internal bool Delete(ADO Ado, string subscriberUserId)
+        internal bool Delete(IADO Ado, string subscriberUserId)
         {
             Subscriber_ADO ado = new Subscriber_ADO(Ado);
             if (ado.Delete(subscriberUserId))
@@ -100,19 +106,26 @@ namespace PxStat.Subscription
             return false;
         }
 
-        internal bool Create(ADO Ado, string sbrPreference, string firebaseId, string lngIsoCode)
+        internal bool Create(IADO Ado, string sbrPreference, string firebaseId, string lngIsoCode)
         {
-            Subscriber_ADO ado = new Subscriber_ADO(Ado);
-            string subscriberKey = GetSubscriberKey(firebaseId);
-            if (ado.Create(sbrPreference, firebaseId, lngIsoCode, subscriberKey))
-            {
-                //Refresh the cache of valid subscriber keys
-                //These are used for throttling
-                RefreshSubscriberKeyCache(Ado);
-                return true;
-            }
-            else
-                return false;
+            
+                Subscriber_ADO ado = new Subscriber_ADO(Ado);
+                string subscriberKey = GetSubscriberKey(firebaseId);
+                if (ado.Create(sbrPreference, firebaseId, lngIsoCode, subscriberKey))
+                {
+                    Ado.CommitTransaction();
+
+                    //Refresh the cache of valid subscriber keys
+                    //These are used for throttling
+                    RefreshSubscriberKeyCache(Ado);
+
+                    return true;
+                }
+                else
+                {                   
+                    return false;
+                }
+           
 
         }
 
@@ -122,7 +135,7 @@ namespace PxStat.Subscription
         /// This method refreshes the Subscriber Key Cache
         /// </summary>
         /// <param name="ado"></param>
-        internal void RefreshSubscriberKeyCache(ADO ado)
+        internal void RefreshSubscriberKeyCache(IADO ado)
         {
             Subscriber_ADO sAdo = new Subscriber_ADO(ado);
             var response = sAdo.ReadSubscriberKeys();
@@ -133,7 +146,7 @@ namespace PxStat.Subscription
                 {
                     sList.Add(item.SbrKey);
                 }
-                MemCacheD.Store_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache", sList, DateTime.Now.AddHours(24));
+               AppServicesHelper.CacheD.Store_BSO("PxStat.Subscription", "Subscriber_BSO", "RefreshSubscriberKeyCache", "RefreshSubscriberKeyCache", sList, DateTime.Now.AddHours(24));
             }
 
         }
@@ -147,7 +160,7 @@ namespace PxStat.Subscription
         internal string GetSubscriberKey(string firebaseId)
         {
             //ConfigurationManager.AppSettings["APP_FIREBASE_SALSA"]
-            return Utility.GetRandomSHA256(ConfigurationManager.AppSettings["APP_FIREBASE_SALSA"] + firebaseId);
+            return Utility.GetSHA256(new Random().Next() + ConfigurationManager.AppSettings["APP_FIREBASE_SALSA"] + firebaseId + DateTime.Now.Millisecond);
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using API;
 using FluentValidation;
 using PxStat.Security;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,7 +46,7 @@ namespace PxStat.Data
             foreach (var feature in dto.GeoJson.Features)
             {
                 if (feature.Type != "Feature") return false;
-                if (!feature.Properties.ContainsKey(Configuration_BSO.GetCustomConfig(ConfigType.global, "language.iso.code"))) return false;
+                if (!feature.Properties.ContainsKey(Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"))) return false;
                 if (!feature.Properties.ContainsKey("code")) return false;
 
                 codes.Add(feature.Properties["code"]);
@@ -77,8 +78,8 @@ namespace PxStat.Data
         {
             if (dto.GeoJson?.Features == null) return false;
             //Get list of geometries that can be unique or otherwise
-            List<string> multi = (Utility.GetCustomConfig("APP_GEOMAP_ALLOWED_GEOMETRY_MULTI")).Split(',').ToList<string>();
-            List<string> unique = (Utility.GetCustomConfig("APP_GEOMAP_ALLOWED_GEOMETRY_UNIQUE")).Split(',').ToList<string>();
+            List<string> multi = ((String)Configuration_BSO.GetStaticConfig("APP_GEOMAP_ALLOWED_GEOMETRY_MULTI")).Split(',').ToList<string>();
+            List<string> unique = ((String)Configuration_BSO.GetStaticConfig("APP_GEOMAP_ALLOWED_GEOMETRY_UNIQUE")).Split(',').ToList<string>();
             string uniqueValue = null;
             int uniqueCount = 0;
             foreach (var feature in dto.GeoJson.Features)

@@ -6,10 +6,10 @@ namespace PxStat.Data
     internal class GeoLayer_ADO
     {
         /// <summary>
-        /// ADO class parameter
+        /// IADO class parameter
         /// </summary>
-        private ADO ado;
-        internal GeoLayer_ADO(ADO ado)
+        private IADO ado;
+        internal GeoLayer_ADO(IADO ado)
         {
             this.ado = ado;
         }

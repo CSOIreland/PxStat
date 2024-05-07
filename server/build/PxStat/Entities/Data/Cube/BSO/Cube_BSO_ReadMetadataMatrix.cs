@@ -1,6 +1,7 @@
 ﻿using API;
 using PxStat.DataStore;
 using PxStat.Template;
+using System.Net;
 
 namespace PxStat.Data
 {
@@ -45,8 +46,14 @@ namespace PxStat.Data
             IDmatrix matrix = dr.ReadLiveDataset(DTO.matrix, DTO.language, null, true);
             ApiMetadata amd = new ApiMetadata();
             var result = amd.GetApiMetadata(matrix, DTO.language);
-            IMetaData metaData = new MetaData();
-            result.Title = result.Title + ConvertFactory.GetDimensionValues(result.Title, matrix.Dspecs[DTO.language].Dimensions, metaData);
+
+            if(result==null)
+            {
+                Response.statusCode=HttpStatusCode.NotFound; 
+                return false;
+            }
+            
+            result.Title = result.Title + ConvertFactory.GetDimensionValues(result.Title, matrix.Dspecs[DTO.language].Dimensions);
             Response.data = result;
             return true;
         }

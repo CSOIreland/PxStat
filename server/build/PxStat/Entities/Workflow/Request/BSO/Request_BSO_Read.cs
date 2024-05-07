@@ -10,7 +10,7 @@ namespace PxStat.Workflow
     /// Reads Request static data table. If no parameter is supplied, all Requests are returned
     /// If a RlsCode is supplied, the Execute function returns all Request types that can be validly applied to that Release
     /// </summary>
-    internal class Request_BSO_Read : BaseTemplate_Read<Request_DTO, Request_VLD>
+    internal class Request_BSO_Read : BaseTemplate_Create<Request_DTO, Request_VLD>
     {
         /// <summary>
         /// Constructor
