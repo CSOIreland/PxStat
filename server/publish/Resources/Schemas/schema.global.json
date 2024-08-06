@@ -97,11 +97,36 @@
 						"threshold"
 					],
 					"additionalProperties": false
+				},
+				"analytical": {
+					"type": "object",
+					"properties": {
+						"label": {
+							"type": "string"
+						},
+						"icon": {
+							"type": "string"
+						},
+						"colour": {
+							"type": "string"
+						},
+						"display": {
+							"type": "boolean"
+						}
+					},
+					"required": [
+					"label",
+					"icon",
+					"colour",
+					"display"
+					],
+					"additionalProperties": false
 				}
 			},
 			"required": [
 				"officialStatistics",
-				"download"
+				"download",
+				"analytical"
 			],
 			"additionalProperties": false
 		},
@@ -302,11 +327,32 @@
 				},
 				"demo": {
 					"type": "boolean"
-				}
+				},
+                 "tokenApiAccessIpMaskWhitelist": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "prefix": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "prefix",
+                "length"
+              ]
+            }
+          ]
+        }
 			},
 			"required": [
 				"adOpenAccess",
-				"demo"
+				"demo",
+              "tokenApiAccessIpMaskWhitelist" 
 			],
 			"additionalProperties": false
 		},
@@ -346,7 +392,20 @@
 				"date-validation"
 			],
 			"additionalProperties": false
+		},
+		"salsa": {
+			"type": "object",
+			"properties": {
+				"firebase" :{
+					"type": "string"
+				},
+				"pxstat": {
+					"type": "string"
+				}
+				
+			}
 		}
+
 	},
 	"required": [
 		"title",
