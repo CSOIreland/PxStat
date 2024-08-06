@@ -20,7 +20,7 @@ CREATE OR ALTER
 	,@FrmVersion NVARCHAR(20)
 	,@MtrOfficialFlag BIT = 1
 	,@MtrNote NVARCHAR(max) = NULL
-	,@MtrInput NVARCHAR(max)
+	,@MtrInput NVARCHAR(max) = NULL
 	,@MtrRlsId INT
 	,@userName NVARCHAR(256)
 AS

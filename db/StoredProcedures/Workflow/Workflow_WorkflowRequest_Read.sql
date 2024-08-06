@@ -8,7 +8,7 @@ GO
 -- Author:		Neil O'Keeffe
 -- Create date: 15/11/2018
 -- Description:	Reads workflow requests for a Release code. If the WrqCurrentFlag parameter is supplied, it only returns the requests with that flag value
--- exec Workflow_WorkflowRequest_Read 64
+-- exec Workflow_WorkflowRequest_Read 155
 -- =============================================
 CREATE
 	OR

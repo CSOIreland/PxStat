@@ -54,6 +54,7 @@ BEGIN
 			@CprUrl IS NULL
 			OR @CprUrl = TS_COPYRIGHT.CPR_URL
 			)
+			ORDER BY CPR_VALUE
 END
 GO
 
