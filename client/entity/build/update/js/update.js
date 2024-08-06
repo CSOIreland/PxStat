@@ -11,11 +11,41 @@ $(document).ready(function () {
     app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["update"]);
     app.navigation.setState("#nav-link-nav-link-update");
 
+    // Get GoTo params
+    app.build.update.goTo.fileImport = api.content.getParam("fileImport");
 
     $("#modal-entity").empty();
     api.content.load("#modal-entity", "entity/build/update/index.modal.html", null, true);
     api.content.load("#modal-entity", "entity/build/map/index.modal.html", null, true);
     api.content.load("#modal-entity", "entity/build/geomap/index.preview.modal.html", null, true);
+
+    $("#build-update-upload-text-tab-content").find("[name=text-content]").once("keyup", function () {
+        if ($(this).val().length) {
+            $("#build-update-upload-text-tab-content").find("[name=parse-source-file]").prop("disabled", false);
+        }
+        else {
+            $("#build-update-upload-text-tab-content").find("[name=parse-source-file]").prop("disabled", true);
+        }
+    });
+
+    if (app.build.update.goTo.fileImport) {
+        $("#build-update-upload-text-tab").tab('show');
+        $("#build-update-upload-text-tab-content").find('[name="text-content"]').val(app.build.update.goTo.fileImport).keyup();
+        app.build.update.upload.getTextInput();
+    }
+
+    $("#build-update-upload-text-tab-content").find("[name=parse-source-file]").once("click", app.build.update.upload.getTextInput);
+
+    $("#build-update-upload-text-tab-content").find("[name=import-text-reset]").once("click", function () {
+        api.modal.confirm(app.label.static["reset-page"], function () {
+            $("#build-update-upload-text-tab-content").find("[name=text-content]").prop("disabled", false);
+            $("#build-update-upload-text-tab-content").find("[name=text-content]").val("");
+            $("#build-update-upload-text-tab-content").find("[name=parse-source-file]").prop("disabled", true);
+            $("#build-update-dimensions").hide();
+        })
+    });
+
+    app.build.update.search.ajax.readMatrixList();
 
     // Set the max file-size in the Upload box
     $("[name=upload-file-max-size]").html(app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB").show();
@@ -29,7 +59,7 @@ $(document).ready(function () {
     app.build.update.ajax.readCopyright();
 
     //Bind the preview button
-    $("#build-update-upload-file").find("[name=file-data-view]").once("click", function () {
+    $("#build-update-upload-file-tab-content").find("[name=file-data-view]").once("click", function () {
         if (app.build.update.upload.file.content.source.size > app.config.transfer.threshold.soft) {
             api.modal.confirm(app.library.html.parseDynamicLabel("confirm-preview", [app.library.utility.formatNumber(Math.ceil(app.build.update.upload.file.content.source.size / 1024)) + " KB"]),
                 app.build.update.upload.previewSource)
@@ -42,10 +72,15 @@ $(document).ready(function () {
 
     //bind the download template button
     $("#build-update-matrix-data").find("[name=download-data-template]").once("click", function () {
-        app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
-        app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
+        if (app.build.update.rlsCode) {
+            app.build.update.search.ajax.downloadCsvTemplate();
+        }
+        else {
+            app.build.update.upload.FrqCode = $("#build-update-properties [name=frequency-code]").val();
+            app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
 
-        app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.downloadDataTemplate", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadTemplate"] })
+            app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.downloadDataTemplate", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadTemplate"] })
+        }
     });
 
 
@@ -60,7 +95,7 @@ $(document).ready(function () {
 
 
     //Bind the reset button
-    $("#build-update-upload-file").find("[name=upload-source-file-reset]").once("click", function () {
+    $("#build-update-upload-file-tab-content").find("[name=upload-source-file-reset]").once("click", function () {
         api.modal.confirm(
             app.label.static["reset-page"],
             app.build.update.upload.reset
@@ -86,7 +121,11 @@ $(document).ready(function () {
     $("#build-update-matrix-dimensions").find("[name=reset]").once("click", function () {
         api.modal.confirm(
             app.label.static["update-reset-dimension"],
-            app.build.update.upload.drawProperties
+            function () {
+                //reload all content into page
+                api.content.load("#body", "entity/build/update/index.html");
+            }
+            // app.build.update.upload.drawProperties
         );
     });
 
@@ -94,7 +133,7 @@ $(document).ready(function () {
     $("#build-update-new-periods").find("[name=upload-reset-periods]").once("click", app.build.update.resetUpoadPeriod);
 
     //Bind the upload button
-    $("#build-update-upload-file").find("[name=upload-source-file]").once("click", function () {
+    $("#build-update-upload-file-tab-content").find("[name=upload-source-file]").once("click", function () {
         app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.uploadSource", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"] });
     });
 
@@ -144,6 +183,13 @@ $(document).ready(function () {
         offstyle: "warning text-dark",
         height: 38,
         width: C_APP_TOGGLE_LENGTH
+    });
+
+    $("#build-update-modal-select-language").find("[name=btn-submit]").once("click", function () {
+        $("#build-update-modal-select-language input:checkbox[name=language-checkbox]:checked").each(function () {
+            app.build.update.search.selectedLanguages.push($(this).val());
+        });;
+        app.build.update.search.ajax.loadRelease();
     });
     //run bootstrap toggle to show/hide toggle button
     app.library.bootstrap.getBreakPoint();

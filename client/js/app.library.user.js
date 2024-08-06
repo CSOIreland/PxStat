@@ -37,7 +37,10 @@ app.library.user.modal.ajax.read = function (apiParams) {
  */
 app.library.user.modal.callback.read = function (data) {
   if (data) {
-    app.library.user.modal.callback.displayUser(data[0]);
+    app.library.user.modal.callback.displayUser({
+      "userData": data[0],
+      "displayApiKey": false
+    });
   }
 
   // Handle no data
@@ -48,13 +51,18 @@ app.library.user.modal.callback.read = function (data) {
 /**
  * Get User data to read current user details
  */
-app.library.user.modal.ajax.readCurrent = function () {
+app.library.user.modal.ajax.readCurrent = function (displayApiKey) {
+  displayApiKey = displayApiKey || false;
   // Get data from API
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.Security.Account_API.ReadCurrent",
     null,
-    "app.library.user.modal.callback.readCurrent"
+    "app.library.user.modal.callback.readCurrent",
+    {
+      "userData": null,
+      "displayApiKey": displayApiKey
+    }
   );
 };
 
@@ -62,32 +70,33 @@ app.library.user.modal.ajax.readCurrent = function () {
  * Populate User data to read user details
  * @param {*} data
  */
-app.library.user.modal.callback.readCurrent = function (data) {
+app.library.user.modal.callback.readCurrent = function (data, params) {
   if (data) {
-    app.library.user.modal.ajax.readUserChannels(data);
+    params.userData = data;
+    app.library.user.modal.ajax.readUserChannels(params);
   }
   // Handle no data
   else
     api.modal.information(app.label.static["api-ajax-nodata"]);
 };
 
-app.library.user.modal.ajax.readUserChannels = function (data) {
+app.library.user.modal.ajax.readUserChannels = function (params) {
   api.ajax.jsonrpc.request(
     app.config.url.api.jsonrpc.private,
     "PxStat.Subscription.Subscription_API.ChannelSubscriptionReadCurrent",
     {},
     "app.library.user.modal.callback.readUserChannels",
-    data
+    params
   );
 };
 
-app.library.user.modal.callback.readUserChannels = function (response, userdata) {
+app.library.user.modal.callback.readUserChannels = function (response, params) {
   app.library.user.userchannels = response || [];
-  app.library.user.modal.callback.displayUser(userdata);
+  app.library.user.modal.callback.displayUser(params);
 };
 
-app.library.user.modal.callback.displayUser = function (data) {
-  if (!data.CcnAdFlag) {
+app.library.user.modal.callback.displayUser = function (params) {
+  if (!params.userData.CcnAdFlag) {
     $("#modal-read-user").find("[name=reset-1fa-row]").show();
   }
   else {
@@ -96,17 +105,17 @@ app.library.user.modal.callback.displayUser = function (data) {
       $("#modal-read-user").find("[name=reset-2fa-row]").hide();
     }
   }
-  $("#modal-read-user").find("[name=ccn-username]").text(data.CcnUsername || "");
-  $("#modal-read-user").find("[name=ccn-name]").text(data.CcnDisplayName || "");
-  $("#modal-read-user").find("[name=prv-value]").text(app.label.datamodel.privilege[data.PrvValue]);
-  $("#modal-read-user").find("[name=ccn-email]").html(app.library.html.email(data.CcnEmail));
-  $("#modal-read-user").find("[name=type]").text(data.CcnAdFlag ? app.label.static["ad"] : app.label.static["local"]);
+  $("#modal-read-user").find("[name=ccn-username]").text(params.userData.CcnUsername || "");
+  $("#modal-read-user").find("[name=ccn-name]").text(params.userData.CcnDisplayName || "");
+  $("#modal-read-user").find("[name=prv-value]").text(app.label.datamodel.privilege[params.userData.PrvValue]);
+  $("#modal-read-user").find("[name=ccn-email]").html(app.library.html.email(params.userData.CcnEmail));
+  $("#modal-read-user").find("[name=type]").text(params.userData.CcnAdFlag ? app.label.static["ad"] : app.label.static["local"]);
 
-  if (data.PrvCode != C_APP_PRIVILEGE_MODERATOR) {
+  if (params.userData.PrvCode != C_APP_PRIVILEGE_MODERATOR) {
     //user is admin or power user, no groups, hide row using d-none
     $("#modal-read-user").find("[name=container-list]").hide();
   } else {
-    app.library.user.modal.buildGroupList(data);
+    app.library.user.modal.buildGroupList(params.userData);
     $("#modal-read-user").find("[name=container-list]").show();
   }
 
@@ -114,7 +123,7 @@ app.library.user.modal.callback.displayUser = function (data) {
   $("#modal-read-user").find("[name=notification]").off("change");
 
   // If the user if the current one, then allow toggle notifications and subscriptions
-  if (data.CcnUsername == app.library.user.data.CcnUsername) {
+  if (params.userData.CcnUsername == app.library.user.data.CcnUsername) {
     //initiate toggle buttons
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("destroy").bootstrapToggle({
       onlabel: app.label.static["true"],
@@ -127,7 +136,7 @@ app.library.user.modal.callback.displayUser = function (data) {
     });
 
     //Set state of bootstrapToggle button
-    $("#modal-read-user").find("[name=notification]").bootstrapToggle(data.CcnNotificationFlag ? "on" : "off");
+    $("#modal-read-user").find("[name=notification]").bootstrapToggle(params.userData.CcnNotificationFlag ? "on" : "off");
     // Enable the notification
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("enable");
     // Bind change event on toggle notification
@@ -149,7 +158,7 @@ app.library.user.modal.callback.displayUser = function (data) {
     });
 
     //Set state of bootstrapToggle button
-    $("#modal-read-user").find("[name=notification]").bootstrapToggle(data.CcnNotificationFlag ? "on" : "off");
+    $("#modal-read-user").find("[name=notification]").bootstrapToggle(params.userData.CcnNotificationFlag ? "on" : "off");
     // Disable the notification
     $("#modal-read-user").find("[name=notification]").bootstrapToggle("disable");
     // Hide the subscriptions row
@@ -197,64 +206,36 @@ app.library.user.modal.callback.displayUser = function (data) {
     });
   });
 
+  $("#modal-read-user-developer-key").text(params.userData.CcnApiToken);
 
-
-
-
-  app.library.user.modal.ajax.channelSubscriptionCreate = function (chnCode) {
-    api.ajax.jsonrpc.request(
-      app.config.url.api.jsonrpc.private,
-      "PxStat.Subscription.Subscription_API.ChannelSubscriptionCreate",
-      {
-        "ChnCode": chnCode
-      },
-      "app.library.user.modal.callback.channelSubscriptionCreate"
-    );
-
-  };
-
-  app.library.user.modal.callback.channelSubscriptionCreate = function (data) {
-    if (data == C_API_AJAX_SUCCESS) {
-      api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
+  new ClipboardJS("#modal-read-user-developer [name=copy-key]");
+  if (params.displayApiKey) {
+    if (!params.userData.CcnApiToken && params.userData.CcnUsername == app.library.user.data.CcnUsername) {//generate a api key for anyone that doesn't have one, but only if its the user looking at their own profile
+      app.library.user.modal.ajax.gererateApiToken(false)
     }
-  };
-
-  app.library.user.modal.ajax.channelSubscriptionDelete = function (chnCode) {
-    api.ajax.jsonrpc.request(
-      app.config.url.api.jsonrpc.private,
-      "PxStat.Subscription.Subscription_API.ChannelSubscriptionDelete",
-      {
-        "ChnCode": chnCode
-      },
-      "app.library.user.modal.callback.channelSubscriptionDelete"
-    );
-  };
-
-  app.library.user.modal.callback.channelSubscriptionDelete = function (data) {
-    if (data == C_API_AJAX_SUCCESS) {
-      api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
-    }
-  };
-
-
-
-
-
-
-
-
+    $("#modal-read-user-developer").show();
+  }
+  else {
+    $("#modal-read-user-developer").hide();
+  }
 
 
   // Switch between the modals to avoid overlapping
   $("#modal-read-group").modal("hide");
-  $("#modal-read-user").modal("show");
+  $("#modal-read-user").modal("show").once('hidden.bs.modal', function (e) {
+    $("#modal-read-user-developer-collapse-one").collapse('hide');
+  });
 
   $("#modal-read-user").find("[name=reset-1fa]").once("click", function () {
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-password-reset", [data.CcnEmail]), app.library.user.modal.ajax.initiateUpdate1FA, data.CcnEmail)
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-password-reset", [params.userData.CcnEmail]), app.library.user.modal.ajax.initiateUpdate1FA, params.userData.CcnEmail)
   });
 
   $("#modal-read-user").find("[name=reset-2fa]").once("click", function () {
-    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-2fa-reset", [data.CcnEmail]), app.library.user.modal.ajax.initiateUpdate2FA, data.CcnEmail)
+    api.modal.confirm(app.library.html.parseDynamicLabel("confirm-2fa-reset", [params.userData.CcnEmail]), app.library.user.modal.ajax.initiateUpdate2FA, params.userData.CcnEmail)
+  });
+
+  $("#modal-read-user").find("[name=generate-key]").once("click", function () {
+    api.modal.confirm(app.label.static["user-generate-api-key"], app.library.user.modal.ajax.gererateApiToken, true);
   });
 }
 
@@ -396,4 +377,63 @@ app.library.user.modal.callback.initiateUpdate2FA = function (data, email) {
 }
 //#endregion
 
+//#region subscribers
 
+app.library.user.modal.ajax.channelSubscriptionCreate = function (chnCode) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Subscription.Subscription_API.ChannelSubscriptionCreate",
+    {
+      "ChnCode": chnCode
+    },
+    "app.library.user.modal.callback.channelSubscriptionCreate"
+  );
+
+};
+
+app.library.user.modal.callback.channelSubscriptionCreate = function (data) {
+  if (data == C_API_AJAX_SUCCESS) {
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
+  }
+};
+
+app.library.user.modal.ajax.channelSubscriptionDelete = function (chnCode) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Subscription.Subscription_API.ChannelSubscriptionDelete",
+    {
+      "ChnCode": chnCode
+    },
+    "app.library.user.modal.callback.channelSubscriptionDelete"
+  );
+};
+
+app.library.user.modal.callback.channelSubscriptionDelete = function (data) {
+  if (data == C_API_AJAX_SUCCESS) {
+    api.modal.success(app.library.html.parseDynamicLabel("success-record-updated", [""]));
+  }
+};
+
+//#endregion
+
+//#region user api key
+app.library.user.modal.ajax.gererateApiToken = function (showSuccess) {
+  api.ajax.jsonrpc.request(
+    app.config.url.api.jsonrpc.private,
+    "PxStat.Security.Account_API.UpdateApiToken",
+    null,
+    "app.library.user.modal.callback.gererateApiToken",
+    {
+      "showSuccess": showSuccess
+    }
+  );
+};
+
+app.library.user.modal.callback.gererateApiToken = function (data, params) {
+  $("#modal-read-user-developer-key").text(data);
+  if (params.showSuccess) {
+    api.modal.success(app.label.static["subscriber-developer-key-generated"]);
+  }
+
+};
+//#region 

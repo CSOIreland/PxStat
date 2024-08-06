@@ -31,7 +31,13 @@ app.build.create.import.cancel = function () {
 };
 
 app.build.create.import.reset = function () {
+    //make search active tab
+    $("#build-create-existing-table-tab").tab('show');
+    //hide search result table
+    $("#build-create-existing-table-search-result").hide();
     $("#build-create-import").find("[name=build-create-import-file]").val("");
+    $("#build-create-import").find("[name=build-create-import-file]").val("");
+    $("#build-create-upload-text-tab-content").find("[name=text-content]").val("");
     app.build.create.import.cancel();
 }
 
@@ -172,7 +178,7 @@ app.build.create.import.callback.read.drawProperties = function () {
     //if valid copyright, select this
     $("#build-create-initiate-setup [name=copyright-code] > option").each(function () {
         if (this.value == defaultData.extension.copyright.code) {
-            $("#build-create-initiate-setup [name=copyright-code]").val(this.value);
+            $("#build-create-initiate-setup [name=copyright-code]").val(this.value).trigger("change");
             return;
         }
     });

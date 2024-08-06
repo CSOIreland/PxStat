@@ -1,4 +1,5 @@
 <div id="build-import-container">
+
     <form>
         <div class="card m-3 border-primary">
             <div class="card-header bg-primary text-light" label="import-data"></div>
@@ -16,20 +17,37 @@
                         </tr>
                     </thead>
                 </table>
-                <div class="box">
-                    <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
-                    <input hidden="true" type="file" name="build-import-file" id="build-import-file" class="box__file" />
-                    <div class="box__input2">
-                        <label class="box__input3" for="build-import-file">
-                            <i class="fas fa-upload fa-2x"></i>
-                            <span name="upload-file-name"></span>
-                            <span name="upload-file-tip">
-                                <strong><span label="choose"></span> <span label="px"></span> <span label="file"></span></strong>
-                                <span class="box__dragndrop"> <span label="drag-here"></span></span>
-                            </span>
-                            <br />
-                            <small><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
-                        </label>
+
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="build-import-container-file-tab" data-bs-toggle="tab" data-bs-target="#build-import-container-file-content" type="button" role="tab" aria-controls="build-import-container-file-content" aria-selected="true" label="upload-source-file"></button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="build-import-container-text-tab" data-bs-toggle="tab" data-bs-target="#build-import-container-text-content" type="button" role="tab" aria-controls="build-import-container-text-content" aria-selected="false" label="paste-px-source"></button>
+                    </li>
+
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="build-import-container-file-content" role="tabpanel" aria-labelledby="build-import-container-file-tab">
+                        <div class="box">
+                            <!-- The attribute ID is required by the Drag and Drop plugin and it must matches the FOR attribute in the label -->
+                            <input hidden="true" type="file" name="build-import-file" id="build-import-file" class="box__file" />
+                            <div class="box__input2">
+                                <label class="box__input3" for="build-import-file">
+                                    <i class="fas fa-upload fa-2x"></i>
+                                    <span name="upload-file-name"></span>
+                                    <span name="upload-file-tip">
+                                        <strong><span label="choose"></span> <span label="px"></span> <span label="file"></span></strong>
+                                        <span class="box__dragndrop"> <span label="drag-here"></span></span>
+                                    </span>
+                                    <br />
+                                    <small><span label="utf-8-encoding"></span> <span name="upload-file-max-size"></span> <span label="allowed"></span></small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="build-import-container-text-content" role="tabpanel" aria-labelledby="build-import-container-text-tab">
+                        <textarea class="form-control mt-2" name="text-content" rows="20"></textarea>
                     </div>
                 </div>
             </div>

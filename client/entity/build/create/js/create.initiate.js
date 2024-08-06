@@ -40,6 +40,13 @@ $(document).ready(function () {
         app.build.create.import.validate.frequencyModal();
     });
 
+    $("#build-create-modal-select-language").find("[name=btn-submit]").once("click", function () {
+        $("#build-create-modal-select-language input:checkbox[name=language-checkbox]:checked").each(function () {
+            app.build.create.search.selectedLanguages.push($(this).val());
+        });;
+        app.build.create.search.ajax.loadRelease();
+    });
+
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
 });

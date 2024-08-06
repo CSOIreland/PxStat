@@ -82,7 +82,7 @@ app.release.information.render = function (data) {
     $("#release-information [name=rls-live-datetime-from]").empty().html(data.RlsLiveDatetimeFrom ? moment(data.RlsLiveDatetimeFrom).format(app.config.mask.datetime.display) : "");
     $("#release-information [name=rls-live-datetime-to]").empty().html(data.RlsLiveDatetimeTo ? moment(data.RlsLiveDatetimeTo).format(app.config.mask.datetime.display) : "");
     $("#release-information [name=rls-exceptional-flag]").empty().html(app.library.html.boolean(data.RlsExceptionalFlag, true, true));
-
+    $("#release-information [name=analytical-label]").empty().html(app.library.html.parseStaticLabel(app.config.dataset.analytical.label));
     if (!data.SbjCode || !data.PrcCode) {
         var warningMessage = $("<span>", {
             "class": "text-watermark",
@@ -105,7 +105,8 @@ app.release.information.render = function (data) {
             offlabel: app.label.static["false"],
             onstyle: "light",
             offstyle: "neutral",
-            width: C_APP_TOGGLE_LENGTH
+            width: C_APP_TOGGLE_LENGTH,
+            height: 38
         });
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle(data.RlsAnalyticalFlag ? "on" : "off");
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle('disable');
@@ -120,7 +121,8 @@ app.release.information.render = function (data) {
             offlabel: app.label.static["false"],
             onstyle: "success text-light",
             offstyle: "warning text-dark",
-            width: C_APP_TOGGLE_LENGTH
+            width: C_APP_TOGGLE_LENGTH,
+            height: 38
         });
         $("#release-information [name=rls-analytical-flag]").bootstrapToggle(data.RlsAnalyticalFlag ? "on" : "off");
         $("#release-information [name=rls-analytical-flag]").once("change", app.release.information.ajax.updateAnalyticalFlag);

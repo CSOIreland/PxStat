@@ -242,6 +242,8 @@ app.release.comparison.callback.readCurrentMatrix = function (data) {
 * 
 */
 app.release.comparison.callback.styleDifferences = function () {
+    $("#release-comparison-report [name=analytical-label]").empty().html(app.library.html.parseStaticLabel(app.config.dataset.analytical.label));
+
     if (app.release.comparison.previousReleaseData &&
         app.release.comparison.previousMatrixData &&
         app.release.comparison.currentReleaseData &&

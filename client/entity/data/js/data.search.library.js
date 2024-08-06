@@ -819,7 +819,13 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
 
         //analytical flag
         if (entry.RlsAnalyticalFlag) {
-            resultItem.find("[name=analytical-flag]").removeClass("d-none");
+
+            //check config to see how to handle analytical flag
+            if (app.config.dataset.analytical.display) {
+                resultItem.find("[name=analytical-flag]").removeClass("d-none").addClass(app.config.dataset.analytical.icon).addClass(app.config.dataset.analytical.colour);
+                resultItem.find("[name=analytical-flag]").attr("label-tooltip", app.config.dataset.analytical.label);
+            }
+
         }
 
         //language
@@ -875,8 +881,8 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
                 $("#data-search-row-desktop [name=non-archived-heading]").show();
             }
         }
-
-
+        app.library.html.parseStaticLabel();
+        $('[data-bs-toggle="tooltip"]').tooltip();
 
     });
     $("#data-search-row-desktop").find("[name=search-result-item]").once("click", function (e) {

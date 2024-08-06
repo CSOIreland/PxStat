@@ -10,6 +10,8 @@ app.build.update.ajax.data = [];
 app.build.update.ajax.jsonStat = [];
 app.build.update.callback = {};
 
+app.build.update.goTo = {};
+
 app.build.update.matrixLookup = {};
 app.build.update.matrixLookup.ajax = {};
 app.build.update.matrixLookup.callback = {};
@@ -17,7 +19,7 @@ app.build.update.matrixLookup.callback = {};
 app.build.update.validate = {};
 app.build.update.validate.isMatrixPropertyValid = false;
 app.build.update.validate.isDimensionPropertyValid = false;
-
+app.build.update.rlsCode = null;
 app.build.update.data = {
     "MtrInput": null,
     "FrqCodeTimeval": null,
@@ -33,6 +35,7 @@ app.build.update.data = {
     "Elimination": {},
     "Map": {}
 };
+app.build.update.import = false;
 //#endregion
 
 /**
@@ -101,20 +104,26 @@ app.build.update.ajax.readCopyright = function () {
  * 
  */
 app.build.update.callback.readCopyright = function (data) {
-    // Map API data to select dropdown  model for main Subject search and update Subject search
-    $("#build-update-properties [name=copyright-code]").empty().append($("<option>", {
-        "text": app.label.static["select-uppercase"],
-        "value": "SELECT",
-        "disabled": "disabled",
-        "selected": "selected"
-    }));
 
-    $.each(data, function (key, value) {
-        $("#build-update-properties [name=copyright-code]").append($("<option>", {
-            "value": value.CprCode,
-            "text": value.CprValue,
-        }));
+    // Load select2
+    $("#build-update-properties").find("[name=copyright-code]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.build.update.mapData(data)
+    }).on('select2:select', function (e) {
+        $("#build-update-properties").find("[type=submit]").trigger("click")
     });
+};
+
+app.build.update.mapData = function (dataAPI) {
+    $.each(dataAPI, function (i, item) {
+        // Create ID and NAME to the list
+        dataAPI[i].id = item.CprCode;
+        dataAPI[i].text = item.CprValue;
+    });
+    return dataAPI;
 };
 
 /**
@@ -151,7 +160,16 @@ app.build.update.callback.readFormat = function (data) {
         $("#build-update-dimensions [name=format-list]").append(formatDropdown);
     });
 
-    $("#build-update-dimensions").find("[name=update-submit]").once("click", function (e) {
+    $("#build-update-dimensions [name=update-submit]").once("click", function (e) {
+        app.build.update.import = false;
+        e.preventDefault();
+        app.build.update.data.FrmType = $(this).attr("frm-type");
+        app.build.update.data.FrmVersion = $(this).attr("frm-version");
+        app.build.update.checkForData();
+    });
+
+    $("#build-update-dimensions [name=import]").once("click", function (e) {
+        app.build.update.import = true;
         e.preventDefault();
         app.build.update.data.FrmType = $(this).attr("frm-type");
         app.build.update.data.FrmVersion = $(this).attr("frm-version");
@@ -671,8 +689,13 @@ app.build.update.confirmUpdateOutput = function () {
     //Populate namespace variables
     app.build.update.upload.FrqCode = $("#build-update-properties").find("[name=frequency-code]").val();
     app.build.update.upload.FrqValue = $("#build-update-dimension-nav-collapse-properties-" + app.config.language.iso.code + " [name=frequency-value]").val();
-    app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.updateOutput", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Update"] });
 
+    if (app.build.update.rlsCode) {
+        app.build.update.ajax.updateOutputRls();
+    }
+    else {
+        app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.updateOutput", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Update"] });
+    }
 }
 
 app.build.update.isPeriodsDimensionsValid = function () {
@@ -726,6 +749,73 @@ app.build.update.isPeriodsDimensionsValid = function () {
  *
  */
 app.build.update.ajax.updateOutput = function () {
+    var params = $.extend(true, {}, app.build.update.data);
+
+    //replace data with reduced structure
+    params.Data = app.build.update.reduceData();
+    // Merge Signature into Data
+    params.Signature = app.build.update.upload.Signature;
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Build.Build_API.Update",
+        params,
+        "app.build.update.callback.updateOutput",
+        params.FrmType,
+        null,
+        null,
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
+
+};
+
+app.build.update.ajax.updateOutputRls = function () {
+    var params = $.extend(true, {}, app.build.update.data);
+    //replace data with reduced structure
+    params.Data = app.build.update.reduceData();
+    delete params.MtrCode;
+    delete params.MtrInput;
+    delete params.Signature;
+    params.RlsCode = app.build.update.rlsCode;
+
+
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Build.Build_API.UpdateByRelease",
+        params,
+        "app.build.update.callback.updateOutputRls",
+        params.FrmType,
+        null,
+        null,
+        {
+            async: false,
+            timeout: app.config.transfer.timeout
+        });
+};
+
+app.build.update.callback.updateOutputRls = function (data, frmType) {
+    if (data.file && data.file.length) {
+
+        //If you try and update a px file with a data csv file that has no valid records, display an error modal instead of the report modal.
+        if (!data.report.length && app.build.update.upload.file.content.data.JSON) {
+            api.modal.information(app.label.static["invalid-csv-data-file"]);
+            app.build.update.callback.downloadFile(data.file, frmType);
+        }
+
+        else if (data.report && data.report.length) {
+            app.build.update.report.drawReport(data, frmType);
+        }
+        else {
+            app.build.update.callback.downloadFile(data.file, frmType);
+        }
+    }
+    else {
+        api.modal.exception(app.label.static["api-ajax-exception"]);
+    }
+};
+
+app.build.update.reduceData = function () {
     //clone data object to tidy up before sending to server
     var params = $.extend(true, {}, app.build.update.data);
 
@@ -768,24 +858,7 @@ app.build.update.ajax.updateOutput = function () {
         });
         dataTbl.push(tblRow);
     });
-
-    //replace data with reduced structure
-    params.Data = dataTbl;
-    // Merge Signature into Data
-    params.Signature = app.build.update.upload.Signature;
-    api.ajax.jsonrpc.request(
-        app.config.url.api.jsonrpc.private,
-        "PxStat.Build.Build_API.Update",
-        params,
-        "app.build.update.callback.updateOutput",
-        params.FrmType,
-        null,
-        null,
-        {
-            async: false,
-            timeout: app.config.transfer.timeout
-        });
-
+    return dataTbl
 };
 
 /**
@@ -803,7 +876,7 @@ app.build.update.callback.updateOutput = function (data, frmType) {
         }
 
         else if (data.report && data.report.length) {
-            app.build.update.data.report.drawReport(data, frmType);
+            app.build.update.report.drawReport(data, frmType);
         }
         else {
             app.build.update.callback.downloadFile(data.file, frmType);
@@ -817,25 +890,31 @@ app.build.update.callback.updateOutput = function (data, frmType) {
 
 
 app.build.update.callback.downloadFile = function (data, format) {
-    var fileName = $("#build-update-properties [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
+    if (app.build.update.import) {
+        api.content.goTo("entity/build/import/", "#nav-link-build", "#nav-link-import", { "fileImport": data[0] });
+    }
+    else {
+        var fileName = $("#build-update-properties [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
 
-    switch (format) {
-        case C_APP_TS_FORMAT_TYPE_PX:
-            $.each(data, function (index, file) {
-                // Download the file
-                app.library.utility.download(fileName, file, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
-            });
-            break;
-        case C_APP_TS_FORMAT_TYPE_JSONSTAT:
-            $.each(data, function (index, file) {
-                // Download the file
-                app.library.utility.download(fileName, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
-            });
-            break;
-        default:
-            api.modal.exception(app.label.static["api-ajax-exception"]);
-            break;
-    };
+        switch (format) {
+            case C_APP_TS_FORMAT_TYPE_PX:
+                $.each(data, function (index, file) {
+                    // Download the file
+                    app.library.utility.download(fileName, file, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
+                });
+                break;
+            case C_APP_TS_FORMAT_TYPE_JSONSTAT:
+                $.each(data, function (index, file) {
+                    // Download the file
+                    app.library.utility.download(fileName, JSON.stringify(file), C_APP_EXTENSION_JSON, C_APP_MIMETYPE_JSON);
+                });
+                break;
+            default:
+                api.modal.exception(app.label.static["api-ajax-exception"]);
+                break;
+        };
+    }
+
 
     $('#build-update-modal-view-report').modal('hide')
 }
@@ -1115,6 +1194,7 @@ app.build.update.sortPeriods = function () {
 }
 
 app.build.update.downloadCsv = function () {
+
     $(app.build.update.ajax.jsonStat).each(function (key, value) {
         if (value.extension.language.code == app.config.language.iso.code) {
             var jsonStat = JSONstat(value);
@@ -1131,13 +1211,23 @@ app.build.update.downloadCsv = function () {
             }
 
             else if (numDatapoints > app.config.entity.build.threshold.soft) {
-                api.modal.confirm(
-                    app.library.html.parseDynamicLabel("confirm-update-csv-download", [app.library.utility.formatNumber(numDatapoints)]),
-                    app.build.update.upload.validate.ajax.read,
-                    { "callback": "app.build.update.upload.validate.callback.downloadData", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDataset"] });
+                if (app.build.update.rlsCode) {
+                    app.build.update.search.ajax.downloadCsvData();
+                }
+                else {
+                    api.modal.confirm(
+                        app.library.html.parseDynamicLabel("confirm-update-csv-download", [app.library.utility.formatNumber(numDatapoints)]),
+                        app.build.update.upload.validate.ajax.read,
+                        { "callback": "app.build.update.upload.validate.callback.downloadData", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDataset"] });
+                }
             }
             else {
-                app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.downloadData", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDataset"] });
+                if (app.build.update.rlsCode) {
+                    app.build.update.search.ajax.downloadCsvData();
+                }
+                else {
+                    app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.downloadData", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.ReadDataset"] });
+                }
             }
         }
     })

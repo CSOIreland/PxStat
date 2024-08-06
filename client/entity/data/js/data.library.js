@@ -84,7 +84,7 @@ app.data.setDatePicker = function () {
 app.data.ajax.readLatestReleases = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.public,
-        "PxStat.Data.Cube_API.ReadMetaCollection",
+        "PxStat.Data.Cube_API.ReadCollection",
         app.data.collection.params,
         "app.data.callback.readLatestReleases",
         null,

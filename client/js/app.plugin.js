@@ -206,7 +206,7 @@ app.plugin.sharethis.load = function (drawShareThis) {
 
       },
       "error": function (jqXHR, textStatus, errorThrown) {
-        api.modal.exception(app.label.static["api-ajax-exception"]);
+        console.log("ShareThis failed to load: " + errorThrown)
       }
     });
   }
@@ -350,7 +350,7 @@ app.plugin.tinyMce.initiate = function (stripDoubleQuotes) {
     force_p_newlines: false,
     forced_root_block: false,
 
-    selector: 'textarea',
+    selector: 'textarea[type="tinymce"]',
     min_height: 100,
     paste_as_text: true,
     menubar: false,

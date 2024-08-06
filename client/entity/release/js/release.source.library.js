@@ -74,7 +74,10 @@ app.release.source.ajax.readLanguage = function () {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.System.Settings.Language_API.ReadListByRelease",
-        { "RlsCode": app.release.RlsCode },
+        {
+            "RlsCode": app.release.RlsCode,
+            "LngIsoCode": app.label.language.iso.code
+        },
         "app.release.source.callback.readLanguageOnSuccess",
         null,
         "app.release.source.callback.readLanguageOnError",

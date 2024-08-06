@@ -5,8 +5,8 @@ Application - Environment
 const C_APP_URL_API = "https://web-service-domain.ext/";
 
 // URLs Widget
-const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.8.1/js/isogram.min.js";
-const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.8.1/snippet.html";
+const C_APP_URL_PXWIDGET_ISOGRAM = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.8.4/js/isogram.min.js";
+const C_APP_URL_PXWIDGET_SNIPPET = "https://cdn.jsdelivr.net/gh/CSOIreland/PxWidget@2.8.4/snippet.html";
 
 // URLs Language Files
-const C_APP_URL_PXLANGUAGEPLUGINS = "https://cdn.jsdelivr.net/gh/CSOIreland/PxLanguagePlugins@8.0.0/client/";
+const C_APP_URL_PXLANGUAGEPLUGINS = "https://cdn.jsdelivr.net/gh/CSOIreland/PxLanguagePlugins@8.1.0/client/";

@@ -11,7 +11,8 @@ app.build.import.callback = {};
 app.build.import.validation = {};
 app.build.import.FrqValue = null;
 app.build.import.FrqCode = null;
-
+app.build.import.goTo = {};
+app.build.import.goTo.fileImport = null;
 // Properties
 app.build.import.file = {};
 app.build.import.file.signature = null;
@@ -58,13 +59,7 @@ app.build.import.cancel = function () {
  * Reset entire upload page
  */
 app.build.import.reset = function () {
-    // Clear Group selection
-    $("#build-import-container").find("[name=select-group]").val("").trigger('change');
-
-    // Clear input file 
-    $("#build-import-container").find("[name=build-import-file]").val("");
-    // Clear Upload
-    app.build.import.cancel();
+    api.content.load("#body", "entity/build/import/");
 };
 
 /**
@@ -143,6 +138,7 @@ app.build.import.validation.create = function () {
             $(form).sanitiseForm();
             if (!app.build.import.validation.file()) {
                 return;
+
             }
             if (app.build.import.file.signature) {
                 app.build.import.ajax.create();
@@ -223,7 +219,7 @@ app.build.import.callback.validateOnSuccess = function (data) {
             app.build.import.file.signature = data.Signature;
             // Change button to Upload
             app.build.import.setImportBtn();
-            api.modal.success(app.library.html.parseDynamicLabel("success-file-validated", [app.build.import.file.name]));
+            api.modal.success(app.library.html.parseDynamicLabel("success-file-validated", [app.build.import.file.name || ""]));
         } else if (Array.isArray(data.FrqValueCandidate) && data.FrqValueCandidate.length) {
             // Populate the Frequency list
             $("#build-import-modal-frequency").find("[name=frequency-radio-group]").empty();
@@ -375,6 +371,7 @@ app.build.import.preview = function () {
  * @param {*} inputObject
  */
 api.plugin.dragndrop.readFiles = function (files, inputObject) {
+    $("#build-import-container-text-tab").prop("disabled", true);
     // Cancel upload first
     app.build.import.cancel();
 

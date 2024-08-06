@@ -179,6 +179,48 @@
           </div>
         </div>
         <div class="border-top row mx-0"></div>
+
+
+        <div class="accordion mt-4" id="modal-read-user-developer" style="display: none;">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="modal-read-user-developer-heading">
+              <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modal-read-user-developer-collapse-one" aria-expanded="false" aria-controls="modal-read-subscriber-developer-collapse-one">
+                <span label="developer"></span>
+              </button>
+            </h2>
+            <div id="modal-read-user-developer-collapse-one" class="accordion-collapse collapse" aria-labelledby="modal-read-user-developer-heading" data-bs-parent="#modal-read-user-developer">
+              <div class="accordion-body">
+                <div class="card mb-2 mt-2">
+                  <div class="card-header d-flex w-100 justify-content-between p-2">
+                    <span label="api-key"></span>
+                    <span><i name="copy-key" class="far fa-copy fa-2x" data-bs-toggle="tooltip" data-clipboard-target="#modal-read-user-developer-key" data-bs-placement="right" title="" style="cursor: grab" data-clipboard-action="copy" label-tooltip="copy-to-clipboard" data-original-title="Copy to Clipboard"></i>
+
+                    </span>
+                  </div>
+                  <div class="card-body p-0 border-top">
+                    <pre id="modal-read-user-developer-key" class="p-2 text-wrap"></pre>
+                  </div>
+                  <div class="card-footer text-end">
+                    <button class="btn btn-info text-light" type="button" name="generate-key">
+                      <i class="fas fa-undo"></i> <span label="regenerate"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
@@ -246,7 +288,7 @@
                     </span>
                   </div>
                   <div class="card-body p-0 border-top">
-                    <input id="modal-read-subscriber-developer-key" class="form-control border-0 rounded-0" type="text" value="" readonly>
+                    <pre id="modal-read-subscriber-developer-key" class="p-2 text-wrap"></pre>
                   </div>
                   <div class="card-footer text-end">
                     <button class="btn btn-info text-light" type="button" name="generate-key">

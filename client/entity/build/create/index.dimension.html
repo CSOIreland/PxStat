@@ -70,8 +70,13 @@
                 <i class="far fa-times-circle"></i>
                 <span label="clear-dimensions"></span>
             </button>
-            <button class="btn btn-tertiary dropdown-toggle" name="update-dropdown" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-download"></i> <span label="create"></span></button>
+            <button class="btn btn-tertiary dropdown-toggle" name="update-dropdown" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-download"></i> <span label="download"></span></button>
             <div name="format-list" class="dropdown-menu"></div>
+
+            <button class="btn btn-tertiary" name="add-data" type="button">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span label="add-data"></span>
+            </button>
         </div>
 
     </div>
@@ -128,7 +133,7 @@
                                     <label class="" for="note-value" label="note"></label>
                                 </div>
                                 <div class="col-8 p-2">
-                                    <textarea rows="3" name="note-value" contenteditable="false" class="form-control" autocomplete="off"></textarea>
+                                    <textarea type="tinymce" rows="3" name="note-value" contenteditable="false" class="form-control" autocomplete="off"></textarea>
                                 </div>
                             </div>
 

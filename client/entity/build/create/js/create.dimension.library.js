@@ -58,15 +58,23 @@ app.build.create.dimension.callback.drawFormat = function (data) {
             $("#build-create-matrix-dimensions [name=format-list]").append(formatDropdown);
         });
 
-        $("#build-create-matrix-dimensions").find("[name=create-submit]").once("click", function (e) {
+        $("#build-create-matrix-dimensions [name=create-submit], #build-create-matrix-dimensions [name=add-data]").once("click", function (e) {
             e.preventDefault();
             $.each(app.build.create.initiate.languages, function (key, value) {
                 $("#build-create-dimension-accordion-" + value.LngIsoCode).find("[type=submit]").trigger("click");
             });
             if (app.build.create.dimension.propertiesValid) {
-                app.build.create.initiate.data.FrmType = $(this).attr("frm-type");
-                app.build.create.initiate.data.FrmVersion = $(this).attr("frm-version");
-                app.build.create.dimension.buildDataObject();
+
+                if ($(this).attr("name") == "add-data") {
+                    app.build.create.initiate.data.FrmType = C_APP_TS_FORMAT_TYPE_PX;
+                    app.build.create.initiate.data.FrmVersion = "2013";
+                    app.build.create.dimension.buildDataObject(true);
+                }
+                else {
+                    app.build.create.initiate.data.FrmType = $(this).attr("frm-type");
+                    app.build.create.initiate.data.FrmVersion = $(this).attr("frm-version");
+                    app.build.create.dimension.buildDataObject();
+                }
             };
         });
     }
@@ -2053,7 +2061,8 @@ app.build.create.dimension.callback.downloadPeriods = function () {
 //#region submit object
 
 //Build the PX file
-app.build.create.dimension.buildDataObject = function () {
+app.build.create.dimension.buildDataObject = function (goToUpdate) {
+    goToUpdate = goToUpdate || false;
     var errors = [];
     var numStatistics = [];
     var numClassifications = [];
@@ -2304,13 +2313,19 @@ app.build.create.dimension.buildDataObject = function () {
         if (!errors.length) {
             //if under soft threshold - go to 2170, else run confirm, pass name of function & params - app.build.create.initiate.data
             if (numCells < app.config.entity.build.threshold.soft) {
-                app.build.create.dimension.ajax.create(app.build.create.initiate.data);
+                app.build.create.dimension.ajax.create({
+                    apiParams: app.build.create.initiate.data,
+                    goToUpdate: goToUpdate
+                });
             }
             else {
                 api.modal.confirm(
                     app.library.html.parseDynamicLabel("confirm-update-csv-download", [app.library.utility.formatNumber(numCells)]),
                     app.build.create.dimension.ajax.create,
-                    app.build.create.initiate.data
+                    {
+                        apiParams: app.build.create.initiate.data,
+                        goToUpdate: goToUpdate
+                    }
                 );
 
             }
@@ -2344,9 +2359,9 @@ app.build.create.dimension.ajax.create = function (params) {
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
         "PxStat.Build.Build_API.Create",
-        params,
+        params.apiParams,
         "app.build.create.dimension.callback.create",
-        params.FrmType,
+        params,
         null,
         null,
         { async: false });
@@ -2357,11 +2372,11 @@ app.build.create.dimension.ajax.create = function (params) {
  *
  * @param {*} data
  */
-app.build.create.dimension.callback.create = function (data, format) {
+app.build.create.dimension.callback.create = function (data, params) {
     if (data && Array.isArray(data) && data.length) {
         var fileName = $("#build-create-initiate-setup [name=mtr-value]").val() + "." + moment(Date.now()).format(app.config.mask.datetime.file);
 
-        switch (format) {
+        switch (params.apiParams.FrmType) {
             case C_APP_TS_FORMAT_TYPE_JSONSTAT:
                 $.each(data, function (index, file) {
                     var jsonStat = file ? JSONstat(file) : null;
@@ -2375,10 +2390,12 @@ app.build.create.dimension.callback.create = function (data, format) {
                 });
                 break;
             case C_APP_TS_FORMAT_TYPE_PX:
-                $.each(data, function (index, file) {
-                    // Download the file
-                    app.library.utility.download(fileName, file, C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
-                });
+                if (params.goToUpdate) {
+                    api.content.goTo("entity/build/update/", "#nav-link-build", "#nav-link-update", { "fileImport": data[0] });
+                }
+                else {
+                    app.library.utility.download(fileName, data[0], C_APP_EXTENSION_PX, C_APP_MIMETYPE_PX);
+                }
                 break;
             default:
                 api.modal.exception(app.label.static["api-ajax-exception"]);

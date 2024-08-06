@@ -226,7 +226,11 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     }
     //analytical flag
     if (data.extension.analytical) {
-        matrixSelectionHeading.find("[name=analytical-flag]").removeClass("d-none");
+        //check config to see how to handle analytical flag
+        if (app.config.dataset.analytical.display) {
+            matrixSelectionHeading.find("[name=analytical-flag]").removeClass("d-none").addClass(app.config.dataset.analytical.icon).addClass(app.config.dataset.analytical.colour);
+            matrixSelectionHeading.find("[name=analytical-flag]").attr("label-tooltip", app.config.dataset.analytical.label);
+        }
     }
     //archive flag
     if (data.extension.archive) {
@@ -305,7 +309,8 @@ app.data.dataset.callback.drawDatasetHeading = function () {
             class: "far fa-copyright me-1"
         }).get(0).outerHTML + data.extension.copyright.name
     ).attr("href", data.extension.copyright.href);
-    $("#data-dataset-selected-table [name=card-header]").html(matrixSelectionHeading.get(0).outerHTML);
+    $("#data-dataset-selected-table [name=card-header]").html(matrixSelectionHeading);
+
     $("#data-dataset-row").show();
     //run bootstrap toggle to show/hide toggle button
     app.library.bootstrap.getBreakPoint();

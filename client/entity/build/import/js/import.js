@@ -7,7 +7,8 @@ $(document).ready(function () {
   app.navigation.setMetaDescription();
   app.navigation.setTitle(app.label.static["build"] + " - " + app.label.static["import"]);
   app.navigation.setState("#nav-link-import");
-
+  // Get GoTo params
+  app.build.import.goTo.fileImport = api.content.getParam("fileImport");
   // Load Modal
   api.content.load("#modal-entity", "entity/build/import/index.modal.html");
 
@@ -20,6 +21,59 @@ $(document).ready(function () {
   app.build.import.validation.create();
   //Bind the cancel button
   $("#build-import-container").find("[name=cancel]").once("click", app.build.import.reset);
+
+  $("#build-import-container-text-content").find("[name=text-content]").once("keyup change", function () {
+    var that = this;
+    if ($(this).val().trim().length) {
+      window.clearTimeout($(this).data('timer'));
+      $(this).data('timer', window.setTimeout(function () {
+
+        app.build.import.file.content.UTF8 = $(that).val().trim();
+        var blob = new Blob([app.build.import.file.content.UTF8], { type: "text/plain" });
+        var dataUrl = URL.createObjectURL(blob);
+        var xhr = new XMLHttpRequest;
+        xhr.responseType = 'blob';
+        xhr.onload = function () {
+          var recoveredBlob = xhr.response;
+
+
+          // Read file into a Base64 string
+          var readerBase64 = new FileReader();
+          readerBase64.onload = function (e) {
+            // Set the file's content
+            app.build.import.file.content.Base64 = e.target.result;
+          };
+          readerBase64.readAsDataURL(recoveredBlob);
+          readerBase64.addEventListener("loadstart", function (e) { api.spinner.start(); });
+          readerBase64.addEventListener("error", function (e) { api.spinner.stop(); });
+          readerBase64.addEventListener("abort", function (e) { api.spinner.stop(); });
+          readerBase64.addEventListener("loadend", function (e) {
+            $("#build-import-container-file-tab").prop("disabled", true);
+            $("#build-import-container").find("[name=validate]").prop("disabled", false);
+            api.spinner.stop();
+          });
+        };
+
+        xhr.open('GET', dataUrl);
+        xhr.send();
+
+      }, 400));
+    } else {
+      $("#build-import-container-file-tab").prop("disabled", false);
+      $("#build-import-container").find("[name=validate]").prop("disabled", true);
+      window.clearTimeout($(this).data('timer'));
+    }
+
+  });
+
+  $('#build-import-container-file-tab').on('shown.bs.tab', function (e) {
+    $('#build-import-container').find('[name=preview]').show();
+  })
+
+  $('#build-import-container-text-tab').on('shown.bs.tab', function (e) {
+    $('#build-import-container').find('[name=preview]').hide();
+  })
+
   //Bind the preview button
   $("#build-import-container").find("[name=preview]").once("click", function () {
     if (app.build.import.file.size > app.config.transfer.threshold.soft) {
@@ -31,6 +85,12 @@ $(document).ready(function () {
       app.build.import.preview();
     }
   });
+
+  if (app.build.import.goTo.fileImport) {
+    $("#build-import-container-text-tab").tab('show');
+    $("#build-import-container-text-content").find('[name="text-content"]').val(app.build.import.goTo.fileImport).keyup().attr('disabled', true);
+    $("#build-import-container").find("[name=validate]").prop("disabled", false);
+  }
 
   // Initiate Drag n Drop plugin
   api.plugin.dragndrop.initiate(document, window);

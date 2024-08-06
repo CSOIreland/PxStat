@@ -782,7 +782,9 @@ app.library.utility.arrayHasDuplicate = function (items) {
   });
   //output the duplicates in the console for information
   var duplicates = itemsLowerCase.filter((item, index) => itemsLowerCase.indexOf(item) !== index);
-  console.log(duplicates);
+  if (duplicates.length) {
+    console.log(duplicates);
+  }
   return (new Set(itemsLowerCase)).size !== itemsLowerCase.length;
 };
 

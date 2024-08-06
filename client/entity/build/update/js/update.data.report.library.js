@@ -2,13 +2,12 @@
 Custom JS application specific
 *******************************************************************************/
 //#region Add Namespace
-app.build.update.data = app.build.update.data || {};
-app.build.update.data.report = app.build.update.data.report || {};
+app.build.update.report = app.build.update.report || {};
 
 //#endregion
 
 
-app.build.update.data.report.drawReport = function (data, frmType) {
+app.build.update.report.drawReport = function (data, frmType) {
     //create report as array of objects for rendering as datatable
     var report = [];
 
@@ -101,7 +100,7 @@ app.build.update.data.report.drawReport = function (data, frmType) {
         // Invoke DataTables CSV export
         // https://stackoverflow.com/questions/45515559/how-to-call-datatable-csv-button-from-custom-button
         $("#build-update-modal-view-report").find("[name=csv-ignored-records]").once("click", function () {
-            app.build.update.data.report.downloadRecordsIgnoredCsv(ignoredRecords);
+            app.build.update.report.downloadRecordsIgnoredCsv(ignoredRecords);
         });
 
     }
@@ -154,7 +153,7 @@ app.build.update.data.report.drawReport = function (data, frmType) {
         // Invoke DataTables CSV export
         // https://stackoverflow.com/questions/45515559/how-to-call-datatable-csv-button-from-custom-button
         $("#build-update-modal-view-report").find("[name=csv-updated-records]").once("click", function () {
-            app.build.update.data.report.downloadRecordsUpdatedCsv(updatedRecords);
+            app.build.update.report.downloadRecordsUpdatedCsv(updatedRecords);
         });
     }
     else {
@@ -170,7 +169,7 @@ app.build.update.data.report.drawReport = function (data, frmType) {
     $('#build-update-modal-view-report').modal('show');
 };
 
-app.build.update.data.report.downloadRecordsUpdatedCsv = function (updatedRecords) {
+app.build.update.report.downloadRecordsUpdatedCsv = function (updatedRecords) {
     var jsonToCSV = {
         "fields": [],
         "data": []
@@ -197,7 +196,7 @@ app.build.update.data.report.downloadRecordsUpdatedCsv = function (updatedRecord
     app.library.utility.download(fileName, Papa.unparse(jsonToCSV, { quotes: true }), C_APP_EXTENSION_CSV, C_APP_MIMETYPE_CSV);
 };
 
-app.build.update.data.report.downloadRecordsIgnoredCsv = function (ignoredRecords) {
+app.build.update.report.downloadRecordsIgnoredCsv = function (ignoredRecords) {
     var jsonToCSV = {
         "fields": [],
         "data": []

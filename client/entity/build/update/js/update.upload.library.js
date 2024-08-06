@@ -118,15 +118,19 @@ app.build.update.upload.callback.drawMatrix = function (data) {
  * Custom validation for Files
  */
 app.build.update.upload.validate.sourceFile = function () {
+    $("#build-update-upload-text-tab-content").find("[name=text-content]").val("");
+    $("#build-update-existing-table-tab-content").find("[name=mtr-code]").val(null).trigger('change');
+    // Hide the card
+    $("#build-update-existing-table-search-result").hide();
     if (!app.build.update.upload.file.content.source.UTF8 || !app.build.update.upload.file.content.source.Base64) {
         //Disable 'Update Metadata' button and set freq code and copyright code
-        $("#build-update-upload-file").find("[name=upload-source-file]").prop("disabled", true);
-        $("#build-update-upload-file").find("[name=file-data-view]").prop("disabled", true);
+        $("#build-update-upload-file-tab-content").find("[name=upload-source-file]").prop("disabled", true);
+        $("#build-update-upload-file-tab-content").find("[name=file-data-view]").prop("disabled", true);
         return false;
     } else {
         //enable 'Update Metadata' button and set freq code and copyright code
-        $("#build-update-upload-file").find("[name=upload-source-file]").prop("disabled", false);
-        $("#build-update-upload-file").find("[name=file-data-view]").prop("disabled", false);
+        $("#build-update-upload-file-tab-content").find("[name=upload-source-file]").prop("disabled", false);
+        $("#build-update-upload-file-tab-content").find("[name=file-data-view]").prop("disabled", false);
         return true;
     }
 };
@@ -239,84 +243,94 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
 
     switch (uploadId) {
         case "build-update-upload-file-input":
-
-            //always hide the dimension details card every time you drpp a file in
-            $("#build-update-dimensions").hide();
-
-            //clean up
-            app.build.update.upload.FrqCode = null;
-            app.build.update.upload.FrqValue = null;
-            app.build.update.upload.Signature = null;
-            app.build.update.upload.file.content.source.UTF8 = null;
-            app.build.update.upload.file.content.source.Base64 = null;
-            app.build.update.upload.file.content.source.languages = [];
-            app.build.update.callback.resetData();
-
-            //Reset Frequency and Copyright dropdowns every time you drop a new file in
-            $("#build-update-properties [name=frequency-code]").val();
-            $("#build-update-properties [name=copyright-code]").val();
-
-            $("#build-update-upload-file").find("[name=upload-source-file]").prop("disabled", true);
-            $("#build-update-upload-file").find("[name=file-data-view]").prop("disabled", true);
-
-            app.build.update.upload.file.content.source.name = file.name;
-            app.build.update.upload.file.content.source.size = file.size;
-
-
-            // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
-            if ($.inArray(fileExt.toLowerCase(), C_APP_UPDATEDATASET_FILE_ALLOWED_EXTENSION) == -1) {
-                // Show Error
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-extension", [fileExt]));
-                return;
+            //check if we have something already from search
+            if (app.build.update.ajax.jsonStat.length) {
+                api.modal.confirm(app.label.static["select-new-existing-table"], uploadFileInput)
             }
-            // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
-            if ($.inArray(file.type.toLowerCase(), C_APP_UPDATEDATASET_FILE_ALLOWED_TYPE) == -1) {
-                // Show Error
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-type", [file.type]));
-                return;
+            else {
+                uploadFileInput()
+            }
+            function uploadFileInput() {
+                //always hide the dimension details card every time you drpp a file in
+                $("#build-update-dimensions").hide();
+
+                //clean up
+                app.build.update.upload.FrqCode = null;
+                app.build.update.upload.FrqValue = null;
+                app.build.update.upload.Signature = null;
+                app.build.update.upload.file.content.source.UTF8 = null;
+                app.build.update.upload.file.content.source.Base64 = null;
+                app.build.update.upload.file.content.source.languages = [];
+                app.build.update.callback.resetData();
+
+                //Reset Frequency and Copyright dropdowns every time you drop a new file in
+                $("#build-update-properties [name=frequency-code]").val();
+                $("#build-update-properties [name=copyright-code]").val();
+
+                $("#build-update-upload-file-tab-content").find("[name=upload-source-file]").prop("disabled", true);
+                $("#build-update-upload-file-tab-content").find("[name=file-data-view]").prop("disabled", true);
+
+                app.build.update.upload.file.content.source.name = file.name;
+                app.build.update.upload.file.content.source.size = file.size;
+
+
+                // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
+                if ($.inArray(fileExt.toLowerCase(), C_APP_UPDATEDATASET_FILE_ALLOWED_EXTENSION) == -1) {
+                    // Show Error
+                    api.modal.error(app.library.html.parseDynamicLabel("error-file-extension", [fileExt]));
+                    return;
+                }
+                // Wondering why == -1 ? Then go to https://api.jquery.com/jQuery.inArray/
+                if ($.inArray(file.type.toLowerCase(), C_APP_UPDATEDATASET_FILE_ALLOWED_TYPE) == -1) {
+                    // Show Error
+                    api.modal.error(app.library.html.parseDynamicLabel("error-file-type", [file.type]));
+                    return;
+                }
+
+                // Check for the hard limit of the file size
+                if (file.size > app.config.transfer.threshold.hard) {
+                    // Show Error    
+                    api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
+                    return;
+                }
+                // info on screen 
+                inputObject.parent().find("[name=file-tip]").hide();
+                inputObject.parent().find("[name=file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
+
+
+                // Read file into an UTF8 string
+                var readerUTF8 = new FileReader();
+                readerUTF8.onload = function (e) {
+                    app.build.update.upload.file.content.source.UTF8 = e.target.result;
+                };
+                readerUTF8.readAsText(file);
+                readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
+                readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });
+                readerUTF8.addEventListener("abort", function (e) { api.spinner.stop(); });
+                readerUTF8.addEventListener("loadend", function (e) {
+                    // Validate the file
+                    app.build.update.upload.validate.sourceFile();
+                    api.spinner.stop();
+                });
+
+                // Read file into a Base64 string
+                var readerBase64 = new FileReader();
+                readerBase64.onload = function (e) {
+                    // Set the file's content
+                    app.build.update.upload.file.content.source.Base64 = e.target.result;
+                };
+                readerBase64.readAsDataURL(file);
+                readerBase64.addEventListener("loadstart", function (e) { api.spinner.start(); });
+                readerBase64.addEventListener("error", function (e) { api.spinner.stop(); });
+                readerBase64.addEventListener("abort", function (e) { api.spinner.stop(); });
+                readerBase64.addEventListener("loadend", function (e) {
+                    // Validate the file
+                    app.build.update.upload.validate.sourceFile();
+                    api.spinner.stop();
+                });
             }
 
-            // Check for the hard limit of the file size
-            if (file.size > app.config.transfer.threshold.hard) {
-                // Show Error    
-                api.modal.error(app.library.html.parseDynamicLabel("error-file-size", [app.library.utility.formatNumber(Math.ceil(app.config.transfer.threshold.hard / 1024 / 1024)) + " MB"]));
-                return;
-            }
-            // info on screen 
-            inputObject.parent().find("[name=file-tip]").hide();
-            inputObject.parent().find("[name=file-name]").html(file.name + " (" + app.library.utility.formatNumber(Math.ceil(file.size / 1024)) + " KB)").show();
 
-
-            // Read file into an UTF8 string
-            var readerUTF8 = new FileReader();
-            readerUTF8.onload = function (e) {
-                app.build.update.upload.file.content.source.UTF8 = e.target.result;
-            };
-            readerUTF8.readAsText(file);
-            readerUTF8.addEventListener("loadstart", function (e) { api.spinner.start(); });
-            readerUTF8.addEventListener("error", function (e) { api.spinner.stop(); });
-            readerUTF8.addEventListener("abort", function (e) { api.spinner.stop(); });
-            readerUTF8.addEventListener("loadend", function (e) {
-                // Validate the file
-                app.build.update.upload.validate.sourceFile();
-                api.spinner.stop();
-            });
-
-            // Read file into a Base64 string
-            var readerBase64 = new FileReader();
-            readerBase64.onload = function (e) {
-                // Set the file's content
-                app.build.update.upload.file.content.source.Base64 = e.target.result;
-            };
-            readerBase64.readAsDataURL(file);
-            readerBase64.addEventListener("loadstart", function (e) { api.spinner.start(); });
-            readerBase64.addEventListener("error", function (e) { api.spinner.stop(); });
-            readerBase64.addEventListener("abort", function (e) { api.spinner.stop(); });
-            readerBase64.addEventListener("loadend", function (e) {
-                // Validate the file
-                app.build.update.upload.validate.sourceFile();
-                api.spinner.stop();
-            });
             break;
 
         case "build-update-upload-periods-file":
@@ -445,6 +459,61 @@ api.plugin.dragndrop.readFiles = function (files, inputObject) {
         default:
             break;
     }
+};
+/**
+ * Get input from testarea and put into variables
+ */
+app.build.update.upload.getTextInput = function () {
+
+    if (app.build.update.ajax.jsonStat.length) {
+        api.modal.confirm(app.label.static["select-new-existing-table"], app.build.update.upload.parseTextInput)
+    }
+    else {
+        app.build.update.upload.parseTextInput()
+    }
+
+};
+
+app.build.update.upload.parseTextInput = function () {
+    $("#build-update-existing-table-tab-content").find("[name=mtr-code]").val(null).trigger('change');
+    // Hide the card
+    $("#build-update-existing-table-search-result").hide();
+    $("#build-update-upload-file-tab-content").find("[name=file-name]").empty().hide();
+    $("#build-update-upload-file-tab-content").find("[name=file-tip]").show();
+    $("#build-update-upload-file-input").val("");
+    $("#build-update-upload-file-tab-content").find("[name=file-data-view]").prop("disabled", true);
+
+    app.build.update.upload.file.content.source.UTF8 = $("#build-update-upload-text-tab-content").find("[name=text-content]").val().trim();
+
+
+    var blob = new Blob([app.build.update.upload.file.content.source.UTF8], { type: "text/plain" });
+    var dataUrl = URL.createObjectURL(blob);
+    var xhr = new XMLHttpRequest;
+    xhr.responseType = 'blob';
+    xhr.onload = function () {
+        var recoveredBlob = xhr.response;
+        // Read file into a Base64 string
+        var readerBase64 = new FileReader();
+        readerBase64.onload = function (e) {
+            // Set the file's content
+            app.build.update.upload.file.content.source.Base64 = e.target.result;
+            app.build.update.upload.validate.ajax.read({ "callback": "app.build.update.upload.validate.callback.uploadSource", "unitsPerSecond": app.config.transfer.unitsPerSecond["PxStat.Build.Build_API.Read"] });
+            $("#build-update-upload-text-tab-content").find("[name=text-content]").prop("disabled", true);
+            $("#build-update-upload-text-tab-content").find("[name=parse-source-file]").prop("disabled", true);
+            api.spinner.stop();
+        };
+        readerBase64.readAsDataURL(recoveredBlob);
+        readerBase64.addEventListener("loadstart", function (e) { api.spinner.start(); });
+        readerBase64.addEventListener("error", function (e) { api.spinner.stop(); });
+        readerBase64.addEventListener("abort", function (e) { api.spinner.stop(); });
+        readerBase64.addEventListener("loadend", function (e) {
+            $("#build-import-container-file-tab").prop("disabled", true);
+            $("#build-import-container").find("[name=validate]").prop("disabled", false);
+        });
+    };
+    xhr.open('GET', dataUrl);
+    xhr.send();
+
 };
 
 /**
@@ -605,6 +674,10 @@ app.build.update.upload.ajax.read = function () {
  * 
  */
 app.build.update.upload.callback.readInput = function (data) {
+    //we are working with a px file and not a release
+    //we use this variable later to determine which api to fire so make sure it is null
+    app.build.update.rlsCode = null;
+
     if (data && Array.isArray(data) && data.length) {
         //put JSON-stat into namespace variable for future use       
         app.build.update.ajax.data = data;
@@ -640,7 +713,7 @@ app.build.update.upload.callback.readInput = function (data) {
  * 
  */
 app.build.update.upload.drawProperties = function () {
-    $("#build-update-upload-file").find("[name=upload-source-file]").prop("disabled", true);
+    $("#build-update-upload-file-tab-content").find("[name=upload-source-file]").prop("disabled", true);
     $("#build-update-dimensions").fadeIn();
     $("#build-update-properties [name=lng-list-group]").empty();
 
@@ -652,8 +725,12 @@ app.build.update.upload.drawProperties = function () {
     //empty any previous tabs
     $("#build-update-matrix-dimensions [name=nav-tab]").empty();
     $("#build-update-matrix-dimensions").find("[name=tab-content]").empty();
-
+    //reset everything
     app.build.update.data.Dimension = [];
+    app.build.update.data.Map = {};
+    app.build.update.data.Elimination = {};
+    app.build.update.data.Data = [];
+
     app.build.update.upload.file.content.source.languages = [];
     $(app.build.update.ajax.jsonStat).each(function (key, jsonStat) {
         app.build.update.upload.file.content.source.languages.push(
@@ -701,7 +778,7 @@ app.build.update.upload.drawProperties = function () {
             //set copyright to value from px file
             $("#build-update-properties [name=copyright-code] > option").each(function () {
                 if (this.text == jsonStat.extension.copyright.name) {
-                    $("#build-update-properties [name=copyright-code]").val(this.value);
+                    $("#build-update-properties [name=copyright-code]").val(this.value).trigger('change');
                 }
             });
 
@@ -756,6 +833,17 @@ app.build.update.upload.drawProperties = function () {
         var tabContent = $("#build-update-dimension-metadata-templates").find("[name=nav-lng-tab-item-content]").clone();
         tabContent.attr("id", "build-update-dimension-nav-" + lngIsoCode);
         tabContent.attr("lng-iso-code", lngIsoCode);
+
+        //can't have textarea in cloned html as it causes issues with tinyMce
+        tabContent.find('[name="tinymce-wrapper"]').append(
+            $("<textarea>", {
+                class: "form-control",
+                rows: "3",
+                type: "tinymce",
+                name: "note-value",
+                contenteditable: "false"
+            })
+        );
 
         //set first tab content to be active
         if (key === 0) {
@@ -906,7 +994,7 @@ app.build.update.upload.drawProperties = function () {
     app.build.update.dimension.drawElimination();
     app.build.update.dimension.drawMapTable(true);
     //if any matrix properties change trigger submit button to run validation
-    $("#build-update-properties [name=mtr-value],#build-update-properties [name=frequency-code], #build-update-properties [name=copyright-code]").once('change', function () {
+    $("#build-update-properties [name=mtr-value],#build-update-properties [name=frequency-code]").once('change', function () {
         $("#build-update-properties").find("[type=submit]").trigger("click");
     });
 

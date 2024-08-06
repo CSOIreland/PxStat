@@ -231,20 +231,23 @@ app.build.create.initiate.ajax.readCopyright = function () {
  * @param {*} data
  */
 app.build.create.initiate.callback.readCopyright = function (data) {
-    // Map API data to select dropdown  model for main Subject search and update Subject search
-    $("#build-create-initiate-setup").find("[name=copyright-code]").append($("<option>", {
-        "text": app.label.static["select-uppercase"],
-        "disabled": "disabled",
-        "selected": "selected",
-        "value": "select"
-    }));
-
-    $.each(data, function (key, value) {
-        $("#build-create-initiate-setup").find("[name=copyright-code]").append($("<option>", {
-            "value": value.CprCode,
-            "text": value.CprValue,
-        }));
+    // Load select2
+    $("#build-create-initiate-setup").find("[name=copyright-code]").empty().append($("<option>")).select2({
+        minimumInputLength: 0,
+        allowClear: true,
+        width: '100%',
+        placeholder: app.label.static["start-typing"],
+        data: app.build.create.initiate.mapData(data)
     });
+};
+
+app.build.create.initiate.mapData = function (dataAPI) {
+    $.each(dataAPI, function (i, item) {
+        // Create ID and NAME to the list
+        dataAPI[i].id = item.CprCode;
+        dataAPI[i].text = item.CprValue;
+    });
+    return dataAPI;
 };
 
 //#endregion

@@ -581,7 +581,7 @@ app.navigation.user.callback.read = function (data) {
 
     // Show user details on click
     $("#nav-user").once("click", function (event) {
-      app.library.user.modal.ajax.readCurrent();
+      app.library.user.modal.ajax.readCurrent(true);
     });
   } else {
     $("#nav-user").hide();

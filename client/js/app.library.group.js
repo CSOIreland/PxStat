@@ -68,32 +68,53 @@ app.library.group.modal.callback.readAccountList = function (data) {
       userIconClass = "fas fa-user-edit text-orange";
       userTooltipTitle = app.label.static["editor"];
     }
-    //Create User Link.
-    var linkUser = $("<a>", {
-      idn: row.CcnUsername,
-      href: "#",
-      html: $("<i>", {
-        "data-bs-toggle": "tooltip",
-        "data-bs-placement": "top",
-        "title": "", //userTooltipTitle,
-        "data-original-title": userTooltipTitle,
-        "class": userIconClass
-      }).get(0).outerHTML + " " + row.CcnUsername
-    }).get(0);
-    linkUser.addEventListener("click", function (e) {
-      e.preventDefault();
-      app.library.user.modal.ajax.read({ CcnUsername: row.CcnUsername });
-    });
-    var li = $("<li>", {
-      class: "list-group-item"
-    }).html(linkUser);
-    $("#modal-read-group .list-group").append(li);
+    if (app.navigation.user.prvCode == C_APP_PRIVILEGE_MODERATOR) {
+      //Create User Link.
+      var textUser = $("<span>", {
+        html: $("<i>", {
+          "data-bs-toggle": "tooltip",
+          "data-bs-placement": "top",
+          "data-original-title": userTooltipTitle,
+          "class": userIconClass
+        }).get(0).outerHTML + " " + row.CcnUsername
+      }).get(0);
+
+      var li = $("<li>", {
+        class: "list-group-item"
+      }).html(textUser);
+      $("#modal-read-group .list-group").append(li);
+    }
+    else {
+      //Create User Link.
+      var linkUser = $("<a>", {
+        idn: row.CcnUsername,
+        href: "#",
+        html: $("<i>", {
+          "data-bs-toggle": "tooltip",
+          "data-bs-placement": "top",
+          "data-original-title": userTooltipTitle,
+          "class": userIconClass
+        }).get(0).outerHTML + " " + row.CcnUsername
+      }).get(0);
+      linkUser.addEventListener("click", function (e) {
+        e.preventDefault();
+        app.library.user.modal.ajax.read({ CcnUsername: row.CcnUsername });
+      });
+      var li = $("<li>", {
+        class: "list-group-item"
+      }).html(linkUser);
+      $("#modal-read-group .list-group").append(li);
+    }
+
+
+
   });
-  //Bootstrap tooltip
-  $('[data-bs-toggle="tooltip"]').tooltip();
+
   // Switch between the modals to avoid overlapping
   $("#modal-read-user").modal("hide");
   $("#modal-read-group").modal("show");
+  //Bootstrap tooltip
+  $('[data-bs-toggle="tooltip"]').tooltip();
 };
 
 //#endregion

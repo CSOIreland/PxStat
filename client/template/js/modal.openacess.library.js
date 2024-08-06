@@ -489,14 +489,14 @@ api.cookie.session.confirmExtension = function () {
     if (!$("#modal-confirm").is(":visible")) {
 
         api.modal.confirm(app.label.static["open-access-confirm-session-extension"], app.openAccess.ajax.extendSession)
-        $("#modal-confirm").find("[data-dismiss=modal]").once("click", function () {
+        $("#modal-confirm").find("[data-bs-dismiss=modal]").once("click", function () {
             api.cookie.session.end();
         });
     }
 };
 
 app.openAccess.ajax.extendSession = function () {
-    $("#modal-confirm").find("[data-dismiss=modal]").off();
+    $("#modal-confirm").find("[data-bs-dismiss=modal]").off();
     // Extend session by calling a silent API
     api.ajax.jsonrpc.request(
         app.config.url.api.jsonrpc.private,
