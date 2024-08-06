@@ -5,12 +5,39 @@ using PxStat.Entities.DBuild;
 using PxStat.Resources;
 using PxStat.Security;
 using PxStat.System.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PxStat.DBuild
 {
+    public class DBuild_VLD_UpdatePublish : AbstractValidator<DBuild_DTO_UpdatePublish>
+    {
+        public DBuild_VLD_UpdatePublish() 
+        {
+            RuleFor(x => x.MtrCode).Length(1, 20).WithMessage("Matrix code must not be empty");
+            RuleFor(x => x.MtrCode).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
+            RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode)).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
+            RuleFor(f => f.WrqDatetime).Must(f => !(f.Equals(default(DateTime)))).WithMessage("Invalid Request Date");
+            RuleFor(f => f.Dspecs).NotNull();
+            RuleFor(x => x).Must(NoSpecsHaveDuplicateLngIsoCodes).WithMessage(Label.Get("error.validation"));
+        }
+
+        public bool NoSpecsHaveDuplicateLngIsoCodes(DBuild_DTO_UpdatePublish dto)
+        {
+            if (dto.Dspecs == null) return false;
+            if (dto.Dspecs.Count == 0) return false;
+            bool isOk = true;
+            List<string> lcodes = dto.Dspecs.Select(x => x.Language).ToList();
+            foreach(var item in dto.Dspecs )
+            {
+                if (lcodes.Where(x => x.Equals(item.Language)).Count() > 1) isOk=false;
+            }
+            return isOk;
+        }
+    }
+
     public class DBuild_VLD_Update : AbstractValidator<DBuild_DTO_Update>
     {
         public DBuild_VLD_Update()
@@ -40,6 +67,30 @@ namespace PxStat.DBuild
 
     }
 
+    public class DBuild_VLD_UpdateByRelease : AbstractValidator<DBuild_DTO_UpdateByRelease>
+    {
+        public DBuild_VLD_UpdateByRelease()
+        {
+            RuleFor(x => x.CprCode).Length(1, 20).When(f => !string.IsNullOrEmpty(f.CprCode)).WithMessage("Copyright code must not be empty");
+            RuleFor(x => x.CprCode).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
+
+            RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Matches((string)Configuration_BSO.GetStaticConfig("APP_REGEX_NO_WHITESPACE"));
+
+            RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
+            RuleFor(f => f).Must(CustomValidations.FormatExists).WithMessage("Requested format/version not found in the system");
+            RuleFor(f => f.Elimination).NotEmpty().WithMessage("Elimination object not supplied in request");
+            RuleFor(f => f.Format.FrmType).NotEmpty();
+            RuleFor(f => f.Format.FrmVersion).NotEmpty();
+            RuleFor(f => f).Must(CustomValidations.FormatExists);
+
+            RuleFor(dto => dto.Format).Must(CustomValidations.FormatForBuildUpdate);
+            RuleForEach(f => f.Dspecs).SetValidator(new DSpec_VLD_Update());
+            RuleFor(f => f.RlsCode).NotEmpty().WithMessage("Release code must not be empty");
+        }
+    }
+
     public class DSpec_VLD_Update : AbstractValidator<DSpec_DTO>
     {
         public DSpec_VLD_Update()
@@ -59,8 +110,6 @@ namespace PxStat.DBuild
 
 
         }
-
-
 
     }
 
@@ -121,6 +170,70 @@ namespace PxStat.DBuild
 
             return true;
         }
+
+        public static bool ValidateCsvHeader(DBuild_DTO_UpdateByRelease dto, IDmatrix dmatrix, List<string> headList)
+        {
+            if (dto.ChangeData == null) return true;
+            if (dto.ChangeData.Count == 0) return true;
+            List<string> codeDimensionList = dmatrix.Dspecs[dto.LngIsoCode].Dimensions.Select(x => x.Code).ToList();
+
+            //header contains something that is not a dimension code for the matrix?
+            foreach (string heading in headList)
+            {
+                if (!codeDimensionList.Contains(heading) && !heading.Equals(Configuration_BSO.GetStaticConfig("APP_CSV_VALUE")) && !heading.Equals(Configuration_BSO.GetStaticConfig("APP_CSV_UNIT")))
+                {
+                    Log.Instance.Error($"Invalid CSV header item: {heading}");
+                    return false;
+                }
+
+            }
+
+            //Duplicates in header?
+            var groupedHeaders = headList.GroupBy(x => x)
+              .Where(g => g.Count() > 1)
+              .Select(y => y.Key)
+              .ToList();
+            if (groupedHeaders.Count > 0)
+            {
+                Log.Instance.Error("One or more items repeated in the CSV header");
+                return false;
+            }
+
+            return true;
+        }
+
+
+        public static bool ValidateCsvHeader(DBuild_DTO_UpdatePublish dto, IDmatrix dmatrix, List<string> headList)
+        {
+            if (dto.ChangeData == null) return true;
+            if (dto.ChangeData.Count == 0) return true;
+            List<string> codeDimensionList = dmatrix.Dspecs[dto.LngIsoCode].Dimensions.Select(x => x.Code).ToList();
+
+            //header contains something that is not a dimension code for the matrix?
+            foreach (string heading in headList)
+            {
+                if (!codeDimensionList.Contains(heading) && !heading.Equals(Configuration_BSO.GetStaticConfig("APP_CSV_VALUE")) && !heading.Equals(Configuration_BSO.GetStaticConfig("APP_CSV_UNIT")))
+                {
+                    Log.Instance.Error($"Invalid CSV header item: {heading}");
+                    return false;
+                }
+
+            }
+
+            //Duplicates in header?
+            var groupedHeaders = headList.GroupBy(x => x)
+              .Where(g => g.Count() > 1)
+              .Select(y => y.Key)
+              .ToList();
+            if (groupedHeaders.Count > 0)
+            {
+                Log.Instance.Error("One or more items repeated in the CSV header");
+                return false;
+            }
+
+            return true;
+        }
+
         internal static bool FormatForBuildCreate(Format_DTO_Read dto)
         {
             if (dto.FrmDirection != Format_DTO_Read.FormatDirection.UPLOAD.ToString()) return false;
@@ -152,6 +265,7 @@ namespace PxStat.DBuild
             return exists;
 
         }
+
 
         /// <summary>
         /// The main language must be represented in one and only one dimension
@@ -194,6 +308,7 @@ namespace PxStat.DBuild
             var result = from s in spec where s.codeCount > 1 select s;
             return result.Count() == 0;
         }
+
         internal static bool ValidateIgnoreEscapeChars(string readString)
         {
             if (readString == null) return true;
@@ -209,14 +324,30 @@ namespace PxStat.DBuild
             return (dtoFreq.FrqCode != null);
 
         }
-
-        internal static bool FrequencyCodeExists(DBuild_DTO_ReadTemplate dto)
+        internal static bool FrequencyCodeExists(DBuild_DTO_UpdateByRelease dto)
         {
             Frequency_BSO bso = new Frequency_BSO();
             Frequency_DTO dtoFreq = bso.Read(dto.FrqCodeTimeval);
             return (dtoFreq.FrqCode != null);
 
         }
+
+
+
+        internal static bool FrequencyCodeExists(DBuild_DTO_ReadTemplate dto)
+        {
+            Frequency_BSO bso = new Frequency_BSO();
+            Frequency_DTO dtoFreq = bso.Read(dto.FrqCodeTimeval);
+            return (dtoFreq.FrqCode != null);
+        }
+
+        internal static bool FrequencyCodeExists(DBuild_DTO_ReadTemplateByRelease dto)
+        {
+            Frequency_BSO bso = new Frequency_BSO();
+            Frequency_DTO dtoFreq = bso.Read(dto.FrqCodeTimeval);
+            return (dtoFreq.FrqCode != null);
+        }
+
 
         internal static bool FrequencyCodeExists(DBuild_DTO_Read dto)
         {
@@ -225,6 +356,7 @@ namespace PxStat.DBuild
             return (dtoFreq.FrqCode != null);
 
         }
+
         internal static bool FormatExists(DBuild_DTO_Update dto)
         {
             bool exists = false;
@@ -239,6 +371,22 @@ namespace PxStat.DBuild
             };
             return exists;
         }
+
+        internal static bool FormatExists(DBuild_DTO_UpdateByRelease dto)
+        {
+            bool exists = false;
+            using (IADO Ado = AppServicesHelper.StaticADO)
+            {
+                Format_ADO adoFormat = new Format_ADO();
+                Format_DTO_Read dtoFormat = new Format_DTO_Read();
+                dtoFormat.FrmType = dto.Format.FrmType;
+                dtoFormat.FrmVersion = dto.Format.FrmVersion;
+                var result = adoFormat.Read(Ado, dtoFormat);
+                exists = result.hasData;
+            };
+            return exists;
+        }
+
 
         internal static bool SignatureMatch(DBuild_DTO_Update dto)
         {
@@ -334,11 +482,7 @@ namespace PxStat.DBuild
             RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval)).WithMessage("You must supply a FrqCode with a FrqValue");
             RuleFor(f => f).Must(CustomValidations.SignatureMatch).WithMessage("MtrInput does not match the supplied signature");
             RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("You must supply a FrqValue with a FrqCode");
-
         }
-
-
-
     }
 
     internal class DBuild_VLD_BuildReadDataset : AbstractValidator<DBuild_DTO_Update>
@@ -355,6 +499,24 @@ namespace PxStat.DBuild
             RuleForEach(f => f.Dspecs).SetValidator(new Dimension_VLD_UltraLite()).When(f => f.Dspecs != null);
         }
     }
+
+    internal class DBuild_ReadDatasetByRelease_VLD : AbstractValidator<DBuild_DTO_UpdateByRelease>
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        internal DBuild_ReadDatasetByRelease_VLD()
+        {
+            RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
+            RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
+
+            RuleFor(f => f.Dspecs).Must(CustomValidations.LanguagesUnique).When(f => f.Dspecs != null).WithMessage("Non unique language");
+            RuleFor(f => f.Dspecs).NotNull();
+            RuleForEach(f => f.Dspecs).SetValidator(new Dimension_VLD_UltraLite()).When(f => f.Dspecs != null);
+        }
+    }
+
     internal class Dimension_VLD_UltraLite : AbstractValidator<DSpec_DTO>
     {
         internal Dimension_VLD_UltraLite()
@@ -385,7 +547,23 @@ namespace PxStat.DBuild
         }
     }
 
-
+    internal class DBuild_VLD_ReadTemplateByRelease : AbstractValidator<DBuild_DTO_ReadTemplateByRelease>
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        internal DBuild_VLD_ReadTemplateByRelease()
+        {
+            //Required
+            RuleFor(f => f.RlsCode).NotEmpty().WithMessage("Release code must not be empty");
+            //Optional
+            //Optional - LngIsoCode
+            RuleFor(f => f.LngIsoCode.Length).Equal(2).When(f => !string.IsNullOrEmpty(f.LngIsoCode)).WithMessage("Invalid ISO code").WithName("LanguageIsoCodeValidation");
+            RuleFor(f => f.FrqValueTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqValueTimeval));
+            RuleFor(f => f.FrqCodeTimeval).Length(1, 256).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval));
+            RuleFor(f => f).Must(CustomValidations.FrequencyCodeExists).When(f => !string.IsNullOrEmpty(f.FrqCodeTimeval)).WithMessage("Invalid Frequency Code");
+        }
+    }
 
     public class DBuild_VLD_Create : AbstractValidator<DBuild_DTO_Create>
     {

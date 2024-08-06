@@ -90,6 +90,7 @@ namespace PxStat.Data
 
             if (this.Variables != null && otherDimension.Variables != null)
             {
+                if(this.Variables.Count != other.Variables.Count) return false;
                 List<string> vCodesThis = this.Variables.Select(x => x.Code).ToList();
                 List<string> vCodesOther = otherDimension.Variables.Select(x => x.Code).ToList();
                 foreach (var vrbCode in vCodesThis)

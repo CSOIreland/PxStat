@@ -21,20 +21,19 @@ namespace PxStat.Data
             
         }
 
-        internal dynamic ReadCollection(IADO theAdo, Cube_DTO_ReadCollection DTO, bool meta = true)
+        internal dynamic ReadCollection(IADO theAdo, Cube_DTO_ReadCollection DTO)
         {
             //var ado = new Cube_ADO(theAdo);
 
             ICollectionReader dataStore = new CollectionReader();
 
-            var dbData = (List<dynamic>)dataStore.ReadCollectionMetadata(theAdo, DTO.language, DTO.datefrom, DTO.product, meta);
-
+            var dbData = (List<dynamic>)dataStore.ReadCollection(theAdo, DTO.language, DTO.datefrom, DTO.product);
 
 
             List<dynamic> jsonStatCollection = new List<dynamic>();
 
             //Get a list of individual matrix data entities
-            List<dynamic> releases = getReleases(dbData, meta);
+            List<dynamic> releases = getReleases(dbData);
 
 
             var theJsonStatCollection = new JsonStatCollection();
@@ -53,27 +52,16 @@ namespace PxStat.Data
             }
 
 
-
             //For each of these, get a list of statistics and a list of classifications
             //Then get the JSON-stat for that metadata and add to jsonStatCollection
             foreach (var rls in releases)
             {
                 List<dynamic> thisReleaseMetadata = dbData.Where(x => x.RlsCode == rls.RlsCode).Where(x => x.LngIsoCode == rls.LngIsoCode).ToList<dynamic>();
-                if (meta)
-                {
+
                     List<dynamic> stats = getStatistics(thisReleaseMetadata);
                     List<dynamic> classifications = getClassifications(thisReleaseMetadata);
                     List<dynamic> periods = getPeriods(thisReleaseMetadata);
                     theJsonStatCollection.Link.Item.Add(GetJsonStatRelease(thisReleaseMetadata, stats, classifications, periods, formats));
-
-                }
-                else
-                {
-                    List<dynamic> classifications = getClassificationsNoVrbCount(thisReleaseMetadata);
-                    theJsonStatCollection.Link.Item.Add(GetJsonStatReleaseNoCollections(thisReleaseMetadata, formats, classifications));
-                    
-
-                }
 
 
             }
@@ -197,13 +185,12 @@ namespace PxStat.Data
         /// </summary>
         /// <param name="dbData"></param>
         /// <returns></returns>
-        private List<dynamic> getReleases(List<dynamic> dbData, bool meta = true)
+        private List<dynamic> getReleases(List<dynamic> dbData)
 
         {
 
             if (dbData == null) return new List<dynamic>();
-            if (meta)
-            {
+
                 return (from d in dbData
                         group d by new
                         {
@@ -240,42 +227,7 @@ namespace PxStat.Data
                         }
                                 ).ToList<dynamic>();
 
-            }
-            else
-            {
-                return (from d in dbData
-                        group d by new
-                        {
-                            d.RlsCode,
-                            d.MtrCode,
-                            d.LngIsoCode,
-                            d.LngIsoName,
-                            d.MtrTitle,
-                            d.CprValue,
-                            d.CprUrl,
-                            d.CprCode,
-                            d.RlsLiveDatetimeFrom,
-                            d.RlsLiveDatetimeTo,
-                            d.ExceptionalFlag
-                        }
-                                into rls
-                        select new
-                        {
-                            rls.Key.RlsCode,
-                            rls.Key.MtrCode,
-                            rls.Key.LngIsoCode,
-                            rls.Key.LngIsoName,
-                            rls.Key.MtrTitle,
-                            rls.Key.CprValue,
-                            rls.Key.CprUrl,
-                            rls.Key.CprCode,
-                            rls.Key.RlsLiveDatetimeFrom,
-                            rls.Key.RlsLiveDatetimeTo,
-                            rls.Key.ExceptionalFlag
-                        }
-                                ).ToList<dynamic>();
 
-            }
         }
 
         /// <summary>

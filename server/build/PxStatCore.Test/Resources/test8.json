@@ -22,6 +22,12 @@
         "csv": 1048573,
         "xlsx": 1048575
       }
+    },
+    "analytical": {
+      "label": "dependency",
+      "icon": "fa-solid fa-circle-nodes",
+      "colour": "text-analytical",
+      "display": false
     }
   },
   "regex": {
@@ -75,7 +81,17 @@
   },
   "security": {
     "adOpenAccess": false,
-    "demo": false
+    "demo": false,
+    "tokenApiAccessIpMaskWhitelist": [
+      {
+        "prefix": "3.0.0.0",
+        "length": 12
+      },
+      {
+        "prefix": "::1",
+        "length": 32
+      }
+    ]
   },
   "search": {
     "maximumResults": 101

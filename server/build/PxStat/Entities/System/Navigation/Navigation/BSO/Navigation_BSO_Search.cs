@@ -19,7 +19,7 @@ namespace PxStat.System.Navigation
         /// <param name="request"></param>
         /// 
 
-        internal Navigation_BSO_Search(JSONRPC_API request) : base(request, new Navigation_VLD_Search())
+        internal Navigation_BSO_Search(IRequest request) : base(request, new Navigation_VLD_Search())
         { }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace PxStat.System.Navigation
 
             //DTO.search has too much variation to use as a cache key - the search terms are formatted in the table so we don't need it any more     
             DTO.Search = "";
-
+            
             MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO); //
             if (cache.hasData)
             {

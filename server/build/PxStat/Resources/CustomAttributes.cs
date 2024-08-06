@@ -86,6 +86,18 @@ namespace PxStat
         public virtual string DOMAIN { get; set; }
     }
 
+
+    /// <summary>
+    /// If this attribute is asserted, the DTO will need to contain the following parameters:
+    /// - Ccnusername - a valid user name
+    /// - AprToken - a token shown to the user on the TM_APPLICATION_USER table
+    /// - Also, the relevant AppCode must be (a) shown on the API call and (b) shown against the CcnUsername on the TM_APPLICATION_USER table
+    /// </summary>
+    internal class TokenSecure : Attribute 
+    { 
+        public virtual string AppCode { get; set; }
+    }
+
     /// <summary>
     /// Method not allowed for PowerUsers and below if the security.demo flag is set in the global config
     /// </summary>

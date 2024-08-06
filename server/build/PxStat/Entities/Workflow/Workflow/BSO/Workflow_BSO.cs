@@ -26,7 +26,7 @@ namespace PxStat.Workflow
                 WrqExperimentalFlag = DataAdaptor.ReadBool(reader.data[0].WrqExperimentalFlag)
             };
         }
-        internal JSONRPC_Output WorkflowRequestCreate(WorkflowRequest_DTO DTO, IADO Ado, string SamAccountName)
+        internal JSONRPC_Output WorkflowRequestCreate(WorkflowRequest_DTO DTO, IADO Ado, string SamAccountName, List<WorkflowRequest_DTO> dtoWrqList=null)
         {
             JSONRPC_Output response = new JSONRPC_Output();
             //Validation of parameters and user have been successful. We may now proceed to read from the database
@@ -47,7 +47,7 @@ namespace PxStat.Workflow
             if (releaseDTO == null)
             {
                 Log.Instance.Debug("Release Code not found");
-                response.error = Label.Get("error.duplicate");
+                response.error = Label.Get("error.release.not-found");
                 return response;
             }
             Request_ADO adoRequest = new Request_ADO();
@@ -142,8 +142,8 @@ namespace PxStat.Workflow
 
 
             response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
-
-            List<WorkflowRequest_DTO> dtoWrqList = adoWorkflowRequest.Read(Ado, DTO.RlsCode, true);
+            if(dtoWrqList==null)
+             dtoWrqList = adoWorkflowRequest.Read(Ado, DTO.RlsCode, true);
             if (dtoWrqList.Count == 1)
             {
                 Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();

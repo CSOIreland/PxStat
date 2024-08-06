@@ -1,6 +1,7 @@
 ﻿using API;
 using PxStat.Security;
 using PxStat.Template;
+using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -42,7 +43,7 @@ namespace PxStat.System.Navigation
 
             var adoProduct = new Product_ADO(Ado);
             var list = adoProduct.Read(DTO);
-            Response.data = list;
+            Response.data = list.ToList().OrderBy(x=>x.PrcValue);
 
             return true;
         }

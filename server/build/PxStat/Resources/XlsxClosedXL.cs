@@ -427,7 +427,8 @@ namespace PxStat.Resources
                 sheet.Cell(row + counter, 2).Value = matrix.Release.RlsArchiveFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode);
             counter++;
 
-            sheet.Cell(row + counter, 1).Value = Label.Get("xlsx.analytical", lngIsoCode);
+            string wildCardFlag = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "dataset.analytical.label");
+            sheet.Cell(row + counter, 1).Value = Label.Get(wildCardFlag, lngIsoCode);
             sheet.Cell(row + counter, 1).Style.Font.Bold = true;
             if (matrix.Release != null)
                 sheet.Cell(row + counter, 2).Value = matrix.Release.RlsAnalyticalFlag ? Label.Get("xlsx.yes", lngIsoCode) : Label.Get("xlsx.no", lngIsoCode);

@@ -33,7 +33,15 @@ namespace PxStat.System.Settings
         {
             var adoLanguage = new Language_ADO(Ado);
 
-            Response.data = adoLanguage.ReadListByRelease(DTO.RlsCode);
+            var response=adoLanguage.ReadListByRelease(DTO.RlsCode);
+
+            if(response.Count>0)
+                Response.data = response;
+            else
+            {
+                Response.error = Label.Get("error.release.not-found",DTO.LngIsoCode );
+                return false;
+            }
 
             return true;
         }

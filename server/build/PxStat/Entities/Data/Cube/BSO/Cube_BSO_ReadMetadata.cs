@@ -129,7 +129,7 @@ namespace PxStat.Data
 
            
             JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
-            var jsonStat = jxb.Create(matrix, matrix.Language, false);
+            var jsonStat = jxb.Create(matrix, matrix.Language, false,false,theCubeDTO.build);
             theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
             
             if (isLive)

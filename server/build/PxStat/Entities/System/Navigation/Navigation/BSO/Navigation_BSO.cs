@@ -374,6 +374,8 @@ namespace PxStat.System.Navigation
                 rel.MtrCode = release.MtrCode;
                 rel.MtrTitle = release.MtrTitle;
                 rel.MtrOfficialFlag = release.MtrOfficialFlag;
+                rel.ThmCode = release.ThmCode;
+                rel.ThmValue = release.ThmValue;
                 rel.SbjCode = release.SbjCode;
                 rel.SbjValue = release.SbjValue;
                 rel.PrcCode = release.PrcCode;
@@ -521,6 +523,8 @@ namespace PxStat.System.Navigation
                                 t.MtrCode,
                                 t.MtrTitle,
                                 t.MtrOfficialFlag,
+                                t.ThmCode,
+                                t.ThmValue,
                                 t.SbjCode,
                                 t.SbjValue,
                                 t.PrcCode,
@@ -547,6 +551,8 @@ namespace PxStat.System.Navigation
                                 grp.Key.MtrCode,
                                 grp.Key.MtrTitle,
                                 grp.Key.MtrOfficialFlag,
+                                grp.Key.ThmCode,
+                                grp.Key.ThmValue,
                                 grp.Key.SbjCode,
                                 grp.Key.SbjValue,
                                 grp.Key.PrcCode,

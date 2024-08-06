@@ -1,4 +1,5 @@
 ﻿using API;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Office2013.Word;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FluentValidation.Results;
@@ -18,6 +19,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace PxStat.DBuild
@@ -578,7 +580,7 @@ namespace PxStat.DBuild
 
 
                     //Update other metadata
-                    matrix.Dspecs[dtospec.Language].Title = dtospec.MtrTitle;
+                    matrix.Dspecs[dtospec.Language].Title = dtospec.MtrTitle ?? matrix.Dspecs[dtospec.Language].Title;
                    matrix.Dspecs[dtospec.Language].NotesAsString = dtospec.MtrNote ?? matrix.Dspecs[dtospec.Language].NotesAsString;
 
                     if (dto.Elimination != null)
@@ -640,6 +642,255 @@ namespace PxStat.DBuild
             return insertedOrdinals;
         }
 
+        public Dictionary<int, object> UpdateMatrixWithNewMetadata(ref IDmatrix matrix, DBuild_DTO_UpdatePublish dto)
+        {
+            List<List<IDimensionVariable>> addedVariables = new List<List<IDimensionVariable>>();
+            List<StatDimension> updateDims = new List<StatDimension>();
+            if (dto.MtrCode != null) matrix.Code = dto.MtrCode;
+
+
+            foreach (var dtospec in dto.Dspecs)
+            {
+                StatDimension updateDim = new StatDimension();
+                if (matrix.Dspecs.ContainsKey(dtospec.Language))
+                {
+                    foreach (var dim in dtospec.StatDimensions)
+                    {
+                        if (dim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_STATISTIC))
+                        {
+                            updateDim = matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_STATISTIC))?.First();
+                            if (dtospec.ContentVariable != null)
+                                updateDim.Value = dtospec.ContentVariable;
+                        }
+                        
+                        else if (dim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME))
+                        {
+                            dim.Code = matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).FirstOrDefault().Code;
+                            dim.Value= matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).FirstOrDefault().Value;
+                        }
+
+                        //Do we have some new data regarding our dimensions?
+                        if (matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Value.Equals(dim.Value)).Count() > 0)
+                        {
+                            updateDim = matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Value.Equals(dim.Value)).First();
+
+                            List<IDimensionVariable> addedDimensionVariables = new List<IDimensionVariable>();
+                            foreach (var dimVariable in dim.Variables)
+                            {
+                                if (updateDim.Variables.Where(x => x.Code.Equals(dimVariable.Code)).Count().Equals(0))
+                                {
+                                    var newVariable = new DimensionVariable()
+                                    {
+                                        Code = dimVariable.Code,
+                                        Value = dimVariable.Value,
+                                        AmendFlag = dimVariable.AmendFlag,
+                                        Decimals = dimVariable.Decimals,
+                                        Elimination = dimVariable.Elimination,
+                                        Unit = dimVariable.Unit,
+                                        Sequence = updateDim.Variables.Count + 1 // might have to revisit this for out of sequence variables (see below)
+                                    };
+                                    //We have found a new variable in the request for this dimension
+                                    updateDim.Variables.Add(newVariable);
+                                    //If this is a time dimension, the sequences must be set by the code
+                                    //e.g. if a month is inserted into the the middle of a list rather than at the end
+                                    if (updateDim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME))
+                                    {
+                                        updateDim.Variables = updateDim.Variables.OrderBy(x => x.Code).ToList();
+                                        for (int i = 0; i < updateDim.Variables.Count; i++)
+                                        {
+                                            updateDim.Variables[i].Sequence = i + 1;
+                                        }
+                                    }
+                                    addedDimensionVariables.Add(newVariable);
+
+                                }
+                            }
+
+                            if (addedDimensionVariables.Count > 0)
+                            {
+                                addedVariables.Add(addedDimensionVariables);
+                                updateDims.Add(updateDim);
+                            }
+                        }
+
+                    }
+
+
+
+                    //Update other metadata
+                    matrix.Dspecs[dtospec.Language].Title = dtospec.MtrTitle?? matrix.Dspecs[dtospec.Language].Title;
+                    matrix.Dspecs[dtospec.Language].NotesAsString = dtospec.MtrNote ?? matrix.Dspecs[dtospec.Language].NotesAsString;
+
+
+                }
+
+                //Update Notes
+                if (dtospec.MtrNote != null)
+                {
+
+                    matrix.Dspecs[dtospec.Language].NotesAsString = dtospec.MtrNote;
+                    matrix.Dspecs[dtospec.Language].Notes = new List<string>();
+                    matrix.Dspecs[dtospec.Language].Notes.Add(dtospec.MtrNote);
+                }
+
+
+            }
+
+
+            ResetLambdas(ref matrix);
+
+            Dictionary<int, object> insertedOrdinals = new Dictionary<int, object>();
+
+            if (updateDims.Count > 0 && addedVariables.Count > 0)
+                insertedOrdinals = GetListOfInsertedOrdinals(matrix, updateDims[0], addedVariables[0]);
+
+            return insertedOrdinals;
+        }
+
+        public Dictionary<int, object> UpdateMatrixWithNewMetadataByRelease(ref IDmatrix matrix, DBuild_DTO_UpdateByRelease dto, Copyright_BSO cbso, ICopyright icpr = null)
+        {
+            List<List<IDimensionVariable>> addedVariables = new List<List<IDimensionVariable>>();
+            List<StatDimension> updateDims = new List<StatDimension>();
+
+            if (dto.CprCode != null)
+            {
+                if (icpr == null)
+                {
+                    ICopyright cpr = cbso.Read(dto.CprCode);
+                    if (cpr != null) matrix.Copyright = cpr;
+                }
+                else matrix.Copyright = icpr;
+            }
+
+            if (dto.MtrOfficialFlag != null)
+                matrix.IsOfficialStatistic = (bool)dto.MtrOfficialFlag;
+
+            foreach (var dtospec in dto.Dspecs)
+            {
+                StatDimension updateDim = new StatDimension();
+                if (matrix.Dspecs.ContainsKey(dtospec.Language))
+                {
+                    foreach (var dim in dtospec.StatDimensions)
+                    {
+                        if (dim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_STATISTIC))
+                        {
+                            updateDim = matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_STATISTIC))?.First();
+                            if (dtospec.ContentVariable != null)
+                                updateDim.Value = dtospec.ContentVariable;
+                        }
+
+                        //Do we have some new data regarding our dimensions?
+                        if (matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Value.Equals(dim.Value)).Count() > 0)
+                        {
+                            updateDim = matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Value.Equals(dim.Value)).First();
+
+                            List<IDimensionVariable> addedDimensionVariables = new List<IDimensionVariable>();
+                            foreach (var dimVariable in dim.Variables)
+                            {
+                                if (updateDim.Variables.Where(x => x.Code.Equals(dimVariable.Code)).Count().Equals(0))
+                                {
+                                    var newVariable = new DimensionVariable()
+                                    {
+                                        Code = dimVariable.Code,
+                                        Value = dimVariable.Value,
+                                        AmendFlag = dimVariable.AmendFlag,
+                                        Decimals = dimVariable.Decimals,
+                                        Elimination = dimVariable.Elimination,
+                                        Unit = dimVariable.Unit,
+                                        Sequence = updateDim.Variables.Count + 1 // might have to revisit this for out of sequence variables (see below)
+                                    };
+                                    //We have found a new variable in the request for this dimension
+                                    updateDim.Variables.Add(newVariable);
+                                    //If this is a time dimension, the sequences must be set by the code
+                                    //e.g. if a month is inserted into the the middle of a list rather than at the end
+                                    if (updateDim.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME))
+                                    {
+                                        updateDim.Variables = updateDim.Variables.OrderBy(x => x.Code).ToList();
+                                        for (int i = 0; i < updateDim.Variables.Count; i++)
+                                        {
+                                            updateDim.Variables[i].Sequence = i + 1;
+                                        }
+                                    }
+                                    addedDimensionVariables.Add(newVariable);
+
+                                }
+                            }
+
+                            if (addedDimensionVariables.Count > 0)
+                            {
+                                addedVariables.Add(addedDimensionVariables);
+                                updateDims.Add(updateDim);
+                            }
+                        }
+
+                    }
+
+
+
+                    //Update other metadata
+                    matrix.Dspecs[dtospec.Language].Title = dtospec.MtrTitle ?? matrix.Dspecs[dtospec.Language].Title;
+                    matrix.Dspecs[dtospec.Language].NotesAsString = dtospec.MtrNote ?? matrix.Dspecs[dtospec.Language].NotesAsString;
+
+                    if (dto.Elimination != null)
+                    {
+                        ICollection<StatDimension> classifications = matrix.Dspecs[dtospec.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_CLASSIFICATION)).ToList();
+                        matrix.Dspecs[dtospec.Language].SetEliminationsByCode(ref classifications, dto.Elimination);
+                    }
+
+                    if (dto.Map != null)
+                    {
+                        foreach (var dim in matrix.Dspecs[dtospec.Language].Dimensions)
+                        {
+                            if (dto.Map.ContainsKey(dim.Code))
+                            {
+                                var dtoMap = dto.Map[dim.Code];
+                                if (dtoMap != null)
+                                {
+                                    dim.GeoUrl = dto.Map[dim.Code];
+                                    dim.GeoFlag = true;
+                                }
+                                else
+                                {
+                                    dim.GeoFlag = false;
+                                    dim.GeoUrl = null;
+                                }
+
+                            }
+                            else
+                            {
+                                dim.GeoFlag = false;
+                                dim.GeoUrl = null;
+                            }
+                        }
+
+                    }
+
+                }
+
+                //Update Notes
+                if (dtospec.MtrNote != null)
+                {
+
+                    matrix.Dspecs[dtospec.Language].NotesAsString = dtospec.MtrNote;
+                    matrix.Dspecs[dtospec.Language].Notes = new List<string>();
+                    matrix.Dspecs[dtospec.Language].Notes.Add(dtospec.MtrNote);
+                }
+
+
+            }
+
+
+            ResetLambdas(ref matrix);
+
+            Dictionary<int, object> insertedOrdinals = new Dictionary<int, object>();
+
+            if (updateDims.Count > 0 && addedVariables.Count > 0)
+                insertedOrdinals = GetListOfInsertedOrdinals(matrix, updateDims[0], addedVariables[0]);
+
+            return insertedOrdinals;
+        }
+
+
         /// <summary>
         /// Return an indexed list of blank cells, indexed with their ordinals, for the added variables
         /// </summary>
@@ -687,6 +938,31 @@ namespace PxStat.DBuild
                     dim.Lambda = previousLambda / dim.Variables.Count;
                     dim.PreviousLambda = previousLambda;
                     previousLambda = dim.Lambda;
+                }
+            }
+        }
+
+        private void ResetLambdasPlusVariableFinder(ref IDmatrix dmatrix)
+        {
+            foreach (var spec in dmatrix.Dspecs)
+            {
+                int previousLambda = 1;
+                foreach (IStatDimension dim in spec.Value.Dimensions)
+                {
+                    previousLambda = previousLambda * dim.Variables.Count;
+                }
+                foreach (IStatDimension dim in spec.Value.Dimensions)
+                {
+                    dim.Lambda = previousLambda / dim.Variables.Count;
+                    dim.PreviousLambda = previousLambda;
+                    previousLambda = dim.Lambda;
+
+                    //Now set the fast find field for each variable:
+                    foreach(var vrb in dim.Variables)
+                    {
+                        vrb.FastFindValue = dim.Lambda * (vrb.Sequence - 1);
+                    }
+
                 }
             }
         }
@@ -901,10 +1177,12 @@ namespace PxStat.DBuild
                 headerData = DTO.ChangeData[0];
             }
 
+            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument,  uDto,uploads);
+
+            ResetLambdasPlusVariableFinder(ref dmatrix);
+
 
             var dlist = this.GetInitialChangeReport(DTO.ChangeData);
-
-            dmatrix = dmatrix.GetDmatrixFromPxDocument(pxDocument,  uDto,uploads);
 
             //Sort the time dimension (along with associated data) if necessary
             var timeDimension = dmatrix.Dspecs[dmatrix.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).First();
@@ -1024,6 +1302,269 @@ namespace PxStat.DBuild
             return response;
         }
 
+        public IDmatrix BsoUpdate(IDmatrix dmatrix, IResponseOutput response, DBuild_DTO_UpdatePublish DTO, IADO ado = null,  ICopyright cpr = null, string lngIsoCode = null)
+        {
+            if (ado == null) ado = AppServicesHelper.StaticADO;
+
+            
+           
+            List<PxUpload_DTO> uploads = new List<PxUpload_DTO>();
+            if (DTO.Dspecs.Count > 1)
+            {
+                foreach (var spc in DTO.Dspecs)
+                {
+                    var tdim = spc.StatDimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).FirstOrDefault();
+                    uploads.Add(new PxUpload_DTO() { FrqValueTimeval = tdim.Value, LngIsoCode = spc.Language, FrqCodeTimeval = tdim.Code });
+                }
+            }
+            if (uploads.Count == 0) uploads = null;
+            List<string> headerData = null;
+            if (DTO.ChangeData?.Count > 0)
+            {
+                headerData = DTO.ChangeData[0];
+            }
+
+
+            var dlist = this.GetInitialChangeReport(DTO.ChangeData);
+
+
+            //Sort the time dimension (along with associated data) if necessary
+            var timeDimension = dmatrix.Dspecs[dmatrix.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).First();
+
+            if (timeDimension != null)
+            {
+                if (!AreVariablesSequential(timeDimension))
+                {
+                    timeDimension.Variables = timeDimension.Variables.OrderBy(x => x.Code).ToList();
+
+                    Dictionary<int, int> sequenceDictionary = new Dictionary<int, int>();
+                    int counter = 1;
+                    foreach (var vrb in timeDimension.Variables)
+                    {
+                        sequenceDictionary.Add(vrb.Sequence, counter);
+                        counter++;
+                    }
+                    dmatrix = SortVariablesInDimension(dmatrix, sequenceDictionary, timeDimension.Sequence);
+                }
+            }
+
+            //check for a dodgy csv header
+
+            //Get a DTO update/publish version of this:
+            if (!CustomValidations.ValidateCsvHeader(DTO, dmatrix, headerData))
+            {
+                response.error = Label.Get("error.validation");
+                return dmatrix;
+            }
+
+            //Update the metadata
+            var updateOrdinals = this.UpdateMatrixWithNewMetadata(ref dmatrix, DTO);
+
+            //Update the data
+            dmatrix.Cells = this.MergeOldAndNewCells(dmatrix, updateOrdinals);
+
+            dmatrix.Dspecs[DTO.LngIsoCode].GetDimensionsAsDictionary();
+
+            //We must also get the ordindals for the csv originated cells
+            Dictionary<int, object> csvCells = this.DictionaryWithOrdinal(dmatrix, dlist, DTO.LngIsoCode);
+
+            var amendedData = this.MergeBuildCells(dlist, dmatrix);
+
+            dmatrix.Cells = amendedData.Select(x => x.value).ToList();
+
+
+
+            refMatrix = dmatrix;
+
+            // Validate the matrix we just created
+            DMatrix_VLD validator = new DMatrix_VLD(ado, lngIsoCode);
+            // Also validate in english - just for the logs
+            DMatrix_VLD dmvEn = new DMatrix_VLD(ado);
+            dmvEn.Validate(dmatrix);
+            var matrixValidation = validator.Validate(dmatrix);
+            if (!matrixValidation.IsValid)
+            {
+                response.error = Error.GetValidationFailure(matrixValidation.Errors);
+                return dmatrix;
+            }
+
+
+            Dictionary<int, bool> dupeReport = new Dictionary<int, bool>();
+            int dupecounter = 0;
+            foreach (var item in dlist.Select(x => x.dlist).ToList())
+            {
+                if (item.ContainsKey("duplicate"))
+                    dupeReport.Add(dupecounter, (bool)item["duplicate"]);
+                else
+                    dupeReport.Add(dupecounter, false);
+                dupecounter++;
+            }
+            return dmatrix;
+        }
+
+        public IResponseOutput BsoUpdateByRelease(IDmatrix dmatrix, IResponseOutput response, DBuild_DTO_UpdateByRelease DTO, IADO ado = null, ICopyright cpr = null, string lngIsoCode = null)
+        {
+            if (ado == null) ado = AppServicesHelper.StaticADO;
+
+
+
+            List<PxUpload_DTO> uploads = new List<PxUpload_DTO>();
+            if (DTO.Dspecs.Count > 1)
+            {
+                foreach (var spc in DTO.Dspecs)
+                {
+                    var tdim = spc.StatDimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).FirstOrDefault();
+                    uploads.Add(new PxUpload_DTO() { FrqValueTimeval = tdim.Value, LngIsoCode = spc.Language, FrqCodeTimeval = tdim.Code });
+                }
+            }
+            if (uploads.Count == 0) uploads = null;
+            List<string> headerData = null;
+            if (DTO.ChangeData?.Count > 0)
+            {
+                headerData = DTO.ChangeData[0];
+            }
+
+
+            var dlist = this.GetInitialChangeReport(DTO.ChangeData);
+
+
+            //Sort the time dimension (along with associated data) if necessary
+            var timeDimension = dmatrix.Dspecs[dmatrix.Language].Dimensions.Where(x => x.Role.Equals(Constants.C_DATA_DIMENSION_ROLE_TIME)).First();
+
+            if (timeDimension != null)
+            {
+                if (!AreVariablesSequential(timeDimension))
+                {
+                    timeDimension.Variables = timeDimension.Variables.OrderBy(x => x.Code).ToList();
+
+                    Dictionary<int, int> sequenceDictionary = new Dictionary<int, int>();
+                    int counter = 1;
+                    foreach (var vrb in timeDimension.Variables)
+                    {
+                        sequenceDictionary.Add(vrb.Sequence, counter);
+                        counter++;
+                    }
+                    dmatrix = SortVariablesInDimension(dmatrix, sequenceDictionary, timeDimension.Sequence);
+                }
+            }
+
+            //check for a dodgy csv header
+
+            //Get a DTO update/publish version of this:
+            if (!CustomValidations.ValidateCsvHeader(DTO, dmatrix, headerData))
+            {
+                response.error = Label.Get("error.validation");
+                return response;
+            }
+
+            //Update the metadata
+            var updateOrdinals = this.UpdateMatrixWithNewMetadataByRelease(ref dmatrix, DTO, new Copyright_BSO(), cpr);
+
+            //Update the data
+            dmatrix.Cells = this.MergeOldAndNewCells(dmatrix, updateOrdinals);
+
+            dmatrix.Dspecs[DTO.LngIsoCode].GetDimensionsAsDictionary();
+
+            //We must also get the ordindals for the csv originated cells
+            Dictionary<int, object> csvCells = this.DictionaryWithOrdinal(dmatrix, dlist, DTO.LngIsoCode);
+
+            var amendedData = this.MergeBuildCells(dlist, dmatrix);
+
+            dmatrix.Cells = amendedData.Select(x => x.value).ToList();
+
+            // Filter values from the dmatrix
+            dmatrix = FilterMatrix(dmatrix);
+
+            refMatrix = dmatrix;
+
+            // Validate the matrix we just created
+            DMatrix_VLD validator = new DMatrix_VLD(ado, lngIsoCode);
+            // Also validate in english - just for the logs
+            DMatrix_VLD dmvEn = new DMatrix_VLD(ado);
+            dmvEn.Validate(dmatrix);
+            var matrixValidation = validator.Validate(dmatrix);
+            if (!matrixValidation.IsValid)
+            {
+                response.error = Error.GetValidationFailure(matrixValidation.Errors);
+                return response;
+            }
+
+
+            Dictionary<int, bool> dupeReport = new Dictionary<int, bool>();
+            int dupecounter = 0;
+            foreach (var item in dlist.Select(x => x.dlist).ToList())
+            {
+                if (item.ContainsKey("duplicate"))
+                    dupeReport.Add(dupecounter, (bool)item["duplicate"]);
+                else
+                    dupeReport.Add(dupecounter, false);
+                dupecounter++;
+            }
+            dynamic result = new ExpandoObject();
+            if (DTO.Format.FrmType == DatasetFormat.Px)
+            {
+                PxFileBuilder pxb = new PxFileBuilder();
+                string px = pxb.Create(dmatrix, DTO.LngIsoCode);
+
+                List<string> file = new List<string>
+                {
+                   px
+                };
+                result.file = file;
+
+                var header = GetHeader(dmatrix, DTO.LngIsoCode);
+
+
+                result.report = GetOutputReportCsv(dlist, amendedData);
+                response.data = result;
+
+                return response;
+            }
+            else if (DTO.Format.FrmType == DatasetFormat.JsonStat)
+            {
+                JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
+                var jsonStat = jxb.Create(dmatrix, dmatrix.Language);
+                var data = new JRaw(Serialize.ToJson(jsonStat));
+
+                result.file = data;
+
+                var header = GetHeader(dmatrix, DTO.LngIsoCode);
+                result.report = GetOutputReportCsv(dlist, amendedData);
+
+                response.data = result;
+            }
+            return response;
+        }
+
+        /// <summary>
+        /// Filters the SUBJECT-AREA, SUBJECT-CODE and LAST-UPDATED fields of the dmatrix, matrix
+        /// </summary>
+        /// <param name="dmatrix"></param>
+        /// <returns></returns>
+        public IDmatrix FilterMatrix(IDmatrix dmatrix)
+        {
+            dmatrix.Release.RlsLiveDatetimeFrom = default;
+
+            foreach (var spec in dmatrix.Dspecs)
+            {
+                switch (spec.Value.Language)
+                {
+                    case "en":
+                        spec.Value.PrcValue = "n/a";
+                        dmatrix.Release.PrcCode = "NA";                       
+                        break;
+                    case "ga":
+                        spec.Value.PrcValue = "n/b";
+                        break;
+                    default:
+                        spec.Value.PrcValue = "n/a";
+                        dmatrix.Release.PrcCode = "NA";
+                        break;
+                }                   
+            }
+            return dmatrix;
+        }
+
         private List<dynamic> GetHeader(IDmatrix dmatrix, string lngIsoCode)
         {
             var dspec = dmatrix.Dspecs[lngIsoCode];
@@ -1037,6 +1578,8 @@ namespace PxStat.DBuild
             hList.Add("duplicate");
             return hList;
         }
+
+
 
         private List<List<dynamic>> GetOutputReportCsv( List<dlistReport> dlist,List<cellMerge> amendedData)
         {

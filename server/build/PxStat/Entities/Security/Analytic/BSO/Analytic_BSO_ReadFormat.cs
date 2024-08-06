@@ -18,11 +18,9 @@ namespace PxStat.Security
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            if (IsPowerUser())
+            if (IsPowerUser() || IsModerator())
                 return true;
 
-            if( IsModerator() && !String.IsNullOrEmpty(DTO.MtrCode))
-                return true;
 
             return false;
         }
@@ -30,7 +28,13 @@ namespace PxStat.Security
 
         protected override bool Execute()
         {
-            
+
+            if (IsModerator() && String.IsNullOrEmpty(DTO.MtrCode))
+            {
+                Response.error = Label.Get("error.privilege");
+                return false;
+            }
+
             MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadFormat", DTO);
             if (cache.hasData)
             {

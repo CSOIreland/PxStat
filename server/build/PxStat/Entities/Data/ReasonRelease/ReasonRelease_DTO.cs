@@ -100,6 +100,9 @@ namespace PxStat.Data
 
         }
 
+        public ReasonRelease_DTO_Create()
+        {
+        }
     }
 
     /// <summary>

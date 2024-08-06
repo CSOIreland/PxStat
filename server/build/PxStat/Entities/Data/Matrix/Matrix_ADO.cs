@@ -258,6 +258,24 @@ namespace PxStat.Data
             return reader.data;
         }
 
+        internal int Update(Dspec dspec)
+        {
+            var inputParams = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams { name = "@MtrId", value = dspec.MatrixId },
+                new ADO_inputParams {name="@MtrInput", value=dspec.Source}
+            };
+
+
+
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+
+           ado.ExecuteNonQueryProcedure("Data_Matrix_Update", inputParams, ref returnParam);
+
+
+            return (int)returnParam.value;
+        }
+
         public void Dispose()
         {
             ado?.Dispose();

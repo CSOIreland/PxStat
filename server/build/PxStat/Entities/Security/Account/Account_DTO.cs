@@ -258,4 +258,14 @@
 
         }
     }
+
+    public class Account_DTO_UpdateToken
+    {
+        public string CcnUsername { get; set; }
+
+        public Account_DTO_UpdateToken(dynamic parameters)
+        {
+            
+        }
+    }
 }

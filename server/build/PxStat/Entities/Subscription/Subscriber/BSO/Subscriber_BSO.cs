@@ -160,7 +160,7 @@ namespace PxStat.Subscription
         internal string GetSubscriberKey(string firebaseId)
         {
             //ConfigurationManager.AppSettings["APP_FIREBASE_SALSA"]
-            return Utility.GetSHA256(new Random().Next() + ConfigurationManager.AppSettings["APP_FIREBASE_SALSA"] + firebaseId + DateTime.Now.Millisecond);
+            return Utility.GetSHA256(new Random().Next() + Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "salsa.firebase") + firebaseId + DateTime.Now.Millisecond);
         }
     }
 

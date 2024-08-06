@@ -10,6 +10,12 @@ namespace PxStat.Security
     [AllowAPICall]
     public static class Account_API
     {
+        public static dynamic UpdateApiToken(JSONRPC_API requestApi)
+        {
+            return new Account_BSO_UpdateApiToken(requestApi).Update().Response;
+        }
+
+
         /// <summary>
         /// Entry point to the API method - Reads Account
         /// </summary>

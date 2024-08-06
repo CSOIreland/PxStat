@@ -15,6 +15,9 @@ using PxStat.Data.Px;
 using PxStat.JsonStatSchema;
 using PxStat;
 using PxStat.DataStore;
+using Newtonsoft.Json.Linq;
+using PxStat.Entities.DBuild;
+using System.Linq;
 
 namespace PxStatXUnit.Tests
 {
@@ -338,6 +341,141 @@ namespace PxStatXUnit.Tests
             Assert.True(queriedMatrix.Cells.ToList()[0].Value.Equals(113.5));
 
             Assert.True(true);
+        }
+
+        [Fact]
+        public void TestBuildReadTemplateByRelease()
+        {
+            Helper.SetupTests();
+            dynamic parameters = GetParameters();
+            DBuild_DTO_ReadTemplateByRelease dto = new DBuild_DTO_ReadTemplateByRelease(parameters);
+            var ado = AppServicesHelper.StaticADO;
+            Release_ADO adoRelease = new Release_ADO(ado);
+            string? SamAccountName = ApiServicesHelper.Configuration.GetSection("Test:SamAccountName").Value;
+            Release_DTO dtoRelease = Release_ADO.GetReleaseDTO(adoRelease.Read(dto.RlsCode, SamAccountName));
+
+            // Get the matrix from the ReleaseDTO
+            IDmatrix dmatrix = new Dmatrix();
+            dmatrix = dmatrix.GetMultiLanguageMatrixFromRelease(ado, dtoRelease.MtrCode, dtoRelease);
+
+            FlatTableBuilder ftb = new FlatTableBuilder();
+
+            DataTable dt = ftb.GetMatrixDataTableCodesOnly(dmatrix, dto.LngIsoCode, true, true);
+
+            dynamic result = new ExpandoObject();
+            result.FrqValue = "";
+            result.template = ftb.GetCsv(dt, "\"", null, true);
+            result.MtrCode = dmatrix.Code;
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void TestBuildReadDatasetByRelease()
+        {
+            Helper.SetupTests();
+            dynamic parameters = GetParameters();
+            DBuild_DTO_UpdateByRelease dto = new DBuild_DTO_UpdateByRelease(parameters);
+            var ado = AppServicesHelper.StaticADO;
+            Release_ADO adoRelease = new Release_ADO(ado);
+            string? SamAccountName = ApiServicesHelper.Configuration.GetSection("Test:SamAccountName").Value;
+            Release_DTO dtoRelease = Release_ADO.GetReleaseDTO(adoRelease.Read(dto.RlsCode, SamAccountName));
+
+            // Get the matrix from the ReleaseDTO
+            IDmatrix dmatrix = new Dmatrix();
+            dmatrix = dmatrix.GetMultiLanguageMatrixFromRelease(ado, dtoRelease.MtrCode, dtoRelease);
+
+            FlatTableBuilder ftb = new FlatTableBuilder();
+            DataTable? dt = null;
+
+            if (!parameters.Labels)
+            {
+                dt = ftb.GetMatrixDataTableCodesOnly(dmatrix, "en", true);
+            }
+            else
+            {
+                dt = ftb.GetMatrixDataTableCodesAndLabels(dmatrix, "en", true);
+            }
+            Assert.NotNull(dt);
+        }
+
+        [Fact]
+        public void TestBuildUpdateByRelease()
+        {
+            Helper.SetupTests();
+
+            IResponseOutput Response = new JSONRPC_Output();
+            dynamic parameters = GetParameters();
+            DBuild_DTO_UpdateByRelease dto = new DBuild_DTO_UpdateByRelease(parameters);
+            dto.Dspecs = new List<DSpec_DTO>();
+            var ado = AppServicesHelper.StaticADO;
+            string? SamAccountName = ApiServicesHelper.Configuration.GetSection("Test:SamAccountName").Value;
+
+            // Check permissions
+            DBuild_BSO dbso = new DBuild_BSO();
+            if (!dbso.HasBuildPermission(SamAccountName, "update"))
+            {
+                Response.error = "error.privilege";
+                Assert.Fail("Response has the error: " + Response.error);
+            }
+
+            Release_ADO adoRelease = new Release_ADO(ado);
+            Release_DTO dtoRelease = Release_ADO.GetReleaseDTO(adoRelease.Read(parameters.RlsCode, SamAccountName));
+
+            // Get the matrix from the ReleaseDTO
+            IDmatrix dmatrix = new Dmatrix();
+            dmatrix = dmatrix.GetMultiLanguageMatrixFromRelease(ado, dtoRelease.MtrCode, dtoRelease);
+
+            Response = dbso.BsoUpdateByRelease(dmatrix, Response, dto, ado, null, dto.LngIsoCode);
+            Assert.NotNull(Response.data);
+        }
+
+        [Fact]
+        public void TestFilterMatrix()
+        {
+            IDmatrix dmatrix = new Dmatrix();
+            dmatrix.Release = new Release_DTO();
+            dmatrix.Release.RlsLiveDatetimeFrom = DateTime.Now;
+            dmatrix.Release.PrcCode = "P1";
+            DBuild_BSO dbso = new DBuild_BSO();
+            Dspec specEn = new Dspec();
+            specEn.Language = "en";
+            specEn.PrcValue = "P1";
+            dmatrix.Dspecs.Add("en", specEn);
+            Dspec specGa = new Dspec();
+            specGa.Language = "ga";
+            specGa.PrcValue = "Gailge";
+            dmatrix.Dspecs.Add("ga", specGa);
+            IDmatrix result = dbso.FilterMatrix(dmatrix);
+            Assert.NotNull(result);
+            Assert.True(result.Dspecs["en"].PrcValue.Equals("n/a"));
+            Assert.True(result.Release.PrcCode.Equals("NA"));
+            Assert.True(result.Dspecs["ga"].PrcValue.Equals("n/b"));
+        }
+
+        private dynamic GetParameters()
+        {
+            dynamic parameters = new ExpandoObject();
+            parameters.RlsCode = 202;
+            parameters.Labels = true;
+            parameters.LngIsoCode = "en";
+            parameters.MtrCode = "AES50";
+            parameters.MtrOfficialFlag = true;
+            parameters.WrqDatetime = DateTime.Now;
+            string? username = ApiServicesHelper.Configuration.GetSection("Test:SamAccountName").Value;
+            parameters.CcnUsername = username;
+            parameters.AprToken = "";
+            parameters.Data = null;
+            parameters.Dimension = null;
+            parameters.Dspecs = new List<DSpec_DTO>();
+            parameters.FrmType = "PX";
+            parameters.FrmVersion = "2013";
+            parameters.FrqCodeTimeval = "";
+            parameters.FrqValueTimeval = "";
+            parameters.Elimination = "{ \"test\": \"test\" }";
+            parameters.Map = "{ \"test\": \"test\" }";
+            parameters.CprCode = "";
+            return parameters;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using PxStat.Security;
+﻿using PxStat.Entities.System.Navigation.Navigation;
+using PxStat.Security;
 using System.Data;
 
 namespace PxStat.System.Navigation
@@ -29,7 +30,7 @@ namespace PxStat.System.Navigation
     /// <summary>
     /// DTO for Search
     /// </summary>
-    internal class Navigation_DTO_Search
+    internal class Navigation_DTO_Search : INavigation_DTO_Search
     {
         #region Properties
         /// <summary>
@@ -46,6 +47,8 @@ namespace PxStat.System.Navigation
         /// Official flag
         /// </summary>
         public bool? MtrOfficialFlag { get; set; }//*** Not used by the Front End yet **
+
+        public int ThmCode { get; set; }
 
         /// <summary>
         /// Subject Code
@@ -95,53 +98,64 @@ namespace PxStat.System.Navigation
         #endregion
 
         public DataTable SearchTerms { get; set; }
+
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parameters"></param>
         public Navigation_DTO_Search(dynamic parameters)
         {
-            if (parameters.LngIsoCode != null)
-                LngIsoCode = parameters.LngIsoCode;
-            else LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+           
+                if (parameters.LngIsoCode != null)
+                    LngIsoCode = parameters.LngIsoCode;
+                else LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
-            if (parameters.MtrCode != null)
-                MtrCode = parameters.MtrCode;
+                if (parameters.MtrCode != null)
+                    MtrCode = parameters.MtrCode;
 
-            if (parameters.MtrOfficialFlag != null)
-                MtrOfficialFlag = parameters.MtrOfficialFlag;
+                if (parameters.MtrOfficialFlag != null)
+                    MtrOfficialFlag = parameters.MtrOfficialFlag;
 
-            if (parameters.SbjCode != null)
-                SbjCode = parameters.SbjCode;
+                if (parameters.ThmCode != null)
+                    ThmCode = parameters.ThmCode;
 
-            if (parameters.PrcCode != null)
-                PrcCode = parameters.PrcCode;
+                if (parameters.SbjCode != null)
+                    SbjCode = parameters.SbjCode;
 
-            if (parameters.CprCode != null)
-                CprCode = parameters.CprCode;
+                if (parameters.PrcCode != null)
+                    PrcCode = parameters.PrcCode;
 
-            if (parameters.RlsExceptionalFlag != null)
-                RlsExceptionalFlag = parameters.RlsExceptionalFlag;
+                if (parameters.CprCode != null)
+                    CprCode = parameters.CprCode;
 
-            if (parameters.RlsReservationFlag != null)
-                RlsReservationFlag = parameters.RlsReservationFlag;
+                if (parameters.RlsExceptionalFlag != null)
+                    RlsExceptionalFlag = parameters.RlsExceptionalFlag;
 
-            if (parameters.RlsArchiveFlag != null)
-                RlsArchiveFlag = parameters.RlsArchiveFlag;
+                if (parameters.RlsReservationFlag != null)
+                    RlsReservationFlag = parameters.RlsReservationFlag;
 
-            if (parameters.RlsExperimentalFlag != null)
-                RlsExperimentalFlag = parameters.RlsExperimentalFlag;
+                if (parameters.RlsArchiveFlag != null)
+                    RlsArchiveFlag = parameters.RlsArchiveFlag;
 
-            if (parameters.RlsAnalyticalFlag != null)
-                RlsAnalyticalFlag = parameters.RlsAnalyticalFlag;
+                if (parameters.RlsExperimentalFlag != null)
+                    RlsExperimentalFlag = parameters.RlsExperimentalFlag;
 
-            if (parameters.Search != null)
-            {
-                Search = parameters.Search;
-                if (string.IsNullOrEmpty(Search) || string.IsNullOrWhiteSpace(Search)) Search = null;
-            }
+                if (parameters.RlsAnalyticalFlag != null)
+                    RlsAnalyticalFlag = parameters.RlsAnalyticalFlag;
+
+                if (parameters.Search != null)
+                {
+                    Search = parameters.Search;
+                    if (string.IsNullOrEmpty(Search) || string.IsNullOrWhiteSpace(Search)) Search = null;
+                }
 
 
+            
+        }
+
+        public Navigation_DTO_Search()
+        {
         }
     }
 }

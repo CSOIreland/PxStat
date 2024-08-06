@@ -1,4 +1,5 @@
 ﻿using API;
+using PxParser.Resources.Parser;
 using PxStat.Build;
 using PxStat.Data;
 using PxStat.Security;
@@ -13,6 +14,7 @@ namespace PxStat.DataStore
         public void CreateAndLoadDataField(IADO ado, IDmatrix matrix, string username, int releaseId)
         {
             List<dynamic> DataCells = new List<dynamic>();
+
             foreach (var c in matrix.Cells)
             {
                 //Temporary!!!
@@ -40,6 +42,35 @@ namespace PxStat.DataStore
                     matrix.Id = matrixId;
                     matrix.Dspecs[language].MatrixId = matrixId;
                     mAdo.LoadDataField(Utility.JsonSerialize_IgnoreLoopingReference(DataCells), matrixId);
+                }
+            }
+        }
+
+        public void CreateAndLoadDataFieldDB(IADO ado, IDmatrix matrix, string username, int releaseId)
+        {
+           
+
+            Matrix_IADO mAdo = new Matrix_IADO(ado);
+            Dspec dspec = new Dspec();
+            string defaultLanguage = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+            var valuePresent = matrix.Dspecs.TryGetValue(defaultLanguage, out dspec);
+
+            // Create the DMatrix for the default language
+            var matrixId = mAdo.CreateNewMatrix(matrix, username, releaseId, defaultLanguage);
+            matrix.Id = matrixId;
+            matrix.Dspecs[defaultLanguage].MatrixId = matrixId;
+            mAdo.LoadDataField(Utility.JsonSerialize_IgnoreLoopingReference(matrix.Cells), matrixId);
+
+            // Create the new DMatrix for other languages
+            foreach (KeyValuePair<string, Dspec> keyValue in matrix.Dspecs)
+            {
+                var language = keyValue.Key;
+                if (language != defaultLanguage)
+                {
+                    matrixId = mAdo.CreateNewMatrix(matrix, username, releaseId, language);
+                    matrix.Id = matrixId;
+                    matrix.Dspecs[language].MatrixId = matrixId;
+                    mAdo.LoadDataField(Utility.JsonSerialize_IgnoreLoopingReference(matrix.Cells), matrixId);
                 }
             }
         }

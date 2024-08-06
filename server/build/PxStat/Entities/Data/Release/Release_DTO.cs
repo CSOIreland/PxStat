@@ -84,6 +84,7 @@ namespace PxStat.Data
                 this.LngIsoCode = parameters.LngIsoCode;
             else
                 this.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+
         }
     }
 

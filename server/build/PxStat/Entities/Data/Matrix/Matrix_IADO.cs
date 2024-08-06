@@ -65,9 +65,9 @@ namespace PxStat.Data
         /// <returns></returns>
         internal int CreateNewMatrix(IDmatrix dmatrix, string username, int releaseId, string lngIsoCode)
         {
+            
             var inputParams = new List<ADO_inputParams>()
             {
-                new ADO_inputParams() {name ="@MtrInput",value= dmatrix.MtrInput},
                 new ADO_inputParams() {name ="@MtrCode",value= dmatrix.Code},
                 new ADO_inputParams() {name ="@MtrTitle",value= dmatrix.Dspecs[lngIsoCode].Title},
                 new ADO_inputParams() {name ="@LngIsoCode",value= lngIsoCode},
@@ -81,6 +81,8 @@ namespace PxStat.Data
             {
                 inputParams.Add(new ADO_inputParams() { name = "@MtrNote", value = dmatrix.Dspecs[lngIsoCode].NotesAsString });
             }
+            if (dmatrix.MtrInput != null)
+                inputParams.Add(new ADO_inputParams() { name = "@MtrInput", value = dmatrix.MtrInput });
 
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
             ado.ExecuteNonQueryProcedure("Data_Matrix_Create", inputParams, ref returnParam);

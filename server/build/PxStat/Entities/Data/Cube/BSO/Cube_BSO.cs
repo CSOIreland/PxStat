@@ -53,94 +53,15 @@ namespace PxStat.Data
 
             return dto.Role;
         }
-        /// <summary>
-        /// Get the collection with metadata
-        /// </summary>
-        /// <param name="theAdo"></param>
-        /// <param name="theCubeDTO"></param>
-        /// <param name="theResponse"></param>
-        /// <returns></returns>
-        internal dynamic ExecuteReadCollection(IADO theAdo, Cube_DTO_ReadCollection DTO, bool meta = true)
-        {
-            var ado = new Cube_ADO(theAdo);
-
-            var dbData = ado.ReadCollectionMetadata(DTO.language, DTO.datefrom, DTO.product, meta);
-
-            List<dynamic> jsonStatCollection = new List<dynamic>();
-
-            //Get a list of individual matrix data entities
-            List<dynamic> releases = getReleases(dbData, meta);
 
 
-            var theJsonStatCollection = new JsonStatCollection();
-            theJsonStatCollection.Link = new JsonStatCollectionLink();
-            theJsonStatCollection.Link.Item = new List<Item>();
-
-            List<Format_DTO_Read> formats = new List<Format_DTO_Read>();
-            using (Format_BSO format = new Format_BSO(AppServicesHelper.StaticADO))
-            {
-                formats = format.Read(new Format_DTO_Read() { FrmDirection = Configuration_BSO.GetStaticConfig("APP_FORMAT_DOWNLOAD_NAME") });
-            };
-
-            //For each of these, get a list of statistics and a list of classifications
-            //Then get the JSON-stat for that metadata and add to jsonStatCollection
-            foreach (var rls in releases)
-            {
-                List<dynamic> thisReleaseMetadata = dbData.Where(x => x.RlsCode == rls.RlsCode).Where(x => x.LngIsoCode == rls.LngIsoCode).ToList<dynamic>();
-                if (meta)
-                {
-                    List<dynamic> stats = getStatistics(thisReleaseMetadata);
-                    List<dynamic> classifications = getClassifications(thisReleaseMetadata);
-                    List<dynamic> periods = getPeriods(thisReleaseMetadata);
-                    theJsonStatCollection.Link.Item.Add(GetJsonStatRelease(thisReleaseMetadata, stats, classifications, periods, formats));
-
-                }
-                else
-                {
-                    List<dynamic> classifications = getClassificationsNoVrbCount(thisReleaseMetadata);
-                    theJsonStatCollection.Link.Item.Add(GetJsonStatReleaseNoCollections(thisReleaseMetadata, formats, classifications));
-
-
-                }
-
-
-            }
-
-            //Get the minimum next release date. The cache can only live until then.
-            //If there's no next release date then the cache will live for the maximum configured amount.
-
-            DateTime minDateItem = default;
-
-            Release_ADO rAdo = new Release_ADO(theAdo);
-
-            dynamic dateQuery = rAdo.ReadNextReleaseDate();
-            if (dateQuery != null)
-                minDateItem = dateQuery.RlsDatetimeNext.Equals(DBNull.Value) ? default(DateTime) : dateQuery.RlsDatetimeNext;
-            else
-                minDateItem = default;
-
-
-
-            var result = new JRaw(Serialize.ToJson(theJsonStatCollection));
-
-
-            AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO, result, minDateItem, Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
-
-
-            // return the formatted data. This is an array of JSON-stat objects.
-            return result;
-
-
-        }
-
-
-        internal List<dynamic> ReadCollection(string LngIsoCode, string SbjCode, string PrcCode)
+        internal List<dynamic> ReadCollectionList(string LngIsoCode, string SbjCode, string PrcCode)
         {
             Cube_ADO cAdo = new Cube_ADO(ado);
             if (Int32.TryParse(SbjCode, out int sbjInt))
-                return cAdo.ReadCollection(LngIsoCode, default, sbjInt, PrcCode);
+                return cAdo.ReadListLive(LngIsoCode, default, sbjInt, PrcCode);
             else
-                return cAdo.ReadCollection(LngIsoCode, default, 0, PrcCode);
+                return cAdo.ReadListLive(LngIsoCode, default, 0, PrcCode);
         }
 
         /// <summary>

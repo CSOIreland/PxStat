@@ -1332,13 +1332,11 @@ namespace PxStat.DataStore
             spec.Language = output.data[0].LngIsoCode;
             spec.MatrixCode = matrix.Code;
             spec.MatrixId = matrix.Id;
-            if (output.data[0].MtrNote != null)
-            {
-                if (Resources.Cleanser.TryCast<List<string>>(output.data[0].MtrNote, out List<string> result))
-                {
-                    spec.Notes = result;
-                }
 
+            spec.Notes = new List<string>();
+            if (!output.data[0]?.MtrNote.Equals(DBNull.Value))
+            {
+                spec.Notes.Add(output.data[0].MtrNote);
             }
 
             spec.Source = matrix.Copyright.CprValue;

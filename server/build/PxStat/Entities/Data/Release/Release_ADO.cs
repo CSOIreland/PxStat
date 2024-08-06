@@ -207,6 +207,26 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        /// Read latest live release for a matrix code
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal dynamic ReadLatestLive(Release_DTO_Read dto)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode });
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_ReadLatestLive", inputParams);
+            if (reader.hasData)
+            {
+                return reader.data[0];
+
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Get the next scheduled release date
         /// </summary>
         /// <returns></returns>

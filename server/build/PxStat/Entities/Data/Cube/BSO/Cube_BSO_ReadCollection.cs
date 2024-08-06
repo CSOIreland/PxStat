@@ -8,14 +8,14 @@ namespace PxStat.Data
     /// </summary>
     public class Cube_BSO_ReadCollection : BaseTemplate_Read<Cube_DTO_ReadCollection, Cube_VLD_ReadCollection>
     {
-        bool _meta;
+       
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="request"></param>
-        public Cube_BSO_ReadCollection(IRequest request, bool meta = true) : base(request, new Cube_VLD_ReadCollection())
+        public Cube_BSO_ReadCollection(IRequest request) : base(request, new Cube_VLD_ReadCollection())
         {
-            _meta = meta;
+            
         }
 
         /// <summary>
@@ -42,10 +42,10 @@ namespace PxStat.Data
         /// <returns></returns>
         protected override bool Execute()
         {
-            //so that caches don't get mixed up..
-             DTO.meta = _meta;
-            
+
+
             //See if this request has cached data
+
             MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO);
 
 

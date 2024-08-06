@@ -14,6 +14,7 @@ using DeviceDetectorNET;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Net;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace PxStat.Resources
 {
@@ -60,22 +61,34 @@ namespace PxStat.Resources
         {
 
             if (Languages == null)
-                Languages = new Dictionary<string, ILanguagePlugin>();;
+                Languages = new Dictionary<string, ILanguagePlugin>();
+            
             baseDir ??=Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "\\";
-
-            if(Configuration_BSO.serverLanguageResource != null) 
+            try
             {
-                foreach (var item in Configuration_BSO.serverLanguageResource)
+                if (Configuration_BSO.serverLanguageResource != null)
                 {
-                    ILanguagePlugin resource = ReadLanguageResource(item.ISO, baseDir + item.PLUGIN_LOCATION, item.NAMESPACE_CLASS, item.TRANSLATION_URL);
-                    resource.IsLive = item.IS_LIVE;
-                    if (resource != null && !Languages.ContainsKey(item.ISO))
-                       {
-                        resource.IsLive = resource.IsLive;
-                        Languages.Add(item.ISO, resource);
-                        Log.Instance.Debug("Language dll added: " + resource.LngIsoCode + " path: " + item.PLUGIN_LOCATION);
-                       }
+                    
+                    foreach (var item in Configuration_BSO.serverLanguageResource)
+                    {
+                        ILanguagePlugin resource = ReadLanguageResource(item.ISO, baseDir + item.PLUGIN_LOCATION, item.NAMESPACE_CLASS, item.TRANSLATION_URL);
+                        resource.IsLive = item.IS_LIVE;
+                        if (resource != null && !Languages.ContainsKey(item.ISO))
+                        {
+                            resource.IsLive = resource.IsLive;
+                            Languages.TryAdd(item.ISO, resource);
+                            Log.Instance.Debug("Language dll added: " + resource.LngIsoCode + " path: " + item.PLUGIN_LOCATION);
+                        }
+                    }
                 }
+
+                
+            }
+            catch(Exception ex)
+            {
+                Languages=null; //we don't want a zombie language collection if there has been a problem
+                Log.Instance.Fatal("Failed to load languages: " + ex.Message  );
+                throw;
             }
         }
 
@@ -88,10 +101,8 @@ namespace PxStat.Resources
         public static ILanguagePlugin GetLanguage(string lngIsoCode)
         {
             if (Languages == null)
-                return null;
-            //Check that Languages exist
-            if (Languages == null)
-                throw new Exception("No language plugin loaded");
+                LoadLanguages();
+
 
             //Get the language if it exists
             if(Languages.ContainsKey(lngIsoCode))

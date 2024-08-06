@@ -6,9 +6,9 @@ namespace PxStat.DataStore
 
     public class CollectionReader : ICollectionReader
     {
-        public dynamic ReadCollectionMetadata(IADO ado, string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
+        public dynamic ReadCollection(IADO ado, string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
         {
-            return new DataStore_ADO().ReadCollectionMetadata(ado, languageCode, DateFrom, PrcCode, meta);
+            return new DataStore_ADO().ReadCollection(ado, languageCode, DateFrom, PrcCode, meta);
         }
     }
 }

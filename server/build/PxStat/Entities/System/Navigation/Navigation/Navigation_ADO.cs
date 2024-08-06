@@ -116,6 +116,8 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
             if (dto.MtrOfficialFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@MtrOfficialFlag", value = dto.MtrOfficialFlag });
+            if (dto.ThmCode!= default(int))
+                paramList.Add(new ADO_inputParams() { name = "@ThmCode", value = dto.ThmCode });
             if (dto.SbjCode != default(int))
                 paramList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
             if (dto.PrcCode != null)
@@ -132,7 +134,7 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@RlsExperimentalFlag", value = dto.RlsExperimentalFlag });
             if (dto.RlsAnalyticalFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsAnalyticalFlag", value = dto.RlsAnalyticalFlag });
-
+      
             //Call the stored procedure
             ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_EntitySearch", paramList);
             return output.data;
@@ -147,6 +149,8 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
             if (dto.MtrOfficialFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@MtrOfficialFlag", value = dto.MtrOfficialFlag });
+            if (dto.ThmCode != default(int))
+                paramList.Add(new ADO_inputParams() { name = "@ThmCode", value = dto.ThmCode });
             if (dto.SbjCode != default(int))
                 paramList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
             if (dto.PrcCode != null)
@@ -163,7 +167,7 @@ namespace PxStat.System.Navigation
                 paramList.Add(new ADO_inputParams() { name = "@RlsExperimentalFlag", value = dto.RlsExperimentalFlag });
             if (dto.RlsAnalyticalFlag != null)
                 paramList.Add(new ADO_inputParams() { name = "@RlsAnalyticalFlag", value = dto.RlsAnalyticalFlag });
-
+         
             //Call the stored procedure
             ADO_readerOutput output = ado.ExecuteReaderProcedure("System_Navigation_Entity_Associated_Search", paramList);
             return output.data;

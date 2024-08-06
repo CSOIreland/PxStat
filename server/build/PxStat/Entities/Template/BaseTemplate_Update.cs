@@ -3,6 +3,7 @@ using FluentValidation;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
+using System.Reflection;
 
 namespace PxStat.Template
 {
@@ -50,118 +51,108 @@ namespace PxStat.Template
         /// <returns></returns>
         public BaseTemplate_Update<T, V> Update()
         {
-            //HEAD requests are not allowed on action queries
-            if (Request.method.Equals("HEAD"))
+            try
             {
-                OnAuthenticationFailed();
-                return this;
+                //Run the parameters through the cleanse process
+                dynamic cleansedParams;
+
+
+
+            bool isKeyValueParameters = Resources.Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
+
+            if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
+            {
+                cleansedParams = Request.parameters;
+            }
+            else
+            {
+                if (!isKeyValueParameters)
+                {
+                    cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
+                }
+                else
+                {
+                    if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                    {
+                        dynamic dto = GetDTO(Request.parameters);
+                        cleansedParams = Resources.Cleanser.Cleanse(Request.parameters, dto);
+                    }
+                    else
+                    {
+                        cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
+                    }
+                }
             }
 
             try
             {
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
-                {
-                    if (!IsAdministrator())
-                    {
-                        OnAuthenticationFailed();
-                        return this;
-                    }
-                }
+                DTO = GetDTO(cleansedParams);
+            }
+            catch
+            {
+                throw new InputFormatException();
+            }
+
+            DTO = Resources.Sanitizer.Sanitize(DTO);
+
+            DTOValidationResult = Validator.Validate(DTO);
+
+            if (!DTOValidationResult.IsValid)
+            {
+                OnDTOValidationError();
+                return this;
+            }
+
 
                 // first of all, we check if user has the right to perform this operation!
                 if (HasUserToBeAuthenticated())
                 {
                     if (!IsUserAuthenticated() || !HasUserPrivilege())
                     {
-
                         OnAuthenticationFailed();
                         return this;
                     }
                 }
+
+
+                if (CustomAttributeNames.Contains("PxStat.NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
+                {
+                    if (!IsAdministrator() && !CustomAttributeNames.Contains("PxStat.TokenSecure"))
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
+
+                //HEAD requests are not allowed on action queries
+                if (Request.method.Equals("HEAD"))
+                {
+                    OnAuthenticationFailed();
+                    return this;
+                }
+
+
                 //if we didn't attempt to authenticate and it's an external call then we still need to the the SamAccountName
                 if (SamAccountName == null && Request.sessionCookie != null)
                 {
-
-                    //Does the cookie correspond with a live token for a user? 
-                    ADO_readerOutput user;
-                    using (Login_BSO lBso = new Login_BSO())
+                    using (var lBso = new Login_BSO())
                     {
-                        user = lBso.ReadBySession(Request.sessionCookie.Value);
+                        //Does the cookie correspond with a live token for a user? 
+
+                        var user = lBso.ReadBySession(Request.sessionCookie.Value);
                         if (user.hasData)
                         {
 
                             SamAccountName = user.data[0].CcnUsername;
                         }
                     }
-
-
                 }
 
-                
 
-                //Run the parameters through the cleanse process
-                dynamic cleansedParams;
-
-                //If the API has the IndividualCleanseNoHtml attribute then parameters are cleansed individually
-                //Any of these parameters whose corresponding DTO property contains the NoHtmlStrip attribute will not be cleansed of HTML tags
-                //if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
-                //{
-                //    dynamic dto = GetDTO(Request.parameters);
-                //    cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
-                //}
-                //else
-                //{
-                //    cleansedParams = Cleanser.Cleanse(Request.parameters);
-                //}
-
-                bool isKeyValueParameters = Resources.Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
-
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
-                {
-                    cleansedParams = Request.parameters;
-                }
-                else
-                {
-                    if (!isKeyValueParameters)
-                    {
-                        cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
-                    }
-                    else
-                    {
-                        if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
-                        {
-                            dynamic dto = GetDTO(Request.parameters);
-                            cleansedParams = Resources.Cleanser.Cleanse(Request.parameters, dto);
-                        }
-                        else
-                        {
-                            cleansedParams = Resources.Cleanser.Cleanse(Request.parameters);
-                        }
-                    }
-                }
-
-                try
-                {
-                    DTO = GetDTO(cleansedParams);
-                }
-                catch
-                {
-                    throw new InputFormatException();
-                }
-
-                DTO = Resources.Sanitizer.Sanitize(DTO);
-
-                DTOValidationResult = Validator.Validate(DTO);
-
-                if (!DTOValidationResult.IsValid)
-                {
-                    OnDTOValidationError();
-                    return this;
-                }
 
                 Ado.StartTransaction();
 
-                //Create the trace now that we're sure we have a SamAccountName if it exists
+                // Create the trace now that we're sure we have a SamAccountName if it exists
                 Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
 
                 // The Actual Creation should happen here by the specific class!
@@ -181,7 +172,7 @@ namespace PxStat.Template
             }
             catch (FormatException formatException)
             {
-                //An error has been caught, rollback the transaction, log the error and return a message to the caller
+                //A FormatException error has been caught, rollback the transaction, log the error and return a message to the caller
                 Ado.RollbackTransaction();
                 Log.Instance.Error(formatException);
                 Response.error = formatException.Message ?? Label.Get("error.schema");
@@ -197,14 +188,15 @@ namespace PxStat.Template
             }
             catch (Exception ex)
             {
-                Ado.RollbackTransaction();
                 //An error has been caught, rollback the transaction, log the error and return a message to the caller
+                Ado.RollbackTransaction();
                 Log.Instance.Error(ex);
                 Response.error = Label.Get("error.exception");
                 return this;
             }
             finally
             {
+
                 Dispose();
             }
         }

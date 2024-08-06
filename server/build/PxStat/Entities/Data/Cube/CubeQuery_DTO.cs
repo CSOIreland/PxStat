@@ -29,6 +29,12 @@ namespace PxStat.JsonStatSchema
         public bool widget { get; set; }
         public bool user { get; set; }
 
+        /// <summary>
+        /// Indicates whether or not the Notes should be returned with Comments
+        /// If true, then notes only
+        /// </summary>
+        public bool build { get; set; }
+
         public CubeQuery_DTO()
         {
         }
@@ -36,6 +42,8 @@ namespace PxStat.JsonStatSchema
         public CubeQuery_DTO(dynamic parameters)
         {
             Cube_MAP map = new Cube_MAP();
+
+            
 
             //Cheeck if the parameters are in key value pairs (e.g. JSON-rpc) or in a list (e.g. RESTful)
             if (!Resources.Cleanser.TryParseJson<dynamic>(parameters.ToString(), out dynamic canParse))
@@ -92,6 +100,9 @@ namespace PxStat.JsonStatSchema
                 m2m = param.m2m;
             else
                 m2m = true;
+
+            if (param.build != null)
+                this.build = parameters.build;
 
 
         }

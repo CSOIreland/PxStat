@@ -122,6 +122,7 @@
     <Compile Remove="Entities\Data\Compare\BSO\Compare_BSO_TestStub.cs" />
     <Compile Remove="Entities\Data\Cube\Sdmx.cs" />
     <Compile Remove="Entities\Data\DataMatrix\IMetaData.cs" />
+    <Compile Remove="Entities\Data\DataMatrix\Matrix_DTO.cs" />
     <Compile Remove="Entities\Data\DataMatrix\MetaData.cs" />
     <Compile Remove="Entities\Data\Matrix\BSO\MatrixValidator.cs" />
     <Compile Remove="Entities\Data\Matrix\BSO\Matrix_BSO_Validate.cs" />

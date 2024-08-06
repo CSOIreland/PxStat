@@ -23,6 +23,8 @@ namespace PxStat.Security
         public Account_VLD_ReadCurrent() { }
     }
 
+    public class Account_VLD_UpdateApiToken : AbstractValidator<Account_DTO_UpdateToken> { }
+
     public class Account_VLD_Lock : AbstractValidator<Account_DTO_Lock>
     {
         public Account_VLD_Lock()

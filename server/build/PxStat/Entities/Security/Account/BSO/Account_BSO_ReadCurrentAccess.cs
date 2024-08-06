@@ -60,7 +60,7 @@ namespace PxStat.Security
                 }
             }
 
-
+            
             DTO.CcnUsername = SamAccountName;
 
             Log.Instance.Debug("ReadCurrentAccess SamAccountName:" + DTO.CcnUsername);

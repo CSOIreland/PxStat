@@ -79,6 +79,14 @@ namespace PxStatXUnit.Tests
         }
 
         [Fact]
+        public void TestValidAnalyticalGlobalConfig()
+        {
+            Config_VLD_Create validationRules = new Config_VLD_Create();
+            bool result = validationRules.ValidateCreateConfig("config.global.json", GetFile(@"\Resources\test9.json"), "APP");
+            Assert.False(result);
+        }
+
+        [Fact]
         public void TestValidServerConfig()
         {
             Config_VLD_Create validationRules = new Config_VLD_Create();

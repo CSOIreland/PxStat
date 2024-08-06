@@ -1,4 +1,6 @@
 ﻿
+using PxStat.Security;
+
 namespace PxStat.System.Settings
 {
     /// <summary>
@@ -40,6 +42,10 @@ namespace PxStat.System.Settings
         {
             if (parameters.RlsCode != null)
                 this.RlsCode = parameters.RlsCode;
+            if(parameters.LngIsoCode != null)
+                this.LngIsoCode= parameters.LngIsoCode;
+            else
+                this.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
         }
 
@@ -47,6 +53,7 @@ namespace PxStat.System.Settings
         /// Blank constructor
         /// </summary>
         public int RlsCode { get; set; }
+        public string LngIsoCode { get; set; }
     }
 
     /// <summary>

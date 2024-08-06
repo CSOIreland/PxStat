@@ -16,13 +16,28 @@ namespace PxStat.Security
         {
         }
 
+        internal ADO_readerOutput ApplicationUserRead(IADO ado, string ccnUsername, string token, string appCode)
+        {
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>();
+            paramList.Add(new ADO_inputParams() { name = "@CcnUsername", value = ccnUsername });
+            paramList.Add(new ADO_inputParams() { name = "@AprToken", value = token });
+            paramList.Add(new ADO_inputParams() { name = "@AppCode", value = appCode });
+
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("Security_Application_User_Read", paramList);
+
+            return output;
+
+        }
+
+
+
         /// <summary>
         /// Reads the account table based on an Account_DTO_Read parameter
         /// </summary>
         /// <param name="ado"></param>
         /// <param name="account"></param>
         /// <returns></returns>
-        internal ADO_readerOutput Read(IADO ado, Account_DTO_Read account, bool adOnly = false, string ccnEmail = null)
+        internal ADO_readerOutput Read(IADO ado, Account_DTO_Read account, bool adOnly = false, string ccnEmail = null,bool isMe=false)
         {
             List<ADO_inputParams> paramList = new List<ADO_inputParams>();
             if (!string.IsNullOrEmpty(account.CcnUsername))
@@ -46,6 +61,11 @@ namespace PxStat.Security
                 paramList.Add(new ADO_inputParams() { name = "@CcnEmail", value = ccnEmail });
             }
 
+            if(isMe)
+            {
+                paramList.Add(new ADO_inputParams() { name = "@IsMe", value = true });
+            }
+
 
             ADO_readerOutput output = ado.ExecuteReaderProcedure("Security_Account_Read", paramList);
 
@@ -67,6 +87,18 @@ namespace PxStat.Security
             paramList.Add(new ADO_inputParams() { name = "@CcnUsername", value = CcnUsername });
 
             ADO_readerOutput output = ado.ExecuteReaderProcedure("Security_Account_Read", paramList);
+
+            return output;
+        }
+
+        internal ADO_readerOutput ReadByApiTokenCcnUsername(IADO ado, string CcnUsername, string apiToken) 
+        {
+            List<ADO_inputParams> paramList = new List<ADO_inputParams>();
+
+            paramList.Add(new ADO_inputParams() { name = "@CcnUsername", value = CcnUsername });
+            paramList.Add(new ADO_inputParams() { name = "@CcnApiToken", value = apiToken });
+
+            ADO_readerOutput output = ado.ExecuteReaderProcedure("Security_Account_ReadByTokenAndCcnUsername", paramList);
 
             return output;
         }
@@ -175,6 +207,25 @@ namespace PxStat.Security
             return output;
         }
 
+        internal int UpdateCcnToken(IADO ado, string ccnToken, string ccnUsername)
+        {
+            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
+            {
+                new ADO_inputParams() { name = "@CcnUsername", value = ccnUsername },
+                new ADO_inputParams() { name = "@CcnToken", value = ccnToken }
+            };
+
+            // A return parameter is required for the operation
+            ADO_returnParam retParam = new ADO_returnParam();
+            retParam.name = "return";
+            retParam.value = 0;
+
+            //Attempting to create the new entity
+            ado.ExecuteNonQueryProcedure("Security_Account_UpdateApiToken", inputParamList, ref retParam);
+
+            //Assign the returned value for checking and output
+            return retParam.value;
+        }
 
         /// <summary>
         /// Creates a new account in the account table

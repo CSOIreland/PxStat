@@ -19,20 +19,25 @@ namespace PxStatXUnit.Tests
         [Fact]
         public void GetRequestUser_Test()
         {
+            Helper.SetupTests();
             WorkflowRequest_ADO workflow = new WorkflowRequest_ADO();
             Mock<IADO> ado = new Mock<IADO>();
             ado.Setup(a => a.ExecuteReaderProcedure("Security_Account_Read", It.IsAny<List<ADO_inputParams>>())).Returns(GetReaderOutput());
             ActiveDirectory_DTO adDto = new ActiveDirectory_DTO() { CcnUsername = "expiredUser" };
             dynamic dynamicObj = new ExpandoObject();
-            dynamicObj.CcnUsername = "chapmand";
+            string? username = ApiServicesHelper.Configuration.GetSection("Test:SamAccountName").Value;
+            dynamicObj.CcnUsername = username;
             var result = workflow.GetRequestUser(ado.Object, dynamicObj, adDto);
-            Assert.Null(result);
+            Assert.NotNull(result);
         }
 
         private ADO_readerOutput GetReaderOutput()
         {
             ADO_readerOutput output = new ADO_readerOutput();
             dynamic o = new ExpandoObject();
+            o.CcnUsername = "expiredUser"; 
+            o.CcnDisplayName = DBNull.Value;
+            o.CcnEmail = DBNull.Value;
             output.data.Add(o);
             output.hasData = true;
             return output;

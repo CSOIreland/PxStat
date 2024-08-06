@@ -171,13 +171,6 @@ namespace PxStat.DBuild
 
             }
 
-
-            if (parameters.report != null)
-            {
-
-            }
-
-
             if (parameters.Dimension != null)
             {
                 Dspecs = new List<DSpec_DTO>();

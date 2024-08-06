@@ -3,6 +3,7 @@ using FluentValidation;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
+using System.Reflection;
 
 namespace PxStat.Template
 {
@@ -50,74 +51,18 @@ namespace PxStat.Template
         /// <returns></returns>
         public BaseTemplate_Delete<T, V> Delete()
         {
-            //HEAD requests are not allowed on action queries
-            if (Request.method.Equals("HEAD"))
-            {
-                OnAuthenticationFailed();
-                return this;
-            }
-
             try
             {
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
-                {
-                    if (!IsAdministrator())
-                    {
-                        OnAuthenticationFailed();
-                        return this;
-                    }
-                }
-
-                // first of all, we check if user has the right to perform this operation!
-                if (HasUserToBeAuthenticated())
-                {
-                    if (!IsUserAuthenticated() || !HasUserPrivilege())
-                    {
-
-                        OnAuthenticationFailed();
-                        return this;
-                    }
-                }
-                //if we didn't attempt to authenticate and it's an external call then we still need to the the SamAccountName
-                if (SamAccountName == null && Request.sessionCookie != null)
-                {
-                    //Does the cookie correspond with a live token for a user? 
-
-                    ADO_readerOutput user;
-
-                    using (Login_BSO lBso = new Login_BSO())
-                    {
-                        user = lBso.ReadBySession(Request.sessionCookie.Value);
-
-                        if (user.hasData)
-                        {
-
-                            SamAccountName = user.data[0].CcnUsername;
-                        }
-                    }
-
-                }
-
-                
-
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams;
 
+
                 //If the API has the IndividualCleanseNoHtml attribute then parameters are cleansed individually
                 //Any of these parameters whose corresponding DTO property contains the NoHtmlStrip attribute will not be cleansed of HTML tags
-                //if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
-                //{
-                //    dynamic dto = GetDTO(Request.parameters);
-                //    cleansedParams = Cleanser.Cleanse(Request.parameters, dto);
-                //}
-                //else
-                //{
-                //    cleansedParams = Cleanser.Cleanse(Request.parameters);
-                //}
 
                 bool isKeyValueParameters = Resources.Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
 
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
+                if (CustomAttributeNames.Contains("PxStat.NoCleanseDto"))
                 {
                     cleansedParams = Request.parameters;
                 }
@@ -129,7 +74,7 @@ namespace PxStat.Template
                     }
                     else
                     {
-                        if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                        if (CustomAttributeNames.Contains("PxStat.IndividualCleanseNoHtml"))
                         {
                             dynamic dto = GetDTO(Request.parameters);
                             cleansedParams = Resources.Cleanser.Cleanse(Request.parameters, dto);
@@ -140,6 +85,8 @@ namespace PxStat.Template
                         }
                     }
                 }
+
+
 
                 try
                 {
@@ -154,15 +101,64 @@ namespace PxStat.Template
 
                 DTOValidationResult = Validator.Validate(DTO);
 
+
                 if (!DTOValidationResult.IsValid)
                 {
-                    OnDTOValidationError();
+                    OnDTOValidationError(CustomAttributeNames.Contains("PxStat.TokenSecure"));
                     return this;
                 }
 
+
+                // first of all, we check if user has the right to perform this operation!
+                if (HasUserToBeAuthenticated())
+                {
+                    if (!IsUserAuthenticated() || !HasUserPrivilege())
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
+
+
+
+                if (CustomAttributeNames.Contains("PxStat.NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
+                {
+                    if (!IsAdministrator() && !CustomAttributeNames.Contains("PxStat.TokenSecure"))
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
+
+                //HEAD requests are not allowed on action queries
+                if (Request.method.Equals("HEAD"))
+                {
+                    OnAuthenticationFailed();
+                    return this;
+                }
+
+
+                //if we didn't attempt to authenticate and it's an external call then we still need to the the SamAccountName
+                if (SamAccountName == null && Request.sessionCookie != null)
+                {
+                    using (var lBso = new Login_BSO())
+                    {
+                        //Does the cookie correspond with a live token for a user? 
+
+                        var user = lBso.ReadBySession(Request.sessionCookie.Value);
+                        if (user.hasData)
+                        {
+
+                            SamAccountName = user.data[0].CcnUsername;
+                        }
+                    }
+                }
+
+
+
                 Ado.StartTransaction();
 
-                //Create the trace now that we're sure we have a SamAccountName if it exists
+                // Create the trace now that we're sure we have a SamAccountName if it exists
                 Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
 
                 // The Actual Creation should happen here by the specific class!
@@ -206,6 +202,7 @@ namespace PxStat.Template
             }
             finally
             {
+
                 Dispose();
             }
         }

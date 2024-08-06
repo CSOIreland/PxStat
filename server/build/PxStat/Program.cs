@@ -65,8 +65,12 @@ namespace PxStat
             
             Configuration_BSO.PxStatConfiguration = (IDictionary<string, string>)AppServicesHelper.AppConfiguration.Settings;
             if (Configuration_BSO.serverLanguageResource == null) Configuration_BSO.SetServerLangaugeConfig();
-            //setup languages early...
-            var lng = PxStat.Resources.LanguageManager.Instance;
+            //setup languages early...If this fails, an attempt will be made whenever a language is required until languages are loaded
+            try
+            {
+                var lng = PxStat.Resources.LanguageManager.Instance;
+            }
+            catch { }
 
         }
     }

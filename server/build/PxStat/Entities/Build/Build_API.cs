@@ -38,7 +38,31 @@ namespace PxStat.Build
 
         }
 
+        /// <summary>
+        /// Update by Release
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        /// 
+        [NoCleanseDto]
+        public static dynamic UpdateByRelease(JSONRPC_API jsonrpcRequest)
+        {
+            return new DBuild_BSO_UpdateByRelease(jsonrpcRequest).Read().Response;
+        }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        /// 
+        [TokenSecure]
+        [NoCleanseDto]
+        public static dynamic UpdatePublish(JSONRPC_API jsonrpcRequest)
+        {
+            return new DBuild_BSO_UpdatePublish(jsonrpcRequest).Create().Response;
+        }
 
         /// <summary>
         /// 
@@ -51,6 +75,16 @@ namespace PxStat.Build
             return new DBuild_BSO_ReadTemplate(jsonrpcRequest).Read().Response;
         }
 
+
+        /// <summary>
+        /// Read a template by release
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadTemplateByRelease(JSONRPC_API jsonrpcRequest)
+        {
+            return new DBuild_BSO_ReadTemplateByRelease(jsonrpcRequest).Read().Response;
+        }
 
         /// <summary>
         /// 
@@ -83,6 +117,16 @@ namespace PxStat.Build
         {
             //return new Build_BSO_ReadDataset(jsonrpcRequest).Read().Response;
             return new DBuild_BSO_ReadDataset(jsonrpcRequest).Read().Response;
+        }
+
+        /// <summary>
+        /// Read a dataset by Release
+        /// </summary>
+        /// <param name="jsonrpcRequest"></param>
+        /// <returns></returns>
+        public static dynamic ReadDatasetByRelease(JSONRPC_API jsonrpcRequest)
+        {
+            return new DBuild_BSO_ReadDatasetByRelease(jsonrpcRequest).Read().Response;
         }
 
         /// <summary>

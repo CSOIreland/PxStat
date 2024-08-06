@@ -129,13 +129,10 @@ namespace PxStat.Data
 
         public static dynamic ReadCollection(IRequest jsonrpcRequest)
         {
-            return new Cube_BSO_ReadCollection(jsonrpcRequest, true).Read().Response;
+            return new Cube_BSO_ReadCollection(jsonrpcRequest).Read().Response;
         }
 
-        public static dynamic ReadMetaCollection(JSONRPC_API jsonrpcRequest)
-        {
-            return new Cube_BSO_ReadCollection(jsonrpcRequest, true).Read().Response;
-        }
+
 
     }
 

@@ -76,7 +76,7 @@ namespace PxStat.Data
         /// <param name="languageCode"></param>
         /// <param name="DateFrom"></param>
         /// <returns></returns>
-        internal List<dynamic> ReadCollection(string languageCode, DateTime DateFrom, int SbjCode, string PrcCode = null)
+        internal List<dynamic> ReadListLive(string languageCode, DateTime DateFrom, int SbjCode, string PrcCode = null)
         {
             var inputParams = new List<ADO_inputParams>();
 
@@ -134,7 +134,7 @@ namespace PxStat.Data
             }
             return null;
         }
-        internal List<dynamic> ReadCollectionMetadata(string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
+        internal List<dynamic> ReadCollection(string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
         {
             var inputParams = new List<ADO_inputParams>();
 

@@ -1,4 +1,8 @@
 ﻿using API;
+using DocumentFormat.OpenXml.Wordprocessing;
+using FluentValidation.Results;
+using PxStat.DataStore;
+using PxStat.DBuild;
 using PxStat.Security;
 using PxStat.System.Settings;
 using System;
@@ -53,7 +57,7 @@ namespace PxStat.Data
         //A list of boolean values corresponding exactly to Cells. Indicates if they are amended data cells.
         public List<bool> ComparisonReport { get; set; }
        
-
+        public ValidationResult ValidationResult { get; set; }
         /// <summary>
         /// Px Document Dmatrix Constructor
         /// </summary>
@@ -68,6 +72,82 @@ namespace PxStat.Data
 
         public Dmatrix()
         {
+        }
+
+        public bool Validate()
+        {
+            DMatrix_VLD vld = new();
+            ValidationResult= vld.Validate(this);
+            return ValidationResult.IsValid;
+        }
+
+        public IDmatrix GetMultiLanguageMatrixFromRelease(IADO ado,string mtrCode,Release_DTO rDto)
+        {
+            //Get a list of languages that the release uses. We will need to get a matrix for each language and then merge them into a single matrix
+            Compare_ADO cAdo = new Compare_ADO(ado);
+            var releaseLanguages = cAdo.ReadLanguagesForRelease(rDto.RlsCode);
+            if (releaseLanguages == null)
+            {
+                return null;
+            }
+            List<IDmatrix> matrixes = new();
+
+            DataReader dr = new();
+            foreach (var language in releaseLanguages)
+            {
+                matrixes.Add(dr.GetLiveData(ado, mtrCode, language, rDto));
+            }
+            DBuild_BSO dBso = new DBuild_BSO();
+            Dmatrix dmatrix = new();
+            dmatrix = MergeMatrixes(matrixes, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
+            return dmatrix;
+        }
+
+        public IDmatrix GetMultiLanguageMatrixFromRelease(IADO ado, Release_DTO rDto)
+        {
+            //Get a list of languages that the release uses. We will need to get a matrix for each language and then merge them into a single matrix
+            Compare_ADO cAdo = new Compare_ADO(ado);
+            var releaseLanguages = cAdo.ReadLanguagesForRelease(rDto.RlsCode);
+            if (releaseLanguages == null)
+            {
+                return null;
+            }
+            List<IDmatrix> matrixes = new();
+
+            DataReader dr = new();
+            foreach (var language in releaseLanguages)
+            {
+                matrixes.Add(dr.GetNonLiveData(ado, language, rDto));
+            }
+            DBuild_BSO dBso = new DBuild_BSO();
+            Dmatrix dmatrix = new();
+            dmatrix = MergeMatrixes(matrixes, Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code"));
+            return dmatrix;
+        }
+
+        /// <summary>
+        /// Merge a list of matrixes so that the default language matrix is the main spec and the other matrices copy their dspecs to the main one
+        /// </summary>
+        /// <param name="matrices"></param>
+        /// <param name="defaultLngIsoCode"></param>
+        /// <returns></returns>
+        public IDmatrix MergeMatrixes(List<IDmatrix> matrices,string defaultLngIsoCode)
+        {
+            if (matrices.Count == 0) return null;
+            if (matrices.Count == 1) return matrices.First();
+            IDmatrix defaultMatrix=matrices.Where(x=>x.Language == defaultLngIsoCode).FirstOrDefault();
+            if (defaultMatrix == null) return null;
+            if (defaultMatrix.Languages == null) defaultMatrix.Languages = new List<string>();
+            if(!defaultMatrix.Languages.Contains(defaultLngIsoCode))
+                defaultMatrix.Languages.Add(defaultLngIsoCode);
+
+            foreach (IDmatrix matrix in matrices.Where(x => x.Language != defaultLngIsoCode))
+            {
+                if (matrix.Dspecs.ContainsKey(matrix.Language) && !defaultMatrix.Dspecs.ContainsKey(matrix.Language))
+                    defaultMatrix.Dspecs.Add(matrix.Language,matrix.Dspecs[matrix.Language]);
+                if(!defaultMatrix.Languages.Contains(matrix.Language)) defaultMatrix.Languages.Add(matrix.Language);
+            }
+            return defaultMatrix;
         }
 
         /// <summary>
@@ -210,7 +290,5 @@ namespace PxStat.Data
 
             return dmatrix;
         }
-
-
     }
 }

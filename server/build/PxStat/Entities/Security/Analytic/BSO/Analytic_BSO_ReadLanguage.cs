@@ -25,11 +25,9 @@ namespace PxStat.Security
         /// <returns></returns>
         override protected bool HasPrivilege()
         {
-            if (IsPowerUser())
+            if (IsPowerUser() || IsModerator())
                 return true;
 
-            if (IsModerator() && !String.IsNullOrEmpty(DTO.MtrCode))
-                return true;
 
             return false;
         }
@@ -37,7 +35,13 @@ namespace PxStat.Security
 
         protected override bool Execute()
         {
-            
+
+            if (IsModerator() && String.IsNullOrEmpty(DTO.MtrCode))
+            {
+                Response.error = Label.Get("error.privilege");
+                return false;
+            }
+
             MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadLanguage", DTO);
             if (cache.hasData)
             {
@@ -46,8 +50,12 @@ namespace PxStat.Security
             }
             Analytic_ADO ado = new Analytic_ADO(Ado);
             List<dynamic> outputSummary = ado.ReadLanguage(DTO);
+
             if (outputSummary != null)
             {
+                outputSummary.ToList().Sort();
+                outputSummary.ToList().Reverse();
+
                 Response.data = FormatData(outputSummary);
                 ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "ReadLanguage", DTO, Response.data, default(DateTime));
                 return true;

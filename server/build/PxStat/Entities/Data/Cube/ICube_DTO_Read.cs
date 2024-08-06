@@ -11,5 +11,6 @@ namespace PxStat.Data
         string matrix { get; set; }
         int release { get; set; }
         Role role { get; set; }
+        bool build { get; set; }
     }
 }

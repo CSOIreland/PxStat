@@ -1,4 +1,6 @@
-﻿using PxStat.System.Settings;
+﻿using API;
+using FluentValidation.Results;
+using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
 
@@ -30,6 +32,10 @@ namespace PxStat.Data
         List<bool> ComparisonReport { get; set; }
         string Language { get; set; }
         IDmatrix GetDmatrixFromPxDocument(IDocument document,  IUpload_DTO uploadDto,List<PxUpload_DTO> dspecs=null);
-      
+        IDmatrix GetMultiLanguageMatrixFromRelease(IADO ado, string mtrCode, Release_DTO rDto);
+        IDmatrix GetMultiLanguageMatrixFromRelease(IADO ado, Release_DTO rDto);
+        bool Validate();
+        public ValidationResult ValidationResult { get; set; }
+
     }
 }

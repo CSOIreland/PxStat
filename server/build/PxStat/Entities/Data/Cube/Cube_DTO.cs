@@ -268,6 +268,8 @@ namespace PxStat.Data
         /// </summary>
         public IList<Dimension> dimension { get; set; }
 
+        public bool build { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -388,6 +390,12 @@ namespace PxStat.Data
         public IList<Dimension> dimension { get; set; }
 
         /// <summary>
+        /// Indicates whether or not the Notes should be returned with Comments
+        /// If true, then notes only
+        /// </summary>
+        public bool build { get; set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parameters"></param>
@@ -407,6 +415,10 @@ namespace PxStat.Data
                 if (parameters.language != null)
                     this.language = parameters.language;
                 else this.language = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+
+                if(parameters.build!=null)
+                    this.build = parameters.build;
+                else this.build = false;
 
 
                 if (parameters.format != null)

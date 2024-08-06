@@ -14,9 +14,9 @@
   "search": {
     "synonym-multiplier": 1,
     "search-word-multiplier": 15,
-    "release_word_multiplier": 1,
+    "release_word_multiplier": 100,
     "product_word_multiplier": 10,
-    "subject_word_multiplier": 100
+    "subject_word_multiplier": 1
   },
   "language": {
     "iso": {
@@ -25,7 +25,9 @@
     }
   },
   "release": {
-    "lockTimeMinutes": 60
+    "lockTimeMinutes": 60,
+    "defaultReason": "02ROUTINE"
+
   },
   "subscription": {
     "query-threshold": 1000
@@ -40,15 +42,9 @@
     "nonSubscribedCallLimit": 10
   },
   "whitelist": [
-    "test.ie"
+    "cso.ie"
   ],
   "pxapiv1": {
-    "formats": [
-      "json-stat",
-      "json-stat2",
-      "csv",
-      "px",
-      "xlsx"
-    ]
+    "formats": [ "json-stat", "json-stat2", "csv", "px", "xlsx" ]
   }
 }

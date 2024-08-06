@@ -20,13 +20,7 @@ namespace PxStat.Data
         [NoCleanseDto]
         public static dynamic Create(JSONRPC_API jsonrpcRequest)
         {
-
             var response = new Matrix_BSO_Create(jsonrpcRequest).Create().Response;
-
-            //if (response.error == null)
-            //{
-            //    runDeletes();
-            //}
 
             return response;
         }

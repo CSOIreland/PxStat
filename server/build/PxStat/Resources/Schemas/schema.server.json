@@ -108,10 +108,14 @@
 			"properties": {
 				"lockTimeMinutes": {
 					"type": "integer"
+				},
+				"defaultReason": {
+					"type": "string"
 				}
 			},
 			"required": [
-				"lockTimeMinutes"
+				"lockTimeMinutes",
+				"defaultReason"
 			],
 			"additionalProperties": false
 		},

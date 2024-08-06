@@ -7,6 +7,10 @@ using System;
 using System.Net;
 using System.Web;
 using PxStat;
+using System.Reflection;
+using Microsoft.AspNetCore.HttpOverrides;
+using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http.Metadata;
 
 namespace PxStat.Template
 {
@@ -65,10 +69,7 @@ namespace PxStat.Template
 
                 if (Response.data != null)
                 {
-                    Response.response = Response.data.ToString();
-
-
-
+                    Response.response = Response.data.ToString();                   
                     //We need to change e.g. an Excel file to a byte array
                     string data = Response.data.ToString();
                     if (data.Contains(";base64,"))
@@ -82,9 +83,10 @@ namespace PxStat.Template
                         Response.response = Utility.DecodeBase64ToByteArray(Response.data);
                     }
                 }
-                
-
-
+                else
+                {
+                    Response.response = "";
+                }
             }
         }
 
@@ -96,56 +98,7 @@ namespace PxStat.Template
         {
             try
             {
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
-                {
-                    if (!IsAdministrator())
-                    {
-                        OnAuthenticationFailed();
-                        return this;
-                    }
-                }
-                //HEAD requests are only allowed for methods with an attribute of [AllowHEADrequest]
-                if (Request.method.Equals("HEAD"))
-                {
-                    if (!Resources.MethodReader.MethodHasAttribute(Request.method, "AllowHEADrequest"))
-                    {
-                        OnAuthenticationFailed();
-                        return this;
-                    }
-                }
-
-                // first of all, we check if user has the right to perform this operation!
-                if (HasUserToBeAuthenticated())
-                {
-                    if (!IsUserAuthenticated() || !HasUserPrivilege())
-                    {
-
-                        OnAuthenticationFailed();
-                        return this;
-                    }
-                }
-                //if we didn't attempt to authenticate and it's an external call then we still need to the the SamAccountName
-                if (SamAccountName == null && Request.sessionCookie != null)
-                {
-                    Log.Instance.Debug("Session cookie: " + Request.sessionCookie.Value);
-
-                    //Does the cookie correspond with a live token for a user? 
-                    ADO_readerOutput user;
-                    using (Login_BSO lBso = new Login_BSO())
-                    {
-                        user = lBso.ReadBySession(Request.sessionCookie.Value);
-                        if (user.hasData)
-                        {
-
-                            SamAccountName = user.data[0].CcnUsername;
-                        }
-                    }
-
-                }
-                Ado.StartTransaction();
-                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
-                Ado.CommitTransaction();
-
+                
                 //Run the parameters through the cleanse process
                 dynamic cleansedParams;
 
@@ -199,16 +152,63 @@ namespace PxStat.Template
                     return this;
                 }
 
-                ////Has the user hit a limit of how many queries are allowed?
-                //if (Throttle_BSO.IsThrottled(Ado, HttpContext.Current.Request, Request, SamAccountName))
-                //{
-                //    OnThrottle();
-                //    return this;
-                //}
+                if (CustomAttributeNames.Contains("PxStat.NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
+                {
+                    if (!IsAdministrator() && !CustomAttributeNames.Contains("PxStat.TokenSecure"))
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
+
+
+                //HEAD requests are only allowed for methods with an attribute of [AllowHEADrequest]
+                if (Request.method.Equals("HEAD"))
+                {
+                    if (!Resources.MethodReader.MethodHasAttribute(Request.method, "AllowHEADrequest"))
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
+
+                // first of all, we check if user has the right to perform this operation!
+                if (HasUserToBeAuthenticated())
+                {
+                    if (!IsUserAuthenticated() || !HasUserPrivilege())
+                    {
+                        OnAuthenticationFailed();
+                        return this;
+                    }
+                }
 
 
 
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "Analytic"))
+                //if we didn't attempt to authenticate and it's an external call then we still need to the the SamAccountName
+                if (SamAccountName == null && Request.sessionCookie != null)
+                {
+                    Log.Instance.Debug("Session cookie: " + Request.sessionCookie.Value);
+
+                    //Does the cookie correspond with a live token for a user? 
+                    ADO_readerOutput user;
+                    using (Login_BSO lBso = new Login_BSO())
+                    {
+                        user = lBso.ReadBySession(Request.sessionCookie.Value);
+                        if (user.hasData)
+                        {
+
+                            SamAccountName = user.data[0].CcnUsername;
+                        }
+                    }
+
+                }
+                Ado.StartTransaction();
+                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
+                Ado.CommitTransaction();
+
+
+
+                if (CustomAttributeNames.Contains("PxStat.Analytic"))
                 {
                     //Create the analytic data if required
                     Ado.StartTransaction();
@@ -228,7 +228,7 @@ namespace PxStat.Template
                 }
 
                 //See if there's a cache in the process
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "CacheRead"))
+                if (CustomAttributeNames.Contains("PxStat.CacheRead"))
                 {
                     cDTO = new CacheMetadata("CacheRead", Request.method, DTO);
                     MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO<dynamic>(cDTO.Namespace, cDTO.ApiName, cDTO.Method, DTO);
@@ -280,5 +280,7 @@ namespace PxStat.Template
                 Dispose();
             }
         }
+
+
     }
 }

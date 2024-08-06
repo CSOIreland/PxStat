@@ -11,6 +11,32 @@ namespace PxStat.Resources
     /// </summary>
     internal class MethodReader
     {
+        internal static string[] GetClassAndMethod(string requestString)
+        {
+            string[] output = new string[2];
+
+            // The method contains the full path, e.g. "PxStat.Security.GroupAccount_API.Read"
+            // Create a List<string> of each individual element
+            List<string> mList = requestString.Split('.').ToList<string>();
+
+            //If this can't be parsed then just return 
+            if (mList.Count < 2)
+                return null;
+
+            //Get the method name, i.e. everything after the last '.'
+            string methodName = mList.Last<string>();
+           
+
+            //Remove the method name from the list
+            mList.RemoveAt(mList.Count - 1);
+
+            //Get the class, i.e. everything before the last '.' . This is done by expressing the list as a dot separated string
+            string className = string.Join(".", mList);
+            output[0] = className;
+            output[1] = methodName;
+            return output;
+        }
+
         /// <summary>
         /// This function checks an API method and ascertains if the method has a specified associated attribute
         /// </summary>
@@ -63,7 +89,7 @@ namespace PxStat.Resources
 
                 //Get the required "attributeName" attribute if it exists
                 var searchedAttribute = methodInfo.CustomAttributes.Where(CustomAttributeData => CustomAttributeData.AttributeType.Name == attributeName).FirstOrDefault();
-
+                
                 //Return true or false depending on whether the attribute was found
                 return searchedAttribute != null;
             }
@@ -74,6 +100,56 @@ namespace PxStat.Resources
                 return false;
             }
         }
+
+        public static List<string> GetAllCustomAttributeNamesForMethod(string method)
+        {
+            try
+            {
+                // The method contains the full path, e.g. "PxStat.Security.GroupAccount_API.Read"
+                // Create a List<string> of each individual element
+                List<string> mList = method.Split('.').ToList<string>();
+
+                //If this can't be parsed then just return 
+                if (mList.Count < 2)
+                    return new List<string>();
+
+                //Get the method name, i.e. everything after the last '.'
+                string methodName = mList.Last<string>();
+
+                //Remove the method name from the list
+                mList.RemoveAt(mList.Count - 1);
+
+                //Get the class, i.e. everything before the last '.' . This is done by expressing the list as a dot separated string
+                string className = string.Join(".", mList);
+
+                //Use some Reflection methods to get info about the class and method
+                Type type = Type.GetType(className);
+
+                int mcount = type.GetMethods().Where(x => x.Name == methodName).Count(); ;//.FirstOrDefault();
+
+
+                if (mcount == 0) new List<string>();
+                MethodInfo methodInfo;
+                if (mcount > 1)
+                {                    
+                    methodInfo = type.GetMethods().Where(x => x.Name == methodName).FirstOrDefault();
+                }
+                else
+                {
+                    methodInfo = type.GetMethod(methodName);
+                }
+
+      
+                return methodInfo.CustomAttributes.Select(x=>x.AttributeType.FullName).ToList();
+            }
+            catch
+            {
+
+                //soft fail - continue the process.
+                return new List<string>();
+            }
+        }
+
         /// <summary>
         /// For a dynamic object, this function tells us if it has a specified property
         /// </summary>

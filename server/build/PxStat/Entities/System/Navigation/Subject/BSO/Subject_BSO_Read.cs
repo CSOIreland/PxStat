@@ -1,5 +1,6 @@
 ﻿using API;
 using PxStat.Template;
+using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -39,7 +40,7 @@ namespace PxStat.System.Navigation
 
             var adoSubject = new Subject_ADO(Ado);
             var list = adoSubject.Read(DTO);
-            Response.data = list;
+            Response.data = list.ToList().OrderBy(x => x.SbjValue); 
 
             return true;
         }

@@ -1,12 +1,16 @@
 ﻿using API;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.HttpOverrides;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PxStat.Data;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace PxStat.Template
@@ -62,6 +66,9 @@ namespace PxStat.Template
 
         protected string UserIdentifier { get; set; }
 
+        public IList<string> CustomAttributeNames { get; set; }
+       
+
         #endregion 
 
         /// <summary>
@@ -71,12 +78,9 @@ namespace PxStat.Template
         /// <param name="validator"></param>
         public  BaseTemplate(IRequest request, IValidator<T> validator)
         {
-     
-            
 
             Ado = AppServicesHelper.StaticADO;
             
-
 
             if (ActiveDirectory.IsAuthenticated(request.userPrincipal))
             {
@@ -92,7 +96,8 @@ namespace PxStat.Template
                 Response = new JSONRPC_Output();
             Validator = validator;
 
-
+            //Save some Reflection effort by getting all custom attributes together
+            CustomAttributeNames=Resources.MethodReader.GetAllCustomAttributeNamesForMethod(Request.method);  
             
 
         }
@@ -281,11 +286,19 @@ namespace PxStat.Template
         /// <summary>
         /// Validation fail
         /// </summary>
-        virtual protected void OnDTOValidationError()
+        virtual protected void OnDTOValidationError(bool isMachineReadable=false)
         {
             //parameter validation not ok - return an error and proceed no further
             Log.Instance.Debug("Validation failed: " + JsonConvert.SerializeObject(DTOValidationResult.Errors));
-            Response.error = Label.Get("error.validation");
+
+            if (!isMachineReadable)
+            {
+                Response.error = Label.Get("error.validation");
+            }
+            else
+            {
+                Response.error = DTOValidationResult.Errors;
+            }
         }
 
         /// <summary>
@@ -367,14 +380,13 @@ namespace PxStat.Template
                 }
                 AuthenticationType = AuthenticationType.windows;
             }
-            else
+            else if (!string.IsNullOrEmpty(Request.sessionCookie.Value) )
             {
                 //This may be application authenticated, let's check..
 
                 Response.error = null;
 
-                if (Request.sessionCookie != null)
-                {
+
                     if (!String.IsNullOrEmpty(Request.sessionCookie.Value))
                     {
 
@@ -403,19 +415,59 @@ namespace PxStat.Template
                         AuthenticationType = AuthenticationType.local;
                     }
                     else return false;
-                }
-                else
+               
+
+            }
+            else if(CustomAttributeNames.Contains("PxStat.TokenSecure"))
+            {
+                //This may be a token verified API.
+
+                //We're not authenticated conventionally, so there must be an apiToken in the Request header
+                string apiToken = Request.requestHeaders["aprtoken"];
+                string ccnUsername= Request.requestHeaders["ccnusername"];
+
+                if (apiToken == null || ccnUsername == null) return false;
+
+                //Check the calling ip is from an allowed subnet
+                if (!IsIpAddressOnWhitelist(Request.ipAddress))
+                    return false;
+
+                //We must validate that the CcnUsername and token validate against the account data
+                Account_ADO account_ADO = new Account_ADO();
+                var response = account_ADO.ReadByApiTokenCcnUsername(Ado, ccnUsername, apiToken);
+                if(response!=null)
                 {
+                    if(response.hasData)
+                    {
+                        SamAccountName = response.data[0].CcnUsername;
+                       
+                        return true;
+                    }
                     return false;
                 }
-
+                return false;
+            }
+        
+            else
+            {
+                return false;
             }
 
             OnAuthenticationSuccessful();
             return true;
         }
-        #endregion
 
+        public bool IsIpAddressOnWhitelist(string ipAddress)
+        {
+            IPNetwork ipnetwork;
+            JArray addrList = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.tokenApiAccessIpMaskWhitelist");
+            foreach (var item in addrList)
+            {
+                ipnetwork = new IPNetwork(IPAddress.Parse((string)item["prefix"]), (int)item["length"]);
+                if (ipnetwork.Contains(IPAddress.Parse(ipAddress))) return true;
+            }
+            return false;
+        }
 
     }
 
@@ -427,3 +479,4 @@ namespace PxStat.Template
         }
     }
 }
+#endregion

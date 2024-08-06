@@ -1,4 +1,5 @@
 ﻿
+using Ganss.Xss;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
@@ -132,6 +133,13 @@ namespace PxStat.Resources
             return parameters;
         }
 
-
+        public static string CleanseDynamic(dynamic input)
+        {
+            
+            var sanitizer = new HtmlSanitizer();
+            sanitizer.KeepChildNodes = false;
+            return sanitizer.Sanitize((string)input);
+            
+        }
     }
 }

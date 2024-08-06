@@ -21,7 +21,7 @@ namespace PxStat.Data
             //Container = builder.Build();
         }
 
-        public JsonStat Create(IDmatrix matrix, string lngIsoCode, bool showData = true, bool doStatus = false)
+        public JsonStat Create(IDmatrix matrix, string lngIsoCode, bool showData = true, bool doStatus = false,bool noCommentsToNotes=false)
         {
             Dspec spec = new Dspec();
             if (matrix.Dspecs.TryGetValue(lngIsoCode, out var dspec))
@@ -72,7 +72,7 @@ namespace PxStat.Data
             // the release note is now appended to the other notes from the px file
             if (matrix.Release != null)
             {
-                if (!string.IsNullOrEmpty(matrix.Release.CmmValue))
+                if (!string.IsNullOrEmpty(matrix.Release.CmmValue) && !noCommentsToNotes)
                 {
                     jsStat.Note.Add(matrix.Release.CmmValue);
                 }

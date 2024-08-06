@@ -78,7 +78,7 @@ namespace PxStat.Data
             ////See if this request has cached data
             
             MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO);
-
+            
             if (cache.hasData)
             {
                 //Modify mimetype etc
@@ -353,7 +353,7 @@ namespace PxStat.Data
                     else
                     {
                         JsonStatBuilder2_0 jxb = new JsonStatBuilder2_0();
-                        var jsonStat = jxb.Create(matrix, matrix.Language, true);
+                        var jsonStat = jxb.Create(matrix, matrix.Language, true,false,theDto.build );
                         theResponse.data = new JRaw(Serialize.ToJson(jsonStat));
                     }
                     break;

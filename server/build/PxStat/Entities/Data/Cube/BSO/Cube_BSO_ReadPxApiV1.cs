@@ -171,7 +171,7 @@ namespace PxStat.Data
 
             using (Cube_BSO cBso = new Cube_BSO(AppServicesHelper.StaticADO))
             {
-                collectionPrdSbjdata = cBso.ReadCollection(request.parameters[Constants.C_DATA_PXAPIV1_SUBJECT_QUERY], request.parameters[Constants.C_DATA_PXAPIV1_PRODUCT_QUERY], request.parameters[Constants.C_DATA_PXAPIV1_COLLECTION_QUERY]);
+                collectionPrdSbjdata = cBso.ReadCollectionList(request.parameters[Constants.C_DATA_PXAPIV1_SUBJECT_QUERY], request.parameters[Constants.C_DATA_PXAPIV1_PRODUCT_QUERY], request.parameters[Constants.C_DATA_PXAPIV1_COLLECTION_QUERY]);
             }
 
             if (collectionPrdSbjmeta == null)

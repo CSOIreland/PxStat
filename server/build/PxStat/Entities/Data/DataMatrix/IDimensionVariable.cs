@@ -10,5 +10,6 @@
         string Unit { get; set; }
         bool AmendFlag { get; set; }
         bool IsEquivalent(IDimensionVariable otherVariable);
+        int FastFindValue { get; set; }
     }
 }

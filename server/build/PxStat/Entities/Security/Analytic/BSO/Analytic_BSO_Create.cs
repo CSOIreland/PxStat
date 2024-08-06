@@ -1,10 +1,6 @@
 ﻿using API;
 using DeviceDetectorNET;
 using DeviceDetectorNET.Cache;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Firebase.Auth;
-using Microsoft.AspNetCore.Http;
-using PxStat.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;

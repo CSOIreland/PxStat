@@ -29,6 +29,11 @@ namespace PxStat.Security
         /// <returns></returns>
         protected override bool Execute()
         {
+            if(IsModerator() && !DTO.CcnUsername.Equals(SamAccountName))
+            {
+                Response.error = Label.Get("error.privilege");
+                return false;
+            }
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoAccount = new Account_ADO();
 

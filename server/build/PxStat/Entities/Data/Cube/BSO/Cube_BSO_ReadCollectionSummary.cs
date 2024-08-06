@@ -51,7 +51,7 @@ namespace PxStat.Data
             // cache store is done in the following function
             //Response.data = cBso.ExecuteReadCollection(Ado, DTO, _meta);
 
-            Response.data = cBso.ReadCollection(DTO.language, DTO.subject.ToString(), DTO.product);
+            Response.data = cBso.ReadCollectionList(DTO.language, DTO.subject.ToString(), DTO.product);
 
             if(Response.data == null) 
             {

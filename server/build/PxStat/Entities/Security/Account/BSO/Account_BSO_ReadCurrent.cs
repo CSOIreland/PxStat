@@ -32,11 +32,14 @@ namespace PxStat.Security
         {
             //Validation of parameters and user have been successful. We may now proceed to read from the database
             var adoAccount = new Account_ADO();
+            
 
             //Accounts are returned as an IADO result
-            if (DTO.CcnUsername == null)
+            if (string.IsNullOrEmpty(DTO.CcnUsername) || IsModerator())
                 DTO.CcnUsername = SamAccountName;
-            ADO_readerOutput result = adoAccount.Read(Ado, DTO);
+
+            //Only allow the authenticated user to return their own api token
+            ADO_readerOutput result = adoAccount.Read(Ado, DTO,false,null,DTO.CcnUsername.Equals(SamAccountName));
 
             //Merge the data with Active Directory data
             if (result.hasData)

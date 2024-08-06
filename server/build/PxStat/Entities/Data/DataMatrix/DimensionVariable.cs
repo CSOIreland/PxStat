@@ -23,6 +23,7 @@ namespace PxStat.Data
         public string Unit { get; set; }
         //For use during Comparison. Flags if this is a new variable
         public bool AmendFlag { get; set; }
+        public int FastFindValue { get; set ; }
 
 
         /// <summary>

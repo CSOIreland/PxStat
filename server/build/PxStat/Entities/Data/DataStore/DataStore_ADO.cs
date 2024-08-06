@@ -128,7 +128,7 @@ namespace PxStat.DataStore
             return ado.ExecuteReaderProcedure("Data_Matrix_ReadByGroup", inputParams);
         }
 
-        internal List<dynamic> ReadCollectionMetadata(IADO ado, string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
+        internal List<dynamic> ReadCollection(IADO ado, string languageCode, DateTime DateFrom, string PrcCode = null, bool meta = true)
         {
             var inputParams = new List<ADO_inputParams>();
 
@@ -150,10 +150,8 @@ namespace PxStat.DataStore
             }
 
             ADO_readerOutput output;
-            if (meta)
-                output = ado.ExecuteReaderProcedure("Data_Release_ReadMetaCollection", inputParams);
-            else
                 output = ado.ExecuteReaderProcedure("Data_Release_ReadCollection", inputParams);
+           
 
             if (output.hasData)
             {

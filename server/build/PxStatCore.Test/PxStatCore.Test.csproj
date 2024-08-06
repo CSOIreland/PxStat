@@ -23,6 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Config\config.global.json" />
+    <None Remove="Resources\Config\config.server.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="API.Library" Version="6.1.26" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
@@ -49,6 +54,11 @@
     <Folder Include="Resources\Plugins\Language\English\" />
     <Folder Include="Resources\Plugins\Language\Gaeilge\" />
     <Folder Include="System\Settings\Language\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Config\config.global.json" />
+    <Resource Include="Resources\Config\config.server.json" />
   </ItemGroup>
 
   <ItemGroup>
