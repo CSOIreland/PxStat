@@ -124,7 +124,7 @@
     },
     "openAccess": {
       "recaptcha": {
-        "siteKey": "6LcmUSMjAAAAALZ938c3XnGf6izac2CNCh8gLxlV"
+        "siteKey": "***"
       },
       "authenticator": ""
     },
@@ -144,7 +144,7 @@
     "sharethis": {
       "enabled": true,
       "apiURL": "https://platform-api.sharethis.com/js/sharethis.js#property={0}&product=inline-share-buttons",
-      "apiKey": "5a532ce70f300f0013e833cd"
+      "apiKey": "***"
     },
     "jscookie": {
       "session": {
@@ -277,12 +277,12 @@
       "enabled": true,
       "firebase": {
         "config": {
-          "apiKey": "AIzaSyAtvF9OeXitlNQtCMQ45mGOTRaeUvmoxa4",
+          "apiKey": "***",
           "authDomain": "dev-data-2beba.firebaseapp.com",
           "projectId": "dev-data-2beba",
           "storageBucket": "dev-data-2beba.appspot.com",
           "messagingSenderId": "775338402719",
-          "appId": "1:775338402719:web:380f590988b6bcc34ed3aa"
+          "appId": "***"
         },
         "providers": {
           "emailPassword": true,
