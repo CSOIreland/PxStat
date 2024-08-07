@@ -144,7 +144,7 @@
 				],
 				"esri": [
 					{
-						"url": "https://utility.arcgis.com/usrsvcs/servers/88f1db9e4ae04df69e499223b8295843/rest/services/MapGeniePremiumWM/MapServer"
+						"url": "https://utility.arcgis.com/usrsvcs/servers/***/rest/services/MapGeniePremiumWM/MapServer"
 					}
 				]
 			}
@@ -161,7 +161,7 @@
 		},
 		"openAccess": {
 			"recaptcha": {
-				"siteKey": "6LdA3AgaAAAAACxmAlIEne89MlAZ4iLR44YSPX9q"
+				"siteKey": "***"
 			},
 			"authenticator": ""
 		},
@@ -312,12 +312,12 @@
 			"enabled": true,
 			"firebase": {
 				"config": {
-					"apiKey": "AIzaSyAtvF9OeXitlNQtCMQ45mGOTRaeUvmoxa4",
+					"apiKey": "***",
 					"authDomain": "dev-data-2beba.firebaseapp.com",
 					"projectId": "dev-data-2beba",
 					"storageBucket": "dev-data-2beba.appspot.com",
 					"messagingSenderId": "775338402719",
-					"appId": "1:775338402719:web:380f590988b6bcc34ed3aa"
+					"appId": "***"
 				},
 				"providers": {
 					"emailPassword": true,
@@ -369,7 +369,7 @@
 				"leaflet": [],
 				"esri": [
 					{
-						"url": "https://utility.arcgis.com/usrsvcs/servers/88f1db9e4ae04df69e499223b8295843/rest/services/MapGeniePremiumWM/MapServer",
+						"url": "https://utility.arcgis.com/usrsvcs/servers/***/rest/services/MapGeniePremiumWM/MapServer",
 						"disclaimer": "You can use the OSi basemap layer only in conjunction with the CSO map widgets, all other rights are reserved by OSi."
 					}
 				]
