@@ -177,7 +177,7 @@
 		"sharethis": {
 			"enabled": true,
 			"apiURL": "https://platform-api.sharethis.com/js/sharethis.js#property={0}&product=inline-share-buttons",
-			"apiKey": "5a532ce70f300f0013e833cd"
+			"apiKey": "***"
 		},
 		"jscookie": {
 			"session": {

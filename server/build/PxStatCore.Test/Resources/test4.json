@@ -18,32 +18,32 @@
 			},
 			"social": [
 				{
-					"label": "follow-us-youtube",
+					"name": "follow-us-youtube",
 					"icon": "fab fa-youtube",
 					"url": "https://www.youtube.com/user/CSOIrelandMedia"
 				},
 				{
-					"label": "follow-us-twitter",
+					"name": "follow-us-twitter",
 					"icon": "fab fa-twitter",
 					"url": "https://twitter.com/csoIreland"
 				},
 				{
-					"label": "like-us-facebook",
+					"name": "like-us-facebook",
 					"icon": "fab fa-facebook",
 					"url": "https://www.facebook.com/CSOIreland"
 				},
 				{
-					"label": "follow-us-instagram",
+					"name": "follow-us-instagram",
 					"icon": "fab fa-github",
 					"url": "https://www.instagram.com/csoireland/"
 				},
 				{
-					"label": "follow-us-linkedin",
+					"name": "follow-us-linkedin",
 					"icon": "fab fa-linkedin-in",
 					"url": "https://ie.linkedin.com/company/csoireland"
 				},
 				{
-					"label": "follow-us-github",
+					"name": "follow-us-github",
 					"icon": "fab fa-github",
 					"url": "https://github.com/CSOIreland/PxStat"
 				}
@@ -173,7 +173,7 @@
 		"sharethis": {
 			"enabled": true,
 			"apiURL": "https://platform-api.sharethis.com/js/sharethis.js#property={0}&product=inline-share-buttons",
-			"apiKey": "5a532ce70f300f0013e833cd"
+			"apiKey": "***"
 		},
 		"jscookie": {
 			"session": {
