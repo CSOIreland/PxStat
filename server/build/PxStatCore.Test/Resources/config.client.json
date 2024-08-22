@@ -55,7 +55,7 @@
 				}
 			],
 			"watermark": {
-				"src": "https://cdn.test.ie/static/img/cso_logo_white_transparent.png",
+				"src": "",
 				"alt": "test.ie",
 				"url": ""
 			}
@@ -136,7 +136,7 @@
 				],
 				"esri": [
 					{
-						"url": "https://utility.arcgis.com/usrsvcs/servers/***/rest/services/MapGeniePremiumWM/MapServer"
+						"url": "https://utility.arcgis.com/usrsvcs/servers/88f1db9e4ae04df69e499223b8295843/rest/services/MapGeniePremiumWM/MapServer"
 					}
 				]
 			}
@@ -206,8 +206,7 @@
 			"responsive": true,
 			"fixedHeader": true,
 			"dom": "fltip",
-			"deferRender": true,
-			"test": "test"
+			"deferRender": true
 		},
 		"chartJs": {
 			"chart": {
@@ -360,12 +359,12 @@
 					"label": "k-means"
 				}
 			],
-			"defaultMode": "k",
+			"defaultMode":  "k",
 			"baseMap": {
 				"leaflet": [],
 				"esri": [
 					{
-						"url": "https://utility.arcgis.com/usrsvcs/servers/***/rest/services/MapGeniePremiumWM/MapServer",
+						"url": "https://utility.arcgis.com/usrsvcs/servers/88f1db9e4ae04df69e499223b8295843/rest/services/MapGeniePremiumWM/MapServer",
 						"disclaimer": "You can use the OSi basemap layer only in conjunction with the CSO map widgets, all other rights are reserved by OSi."
 					}
 				]
