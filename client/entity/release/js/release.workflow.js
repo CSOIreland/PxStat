@@ -2,7 +2,10 @@
 Custom JS application specific
 *******************************************************************************/
 $(document).ready(function () {
-
+    // Bind cancel publish
+    $("#release-workflow-request").find("[name=cancel-publish]").once("click", function () {
+        app.release.workflow.modal.request.validation.cancelPendingLive();
+    });
     // Bind Awaiting Request
     $("#release-workflow-request").find("[name=button-add]").once("click", app.release.workflow.modal.request.ajax.ReadCurrent);
     $("#release-workflow-request").find("[name=rqs-code]").once("change", function () {

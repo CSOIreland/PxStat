@@ -50,33 +50,237 @@
 
 </div>
 
-<div id="data-dataset-table-result" class="row mx-0 mt-4" style="display: none;">
-    <div class="col-sm px-0">
-        <div class="card mb-2" name="result-table">
-            <div class="card-header d-flex justify-content-between">
-                <h5 label="results"></h5>
-                <span name="save-query-wrapper">
-                    <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
-                    <button name="save-query" class="btn btn-tertiary" type="button">
-                        <i class="far fa-save"></i> <span label="save-query"></span>
-                    </button>
-                </span>
 
+<div id="data-dataset-table-result-wrapper" style="display: none;">
+
+
+    <ul class="nav nav-tabs mt-4" id="data-dataset-table-result-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="data-dataset-table-result-tab-standard" data-bs-toggle="tab" data-bs-target="#data-dataset-table-result-standard-content" type="button" role="tab" aria-controls="data-dataset-table-result-standard-content" aria-selected="true" label="results"></button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="data-dataset-table-result-tab-custom" data-bs-toggle="tab" data-bs-target="#data-dataset-table-result-custom-content" type="button" role="tab" aria-controls="data-dataset-table-result-custom-content" aria-selected="false"><i class="fa-regular fa-bell fa-beat-fade text-danger"></i> <span label="custom-view"></span> <sup>BETA</sup></button>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="data-dataset-table-result-standard-content" role="tabpanel" aria-labelledby="data-dataset-table-result-tab-standard">
+            <div id="data-dataset-table-result" class="row mx-0 mt-4">
+                <div class="col-sm px-0">
+                    <span class="d-flex flex-row-reverse mb-2">
+                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
+                        <button name="save-query" class="btn btn-tertiary" type="button">
+                            <i class="far fa-save"></i> <span label="save-query"></span>
+                        </button>
+                    </span>
+
+
+                    <div class="card mb-2" name="result-table">
+                        <!--   <div class="card-header d-flex justify-content-between">
+                            <h5 label="results"></h5>
+                            <span name="save-query-wrapper">
+                               
+                            </span>
+
+                        </div> -->
+                        <!-- Data Table data table-->
+                        <div class="card-body">
+                            <table name="datatable" class="table table-striped pt-2 table-bordered" style="width:100%">
+                                <thead>
+                                    <tr name="header-row"></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Data Table data table-->
-            <div class="card-body">
-                <table name="datatable" class="table table-striped pt-2 table-bordered" style="width:100%">
-                    <thead>
-                        <tr name="header-row"></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+
+            <div class="accordion" id="data-dataset-table-accordion-standard-widget">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="data-dataset-table-accordion-heading-widget">
+                        <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-table-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-table-accordion-collapse-widget">
+                            <span label="widget"></span>
+                        </button>
+                    </h2>
+                    <div id="data-dataset-table-accordion-collapse-widget" class="accordion-collapse collapse" aria-labelledby="data-dataset-table-accordion-heading-widget" data-bs-parent="#data-dataset-table-accordion">
+                        <div class="accordion-body">
+                            <div name="widget-hidden-wrapper" style="display: none;">
+                                <p label="standard-widget-disabled-wip"></p>
+                                <button type="button" name="open-custom-view" class="btn btn-primary">
+                                    <i class="fa-solid fa-square-arrow-up-right"></i> <span label="custom-view"></span>
+                                </button>
+
+                            </div>
+                            <div name="widget-display-wrapper">
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
+                                        <span label="auto-update"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
+                                        <span label="fluid-time"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0" name="link-to-wip-wrapper" style="display:none">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover-dynamic="link-to-wip" style="cursor: help;"></i>
+                                        <span label="link-to-wip"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="link-to-wip" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle"></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
+                                        <span label="copyright"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="include-copyright" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
+                                        <span label="link"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="include-link" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
+                                        <span label="title"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="include-title" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                        <input type="text" class="form-control mt-2" name="title-value" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-pagination" style="cursor: help;"></i>
+                                        <span label="pagination"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="include-pagination" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-buttons" style="cursor: help;"></i>
+                                        <span label="buttons"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="include-buttons" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-search" style="cursor: help;"></i>
+                                        <span label="search"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="include-search" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-responsive" style="cursor: help;"></i>
+                                        <span label="responsive"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <input name="include-responsive" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2 pt-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="hide-columns" style="cursor: help;"></i>
+                                        <span label="hide-columns"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <div name="hide-column-checkbox-container"></div>
+                                        <p class="mb-0" label="no-columns-to-hide" name="no-columns-to-hide"></p>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
+                                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2 pt-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-custom-json" style="cursor: help;"></i>
+                                        <span label="custom-JSON"></span>
+                                    </div>
+                                    <div class="col-8 p-2">
+                                        <textarea class="form-control" name="custom-config" rows="3" disabled></textarea>
+                                        <div name="invalid-json-object" class="row text-danger" style="display: none;">
+                                            <div class="col " label="invalid-json-object"></div>
+                                        </div>
+                                        <div name="valid-json-object" class="row text-primary" style="display: none;">
+                                            <div class="col " label="valid"></div>
+                                        </div>
+
+                                        <button type="button" name="add-custom-configuration" class="btn btn-outline-primary btn-sm mt-2" disabled>
+                                            <i class="fas fa-code"></i> <span label="validate"></span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0" name="make-selection-message" style="display: none;">
+                                    <div class="bg-info text-light border-end col p-2">
+                                        <span label="widget-make-selection"></span>
+                                    </div>
+                                </div>
+
+                                <div class="border-top border-end border-start row mx-0">
+                                    <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="snippet-code"></div>
+                                    <div class="col-8 p-0">
+                                        <p class="mb-0 p-2 bg-info text-light" label="widget-snippet-information" name="widget-snippet-information" style="display: none;"></p>
+                                        <pre class="line-numbers language-markup m-0"><code id="data-dataset-table-accordion-snippet-code"></code></pre>
+                                        <button name="copy-snippet-code" type="button" data-clipboard-target="#data-dataset-table-accordion-snippet-code" class="btn btn-outline-primary btn-sm m-2">
+                                            <i class="far fa-copy"></i> <span label="copy-to-clipboard"></span>
+                                        </button>
+                                        <button type="button" name="download-snippet" class="btn btn-outline-primary btn-sm m-2" disabled>
+                                            <i class="fas fa-file-download"></i> <span label="download"></span>
+                                        </button>
+                                        <button type="button" name="preview-snippet" class="btn btn-outline-primary btn-sm m-2">
+                                            <i class="fa-solid fa-magnifying-glass"></i> <span label="preview"></span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="border-top row mx-0"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
+
+        </div>
+        <div class="tab-pane fade" id="data-dataset-table-result-custom-content" role="tabpanel" aria-labelledby="data-dataset-table-result-tab-custom">
         </div>
     </div>
+
 </div>
 
-<div class="accordion mt-4" id="data-dataset-table-accordion">
+<div class="accordion mt-4" style="clear: both;" id="data-dataset-table-accordion">
     <div class="accordion-item">
         <h2 class="accordion-header" id="data-dataset-table-accordion-heading-api">
             <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-table-accordion-collapse-api" aria-expanded="false" aria-controls="data-dataset-table-accordion-collapse-api">
@@ -198,168 +402,6 @@
                     </div>
 
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="data-dataset-table-accordion-heading-widget">
-            <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-table-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-table-accordion-collapse-widget">
-                <span label="widget"></span>
-            </button>
-        </h2>
-        <div id="data-dataset-table-accordion-collapse-widget" class="accordion-collapse collapse" aria-labelledby="data-dataset-table-accordion-heading-widget" data-bs-parent="#data-dataset-table-accordion">
-            <div class="accordion-body">
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="auto-update" style="cursor: help;"></i>
-                        <span label="auto-update"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
-                        <span label="fluid-time"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="fluid-time" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0" name="link-to-wip-wrapper" style="display:none">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover-dynamic="link-to-wip" style="cursor: help;"></i>
-                        <span label="link-to-wip"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="link-to-wip" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle"></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-copyright" style="cursor: help;"></i>
-                        <span label="copyright"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="include-copyright" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-link" style="cursor: help;"></i>
-                        <span label="link"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="include-link" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
-                        <span label="title"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="include-title" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                        <input type="text" class="form-control mt-2" name="title-value" autocomplete="off">
-                    </div>
-                </div>
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-pagination" style="cursor: help;"></i>
-                        <span label="pagination"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="include-pagination" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-buttons" style="cursor: help;"></i>
-                        <span label="buttons"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="include-buttons" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-search" style="cursor: help;"></i>
-                        <span label="search"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="include-search" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-responsive" style="cursor: help;"></i>
-                        <span label="responsive"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <input name="include-responsive" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2 pt-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="hide-columns" style="cursor: help;"></i>
-                        <span label="hide-columns"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <div name="hide-column-checkbox-container"></div>
-                        <p class="mb-0" label="no-columns-to-hide" name="no-columns-to-hide"></p>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
-                        <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2 pt-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-custom-json" style="cursor: help;"></i>
-                        <span label="custom-JSON"></span>
-                    </div>
-                    <div class="col-8 p-2">
-                        <textarea class="form-control" name="custom-config" rows="3" disabled></textarea>
-                        <div name="invalid-json-object" class="row text-danger" style="display: none;">
-                            <div class="col " label="invalid-json-object"></div>
-                        </div>
-                        <div name="valid-json-object" class="row text-primary" style="display: none;">
-                            <div class="col " label="valid"></div>
-                        </div>
-
-                        <button type="button" name="add-custom-configuration" class="btn btn-outline-primary btn-sm mt-2" disabled>
-                            <i class="fas fa-code"></i> <span label="validate"></span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0" name="make-selection-message" style="display: none;">
-                    <div class="bg-info text-light border-end col p-2">
-                        <span label="widget-make-selection"></span>
-                    </div>
-                </div>
-
-                <div class="border-top border-end border-start row mx-0">
-                    <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="snippet-code"></div>
-                    <div class="col-8 p-0">
-                        <p class="mb-0 p-2 bg-info text-light" label="widget-snippet-information" name="widget-snippet-information" style="display: none;"></p>
-                        <pre class="line-numbers language-markup m-0"><code id="data-dataset-table-accordion-snippet-code"></code></pre>
-                        <button name="copy-snippet-code" type="button" data-clipboard-target="#data-dataset-table-accordion-snippet-code" class="btn btn-outline-primary btn-sm m-2">
-                            <i class="far fa-copy"></i> <span label="copy-to-clipboard"></span>
-                        </button>
-                        <button type="button" name="download-snippet" class="btn btn-outline-primary btn-sm m-2" disabled>
-                            <i class="fas fa-file-download"></i> <span label="download"></span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="border-top row mx-0"></div>
             </div>
         </div>
     </div>

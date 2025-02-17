@@ -216,6 +216,7 @@ app.data.callback.drawLatestReleases = function (data) {
                 },
                 {
                     data: null,
+                    visible: app.config.entity.data.display.language,
                     render: function (data, type, row) {
                         return $("<span>", {
                             class: "badge bg-primary",

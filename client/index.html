@@ -71,15 +71,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@5.0.0-RTM/src/css/api.plugin.dragndrop.min.css" integrity="sha256-mkgr7Gen+kcIeSlEVKsHxO31/C223WOVrC+bnY8fSlM=" crossorigin="anonymous">
 
     <script src="https://cdn.jsdelivr.net/gh/CSOIreland/Client-API-Library@5.0.0-RTM/src/js/api.plugin.dragndrop.min.js" integrity="sha256-iRAhcox63wqRJmELabDjJFyFtdwKAR2sNc2AwBC/eBI=" crossorigin="anonymous"></script>
-    <!-- jquery ui needed for drag and drop-->
-    <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.13.2/dist/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
 
     <!-- **************************************************************************** -->
     <!-- Resources - App - Dependency -->
     <!-- **************************************************************************** -->
 
     <!-- Font-awesome - https://github.com/FortAwesome/Font-Awesome/-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/CSOIreland/FontAwesome@6.4.0b1/css/all.css" integrity="sha256-fmXycjxDBreUnYhOrEBRvUGy3Un9YtzbrVzyV6p/5hw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/CSOIreland/Fontawesome@6.5.2b1/css/all.min.css" integrity="sha256-vvmBgdkRo5x0l5TaZ9VSsHaMyObJD8oBGA0etv2xnRk=" crossorigin="anonymous">
 
     <!-- Bootstrap Toggle - https://palcarazm.github.io/bootstrap5-toggle/ -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.6/css/bootstrap5-toggle.min.css" rel="stylesheet" />
@@ -238,6 +236,14 @@
                     <div id="data-search-row-responsive" class="col-sm-12 px-2 my-2"></div>
                     <div id="data-navigation">
                         <div name="menu"></div>
+                        <div name="quick-links" style="display: none;">
+                            <div class="card m-3 border-0">
+                                <div class="card-header text-light bg-primary" label="quick-links">
+                                </div>
+                                <div class="list-group">
+                                </div>
+                            </div>
+                        </div>
                         <div name="favourite-tables"></div>
                     </div>
                     <div id="data-filter-toggle" class="col mb-2" style="display: none;">

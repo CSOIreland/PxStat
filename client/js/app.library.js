@@ -831,6 +831,25 @@ app.library.utility.download = function (fileName, fileData, fileExtension, mime
 };
 
 /**
+ * open html in a new tab
+ * @param {*} html 
+ */
+app.library.utility.previewHtml = function (html) {
+  //prepend <meta charset="UTF-16"> to fileData
+  var metaCharset = $("<meta>", {
+    charset: "UTF-16"
+  }).get(0).outerHTML
+  html = metaCharset + html;
+
+  // Create a new Blob object with the HTML content
+  var blob = new Blob([html], { type: 'text/html' });
+  // Create a URL for the Blob
+  var url = URL.createObjectURL(blob);
+  // Open the URL in a new tab
+  window.open(url);
+}
+
+/**
  * Check and block deprecated IE browser
  */
 app.library.utility.isIE = function () {

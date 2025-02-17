@@ -120,6 +120,7 @@ app.geomap.preview.callback.renderMap = async function (data) {
             }
             else {
                 layer.on("click", function (e) {
+                    var popup = L.popup();
                     var hoverText = "<span class='map-preview-popup'>";
                     $.each(feature.properties, function (key, value) {
                         hoverText += "<b>" + key + "</b> : " + value;
@@ -133,8 +134,7 @@ app.geomap.preview.callback.renderMap = async function (data) {
                         }
 
                     });
-
-                    layer.bindPopup(hoverText).openPopup(e.latlng);
+                    popup.setLatLng(e.latlng).setContent(hoverText).openOn(layer._map);
                 })
             }
         }

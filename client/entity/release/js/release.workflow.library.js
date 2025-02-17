@@ -30,6 +30,16 @@ app.release.workflow.request.render = function () {
     $("#release-workflow-request").hide().fadeIn();
     $("#release-workflow-response").hide();
     $("#release-workflow-signoff").hide();
+
+    if (app.release.isPending) {
+        $("#release-workflow-request").find("[name=cancel-publish]").show();
+        if (!app.release.isModerator) {
+            $("#release-workflow-request").find("[name=cancel-publish]").attr("disabled", false);
+        }
+    }
+    else {
+        $("#release-workflow-request").find("[name=cancel-publish]").hide();
+    }
 };
 
 /**

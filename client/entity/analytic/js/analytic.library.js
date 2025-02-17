@@ -231,7 +231,6 @@ app.analytic.ajax.readAnalytics = function () {
             "DateTo": app.analytic.dateTo.format(app.config.mask.date.ajax),
             "SbjCode": SbjCode,
             "PrcCode": PrcCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val(),
             "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readAnalytics",
@@ -240,14 +239,6 @@ app.analytic.ajax.readAnalytics = function () {
         null,
         { async: false }
     );
-    app.analytic.ajax.readBrowser(null, "#analytic-chart [name=browser-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
-    app.analytic.ajax.readOs(null, "#analytic-chart [name=operating-system-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
-    app.analytic.ajax.readReferrer(null, "#analytic-chart [name=referrer-column-chart]", app.analytic.dateFrom, app.analytic.dateTo);
-    app.analytic.ajax.readUserLanguage(null, "#analytic-chart [name=user-language-column-chart]", app.analytic.dateFrom, app.analytic.dateTo);
-    app.analytic.ajax.readTimeline(null, "#analytic-chart [name=dates-line-chart]", app.analytic.dateFrom, app.analytic.dateTo);
-    app.analytic.ajax.readLanguage(null, "#analytic-chart [name=language-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
-    app.analytic.ajax.readFormat(null, "#analytic-chart [name=format-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
-    $("#analytic-results").fadeIn();
 
 };
 
@@ -265,12 +256,6 @@ app.analytic.drawCallback = function () {
 
 app.analytic.drawCallback.drawModalResults = function () {
     app.analytic.ajax.readTimeline(app.analytic.MtrCode, "#analytic-chart-modal [name=dates-line-chart]", app.analytic.dateFromModal, app.analytic.dateToModal);
-    app.analytic.ajax.readReferrer(app.analytic.MtrCode, "#analytic-chart-modal [name=referrer-column-chart]", app.analytic.dateFromModal, app.analytic.dateToModal);
-    app.analytic.ajax.readUserLanguage(app.analytic.MtrCode, "#analytic-chart-modal [name=user-language-column-chart]", app.analytic.dateFromModal, app.analytic.dateToModal);
-    app.analytic.ajax.readBrowser(app.analytic.MtrCode, "#analytic-chart-modal [name=browser-pie-chart]", app.analytic.dateFromModal, app.analytic.dateToModal);
-    app.analytic.ajax.readOs(app.analytic.MtrCode, "#analytic-chart-modal [name=operating-system-pie-chart]", app.analytic.dateFromModal, app.analytic.dateToModal);
-    app.analytic.ajax.readLanguage(app.analytic.MtrCode, "#analytic-chart-modal [name=language-pie-chart]", app.analytic.dateFromModal, app.analytic.dateToModal);
-    app.analytic.ajax.readFormat(app.analytic.MtrCode, "#analytic-chart-modal [name=format-pie-chart]", app.analytic.dateFromModal, app.analytic.dateToModal);
     $("#matrix-chart-modal").find("[name=mtr-code]").text(app.analytic.MtrCode);
     $("#matrix-chart-modal").modal("show");
     $("#matrix-chart-modal").find("[name=modal-results]").show();
@@ -289,6 +274,7 @@ app.analytic.callback.readAnalytics = function (data) {
 
         var localOptions = {
             data: data,
+            order: [[8, 'desc']],
             columns: [
                 {
                     "data": "MtrCode",
@@ -299,8 +285,7 @@ app.analytic.callback.readAnalytics = function (data) {
                     data: null,
                     render: function (data, type, row) {
                         return app.library.html.link.edit({ idn: row.MtrCode }, row.MtrCode);
-                    },
-                    orderData: [0]
+                    }
                 },
                 { data: "SbjValue" },
 
@@ -309,12 +294,6 @@ app.analytic.callback.readAnalytics = function (data) {
                     render: function (data, type, row) {
                         return row.PrcCode + "(" + row.PrcValue + ")";
 
-                    }
-                },
-                {
-                    data: null,
-                    render: function (data, type, row) {
-                        return row.PublishDate ? moment(row.PublishDate).format(app.config.mask.datetime.display) : "";
                     }
                 },
                 { data: "NltBot" },
@@ -364,6 +343,33 @@ app.analytic.callback.readAnalytics = function (data) {
         return app.library.utility.formatNumber(totalUsers)
     });
     $("#analytic-results").find("[name=summary-card]").find("[name=analytic-sum-totals]").text(app.library.utility.formatNumber(totalBot + totalM2M + totalUsers + totalWidgets));
+    //No subject/product so run all APIs
+    if ($("#analytic-select-card").find("[name=select-subject]").val().length == 0) {
+        app.analytic.ajax.readBrowser("#analytic-chart [name=browser-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
+        app.analytic.ajax.readOs("#analytic-chart [name=operating-system-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
+        app.analytic.ajax.readReferrer("#analytic-chart [name=referrer-column-chart]", app.analytic.dateFrom, app.analytic.dateTo);
+        app.analytic.ajax.readUserLanguage("#analytic-chart [name=user-language-column-chart]", app.analytic.dateFrom, app.analytic.dateTo);
+        app.analytic.ajax.readTimeline(null, "#analytic-chart [name=dates-line-chart]", app.analytic.dateFrom, app.analytic.dateTo);
+        app.analytic.ajax.readLanguage("#analytic-chart [name=language-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
+        app.analytic.ajax.readFormat("#analytic-chart [name=format-pie-chart]", app.analytic.dateFrom, app.analytic.dateTo);
+
+        $("#analytic-chart [name=chart-not-available]").removeClass("d-flex").addClass("d-none");
+
+    }
+    else {
+        $("#analytic-chart [name=browser-pie-chart]").empty();
+        $("#analytic-chart [name=operating-system-pie-chart]").empty();
+        $("#analytic-chart [name=referrer-column-chart]").empty();
+        $("#analytic-chart [name=user-language-column-chart]").empty();
+        $("#analytic-chart [name=dates-line-chart]").empty();
+        $("#analytic-chart [name=language-pie-chart]").empty();
+        $("#analytic-chart [name=format-pie-chart]").empty();
+
+        $("#analytic-chart [name=chart-not-available]").removeClass("d-none").addClass("d-flex");
+        $("#analytic-chart [name=chart-not-available]").show();
+    }
+
+    $("#analytic-results").fadeIn();
 
 
     // Scroll to the top section
@@ -425,27 +431,12 @@ app.analytic.callback.downloadResults = function () {
  * @param  {} MtrCode
  * @param  {} selector
  */
-app.analytic.ajax.readBrowser = function (MtrCode, selector, dateFrom, dateTo) {
-    MtrCode = MtrCode || null;
-    var SbjCode = $("#analytic-select-card").find("[name=select-subject]").val();
-    if (SbjCode != null && SbjCode.length == 0) {
-        SbjCode = null
-    }
-
-    var PrcCode = $("#analytic-select-card").find("[name=select-product]").val();
-    if (PrcCode != null && PrcCode.length == 0) {
-        PrcCode = null
-    }
-
+app.analytic.ajax.readBrowser = function (selector, dateFrom, dateTo) {
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadBrowser",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
             "DateTo": dateTo.format(app.config.mask.date.ajax),
-            "SbjCode": SbjCode,
-            "PrcCode": PrcCode,
-            "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val(),
             "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readBrowser",
@@ -522,28 +513,12 @@ app.analytic.callback.readBrowser = function (data, selector) {
  * @param  {} MtrCode
  * @param  {} selector
  */
-app.analytic.ajax.readOs = function (MtrCode, selector, dateFrom, dateTo) {
-    MtrCode = MtrCode || null;
-
-    var SbjCode = $("#analytic-select-card").find("[name=select-subject]").val();
-    if (SbjCode != null && SbjCode.length == 0) {
-        SbjCode = null
-    }
-
-    var PrcCode = $("#analytic-select-card").find("[name=select-product]").val();
-    if (PrcCode != null && PrcCode.length == 0) {
-        PrcCode = null
-    }
-
+app.analytic.ajax.readOs = function (selector, dateFrom, dateTo) {
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadOs",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
             "DateTo": dateTo.format(app.config.mask.date.ajax),
-            "SbjCode": SbjCode,
-            "PrcCode": PrcCode,
-            "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val(),
             "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readOs",
@@ -620,28 +595,12 @@ app.analytic.callback.readOs = function (data, selector) {
  * @param  {} MtrCode
  * @param  {} selector
  */
-app.analytic.ajax.readReferrer = function (MtrCode, selector, dateFrom, dateTo) {
-    MtrCode = MtrCode || null;
-
-    var SbjCode = $("#analytic-select-card").find("[name=select-subject]").val();
-    if (SbjCode != null && SbjCode.length == 0) {
-        SbjCode = null
-    }
-
-    var PrcCode = $("#analytic-select-card").find("[name=select-product]").val();
-    if (PrcCode != null && PrcCode.length == 0) {
-        PrcCode = null
-    }
-
+app.analytic.ajax.readReferrer = function (selector, dateFrom, dateTo) {
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadReferrer",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
             "DateTo": dateTo.format(app.config.mask.date.ajax),
-            "SbjCode": SbjCode,
-            "PrcCode": PrcCode,
-            "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val(),
             "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readReferrer",
@@ -715,28 +674,12 @@ app.analytic.callback.readReferrer = function (data, selector) {
  * @param  {} MtrCode
  * @param  {} selector
  */
-app.analytic.ajax.readUserLanguage = function (MtrCode, selector, dateFrom, dateTo) {
-    MtrCode = MtrCode || null;
-
-    var SbjCode = $("#analytic-select-card").find("[name=select-subject]").val();
-    if (SbjCode != null && SbjCode.length == 0) {
-        SbjCode = null
-    }
-
-    var PrcCode = $("#analytic-select-card").find("[name=select-product]").val();
-    if (PrcCode != null && PrcCode.length == 0) {
-        PrcCode = null
-    }
-
+app.analytic.ajax.readUserLanguage = function (selector, dateFrom, dateTo) {
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadEnvironmentLanguage",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
             "DateTo": dateTo.format(app.config.mask.date.ajax),
-            "SbjCode": SbjCode,
-            "PrcCode": PrcCode,
-            "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val(),
             "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readUserLanguage",
@@ -811,28 +754,13 @@ app.analytic.callback.readUserLanguage = function (data, selector) {
  * @param  {} MtrCode
  * @param  {} selector
  */
-app.analytic.ajax.readLanguage = function (MtrCode, selector, dateFrom, dateTo) {
-    MtrCode = MtrCode || null;
-
-    var SbjCode = $("#analytic-select-card").find("[name=select-subject]").val();
-    if (SbjCode != null && SbjCode.length == 0) {
-        SbjCode = null
-    }
-
-    var PrcCode = $("#analytic-select-card").find("[name=select-product]").val();
-    if (PrcCode != null && PrcCode.length == 0) {
-        PrcCode = null
-    }
+app.analytic.ajax.readLanguage = function (selector, dateFrom, dateTo) {
 
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadLanguage",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
-            "DateTo": dateTo.format(app.config.mask.date.ajax),
-            "SbjCode": SbjCode,
-            "PrcCode": PrcCode,
-            "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val()
+            "DateTo": dateTo.format(app.config.mask.date.ajax)
         },
         "app.analytic.callback.readLanguage",
         selector,
@@ -911,25 +839,12 @@ app.analytic.callback.readLanguage = function (data, selector) {
 app.analytic.ajax.readTimeline = function (MtrCode, selector, dateFrom, dateTo) {
     MtrCode = MtrCode || null;
 
-    var SbjCode = $("#analytic-select-card").find("[name=select-subject]").val();
-    if (SbjCode != null && SbjCode.length == 0) {
-        SbjCode = null
-    }
-
-    var PrcCode = $("#analytic-select-card").find("[name=select-product]").val();
-    if (PrcCode != null && PrcCode.length == 0) {
-        PrcCode = null
-    }
-
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadTimeline",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
             "DateTo": dateTo.format(app.config.mask.date.ajax),
-            "SbjCode": SbjCode,
-            "PrcCode": PrcCode,
             "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val(),
             "LngIsoCode": app.label.language.iso.code
         },
         "app.analytic.callback.readTimeline",
@@ -1046,7 +961,7 @@ app.analytic.callback.readTimeline = function (data, selector) {
         widgets.data.push(el.NltWidget);
         users.data.push(el.NltUser);
         total.data.push(el.total);
-        localConfig.data.labels.push(el.date ? moment(el.date).format(app.config.mask.date.display) : "");
+        localConfig.data.labels.push(el.DATE ? moment(el.DATE).format(app.config.mask.date.display) : "");
     });
     localConfig.data.datasets = [bots, M2M, widgets, users, total];
     var config = $.extend(true, {}, app.config.plugin.chartJs.chart, localConfig);
@@ -1063,12 +978,6 @@ app.analytic.callback.readTimeline = function (data, selector) {
 app.analytic.validation.select = function () {
 
     $("#analytic-select-card").find("form").trigger("reset").validate({
-        rules: {
-            "nlt-masked-ip":
-            {
-                validIpMask: true
-            },
-        },
         errorPlacement: function (error, element) {
             $("#analytic-select-card").find("[name=" + element[0].name + "-error-holder]").append(error[0]);
         },
@@ -1087,27 +996,12 @@ app.analytic.validation.select = function () {
  * @param  {} MtrCode
  * @param  {} selector
  */
-app.analytic.ajax.readFormat = function (MtrCode, selector, dateFrom, dateTo) {
-    MtrCode = MtrCode || null;
-    var SbjCode = $("#analytic-select-card").find("[name=select-subject]").val();
-    if (SbjCode != null && SbjCode.length == 0) {
-        SbjCode = null
-    }
-
-    var PrcCode = $("#analytic-select-card").find("[name=select-product]").val();
-    if (PrcCode != null && PrcCode.length == 0) {
-        PrcCode = null
-    }
-
+app.analytic.ajax.readFormat = function (selector, dateFrom, dateTo) {
     api.ajax.jsonrpc.request(app.config.url.api.jsonrpc.private,
         "PxStat.Security.Analytic_API.ReadFormat",
         {
             "DateFrom": dateFrom.format(app.config.mask.date.ajax),
-            "DateTo": dateTo.format(app.config.mask.date.ajax),
-            "SbjCode": SbjCode,
-            "PrcCode": PrcCode,
-            "MtrCode": MtrCode,
-            "NltInternalNetworkMask": $("#analytic-select-card").find("[name=nlt-masked-ip]").val()
+            "DateTo": dateTo.format(app.config.mask.date.ajax)
         },
         "app.analytic.callback.readFromat",
         selector,

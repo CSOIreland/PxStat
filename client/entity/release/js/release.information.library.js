@@ -52,6 +52,7 @@ app.release.information.callback.read = function (data) {
     app.release.isLive = app.release.checkStatusLive(data);
     app.release.isPending = app.release.checkStatusPending(data);
     app.release.isHistorical = app.release.checkStatusHistorical(data);
+    app.release.isCancelled = app.release.checkStatusCancelled(data);
 
 
     app.release.isWorkInProgress = app.release.checkStatusWorkInProgress(data);

@@ -11,7 +11,7 @@ app.footer.render = {};
 app.footer.render.contact = function () {
   $("#footer [name=phone]").html(app.config.template.footer.contact.phone).attr("href", "tel:" + app.config.template.footer.contact.phone);
   $("#footer [name=email]").html(app.config.template.footer.contact.email).attr("href", "mailto:" + app.config.template.footer.contact.email);
-  $("#footer address").text(app.config.template.footer.contact.address);
+  $("#footer address").text(app.label.footer.contact["address"]);
 };
 
 //Set Links
@@ -74,13 +74,13 @@ app.footer.render.links = function () {
 app.footer.render.social = function () {
   $.each(app.config.template.footer.social, function (index, value) {
     $("#footer [name=footer-social]").append($("<a>", {
-      "href": value.url,
+      "href": app.label.footer.social[value.name] ? app.label.footer.social[value.name].url : "#",
       "target": "_blank",
-      "aria-label": app.label.static[value.label],
+      "aria-label": app.label.footer.social[value.name] ? app.label.footer.social[value.name].label : "",
       "rel": "noreferrer" // Best practice for cross-origin links
     }).append($("<i>", {
       "class": value.icon + " fa-3x me-2 text-white",
-      "title": app.label.static[value.label],
+      "title": app.label.footer.social[value.name] ? app.label.footer.social[value.name].label : "",
       "data-bs-toggle": "tooltip",
       "data-bs-placement": "top"
     })).get(0).outerHTML);
@@ -89,7 +89,7 @@ app.footer.render.social = function () {
 };
 
 app.footer.render.watermark = function () {
-  $("#footer").find("[name=logo-link]").attr("href", app.config.template.footer.watermark.url);
+  $("#footer").find("[name=logo-link]").attr("href", app.label.footer.watermark.url);
   $("#footer").find("[name=logo]").attr("alt", app.config.template.footer.watermark.alt);
   $("#footer").find("[name=logo]").attr("src", app.config.template.footer.watermark.src);
 }

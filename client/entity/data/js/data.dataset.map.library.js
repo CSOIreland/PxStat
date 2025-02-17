@@ -31,6 +31,9 @@ app.data.dataset.map.template.wrapper = {
         "title": app.label.static["view-fullscreen"],
         "titleCancel": app.label.static["exit-fullscreen"]
     },
+    "easyPrint": {
+        "title": app.label.static["download"]
+    },
     "data": {
         "datasets": [
             {

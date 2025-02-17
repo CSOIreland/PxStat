@@ -293,6 +293,29 @@ app.release.workflow.modal.request.validation.create = function (RqsCode) {
     }
 };
 
+app.release.workflow.modal.request.validation.cancelPendingLive = function () {
+    $("#request-workflow-modal-cancel-pending-live form").trigger("reset").validate({
+        ignore: [],
+        rules: {
+            "cmm-value": {
+                required: function (element) {
+                    tinymce.triggerSave();
+                    return true;
+                }
+            }
+        },
+        errorPlacement: function (error, element) {
+            $("#request-workflow-modal-cancel-pending-live [name=" + element[0].name + "-error-holder]").append(error[0]);
+        },
+        submitHandler: function (form) {
+            $(form).sanitiseForm();
+            app.release.workflow.modal.request.confirmCancelPendingLive();
+        }
+    }).resetForm();
+
+    $("#request-workflow-modal-cancel-pending-live").modal("show");
+};
+
 /**
 * 
  * @param {*} RqsCode
@@ -438,4 +461,47 @@ app.release.workflow.modal.request.checkDatetime = function () {
         }
     });
 };
+//#endregion
+
+//#region cancel publish
+
+app.release.workflow.modal.request.confirmCancelPendingLive = function () {
+    api.modal.confirm(
+        app.label.static["confirm-cancel-publish"],
+        app.release.workflow.modal.request.ajax.cancelPendingLive
+    );
+};
+
+
+app.release.workflow.modal.request.ajax.cancelPendingLive = function () {
+    $("#request-workflow-modal-cancel-pending-live").modal("hide");
+    var tinyMceId = $("#request-workflow-modal-cancel-pending-live [name=cmm-value]").attr("id");
+    var CmmValue = tinymce.get(tinyMceId).getContent();
+    api.ajax.jsonrpc.request(
+        app.config.url.api.jsonrpc.private,
+        "PxStat.Workflow.Workflow_API.CancelPendingLive",
+        {
+            "RlsCode": app.release.RlsCode,
+            "LngIsoCode": app.label.language.iso.code,
+            "CmmValue": CmmValue
+        },
+        "app.release.workflow.modal.request.callback.cancelPendingLive"
+    );
+};
+
+app.release.workflow.modal.request.callback.cancelPendingLive = function (data) {
+    if (data == C_API_AJAX_SUCCESS) {
+        api.modal.success(app.label.static["success-cancel-publish"]);
+        var goToParams = {
+            "RlsCode": null,
+            "MtrCode": app.release.MtrCode
+        };
+
+        $("#modal-success").one('hidden.bs.modal', function (e) {
+            // Force page reload to matrix
+            api.content.goTo("entity/release/", "#nav-link-release", "#nav-link-release", goToParams);
+        });
+    }
+
+}
 //#endregion

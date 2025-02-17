@@ -4,7 +4,7 @@ Application - Constant
 *******************************************************************************/
 
 // Application Version
-const C_APP_VERSION = "8.1.2";
+const C_APP_VERSION = "8.4.1";
 
 // Master language
 const C_APP_MASTER_LANGUAGE = "en";
@@ -191,6 +191,7 @@ const C_APP_SORT_OLDEST = "oldest";
 // Widget
 const C_APP_PXWIDGET_TYPE_CHART = 'chart';
 const C_APP_PXWIDGET_TYPE_TABLE = 'table';
+const C_APP_PXWIDGET_TYPE_TABLE_V2 = 'table_v2';
 const C_APP_PXWIDGET_TYPE_MAP = 'map';
 const C_APP_PXWIDGET_CHART_TYPES = ["line", "bar", "horizontalBar", "pyramid", "pie", "doughnut", "mixed", "polarArea", "radar"];
 const C_APP_PXWIDGET_CHART_TYPES_MIXED = ["line", "bar"];

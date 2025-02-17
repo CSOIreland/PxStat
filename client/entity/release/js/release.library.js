@@ -20,6 +20,7 @@ app.release.isApprover = false;
 app.release.isLive = false;
 app.release.isPending = false;
 app.release.isHistorical = false;
+app.release.isCancelled = false;
 app.release.isWorkInProgress = false;
 app.release.liveHasWorkInProgress = null;
 app.release.isAwaitingResponse = false;
@@ -238,6 +239,24 @@ app.release.checkStatusHistorical = function (data) {
 * 
  * @param {*} data
  */
+app.release.checkStatusCancelled = function (data) {
+  if (data.RlsLiveDatetimeFrom == null && data.RlsLiveDatetimeTo == null) {
+    return false;
+  }
+  var dateFrom = (data.RlsLiveDatetimeFrom == null) ? null : Date.parse(data.RlsLiveDatetimeFrom);
+  var dateTo = (data.RlsLiveDatetimeTo == null) ? null : Date.parse(data.RlsLiveDatetimeTo);
+  if (
+    //(data.RlsVersion != 0 && data.RlsRevision == 0) &&
+    (dateFrom == dateTo)) {
+    return true;
+  }
+  return false;
+};
+
+/**
+* 
+ * @param {*} data
+ */
 app.release.checkStatusWorkInProgress = function (data) {
   var now = Date.now();
   var dateFrom = (data.RlsLiveDatetimeFrom == null) ? null : Date.parse(data.RlsLiveDatetimeFrom);
@@ -309,6 +328,14 @@ app.release.renderStatus = function (data) {
     return $("<span>", {
       class: "badge bg-warning",
       text: app.label.static["pending-live"]
+    }).get(0).outerHTML;
+  }
+
+  // Cancelled Release
+  if (app.release.checkStatusCancelled(data)) {
+    return $("<span>", {
+      class: "badge bg-neutral text-dark",
+      text: app.label.static["cancelled"]
     }).get(0).outerHTML;
   }
 

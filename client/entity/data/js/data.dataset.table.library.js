@@ -333,9 +333,15 @@ app.data.dataset.table.drawDimensions = function () {
             }
         }
 
-        $("#data-dataset-table-result").hide();
+        $("#data-dataset-table-result-wrapper").hide();
         app.data.dataset.table.response = null;
         app.data.dataset.table.jsonStat = null;
+        app.data.dataset.customTable.parsedData = null;
+        $("#pxwidget-custom-table").empty();
+        $('#data-dataset-table-result-custom-available-fields [name="available-fields"]').empty();
+        $('#data-dataset-table-result-custom-available-fields [name="row-fields"]').empty();
+        $('#data-dataset-table-result-custom-available-fields [name="column-fields"]').empty();
+        $("#data-dataset-table-accordion-custom-widget").hide();
         app.data.dataset.table.countSelection()
         app.data.dataset.table.buildApiParams();
     });
@@ -431,13 +437,19 @@ app.data.dataset.table.drawDimensions = function () {
         if ($(this).attr("role") == "time") {
             $("#data-dataset-table-api-data-connector-content").find("[name=fluid-time]").bootstrapToggle('enable');
         }
-        $("#data-dataset-table-result").hide();
+        $("#data-dataset-table-result-wrapper").hide();
         app.data.dataset.table.response = null;
         app.data.dataset.table.jsonStat = null;
+        app.data.dataset.customTable.parsedData = null;
+        $("#pxwidget-custom-table").empty();
+        $('#data-dataset-table-result-custom-available-fields [name="available-fields"]').empty();
+        $('#data-dataset-table-result-custom-available-fields [name="row-fields"]').empty();
+        $('#data-dataset-table-result-custom-available-fields [name="column-fields"]').empty();
+        $("#data-dataset-table-accordion-custom-widget").hide();
         app.data.dataset.table.countSelection();
         app.data.dataset.table.buildApiParams();
     });
-    $("#data-dataset-table-result").hide();
+    $("#data-dataset-table-result-wrapper").hide();
 
     //reset api params
     app.data.dataset.table.buildApiParams();
@@ -481,6 +493,10 @@ app.data.dataset.table.drawDimensions = function () {
     $("#data-dataset-table-accordion-collapse-widget [name=download-snippet]").once("click", function () {
         // Download the snippet file
         app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-dataset-table-accordion-snippet-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML, false, true);
+    });
+
+    $("#data-dataset-table-accordion-collapse-widget [name=preview-snippet]").once("click", function () {
+        app.library.utility.previewHtml($("#data-dataset-table-accordion-snippet-code").text())
     });
 
 };
@@ -921,7 +937,7 @@ app.data.dataset.table.ajax.data = function () {
 app.data.dataset.table.callback.data = function (response) {
     if (response) {
         app.data.dataset.table.response = response;
-        app.data.dataset.table.jsonStat = response ? JSONstat(response) : null;
+        app.data.dataset.table.jsonStat = response ? JSONstat($.extend(true, {}, response)) : null;
         if (app.data.dataset.table.jsonStat && app.data.dataset.table.jsonStat.length) {
             app.data.dataset.table.order = null;
             app.data.dataset.table.search = "";
@@ -1033,10 +1049,11 @@ app.data.dataset.table.callback.drawSnippetCode = function (widgetEnabled) { //c
         if ($("#data-dataset-table-accordion-collapse-widget [name=link-to-wip]").is(':checked')) {
             //disable download HTML button as this won't work with private api due to CORS rules
             $("#data-dataset-table-accordion-collapse-widget").find("[name=download-snippet]").prop('disabled', true);
+            $("#data-dataset-table-accordion-collapse-widget").find("[name=preview-snippet]").prop('disabled', true);
         }
         else {
-            //disable download HTML button as this won't work with private api due to CORS rules
             $("#data-dataset-table-accordion-collapse-widget").find("[name=download-snippet]").prop('disabled', false);
+            $("#data-dataset-table-accordion-collapse-widget").find("[name=preview-snippet]").prop('disabled', false);
         }
 
         //check for WIP
@@ -1443,16 +1460,33 @@ app.data.dataset.table.callback.drawDatatable = function () {
     //scroll to top of datatable -- Data entity
 
     if (app.data.isModal) {
+        if (!app.data.isLive) { //is WIP
+            if (!app.config.entity.data.display.wipWidgetStandard) {
+                //hide widget 
+                $("#data-dataset-table-accordion-collapse-widget").find('[name="widget-hidden-wrapper"]').show();
+                $("#data-dataset-table-accordion-collapse-widget").find('[name="widget-display-wrapper"]').hide();
+            }
+            else {
+                //show widget 
+                $("#data-dataset-table-accordion-collapse-widget").find('[name="widget-hidden-wrapper"]').hide();
+                $("#data-dataset-table-accordion-collapse-widget").find('[name="widget-display-wrapper"]').show();
+            }
+        }
+        else {//live table
+            //show widget 
+            $("#data-dataset-table-accordion-collapse-widget").find('[name="widget-hidden-wrapper"]').hide();
+            $("#data-dataset-table-accordion-collapse-widget").find('[name="widget-display-wrapper"]').show();
+        }
         $("#data-dataset-table-result").find("[name=save-query-wrapper]").hide();
         $('#data-view-modal').animate({
-            scrollTop: '+=' + $('#data-dataset-table-nav-content [name=result-table]')[0].getBoundingClientRect().top
+            scrollTop: '+=' + $('#data-dataset-table-result-tabs')[0].getBoundingClientRect().top
         },
             1000);
     }
     else {
         $("#data-dataset-table-result").find("[name=save-query-wrapper]").show();
         $('html, body').animate({
-            scrollTop: $("#data-dataset-table-nav-content [name=result-table]").offset().top
+            scrollTop: $("#data-dataset-table-result-tabs").offset().top
         }, 1000);
     }
 
@@ -1540,8 +1574,13 @@ app.data.dataset.table.drawCallbackDrawDataTable = function () {
 
 
     api.spinner.stop();
+    //default to standard results
+    $('#data-dataset-table-result-tab-standard').tab('show');
+    $("#data-dataset-table-result-wrapper").fadeIn();
 
-    $("#data-dataset-table-result").fadeIn();
+    setTimeout(function () {
+        $("#data-dataset-table-result-tabs").find("i.fa-bell").removeClass("fa-beat-fade text-danger");
+    }, 5000)
 
 };
 

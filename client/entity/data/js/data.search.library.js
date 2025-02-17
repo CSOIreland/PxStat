@@ -311,36 +311,40 @@ app.data.searchResult.callback.readResults = function (data, params) {
                 });
             }
         }
-
-        //group copyrights
-        var mapCopyrights = new Map();
-        for (item of copyrights) {
-            if (!mapCopyrights.has(item.CprCode)) {
-                mapCopyrights.set(item.CprCode, true);    // set any value to Map
-                copyrightsFiltered.push({
-                    CprCode: item.CprCode,
-                    CprValue: item.CprValue,
-                    CprCount: copyrights.reduce(function (r, a) {
-                        return r + (a.CprCode === item.CprCode);
-                    }, 0)
-                });
+        if (app.config.entity.data.display.copyright) {
+            //group copyrights
+            var mapCopyrights = new Map();
+            for (item of copyrights) {
+                if (!mapCopyrights.has(item.CprCode)) {
+                    mapCopyrights.set(item.CprCode, true);    // set any value to Map
+                    copyrightsFiltered.push({
+                        CprCode: item.CprCode,
+                        CprValue: item.CprValue,
+                        CprCount: copyrights.reduce(function (r, a) {
+                            return r + (a.CprCode === item.CprCode);
+                        }, 0)
+                    });
+                }
             }
         }
 
-        //group languages
-        var mapLanguages = new Map();
-        for (item of languages) {
-            if (!mapLanguages.has(item.LngIsoCode)) {
-                mapLanguages.set(item.LngIsoCode, true);    // set any value to Map
-                languagesFiltered.push({
-                    LngIsoCode: item.LngIsoCode,
-                    LngIsoName: item.LngIsoName,
-                    LngIsoCount: languages.reduce(function (r, a) {
-                        return r + (a.LngIsoCode === item.LngIsoCode);
-                    }, 0)
-                });
+        if (app.config.entity.data.display.language) {
+            //group languages
+            var mapLanguages = new Map();
+            for (item of languages) {
+                if (!mapLanguages.has(item.LngIsoCode)) {
+                    mapLanguages.set(item.LngIsoCode, true);    // set any value to Map
+                    languagesFiltered.push({
+                        LngIsoCode: item.LngIsoCode,
+                        LngIsoName: item.LngIsoName,
+                        LngIsoCount: languages.reduce(function (r, a) {
+                            return r + (a.LngIsoCode === item.LngIsoCode);
+                        }, 0)
+                    });
+                }
             }
         }
+
         if (app.data.isSearch || app.data.isCopyrightGoTo) {
             //Subject Filter List
             var subjectFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
@@ -373,22 +377,24 @@ app.data.searchResult.callback.readResults = function (data, params) {
             });
         }
 
+        if (app.config.entity.data.display.copyright) {
+            //Copyrights Filter List
+            var copyrightsFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
+            copyrightsFilterList.attr("filter-type", "copyright");
+            var copyrightsFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
+            copyrightsFilterList.append(copyrightsFilterHeading.text(app.label.static["copyrights"]));
+
+            $.each(copyrightsFiltered, function (key, value) {
+                var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                item.attr("cpr-code", value.CprCode);
+                item.attr("active", "false");
+                item.find("[name=filter-list-item-value]").text(value.CprValue);
+                item.find("[name=filter-list-item-count]").text(value.CprCount);
+                copyrightsFilterList.append(item);
+            });
+        }
 
 
-        //Copyrights Filter List
-        var copyrightsFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
-        copyrightsFilterList.attr("filter-type", "copyright");
-        var copyrightsFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
-        copyrightsFilterList.append(copyrightsFilterHeading.text(app.label.static["copyrights"]));
-
-        $.each(copyrightsFiltered, function (key, value) {
-            var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
-            item.attr("cpr-code", value.CprCode);
-            item.attr("active", "false");
-            item.find("[name=filter-list-item-value]").text(value.CprValue);
-            item.find("[name=filter-list-item-count]").text(value.CprCount);
-            copyrightsFilterList.append(item);
-        });
 
         //if we have some true properties, draw properties filter
         //properties
@@ -452,28 +458,33 @@ app.data.searchResult.callback.readResults = function (data, params) {
                 propertiesFilterList.append(itemExperimental);
             }
         }
+        if (app.config.entity.data.display.language) {
+            //Languages Filter List
+            var languagesFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
+            languagesFilterList.attr("filter-type", "language");
+            var languagesFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
+            languagesFilterList.append(languagesFilterHeading.text(app.label.static["languages"]));
+            $.each(languagesFiltered, function (key, value) {
+                var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
+                item.attr("lng-iso-code", value.LngIsoCode);
+                item.attr("active", "false");
+                item.find("[name=filter-list-item-value]").text(value.LngIsoName);
+                item.find("[name=filter-list-item-count]").text(value.LngIsoCount);
+                languagesFilterList.append(item);
+            });
 
-        //Languages Filter List
-        var languagesFilterList = $("#data-search-result-templates").find("[name=filter-list]").clone();
-        languagesFilterList.attr("filter-type", "language");
-        var languagesFilterHeading = $("#data-search-result-templates").find("[name=filter-list-heading]").clone();
-        languagesFilterList.append(languagesFilterHeading.text(app.label.static["languages"]));
-        $.each(languagesFiltered, function (key, value) {
-            var item = $("#data-search-result-templates").find("[name=filter-list-item]").clone();
-            item.attr("lng-iso-code", value.LngIsoCode);
-            item.attr("active", "false");
-            item.find("[name=filter-list-item-value]").text(value.LngIsoName);
-            item.find("[name=filter-list-item-count]").text(value.LngIsoCount);
-            languagesFilterList.append(item);
-        });
 
-
-        //collapse navigation HTML
-        $("#data-filter").append(languagesFilterList.get(0).outerHTML);
-        if (app.data.isSearch || app.data.isCopyrightGoTo) {
-            $("#data-filter").append(subjectFilterList.get(0).outerHTML + productsFilterList.get(0).outerHTML);
+            //collapse navigation HTML
+            $("#data-filter").append(languagesFilterList.get(0).outerHTML);
+            if (app.data.isSearch || app.data.isCopyrightGoTo) {
+                $("#data-filter").append(subjectFilterList.get(0).outerHTML + productsFilterList.get(0).outerHTML);
+            }
         }
-        $("#data-filter").append(copyrightsFilterList.get(0).outerHTML);
+
+        if (app.config.entity.data.display.copyright) {
+            $("#data-filter").append(copyrightsFilterList.get(0).outerHTML);
+        }
+
         if (propertiesFilterList) {
             $("#data-filter").append(propertiesFilterList.get(0).outerHTML)
         }
@@ -827,9 +838,11 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
             }
 
         }
-
-        //language
-        resultItem.find("[name=language]").text(entry.LngIsoName);
+        if (app.config.entity.data.display.language) {
+            //language
+            resultItem.find("[name=language]").text(entry.LngIsoName);
+            resultItem.find("[name=language-wrapper]").show();
+        }
 
         //dimension pill
         $.each(entry.classification, function (keyClassification, entryClassification) {
@@ -862,7 +875,11 @@ app.data.searchResult.callback.drawResults = function (paginatedResults) {
         resultItem.find("[name=dimensions]").append(frequencySpan);
 
         // copyright
-        resultItem.find("[name=copyright]").text(entry.CprValue);
+        if (app.config.entity.data.display.copyright) {
+            resultItem.find("[name=copyright]").text(entry.CprValue);
+            resultItem.find("[name=copyright-wrapper]").show();
+        }
+
         if (app.data.isSearch) {
             $("#data-search-row-desktop").find("[name=search-results-non-archived]").append(resultItem);
         }

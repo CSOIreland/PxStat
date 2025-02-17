@@ -27,6 +27,7 @@ app.data.dataset.chart.template.wrapper = {
     "copyright": false,
     "link": null,
     "sort": false,
+    "maxNumberValues": null,
     "metadata": {},
     "data": {
         "labels": [],
@@ -979,6 +980,7 @@ app.data.dataset.chart.buildChartConfig = function (scroll) {
     var isStacked = $("#data-dataset-chart-accordion-options-collapse").find("[name=stacked]").is(':visible, :checked');
     var isStackedPercentage = $("#data-dataset-chart-accordion-options-collapse").find("[name=stacked-percent]").is(':visible, :checked');
     app.data.dataset.chart.configuration.sort = $("#data-dataset-chart-accordion-options-collapse").find("[name=sort]").is(':checked');
+    app.data.dataset.chart.configuration.maxNumberValues = $("#data-dataset-chart-accordion-options-collapse").find("[name=max-number-values]").val() ? Math.abs($("#data-dataset-chart-accordion-options-collapse").find("[name=max-number-values]").val()) : null;
     app.data.dataset.chart.configuration.options.scales.xAxes[0].stacked = isStacked;
     app.data.dataset.chart.configuration.options.scales.xAxes[0].ticks.maxTicksLimit = $("#data-dataset-chart-accordion-options-collapse").find("[name=xaxis-max-steps]").val().trim() || null;
     $.each(app.data.dataset.chart.configuration.options.scales.yAxes, function (index, value) {
@@ -1458,10 +1460,12 @@ app.data.dataset.chart.renderSnippet = function () {
     if ($("#data-dataset-chart-snippet-code [name=link-to-wip]").is(':checked')) {
         //disable download HTML button as this won't work with private api due to CORS rules
         $("#data-dataset-chart-snippet-code").find("[name=download-snippet]").prop('disabled', true);
+        $("#data-dataset-chart-snippet-code").find("[name=preview-snippet]").prop('disabled', true);
     }
     else {
         //disable download HTML button as this won't work with private api due to CORS rules
         $("#data-dataset-chart-snippet-code").find("[name=download-snippet]").prop('disabled', false);
+        $("#data-dataset-chart-snippet-code").find("[name=preview-snippet]").prop('disabled', false);
     }
 
 };
@@ -1509,6 +1513,13 @@ app.data.dataset.chart.resetChart = function () {
     //hide the chart
     $("#pxwidget-chart, #data-pxwidget-snippet-chart-code").empty();
     $("#data-dataset-chart-render, #data-dataset-chart-snippet-code").hide();
+    $("#data-dataset-chart-accordion-options-collapse").find("[name=max-number-values]").val("");
+    if (!$("#data-dataset-chart-accordion-options-collapse [name=sort]").is(':checked')) {
+        $("#data-dataset-chart-accordion-options-collapse").find("[name=max-number-values]").prop("disabled", true);
+    }
+    else {
+        $("#data-dataset-chart-accordion-options-collapse").find("[name=max-number-values]").prop("disabled", false);
+    }
 }
 
 app.data.dataset.chart.resetAll = function () {

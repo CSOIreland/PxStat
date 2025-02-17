@@ -135,8 +135,12 @@
                         <span label="sort-by-value"></span>
                         <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="sort-chart" style="cursor: help;"></i>
                     </div>
-                    <div class="col-8 p-2">
+                    <div class="col-8 p-2 d-flex align-items-center">
                         <input name="sort" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle"></input>
+                        <div class="ps-2 input-group">
+                            <span class="input-group-text" label="max-number-of-values">Max number of values</span>
+                            <input name="max-number-values" type="number" step="1" min="0" class="form-control" disabled>
+                        </div>
                     </div>
                 </div>
 
@@ -360,6 +364,9 @@
             </button>
             <button type="button" name="download-snippet" class="btn btn-outline-primary btn-sm m-2" disabled>
                 <i class="fas fa-file-download"></i> <span label="download"></span>
+            </button>
+            <button type="button" name="preview-snippet" class="btn btn-outline-primary btn-sm m-2">
+                <i class="fa-solid fa-magnifying-glass"></i> <span label="preview"></span>
             </button>
         </div>
     </div>

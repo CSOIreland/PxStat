@@ -22,7 +22,7 @@ $(document).ready(function () {
 
 
     if (!app.config.plugin.subscriber.enabled) {
-        $("#data-dataset-table-result").find("[name=save-query]").remove()
+        $("#data-dataset-table-result-wrapper").find("[name=save-query]").remove()
     };
 
     $('#data-dataset-table-accordion-collapse-widget [name=auto-update], #data-dataset-table-accordion-collapse-widget [name=fluid-time], #data-dataset-table-api-data-connector-content [name=fluid-time], #data-dataset-table-accordion-collapse-widget [name=link-to-wip], #data-dataset-table-accordion-collapse-widget [name=include-copyright], #data-dataset-table-accordion-collapse-widget [name=include-link], #data-dataset-table-accordion-collapse-widget [name=include-title], #data-dataset-table-accordion-collapse-widget [name=include-pagination], #data-dataset-table-accordion-collapse-widget [name=include-buttons], #data-dataset-table-accordion-collapse-widget [name=include-search], #data-dataset-table-accordion-collapse-widget [name=include-responsive]').bootstrapToggle("destroy").bootstrapToggle({
@@ -46,6 +46,13 @@ $(document).ready(function () {
         app.data.dataset.table.pivot.dimensionCode = null;
         app.data.dataset.table.drawPivotDropdown();
         app.data.dataset.table.drawDimensions();
+        app.data.dataset.customTable.parsedData = null;
+        $("#pxwidget-custom-table").empty();
+        $('#data-dataset-table-result-custom-available-fields [name="available-fields"]').empty();
+        $('#data-dataset-table-result-custom-available-fields [name="row-fields"]').empty();
+        $('#data-dataset-table-result-custom-available-fields [name="column-fields"]').empty();
+        $('#data-dataset-table-accordion-custom-widget [name="highlighted-variable-code"]').empty().hide();
+        $("#data-dataset-table-accordion-custom-widget").hide();
     });
 
     //show data
@@ -91,7 +98,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#data-dataset-table-result").find("[name=save-query]").once("click", function () {
+    $("#data-dataset-table-result-wrapper").find("[name=save-query]").once("click", function () {
         //check that we have a user to save the table against
         if (app.navigation.user.isWindowsAccess || app.navigation.user.isLoginAccess || app.navigation.user.isSubscriberAccess) {
             app.data.dataset.table.saveQuery.drawSaveQueryModal();
@@ -102,10 +109,21 @@ $(document).ready(function () {
 
     });
 
+    $("#data-dataset-table-accordion-collapse-widget").find("[name=open-custom-view]").once("click", function () {
+        $('#data-dataset-table-result-tab-custom').tab('show');
+    });
 
-    new ClipboardJS("#data-dataset-table-accordion [name=copy-api-info], #data-dataset-table-accordion [name=copy-api-object], #data-dataset-table-accordion [name=copy-snippet-code]");
+    new ClipboardJS("#data-dataset-table-accordion [name=copy-api-info], #data-dataset-table-accordion [name=copy-api-object], #data-dataset-table-accordion-standard-widget [name=copy-snippet-code]");
     app.library.html.parseDynamicPopover("#data-dataset-table-accordion-collapse-widget [label-popover-dynamic=link-to-wip]", "link-to-wip", [app.config.corsDomain]);
     // Translate labels language (Last to run)
     app.library.html.parseStaticLabel();
     $('[data-bs-toggle="tooltip"]').tooltip();
+
+    //load into new custom html and js
+    api.content.load("#data-dataset-table-result-custom-content", "entity/data/index.dataset.table.custom.html");
+
+    $('#data-dataset-table-result-tab-custom').on('shown.bs.tab', function (e) {
+        app.data.dataset.customTable.createPivotControls()
+    });
+
 });

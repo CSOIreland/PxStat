@@ -1,62 +1,51 @@
-<div name="map-container" class="row">
-
-    <div class="col-md-4">
-        <span name="geo-select-container">
-        </span>
-        <span name="dimension-containers">
-        </span>
-    </div>
-
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-xl-6 mb-2">
-                        <div class="input-group" name="mode-select-wrapper" style="display: none;">
-                            <label class="input-group-text bg-info text-light" for="inputGroupSelect01" label="mode"></label>
-                            <select name="mode-select" class="form-select">
-                            </select>
-                            <span class="input-group-text bg-white">
-                                <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info" data-bs-placement="top" data-bs-trigger="hover" label-popover="map-mode" style="cursor: help;"></i>
-                            </span>
-                        </div>
-
-                    </div>
-                    <div class="col-xl-6 mb-2 text-sm-end">
-                        <span name="save-query-wrapper">
-                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="save-query" style="cursor: help;"></i>
-                            <button name="save-query" class="btn btn-tertiary" type="button">
-                                <i class="far fa-save"></i> <span label="save-query"></span>
-                            </button>
-                        </span>
-                    </div>
-                </div>
-
-            </div>
-            <div class="card-body p-0">
-                <div id="pxwidget-map" class="pxwidget">
+<div id="data-dataset-table-result-custom-available-fields">
+    <p class="mt-2" label="custom-view-message"></p>
+    <div class="row mt-2">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-light" label="available-fields"></div>
+                <div name="available-fields" class="card-body field-list">
                 </div>
             </div>
-            <div class="card-footer text-end">
-                <a class="btn btn-primary" name="download-chart" href="#" role="button"><i class="fas fa-download"></i> <span label="download"></span></a>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white" label="rows"></div>
+                <div name="row-fields" class="card-body field-list"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white" label="columns"></div>
+                <div name="column-fields" class="card-body field-list"></div>
             </div>
         </div>
     </div>
-    <div class="col-sm-12 mt-4" name="confidential-data-warning" style="display: none;">
-        <div class="card rounded-0">
-            <div class="card-body bg-warning p-2 border-bottom text-dark" label="confidential-data-warning">
+    <div class="card mt-1">
+        <div class="card-footer text-end border-top-0">
+            <button name="apply-pivot" class="btn btn-primary" label="apply"></button>
+        </div>
+    </div>
+
+
+    <div class="row my-4">
+        <div class="col-12">
+            <div id="data-dataset-table-result-custom-pivoted-table">
+                <div id="pxwidget-custom-table" class="pxwidget">
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="accordion mt-2" id="data-dataset-map-accordion">
+
+    <div class="accordion" id="data-dataset-table-accordion-custom-widget" style="display: none;">
         <div class="accordion-item">
-            <h2 class="accordion-header" id="data-dataset-map-accordion-heading-widget">
-                <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-map-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-map-accordion-collapse-widget">
+            <h2 class="accordion-header" id="data-dataset-table-accordion-heading-widget">
+                <button class="accordion-button text-primary bg-neutral bg-opacity-25 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#data-dataset-table-custom-accordion-collapse-widget" aria-expanded="false" aria-controls="data-dataset-table-custom-accordion-collapse-widget">
                     <span label="widget"></span>
                 </button>
             </h2>
-            <div id="data-dataset-map-accordion-collapse-widget" class="accordion-collapse collapse" aria-labelledby="data-dataset-map-accordion-heading-widget" data-bs-parent="#data-dataset-map-accordion">
+            <div id="data-dataset-table-custom-accordion-collapse-widget" class="accordion-collapse collapse" aria-labelledby="data-dataset-table-accordion-heading-widget" data-bs-parent="#data-dataset-table-accordion">
                 <div class="accordion-body">
                     <div class="border-top border-end border-start row mx-0">
                         <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
@@ -67,6 +56,7 @@
                             <input name="auto-update" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
+
                     <div class="border-top border-end border-start row mx-0">
                         <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
                             <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="fluid-time" style="cursor: help;"></i>
@@ -106,6 +96,7 @@
                             <input name="include-link" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
                     </div>
+
                     <div class="border-top border-end border-start row mx-0">
                         <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
                             <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-title" style="cursor: help;"></i>
@@ -116,24 +107,53 @@
                             <input type="text" class="form-control mt-2" name="title-value" autocomplete="off">
                         </div>
                     </div>
-                    <div class="border-top border-end border-start row mx-0" name="include-borders-wrapper" style="display: none;">
-                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-map-borders" style="cursor: help;"></i>
-                            <span label="borders"></span>
-                        </div>
-                        <div class="col-8 p-2">
-                            <input name="include-borders" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
-                        </div>
-                    </div>
                     <div class="border-top border-end border-start row mx-0">
                         <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
-                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-map-colour-scale" style="cursor: help;"></i>
-                            <span label="colour-scale"></span>
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-pagination" style="cursor: help;"></i>
+                            <span label="pagination"></span>
                         </div>
                         <div class="col-8 p-2">
-                            <select name="colour-scale" class="form-select">
-                            </select>
+                            <input name="include-pagination" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
                         </div>
+                    </div>
+
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-buttons" style="cursor: help;"></i>
+                            <span label="buttons"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="include-buttons" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="widget-search" style="cursor: help;"></i>
+                            <span label="search"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <input name="include-search" type="checkbox" class="bootstrap-toggle" data-bs-toggle="toggle" checked></input>
+                        </div>
+                    </div>
+
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 fw-bold d-flex align-items-center flex-row-reverse">
+                            <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" label-popover="highlight-rows" style="cursor: help;"></i>
+                            <span label="highlight-rows"></span>
+                        </div>
+                        <div class="col-8 p-2">
+                            <div class="input-group mb-3">
+                                <div class="input-group mb-2">
+                                    <label class="input-group-text" label="dimension-code"></label>
+                                    <select name="highlighted-dimension-code" class="form-select">
+                                    </select>
+                                </div>
+                                <select name="highlighted-variable-code" multiple style="display: none;">
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="border-top border-end border-start row mx-0">
                         <div class="bg-default border-end col-4 p-2 fw-bold d-flex flex-row-reverse">
@@ -158,13 +178,9 @@
                     <div class="border-top border-end border-start row mx-0">
                         <div class="bg-default border-end col-4 p-2 text-end fw-bold" label="snippet-code"></div>
                         <div class="col-8 p-0">
-                            <p class="mb-0 p-2 bg-info text-light" label="widget-snippet-information"></p>
-                            <pre class="line-numbers language-markup m-0"><code id="data-dataset-map-accordion-snippet-code"></code></pre>
-                            <p name="map-discalimer" style="display: none;" class="mb-0 px-2 py-1 bg-default text-end">
-                                <small label="map-widget-disclaimer"></small>
-                                <i data-bs-toggle="popover" class="fas fa-info-circle fa-lg text-info ps-2" data-bs-placement="top" data-bs-trigger="hover" style="cursor: help;"></i>
-                            </p>
-                            <button name="copy-snippet-code" type="button" data-clipboard-target="#data-dataset-map-accordion-snippet-code" class="btn btn-outline-primary btn-sm m-2">
+                            <p class="mb-0 p-2 bg-info text-light" label="widget-snippet-information" name="widget-snippet-information" style="display: none;"></p>
+                            <pre class="line-numbers language-markup m-0"><code id="data-dataset-custom-table-accordion-snippet-code"></code></pre>
+                            <button name="copy-snippet-code" type="button" data-clipboard-target="#data-dataset-custom-table-accordion-snippet-code" class="btn btn-outline-primary btn-sm m-2">
                                 <i class="far fa-copy"></i> <span label="copy-to-clipboard"></span>
                             </button>
                             <button type="button" name="download-snippet" class="btn btn-outline-primary btn-sm m-2">
@@ -182,36 +198,30 @@
         </div>
     </div>
 
+
+
 </div>
 
-<div id="data-dataset-map-templates" style="display: none">
-    <div name="dimension-container">
-        <div class="card mb-4">
-            <div class="card-header bg-default text-dark d-flex justify-content-between align-items-center p-2">
-                <span name="dimension-label" class="fw-bold"></span>
-                <span name="dimension-count" class="badge bg-data rounded-pill bg-tertiary text-light"></span>
-            </div>
-            <div class="card-body p-1">
-                <select class="form-select" idn="" role="" disabled>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div name="dimension-container-map">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-light d-flex justify-content-between align-items-center p-2">
-                <span name="dimension-label" class="fw-bold"></span>
-                <span name="dimension-count" class="badge bg-data rounded-pill bg-light text-dark"></span>
-            </div>
-            <div class="card-body p-1">
-                <select class="form-select" idn="" role="" disabled>
-                </select>
-            </div>
-        </div>
-    </div>
 </div>
+
+
+
+<style>
+    .field-list {
+        min-height: 100px;
+        border: 1px dashed #ccc;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .field-item {
+        margin: 5px;
+        cursor: move;
+    }
+
+</style>
+
 
 <!-- Page specific JS -->
-<script src="entity/data/js/data.dataset.map.library.js"></script>
-<script src="entity/data/js/data.dataset.map.js"></script>
+<script src="entity/data/js/data.dataset.table.custom.library.js"></script>
+<script src="entity/data/js/data.dataset.table.custom.js"></script>

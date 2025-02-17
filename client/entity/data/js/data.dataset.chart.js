@@ -48,6 +48,10 @@ $(document).ready(function () {
         app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-pxwidget-snippet-chart-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML, false, true);
     });
 
+    $("#data-dataset-chart-snippet-code [name=preview-snippet]").once("click", function () {
+        app.library.utility.previewHtml($("#data-pxwidget-snippet-chart-code").text())
+    });
+
     $("#data-dataset-chart-snippet-code [name=custom-config]").val(JSON.stringify({ "options": {} }));
     app.data.dataset.chart.formatJson();
     $("#data-dataset-chart-snippet-code [name=valid-json-object]").hide();

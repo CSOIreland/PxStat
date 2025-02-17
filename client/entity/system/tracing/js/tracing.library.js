@@ -188,6 +188,17 @@ app.tracing.drawDataTable = function (data) {
                     data: "TrcUserAgent",
                     "visible": false,
                     "searchable": true
+                },
+                {
+                    data: "TrcCorrelationId",
+                    "visible": false,
+                    "searchable": true
+                }
+                ,
+                {
+                    data: "TrcMachinename",
+                    "visible": false,
+                    "searchable": true
                 }
             ],
             "order": [[0, "desc"]],
@@ -235,12 +246,18 @@ app.tracing.drawCallback = function () {
 app.tracing.drawExtraInformation = function (data) {
     var randomIdParams = app.library.utility.randomGenerator();
     var randomIdUserAgent = app.library.utility.randomGenerator();
+    var randomIdCorrelationId = app.library.utility.randomGenerator();
+    var randomIdTrcMachinename = app.library.utility.randomGenerator();
     var details = $("#tracing-method-template").find("[name=method-detail]").clone();
     details.removeAttr('id');
     details.find("[name=params-card]").find("[name=params]").find("pre code").text(data.TrcParams).attr("id", "parameters-" + randomIdParams);
     details.find("[name=params-card]").find(".cpy-btn").attr("data-clipboard-target", "#parameters-" + randomIdParams);
-    details.find("[name=user-agent-card]").find("pre code").text(data.TrcUserAgent).attr("id", "user-agent-" + randomIdUserAgent);
+    details.find("[name=user-agent-card]").find("[name=user-agent]").text(data.TrcUserAgent).attr("id", "user-agent-" + randomIdUserAgent);
     details.find("[name=user-agent-card]").find(".cpy-btn").attr("data-clipboard-target", "#user-agent-" + randomIdUserAgent);
+    details.find("[name=correlation-id-card]").find("[name=correlation-id]").text(data.TrcCorrelationId).attr("id", "user-agent-" + randomIdCorrelationId);
+    details.find("[name=correlation-id-card]").find(".cpy-btn").attr("data-clipboard-target", "#user-agent-" + randomIdCorrelationId);
+    details.find("[name=machine-name-card]").find("[name=machine-name]").text(data.TrcMachinename).attr("id", "user-agent-" + randomIdTrcMachinename);
+    details.find("[name=machine-name-card]").find(".cpy-btn").attr("data-clipboard-target", "#user-agent-" + randomIdTrcMachinename);
     return details.show().get(0).outerHTML;
 };
 
@@ -321,9 +338,5 @@ app.tracing.validation.submit = function () {
     });
 };
 //#endregion
-
-
-
-
 
 

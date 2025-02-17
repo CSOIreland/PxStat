@@ -189,12 +189,18 @@ app.logging.drawCallback = function () {
 app.logging.drawExtraInformation = function (data) {
     var randomIdMessage = app.library.utility.randomGenerator();
     var randomIdException = app.library.utility.randomGenerator();
+    var randomIdCorrelationId = app.library.utility.randomGenerator();
+    var randomIdTrcMachinename = app.library.utility.randomGenerator();
     var details = $("#logging-message-template").find("[name=message-detail]").clone();
     details.removeAttr('id');
     details.find("[name=message-card]").find("[name=message]").find("pre code").text(data.LggMessage).attr("id", "message-" + randomIdMessage);
     details.find("[name=message-card]").find(".cpy-btn").attr("data-clipboard-target", "#message-" + randomIdMessage);
     details.find("[name=exception-card]").find("pre code").text(data.LggException).attr("id", "exception-" + randomIdException);
     details.find("[name=exception-card]").find(".cpy-btn").attr("data-clipboard-target", "#exception-" + randomIdException);
+    details.find("[name=correlation-id-card]").find("[name=correlation-id]").text(data.LggCorrelationID).attr("id", "user-agent-" + randomIdCorrelationId);
+    details.find("[name=correlation-id-card]").find(".cpy-btn").attr("data-clipboard-target", "#user-agent-" + randomIdCorrelationId);
+    details.find("[name=machine-name-card]").find("[name=machine-name]").text(data.LggMachinename).attr("id", "user-agent-" + randomIdTrcMachinename);
+    details.find("[name=machine-name-card]").find(".cpy-btn").attr("data-clipboard-target", "#user-agent-" + randomIdTrcMachinename);
     return details.show().get(0).outerHTML;
 };
 

@@ -62,6 +62,8 @@
                         <th label="method"></th>
                         <th label="parameters"></th>
                         <th label="user-agent"></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
             </table>
@@ -73,8 +75,11 @@
                 </button>
             </span>
         </div>
+
     </div>
 </div>
+
+
 
 <div id="tracing-method-template" class="invisible" style="display: none">
     <div name="method-detail" style="display: none">
@@ -96,10 +101,32 @@
                     <i name="data-clipboard-icon" class="cpy-btn far fa-copy fa-2x" data-clipboard-target="" label-tooltip="copy-to-clipboard" data-bs-toggle="tooltip" data-bs-placement="right" title="" style="cursor: grab"></i>
                 </span>
             </div>
-            <div class="card-body p-0" name="useragent">
-                <pre class="line-numbers language-json m-0"><code></code></pre>
+            <div class="card-body" name="user-agent">
             </div>
         </div>
+
+        <div name="correlation-id-card" class="card mb-2">
+            <div class="card-header d-flex justify-content-between">
+                <span label="correlation-id"></span>
+                <span>
+                    <i name="data-clipboard-icon" class="cpy-btn far fa-copy fa-2x" data-clipboard-target="" label-tooltip="copy-to-clipboard" data-bs-toggle="tooltip" data-bs-placement="right" title="" style="cursor: grab"></i>
+                </span>
+            </div>
+            <div class="card-body" name="correlation-id">
+            </div>
+        </div>
+
+        <div name="machine-name-card" class="card mb-2">
+            <div class="card-header d-flex justify-content-between">
+                <span label="machine-name"></span>
+                <span>
+                    <i name="data-clipboard-icon" class="cpy-btn far fa-copy fa-2x" data-clipboard-target="" label-tooltip="copy-to-clipboard" data-bs-toggle="tooltip" data-bs-placement="right" title="" style="cursor: grab"></i>
+                </span>
+            </div>
+            <div class="card-body" name="machine-name">
+            </div>
+        </div>
+
     </div>
 </div>
 

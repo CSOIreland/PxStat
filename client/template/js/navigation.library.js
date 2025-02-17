@@ -383,6 +383,7 @@ app.navigation.setLayout = function (isDataEntity) {
       $("#body").removeClass("order-first").addClass("order-last").removeClass("col-sm-8").addClass("col-sm-9");
       $("#sidebar").removeClass("col-sm-4").addClass("col-sm-3").addClass("bg-sidebar");
       $("#data-navigation").find("[name=favourite-tables]").show();
+      app.navigation.renderQuickLinks();
       break;
     case false:
     default:
@@ -392,9 +393,42 @@ app.navigation.setLayout = function (isDataEntity) {
       //hide responsive serach
       $("#data-search-row-responsive").hide();
       $("#data-navigation").find("[name=favourite-tables]").hide();
+      $("#data-navigation").find("[name=quick-links]").hide();
       break;
   }
 };
+
+/**
+ * render the quick links menu
+ */
+app.navigation.renderQuickLinks = function () {
+  if (app.config.template.quickLinks) {
+    if (app.config.template.quickLinks.length) {
+      $("#data-navigation").find("[name=quick-links] .list-group").empty();
+      $.each(app.config.template.quickLinks, function (index, value) {
+        $("#data-navigation").find("[name=quick-links] .list-group").append(
+          $("<a>", {
+            "html": (app.label.quickLinks[value.name] ? app.label.quickLinks[value.name].text : "[" + value.name + "]") + (value.newTab ? " " + $("<i>", {
+              "class": "fas fa-external-link-alt fa-2xs"
+            }).get(0).outerHTML : ""),
+            "class": "list-group-item list-group-item-action" + (index === 0 ? " rounded-0" : ""),
+            "href": app.label.quickLinks[value.name] ? app.label.quickLinks[value.name].url : "#",
+            "target": value.newTab ? "_blank" : "_self"
+          })
+        )
+      });
+      $("#data-navigation").find("[name=quick-links]").show();
+    }
+    else {
+      $("#data-navigation").find("[name=quick-links]").hide();
+    }
+  }
+  else {
+    $("#data-navigation").find("[name=quick-links]").hide();
+  }
+
+
+}
 
 /**
  * Set the breadcrumb

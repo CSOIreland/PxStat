@@ -111,11 +111,6 @@ app.library.subscriber.callback.drawUser = function () {
         }).get(0).outerHTML
       }));
 
-    $("#modal-read-subscriber-developer-key").val(app.library.subscriber.details.SbrKey);
-
-    new ClipboardJS("#modal-read-subscriber-developer [name=copy-key]");
-
-
     $("#modal-read-subscriber").find("[name='" + value.ChnCode + "']").bootstrapToggle("destroy").bootstrapToggle({
       onlabel: app.label.static["on"],
       offlabel: app.label.static["off"],
@@ -133,6 +128,10 @@ app.library.subscriber.callback.drawUser = function () {
       }
     });
   });
+
+  $("#modal-read-subscriber-developer-key").text(app.library.subscriber.details.SbrKey);
+  new ClipboardJS("#modal-read-subscriber-developer [name=copy-key]");
+
   $("#modal-read-subscriber").modal("show");
 
   $("#modal-read-subscriber").find("[name=update-password]").once("click", function () {
@@ -300,7 +299,7 @@ app.library.subscriber.ajax.getNewKey = function () {
 app.library.subscriber.callback.getNewKey = function (data) {
   if (data) {
     app.library.subscriber.details = data;
-    $("#modal-read-subscriber-developer-key").val(app.library.subscriber.details.SbrKey);
+    $("#modal-read-subscriber-developer-key").text(app.library.subscriber.details.SbrKey);
     $("#modal-subscriber-confirm-password-api-key").modal("hide");
     api.modal.success(app.label.static["subscriber-developer-key-generated"]);
     api.spinner.stop();

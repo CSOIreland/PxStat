@@ -43,14 +43,16 @@ $(document).ready(function () {
 
     $("#data-dataset-map-nav-content").find("[name=download-chart]").once("click", function (e) {
         e.preventDefault();
-        var url_base64jp = $("#pxwidget-map canvas")[0].toDataURL();
-        var filename = (app.data.dataset.metadata.jsonStat.label.trim().replace(/ /g, "_") + "." + new Date().getTime()).toLocaleLowerCase();
-        app.library.utility.download(filename, url_base64jp, "png", "image/png", true);
+        pxWidget.map.easyPrint.printMap('CurrentSize', app.data.fileNamePrefix + "_" + moment(Date.now()).format('DDMMYYYYHHmmss'))
     });
 
     $("#data-dataset-map-accordion [name=download-snippet]").once("click", function () {
         // Download the snippet file
         app.library.utility.download(app.data.fileNamePrefix + '.' + moment(Date.now()).format(app.config.mask.datetime.file), $("#data-dataset-map-accordion-snippet-code").text(), C_APP_EXTENSION_HTML, C_APP_MIMETYPE_HTML, false, true);
+    });
+
+    $("#data-dataset-map-accordion [name=preview-snippet]").once("click", function () {
+        app.library.utility.previewHtml($("#data-dataset-map-accordion-snippet-code").text())
     });
 
     //format advanced options
@@ -110,10 +112,12 @@ $(document).ready(function () {
         if ($(this).is(':checked')) {
             //disable download HTML button as this won't work with private api due to CORS rules
             $("#data-dataset-map-accordion").find("[name=download-snippet]").prop('disabled', true);
+            $("#data-dataset-map-accordion").find("[name=preview-snippet]").prop('disabled', true);
         }
         else {
             //disable download HTML button as this won't work with private api due to CORS rules
             $("#data-dataset-map-accordion").find("[name=download-snippet]").prop('disabled', false);
+            $("#data-dataset-map-accordion").find("[name=preview-snippet]").prop('disabled', false);
         }
     });
 

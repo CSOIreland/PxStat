@@ -7,6 +7,11 @@ $(document).ready(function () {
         app.plugin.cookiconsent.allow(true);
     });
 
+    // Cookie Consent - Allow button
+    $("#cookie").find("[name=cookie-reject]").once("click", function () {
+        app.plugin.cookiconsent.deny();
+    });
+
     // Bind Manage Cookie click event
     $("#footer, #cookie").find("[name=cookie-manage]").once("click", function (e) {
         e.preventDefault();

@@ -312,6 +312,49 @@
     </div>
 </div>
 
+<!-- Release Workflow Modal Request Cancel Pending Live-->
+<div id="request-workflow-modal-cancel-pending-live" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-light" label="cancel-publish"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="border-top border-end border-start row mx-0">
+                        <div class="bg-default border-end col-4 p-2 text-end fw-bold">
+                            <label class="mandatory" label="comment"></label>
+                        </div>
+                        <div class="col-8 p-2">
+                            <textarea type="tinymce" rows="3" name="cmm-value" class="form-control"></textarea>
+                            <span class="serverValidationError text-danger" name="cmm-value-error-holder"></span>
+                        </div>
+                    </div>
+                    <div class="border-top row mx-0"></div>
+                </div>
+                <div class="modal-footer bg-warning justify-content-start rounded-0">
+                    <label>
+                        <span label="cancel-pending-live-warning"></span>
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <div class="container-fluid">
+                        <div class="text-end">
+                            <button type="button" class="btn btn-neutral" data-bs-dismiss="modal">
+                                <i class="fas fa-ban"></i> <span label="cancel"></span>
+                            </button>
+                            <button type="submit" class="btn btn-tertiary text-light">
+                                <i class="far fa-check-circle"></i> <span label="submit"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Page specific JS -->
 <script src="entity/release/js/release.workflow.modal.request.library.js"></script>
 <script src="entity/release/js/release.workflow.modal.request.js"></script>

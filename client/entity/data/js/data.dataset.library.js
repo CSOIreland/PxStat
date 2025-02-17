@@ -270,8 +270,11 @@ app.data.dataset.callback.drawDatasetHeading = function () {
             matrixSelectionHeading.find("[name=under-reservation-header]").find("[name=more-info-link]").attr("href", app.config.entity.data.properties.underReservation);
         }
     }
-    //Add badge for language.
-    matrixSelectionHeading.find("[name=language]").text(data.extension.language.name);
+    if (app.config.entity.data.display.language) {
+        //Add badge for language.
+        matrixSelectionHeading.find("[name=language]").text(data.extension.language.name);
+        matrixSelectionHeading.find("[name=language-wrapper]").show();
+    }
 
     //dimension pill
     for (i = 0; i < data.length; i++) {
@@ -304,11 +307,15 @@ app.data.dataset.callback.drawDatasetHeading = function () {
     }
 
     //copyright
-    matrixSelectionHeading.find("[name=copyright]").html(
-        $("<i>", {
-            class: "far fa-copyright me-1"
-        }).get(0).outerHTML + data.extension.copyright.name
-    ).attr("href", data.extension.copyright.href);
+    if (app.config.entity.data.display.copyright) {
+        matrixSelectionHeading.find("[name=copyright]").html(
+            $("<i>", {
+                class: "far fa-copyright me-1"
+            }).get(0).outerHTML + data.extension.copyright.name
+        ).attr("href", data.extension.copyright.href);
+        matrixSelectionHeading.find("[name=copyright-wrapper]").show();
+    }
+
     $("#data-dataset-selected-table [name=card-header]").html(matrixSelectionHeading);
 
     $("#data-dataset-row").show();

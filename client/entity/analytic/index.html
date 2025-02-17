@@ -32,15 +32,6 @@
                     <select class="form-select" name="select-product" disabled></select>
                     <span class="serverValidationError text-danger" name="select-product-error-holder"></span>
                 </div>
-            </div>
-            <div class="border-bottom  border-top border-end border-start row mx-0">
-                <div class="bg-default border-end col-4 p-2 text-end fw-bold">
-                    <label for="nlt-masked-ip" label="exclude-ip-subnet"></label>
-                </div>
-                <div class="col-8 p-2">
-                    <input name="nlt-masked-ip" type="text" class="form-control" placeholder="">
-                    <span class="serverValidationError text-danger" name="nlt-masked-ip-error-holder"></span>
-                </div>
                 <div class="border-top row mx-0"></div>
             </div>
         </div>
@@ -94,7 +85,6 @@
                         <th label="table"></th>
                         <th label="subject"></th>
                         <th label="product"></th>
-                        <th label="date-published"></th>
                         <th label="bots"></th>
                         <th label="m2m"></th>
                         <th label="widgets"></th>
@@ -119,6 +109,7 @@
                     <div class="card mb-4">
                         <div name="analytic-div-header-dates" class="card-header p-2" label="hits"></div>
                         <div class="card-body p-1">
+                            <p class="lead d-flex justify-content-center mt-4" name="chart-not-available" label="analytics-data-not-available" style="display: none;"></p>
                             <div name="dates-line-chart" style="width: 100%; height: 400px"></div>
                         </div>
                     </div>
@@ -129,6 +120,7 @@
                     <div class="card mb-4">
                         <div name="analytic-div-header-referrer" class="card-header p-2" label="referrer"></div>
                         <div class="card-body p-1">
+                            <p class="lead d-flex justify-content-center mt-4" name="chart-not-available" label="analytics-data-not-available" style="display: none;"></p>
                             <div name="referrer-column-chart" style="width: 100%; height: 400px"></div>
                         </div>
                     </div>
@@ -139,7 +131,8 @@
                     <div class="card mb-4">
                         <div name="analytic-div-header-browser" class="card-header p-2" label="browser"></div>
                         <div class="card-body p-1">
-                            <div name="browser-pie-chart"></div>
+                            <p class="lead d-flex justify-content-center mt-4" name="chart-not-available" label="analytics-data-not-available" style="display: none;"></p>
+                            <div name="browser-pie-chart" style="width: 100%; height: 400px"></div>
                         </div>
                     </div>
                 </div>
@@ -147,6 +140,7 @@
                     <div class="card mb-4">
                         <div name="analytic-div-header-os" class="card-header p-2" label="operating-system"></div>
                         <div class="card-body p-1">
+                            <p class="lead d-flex justify-content-center mt-4" name="chart-not-available" label="analytics-data-not-available" style="display: none;"></p>
                             <div name="operating-system-pie-chart" style="width: 100%; height: 400px"></div>
                         </div>
                     </div>
@@ -157,6 +151,7 @@
                     <div class="card mb-4">
                         <div name="analytic-div-header-language" class="card-header p-2" label="table-language"></div>
                         <div class="card-body p-1">
+                            <p class="lead d-flex justify-content-center mt-4" name="chart-not-available" label="analytics-data-not-available" style="display: none;"></p>
                             <div name="language-pie-chart" style="width: 100%; height: 400px"></div>
                         </div>
                     </div>
@@ -165,6 +160,7 @@
                     <div class="card mb-4">
                         <div name="analytic-div-header-format" class="card-header p-2" label="format"></div>
                         <div class="card-body p-1">
+                            <p class="lead justify-content-center mt-4" name="chart-not-available" label="analytics-data-not-available" style="display: none;"></p>
                             <div name="format-pie-chart" style="width: 100%; height: 400px"></div>
                         </div>
                     </div>
@@ -176,6 +172,7 @@
                     <div class="card mb-4">
                         <div class="card-header p-2" label="user-language"></div>
                         <div class="card-body p-1">
+                            <p class="lead d-flex justify-content-center mt-4" name="chart-not-available" label="analytics-data-not-available" style="display: none;"></p>
                             <div name="user-language-column-chart" style="width: 100%; height: 400px"></div>
                         </div>
                     </div>
