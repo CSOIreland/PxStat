@@ -1,0 +1,38 @@
+﻿
+CREATE
+	
+
+ PROCEDURE [dbo].[System_Navigation_Keyword_Release_RemoveDupes] @RlsId INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DROP TABLE
+
+	IF EXISTS #tempKeyword;
+		SELECT DISTINCT krl_value
+			,KRL_RLS_ID
+			,KRL_MANDATORY_FLAG
+			,KRL_SINGULARISED_FLAG
+		INTO #tempKeyword
+		FROM TD_KEYWORD_RELEASE
+		WHERE krl_rls_id = @RlsId;
+
+	DELETE TD_KEYWORD_RELEASE
+	WHERE krl_rls_id = @RlsId;
+
+	INSERT INTO TD_KEYWORD_RELEASE (
+		krl_value
+		,KRL_RLS_ID
+		,KRL_MANDATORY_FLAG
+		,KRL_SINGULARISED_FLAG
+		)
+	SELECT krl_value
+		,KRL_RLS_ID
+		,KRL_MANDATORY_FLAG
+		,KRL_SINGULARISED_FLAG
+	FROM #tempKeyword;
+
+	DROP TABLE
+
+	IF EXISTS #tempKeyword;END

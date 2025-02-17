@@ -42,16 +42,9 @@ namespace PxStat.Config
             }
             var directory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-            if (name.Contains("config"))
-            {
-                // Replace config with schema in name
-                name = name.Replace("config", "schema");
-            }
-            else
-            {
-                // Name is FirebaseKey.json
-                name = "schema." + name;
-            }
+            // Replace config with schema in name
+            name = name.Replace("config", "schema");
+            
             string schema = File.ReadAllText(directory + @"\Resources\Schemas\" + name);
 
             var model = JObject.Parse(value);

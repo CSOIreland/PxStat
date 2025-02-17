@@ -1,6 +1,7 @@
 ﻿using API;
 using PxStatCore.Test;
 using PxStat;
+using CSO.Email;
 
 
 namespace PxStatXUnit.Tests

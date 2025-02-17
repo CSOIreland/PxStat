@@ -53,7 +53,7 @@ namespace PxStat.Subscription
             {
                 //The subscriber is attempting to delete themselves
 
-                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken, ApiServicesHelper.ApiConfiguration.Settings, Log.Instance))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;
@@ -68,7 +68,7 @@ namespace PxStat.Subscription
             if (bso.Delete(Ado, subscriberUserId))
             {
                 //Delete the user also from Firebase
-                if(!AppServicesHelper.Firebase.DeleteUser(subscriberUserId))
+                if(!AppServicesHelper.Firebase.DeleteUser(subscriberUserId,  ApiServicesHelper.ApiConfiguration.Settings, Log.Instance))
                 {
                     Log.Instance.Debug("Can't delete Subscriber");
                     Response.error = Label.Get("error.delete");

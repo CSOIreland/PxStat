@@ -345,6 +345,52 @@ namespace PxStat.DataStore
             return matrix;
         }
 
+        public IDmatrix RunFractalQueryQspec(IDmatrix matrix, IDspec querySpec,string lngIsoCode)
+        {
+            IDspec dspec = matrix.Dspecs[lngIsoCode];
+            //For each dimension, what variables are being queried? The result is stored in the QueryDimensionOrdinals
+            //property of each dimension
+            ApplyQueryToDimensions(ref dspec, querySpec);
+
+            //For each dimension, what ordinals of Cells would be selected if only that dimension was being queried?
+            Parallel.ForEach(dspec.Dimensions, dim =>
+            {
+                dim.QualifyingOrdinals = GetQualifyingOrdinals(dim, matrix.Cells.Count);
+                List<IDimensionVariable> queriedVariableList = new List<IDimensionVariable>();
+                foreach (int s in dim.QueryDimensionOrdinals)
+                    queriedVariableList.Add(dim.Variables[s - 1]);
+                //We can also take the opportunity to amend the dimension to make it correspond to the query:
+                dim.Variables = queriedVariableList;
+            });
+
+
+            //Now do a linq join of the QueryDimensionOrdinals properties of each dimension
+            //This will result in a list of Cells ordinals that correspond to the query
+            var selectedCells = GetJoinedQueriedOrdinals(matrix);
+
+            var sequenceCells = from pair in matrix.Cells.ToList().Select((value, index) => new { value, index })
+                                select new SequencedCell() { Sequence = pair.index, Value = pair.value };
+
+            //foreach (int s in selectedCells)
+            //    filteredCells.Add(matrix.Cells.ToList()[s]);
+
+            var output = from sCell in sequenceCells
+                         join cell in selectedCells
+                         on sCell.Sequence equals cell
+                         orderby sCell.Sequence
+                         select new
+                         {
+                             sCell.Value
+                         };
+
+            // result = new List<int>(output);
+
+            matrix.Cells = output.Select(x => x.Value).ToList();
+
+
+            return matrix;
+        }
+
         /// <summary>
         /// Run fractal query using another matrix as query metaData. This version just returns the list of selected ordinals
         /// </summary>
@@ -824,7 +870,7 @@ namespace PxStat.DataStore
             dmatrix.Id = dmatrixData.data[0].MtrId;
             dmatrix.Language = lngIsoCode;
 
-
+            dmatrix.MtrInput = dmatrixData.data[0].MtrInput;
 
             IDspec dspec = new DSpecFactory().CreateDspec();
             dspec.Dimensions = new List<StatDimension>();
@@ -854,8 +900,12 @@ namespace PxStat.DataStore
                 }
                 else
                 {
-                    spec.Notes = new List<string>() { dmatrixData.data[0].MtrNote };
+                    spec.Notes = new List<string>();
+                    if (Resources.Cleanser.TryCast<string>(dmatrixData.data[0].MtrNote, out string sresult))// { dmatrixData.data[0].MtrNote };
+                        spec.Notes.Add(sresult);
+
                 }
+
 
             }
             spec.Source = dmatrix.Copyright.CprValue;

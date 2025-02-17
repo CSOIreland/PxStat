@@ -23,6 +23,11 @@ namespace PxStat.Data
         }
     }
 
+    public class Cube_VLD_ReadLiveAll : AbstractValidator<Cube_DTO_ReadLiveAll>
+    {
+        public Cube_VLD_ReadLiveAll() { }
+    }
+
     /// <summary>
     /// Validator for Cube_DTO_Read
     /// </summary>
@@ -201,7 +206,6 @@ namespace PxStat.Data
         {
             RuleFor(x => x).Must(CustomValidations.ReadDatasetHasEnoughParameters).WithMessage("Not enough parameters in the RESTful request");
             RuleFor(x => x).Must(CustomValidations.FormatExistsReadDataset).WithMessage("Requested format not found");
-            RuleFor(x => x).Must(CustomValidations.LanguageCode).WithMessage("Invalid language code");
         }
 
 

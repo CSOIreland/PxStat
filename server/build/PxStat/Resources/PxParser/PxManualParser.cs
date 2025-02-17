@@ -64,6 +64,9 @@ namespace PxParser.Resources.Parser
         /// input string before processing. This pre-process is to make sure that all the line
         /// endings in the input string are terminated with \r\n. It protects against
         /// name value pairs in the input string written over multiple lines.
+        /// 
+        /// Note - the HTML sanitizer converts \r\n to \n by default
+        /// 
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -206,6 +209,7 @@ namespace PxParser.Resources.Parser
                 string keyword;
                 string value;
 
+
                 if (String.IsNullOrEmpty(keywordAndValue))
                 {
                     break;
@@ -239,6 +243,7 @@ namespace PxParser.Resources.Parser
 
             for (int i = 0; i < keywords.Count; i++)
             {
+                
                 IPxKeywordElement keywordElement = ProcessKeywordElement(keywords[i], values[i]);
                 pxKeywordElements.Add(keywordElement);
             }
@@ -283,7 +288,11 @@ namespace PxParser.Resources.Parser
             {
                 case DATA:
                     IList<IPxSingleElement> cells = new List<IPxSingleElement>();
-                    List<dynamic> dataRows = value.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<dynamic>();
+                  
+                    //List<dynamic> dataRows = value.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<dynamic>();
+                    // Change the split to just \n and remove the \r in the next stage
+                    //the Html sanitizer has already removed the \r 
+                    List<dynamic> dataRows = value.Split(new string[] { "\n" }, StringSplitOptions.None).ToList<dynamic>();
                     foreach (string data in dataRows)
                     {
                         if (String.IsNullOrEmpty(data) || data.Equals(";"))
@@ -477,8 +486,11 @@ namespace PxParser.Resources.Parser
         /// <param name="data"></param>
         private void ProcessTail(IList<IPxSingleElement> elements, string data)
         {
+
             // Remove semicolon line feeds and carriage returns from data, if present
             data = data.Replace(";", "").Replace("\r", "").Replace("\n", "");
+
+
 
             // Check for strings in data
             if (data.Contains("\""))

@@ -1,4 +1,5 @@
 ﻿using API;
+using CSO.Email;
 using PxStat.Security;
 using PxStat.Template;
 using System;
@@ -110,8 +111,8 @@ namespace PxStat.Subscription
 
 
             email.Subject = subject;
-            email.Body = email.ParseTemplate(Properties.Resources.template_NotifyChannelSubscription, listToParse);
-            return email.Send();
+            email.Body = email.ParseTemplate(Properties.Resources.template_NotifyChannelSubscription, listToParse,Log.Instance );
+            return email.Send(ApiServicesHelper.ApiConfiguration.Settings,Log.Instance);
         }
     }
 }

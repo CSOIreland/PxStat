@@ -15,6 +15,10 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Net;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net.Http;
+using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Configuration;
 
 namespace PxStat.Resources
 {
@@ -62,7 +66,7 @@ namespace PxStat.Resources
 
             if (Languages == null)
                 Languages = new Dictionary<string, ILanguagePlugin>();
-            
+            var x = Directory.GetCurrentDirectory();  //C:\Wspace\8.2.0\server\PxStatCore.Test\bin\Debug\net8.0
             baseDir ??=Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "\\";
             try
             {
@@ -132,18 +136,61 @@ namespace PxStat.Resources
             var dll = Assembly.LoadFile(path);
             var languageType = dll.GetType(namespaceClass);
 
-            string translation;
-            using (WebClient wc = new())
+            var socketHandler = new SocketsHttpHandler()
             {
-                translation = wc.DownloadString(translationUrl);
-            }
+                ConnectCallback = async (context, cancellationToken) =>
+                {
+                    // Use DNS to look up the IP addresses of the target host:
+                    // - IP v4: AddressFamily.InterNetwork
+                    // - IP v6: AddressFamily.InterNetworkV6
+                    // - IP v4 or IP v6: AddressFamily.Unspecified
+                    // note: this method throws a SocketException when there is no IP address for the host
+                    var entry = await Dns.GetHostEntryAsync(context.DnsEndPoint.Host, AddressFamily.InterNetwork, cancellationToken);
 
+                    // Open the connection to the target host/port
+                    var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+
+                    // Turn off Nagle's algorithm since it degrades performance in most HttpClient scenarios.
+                    socket.NoDelay = true;
+
+                    try
+                    {
+                        await socket.ConnectAsync(entry.AddressList, context.DnsEndPoint.Port, cancellationToken);
+
+                        // If you want to choose a specific IP address to connect to the server
+                        // await socket.ConnectAsync(
+                        //    entry.AddressList[Random.Shared.Next(0, entry.AddressList.Length)],
+                        //    context.DnsEndPoint.Port, cancellationToken);
+
+                        // Return the NetworkStream to the caller
+                        return new NetworkStream(socket, ownsSocket: true);
+                    }
+                    catch
+                    {
+                        socket.Dispose();
+                        throw;
+                    }
+                }
+
+            };
+            string translation;
+            using (var httpClient = new HttpClient(socketHandler))
+            {
+                httpClient.DefaultRequestHeaders.Add("User-Agent", Configuration_BSO.GetStaticConfig("APP_USER_AGENT"));
+                translation = GetDownloadString(httpClient, translationUrl).Result;
+            }
+                
             dynamic languageClass = Activator.CreateInstance(languageType,translation);
 
             //Impromptu will convert the dynamic to an instance of ILanguagePlugin. Must be of the same shape!
             ILanguagePlugin lngPlugin = Impromptu.ActLike<ILanguagePlugin>(languageClass);
 
             return lngPlugin;
+        }
+
+        public static async Task<string> GetDownloadString(HttpClient httpClient, string translationUrl)
+        {
+            return await httpClient.GetStringAsync(translationUrl);
         }
     }
 }

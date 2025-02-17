@@ -3,6 +3,7 @@ using FluentValidation;
 using PxStat.Resources;
 using PxStat.Security;
 using System;
+using System.Net;
 using System.Reflection;
 
 namespace PxStat.Template
@@ -27,9 +28,11 @@ namespace PxStat.Template
         /// </summary>
         protected override void OnExecutionSuccess()
         {
+            if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                Response.statusCode = HttpStatusCode.OK;
             Log.Instance.Debug("Record deleted");
             //See if there's a cache in the process. If so then we need to flush the cache.
-            if (Resources.MethodReader.MethodHasAttribute(Request.method, Configuration_BSO.GetStaticConfig("APP_CACHE_FLUSH_ATTRIBUTE")))
+            if (API.MethodReader.MethodHasAttribute(Request.method, Configuration_BSO.GetStaticConfig("APP_CACHE_FLUSH_ATTRIBUTE")))
             {
                 cDTO = new CacheMetadata(Configuration_BSO.GetStaticConfig("APP_CACHE_FLUSH_ATTRIBUTE"), Request.method, DTO);
                 foreach (Cas cas in cDTO.CasList)Cas.RunCasFlush(cas.CasRepository + cas.Domain);
@@ -42,6 +45,8 @@ namespace PxStat.Template
         /// </summary>
         protected override void OnExecutionError()
         {
+            if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                Response.statusCode =HttpStatusCode.NotModified;
             Log.Instance.Debug("No record deleted");
         }
 
@@ -62,7 +67,7 @@ namespace PxStat.Template
 
                 bool isKeyValueParameters = Resources.Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
 
-                if (CustomAttributeNames.Contains("PxStat.NoCleanseDto"))
+                if (API.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
                 {
                     cleansedParams = Request.parameters;
                 }
@@ -74,7 +79,7 @@ namespace PxStat.Template
                     }
                     else
                     {
-                        if (CustomAttributeNames.Contains("PxStat.IndividualCleanseNoHtml"))
+                        if (API.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
                         {
                             dynamic dto = GetDTO(Request.parameters);
                             cleansedParams = Resources.Cleanser.Cleanse(Request.parameters, dto);
@@ -104,7 +109,7 @@ namespace PxStat.Template
 
                 if (!DTOValidationResult.IsValid)
                 {
-                    OnDTOValidationError(CustomAttributeNames.Contains("PxStat.TokenSecure"));
+                    OnDTOValidationError(API.MethodReader.MethodHasAttribute(Request.method, "TokenSecure"));
                     return this;
                 }
 
@@ -121,9 +126,9 @@ namespace PxStat.Template
 
 
 
-                if (CustomAttributeNames.Contains("PxStat.NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
+                if (API.MethodReader.MethodHasAttribute(Request.method, "NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
                 {
-                    if (!IsAdministrator() && !CustomAttributeNames.Contains("PxStat.TokenSecure"))
+                    if (!IsAdministrator() && !API.MethodReader.MethodHasAttribute(Request.method, "TokenSecure"))
                     {
                         OnAuthenticationFailed();
                         return this;
@@ -159,7 +164,8 @@ namespace PxStat.Template
                 Ado.StartTransaction();
 
                 // Create the trace now that we're sure we have a SamAccountName if it exists
-                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
+                // TODO This can be removed when the new tracing is tested
+                // Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
 
                 // The Actual Creation should happen here by the specific class!
                 if (!Execute())
@@ -181,6 +187,7 @@ namespace PxStat.Template
                 //A FormatException error has been caught, rollback the transaction, log the error and return a message to the caller
                 Ado.RollbackTransaction();
                 Log.Instance.Error(formatException);
+                Response.statusCode = HttpStatusCode.BadRequest;
                 Response.error = formatException.Message ?? Label.Get("error.schema");
                 return this;
             }
@@ -189,6 +196,7 @@ namespace PxStat.Template
                 //An error has been caught, rollback the transaction, log the error and return a message to the caller
                 Ado.RollbackTransaction();
                 Log.Instance.Error(inputError);
+                Response.statusCode = HttpStatusCode.BadRequest;
                 Response.error = Label.Get("error.schema");
                 return this;
             }
@@ -197,6 +205,7 @@ namespace PxStat.Template
                 //An error has been caught, rollback the transaction, log the error and return a message to the caller
                 Ado.RollbackTransaction();
                 Log.Instance.Error(ex);
+                Response.statusCode = HttpStatusCode.InternalServerError;
                 Response.error = Label.Get("error.exception");
                 return this;
             }

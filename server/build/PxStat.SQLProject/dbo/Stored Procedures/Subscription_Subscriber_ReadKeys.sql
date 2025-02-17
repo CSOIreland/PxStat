@@ -1,0 +1,13 @@
+﻿
+CREATE
+	
+
+ PROCEDURE [dbo].[Subscription_Subscriber_ReadKeys]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT DISTINCT SBR_KEY AS SbrKey
+	FROM TD_SUBSCRIBER
+	WHERE SBR_DELETE_FLAG = 0;
+END

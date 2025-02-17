@@ -32,7 +32,15 @@ namespace PxStat.Data
             return GetWipForLive(rlsCode, samAccountName) != null;
         }
 
+        internal bool IsPendingLive(Release_DTO release_DTO)
+        { 
+            if(release_DTO == null) return false;
+            if(!release_DTO.RlsLiveFlag) return false;
+            if(release_DTO.RlsLiveDatetimeFrom<=DateTime.Now) return false;
+            if (release_DTO.RlsLiveDatetimeTo <= DateTime.Now && release_DTO.RlsLiveDatetimeTo!=default) return false;
+            return true;
 
+        }
 
         internal dynamic GetWipForLive(int rlsCode, string samAccountName)
         {

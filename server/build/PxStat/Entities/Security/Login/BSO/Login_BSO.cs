@@ -1,4 +1,6 @@
 ﻿using API;
+using CSO.Email;
+using CSO.TwoFA;
 using System;
 
 namespace PxStat.Security
@@ -92,7 +94,7 @@ namespace PxStat.Security
                 email.Subject = Subject;
                 email.To.Add(dto.CcnEmail);
 
-                email.Send();
+                email.Send(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
             }
         }
 

@@ -43,6 +43,7 @@ namespace PxStat.Security
             }
 
             MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadLanguage", DTO);
+     
             if (cache.hasData)
             {
                 Response.data = cache.data;
@@ -53,8 +54,7 @@ namespace PxStat.Security
 
             if (outputSummary != null)
             {
-                outputSummary.ToList().Sort();
-                outputSummary.ToList().Reverse();
+               // outputSummary.ToList().OrderBy(x=>x.lngCount).Reverse();
 
                 Response.data = FormatData(outputSummary);
                 ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "ReadLanguage", DTO, Response.data, default(DateTime));

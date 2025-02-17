@@ -48,7 +48,11 @@ namespace PxStat.Security
                 return true;
             }
             Analytic_ADO ado = new Analytic_ADO(Ado);
+
+            // Sort outputSummary by ascending date
             List<dynamic> outputSummary = ado.ReadTimeline(DTO);
+            outputSummary.Sort((x, y) => ((DateTime)x.DATE).CompareTo((DateTime)y.DATE));
+
             if (outputSummary != null)
             {
                 ApiServicesHelper.CacheD.Store_BSO("PxStat.Security", "Analytic", "ReadTimeline", DTO, outputSummary, default(DateTime));

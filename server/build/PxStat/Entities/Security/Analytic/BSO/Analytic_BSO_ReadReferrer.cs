@@ -42,6 +42,7 @@ namespace PxStat.Security
             }
 
             MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "ReadReferrer", DTO);
+            
             if (cache.hasData)
             {
                 Response.data = cache.data;
@@ -73,12 +74,23 @@ namespace PxStat.Security
 
             string unknown = Label.Get("analytic.unknown");
             string others = Label.Get("analytic.others");
+
+            List<nltReferer> rList = new();
             foreach (dynamic item in readData)
+            {
+                rList.Add(new nltReferer() { NltReferer = GetDomain(item.NltReferer), nltCount = item.NltCount });  
+            }
+
+
+            var oList=rList.GroupBy(x => x.NltReferer).Select(x => new { NltReferer = x.Key, NltCount = x.Sum(s => s.nltCount) });
+            foreach (dynamic item in oList)
             {
 
                 if (counter < limit)
                 {
-                    itemDict.Add(item.NltReferer.ToString() == "-" ? unknown : item.NltReferer.ToString(), item.NltCount);
+                    var itemObject = item.NltReferer.ToString() == "-" ? unknown : item.NltReferer.ToString();
+                    
+                    itemDict.Add(GetDomain(itemObject), item.NltCount);
                 }
                 else otherSum = otherSum + item.NltCount;
                 counter++;
@@ -88,6 +100,21 @@ namespace PxStat.Security
             
             return itemDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
        
+        }
+
+        private string GetDomain(string domain)
+        {
+            try
+            {
+                Uri uri = new Uri(domain);
+                return uri.Host;
+            }
+            catch (FormatException fx)
+
+            {
+                return domain;
+            }
+            catch (Exception ex) { throw; }
         }
     }
     class nltReferer

@@ -41,13 +41,14 @@ namespace PxStat.Security
                 DTO.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
             MemCachedD_Value cache = ApiServicesHelper.CacheD.Get_BSO("PxStat.Security", "Analytic", "Read", DTO);
+            
             if (cache.hasData)
             {
                 Response.data = cache.data;
                 return true;
             }
-            
-            
+
+
 
             Analytic_ADO ado = new Analytic_ADO(Ado);
             List<dynamic> outputSummary = ado.Read(DTO);

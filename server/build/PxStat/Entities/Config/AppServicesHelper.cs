@@ -1,16 +1,24 @@
 ﻿using API;
+using CSO.Firebase;
 using Dynamitey;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System;
+using System.IO;
 
 
 namespace PxStat
 {
+    public static class StaticConfigurations
+    {
+
+    }
+
     public class AppServicesHelper : ApiServicesHelper
     {
         private  static StaticConfig staticConfig;
-        private static IFirebase firebase;
+        private static CSO.Firebase.Firebase firebase;
         private static IActiveDirectory activeDirectory;
         private static IADO staticAdo;
         private static ICacheD staticCache;
@@ -21,7 +29,7 @@ namespace PxStat
         {
             staticConfig = JsonConvert.DeserializeObject<StaticConfig>(injectedConfig);       
         }
-
+        
 
         public static IADO StaticADO
         {
@@ -30,6 +38,21 @@ namespace PxStat
                 return new ADO("defaultConnection");
             }
             set { staticAdo = value; }
+        }
+
+        public static CSO.Firebase.Firebase Firebase
+        {
+            get
+            {
+                if (firebase == null)
+                {
+                    firebase=new CSO.Firebase.Firebase();
+                }
+                    return firebase;
+                
+            }
+            set { firebase = value; }
+
         }
 
         public static StaticConfig StaticConfig
@@ -50,7 +73,9 @@ namespace PxStat
             {
                 if (appSettings == null)
                 {
-                    var configuration = new ConfigurationBuilder().AddJsonFile($"appsettings.json");
+
+                    var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.RelativeSearchPath ?? "");
+                    var configuration = new ConfigurationBuilder().AddJsonFile(path + "appsettings.json");
 
                     appSettings = configuration.Build();
                 }

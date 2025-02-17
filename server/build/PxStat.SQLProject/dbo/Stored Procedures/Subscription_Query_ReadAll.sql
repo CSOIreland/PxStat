@@ -1,0 +1,55 @@
+﻿
+CREATE
+    
+	
+
+  PROCEDURE [dbo].[Subscription_Query_ReadAll] @SubscriberUserId NVARCHAR(256) = NULL
+	,@CcnUsername NVARCHAR(256) = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @SubscriberUserId IS NULL
+		AND @CcnUsername IS NULL
+	BEGIN
+		RETURN 0;
+	END
+
+	DECLARE @UserId AS INT;
+
+	IF @SubscriberUserId IS NOT NULL
+	BEGIN
+		SET @UserId = (
+				SELECT USR_ID
+				FROM TD_USER
+				INNER JOIN TD_SUBSCRIBER ON SBR_USR_ID = USR_ID
+					AND SBR_UID = @SubscriberUserId
+					AND SBR_DELETE_FLAG = 0
+				);
+	END
+	ELSE
+	BEGIN
+		SET @UserId = (
+				SELECT USR_ID
+				FROM TD_USER
+				INNER JOIN TD_ACCOUNT ON CCN_USR_ID = USR_ID
+					AND CCN_USERNAME = @CcnUsername
+					AND CCN_DELETE_FLAG = 0
+				);
+	END
+
+	IF @UserId IS NULL
+	BEGIN
+		RETURN 0;
+	END
+
+	SELECT SQR_ID AS Id
+		,SQR_SNIPPET_TAGNAME AS TagName
+		,SQR_SNIPPET_MATRIX AS Matrix
+		,SQR_SNIPPET_TYPE AS SnippetType
+		,SQR_FLUID_TIME AS FluidTime
+	FROM TD_USER_QUERY
+	WHERE SQR_USR_ID = @UserId;
+END
+
+SET ANSI_NULLS ON;

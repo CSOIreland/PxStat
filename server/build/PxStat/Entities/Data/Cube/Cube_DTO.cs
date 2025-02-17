@@ -88,6 +88,14 @@ namespace PxStat.Data
         public int subject { get; set; }
 
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Cube_DTO_ReadCollection()
+        {
+
+        }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parameters"></param>
@@ -485,6 +493,10 @@ namespace PxStat.Data
         }
     }
 
+    public class Cube_DTO_ReadLiveAll
+    {
+        public Cube_DTO_ReadLiveAll(dynamic parameters) { }
+    }
 
     /// <summary>
     /// Some constants

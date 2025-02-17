@@ -39,8 +39,6 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).NotEqual(default(DateTime));
             RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom);
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
-            //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
             //Optional - ExcludeInternal
@@ -61,13 +59,7 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).NotEqual(default(DateTime));
             RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom);
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
-            //Optional - MtrCode
-            RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
-            //Optional - NltInternalNetworkMask
-            //RuleFor(x => x.NltInternalNetworkMask).Length(1, 15).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
-            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
-            //Optional - SbjCode
-            //Optional - PrcCode
+        
             
         }
     }
@@ -85,8 +77,6 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
             //Optional - MtrCode
             RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
-            //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
             //Optional - SbjCode
             //Optional - PrcCode
             //Mandatory LngIsoCode
@@ -109,14 +99,7 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).NotEqual(default(DateTime));
             RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom);
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
-            //Optional - MtrCode
-            RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
-            //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
-            //Optional - SbjCode
-            //Optional - PrcCode
-            //Mandatory LngIsoCode
-            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+            
         }
     }
 
@@ -131,13 +114,7 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).NotEqual(default(DateTime));
             RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom);
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
-            //Optional FrmType
-            RuleFor(x => x.FrmType).Length(1, 32).When(x => !string.IsNullOrEmpty(x.FrmType));
-
-            RuleFor(x => x.FrmVersion).Length(1, 32).When(x => !string.IsNullOrEmpty(x.FrmVersion));
-
-            //FrmVersion must be empty when FrmType is empty
-            RuleFor(x => x.FrmVersion).Empty().When(x => string.IsNullOrEmpty(x.FrmType));
+           
 
         }
     }
@@ -158,8 +135,6 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
             //Optional - MtrCode
             RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
-            //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
 
             //Optional - SbjCode
             //Optional - PrcCode
@@ -180,15 +155,7 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).NotEqual(default(DateTime));
             RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom);
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
-            //Optional - MtrCode
-            RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
-            //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
-
-            //Optional - SbjCode
-            //Optional - PrcCode
-            //Mandatory LngIsoCode
-            RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
+            
         }
     }
 
@@ -206,14 +173,7 @@ namespace PxStat.Security
             RuleFor(x => x.DateTo).NotEqual(default(DateTime));
             RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom);
             RuleFor(x => x.DateTo).LessThanOrEqualTo(DateTime.Now.Date.AddDays(-1));
-            //Optional - MtrCode
-            RuleFor(x => x.MtrCode).NotEmpty().Length(1, 20).When(x => !string.IsNullOrEmpty(x.MtrCode));
-            //Optional - NltInternalNetworkMask
-            RuleFor(x => x.NltInternalNetworkMask).Matches(maskedIp).When(x => !string.IsNullOrEmpty(x.NltInternalNetworkMask));
-            //Optional - LngIsoCode
-            RuleFor(x => x.LngIsoCode).Length(2).When(x => !string.IsNullOrEmpty(x.LngIsoCode));
-            //Optional - SbjCode
-            //Optional - PrcCode
+      
         }
     }
 }

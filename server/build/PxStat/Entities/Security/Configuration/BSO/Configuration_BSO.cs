@@ -47,9 +47,11 @@ namespace PxStat.Security
             PxStatConfiguration = config;
         }
 
-        public static void SetServerLangaugeConfig()
+        public static void SetServerLangaugeConfig(string appsettingsFile=null)
         {
-            using StreamReader reader = new("appsettings.json");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppDomain.CurrentDomain.RelativeSearchPath ?? "");
+            using StreamReader reader = new(appsettingsFile == null ? path + "appsettings.json" : appsettingsFile);
+
             string json = reader.ReadToEnd();
             dynamic fullConfig = JsonConvert.DeserializeObject(json);
             var cfg = fullConfig.LanguageResource.languages;

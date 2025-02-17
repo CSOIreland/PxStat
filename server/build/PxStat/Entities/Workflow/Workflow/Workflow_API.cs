@@ -69,5 +69,10 @@ namespace PxStat.Workflow
         {
             return new Workflow_BSO_ReadWorkInProgress(requestApi).Read().Response;
         }
+
+        public static dynamic CancelPendingLive(JSONRPC_API requestApi)
+        {
+            return new Workflow_BSO_CancelPendingLive(requestApi).Create().Response;
+        }
     }
 }

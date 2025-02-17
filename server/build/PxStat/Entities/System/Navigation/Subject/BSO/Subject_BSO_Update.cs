@@ -2,6 +2,7 @@
 using PxStat.Resources;
 using PxStat.Security;
 using PxStat.Template;
+using System.Collections.Generic;
 
 namespace PxStat.System.Navigation
 {
@@ -73,8 +74,11 @@ namespace PxStat.System.Navigation
                 Log.Instance.Debug("No keywords deleted");
 
             }
+
+            List<dynamic> versions = GetAllSbjValuesForSubject(adoSubject,nUpdatedSubjectId);
+
             //We can now recreate the keywords for the subject
-            kbBso.Create(Ado, DTO, nUpdatedSubjectId);
+            kbBso.Create(Ado, DTO, nUpdatedSubjectId,versions);
 
             //Reset the relevant caches
            Cas.RunCasFlush(Resources.Constants.C_CAS_NAVIGATION_SEARCH);
@@ -83,6 +87,11 @@ namespace PxStat.System.Navigation
             Response.data = ApiServicesHelper.ApiConfiguration.Settings["API_SUCCESS"];
 
             return true;
+        }
+
+        private List<dynamic> GetAllSbjValuesForSubject(Subject_ADO sAdo, int sbjCode)
+        {
+            return sAdo.ReadAllLanguages(sbjCode);
         }
     }
 }

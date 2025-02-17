@@ -1,0 +1,103 @@
+﻿
+CREATE
+	
+
+ PROCEDURE [dbo].[Api_Settings_Write] @apiversion DECIMAL(10, 2)
+	,@apikey VARCHAR(200)
+	,@apivalue VARCHAR(MAX)
+	,@apidescription VARCHAR(MAX)
+	,@apisensitivevalue BIT = NULL
+	,@userName NVARCHAR(256)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @APIID AS INT;
+	DECLARE @newkey AS INT;
+
+	SET @APIID = (
+			SELECT MAX(TM_APP_SETTING_CONFIG_VERSION.ASV_ID)
+			FROM TM_APP_SETTING_CONFIG_VERSION
+			INNER JOIN TS_CONFIG_SETTING_TYPE ON TS_CONFIG_SETTING_TYPE.CST_ID = TM_APP_SETTING_CONFIG_VERSION.ASV_CST_ID
+			WHERE (TS_CONFIG_SETTING_TYPE.CST_CODE = 'API')
+			);
+
+	DECLARE @DtgId AS INT = NULL;
+
+	EXECUTE @DtgId = Security_Auditing_Create @userName;
+
+	IF @DtgId IS NULL
+		OR @DtgId = 0
+	BEGIN
+		RAISERROR (
+				'SP: Security_Auditing_Create has failed!'
+				,16
+				,1
+				);
+
+		RETURN 0;
+	END
+
+	SET @newkey = (
+			SELECT count(*)
+			FROM TS_API_SETTING
+			WHERE API_KEY = @apikey
+				AND API_ASV_ID = (
+					SELECT MAX(ASV_ID)
+					FROM TM_APP_SETTING_CONFIG_VERSION
+					WHERE ASV_VERSION = @apiversion
+					)
+			);
+
+	IF @newkey = 0
+	BEGIN
+		INSERT INTO TS_API_SETTING
+		VALUES (
+			@APIID
+			,@apikey
+			,@apivalue
+			,@apidescription
+			,COALESCE(@apisensitivevalue, 0)
+			);
+
+		INSERT INTO TS_API_SETTING
+		SELECT @APIID
+			,API_KEY
+			,API_VALUE
+			,API_DESCRIPTION
+			,API_SENSITIVE_VALUE
+		FROM TS_API_SETTING
+		WHERE API_ASV_ID = (
+				SELECT DISTINCT ASV_ID
+				FROM TM_APP_SETTING_CONFIG_VERSION
+				WHERE ASV_VERSION = @apiversion
+					AND ASV_CST_ID = 1
+				);
+	END
+	ELSE
+	BEGIN
+		INSERT INTO TS_API_SETTING
+		VALUES (
+			@APIID
+			,@apikey
+			,@apivalue
+			,@apidescription
+			,COALESCE(@apisensitivevalue, 0)
+			);
+
+		INSERT INTO TS_API_SETTING
+		SELECT @APIID
+			,API_KEY
+			,API_VALUE
+			,API_DESCRIPTION
+			,API_SENSITIVE_VALUE
+		FROM TS_API_SETTING
+		WHERE API_ASV_ID = (
+				SELECT DISTINCT ASV_ID
+				FROM TM_APP_SETTING_CONFIG_VERSION
+				WHERE ASV_VERSION = @apiversion
+					AND ASV_CST_ID = 1
+				)
+			AND API_KEY <> @apikey;
+	END
+END

@@ -43,7 +43,9 @@ namespace PxStat.Config
             {
                 Response.mimeType = Configuration_BSO.GetStaticConfig("APP_TEXT_MIMETYPE");
             }
-            else Response.mimeType = Configuration_BSO.GetStaticConfig("APP_JSON_MIMETYPE");
+            else 
+                
+                Response.mimeType = Configuration_BSO.GetStaticConfig("APP_JSON_MIMETYPE");
             return true;
         }
 

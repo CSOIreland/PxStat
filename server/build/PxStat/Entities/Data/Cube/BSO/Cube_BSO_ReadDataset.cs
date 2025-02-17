@@ -78,7 +78,7 @@ namespace PxStat.Data
             ////See if this request has cached data
             
             MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadDataset", DTO);
-            
+
             if (cache.hasData)
             {
                 //Modify mimetype etc
@@ -105,7 +105,7 @@ namespace PxStat.Data
             if (Throttle_BSO.IsNotInTheWhitelist(whitelist, host) && Throttle_BSO.IsThrottled(Ado , Request, SamAccountName))
             {
                 Log.Instance.Debug("Request throttled");
-                Response.statusCode = HttpStatusCode.Forbidden;
+                Response.statusCode = HttpStatusCode.TooManyRequests;
                 Response.error = Label.Get("error.throttled");
 
 
@@ -114,6 +114,7 @@ namespace PxStat.Data
                 if ((bool)DTO.m2m)
                 {
                     Response.error = Response.error + " " + Label.Get("error.throttled-m2m");
+                    Response.statusCode = HttpStatusCode.TooManyRequests;
                 }
                 return false;
             }

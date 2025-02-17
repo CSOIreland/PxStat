@@ -22,7 +22,7 @@ namespace PxStat.Security
         {
             //Check in case the NoTrace attribute is set for the requested API method
             //If so, don't proceed with the trace.
-            if (Resources.MethodReader.MethodHasAttribute(request.method, "NoTrace"))
+            if (API.MethodReader.MethodHasAttribute(request.method, "NoTrace"))
                 return 0;
 
             Trace_ADO tAdo = new Trace_ADO();

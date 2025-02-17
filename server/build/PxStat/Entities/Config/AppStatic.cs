@@ -81,5 +81,6 @@
         public string APP_COOKIELINK_TABLE { get; set;}
         public string APP_GEOMAP_ALLOWED_GEOMETRY_MULTI { get; set;}
         public string APP_GEOMAP_ALLOWED_GEOMETRY_UNIQUE { get; set;}
+        public string APP_USER_AGENT { get; set; }
     }
 }

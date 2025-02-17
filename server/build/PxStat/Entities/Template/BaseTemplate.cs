@@ -1,4 +1,5 @@
 ﻿using API;
+using CSO.AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -66,7 +67,6 @@ namespace PxStat.Template
 
         protected string UserIdentifier { get; set; }
 
-        public IList<string> CustomAttributeNames { get; set; }
        
 
         #endregion 
@@ -96,8 +96,7 @@ namespace PxStat.Template
                 Response = new JSONRPC_Output();
             Validator = validator;
 
-            //Save some Reflection effort by getting all custom attributes together
-            CustomAttributeNames=Resources.MethodReader.GetAllCustomAttributeNamesForMethod(Request.method);  
+           
             
 
         }
@@ -228,6 +227,7 @@ namespace PxStat.Template
         /// <returns></returns>
         virtual protected T GetDTO(dynamic parameters = null)
         {
+            AutoMap.Mapper = AutoMap.CreateMapper(ApiServicesHelper.ApiConfiguration.Settings);
             dynamic copyParams;
             try
             {
@@ -294,10 +294,12 @@ namespace PxStat.Template
             if (!isMachineReadable)
             {
                 Response.error = Label.Get("error.validation");
+                Response.statusCode=HttpStatusCode.BadRequest;  
             }
             else
             {
                 Response.error = DTOValidationResult.Errors;
+                Response.statusCode=HttpStatusCode.BadRequest;  
             }
         }
 
@@ -307,6 +309,8 @@ namespace PxStat.Template
         virtual protected void OnThrottle()
         {
             Log.Instance.Debug("Request throttled");
+            if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                Response.statusCode = HttpStatusCode.TooManyRequests;
             Response.error = Label.Get("error.throttled");
         }
 
@@ -317,6 +321,8 @@ namespace PxStat.Template
         {
             //Security validation failed - return an error and proceed no further
             Log.Instance.Debug("Unauthorised access");
+            if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                Response.statusCode = HttpStatusCode.Unauthorized;
             Response.error = Label.Get("error.privilege");
         }
 
@@ -329,6 +335,7 @@ namespace PxStat.Template
         {
             //Security validation failed - return an error and proceed no further
             Log.Instance.Debug("Unauthorised access");
+            Response.statusCode = HttpStatusCode.Unauthorized;
             Response.error = Label.Get("error.authentication");
         }
 
@@ -359,7 +366,7 @@ namespace PxStat.Template
             {
                 if (!ActiveDirectory.IsAuthenticated(Request.userPrincipal))
                 {
-
+                    Log.Instance.Error(String.Format("Invalid Login for attempt. User is: {0}", Request.userPrincipal));
                     OnAuthenticationFailed();
                     return false;
                 }
@@ -380,45 +387,49 @@ namespace PxStat.Template
                 }
                 AuthenticationType = AuthenticationType.windows;
             }
-            else if (!string.IsNullOrEmpty(Request.sessionCookie.Value) )
+            else if ((!string.IsNullOrEmpty(Request.sessionCookie.Value)) && (!API.MethodReader.MethodHasAttribute(Request.method, "TokenSecure")) )
             {
                 //This may be application authenticated, let's check..
 
                 Response.error = null;
 
 
-                    if (!String.IsNullOrEmpty(Request.sessionCookie.Value))
+                if (!String.IsNullOrEmpty(Request.sessionCookie.Value))
+                {
+
+                    //Does the cookie correspond with a live token for a user? If so then return the user.
+
+
+                    ADO_readerOutput user;
+                    using (Login_BSO lBso = new Login_BSO())
                     {
-
-                        //Does the cookie correspond with a live token for a user? If so then return the user.
-
-
-                        ADO_readerOutput user;
-                        using (Login_BSO lBso = new Login_BSO())
+                        user = lBso.ReadBySession(Request.sessionCookie.Value);
+                        if (!user.hasData)
                         {
-                            user = lBso.ReadBySession(Request.sessionCookie.Value);
-                            if (!user.hasData)
-                            {
-
-                                Response.error = Label.Get("error.authentication"); ;
-                                return false;
-                            }
-                            else
-                            {
-                                SamAccountName = user.data[0].CcnUsername;
-                                if (!HasUserPrivilege()) return false;
-                            }
+                            Response.error = Label.Get("error.authentication"); ;
+                            return false;
                         }
-
-
-
-                        AuthenticationType = AuthenticationType.local;
+                        else
+                        {
+                            SamAccountName = user.data[0].CcnUsername;
+                            if (!HasUserPrivilege()) return false;
+                        }
                     }
-                    else return false;
+
+
+
+                    AuthenticationType = AuthenticationType.local;
+                }
+                else
+                {
+                    if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                        Response.statusCode = HttpStatusCode.Unauthorized;
+                    return false;
+                }
                
 
             }
-            else if(CustomAttributeNames.Contains("PxStat.TokenSecure"))
+            else if(API.MethodReader.MethodHasAttribute(Request.method, "TokenSecure"))
             {
                 //This may be a token verified API.
 
@@ -430,7 +441,10 @@ namespace PxStat.Template
 
                 //Check the calling ip is from an allowed subnet
                 if (!IsIpAddressOnWhitelist(Request.ipAddress))
+                {   
+                    Log.Instance.Error(String.Format("Token login fail due to invalid calling ip address {0}, user {1}",Request.ipAddress,ccnUsername));
                     return false;
+                }
 
                 //We must validate that the CcnUsername and token validate against the account data
                 Account_ADO account_ADO = new Account_ADO();
@@ -443,13 +457,25 @@ namespace PxStat.Template
                        
                         return true;
                     }
+                    Log.Instance.Error(String.Format("Token Login failed for user {0} - Read method has no data", ccnUsername));
                     return false;
                 }
-                return false;
+                {
+                    if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                    {
+                        Response.statusCode = HttpStatusCode.Unauthorized;
+                        Log.Instance.Error(String.Format("Token Login failed for user {0}", ccnUsername));
+                    }
+                    else
+                        Log.Instance.Error(String.Format("Token Login failed for user {0} -  status code {1}", ccnUsername, Response.statusCode));
+                    return false;
+                }
             }
         
             else
             {
+                if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                    Response.statusCode = HttpStatusCode.Unauthorized;
                 return false;
             }
 
@@ -459,11 +485,11 @@ namespace PxStat.Template
 
         public bool IsIpAddressOnWhitelist(string ipAddress)
         {
-            IPNetwork ipnetwork;
+            Microsoft.AspNetCore.HttpOverrides.IPNetwork ipnetwork;
             JArray addrList = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.tokenApiAccessIpMaskWhitelist");
             foreach (var item in addrList)
             {
-                ipnetwork = new IPNetwork(IPAddress.Parse((string)item["prefix"]), (int)item["length"]);
+                ipnetwork = new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse((string)item["prefix"]), (int)item["length"]);
                 if (ipnetwork.Contains(IPAddress.Parse(ipAddress))) return true;
             }
             return false;

@@ -59,6 +59,7 @@ namespace PxStat.System.Navigation
             DTO.Search = "";
             
             MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO("PxStat.System.Navigation", "Navigation_API", "Search", DTO); //
+           
             if (cache.hasData)
             {
                 Response.data = cache.data;

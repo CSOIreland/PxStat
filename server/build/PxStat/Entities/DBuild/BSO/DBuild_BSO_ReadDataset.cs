@@ -34,7 +34,7 @@ namespace PxStat.DBuild
             var pxValidation = psv.Validate(pxDocument);
             if (!pxValidation.IsValid)
             {
-                Response.error = Label.Get("error.invalid", DTO.LngIsoCode );
+                Response.error = Label.Get("error.invalid", DTO.LngIsoCode);
                 return false;
             }
 

@@ -17,7 +17,7 @@
     "APP_LANGUAGE_CULTURE": "^[a-z]{2,3}(?:-[A-Z]{2,3}(?:-[a-zA-Z]{4})?)?$",
     "APP_GEO_MIMETYPE": "application/geo+json",
     "APP_JSON_MIMETYPE": "application/json",
-    "APP_TEXT_MIMETYPE":  "text/plain",
+    "APP_TEXT_MIMETYPE": "text/plain",
     "APP_PX_MIMETYPE": "application/octet-stream",
     "APP_CSV_MIMETYPE": "text/csv",
     "APP_XLSX_MIMETYPE": "application/base64",
@@ -78,6 +78,7 @@
     "APP_REGEX_ALPHA_NUMERIC": "^[\\p{L}0-9\\s]+$",
     "APP_REGEX_MASKED_IP": "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$|^\\d{1,3}$|^\\d{1,3}\\.\\d{1,3}$",
     "APP_REGEX_NO_WHITESPACE": "^((?!\\s).)*$",
-    "APP_BUILD_REGEX_FORBIDDEN_CHARS": "^[^><!]+$"
+    "APP_BUILD_REGEX_FORBIDDEN_CHARS": "^[^><!]+$",
+    "APP_USER_AGENT": "PxStat"
   }
 }

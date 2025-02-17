@@ -1,4 +1,5 @@
 ﻿using API;
+using CSO.Email;
 using PxStat.Data;
 using PxStat.Resources;
 using PxStat.Security;
@@ -156,6 +157,34 @@ namespace PxStat.System.Notification
             email.Dispose();
         }
 
+        internal void EmailPendingLiveCancelled(string mtrCode, Release_DTO releaseDTO, ADO_readerOutput moderators, ADO_readerOutput powerUsers)
+        {
+            eMail email = new eMail();
+
+            List<string> emailsAll = new List<string>();
+
+            emailsAll.AddRange(getEmailAddresses(powerUsers));
+            emailsAll.AddRange(getEmailAddresses(moderators));
+
+            if (emailsAll.Count == 0) return;
+
+            foreach (string person in emailsAll)
+            {
+                email.Bcc.Add(person);
+            }
+
+
+            
+            string releaseUrl = getReleaseUrl(releaseDTO);
+            string rqsvalue = Label.Get("workflow.request.cancel-pending-live");
+
+            string subject = string.Format(Label.Get("email.subject.release-cancelled"), releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision);
+            string body = string.Format(Label.Get("email.body.release-cancelled"),  releaseDTO.MtrCode, releaseDTO.RlsVersion, releaseDTO.RlsRevision, releaseDTO.RlsLiveDatetimeFrom);
+
+            sendMail(email,subject,subject, body);
+            email.Dispose();
+        }
+
         /// <summary>
         /// Send mails for a workflow
         /// </summary>
@@ -182,8 +211,8 @@ namespace PxStat.System.Notification
             listToParse.Add(new eMail_KeyValuePair() { key = "{reason}", value = Label.Get("workflow.reason", Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code")) });
 
             email.Subject = subject;
-            email.Body = email.ParseTemplate(Properties.Resources.template_NotifyWorkflow, listToParse);
-            email.Send();
+            email.Body = email.ParseTemplate(Properties.Resources.template_NotifyWorkflow, listToParse, Log.Instance );
+            email.Send(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
         }
 
         /// <summary>

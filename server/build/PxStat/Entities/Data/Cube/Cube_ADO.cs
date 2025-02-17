@@ -67,7 +67,11 @@ namespace PxStat.Data
 
         }
 
-
+        internal ADO_readerOutput ReadLiveAll()
+        {
+            var inputParams = new List<ADO_inputParams>();
+            return ado.ExecuteReaderProcedure("Data_Matrix_Read_LiveAll", inputParams);
+        }
 
 
         /// <summary>

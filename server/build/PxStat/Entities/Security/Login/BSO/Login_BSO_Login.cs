@@ -1,4 +1,6 @@
 ﻿using API;
+using CSO.Recaptcha;
+using CSO.TwoFA;
 using PxStat.Template;
 using System;
 using System.Diagnostics;
@@ -37,7 +39,7 @@ namespace PxStat.Security
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            if (!ReCAPTCHA.Validate(DTO.Captcha))
+            if (!ReCAPTCHA.Validate(DTO.Captcha, ApiServicesHelper.ApiConfiguration.Settings, Log.Instance))
             {
                 Response.error = Label.Get("error.authentication");
                 return false;
@@ -115,7 +117,7 @@ namespace PxStat.Security
             int ccnId = response.data[0].CcnId;
             string login2Fa = response.data[0].Lgn2Fa;
 
-            if (!API.TwoFA.Validate2fa(DTO.Totp, login2Fa))
+            if (!TwoFA.Validate2fa(DTO.Totp, login2Fa))
             {
                 Response.error = Label.Get("error.authentication");
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using API;
+using Microsoft.Extensions.Caching.Memory;
 using PxStat;
 using PxStat.Data;
 using PxStat.Data.Px;
@@ -90,7 +91,7 @@ namespace PxStatXUnit.Tests
         public void FirebaseTestBasic()
         {
             Helper.SetupTests();
-            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers();
+            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
             Assert.True(fbUsers.Count > 0);
         }
 

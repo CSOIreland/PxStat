@@ -46,6 +46,14 @@ namespace PxStat.System.Navigation
             return (int)returnParam.value;
         }
 
+        internal List<dynamic> ReadAllLanguages(int sbjCode)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@SbjCode", value = sbjCode });
+            var reader = ado.ExecuteReaderProcedure("System_Navigation_Subject_ReadAllLanguages", inputParams);
+            return reader.data;
+        }
+
         /// <summary>
         /// Test if a subject is in place
         /// </summary>

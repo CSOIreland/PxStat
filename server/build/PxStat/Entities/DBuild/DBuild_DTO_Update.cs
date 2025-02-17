@@ -6,7 +6,6 @@ using PxStat.Security;
 using PxStat.System.Settings;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 //using System.Reflection;
 
 namespace PxStat.DBuild
@@ -114,7 +113,7 @@ namespace PxStat.DBuild
                 this.MtrOfficialFlag = parameters.MtrOfficialFlag;
             else
             {
- 
+
                 this.MtrOfficialFlag = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "dataset.officialStatistics");
             }
 
@@ -160,7 +159,7 @@ namespace PxStat.DBuild
                 foreach (var line in parameters.Data)
                 {
                     JArray jLine = JArray.FromObject(line);
-                    
+
                     ChangeData.Add(jLine.ToObject<List<string>>());//.Select(x => x.Trim()).ToList());
                 }
 
@@ -571,7 +570,7 @@ namespace PxStat.DBuild
         /// 
         /// </summary>
         /// <param name="dim"></param>
-   
+
         /*
         public Dimension_DTO(dynamic dim)
         {

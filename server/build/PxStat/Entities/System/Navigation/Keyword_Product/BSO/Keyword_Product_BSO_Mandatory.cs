@@ -2,6 +2,7 @@
 using PxStat.Security;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -41,8 +42,49 @@ namespace PxStat.System.Navigation
 
             AddToTable(ref dt, kbe.ExtractSplitSingular(productDto.PrcValue), productID);
 
+
             keywordProductAdo.Create(dt);
         }
+
+        internal void Create(IADO Ado, Product_DTO productDto, int productID,List<dynamic> versions)
+        {
+            //If there is no direct means of finding out which langauge the product name uses,
+            // we take a default language from the settings
+            string LngIsoCode;
+
+            if (productDto.LngIsoCode == null)
+                LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+            else
+                LngIsoCode = productDto.LngIsoCode;
+
+            //Create the table that will be bulk inserted
+            DataTable dt = new DataTable();
+            dt.Columns.Add("KPR_VALUE", typeof(string));
+            dt.Columns.Add("KPR_PRC_ID", typeof(int));
+            dt.Columns.Add("KPR_MANDATORY_FLAG", typeof(bool));
+
+            Keyword_Product_ADO keywordProductAdo = new Keyword_Product_ADO(Ado);
+
+            Dictionary<string,Keyword_BSO_Extract> kbeList = new();
+
+
+            List<string> allKeywords = new();
+            foreach(var item in versions)
+            {
+                if (!kbeList.ContainsKey(item.LngIsoCode))
+                    kbeList.Add(item.LngIsoCode, new Keyword_BSO_Extract(item.LngIsoCode));
+                Keyword_BSO_Extract k = kbeList[item.LngIsoCode];
+                allKeywords.AddRange(k.ExtractSplitSingular(item.PrcValue));
+            }
+            List<string> shortList=allKeywords.Select(x=>x).Distinct().ToList();
+             
+            AddToTable(ref dt, shortList, productID);
+
+
+            keywordProductAdo.Create(dt);
+        }
+
+
 
         /// <summary>
         /// Deletes a Keyword Product

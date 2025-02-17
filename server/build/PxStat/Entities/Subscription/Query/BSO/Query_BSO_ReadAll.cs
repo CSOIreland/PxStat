@@ -34,8 +34,8 @@ namespace PxStat.Subscription
         {
             if (SamAccountName == null)
             {
-
-                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken))
+                
+                if (!AppServicesHelper.Firebase.Authenticate(DTO.Uid, DTO.AccessToken, ApiServicesHelper.ApiConfiguration.Settings, Log.Instance))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;

@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Dev;Test;UAT;Demo;PreLive;Live</Configurations>
 	<CopyDebugSymbolFilesFromPackages>true</CopyDebugSymbolFilesFromPackages>
+	<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\</OutputPath>
@@ -29,12 +30,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Entities\Build\**" />
+    <Compile Remove="Logs\**" />
     <Compile Remove="Resources\Config\**" />
     <Content Remove="Entities\Build\**" />
+    <Content Remove="Logs\**" />
     <Content Remove="Resources\Config\**" />
     <EmbeddedResource Remove="Entities\Build\**" />
+    <EmbeddedResource Remove="Logs\**" />
     <EmbeddedResource Remove="Resources\Config\**" />
     <None Remove="Entities\Build\**" />
+    <None Remove="Logs\**" />
     <None Remove="Resources\Config\**" />
   </ItemGroup>
 
@@ -96,24 +101,28 @@
     <Delete Files="$(OutDir)Web.Demo.config" />
     <Delete Files="$(OutDir)Web.Test.config" />
   </Target>
-
-	<ItemGroup>
-    <Folder Include="Logs\" />
-  </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="API.Library" Version="6.1.26" />
-    <PackageReference Include="Autofac" Version="7.0.1" />
-    <PackageReference Include="ClosedXML" Version="0.102.1" />
-    <PackageReference Include="CodeKicker.BBCode.Core" Version="4.0.1" />
-    <PackageReference Include="DeviceDetector.NET" Version="6.1.0" />
-    <PackageReference Include="FirebaseAuthentication.net" Version="4.0.2" />
-    <PackageReference Include="FluentValidation" Version="11.5.2" />
-    <PackageReference Include="HtmlSanitizer" Version="8.0.723" />
-    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
-    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.15" />
+    <PackageReference Include="API.Library" Version="7.0.16" />
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Azure.Identity" Version="1.12.0" />
+    <PackageReference Include="ClosedXML" Version="0.102.3" />
+    <PackageReference Include="CodeKicker.BBCode.Core" Version="5.0.0" />
+    <PackageReference Include="CSO.AutoMapper" Version="0.0.1" />
+    <PackageReference Include="CSO.Email" Version="0.0.1" />
+    <PackageReference Include="CSO.Firebase" Version="0.0.1" />
+    <PackageReference Include="CSO.Recaptcha" Version="0.0.2" />
+    <PackageReference Include="CSO.Sanitizer" Version="0.0.1" />
+    <PackageReference Include="CSO.TwoFA" Version="0.0.1" />
+    <PackageReference Include="DeviceDetector.NET" Version="6.3.3" />
+    <PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
+    <PackageReference Include="FluentValidation" Version="11.9.2" />
+    <PackageReference Include="HtmlSanitizer" Version="8.1.870" />
+    <PackageReference Include="ImpromptuInterface" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
+    <PackageReference Include="Newtonsoft.Json.Schema" Version="4.0.1" />
     <PackageReference Include="Pluralize.NET.Core" Version="1.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="7.0.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>

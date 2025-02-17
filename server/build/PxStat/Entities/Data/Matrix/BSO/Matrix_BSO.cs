@@ -102,7 +102,19 @@ namespace PxStat.Data
         {
             Release_ADO releaseAdo = new Release_ADO(Ado);
             var releaseDTORead = new Release_DTO_Read() { MtrCode = theMatrix.Code };
-            return Release_ADO.GetReleaseDTO(releaseAdo.ReadLatest(releaseDTORead));
+            return Release_ADO.GetReleaseDTO(releaseAdo.ReadLatestIgnoreCancelled(releaseDTORead));
+        }
+
+        /// <summary>
+        /// Get the latest release for a matrix
+        /// </summary>
+        /// <param name="theMatrix"></param>
+        /// <returns></returns>
+        internal Release_DTO GetLatestReleaseIncludingCancelled(IDmatrix theMatrix)
+        {
+            Release_ADO releaseAdo = new Release_ADO(Ado);
+            var releaseDTORead = new Release_DTO_Read() { MtrCode = theMatrix.Code };
+            return Release_ADO.GetReleaseDTO(releaseAdo.ReadLatestIncludingCancelled(releaseDTORead));
         }
 
         /// <summary>
@@ -117,6 +129,13 @@ namespace PxStat.Data
             Release_ADO releaseAdo = new Release_ADO(Ado);
             //Clone the comment first
             return releaseAdo.Clone(releaseCode, grpCode, username);
+        }
+
+        internal int CloneReleaseToVersion(int releaseCode, int version, int revision, string username)
+        {
+            Release_ADO releaseAdo = new Release_ADO(Ado);
+            //Clone the comment first
+            return releaseAdo.CloneToVersion(releaseCode, version,revision, username);
         }
 
         internal int CloneComment(int releaseCode, int RlsIdNew, string username)

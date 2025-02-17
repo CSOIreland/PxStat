@@ -31,6 +31,12 @@ namespace PxStat.Data
             return null;
         }
 
+        public static dynamic ReadLiveAll(IRequest request)
+        {
+            return new Cube_BSO_ReadLiveAll(request).Read().Response;
+           
+        }
+
         /// <summary>
         /// Reads a live dataset based on specific criteria. 
         /// </summary>

@@ -35,8 +35,10 @@ namespace PxStat.Subscription
             {
                 adUsers = AppServicesHelper.ActiveDirectory.List();
             }
-
-            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers();
+            var y = AppServicesHelper.APPConfig;
+            
+            var x = AppServicesHelper.ApiConfiguration.Settings as Dictionary<string,string>;// ["API_FIREBASE_ENABLED"];
+            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers(AppServicesHelper.ApiConfiguration.Settings, Log.Instance);
             if (fbUsers != null) fbUsers = new Dictionary<string, dynamic>();
             else return subscriptionsData;
 
@@ -85,7 +87,7 @@ namespace PxStat.Subscription
                 }
             }
 
-            return subscriptionsData.Where(x => !String.IsNullOrEmpty(x.CcnEmail)).ToList();
+            return subscriptionsData.Where(x => !x.CcnEmail.Equals(DBNull.Value) && !String.IsNullOrEmpty(x.CcnEmail)).ToList();
         }
     }
 

@@ -37,7 +37,7 @@ namespace PxStat.Subscription
             }
             
 
-            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers();
+            IDictionary<string, dynamic> fbUsers = AppServicesHelper.Firebase.GetAllUsers(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
             if(fbUsers==null)   fbUsers = new Dictionary<string, dynamic>();
             Subscriber_ADO sAdo = new Subscriber_ADO(ado);
 
@@ -108,7 +108,8 @@ namespace PxStat.Subscription
 
         internal bool Create(IADO Ado, string sbrPreference, string firebaseId, string lngIsoCode)
         {
-            
+            try
+            {
                 Subscriber_ADO ado = new Subscriber_ADO(Ado);
                 string subscriberKey = GetSubscriberKey(firebaseId);
                 if (ado.Create(sbrPreference, firebaseId, lngIsoCode, subscriberKey))
@@ -122,11 +123,15 @@ namespace PxStat.Subscription
                     return true;
                 }
                 else
-                {                   
+                {
                     return false;
                 }
-           
-
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Fatal("Failed to insert a subscriber: " + ex.Message);
+                throw;
+            }
         }
 
 

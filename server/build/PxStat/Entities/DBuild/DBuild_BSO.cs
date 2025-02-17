@@ -1052,6 +1052,32 @@ namespace PxStat.DBuild
             return qDto;
         }
 
+        public CubeQuery_DTO MapReadToQueryDto(DBuild_DTO_UpdateByRelease bDto, IDmatrix dmatrix)
+        {
+
+            CubeQuery_DTO qDto = new CubeQuery_DTO();
+            qDto.jStatQuery = new JsonQuery.JsonStatQuery();
+            qDto.jStatQuery.Id = new List<string>();
+            qDto.jStatQuery.Dimensions = new Dictionary<string, JsonQuery.Dimension>();
+
+            foreach (var dim in bDto.Dspecs[0].StatDimensions)
+            {
+                var mtrDim = dmatrix.Dspecs[bDto.Dspecs[0].Language].Dimensions.Where(x => x.Value.Equals(dim.Value)).FirstOrDefault();
+
+                dim.Code = mtrDim.Code;
+                if (dim.Code != null)
+                {
+                    qDto.jStatQuery.Id.Add(dim.Code);
+                    foreach (var vrb in dim.Variables)
+                    {
+                        vrb.Code = mtrDim.Variables.Where(x => x.Value.Equals(vrb.Value))?.FirstOrDefault().Code;
+                    }
+                    qDto.jStatQuery.Dimensions.Add(dim.Code, new JsonQuery.Dimension() { Id = dim.Code, Category = new JsonQuery.Category() { Index = dim.Variables.Select(x => x.Code).ToList() } });
+                }
+            }
+            return qDto;
+        }
+
         public IDmatrix Create(DBuild_DTO_Create dto, ICopyright cpr = null)
         {
             IDmatrix dmatrix = new Dmatrix()

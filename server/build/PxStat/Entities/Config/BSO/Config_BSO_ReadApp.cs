@@ -46,14 +46,10 @@ namespace PxStat.Config
             Config_ADO cAdo = new Config_ADO(Ado);
 
             ADO_readerOutput result = null;
-            try
-            {
+
                 result = cAdo.Read(DTO);
-            }
-            catch (Exception ex)
-            {
-                Log.Instance.Error(ex.Message);
-            }
+
+            
 
             if (!result.hasData)
             {
@@ -69,6 +65,7 @@ namespace PxStat.Config
 
             var appData = (List<dynamic>)result.data[0];
             var data = appData.Where(x => x.APP_KEY.Equals(DTO.name)).FirstOrDefault();
+
 
             if (data?.APP_KEY != null)
             {
@@ -99,6 +96,8 @@ namespace PxStat.Config
                 Response.statusCode = HttpStatusCode.NotFound;
                 return false;
             }
+            
+
             return true;            
         }
         private dynamic MaskData(dynamic data)

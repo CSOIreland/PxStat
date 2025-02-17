@@ -1,0 +1,21 @@
+﻿
+CREATE
+	
+
+ PROCEDURE [dbo].[App_Settings_Insert_Version] @version_id VARCHAR(100)
+	,@cst_id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO TM_APP_SETTING_CONFIG_VERSION
+	VALUES (
+		@version_id
+		,@cst_id
+		);
+
+	SELECT ASV_VERSION
+	FROM TM_APP_SETTING_CONFIG_VERSION
+	WHERE ASV_VERSION = @version_id
+		AND ASV_CST_ID = @cst_id;
+END

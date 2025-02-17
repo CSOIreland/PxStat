@@ -43,7 +43,7 @@ namespace PxStat.Subscription
             else
             {
 
-                if (!AppServicesHelper.Firebase.Logout(DTO.Uid, DTO.AccessToken))
+                if (!AppServicesHelper.Firebase.Logout(DTO.Uid, DTO.AccessToken, ApiServicesHelper.ApiConfiguration.Settings, Log.Instance))
                 {
                     Response.error = Label.Get("error.authentication");
                     return false;

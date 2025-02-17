@@ -39,7 +39,14 @@ namespace PxStat.DBuild
             //Get the latest release for the Matrix code
             Release_ADO releaseAdo = new Release_ADO(Ado);
             var releaseDTORead = new Release_DTO_Read() { MtrCode = DTO.MtrCode };
-            Release_DTO release= Release_ADO.GetReleaseDTO(releaseAdo.ReadLatest(releaseDTORead));
+            Release_DTO release= Release_ADO.GetReleaseDTO(releaseAdo.ReadLatestIgnoreCancelled(releaseDTORead));
+
+            if(release==null)
+            {
+                Response.error = Label.Get("error.create", DTO.LngIsoCode);
+                Log.Instance.Error(String.Format("No release found for MtrCode {0}", DTO.MtrCode));
+                return false;
+            }
 
             //Now we must check if the user has access to the group to which the release belongs
 
@@ -52,12 +59,14 @@ namespace PxStat.DBuild
                     if (!usersGroups.data.Select(x => x.GrpCode).Contains(release.GrpCode))
                     {
                         Response.error = Label.Get("error.privilege", DTO.LngIsoCode);
+                        Log.Instance.Error(String.Format("User {0} not found in group {1} for px auto update",SamAccountName, release.GrpCode));
                         return false;
                     }
                 }
                 else
                 {
                     Response.error = Label.Get("error.privilege", DTO.LngIsoCode);
+                    Log.Instance.Error(String.Format("No group access found for user {0} in px auto update", SamAccountName));
                     return false;
                 }
 
@@ -66,6 +75,7 @@ namespace PxStat.DBuild
             if (release == null) 
             {
                 Response.error = Label.Get("error.release.not-found",DTO.LngIsoCode);
+                Log.Instance.Error(String.Format("Release not found in px auto update"));
                 return false;
             }
 
@@ -84,6 +94,7 @@ namespace PxStat.DBuild
             if(!upv.ValidateDtoAgainstMatrix(DTO,matrix,matrix.Language))
             {
                 Response.error =Label.Get("error.validation") + " " + upv.ValidationResult.ToString();
+                Log.Instance.Error("Publish Validation failed after db read");
                 return false;
             }
 
@@ -107,6 +118,7 @@ namespace PxStat.DBuild
             if (rlsId == 0) 
             {
                 Response.error = rbso.ErrorMessage;
+                Log.Instance.Error("Release not found after new release create");
                 return false;
             }
 
@@ -127,10 +139,11 @@ namespace PxStat.DBuild
             if (latestLiveRelease == null) 
             {
                 Response.error = Label.Get("error.release.not-found", DTO.LngIsoCode);
+                Log.Instance.Error("Latest Live Release not found after new release create");
                 return false;
             }
-
-            Release_DTO newRelease = Release_ADO.GetReleaseDTO(releaseAdo.ReadLatest(releaseDTORead));
+            
+            Release_DTO newRelease = Release_ADO.GetReleaseDTO(releaseAdo.ReadLatestIgnoreCancelled(releaseDTORead));
 
             //Create a ReasonRelease based on the default Release Reason
             string reasonCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.server, "release.defaultReason");

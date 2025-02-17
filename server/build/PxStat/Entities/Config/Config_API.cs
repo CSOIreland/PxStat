@@ -28,6 +28,7 @@ namespace PxStat.Config
         public static dynamic ReadApi(JSONRPC_API requestApi)
         {
             return new Config_BSO_ReadApi(requestApi).Read().Response;
+            
         }
 
         public static dynamic ReadApp(RESTful_API restfulRequestApi)

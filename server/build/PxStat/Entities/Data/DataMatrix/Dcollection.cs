@@ -23,7 +23,18 @@ namespace PxStat.Data
 
         internal dynamic ReadCollection(IADO theAdo, Cube_DTO_ReadCollection DTO)
         {
-            //var ado = new Cube_ADO(theAdo);
+            // Get the minimum next release date. The cache can only live until then.
+            // If there's no next release date then the cache will live for the maximum configured amount.
+
+            DateTime minDateItem = default;
+
+            Release_ADO rAdo = new Release_ADO(theAdo);
+
+            dynamic dateQuery = rAdo.ReadNextReleaseDate();
+            if (dateQuery != null)
+                minDateItem = dateQuery.RlsDatetimeNext.Equals(DBNull.Value) ? default(DateTime) : dateQuery.RlsDatetimeNext;
+            else
+                minDateItem = default;
 
             ICollectionReader dataStore = new CollectionReader();
 
@@ -66,31 +77,11 @@ namespace PxStat.Data
 
             }
 
-            //Get the minimum next release date. The cache can only live until then.
-            //If there's no next release date then the cache will live for the maximum configured amount.
-
-            DateTime minDateItem = default;
-
-            Release_ADO rAdo = new Release_ADO(theAdo);
-
-            dynamic dateQuery = rAdo.ReadNextReleaseDate();
-            if (dateQuery != null)
-                minDateItem = dateQuery.RlsDatetimeNext.Equals(DBNull.Value) ? default(DateTime) : dateQuery.RlsDatetimeNext;
-            else
-                minDateItem = default;
-
-
-
             var result = new JRaw(Serialize.ToJson(theJsonStatCollection));
-
-
-           AppServicesHelper.CacheD.Store_BSO<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO, result, minDateItem, Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
-
+            AppServicesHelper.CacheD.Store_BSO_REMOVELOCK<dynamic>("PxStat.Data", "Cube_API", "ReadCollection", DTO, result, minDateItem, Constants.C_CAS_DATA_CUBE_READ_COLLECTION);
 
             // return the formatted data. This is an array of JSON-stat objects.
             return result;
-
-
         }
 
         /// <summary>

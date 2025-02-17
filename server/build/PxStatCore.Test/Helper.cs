@@ -57,11 +57,15 @@ namespace PxStatCore.Test
             Configuration_BSO.globalFileConfig = JObject.Parse(Utility.JsonDeserialize_IgnoreLoopingReference(Utility.JsonSerialize_IgnoreLoopingReference(globalJson)));
             var staticJson = File.ReadAllText(GetLanguagesLocation() + "PxStatCore.Test\\Resources\\Config\\static.json");
             Configuration_BSO.PxStatStaticConfig = (StaticConfig) JsonConvert.DeserializeObject<StaticConfig>(staticJson);
-            API.AutoMap.Mapper = API.AutoMap.CreateMapper();
+            CSO.AutoMapper.AutoMap.Mapper = CSO.AutoMapper.AutoMap.CreateMapper(ApiServicesHelper.ApiConfiguration.Settings);
+
             
 
             Configuration_BSO.PxStatConfiguration = (IDictionary<string, string>)AppServicesHelper.AppConfiguration.Settings;
-            if (Configuration_BSO.serverLanguageResource == null) Configuration_BSO.SetServerLangaugeConfig();
+
+            //Forcing the tests to use the appsettings.json in the test project
+            string envLocation = Environment.GetEnvironmentVariable("LANGUAGES_LOCATION", EnvironmentVariableTarget.User) + "PxStatCore.Test\\bin\\Debug\\net8.0\\";
+            if (Configuration_BSO.serverLanguageResource == null) Configuration_BSO.SetServerLangaugeConfig(envLocation  + "appsettings.json");
 
             //setup languages early...
             var lng = PxStat.Resources.LanguageManager.Instance;

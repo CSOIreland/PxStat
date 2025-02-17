@@ -1,14 +1,11 @@
-﻿using API;
-using Ganss.Xss;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace PxStat.DBuild
 {
-    
+
     public class DBuild_DTO_UpdatePublish
     {
         //[DefaultSanitizer]
@@ -19,21 +16,24 @@ namespace PxStat.DBuild
 
         public List<DSpec_DTO> Dspecs { get; set; }
         public List<List<string>> ChangeData { get; set; }
+        public int RlsCode { get; set; }
 
-
-
+        public DBuild_DTO_UpdatePublish() { }
 
         public DBuild_DTO_UpdatePublish(dynamic parameters)
         {
-            if(parameters.MtrCode!=null)
+            if (parameters.MtrCode != null)
                 MtrCode = parameters.MtrCode;
-            if(parameters.LngIsoCode!=null)
+            if (parameters.LngIsoCode != null)
                 LngIsoCode = parameters.LngIsoCode;
-            else LngIsoCode= Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+            else LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
 
-            if (parameters.WrqDatetime!=null)
+            if (parameters.WrqDatetime != null)
                 WrqDatetime = parameters.WrqDatetime;
-  
+
+            if (parameters.RlsCode != null)
+                RlsCode = parameters.RlsCode;
+
 
             if (parameters.Data != null)
             {
@@ -123,9 +123,9 @@ namespace PxStat.DBuild
 
             }
 
-            
+
         }
-            
+
 
     }
 }

@@ -2,6 +2,8 @@
 using PxStat.Resources;
 using PxStat.Security;
 using PxStat.Template;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -37,6 +39,8 @@ namespace PxStat.System.Navigation
             adoProduct = new Product_ADO(Ado);
 
             int nUpdatedProductID = 0;
+
+            
 
             //Check if the product exists
 
@@ -100,12 +104,18 @@ namespace PxStat.System.Navigation
                 return false;
             }
 
-
+            //Get all product names irrespective of language - we will need them to reconstruct the mandatory keywords
+            List<dynamic> versions = GetAllPrcValuesForProduct(adoProduct, DTO.PrcCode);
 
             //Finally we must recreate the mandatory keywords in line with the updated product
-            kpBso.Create(Ado, DTO, nUpdatedProductID);
+            kpBso.Create(Ado, DTO, nUpdatedProductID,versions);
 
             return true;
+        }
+
+        private List<dynamic> GetAllPrcValuesForProduct(Product_ADO pAdo,string prcCode)
+        {
+            return pAdo.ReadAllLanguages(prcCode);         
         }
 
         public override bool PostExecute()

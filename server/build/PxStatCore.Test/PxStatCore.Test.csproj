@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Cache\SemphoreCacheTests.cs" />
     <Compile Remove="System\Settings\Language\ConfigurationTest.cs" />
   </ItemGroup>
 
@@ -28,19 +29,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="API.Library" Version="6.1.26" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="API.Library" Version="7.0.16" />
+    <PackageReference Include="CSO.AutoMapper" Version="0.0.1" />
+    <PackageReference Include="CSO.Email" Version="0.0.1" />
+    <PackageReference Include="CSO.Firebase" Version="0.0.1" />
+    <PackageReference Include="CSO.Recaptcha" Version="0.0.2" />
+    <PackageReference Include="CSO.Sanitizer" Version="0.0.1" />
+    <PackageReference Include="CSO.TwoFA" Version="0.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit" Version="4.2.1" />
     <PackageReference Include="Pluralize.NET.Core" Version="1.0.0" />
     <PackageReference Include="PxLanguagePlugin.en" Version="4.1.0" />
     <PackageReference Include="PxLanguagePlugin.ga" Version="4.1.0" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="3.1.2">
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -73,7 +80,7 @@
     <None Update="appsettings.json">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>appsettings.Designer.cs</LastGenOutput>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -34,7 +34,7 @@ namespace PxStat.Security
             paramList.Add(new ADO_inputParams() { name = "@Const_ANY", value = Label.Get("authentication.any") });
 
             //Call the stored procedure
-            output = ado.ExecuteReaderProcedure("Security_Trace_Read", paramList);
+            output = ado.ExecuteReaderProcedure("Security_Api_Trace_Read", paramList);
 
             //Read the result of the call to the database
             if (output.hasData)

@@ -13,8 +13,10 @@ namespace PxStat.System.Navigation
     internal class Keyword_BSO_Extract
     {
         readonly ILanguagePlugin language;
+        internal string LngIsoCode { get; set; }    
         internal Keyword_BSO_Extract(string lngIsoCode)
         {
+            LngIsoCode = lngIsoCode;    
             language=LanguageManager.GetLanguage(lngIsoCode);
         }
 

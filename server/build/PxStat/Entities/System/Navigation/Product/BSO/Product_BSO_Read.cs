@@ -43,7 +43,7 @@ namespace PxStat.System.Navigation
 
             var adoProduct = new Product_ADO(Ado);
             var list = adoProduct.Read(DTO);
-            Response.data = list.ToList().OrderBy(x=>x.PrcValue);
+            Response.data = list.OrderBy(x=>x.PrcValue).ToList();
 
             return true;
         }

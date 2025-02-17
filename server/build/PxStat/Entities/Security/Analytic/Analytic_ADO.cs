@@ -69,30 +69,7 @@ namespace PxStat.Security
         }
 
 
-        internal List<dynamic> ReadForAll(Analytic_DTO_Read dto)
-        {
-            //For reasons of cache consistency we limit queries to days in the past
-            if (dto.DateTo.Date >= (DateTime.Now.Date)) dto.DateTo = DateTime.Now.Date.AddDays(-1);
 
-            ADO_readerOutput result;
-
-            List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
-            {
-                new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
-            };
-
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadForAll", inputParamList);
-
-
-
-            return result.data;
-
-
-
-            
-        }
 
         internal List<dynamic> ReadBrowser(Analytic_DTO_Read dto)
         {
@@ -104,23 +81,11 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
-            if (dto.MtrCode != null)
-                inputParamList.Add(new ADO_inputParams() { name="@MtrCode",value=dto.MtrCode});
 
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode != default)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
-            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
-                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
-
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadBrowser", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadBrowserReport", inputParamList);
 
 
 
@@ -139,23 +104,14 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
-            if (dto.MtrCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
-
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode != default)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
             if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
                 inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
 
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadEnvironmentLanguage", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadEnvironmentLanguageReport", inputParamList);
 
 
 
@@ -175,23 +131,12 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
-            if (dto.MtrCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
+           
 
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode != default)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
-            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
-                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
-
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadFormat", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadFormatReport", inputParamList);
 
 
 
@@ -210,23 +155,12 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
-            if (dto.MtrCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
+      
 
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode != default)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
-            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
-                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
-
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadLanguage", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadLanguageReport", inputParamList);
 
 
 
@@ -245,23 +179,12 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
-            if (dto.MtrCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
+           
 
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
-
-            if (dto.SbjCode != default)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
-            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
-                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
-
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadOs", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadOsReport", inputParamList);
 
             return result.data;
         }
@@ -276,23 +199,12 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
-            if (dto.MtrCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@MtrCode", value = dto.MtrCode });
 
-            if (dto.PrcCode != null)
-                inputParamList.Add(new ADO_inputParams() { name = "@PrcCode", value = dto.PrcCode });
 
-            if (dto.SbjCode != default)
-                inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
-
-            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
-                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
-
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadReferers", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadReferersReport", inputParamList);
 
             return result.data;
         }
@@ -307,8 +219,7 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
             if (dto.MtrCode != null)
@@ -320,10 +231,9 @@ namespace PxStat.Security
             if (dto.SbjCode != default)
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
-            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
-                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
+           
 
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadTimeline", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadTimelineReport", inputParamList);
 
             return result.data;
         }
@@ -338,8 +248,7 @@ namespace PxStat.Security
             List<ADO_inputParams> inputParamList = new List<ADO_inputParams>()
             {
                 new ADO_inputParams() {name= "@DateFrom",value=dto.DateFrom},
-                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo},
-                new ADO_inputParams() {name ="@LngIsoCode",value=dto.LngIsoCode}
+                new ADO_inputParams() {name= "@DateTo",value=dto.DateTo}
             };
 
             if (dto.MtrCode != null)
@@ -351,10 +260,8 @@ namespace PxStat.Security
             if (dto.SbjCode != default)
                 inputParamList.Add(new ADO_inputParams() { name = "@SbjCode", value = dto.SbjCode });
 
-            if (!String.IsNullOrEmpty(dto.NltInternalNetworkMask))
-                inputParamList.Add(new ADO_inputParams() { name = "@NltMaskedIp", value = dto.NltInternalNetworkMask });
 
-            result = Ado.ExecuteReaderProcedure("Security_Analytic_Read", inputParamList);
+            result = Ado.ExecuteReaderProcedure("Security_Analytic_ReadReport", inputParamList);
 
             return result.data;
         }

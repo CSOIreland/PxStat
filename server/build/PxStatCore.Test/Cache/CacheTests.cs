@@ -174,6 +174,95 @@ namespace PxStatXUnit.Tests
             Assert.NotNull(cache);
             Assert.True(cache.hasData);
         }
+        
+        // * Remmed out until API implements locking cache (stampede, cache for the prevention of)
+        /*
+        [Fact]
+        public void TestReadWithLockBasic()
+        {
+            Helper.SetupTests();
+            TestDTO dto = new TestDTO() { Id = 1001, Name = "TestReadWithLockBasic" };
+            TestData data = new TestData() { Id = 1011, Name = "TestReadWithLockBasicData" };
+
+            AppServicesHelper.CacheD.Store_BSO("TestNameSpaceWithLock", "TestClassWithLock", "TestMethodWithLock", dto, data, DateTime.Now.AddMinutes(1));
+
+            MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO_WITHLOCK<dynamic>("TestNameSpaceWithLock", "TestClassWithLock", "TestMethodWithLock", dto);
+            Assert.NotNull(cache);
+            Assert.True(cache.hasData);
+            Assert.True(cache.data["Id"].ToString() == "1011");
+
+        }
+
+
+        [Fact]
+        public void TestReadWithLockMultiple()
+        {
+            Helper.SetupTests();
+            TestDTO dto = new TestDTO() { Id = 1001, Name = "TestReadWithLockBasic" };
+            TestData data = new TestData() { Id = 1011, Name = "TestReadWithLockBasicData" };
+
+            AppServicesHelper.CacheD.Store_BSO("TestNameSpaceWithLock", "TestClassWithLock", "TestMethodWithLock", dto, data, DateTime.Now.AddMinutes(1));
+            List<MemCachedD_Value> returns = new();
+            for (int i = 0; i < 10; i++)
+            {
+                MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO_WITHLOCK<dynamic>("TestNameSpaceWithLock", "TestClassWithLock", "TestMethodWithLock", dto);
+                Assert.NotNull(cache);
+                Assert.True(cache.hasData);
+                Assert.True(cache.data["Id"].ToString() == "1011");
+                returns.Add(cache);
+            }
+
+        }
+
+        [Fact]
+        public void TestReadWithLockParallel()
+        {
+            Helper.SetupTests();
+            TestDTO dto = new TestDTO() { Id = 1001, Name = "TestReadWithLockBasic" };
+            
+           
+            List<MemCachedD_Value> returns = new();
+            List<TestData> dbReadData = new List<TestData>();
+            List<int> instances = new List<int>();
+            for (int i = 1; i < 101; i++)
+            {
+                instances.Add(i);
+            }
+            Parallel.ForEach(instances, i =>
+            {
+                Random rnd= new Random();
+                Thread.Sleep(rnd.Next(1000));
+                MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO_WITHLOCK<dynamic>("TestNameSpaceWithLock", "TestClassWithLock", "TestMethodWithLock", dto);
+                if (!cache.hasData)
+                {
+                    var result = fetchData(dto);
+                    dbReadData.Add(result);
+                    Assert.True(AppServicesHelper.CacheD.Store_BSO("TestNameSpaceWithLock", "TestClassWithLock", "TestMethodWithLock", dto,result , DateTime.Now.AddMinutes(1)));
+                }
+                else
+                {
+                    Assert.NotNull(cache);
+                    Assert.True(cache.hasData);
+                    Assert.True(cache.data["Id"].ToString() == "1011");
+                    returns.Add(cache);
+                }
+            });
+            int ending = returns.Where(x => x.cacheLockUsed).ToList().Count();
+            Assert.True(dbReadData.Count < returns.Count);
+        }
+
+        //Simulates slow database read
+        private TestData fetchData(TestDTO dto)
+        {
+            string bigString = String.Empty;
+            
+            bigString ="This is supposedly a very big string";
+            TestData data = new TestData() { Id = 1011, Name = bigString };
+            
+            Thread.Sleep(5000);
+            return data;
+        }
+        */
     }
 
     public class TestDTO

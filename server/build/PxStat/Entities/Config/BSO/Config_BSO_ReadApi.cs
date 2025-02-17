@@ -37,19 +37,13 @@ namespace PxStat.Config
             Config_ADO cAdo = new Config_ADO(Ado);
 
             ADO_readerOutput result = null;
-            try
-            {
+
                 if (DTO.type.Equals("APP") || string.IsNullOrEmpty(DTO.type))
                 {
                     DTO.type = "API";
                 }
                 result = cAdo.Read(DTO);
-            }
-            catch (Exception ex)
-            {
-                Log.Instance.Error(ex.Message);
-            }
-
+         
             if (!result.hasData)
             {
                 Response.statusCode = HttpStatusCode.NotFound;

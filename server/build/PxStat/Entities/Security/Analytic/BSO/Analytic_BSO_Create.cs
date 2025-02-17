@@ -27,7 +27,7 @@ namespace PxStat.Security
         internal static void Create(IADO Ado, dynamic requestDTO,  IRequest request)
         {
             //If this method doesn't require analytic logging then exit the function here
-            if (!Resources.MethodReader.MethodHasAttribute(request.method, "Analytic")) return;
+            if (!API.MethodReader.MethodHasAttribute(request.method, "Analytic")) return;
 
             Analytic_DTO aDto = new Analytic_DTO();
             

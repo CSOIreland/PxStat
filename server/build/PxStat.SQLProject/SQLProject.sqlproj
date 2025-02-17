@@ -1,0 +1,476 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>SQLProject</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{fa814fa6-91fd-4231-9b0c-0f9dab4f712a}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>SQLProject</RootNamespace>
+    <AssemblyName>SQLProject</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="Security\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\User Defined Types\" />
+    <Folder Include="dbo\Sequences\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\TS_CHANNEL_LANGUAGE.sql" />
+    <Build Include="dbo\Tables\TS_COPYRIGHT.sql" />
+    <Build Include="dbo\Tables\TS_FORMAT.sql" />
+    <Build Include="dbo\Tables\TD_API_TRACE.sql" />
+    <Build Include="dbo\Tables\TS_LANGUAGE.sql" />
+    <Build Include="dbo\Tables\TS_PRIVILEGE.sql" />
+    <Build Include="dbo\Tables\TS_REASON.sql" />
+    <Build Include="dbo\Tables\TS_REASON_LANGUAGE.sql" />
+    <Build Include="dbo\Tables\TD_MATRIX_DATA.sql" />
+    <Build Include="dbo\Tables\TR_MATRIX_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TS_DIMENSION_ROLE.sql" />
+    <Build Include="dbo\Tables\TD_MATRIX_DIMENSION.sql" />
+    <Build Include="dbo\Tables\TD_DIMENSION_ITEM.sql" />
+    <Build Include="dbo\Tables\TS_REQUEST.sql" />
+    <Build Include="dbo\Tables\TR_BROWSER_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TS_RESPONSE.sql" />
+    <Build Include="dbo\Tables\TR_ENVIRONMENT_LANGUAGE_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TS_SIGNOFF.sql" />
+    <Build Include="dbo\Tables\TR_FORMAT_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TM_RELEASE_PRODUCT.sql" />
+    <Build Include="dbo\Tables\TM_HISTORY_APP_SETTING_CONFIG_VERSION_DEPLOY.sql" />
+    <Build Include="dbo\Tables\TR_DATASET_LANGUAGE_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TS_CONFIG_SETTING_TYPE.sql" />
+    <Build Include="dbo\Tables\TR_OS_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TM_APP_SETTING_CONFIG_VERSION.sql" />
+    <Build Include="dbo\Tables\TD_PERFORMANCE.sql" />
+    <Build Include="dbo\Tables\TR_REFERER_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TD_MATRIX.sql" />
+    <Build Include="dbo\Tables\TM_HISTORY_APP_SETTING_CONFIG_VERSION.sql" />
+    <Build Include="dbo\Tables\TD_RELEASE.sql" />
+    <Build Include="dbo\Tables\TD_ACCOUNT.sql" />
+    <Build Include="dbo\Tables\TD_ALERT.sql" />
+    <Build Include="dbo\Tables\TD_ALERT_LANGUAGE.sql" />
+    <Build Include="dbo\Tables\TS_API_SETTING.sql" />
+    <Build Include="dbo\Tables\TD_ANALYTIC.sql" />
+    <Build Include="dbo\Tables\TS_HISTORY_API_SETTING.sql" />
+    <Build Include="dbo\Tables\TD_AUDITING.sql" />
+    <Build Include="dbo\Tables\TD_CLASSIFICATION.sql" />
+    <Build Include="dbo\Tables\TD_COMMENT.sql" />
+    <Build Include="dbo\Tables\TS_FLAG.sql" />
+    <Build Include="dbo\Tables\TD_DATA.sql" />
+    <Build Include="dbo\Tables\TS_APP_SETTING.sql" />
+    <Build Include="dbo\Tables\TD_DATASET.sql" />
+    <Build Include="dbo\Tables\TS_HISTORY_APP_SETTING.sql" />
+    <Build Include="dbo\Tables\TD_FREQUENCY.sql" />
+    <Build Include="dbo\Tables\TD_GEOLAYER.sql" />
+    <Build Include="dbo\Tables\TM_MATRIX_FLAG.sql" />
+    <Build Include="dbo\Tables\TD_GEOMAP.sql" />
+    <Build Include="dbo\Tables\TM_RELEASE_FLAG.sql" />
+    <Build Include="dbo\Tables\TD_GROUP.sql" />
+    <Build Include="dbo\Tables\TM_WORKFLOW_REQUEST_FLAG.sql" />
+    <Build Include="dbo\Tables\TD_KEYWORD_PRODUCT.sql" />
+    <Build Include="dbo\Tables\TD_KEYWORD_RELEASE.sql" />
+    <Build Include="dbo\Tables\TD_KEYWORD_SUBJECT.sql" />
+    <Build Include="dbo\Tables\TD_LOGGING.sql" />
+    <Build Include="dbo\Tables\TD_LOGIN.sql" />
+    <Build Include="dbo\Tables\TD_PERIOD.sql" />
+    <Build Include="dbo\Tables\TD_PRODUCT.sql" />
+    <Build Include="dbo\Tables\TD_PRODUCT_LANGUAGE.sql" />
+    <Build Include="dbo\Tables\TD_STATISTIC.sql" />
+    <Build Include="dbo\Tables\TD_SUBJECT.sql" />
+    <Build Include="dbo\Tables\TD_SUBJECT_LANGUAGE.sql" />
+    <Build Include="dbo\Tables\TD_SUBSCRIBER.sql" />
+    <Build Include="dbo\Tables\TD_THEME.sql" />
+    <Build Include="dbo\Tables\TD_THEME_LANGUAGE.sql" />
+    <Build Include="dbo\Tables\TD_TRACE.sql" />
+    <Build Include="dbo\Tables\TD_USER.sql" />
+    <Build Include="dbo\Tables\TD_USER_QUERY.sql" />
+    <Build Include="dbo\Tables\TD_VARIABLE.sql" />
+    <Build Include="dbo\Tables\TD_WORKFLOW_REQUEST.sql" />
+    <Build Include="dbo\Tables\TD_WORKFLOW_RESPONSE.sql" />
+    <Build Include="dbo\Tables\TD_WORKFLOW_SIGNOFF.sql" />
+    <Build Include="dbo\Tables\TM_AUDITING_HISTORY.sql" />
+    <Build Include="dbo\Tables\TM_CHANNEL_SUBSCRIPTION.sql" />
+    <Build Include="dbo\Tables\TM_DATA_CELL.sql" />
+    <Build Include="dbo\Tables\TM_GROUP_ACCOUNT.sql" />
+    <Build Include="dbo\Tables\TM_REASON_RELEASE.sql" />
+    <Build Include="dbo\Tables\TM_TABLE_SUBSCRIPTION.sql" />
+    <Build Include="dbo\Tables\TS_AUDITING_TYPE.sql" />
+    <Build Include="dbo\Tables\TS_CHANNEL.sql" />
+    <Build Include="dbo\Views\VW_RELEASE_LIVE_PREVIOUS.sql" />
+    <Build Include="dbo\Views\VW_RELEASE_PENDING_LIVE.sql" />
+    <Build Include="dbo\Views\VW_RELEASE_WIP.sql" />
+    <Build Include="dbo\Views\VW_PERFORMANCE_AVERAGES.sql" />
+    <Build Include="dbo\Views\VW_RELEASE_HISTORICAL.sql" />
+    <Build Include="dbo\Views\VW_RELEASE_LATEST.sql" />
+    <Build Include="dbo\Views\VW_RELEASE_LIVE_NEXT.sql" />
+    <Build Include="dbo\Views\VW_RELEASE_LIVE_NOW.sql" />
+    <Build Include="Security\db_executor.sql" />
+    <Build Include="Security\pxstat.sql" />
+    <Build Include="Security\pxstat_1.sql" />
+    <Build Include="Security\CSOCORK_PxStatDev.sql" />
+    <Build Include="Security\CSOCORK_PxStatDev_1.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Geomap_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Read_LiveAll.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Product_ReadAllLanguages.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Auditing_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Subject_ReadAllLanguages.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_DeleteEntities.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Auditing_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Auditing_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadAllForRelease.sql" />
+    <Build Include="dbo\Stored Procedures\Api_Settings_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadByCopyright.sql" />
+    <Build Include="dbo\Stored Procedures\Api_Settings_Migrate_Write.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadByGeoMap.sql" />
+    <Build Include="dbo\Stored Procedures\Api_Settings_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadByGroup.sql" />
+    <Build Include="dbo\Stored Procedures\Api_Settings_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadByLanguage.sql" />
+    <Build Include="dbo\Stored Procedures\Api_Settings_Write.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadByProduct.sql" />
+    <Build Include="dbo\Stored Procedures\App_Settings_Insert_Version.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadCodeList.sql" />
+    <Build Include="dbo\Stored Procedures\App_Settings_Migrate_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadDataField.sql" />
+    <Build Include="dbo\Stored Procedures\App_Settings_Migrate_Write.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadDimensionItems.sql" />
+    <Build Include="dbo\Stored Procedures\App_Settings_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadDimensionRole.sql" />
+    <Build Include="dbo\Stored Procedures\App_Settings_Read_Version.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadDmatrixByRelease.sql" />
+    <Build Include="dbo\Stored Procedures\App_Settings_Write.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadHistory.sql" />
+    <Build Include="dbo\Stored Procedures\App_Setting_Deploy_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadLanguage.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Classification_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadPeriodByRelease.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Classification_Search.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadSingleField.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Dataset_Lock_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadStatisticByRelease.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Dataset_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Read_Live.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Read_Title_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Release_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Report_TableAudit.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Remove.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Update_Data_Flag.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_PrivilegeCount.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Reason_Release_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Reason_Release_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_ReadByTokenAndCcnUsername.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Reason_Release_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_ReadMinimumPrivilege.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Reason_Release_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_ReadReleaseApprovers.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Clone.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Clone_Comment.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_UpdateApiToken.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Comment_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Account_Usage.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Comment_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Comment_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadBrowser.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadEnvironmentLanguage.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_DeleteKeywords.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadForAll.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_IncrementRevision.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadFormat.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_IsHistorical.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadLanguage.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_IsLiveNext.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadOs.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_IsLiveNow.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadReferers.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_IsWIP.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadTimeline.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_LanguagesForRelease.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Api_Trace_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Live_Now.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Database_ReadStatistic.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Live_Previous.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Database_ReadTableList.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Pending_Live.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Database_ReorganizeFragmented.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadTimelineReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Database_UpdateIndexes.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadByGroup.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Database_UpdateStatistic.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadBrowserReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadCollection.sql" />
+    <Build Include="dbo\Stored Procedures\Security_GroupAccount_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadEnvironmentLanguageReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadLatest.sql" />
+    <Build Include="dbo\Stored Procedures\Security_GroupAccount_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadFormatReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestLive.sql" />
+    <Build Include="dbo\Stored Procedures\Security_GroupAccount_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadLanguageReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadList.sql" />
+    <Build Include="dbo\Stored Procedures\Security_GroupAccount_ReadMultiple.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadOsReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadListLive.sql" />
+    <Build Include="dbo\Stored Procedures\Security_GroupAccount_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_ReadReferersReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadNext.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Group_AccessList.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Update_ReadReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadNextReleaseDate.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Group_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Update_BrowserReport.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadPrevious.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Group_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Update_DatasetLanguage.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadPreviousForUser.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Group_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Update_EnvironmentLanguage.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Group_ReadAccess.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Update_Format.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_WIP.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Group_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Update_OS.sql" />
+    <Build Include="dbo\Stored Procedures\Data_ReleaseProduct_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Group_Usage.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Analytic_Update_Referer.sql" />
+    <Build Include="dbo\Stored Procedures\Data_ReleaseProduct_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Logging_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Data_ReleaseProduct_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Logging_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Query_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_Authenticate1FA.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Query_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Query_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_CreateSession.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Query_ReadAll.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_ExtendSession.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Alert_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_Logout.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Alert_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_ReadBy1FaToken.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Alert_Language_CreateOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_ReadBy2FaToken.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Alert_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_ReadBySession.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Alert_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_ReadOpen1Fa.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Associated_Search.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_ReadOpen2Fa.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_EntitySearch.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_Update1FA.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Entity_Associated_Search.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_Update2FA.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_GetMtrCodesForProduct.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_Update2FaToken.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_GetRlsCodesForProduct.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Login_UpdateToken1FA.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Product_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Performance_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Product_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Performance_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Product_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Privilege_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Product_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Trace_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Release_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Security_Trace_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Release_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_ChannelSubscription_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Release_EliminateDupes.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_ChannelSubscription_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Release_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_ChannelSubscription_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Release_RemoveDupes.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_ChannelSubscription_ReadCurrent.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Release_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Channel_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Subject_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Channel_ReadUsers.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Subject_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Subscriber_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Subject_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Subscriber_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Keyword_Subject_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Subscriber_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Navigation_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Subscriber_ReadKeys.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_ProductLanguage_CreateOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Subscriber_Update.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Product_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Subscriber_UpdateSubscriberKey.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Product_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Table_Subscription_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Product_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Table_Subscription_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Product_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Table_Subscription_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Search.sql" />
+    <Build Include="dbo\Stored Procedures\Subscription_Table_Subscription_ReadCurrent.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Search_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_Comment_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_SubjectLanguage_CreateOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_Comment_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Subject_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_Comment_Update.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Subject_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Subject_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_ReadAwaitingResponse.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Subject_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_ReadAwaitingSignoff.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_ThemeLanguage_CreateOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_ReadHistory.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Theme_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_ReadIsCurrent.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Theme_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_ReadLive.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Theme_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_ReadPendingLive.sql" />
+    <Build Include="dbo\Stored Procedures\System_Navigation_Theme_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_ReadWorkInProgress.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Copyright_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_Release_Usage.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Copyright_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_Request_ReadRequest.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Copyright_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_Response_Usage.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Copyright_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowSignoffComment_Update.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Copyright_Usage.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowRequestComment_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Format_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowRequestComment_Update.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Language_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowRequest_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Language_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowRequest_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Language_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowRequest_Read.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Language_ReadListByRelease.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowRequest_Update.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Language_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowResponseComment_Update.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Language_Usage.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowResponse_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_ReasonLanguage_CreateOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowResponse_ReadApprovalAccess.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Reason_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Workflow_WorkflowSignoff_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Reason_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_Dimension_Create.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Reason_Exists.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_LoadSingleField.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Reason_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Matrix_ReadDimensions.sql" />
+    <Build Include="dbo\Stored Procedures\System_Settings_Reason_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_GeoLayer_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Data_GeoLayer_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Data_GeoLayer_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_GeoLayer_Update.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Geomap_Create.sql" />
+    <Build Include="dbo\Stored Procedures\Data_GeoMap_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\Data_GeoMap_Read.sql" />
+    <Build Include="dbo\Stored Procedures\Data_GeoMap_ReadCollection.sql" />
+    <Build Include="dbo\User Defined Types\KeyValueVarchar.sql" />
+    <Build Include="dbo\User Defined Types\KeyValueVarcharAttribute.sql" />
+    <Build Include="dbo\User Defined Types\ValueVarchar.sql" />
+    <Build Include="dbo\Sequences\CMM_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\KPR_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\KRL_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\KSB_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\LRT_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\PRC_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\RLS_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\SBJ_CODE_seq.sql" />
+    <Build Include="dbo\Sequences\THM_CODE_seq.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_Clone_ToVersion.sql" />
+    <Build Include="dbo\Tables\TD_API_CACHE_TRACE.sql" />
+    <Build Include="Security\CEK_MTR_INPUT.sql" />
+    <Build Include="Security\CMK.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIncludingCancelled.sql" />
+    <Build Include="Security\CEK_MTD_DATA.sql" />
+    <Build Include="Security\CEK_LGN_2FA_1.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIgnoreCancelled.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pxstat.dev.publish.xml" />
+    <None Include="pxstat.test.publish.xml" />
+    <None Include="pxstat.demo.publish.xml" />
+    <None Include="pxstat.live.publish.xml" />
+    <None Include="container ugrade.xml" />
+    <None Include="containerUgrade.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Script.PreDeployment.sql" />
+  </ItemGroup>
+</Project>

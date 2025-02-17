@@ -4,6 +4,7 @@ using PxStat.Resources;
 using PxStatCore.Test;
 using PxStat.Subscription;
 using PxStat;
+using API;
 
 namespace PxStatXUnit.Tests
 {
@@ -13,6 +14,7 @@ namespace PxStatXUnit.Tests
         [Fact]
         public void SubscriptionRead_Basic()
         {
+
             Helper.SetupTests();
             Subscription_BSO sbso = new Subscription_BSO();
             var result=sbso.TableRead(AppServicesHelper.StaticADO);
@@ -23,7 +25,7 @@ namespace PxStatXUnit.Tests
         public void FirebaseHasAtLeastOneAccount()
         {
             Helper.SetupTests();
-            var list=AppServicesHelper.Firebase.GetAllUsers();
+            var list=AppServicesHelper.Firebase.GetAllUsers(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
             Assert.True(list.Count > 0);
         }
 

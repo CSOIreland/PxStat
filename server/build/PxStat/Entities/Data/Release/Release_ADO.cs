@@ -207,6 +207,46 @@ namespace PxStat.Data
         }
 
         /// <summary>
+        /// Read latest release for a matrix code
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal dynamic ReadLatestIncludingCancelled(Release_DTO_Read dto)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode });
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_ReadLatestIncludingCancelled", inputParams);
+            if (reader.hasData)
+            {
+                return reader.data[0];
+
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Read latest release for a matrix code
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        internal dynamic ReadLatestIgnoreCancelled(Release_DTO_Read dto)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@MtrCode", value = dto.MtrCode });
+
+            var reader = ado.ExecuteReaderProcedure("Data_Release_ReadLatestIgnoreCancelled", inputParams);
+            if (reader.hasData)
+            {
+                return reader.data[0];
+
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Read latest live release for a matrix code
         /// </summary>
         /// <param name="dto"></param>
@@ -450,6 +490,20 @@ namespace PxStat.Data
             //Call the stored procedure
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
             ado.ExecuteNonQueryProcedure("Data_Release_Clone", inputParams, ref returnParam);
+            return ReadInt(returnParam.value);
+        }
+
+        internal int CloneToVersion(int releaseCode, int version, int revision, string username)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@RlsCode", value = releaseCode });
+            inputParams.Add(new ADO_inputParams { name = "@Version", value = version });
+            inputParams.Add(new ADO_inputParams { name = "@Revision", value = revision });
+            inputParams.Add(new ADO_inputParams { name = "@userName", value = username });
+
+            //Call the stored procedure
+            var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
+            ado.ExecuteNonQueryProcedure("Data_Release_Clone_ToVersion", inputParams, ref returnParam);
             return ReadInt(returnParam.value);
         }
 

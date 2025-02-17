@@ -146,18 +146,23 @@ namespace PxStat.Workflow
              dtoWrqList = adoWorkflowRequest.Read(Ado, DTO.RlsCode, true);
             if (dtoWrqList.Count == 1)
             {
-                Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
-                try
-                {
-                    notify.EmailRequest(dtoWrqList[0], releaseDTO, Ado);
-                }
-                catch(Exception ex)
-                { 
-                Log.Instance.Error("Email failed: " + ex.Message);
-                }
+                var sendMailThread = new Thread(() => {
+                    Email_BSO_NotifyWorkflow notify = new Email_BSO_NotifyWorkflow();
+                    try
+                    {
+                        notify.EmailRequest(dtoWrqList[0], releaseDTO, Ado);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Instance.Error("Email failed: " + ex.Message);
+                    }
+                });
+                sendMailThread.Start();
             }
             else
                 Log.Instance.Error("Email failed");
+
+
 
             return response;
         }

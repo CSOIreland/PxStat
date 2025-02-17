@@ -1,7 +1,9 @@
 ﻿using API;
+using Irony.Parsing;
 using PxStat.Security;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace PxStat.System.Navigation
 {
@@ -29,6 +31,39 @@ namespace PxStat.System.Navigation
             Keyword_BSO_Extract kbe = new Navigation.Keyword_BSO_Extract(languageCode);
             //IKeywordExtractor ext = kbe.GetExtractor();
             AddToTable(ref dt, kbe.ExtractSplitSingular(subjectDto.SbjValue), subjectID);
+
+            keywordSubjectAdo.Create(dt);
+
+        }
+
+        internal void Create(IADO Ado, Subject_DTO subjectDto, int subjectID,List<dynamic> versions)
+        {
+            //There is no direct means of finding out which langauge the product name uses,
+            // so we take a default language from the settings
+            string languageCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+
+            //Create the table that will be bulk inserted
+            DataTable dt = new DataTable();
+            dt.Columns.Add("KSB_VALUE", typeof(string));
+            dt.Columns.Add("KSB_SBJ_ID", typeof(int));
+            dt.Columns.Add("KSB_MANDATORY_FLAG", typeof(bool));
+
+            Keyword_Subject_ADO keywordSubjectAdo = new Keyword_Subject_ADO(Ado);
+
+            Dictionary<string, Keyword_BSO_Extract> kbeList = new();
+
+
+            List<string> allKeywords = new();
+            foreach (var item in versions)
+            {
+                if (!kbeList.ContainsKey(item.LngIsoCode))
+                    kbeList.Add(item.LngIsoCode, new Keyword_BSO_Extract(item.LngIsoCode));
+                Keyword_BSO_Extract k = kbeList[item.LngIsoCode];
+                allKeywords.AddRange(k.ExtractSplitSingular(item.SbjValue));
+            }
+            List<string> shortList = allKeywords.Select(x => x).Distinct().ToList();
+
+            AddToTable(ref dt, shortList, subjectID);
 
             keywordSubjectAdo.Create(dt);
 

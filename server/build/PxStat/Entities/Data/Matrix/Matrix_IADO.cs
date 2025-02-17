@@ -81,6 +81,11 @@ namespace PxStat.Data
             {
                 inputParams.Add(new ADO_inputParams() { name = "@MtrNote", value = dmatrix.Dspecs[lngIsoCode].NotesAsString });
             }
+            else if(dmatrix.Dspecs[lngIsoCode].Notes != null)
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@MtrNote", value =string.Join(',', dmatrix.Dspecs[lngIsoCode].Notes) });
+            }
+
             if (dmatrix.MtrInput != null)
                 inputParams.Add(new ADO_inputParams() { name = "@MtrInput", value = dmatrix.MtrInput });
 

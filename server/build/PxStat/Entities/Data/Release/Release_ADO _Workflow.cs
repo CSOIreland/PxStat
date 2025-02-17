@@ -142,6 +142,11 @@ namespace PxStat.Data
                 inputParams.Add(new ADO_inputParams() { name = "@RlsLiveDatetimeTo", value = dto.RlsLiveDatetimeTo });
             }
 
+            if(dto.CmmCode>0)
+            {
+                inputParams.Add(new ADO_inputParams() { name = "@RlsCmmCode", value = dto.CmmCode });
+            }
+
             var returnParam = new ADO_returnParam() { name = "@ReturnVal", value = 0 };
 
             ado.ExecuteNonQueryProcedure("Data_Release_Update", inputParams, ref returnParam);

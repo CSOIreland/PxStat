@@ -1,4 +1,6 @@
 ﻿using API;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 
 namespace PxStat.System.Navigation
@@ -54,7 +56,7 @@ namespace PxStat.System.Navigation
         internal List<dynamic> Read(Product_DTO dto)
         {
             var inputParams = new List<ADO_inputParams>();
-            if (dto.PrcCode != null)
+            if (!String.IsNullOrEmpty(dto.PrcCode))
             {
                 inputParams.Add(new ADO_inputParams { name = "@PrcCode", value = dto.PrcCode });
             }
@@ -64,13 +66,21 @@ namespace PxStat.System.Navigation
                 inputParams.Add(new ADO_inputParams { name = "@SbjCode", value = dto.SbjCode });
             }
 
-            if (dto.LngIsoCode != null)
+            if (!String.IsNullOrEmpty(dto.LngIsoCode))
             {
                 inputParams.Add(new ADO_inputParams() { name = "@LngIsoCode", value = dto.LngIsoCode });
             }
 
             var reader = ado.ExecuteReaderProcedure("System_Navigation_Product_Read", inputParams);
 
+            return reader.data;
+        }
+
+        internal List<dynamic>ReadAllLanguages(string prcCode)
+        {
+            var inputParams = new List<ADO_inputParams>();
+            inputParams.Add(new ADO_inputParams { name = "@PrcCode", value = prcCode });
+            var reader = ado.ExecuteReaderProcedure("System_Navigation_Product_ReadAllLanguages", inputParams);
             return reader.data;
         }
 

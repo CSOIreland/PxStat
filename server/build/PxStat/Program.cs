@@ -29,10 +29,7 @@ namespace PxStat
             
             builder.Services.AddApiLibrary(builder);
 
-            if (ApiServicesHelper.ApplicationLoaded)
-            {
-                AutoMap.Mapper = API.AutoMap.CreateMapper();
-            }
+
 
             builder.Services.AddStaticConfiguration(builder.Configuration);
             
@@ -44,11 +41,7 @@ namespace PxStat
 
             app.UseSimpleResponseMiddleware();
 
-            if (ApiServicesHelper.ApplicationLoaded)
-            {
-                SetupConfig();
-            }
-
+            SetupConfig();
 
             if (app != null)
                 app.Run();

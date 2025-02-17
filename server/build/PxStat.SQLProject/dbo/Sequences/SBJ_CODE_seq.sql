@@ -1,0 +1,5 @@
+﻿CREATE SEQUENCE [dbo].[SBJ_CODE_seq]
+    AS INT
+    INCREMENT BY 1
+    MINVALUE 1;
+

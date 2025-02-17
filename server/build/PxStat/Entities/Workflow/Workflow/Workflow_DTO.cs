@@ -50,4 +50,24 @@ namespace PxStat.Workflow
         public Workflow_DTO() { }
 
     }
+
+    internal class Workflow_DTO_CancelPendingLive
+    {
+        public int RlsCode { get; set; }
+        public string CmmValue { get; set; }
+        public int CmmCode { get; set; }
+        public string LngIsoCode { get; set; }
+
+        public Workflow_DTO_CancelPendingLive(dynamic parameters)
+        {
+            if(parameters.RlsCode != null)
+                RlsCode = parameters.RlsCode;
+            if(parameters.CmmValue != null) 
+                CmmValue = parameters.CmmValue;
+            if (parameters.LngIsoCode != null)
+                this.LngIsoCode = parameters.LngIsoCode;
+            else
+                this.LngIsoCode = Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "language.iso.code");
+        }
+    }
 }

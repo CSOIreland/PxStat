@@ -1,4 +1,5 @@
 ﻿using API;
+using CSO.Email;
 using PxStat.Security;
 using System;
 using System.Collections.Generic;
@@ -48,10 +49,10 @@ namespace PxStat.System.Notification
                 listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", lngIsoCode) });
 
 
-                email.Body = email.ParseTemplate(Properties.Resources.template_Login, listToParse);
+                email.Body = email.ParseTemplate(Properties.Resources.template_Login, listToParse, Log.Instance);
                 try
                 {
-                    email.Send();
+                    email.Send(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
                 }
                 catch (Exception ex)
                 {
@@ -107,10 +108,10 @@ namespace PxStat.System.Notification
                 listToParse.Add(new eMail_KeyValuePair() { key = "{date_format}", value = Label.Get("label.date-format", lngIsoCode) });
                 listToParse.Add(new eMail_KeyValuePair() { key = "{timezone}", value = Label.Get("label.timezone", lngIsoCode) });
 
-                email.Body = email.ParseTemplate(Properties.Resources.template_LoginBulletPoint, listToParse);
+                email.Body = email.ParseTemplate(Properties.Resources.template_LoginBulletPoint, listToParse, Log.Instance);
                 try
                 {
-                    email.Send();
+                    email.Send(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
                 }
                 catch (Exception ex)
                 {

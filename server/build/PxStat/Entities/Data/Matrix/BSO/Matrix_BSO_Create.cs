@@ -96,7 +96,7 @@ namespace PxStat.Data
             Matrix_BSO mBso = new Matrix_BSO(Ado);
 
             // Check if a WIP Release already exists for the Matrix to Upload
-            latestRelease = mBso.GetLatestRelease(matrix);
+            latestRelease = mBso.GetLatestReleaseIncludingCancelled(matrix);
             if (latestRelease != null && !DTO.Overwrite && releaseAdo.IsWip(latestRelease.RlsCode)) //
             {
                 Group_DTO_Create dtoGroup = this.GetGroup(DTO.GrpCode);

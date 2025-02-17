@@ -59,7 +59,7 @@ namespace PxStat.Data
                         rspPrd.statusCode = HttpStatusCode.NotFound;
                         return rspPrd;
                     }
-                    if(rspPrd.data.Count==0)
+                    if (rspPrd.data.Count == 0)
                     {
                         RESTful_Output output = new();
                         output.statusCode = HttpStatusCode.NotFound;

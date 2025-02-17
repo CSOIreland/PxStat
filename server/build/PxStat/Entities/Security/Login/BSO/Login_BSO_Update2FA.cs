@@ -1,4 +1,5 @@
 ﻿using API;
+using CSO.Recaptcha;
 using PxStat.Template;
 using System;
 
@@ -21,7 +22,7 @@ namespace PxStat.Security
 
         protected override bool Execute()
         {
-            if (!ReCAPTCHA.Validate(DTO.Captcha))
+            if (!ReCAPTCHA.Validate(DTO.Captcha, ApiServicesHelper.ApiConfiguration.Settings, Log.Instance))
             {
                 Response.error = Label.Get("error.authentication");
                 return false;

@@ -15,4 +15,13 @@ namespace PxStat.Workflow
             RuleFor(x => x.LngIsoCode).NotEmpty().Length(2);
         }
     }
+
+    internal class Workflow_VLD_CancelPendingLive : AbstractValidator<Workflow_DTO_CancelPendingLive>
+    {
+        internal Workflow_VLD_CancelPendingLive()
+        {
+            RuleFor(f => f.RlsCode).GreaterThan(0).WithMessage("Invalid Release Code").WithName("InvalidRlsCode");
+            RuleFor(f => f.CmmValue).Length(1, 1024).When(f => !string.IsNullOrEmpty(f.CmmValue)).WithMessage("Invalid Workflow Pending Live Cancel Comment").WithName("CommentValidation");
+        }
+    }
 }

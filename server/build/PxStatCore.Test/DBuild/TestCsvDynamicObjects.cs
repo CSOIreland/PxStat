@@ -951,7 +951,7 @@ namespace PxStatXUnit.Tests
             dynamic parameters = tmf.TestReadDataset();
             DBuild_DTO_Update dto = new DBuild_DTO_Update(parameters);
 
-            DBuild_BSO dbso = new DBuild_BSO();
+            DBuild_BSO dbso = new DBuild_BSO(); 
 
             var pxManualParser = new PxParser.Resources.Parser.PxManualParser(dto.MtrInput);
             var pxDocument = pxManualParser.Parse();

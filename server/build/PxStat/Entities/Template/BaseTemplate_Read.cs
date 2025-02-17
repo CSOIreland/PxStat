@@ -11,6 +11,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http.Metadata;
+using System.Linq;
 
 namespace PxStat.Template
 {
@@ -36,6 +37,9 @@ namespace PxStat.Template
         {
 
             Log.Instance.Debug("Record Read");
+            if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode)) 
+                Response.statusCode = HttpStatusCode.OK;
+            
             //If a cache DTO exists, then we have been given a directive to store the results in the cache
             if (cDTO != null )
                 AppServicesHelper.CacheD.Store_BSO<dynamic>(cDTO.Namespace, cDTO.ApiName, cDTO.Method, DTO, Response.data, cDTO.TimeLimit, cDTO.Cas + cDTO.Domain);
@@ -47,6 +51,8 @@ namespace PxStat.Template
         /// </summary>
         protected override void OnExecutionError()
         {
+            if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode))
+                Response.statusCode =HttpStatusCode.NotFound;
             Log.Instance.Debug("No record read");
         }
 
@@ -58,11 +64,13 @@ namespace PxStat.Template
 
                 if (Response.error != null)
                 {
-                    Response.data = RESTful.FormatRestfulError(Response, null, HttpStatusCode.NoContent, HttpStatusCode.InternalServerError);
+                    if(Response.statusCode==0)
+                        Response.statusCode =  HttpStatusCode.InternalServerError;
+                    Response.data = RESTful.FormatRestfulError(Response, null, HttpStatusCode.NoContent, Response.statusCode);
                 }
                 else
-                  if(Response.statusCode==0) Response.statusCode = HttpStatusCode.OK;
-
+                    if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode)) 
+                        Response.statusCode = HttpStatusCode.OK; 
                 //This is the default mimetype, may be amended before output by the calling BSO
                 if (Response.mimeType == null)
                     Response.mimeType = Configuration_BSO.GetStaticConfig("APP_JSON_MIMETYPE");
@@ -107,7 +115,7 @@ namespace PxStat.Template
 
                 bool isKeyValueParameters = Resources.Cleanser.TryParseJson<dynamic>(Request.parameters.ToString(), out dynamic canParse);
 
-                if (Resources.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
+                if (API.MethodReader.MethodHasAttribute(Request.method, "NoCleanseDto"))
                 {
                     cleansedParams = Request.parameters;
                 }
@@ -119,7 +127,7 @@ namespace PxStat.Template
                     }
                     else
                     {
-                        if (Resources.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
+                        if (API.MethodReader.MethodHasAttribute(Request.method, "IndividualCleanseNoHtml"))
                         {
                             dynamic dto = GetDTO(Request.parameters);
                             cleansedParams = Resources.Cleanser.Cleanse(Request.parameters, dto);
@@ -152,9 +160,9 @@ namespace PxStat.Template
                     return this;
                 }
 
-                if (CustomAttributeNames.Contains("PxStat.NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
+                if (API.MethodReader.MethodHasAttribute(Request.method,"NoDemo") && Configuration_BSO.GetApplicationConfigItem(ConfigType.global, "security.demo"))
                 {
-                    if (!IsAdministrator() && !CustomAttributeNames.Contains("PxStat.TokenSecure"))
+                    if (!IsAdministrator() && !API.MethodReader.MethodHasAttribute(Request.method, "TokenSecure"))
                     {
                         OnAuthenticationFailed();
                         return this;
@@ -165,7 +173,7 @@ namespace PxStat.Template
                 //HEAD requests are only allowed for methods with an attribute of [AllowHEADrequest]
                 if (Request.method.Equals("HEAD"))
                 {
-                    if (!Resources.MethodReader.MethodHasAttribute(Request.method, "AllowHEADrequest"))
+                    if (!API.MethodReader.MethodHasAttribute(Request.method, "AllowHEADrequest"))
                     {
                         OnAuthenticationFailed();
                         return this;
@@ -203,12 +211,13 @@ namespace PxStat.Template
 
                 }
                 Ado.StartTransaction();
-                Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
+                // TODO This can be removed when the new tracing is tested
+                // Trace_BSO_Create.Execute(Ado, Request, SamAccountName);
                 Ado.CommitTransaction();
 
 
 
-                if (CustomAttributeNames.Contains("PxStat.Analytic"))
+                if (API.MethodReader.MethodHasAttribute(Request.method,"Analytic"))
                 {
                     //Create the analytic data if required
                     Ado.StartTransaction();
@@ -228,13 +237,15 @@ namespace PxStat.Template
                 }
 
                 //See if there's a cache in the process
-                if (CustomAttributeNames.Contains("PxStat.CacheRead"))
+                if (API.MethodReader.MethodHasAttribute(Request.method, "CacheRead"))
                 {
                     cDTO = new CacheMetadata("CacheRead", Request.method, DTO);
                     MemCachedD_Value cache = AppServicesHelper.CacheD.Get_BSO<dynamic>(cDTO.Namespace, cDTO.ApiName, cDTO.Method, DTO);
                     if (cache.hasData)
                     {
                         Response.data = cache.data;
+                        if (!Enum.IsDefined(typeof(HttpStatusCode), Response.statusCode)) 
+                            Response.statusCode = HttpStatusCode.OK;
                         return this;
                     }
                 }
@@ -245,6 +256,7 @@ namespace PxStat.Template
                     OnExecutionError();
                 }
 
+                
                 if (!PostExecute())
                 {
                     OnExecutionError();
@@ -252,12 +264,14 @@ namespace PxStat.Template
 
                 FormatForRestful(Response);
                 OnExecutionSuccess();
+                
                 return this;
             }
             catch (UnmatchedParametersException unmatchException)
             {
                 Log.Instance.Debug(unmatchException);
                 OnDTOValidationError();
+                Response.statusCode = HttpStatusCode.BadRequest;
                 return this;
             }
             catch (FormatException formatException)
@@ -265,6 +279,7 @@ namespace PxStat.Template
                 //A FormatException error has been caught, log the error and return a message to the caller
                 Log.Instance.Error(formatException);
                 Response.error = formatException.Message ?? Label.Get("error.schema");
+                Response.statusCode = HttpStatusCode.InternalServerError;
                 return this;
             }
             catch (Exception ex)
@@ -272,7 +287,7 @@ namespace PxStat.Template
                 //An error has been caught,  log the error and return a message to the caller
                 Log.Instance.Error(ex);
                 Response.error = Label.Get("error.exception");
-
+                Response.statusCode = HttpStatusCode.InternalServerError;
                 return this;
             }
             finally

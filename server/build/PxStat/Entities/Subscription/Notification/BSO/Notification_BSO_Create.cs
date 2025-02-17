@@ -1,4 +1,5 @@
 ﻿using API;
+using CSO.Email;
 using PxStat.Template;
 using System.Linq;
 
@@ -61,7 +62,7 @@ namespace PxStat.Subscription
                 string emailAddress = user.FirstOrDefault().CcnEmail;
                 email.To.Add(emailAddress);
                 Log.Instance.Debug($"Send notification to {emailAddress}");
-                email.Send();
+                email.Send(ApiServicesHelper.ApiConfiguration.Settings, Log.Instance);
             }
             return true;
         }
