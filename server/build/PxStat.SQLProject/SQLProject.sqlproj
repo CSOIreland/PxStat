@@ -157,10 +157,6 @@
     <Build Include="dbo\Views\VW_RELEASE_LIVE_NOW.sql" />
     <Build Include="Security\db_executor.sql" />
     <Build Include="Security\pxstat.sql" />
-    <Build Include="Security\pxstat_1.sql" />
-    <Build Include="Security\CSOCORK_PxStatDev.sql" />
-    <Build Include="Security\CSOCORK_PxStatDev_1.sql" />
-    <Build Include="Security\RoleMemberships.sql" />
     <Build Include="dbo\Stored Procedures\Data_Geomap_Update.sql" />
     <Build Include="dbo\Stored Procedures\Data_Matrix_Read_LiveAll.sql" />
     <Build Include="dbo\Stored Procedures\Data_Matrix_Create.sql" />
@@ -456,16 +452,9 @@
     <Build Include="Security\CMK.sql" />
     <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIncludingCancelled.sql" />
     <Build Include="Security\CEK_MTD_DATA.sql" />
-    <Build Include="Security\CEK_LGN_2FA_1.sql" />
     <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIgnoreCancelled.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="pxstat.dev.publish.xml" />
-    <None Include="pxstat.test.publish.xml" />
-    <None Include="pxstat.demo.publish.xml" />
-    <None Include="pxstat.live.publish.xml" />
-    <None Include="container ugrade.xml" />
-    <None Include="containerUgrade.xml" />
+    <Build Include="Security\CEK_LGN_2FA.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />
