@@ -130,59 +130,39 @@ namespace PxStat.Resources
         /// <param name="path"></param>
         /// <param name="namespaceClass"></param>
         /// <returns></returns>
-        public static ILanguagePlugin ReadLanguageResource(string lngIsocode, string path,string namespaceClass,string translationUrl)
+        /// <summary>
+        /// Get a language from the plugins
+        /// </summary>
+        /// <param name="lngIsocode"></param>
+        /// <param name="path"></param>
+        /// <param name="namespaceClass"></param>
+        /// <returns></returns>
+        public static ILanguagePlugin ReadLanguageResource(string lngIsocode, string path, string namespaceClass, string translationUrl)
         {
             Log.Instance.Debug("Current module =" + Process.GetCurrentProcess().MainModule.FileName);
             var dll = Assembly.LoadFile(path);
             var languageType = dll.GetType(namespaceClass);
 
-            var socketHandler = new SocketsHttpHandler()
-            {
-                ConnectCallback = async (context, cancellationToken) =>
-                {
-                    // Use DNS to look up the IP addresses of the target host:
-                    // - IP v4: AddressFamily.InterNetwork
-                    // - IP v6: AddressFamily.InterNetworkV6
-                    // - IP v4 or IP v6: AddressFamily.Unspecified
-                    // note: this method throws a SocketException when there is no IP address for the host
-                    var entry = await Dns.GetHostEntryAsync(context.DnsEndPoint.Host, AddressFamily.InterNetwork, cancellationToken);
-
-                    // Open the connection to the target host/port
-                    var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-
-                    // Turn off Nagle's algorithm since it degrades performance in most HttpClient scenarios.
-                    socket.NoDelay = true;
-
-                    try
-                    {
-                        await socket.ConnectAsync(entry.AddressList, context.DnsEndPoint.Port, cancellationToken);
-
-                        // If you want to choose a specific IP address to connect to the server
-                        // await socket.ConnectAsync(
-                        //    entry.AddressList[Random.Shared.Next(0, entry.AddressList.Length)],
-                        //    context.DnsEndPoint.Port, cancellationToken);
-
-                        // Return the NetworkStream to the caller
-                        return new NetworkStream(socket, ownsSocket: true);
-                    }
-                    catch
-                    {
-                        socket.Dispose();
-                        throw;
-                    }
-                }
-
-            };
             string translation;
-            using (var httpClient = new HttpClient(socketHandler))
+            if (translationUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
-                httpClient.DefaultRequestHeaders.Add("User-Agent", Configuration_BSO.GetStaticConfig("APP_USER_AGENT"));
-                translation = GetDownloadString(httpClient, translationUrl).Result;
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", Configuration_BSO.GetStaticConfig("APP_USER_AGENT"));
+                    translation = GetDownloadString(httpClient, translationUrl).Result;
+                }
             }
-                
-            dynamic languageClass = Activator.CreateInstance(languageType,translation);
+            else if (translationUrl.StartsWith("file", StringComparison.OrdinalIgnoreCase))
+            {
+                var filePath = new Uri(translationUrl).LocalPath;
+                translation = File.ReadAllText(filePath);
+            }
+            else
+            {
+                throw new NotSupportedException("The provided URL scheme is not supported for " + path);
+            }
 
-            //Impromptu will convert the dynamic to an instance of ILanguagePlugin. Must be of the same shape!
+            dynamic languageClass = Activator.CreateInstance(languageType, translation);
             ILanguagePlugin lngPlugin = Impromptu.ActLike<ILanguagePlugin>(languageClass);
 
             return lngPlugin;

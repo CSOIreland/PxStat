@@ -1,0 +1,10 @@
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\bin\Debug\SQLProject.dacpac
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\obj\Debug\SQLProject.sqlproj.AssemblyReference.cache
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\obj\Debug\Model.xml
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\obj\Debug\refactor.xml
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\obj\Debug\postdeploy.sql
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\obj\Debug\predeploy.sql
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\obj\Debug\SQLProject.dll
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\obj\Debug\SQLProject.pdb
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\bin\Debug\SQLProject.dll
+C:\Users\chapmand\development\GitHub\PxStat\server\build\PxStat.SQLProject\bin\Debug\SQLProject.pdb

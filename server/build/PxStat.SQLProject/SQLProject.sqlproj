@@ -61,10 +61,10 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Views\" />
-    <Folder Include="Security\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
     <Folder Include="dbo\Sequences\" />
+    <Folder Include="Security" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\TS_CHANNEL_LANGUAGE.sql" />
@@ -155,12 +155,6 @@
     <Build Include="dbo\Views\VW_RELEASE_LATEST.sql" />
     <Build Include="dbo\Views\VW_RELEASE_LIVE_NEXT.sql" />
     <Build Include="dbo\Views\VW_RELEASE_LIVE_NOW.sql" />
-    <Build Include="Security\db_executor.sql" />
-    <Build Include="Security\pxstat.sql" />
-    <Build Include="Security\pxstat_1.sql" />
-    <Build Include="Security\CSOCORK_PxStatDev.sql" />
-    <Build Include="Security\CSOCORK_PxStatDev_1.sql" />
-    <Build Include="Security\RoleMemberships.sql" />
     <Build Include="dbo\Stored Procedures\Data_Geomap_Update.sql" />
     <Build Include="dbo\Stored Procedures\Data_Matrix_Read_LiveAll.sql" />
     <Build Include="dbo\Stored Procedures\Data_Matrix_Create.sql" />
@@ -452,12 +446,17 @@
     <Build Include="dbo\Sequences\THM_CODE_seq.sql" />
     <Build Include="dbo\Stored Procedures\Data_Release_Clone_ToVersion.sql" />
     <Build Include="dbo\Tables\TD_API_CACHE_TRACE.sql" />
-    <Build Include="Security\CEK_MTR_INPUT.sql" />
-    <Build Include="Security\CMK.sql" />
     <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIncludingCancelled.sql" />
-    <Build Include="Security\CEK_MTD_DATA.sql" />
-    <Build Include="Security\CEK_LGN_2FA_1.sql" />
     <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIgnoreCancelled.sql" />
+    <Build Include="Security\CEK_LGN_2FA.sql" />
+    <Build Include="Security\CEK_MTD_DATA.sql" />
+    <Build Include="Security\CEK_MTR_INPUT.sql" />
+    <Build Include="Security\CEK_TDT_VALUE.sql" />
+    <Build Include="Security\CMK.sql" />
+    <Build Include="Security\db_executor.sql" />
+    <Build Include="Security\pxstat.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
+    <Build Include="Security\pxstat_1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="pxstat.dev.publish.xml" />
