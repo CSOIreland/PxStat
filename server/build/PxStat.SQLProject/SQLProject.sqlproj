@@ -160,6 +160,9 @@
     <Build Include="Security\db_executor.sql" />
     <Build Include="Security\pxstat.sql" />
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
+=======
 >>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
 =======
 >>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
@@ -457,6 +460,7 @@
     <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIncludingCancelled.sql" />
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIgnoreCancelled.sql" />
     <Build Include="Security\CEK_LGN_2FA.sql" />
     <Build Include="Security\CEK_MTD_DATA.sql" />
@@ -475,6 +479,12 @@
     <None Include="pxstat.live.publish.xml" />
     <None Include="container ugrade.xml" />
     <None Include="containerUgrade.xml" />
+=======
+    <Build Include="Security\CEK_MTD_DATA.sql" />
+    <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIgnoreCancelled.sql" />
+    <Build Include="Security\CEK_LGN_2FA.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
+>>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
 =======
     <Build Include="Security\CEK_MTD_DATA.sql" />
     <Build Include="dbo\Stored Procedures\Data_Release_ReadLatestIgnoreCancelled.sql" />

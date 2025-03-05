@@ -1,7 +1,10 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿CREATE USER [pxstat] FOR LOGIN [pxstat];
 =======
+=======
+>>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
 =======
 >>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
 ﻿CREATE LOGIN [pxstat]
@@ -11,6 +14,9 @@ GO
 
 CREATE USER [pxstat] FOR LOGIN [pxstat];
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
+=======
 >>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
 =======
 >>>>>>> fcb8cf4cf3b58ef362b147be15c5b7ec50cfdbe5
